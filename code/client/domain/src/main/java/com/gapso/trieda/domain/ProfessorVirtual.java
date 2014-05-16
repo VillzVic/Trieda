@@ -337,9 +337,12 @@ public class ProfessorVirtual
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< ProfessorVirtual > findBy(
-		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Titulacao titulacao, String orderBy )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Titulacao titulacao,
+		TipoContrato tipoContrato, AreaTitulacao areaTitulacao,String nome, String orderBy )
 	{
 		String titulacaoQuery = titulacao == null ? "" : " AND o.professorVirtual.titulacao = :titulacao ";
+		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professorVirtual.tipoContrato = :tipoContrato ";
+		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professorVirtual.areaTitulacao = :areaTitulacao ";
 		
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o.professorVirtual." + orderBy.replace("String", "").replace("nome", "id") : "" );
 		
@@ -347,7 +350,7 @@ public class ProfessorVirtual
 			" SELECT DISTINCT o.professorVirtual " +
 			" FROM AtendimentoOperacional o " +
 			" WHERE o.cenario = :cenario " +
-			titulacaoQuery +
+			titulacaoQuery + tipoContratoQuery + areaTitulacaoQuery + 
 			" AND o.instituicaoEnsino = :instituicaoEnsino "
 			+ orderBy);
 
@@ -355,6 +358,17 @@ public class ProfessorVirtual
 		{
 			q.setParameter( "titulacao", titulacao );
 		}
+		
+		if ( tipoContrato != null )
+		{
+			q.setParameter( "tipoContrato", tipoContrato );
+		}
+		
+		if ( areaTitulacao != null )
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+		
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
@@ -363,9 +377,12 @@ public class ProfessorVirtual
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< ProfessorVirtual > findBy(
-		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Titulacao titulacao, Campus campus, String orderBy )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Titulacao titulacao,
+		TipoContrato tipoContrato, AreaTitulacao areaTitulacao,String nome,  Campus campus, String orderBy )
 	{
 		String titulacaoQuery = titulacao == null ? "" : " AND o.professorVirtual.titulacao = :titulacao ";
+		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professorVirtual.tipoContrato = :tipoContrato ";
+		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professorVirtual.areaTitulacao = :areaTitulacao ";
 		
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o.professorVirtual." + orderBy.replace("String", "").replace("nome", "id") : "" );
 		
@@ -374,7 +391,7 @@ public class ProfessorVirtual
 			" FROM AtendimentoOperacional o " +
 			" WHERE o.cenario = :cenario " +
 			" and  o.oferta.campus = :campus " +
-			titulacaoQuery +
+			titulacaoQuery + tipoContratoQuery + areaTitulacaoQuery + 
 			" AND o.instituicaoEnsino = :instituicaoEnsino "
 			+ orderBy);
 
@@ -382,6 +399,17 @@ public class ProfessorVirtual
 		{
 			q.setParameter( "titulacao", titulacao );
 		}
+		
+		if ( tipoContrato != null )
+		{
+			q.setParameter( "tipoContrato", tipoContrato );
+		}
+		
+		if ( areaTitulacao != null )
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+		
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "campus", campus );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );

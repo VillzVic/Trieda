@@ -717,33 +717,73 @@ public class Sala
 	}
 
 	public static Integer count( InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, Campus campus, Unidade unidade )
+		Cenario cenario, Campus campus, Unidade unidade,
+		TipoSala tipoSala, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
+		String operadorCapacidadeMaxima, Integer capacidadeMax, String operadorCustoOperacao, Double custoOperacao,
+		String  numero, String descricao, String andar)
 	{
 		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
-				" AND o.unidade.campus.cenario = :cenario";
+				" AND o.unidade.campus.cenario = :cenario and ";
 
-		if ( campus != null || unidade != null )
-		{
-			whereString += " AND ";
-		}
 
+		
 		if ( campus != null )
 		{
-			whereString += " o.unidade.campus = :campus ";
-		}
-
-		if ( campus != null && unidade != null )
-		{
-			whereString += " AND ";
+			whereString += " o.unidade.campus = :campus and ";
 		}
 
 		if ( unidade != null )
 		{
-			whereString += " o.unidade = :unidade ";
+			whereString += " o.unidade = :unidade and ";
+		}
+		
+		if ( tipoSala != null )
+		{
+			whereString += " o.tipoSala = :tipoSala and ";
+			
+		}
+		
+		if ( numero != null )
+		{
+			whereString += " o.numero = :numero and ";
+			
+		}
+		
+		if ( andar != null )
+		{
+			whereString += " o.andar = :andar and ";
+			
+		}
+		
+		if ( descricao != null )
+		{
+			whereString += ( " LOWER ( o.descricao ) LIKE LOWER ( :descricao ) AND " );
+			descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
+		}
+		
+		if(capacidadeInstalada != null){
+			if(operadorCapacidadeInstalada != null)
+				whereString += " capacidadeInstalada " + operadorCapacidadeInstalada + " :capacidadeInstalada and ";
+			else
+				whereString += " capacidadeInstalada = :capacidadeInstalada and ";
+		}
+		
+		if(capacidadeMax != null){
+			if(operadorCapacidadeMaxima != null)
+				whereString += " capacidadeMax " + operadorCapacidadeMaxima + " :capacidadeMax and ";
+			else
+				whereString += " capacidadeMax = :capacidadeMax and ";
+		}
+		
+		if(custoOperacao != null){
+			if(operadorCustoOperacao != null)
+				whereString += " custoOperacaoCred " + operadorCustoOperacao + " :custoOperacaoCred and ";
+			else
+				whereString += " custoOperacaoCred = :custoOperacaoCred and ";
 		}
 
 		Query q = entityManager().createQuery(
-			"SELECT COUNT ( o ) FROM Sala o " + whereString );
+			"SELECT COUNT ( o ) FROM Sala o " + whereString + " 1=1");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -757,40 +797,111 @@ public class Sala
 		{
 			q.setParameter( "unidade", unidade );
 		}
+		
+		if( tipoSala != null)
+		{
+			q.setParameter("tipoSala", tipoSala);
+		}
+		
+		if ( numero != null )
+		{
+			q.setParameter("numero", numero);
+		}
+		
+		if ( andar != null )
+		{
+			q.setParameter("andar", andar);
+		}
+		
+		if ( descricao != null )
+		{
+			q.setParameter( "descricao", descricao );
+		}
+		
+		if(capacidadeInstalada != null){
+			q.setParameter("capacidadeInstalada", capacidadeInstalada);
+		}
+		
+		if(capacidadeMax != null){
+			q.setParameter("capacidadeMax", capacidadeMax);
+		}
+		
+		if(custoOperacao != null){
+			q.setParameter("custoOperacaoCred", custoOperacao);
+		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings("unchecked")
     public static List< Sala > find( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-    	Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy )
+    	Campus campus, Unidade unidade,
+    	TipoSala tipoSala, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
+		String operadorCapacidadeMaxima, Integer capacidadeMax, String operadorCustoOperacao, Double custoOperacao,
+		String  numero, String descricao, String andar,
+    	int firstResult, int maxResults, String orderBy )
     {
 		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
-				" AND o.unidade.campus.cenario = :cenario";
+				" AND o.unidade.campus.cenario = :cenario and ";
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
-
-		if ( campus != null || unidade != null )
-		{
-			whereString += " AND ";
-		}
 
 		if ( campus != null )
 		{
-			whereString += " o.unidade.campus = :campus ";
-		}
-
-		if ( campus != null && unidade != null )
-		{
-			whereString += " AND ";
+			whereString += " o.unidade.campus = :campus and ";
 		}
 
 		if ( unidade != null )
 		{
-			whereString += " o.unidade = :unidade ";
+			whereString += " o.unidade = :unidade and ";
+		}
+		
+		if ( tipoSala != null )
+		{
+			whereString += " o.tipoSala = :tipoSala and ";
+			
+		}
+		
+		if ( numero != null )
+		{
+			whereString += " o.numero = :numero and ";
+			
+		}
+		
+		if ( andar != null )
+		{
+			whereString += " o.andar = :andar and ";
+			
+		}
+		
+		if ( descricao != null )
+		{
+			whereString += ( " LOWER ( o.descricao ) LIKE LOWER ( :descricao ) AND " );
+			descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
+		}
+		
+		if(capacidadeInstalada != null){
+			if(operadorCapacidadeInstalada != null)
+				whereString += " capacidadeInstalada " + operadorCapacidadeInstalada + " :capacidadeInstalada and ";
+			else
+				whereString += " capacidadeInstalada = :capacidadeInstalada and ";
+		}
+		
+		if(capacidadeMax != null){
+			if(operadorCapacidadeMaxima != null)
+				whereString += " capacidadeMax " + operadorCapacidadeMaxima + " :capacidadeMax and ";
+			else
+				whereString += " capacidadeMax = :capacidadeMax and ";
+		}
+		
+		if(custoOperacao != null){
+			if(operadorCustoOperacao != null)
+				whereString += " custoOperacaoCred " + operadorCustoOperacao + " :custoOperacaoCred and ";
+			else
+				whereString += " custoOperacaoCred = :custoOperacaoCred and ";
 		}
 
 		Query q = entityManager().createQuery(
-			"SELECT o FROM Sala o " + whereString + orderBy);
+			"SELECT o FROM Sala o " + whereString + "  1=1 " +  orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -805,6 +916,38 @@ public class Sala
 		if ( unidade != null )
 		{
 			q.setParameter( "unidade", unidade );
+		}
+		
+		if( tipoSala != null)
+		{
+			q.setParameter("tipoSala", tipoSala);
+		}
+		
+		if ( numero != null )
+		{
+			q.setParameter("numero", numero);
+		}
+		
+		if ( andar != null )
+		{
+			q.setParameter("andar", andar);
+		}
+		
+		if ( descricao != null )
+		{
+			q.setParameter( "descricao", descricao );
+		}
+		
+		if(capacidadeInstalada != null){
+			q.setParameter("capacidadeInstalada", capacidadeInstalada);
+		}
+		
+		if(capacidadeMax != null){
+			q.setParameter("capacidadeMax", capacidadeMax);
+		}
+		
+		if(custoOperacao != null){
+			q.setParameter("custoOperacaoCred", custoOperacao);
 		}
 
         return q.getResultList();

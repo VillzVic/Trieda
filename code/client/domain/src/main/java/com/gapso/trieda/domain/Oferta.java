@@ -356,18 +356,27 @@ public class Oferta
 	}
 
 	public static int count( InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, Turno turno, Campus campus, Curso curso, Curriculo curriculo )
+		Cenario cenario, Turno turno, Campus campus, Curso curso, Curriculo curriculo, String receitaCreditoOperador,Double receitaCredito )
 	{
 		String queryTurno = ( ( turno != null ) ? " o.turno = :turno AND " : "" );
 		String queryCampus = ( ( campus != null ) ? " o.campus = :campus AND " : "" );
 		String queryCurso = ( ( curso != null ) ? " o.curriculo.curso = :curso AND " : "" );
 		String queryCurriculo = ( ( curriculo != null ) ? " o.curriculo = :curriculo AND " : "" );
+		
+		String operadorReceitaCreditoStr = "";
+		
+		if(receitaCredito != null){
+			if(receitaCreditoOperador != null)
+				operadorReceitaCreditoStr = " receita " + receitaCreditoOperador + " :receita and ";
+			else
+				operadorReceitaCreditoStr = " receita = :receita and ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Oferta o " +
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.campus.cenario = :cenario " +
-			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " );
+			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + operadorReceitaCreditoStr+" 1=1 " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -391,14 +400,19 @@ public class Oferta
 		{
 			q.setParameter( "curriculo", curriculo );
 		}
+		
+		if(receitaCredito != null)
+		{
+			q.setParameter( "receita", receitaCredito );
+		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List<Oferta> findBy( InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, Turno turno, Campus campus, Curso curso,
-		Curriculo curriculo, int firstResult, int maxResults, String orderBy )
+		Cenario cenario, Turno turno, Campus campus, Curso curso,	Curriculo curriculo, 
+		String receitaCreditoOperador,Double receitaCredito,int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
@@ -406,12 +420,21 @@ public class Oferta
 		String queryCampus = ( ( campus != null ) ? " o.campus = :campus AND " : "" );
 		String queryCurso = ( ( curso != null ) ? " o.curriculo.curso = :curso AND " : "" );
 		String queryCurriculo = ( ( curriculo != null ) ? " o.curriculo = :curriculo AND "	: "" );
+		
+		String operadorReceitaCreditoStr = "";
+		
+		if(receitaCredito != null){
+			if(receitaCreditoOperador != null)
+				operadorReceitaCreditoStr = " receita " + receitaCreditoOperador + " :receita and ";
+			else
+				operadorReceitaCreditoStr = " receita = :receita and ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Oferta o " +
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.campus.cenario = :cenario " +
-			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " + orderBy);
+			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + operadorReceitaCreditoStr +" 1=1 " + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -436,6 +459,11 @@ public class Oferta
 		if ( curriculo != null )
 		{
 			q.setParameter( "curriculo", curriculo );
+		}
+		
+		if(receitaCredito != null)
+		{
+			q.setParameter( "receita", receitaCredito );
 		}
 
 		return q.getResultList();

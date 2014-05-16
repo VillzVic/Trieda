@@ -1192,48 +1192,64 @@ public class AlunoDemanda
 	public static int count(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Campus campus, Curso curso, Curriculo curriculo, Turno turno,
-			Disciplina disciplina ) {
+			Disciplina disciplina, Integer periodo,String matricula,String nome,
+			Integer prioridade, Boolean atendido ) {
 	   	
-		String queryCampus = "";
+		String queryString = "";
 		if ( campus != null )
 		{
-			queryCampus	= " o.demanda.oferta.campus = :campus AND ";
+			queryString	+= " o.demanda.oferta.campus = :campus AND ";
 		}
 
-		String queryCurso = "";
 		if ( curso != null )
 		{
-			queryCurso = " o.demanda.oferta.curriculo.curso = :curso AND ";
+			queryString += " o.demanda.oferta.curriculo.curso = :curso AND ";
 		}
 
-		String queryCurriculo = "";
 		if ( curriculo != null )
 		{
-			queryCurriculo = " o.demanda.oferta.curriculo = :curriculo AND ";
+			queryString += " o.demanda.oferta.curriculo = :curriculo AND ";
 		}
 
-		String queryTurno = "";
 		if ( turno != null )
 		{
-			queryTurno = " o.demanda.oferta.turno = :turno AND ";
+			queryString += " o.demanda.oferta.turno = :turno AND ";
 		}
 
-		String queryDisciplina = "";
 		if ( disciplina != null )
 		{
-			queryDisciplina	= " o.demanda.disciplina = :disciplina AND ";
+			queryString	+= " o.demanda.disciplina = :disciplina AND ";
 		}
-
-        String queryString = queryCampus + queryCurso + queryCurriculo + queryTurno + queryDisciplina;
+		
+		if(periodo != null){
+			queryString += " o.periodo = :periodo and ";
+		}
+		
+		if(prioridade != null){
+			queryString += " o.prioridade = :prioridade and ";
+		}
+		
+		if(atendido != null){
+			queryString += " o.atendido = :atendido and ";
+		}
+		
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		matricula = ( ( matricula == null ) ? "" : matricula );
+		matricula = ( "%" + matricula.replace( '*', '%' ) + "%" );
 
         Query q = entityManager().createQuery(
         	" SELECT o FROM AlunoDemanda o " +
         	" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.demanda.oferta.campus.cenario = :cenario " +
+        	" AND LOWER ( o.aluno.nome ) LIKE LOWER ( :nome ) " +
+        	" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) " +
         	" AND " + queryString + " 1=1 " );
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
+        q.setParameter( "nome", nome );
+        q.setParameter( "matricula", matricula );
 
         if ( campus != null )
         {
@@ -1260,14 +1276,29 @@ public class AlunoDemanda
         	q.setParameter( "disciplina", disciplina );
         }
 
+        if( periodo != null)
+        {
+        	q.setParameter( "periodo", periodo );
+        }
+        
+        if(prioridade != null){
+        	q.setParameter("prioridade", prioridade);
+        }
+        
+        if(atendido != null){
+        	q.setParameter("atendido", atendido);
+        }
+
         return q.getResultList().size();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<AlunoDemanda> findBy(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-			Campus campus, Curso curso, Curriculo curriculo, Turno turno,
-			Disciplina disciplina, int firstResult, int maxResults, String orderBy ) {
+			Campus campus, Curso curso, Curriculo curriculo, Turno turno,Disciplina disciplina,
+			 Integer periodo,String matricula,String nome,
+				Integer prioridade, Boolean atendido,
+			int firstResult, int maxResults, String orderBy ) {
 	   	
         if (orderBy != null)
         {
@@ -1283,48 +1314,64 @@ public class AlunoDemanda
         	orderBy = "";
         }
 
-		String queryCampus = "";
+		String queryString = "";
 		if ( campus != null )
 		{
-			queryCampus	= " o.demanda.oferta.campus = :campus AND ";
+			queryString	+= " o.demanda.oferta.campus = :campus AND ";
 		}
 
-		String queryCurso = "";
 		if ( curso != null )
 		{
-			queryCurso = " o.demanda.oferta.curriculo.curso = :curso AND ";
+			queryString += " o.demanda.oferta.curriculo.curso = :curso AND ";
 		}
 
-		String queryCurriculo = "";
 		if ( curriculo != null )
 		{
-			queryCurriculo = " o.demanda.oferta.curriculo = :curriculo AND ";
+			queryString += " o.demanda.oferta.curriculo = :curriculo AND ";
 		}
 
-		String queryTurno = "";
 		if ( turno != null )
 		{
-			queryTurno = " o.demanda.oferta.turno = :turno AND ";
+			queryString += " o.demanda.oferta.turno = :turno AND ";
 		}
 
-		String queryDisciplina = "";
 		if ( disciplina != null )
 		{
-			queryDisciplina	= " o.demanda.disciplina = :disciplina AND ";
+			queryString	+= " o.demanda.disciplina = :disciplina AND ";
 		}
+		
+		if(periodo != null){
+			queryString += " o.periodo = :periodo and ";
+		}
+		
+		if(prioridade != null){
+			queryString += " o.prioridade = :prioridade and ";
+		}
+		
+		if(atendido != null){
+			queryString += " o.atendido = :atendido and ";
+		}
+		
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		matricula = ( ( matricula == null ) ? "" : matricula );
+		matricula = ( "%" + matricula.replace( '*', '%' ) + "%" );
 
-        String queryString = queryCampus + queryCurso + queryCurriculo + queryTurno + queryDisciplina;
 
         Query q = entityManager().createQuery(
         	" SELECT o FROM AlunoDemanda o " +
         	" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.demanda.oferta.campus.cenario = :cenario " +
+        	" AND LOWER ( o.aluno.nome ) LIKE LOWER ( :nome ) " +
+        	" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) " +
         	" AND " + queryString + " 1=1 " + orderBy );
 
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
+        q.setParameter( "matricula", matricula );
+        q.setParameter( "nome", nome );
 
         if ( campus != null )
         {
@@ -1349,6 +1396,18 @@ public class AlunoDemanda
         if ( disciplina != null )
         {
         	q.setParameter( "disciplina", disciplina );
+        }
+        
+        if(periodo != null){
+        	q.setParameter("periodo", periodo);
+        }
+        
+        if(prioridade != null){
+        	q.setParameter("prioridade", prioridade);
+        }
+        
+        if(atendido != null){
+        	q.setParameter("atendido", atendido);
         }
 
         return q.getResultList();

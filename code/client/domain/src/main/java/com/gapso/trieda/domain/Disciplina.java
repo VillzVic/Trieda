@@ -821,7 +821,12 @@ public class Disciplina
 
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		String codigo, String nome, TipoDisciplina tipoDisciplina )
+		String codigo, String nome, TipoDisciplina tipoDisciplina,
+		String operadorCreditosTeorico, Integer creditosTeorico, String  operadorCreditosPratico,Integer creditosPratico,
+		Boolean exigeLaboratorio,String operadorMaxAlunosTeorico,Integer maxAlunosTeorico, 
+		String  operadorMaxAlunosPratico,Integer maxAlunosPratico,
+		Boolean aulasContinuas, Boolean professorUnico,
+		Boolean usaSabado,Boolean usaDomingo, String dificuldade)
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -832,6 +837,61 @@ public class Disciplina
 		if ( tipoDisciplina != null )
 		{
 			queryCampus = ( " o.tipoDisciplina = :tipoDisciplina AND " );
+		}
+		
+		if(creditosTeorico != null){
+			if(operadorCreditosTeorico != null)
+				queryCampus += " creditosTeorico " + operadorCreditosTeorico + " :creditosTeorico and ";
+			else
+				queryCampus += " creditosTeorico = :creditosTeorico and ";
+		}
+		
+		if(creditosPratico != null){
+			if(operadorCreditosPratico != null)
+				queryCampus += " creditosPratico " + operadorCreditosPratico + " :creditosPratico and ";
+			else
+				queryCampus += " creditosPratico = :creditosPratico and ";
+		}
+		
+		if(aulasContinuas != null ){
+			queryCampus += ( " o.aulasContinuas = :aulasContinuas AND " );
+		}
+		
+		if(professorUnico != null ){
+			queryCampus += ( " o.professorUnico = :professorUnico AND " );
+		}
+		
+		if ( exigeLaboratorio != null )
+		{
+			queryCampus += ( " o.laboratorio = :exigeLaboratorio AND " );
+		}
+		
+		if ( usaSabado != null )
+		{
+			queryCampus += ( " o.usaSabado = :usaSabado AND " );
+		}
+		
+		if ( usaDomingo != null )
+		{
+			queryCampus += ( " o.usaDomingo = :usaDomingo AND " );
+		}
+		
+		if(dificuldade != null){
+			queryCampus += ( " o.dificuldade = :dificuldade AND " );
+		}
+		
+		if(maxAlunosTeorico != null){
+			if(operadorMaxAlunosTeorico != null)
+				queryCampus += " maxAlunosTeorico " + operadorMaxAlunosTeorico + " :maxAlunosTeorico and ";
+			else
+				queryCampus += " maxAlunosTeorico = :maxAlunosTeorico and ";
+		}
+		
+		if(maxAlunosPratico != null){
+			if(operadorMaxAlunosPratico != null)
+				queryCampus += " maxAlunosPratico " + operadorMaxAlunosPratico + " :maxAlunosPratico and ";
+			else
+				queryCampus += " maxAlunosPratico = :maxAlunosPratico and ";
 		}
 
 		Query q = entityManager().createQuery(
@@ -846,6 +906,47 @@ public class Disciplina
 		{
 			q.setParameter( "tipoDisciplina", tipoDisciplina );
 		}
+		
+		if(creditosTeorico != null){
+			q.setParameter( "creditosTeorico", creditosTeorico );
+		}
+		if(creditosPratico != null){
+			q.setParameter( "creditosPratico", creditosPratico );
+		}
+		
+		if(aulasContinuas != null ){
+			q.setParameter( "aulasContinuas", aulasContinuas );
+		}
+		
+		if(professorUnico != null ){
+			q.setParameter( "professorUnico", professorUnico );
+		}
+		
+		if ( exigeLaboratorio != null )
+		{
+			q.setParameter( "exigeLaboratorio", exigeLaboratorio );
+		}
+		
+		if ( usaSabado != null )
+		{
+			q.setParameter( "usaSabado", usaSabado );
+		}
+		
+		if ( usaDomingo != null )
+		{
+			q.setParameter( "usaDomingo", usaDomingo );
+		}
+		
+		if(maxAlunosTeorico!= null){
+			q.setParameter( "maxAlunosTeorico", maxAlunosTeorico );
+		}
+		if(maxAlunosPratico != null){
+			q.setParameter( "maxAlunosPratico", maxAlunosPratico );
+		}
+		
+		if(dificuldade != null){
+			q.setParameter( "dificuldade", Dificuldades.get(dificuldade) );
+		}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -859,6 +960,11 @@ public class Disciplina
 	public static List< Disciplina > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		String codigo, String nome, TipoDisciplina tipoDisciplina,
+		String operadorCreditosTeorico, Integer creditosTeorico, String  operadorCreditosPratico, Integer creditosPratico,
+		Boolean exigeLaboratorio,String operadorMaxAlunosTeorico,Integer maxAlunosTeorico, 
+		String  operadorMaxAlunosPratico, Integer maxAlunosPratico,
+		Boolean aulasContinuas, Boolean professorUnico,
+		Boolean usaSabado,Boolean usaDomingo, String dificuldade,
 		int firstResult, int maxResults, String orderBy )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
@@ -873,6 +979,61 @@ public class Disciplina
 		{
 			queryCampus = ( " o.tipoDisciplina = :tipoDisciplina AND " );
 		}
+		
+		if(creditosTeorico != null){
+			if(operadorCreditosTeorico != null)
+				queryCampus += " creditosTeorico " + operadorCreditosTeorico + " :creditosTeorico and ";
+			else
+				queryCampus += " creditosTeorico = :creditosTeorico and ";
+		}
+		
+		if(creditosPratico != null){
+			if(operadorCreditosPratico != null)
+				queryCampus += " creditosPratico " + operadorCreditosPratico + " :creditosPratico and ";
+			else
+				queryCampus += " creditosPratico = :creditosPratico and ";
+		}
+		
+		if(aulasContinuas != null ){
+			queryCampus += ( " o.aulasContinuas = :aulasContinuas AND " );
+		}
+		
+		if(professorUnico != null ){
+			queryCampus += ( " o.professorUnico = :professorUnico AND " );
+		}
+		
+		if ( exigeLaboratorio != null )
+		{
+			queryCampus += ( " o.laboratorio = :exigeLaboratorio AND " );
+		}
+		
+		if ( usaSabado != null )
+		{
+			queryCampus += ( " o.usaSabado = :usaSabado AND " );
+		}
+		
+		if ( usaDomingo != null )
+		{
+			queryCampus += ( " o.usaDomingo = :usaDomingo AND " );
+		}
+		
+		if(dificuldade != null){
+			queryCampus += ( " o.dificuldade = :dificuldade AND " );
+		}
+		
+		if(maxAlunosTeorico != null){
+			if(operadorMaxAlunosTeorico != null)
+				queryCampus += " maxAlunosTeorico " + operadorMaxAlunosTeorico + " :maxAlunosTeorico and ";
+			else
+				queryCampus += " maxAlunosTeorico = :maxAlunosTeorico and ";
+		}
+		
+		if(maxAlunosPratico != null){
+			if(operadorMaxAlunosPratico != null)
+				queryCampus += " maxAlunosPratico " + operadorMaxAlunosPratico + " :maxAlunosPratico and ";
+			else
+				queryCampus += " maxAlunosPratico = :maxAlunosPratico and ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Disciplina o " +
@@ -884,6 +1045,47 @@ public class Disciplina
 		if ( tipoDisciplina != null )
 		{
 			q.setParameter( "tipoDisciplina", tipoDisciplina );
+		}
+		
+		if(creditosTeorico != null){
+			q.setParameter( "creditosTeorico", creditosTeorico );
+		}
+		if(creditosPratico != null){
+			q.setParameter( "creditosPratico", creditosPratico );
+		}
+		
+		if(aulasContinuas != null ){
+			q.setParameter( "aulasContinuas", aulasContinuas );
+		}
+		
+		if(professorUnico != null ){
+			q.setParameter( "professorUnico", professorUnico );
+		}
+		
+		if ( exigeLaboratorio != null )
+		{
+			q.setParameter( "exigeLaboratorio", exigeLaboratorio );
+		}
+		
+		if ( usaSabado != null )
+		{
+			q.setParameter( "usaSabado", usaSabado );
+		}
+		
+		if ( usaDomingo != null )
+		{
+			q.setParameter( "usaDomingo", usaDomingo );
+		}
+		
+		if(maxAlunosTeorico!= null){
+			q.setParameter( "maxAlunosTeorico", maxAlunosTeorico );
+		}
+		if(maxAlunosPratico != null){
+			q.setParameter( "maxAlunosPratico", maxAlunosPratico );
+		}
+		
+		if(dificuldade != null){
+			q.setParameter( "dificuldade", Dificuldades.get(dificuldade) );
 		}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );

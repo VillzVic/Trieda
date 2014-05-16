@@ -552,7 +552,14 @@ public class Curso
 	@SuppressWarnings( "unchecked" )
 	public static List< Curso > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
-		String nome, TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy )
+		String nome, TipoCurso tipoCurso, 
+		String operadorMinPercentualDoutor, Integer minPercentualDoutor,
+		String operadorMinPercentualMestre, Integer minPercentualMestre,
+		String operadorMinTempoIntegralParcial, Integer minTempoIntegralParcial,
+		String operadorMinTempoIntegral, Integer minTempoIntegral,
+		String operadorMaxDisciplinasProfessor, Integer maxDisciplinasProfessor,
+		Boolean maisDeUmaDisciplinaProfessor,
+		int firstResult, int maxResults, String orderBy )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -567,6 +574,47 @@ public class Curso
 			queryCampus = ( " o.tipoCurso = :tipoCurso AND " );
 		}
 
+		if(minPercentualDoutor != null){
+			if(operadorMinPercentualDoutor != null)
+				queryCampus += " numMinDoutores " + operadorMinPercentualDoutor + " :numMinDoutores and ";
+			else
+				queryCampus += " numMinDoutores = :numMinDoutores and ";
+		}
+		
+		if(minPercentualMestre != null){
+			if(operadorMinPercentualMestre != null)
+				queryCampus += " numMinMestres " + operadorMinPercentualMestre + " :numMinMestres and ";
+			else
+				queryCampus += " numMinMestres = :numMinMestres and ";
+		}
+		
+		if(minTempoIntegralParcial != null){
+			if(operadorMinTempoIntegralParcial != null)
+				queryCampus += " minTempoIntegralParcial " + operadorMinTempoIntegralParcial + " :minTempoIntegralParcial and ";
+			else
+				queryCampus += " minTempoIntegralParcial = :minTempoIntegralParcial and ";
+		}
+		
+		if(minTempoIntegral != null){
+			if(operadorMinTempoIntegral != null)
+				queryCampus += " minTempoIntegral " + operadorMinTempoIntegral + " :minTempoIntegral and ";
+			else
+				queryCampus += " minTempoIntegral = :minTempoIntegral and ";
+		}
+
+		if(maxDisciplinasProfessor != null){
+			if(operadorMaxDisciplinasProfessor != null)
+				queryCampus += " maxDisciplinasPeloProfessor " + operadorMaxDisciplinasProfessor + " :maxDisciplinasPeloProfessor and ";
+			else
+				queryCampus += " maxDisciplinasPeloProfessor = :maxDisciplinasPeloProfessor and ";
+		}		
+		
+		
+		if ( maisDeUmaDisciplinaProfessor != null )
+		{
+			queryCampus += ( " o.admMaisDeUmDisciplina = :admMaisDeUmDisciplina AND " );
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Curso o WHERE "	+ queryCampus +
 			" LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
@@ -578,6 +626,26 @@ public class Curso
 		{
 			q.setParameter( "tipoCurso", tipoCurso );
 		}
+		
+		if(minPercentualDoutor != null)
+		{
+			q.setParameter( "numMinDoutores", minPercentualDoutor );
+		}
+		
+		if(minPercentualMestre != null)
+			q.setParameter( "numMinMestres", minPercentualMestre );
+		
+		if(minTempoIntegralParcial != null)
+			q.setParameter( "minTempoIntegralParcial", minTempoIntegralParcial );
+		
+		if(minTempoIntegral != null)
+			q.setParameter( "minTempoIntegral", minTempoIntegral );
+		
+		if(maxDisciplinasProfessor != null)
+			q.setParameter( "maxDisciplinasPeloProfessor", maxDisciplinasProfessor );
+		
+		if(maisDeUmaDisciplinaProfessor != null)
+			q.setParameter( "admMaisDeUmDisciplina", maisDeUmaDisciplinaProfessor );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -591,7 +659,13 @@ public class Curso
 
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		String codigo, String nome, TipoCurso tipoCurso )
+		String codigo, String nome, TipoCurso tipoCurso,
+		String operadorMinPercentualDoutor, Integer minPercentualDoutor,
+		String operadorMinPercentualMestre, Integer minPercentualMestre,
+		String operadorMinTempoIntegralParcial, Integer minTempoIntegralParcial,
+		String operadorMinTempoIntegral, Integer minTempoIntegral,
+		String operadorMaxDisciplinasProfessor, Integer maxDisciplinasProfessor,
+		Boolean maisDeUmaDisciplinaProfessor)
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -603,7 +677,48 @@ public class Curso
 		{
 			queryCampus = ( " o.tipoCurso = :tipoCurso AND " );
 		}
+		
+		if(minPercentualDoutor != null){
+			if(operadorMinPercentualDoutor != null)
+				queryCampus += " numMinDoutores " + operadorMinPercentualDoutor + " :numMinDoutores and ";
+			else
+				queryCampus += " numMinDoutores = :numMinDoutores and ";
+		}
+		
+		if(minPercentualMestre != null){
+			if(operadorMinPercentualMestre != null)
+				queryCampus += " numMinMestres " + operadorMinPercentualMestre + " :numMinMestres and ";
+			else
+				queryCampus += " numMinMestres = :numMinMestres and ";
+		}
+		
+		if(minTempoIntegralParcial != null){
+			if(operadorMinTempoIntegralParcial != null)
+				queryCampus += " minTempoIntegralParcial " + operadorMinTempoIntegralParcial + " :minTempoIntegralParcial and ";
+			else
+				queryCampus += " minTempoIntegralParcial = :minTempoIntegralParcial and ";
+		}
+		
+		if(minTempoIntegral != null){
+			if(operadorMinTempoIntegral != null)
+				queryCampus += " minTempoIntegral " + operadorMinTempoIntegral + " :minTempoIntegral and ";
+			else
+				queryCampus += " minTempoIntegral = :minTempoIntegral and ";
+		}
 
+		if(maxDisciplinasProfessor != null){
+			if(operadorMaxDisciplinasProfessor != null)
+				queryCampus += " maxDisciplinasPeloProfessor " + operadorMaxDisciplinasProfessor + " :maxDisciplinasPeloProfessor and ";
+			else
+				queryCampus += " maxDisciplinasPeloProfessor = :maxDisciplinasPeloProfessor and ";
+		}		
+		
+		
+		if ( maisDeUmaDisciplinaProfessor != null )
+		{
+			queryCampus += ( " o.admMaisDeUmDisciplina = :admMaisDeUmDisciplina AND " );
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Curso o " +
 			" WHERE " + queryCampus	+ " LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
@@ -615,6 +730,25 @@ public class Curso
 		{
 			q.setParameter( "tipoCurso", tipoCurso );
 		}
+		if(minPercentualDoutor != null)
+		{
+			q.setParameter( "numMinDoutores", minPercentualDoutor );
+		}
+		
+		if(minPercentualMestre != null)
+			q.setParameter( "numMinMestres", minPercentualMestre );
+		
+		if(minTempoIntegralParcial != null)
+			q.setParameter( "minTempoIntegralParcial", minTempoIntegralParcial );
+		
+		if(minTempoIntegral != null)
+			q.setParameter( "minTempoIntegral", minTempoIntegral );
+		
+		if(maxDisciplinasProfessor != null)
+			q.setParameter( "maxDisciplinasPeloProfessor", maxDisciplinasProfessor );
+		
+		if(maisDeUmaDisciplinaProfessor != null)
+			q.setParameter( "admMaisDeUmDisciplina", maisDeUmaDisciplinaProfessor );
 
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );

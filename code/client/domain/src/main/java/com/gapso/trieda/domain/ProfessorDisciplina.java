@@ -219,13 +219,22 @@ public class ProfessorDisciplina
 
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Professor professor, Disciplina disciplina )
+		Professor professor, Disciplina disciplina,
+		String cpf, String nome,String  operadorPreferencia, Integer preferencia,String  operadorNotaDesempenho, Integer notaDesempenho)
 	{
 		String where = " o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.professor.cenario = :cenario " +
 			" AND o.disciplina.cenario = :cenario AND ";
+		
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 
+		if ( cpf != null )
+		{
+			where += " o.professor.cpf = :cpf AND ";
+		}
+		
 		if ( professor != null )
 		{
 			where += ( " o.professor = :professor AND " );
@@ -235,17 +244,35 @@ public class ProfessorDisciplina
 		{
 			where += ( " o.disciplina = :disciplina AND " );
 		}
-		if ( where.length() > 1 )
-		{
-			where = " WHERE " + where.substring( 0, where.length() - 4 );
+		
+		if(preferencia != null){
+			if(operadorPreferencia != null)
+				where += "  o.preferencia " + operadorPreferencia + " :preferencia and ";
+			else
+				where += "  o.preferencia = :preferencia and ";
+		}
+		
+		if(notaDesempenho != null){
+			if(operadorNotaDesempenho != null)
+				where += "  o.nota " + operadorNotaDesempenho + " :notaDesempenho and ";
+			else
+				where += "  o.nota = :notaDesempenho and ";
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT COUNT ( o ) FROM ProfessorDisciplina o " + where );
+			" SELECT COUNT ( o ) FROM ProfessorDisciplina o " +
+					" where LOWER ( o.professor.nome ) LIKE LOWER ( :nome ) and "	+
+					where + " 1=1 ");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "nome", nome );
 
+		if ( cpf != null )
+		{
+			q.setParameter( "cpf", cpf );
+		}
+		
 		if ( professor != null )
 		{
 			q.setParameter( "professor", professor );
@@ -255,6 +282,14 @@ public class ProfessorDisciplina
 		{
 			q.setParameter( "disciplina", disciplina );
 		}
+		
+		if(preferencia != null){
+			q.setParameter( "preferencia", preferencia );
+		}
+		
+		if(notaDesempenho != null){
+			q.setParameter( "notaDesempenho", notaDesempenho );
+		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
@@ -262,12 +297,22 @@ public class ProfessorDisciplina
 	@SuppressWarnings("unchecked")
 	public static List< ProfessorDisciplina > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Professor professor,
-		Disciplina disciplina, int firstResult, int maxResults,	String orderBy )
+		Disciplina disciplina, 
+		String cpf, String nome,String  operadorPreferencia,Integer preferencia,String  operadorNotaDesempenho, Integer notaDesempenho,
+		int firstResult, int maxResults,	String orderBy )
 	{
 		String where = " o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.professor.cenario = :cenario " +
 			" AND o.disciplina.cenario = :cenario AND ";
+		
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		
+		if ( cpf != null )
+		{
+			where += " o.professor.cpf = :cpf AND ";
+		}
 
 		if ( professor != null )
 		{
@@ -278,10 +323,19 @@ public class ProfessorDisciplina
 		{
 			where += ( " o.disciplina = :disciplina AND " );
 		}
-
-		if ( where.length() > 1 )
-		{
-			where = ( " WHERE " + where.substring( 0, where.length() - 4 ) );
+		
+		if(preferencia != null){
+			if(operadorPreferencia != null)
+				where += "  o.preferencia " + operadorPreferencia + " :preferencia and ";
+			else
+				where += "  o.preferencia = :preferencia and ";
+		}
+		
+		if(notaDesempenho != null){
+			if(operadorNotaDesempenho != null)
+				where += "  o.nota " + operadorNotaDesempenho + " :notaDesempenho and ";
+			else
+				where += "  o.nota = :notaDesempenho and ";
 		}
 
 		if ( orderBy != null )
@@ -309,21 +363,36 @@ public class ProfessorDisciplina
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM ProfessorDisciplina o " + where + orderBy );
+			" SELECT o FROM ProfessorDisciplina o " +
+				" where LOWER ( o.professor.nome ) LIKE LOWER ( :nome ) and "	+ where + " 1=1 " +orderBy );
 
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "nome", nome );
 
 		if ( professor != null )
 		{
 			q.setParameter( "professor", professor );
 		}
+		
+		if ( cpf != null )
+		{
+			q.setParameter( "cpf", cpf );
+		}
 
 		if ( disciplina != null )
 		{
 			q.setParameter( "disciplina", disciplina );
+		}
+		
+		if(preferencia != null){
+			q.setParameter( "preferencia", preferencia );
+		}
+		
+		if(notaDesempenho != null){
+			q.setParameter( "notaDesempenho", notaDesempenho );
 		}
 
 		return q.getResultList();

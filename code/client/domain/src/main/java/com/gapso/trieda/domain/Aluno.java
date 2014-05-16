@@ -502,11 +502,26 @@ public class Aluno
 	}
 	
 	@SuppressWarnings( "unchecked" )
-	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula, int firstResult, int maxResults, String orderBy) {
+	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula,
+			Boolean formando,Integer periodo,Boolean virtual,Boolean criadoTrieda, int firstResult, int maxResults, String orderBy) {
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 		matricula = ( ( matricula == null ) ? "" : matricula );
 		matricula = ( "%" + matricula.replace( '*', '%' ) + "%" );
+		
+		String whereString = "";
+		
+		if(formando != null)
+			whereString += " o.formando = :formando and ";
+		
+		if(periodo != null)
+			whereString += " o.periodo = :periodo and ";
+		
+		if(virtual != null)
+			whereString += " o.virtual = :virtual and ";
+		
+		if(criadoTrieda != null)
+			whereString += " o.criadoTrieda = :criadoTrieda and ";
 
 		EntityManager em = Campus.entityManager();
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
@@ -515,9 +530,21 @@ public class Aluno
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND LOWER ( o.matricula ) LIKE LOWER ( :matricula ) " +
-			" AND o.cenario = :cenario " +
-			" AND 1=1 " + orderBy
+			" AND o.cenario = :cenario and " + whereString +
+			" 1=1 " + orderBy
 		);
+		
+		if(formando != null)
+			q.setParameter( "formando", formando );
+		
+		if(periodo != null)
+			q.setParameter( "periodo", periodo );
+		
+		if(virtual != null)
+			q.setParameter( "virtual", virtual );
+		
+		if(criadoTrieda != null)
+			q.setParameter( "criadoTrieda", criadoTrieda );
 
 		q.setParameter("nome",nome);
 		q.setParameter("matricula",matricula);
@@ -530,11 +557,26 @@ public class Aluno
 		return q.getResultList();
 	}
 	
-	public static int count(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula) {
+	public static int count(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula,
+			Boolean formando,Integer periodo,Boolean virtual,Boolean criadoTrieda) {
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 		matricula = ( ( matricula == null ) ? "" : matricula );
 		matricula = ( "%" + matricula.replace( '*', '%' ) + "%" );
+		
+		String whereString = "";
+		
+		if(formando != null)
+			whereString += " o.formando = :formando and ";
+		
+		if(periodo != null)
+			whereString += " o.periodo = :periodo and ";
+		
+		if(virtual != null)
+			whereString += " o.virtual = :virtual and ";
+		
+		if(criadoTrieda != null)
+			whereString += " o.criadoTrieda = :criadoTrieda and ";
 
 		EntityManager em = Campus.entityManager();
 		Query q = em.createQuery(
@@ -542,9 +584,21 @@ public class Aluno
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND LOWER ( o.matricula ) LIKE LOWER ( :matricula ) " +
-			" AND o.cenario = :cenario " +
-			" AND 1=1 "
+			" AND o.cenario = :cenario and " + whereString +
+			" 1=1 "
 		);
+		
+		if(formando != null)
+			q.setParameter( "formando", formando );
+		
+		if(periodo != null)
+			q.setParameter( "periodo", periodo );
+		
+		if(virtual != null)
+			q.setParameter( "virtual", virtual );
+		
+		if(criadoTrieda != null)
+			q.setParameter( "criadoTrieda", criadoTrieda );
 
 		q.setParameter( "nome", nome );
 		q.setParameter( "matricula", matricula );

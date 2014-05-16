@@ -580,16 +580,16 @@ public class CurriculoDisciplina
     }
 	
 	public static List< Object[] > findBy( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-			Curriculo curriculo, Disciplina disciplina, Integer periodo, String associacao )
+			Curriculo curriculo, Disciplina disciplina,Curso curso, String matricula, Integer periodo, String associacao )
 	{
-		int maxResult = count(instituicaoEnsino, cenario, curriculo, disciplina, periodo, associacao);
+		int maxResult = count(instituicaoEnsino, cenario, curriculo, disciplina, curso, matricula, periodo, associacao);
 		
-		return findBy( instituicaoEnsino, cenario, curriculo, disciplina, periodo, associacao, null, 0, maxResult );
+		return findBy( instituicaoEnsino, cenario, curriculo, disciplina, curso, matricula, periodo, associacao, null, 0, maxResult );
 	}
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< Object[] > findBy( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-			Curriculo curriculo, Disciplina disciplina, Integer periodo, String associacao, String orderBy,
+			Curriculo curriculo, Disciplina disciplina,Curso curso, String matricula, Integer periodo, String associacao, String orderBy,
 			int firstResult, int maxResults)
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
@@ -612,13 +612,23 @@ public class CurriculoDisciplina
 			periodoQuery = " AND o.periodo = :periodo";
 		}
 		
+		String cursoQuery = "";
+		if( curso != null){
+			cursoQuery = " and o.curriculo.curso = :curso ";
+		}
+		
+		String matriculaQuery = "";
+		if( matricula != null){
+			matriculaQuery = " and a.matricula = :matricula ";
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT o, a FROM CurriculoDisciplina o INNER JOIN o." + associacao + " a " +
 			" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.curriculo.cenario = :cenario " +
         	" AND o.disciplina.cenario = :cenario " +
-        	curriculoQuery + disciplinaQuery + periodoQuery + orderBy );
+        	curriculoQuery + disciplinaQuery + periodoQuery + cursoQuery + matriculaQuery + orderBy );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -638,12 +648,20 @@ public class CurriculoDisciplina
 		{
 			q.setParameter( "periodo", periodo );
 		}
+		
+		if( curso != null){
+			q.setParameter("curso", curso);
+		}
+		
+		if( matricula != null){
+			q.setParameter("matricula", matricula);
+		}
 
 		return q.getResultList();
 	}
 	
 	public static int count( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-			Curriculo curriculo, Disciplina disciplina, Integer periodo, String associacao)
+			Curriculo curriculo, Disciplina disciplina, Curso curso, String matricula, Integer periodo, String associacao)
 	{
 		String curriculoQuery = "";
 		if ( curriculo != null )
@@ -663,13 +681,23 @@ public class CurriculoDisciplina
 			periodoQuery = " AND o.periodo = :periodo";
 		}
 		
+		String cursoQuery = "";
+		if( curso != null){
+			cursoQuery = " and o.curriculo.curso = :curso ";
+		}
+		
+		String matriculaQuery = "";
+		if( matricula != null){
+			matriculaQuery = " and a.matricula = :matricula ";
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT o, a FROM CurriculoDisciplina o INNER JOIN o." + associacao + " a " +
 			" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.curriculo.cenario = :cenario " +
         	" AND o.disciplina.cenario = :cenario " +
-        	curriculoQuery + disciplinaQuery + periodoQuery);
+        	curriculoQuery + disciplinaQuery + periodoQuery + cursoQuery + matriculaQuery );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -686,6 +714,16 @@ public class CurriculoDisciplina
 		if ( periodo != null )
 		{
 			q.setParameter( "periodo", periodo );
+		}
+		
+		if ( matricula != null )
+		{
+			q.setParameter( "matricula", matricula );
+		}
+		
+		if ( curso != null )
+		{
+			q.setParameter( "curso", curso );
 		}
 
 		return q.getResultList().size();

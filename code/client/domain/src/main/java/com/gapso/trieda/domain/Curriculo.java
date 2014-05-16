@@ -425,7 +425,7 @@ public class Curriculo
 
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Curso curso, String codigo, String descricao )
+		Curso curso, SemanaLetiva semanaLetiva, String codigo, String descricao, String periodo )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -462,7 +462,7 @@ public class Curriculo
     @SuppressWarnings( "unchecked" )
 	public static List< Curriculo > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Curso curso, String codigo, String descricao,
+		Curso curso, SemanaLetiva semanaLetiva, String codigo, String descricao, String periodo,
 		int firstResult, int maxResults, String orderBy )
 	{
         codigo = ( ( codigo == null ) ? "" : codigo );
@@ -471,24 +471,38 @@ public class Curriculo
         descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
 
         orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
-        String queryCurso = "";
+        String whereString = "";
 
         if ( curso != null )
         {
-        	queryCurso = ( " o.curso = :curso AND " );
+        	whereString += ( " o.curso = :curso AND " );
+        }
+        
+        if(semanaLetiva != null){
+        	whereString += " o.semanaLetiva = :semanaLetiva and ";
+        }
+        
+        if(periodo != null){
+        	whereString += " o in (select a.curriculo from CurriculoDisciplina a where a.periodo = :periodo ) and ";
         }
 
         Query q = entityManager().createQuery(
         	" SELECT o FROM Curriculo o " +
         	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.cenario = :cenario " +
-        	" AND " + queryCurso +
+        	" AND " + whereString +
         	" LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " +
         	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo )" + orderBy );
 
         if ( curso != null )
         {
         	q.setParameter( "curso", curso );
+        }
+        if(semanaLetiva != null)
+        	q.setParameter("semanaLetiva", semanaLetiva);
+        
+        if(periodo != null){
+        	q.setParameter("periodo", periodo);
         }
 
         q.setFirstResult( firstResult );

@@ -345,39 +345,84 @@ public class Demanda
 	
 	public static int count( InstituicaoEnsino instituicaoEnsino,
 		Cenario cenario, Campus campus, Curso curso, Curriculo curriculo,
-		Turno turno, Disciplina disciplina )
+		Turno turno, Disciplina disciplina,
+		Integer periodo, String demandaRealOperador, Long demandaReal, String demandaVirtualOperador, 
+		Long demandaVirtual, String demandaTotalOperador,Long  demandaTotal)
 	{
-		String queryCampus = "";
+		String queryString = "";
 		if ( campus != null )
 		{
-			queryCampus	= " o.oferta.campus = :campus AND ";
+			queryString	+= " o.oferta.campus = :campus AND ";
 		}
 
-		String queryCurso = "";
 		if ( curso != null )
 		{
-			queryCurso = " o.oferta.curriculo.curso = :curso AND ";
+			queryString += " o.oferta.curriculo.curso = :curso AND ";
 		}
 
-		String queryCurriculo = "";
 		if ( curriculo != null )
 		{
-			queryCurriculo = " o.oferta.curriculo = :curriculo AND ";
+			queryString += " o.oferta.curriculo = :curriculo AND ";
 		}
 
-		String queryTurno = "";
 		if ( turno != null )
 		{
-			queryTurno = " o.oferta.turno = :turno AND ";
+			queryString += " o.oferta.turno = :turno AND ";
 		}
 
-		String queryDisciplina = "";
 		if ( disciplina != null )
 		{
-			queryDisciplina	= " o.disciplina = :disciplina AND ";
+			queryString	+= " o.disciplina = :disciplina AND ";
+		}
+		
+		if(periodo != null){
+			queryString += " o.oferta in (select d from Disciplina d where d in" +
+					" (select  c.disciplina from CurriculoDisciplina c where c.periodo = :periodo ))";
+		}
+		
+		if(demandaReal != null){
+			if(demandaRealOperador != null)
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is FALSE) "+demandaRealOperador+" :demandaReal and " ;
+			else
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is FALSE) = :demandaReal and " ;
+		}
+		
+		if(demandaVirtual != null){
+			if(demandaVirtualOperador != null)
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is TRUE) "+demandaVirtualOperador+" :demandaVirtual and " ;
+			else
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is TRUE) = :demandaVirtual and " ;
 		}
 
-		String queryString = queryCampus + queryCurso + queryCurriculo + queryTurno + queryDisciplina;
+		
+		if(demandaTotal != null){
+			if(demandaTotalOperador != null)
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o ) " + demandaTotalOperador + " :demandaTotal and " ;
+			else
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o ) = :demandaTotal and " ;
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Demanda o " +
@@ -412,7 +457,23 @@ public class Demanda
 		{
 			q.setParameter( "disciplina", disciplina );
 		}
+		
+        if( periodo != null ){
+        	q.setParameter("periodo", periodo);
+        }
+        
+        if(demandaReal != null){
+        	q.setParameter("demandaReal", demandaReal);
+        }
+        
+        if(demandaVirtual != null){
+        	q.setParameter("demandaVirtual", demandaVirtual);
+        }
 
+        if(demandaTotal != null){
+        	q.setParameter("demandaTotal", demandaTotal);
+        }
+        
 		return ( (Number)q.getSingleResult() ).intValue();
 	}
 
@@ -491,6 +552,8 @@ public class Demanda
 	public static List< Demanda > findBy( InstituicaoEnsino instituicaoEnsino,
 		Cenario cenario, Campus campus, Curso curso, Curriculo curriculo,
 		Turno turno, Disciplina disciplina,
+		Integer periodo, String demandaRealOperador, Long demandaReal, String demandaVirtualOperador, 
+		Long demandaVirtual, String demandaTotalOperador,Long  demandaTotal,
 		int firstResult, int maxResults, String orderBy )
 	{
     	
@@ -505,38 +568,83 @@ public class Demanda
         {
         	orderBy = "";
         }
+        
+        String queryString = "";
 
-		String queryCampus = "";
 		if ( campus != null )
 		{
-			queryCampus	= " o.oferta.campus = :campus AND ";
+			queryString	= " o.oferta.campus = :campus AND ";
 		}
 
-		String queryCurso = "";
 		if ( curso != null )
 		{
-			queryCurso = " o.oferta.curriculo.curso = :curso AND ";
+			queryString += " o.oferta.curriculo.curso = :curso AND ";
 		}
 
-		String queryCurriculo = "";
 		if ( curriculo != null )
 		{
-			queryCurriculo = " o.oferta.curriculo = :curriculo AND ";
+			queryString += " o.oferta.curriculo = :curriculo AND ";
 		}
 
-		String queryTurno = "";
 		if ( turno != null )
 		{
-			queryTurno = " o.oferta.turno = :turno AND ";
+			queryString += " o.oferta.turno = :turno AND ";
 		}
 
-		String queryDisciplina = "";
 		if ( disciplina != null )
 		{
-			queryDisciplina	= " o.disciplina = :disciplina AND ";
+			queryString += " o.disciplina = :disciplina AND ";
+		}
+		
+		if(periodo != null){
+			queryString += " o.disciplina in (select d from Disciplina d where d in" +
+					" (select distinct c.disciplina from CurriculoDisciplina c where c.periodo = :periodo )) and ";
+		}
+		
+		if(demandaReal != null){
+			if(demandaRealOperador != null)
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is FALSE) "+demandaRealOperador+" :demandaReal and " ;
+			else
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is FALSE) = :demandaReal and " ;
+		}
+		
+		if(demandaVirtual != null){
+			if(demandaVirtualOperador != null)
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is TRUE) "+demandaVirtualOperador+" :demandaVirtual and " ;
+			else
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o " +
+					" AND a.aluno.criadoTrieda is TRUE) = :demandaVirtual and " ;
+		}
+		
+		if(demandaTotal != null){
+			if(demandaTotalOperador != null)
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o ) " + demandaTotalOperador + " :demandaTotal and " ;
+			else
+				queryString += " ( SELECT count(a) FROM AlunoDemanda a " +
+					" WHERE a.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+					" AND a.demanda = o ) = :demandaTotal and " ;
 		}
 
-        String queryString = queryCampus + queryCurso + queryCurriculo + queryTurno + queryDisciplina;
+        
 
         Query q = entityManager().createQuery(
         	" SELECT o FROM Demanda o " +
@@ -572,6 +680,23 @@ public class Demanda
         if ( disciplina != null )
         {
         	q.setParameter( "disciplina", disciplina );
+        }
+        
+        if(periodo != null){
+        	q.setParameter("periodo", periodo);
+        }
+        
+        if(demandaReal != null){
+        	q.setParameter("demandaReal", demandaReal);
+        }
+        
+        if(demandaVirtual != null){
+        	q.setParameter("demandaVirtual", demandaVirtual);
+        }
+        
+        
+        if(demandaTotal != null){
+        	q.setParameter("demandaTotal", demandaTotal);
         }
 
         return q.getResultList();

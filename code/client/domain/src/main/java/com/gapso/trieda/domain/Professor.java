@@ -599,8 +599,18 @@ public class Professor
 		return q.getResultList();
 	}
 
-	public static int count( InstituicaoEnsino instituicaoEnsino, Cenario cenario, String cpf,
-		TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao )
+	public static int count( InstituicaoEnsino instituicaoEnsino, Cenario cenario, String cpf, String nome,
+		TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao,
+		String operadorCargaHorariaMin,
+		Integer cargaHorariaMin, String operadorCargaHorariaMax,
+		Integer cargaHorariaMax, String operadorNotaDesempenho,
+		Double notaDesempenho, String operadorCargaHorariaAnterior,
+		Integer cargaHorariaAnterior, String operadorCustoCreditoSemanal,
+		Double custoCreditoSemanal, String operadorMaxDiasSemana,
+		Integer maxDiasSemana, String operadorMinCreditosSemanais,
+		Integer minCreditosSemanais, String operadorTotalCreditosSemanais,
+		Long totalCreditosSemanais, String operadorCargaHorariaSemanal,
+		Long cargaHorariaSemanal )
 	{
 		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND" +
 				" o.cenario = :cenario AND";
@@ -624,23 +634,73 @@ public class Professor
 		{
 			where += " o.areaTitulacao = :areaTitulacao AND ";
 		}
-
-		if ( where.length() > 1 )
-		{
-			where = " WHERE " + where.substring( 0, where.length() - 4 );
+		
+		if(cargaHorariaMin != null){
+			if(operadorCargaHorariaMin != null)
+				where += "  o.cargaHorariaMin " + operadorCargaHorariaMin + " :cargaHorariaMin and ";
+			else
+				where += "  o.cargaHorariaMin = :cargaHorariaMin and ";
 		}
+		if(cargaHorariaMax != null){
+			if(operadorCargaHorariaMax != null)
+				where += "  o.cargaHorariaMax " + operadorCargaHorariaMax + " :cargaHorariaMax and ";
+			else
+				where += "  o.cargaHorariaMax = :cargaHorariaMax and ";
+		}
+		
+		if(notaDesempenho != null){
+			if(operadorNotaDesempenho != null)
+				where += "  (select AVG(nota) from ProfessorDisciplina p where p.professor = o) " + operadorNotaDesempenho + " :notaDesempenho and ";
+			else
+				where += "  (select AVG(nota) from ProfessorDisciplina p where p.professor = o) = :notaDesempenho and ";
+		}
+		
+		
+		
+		if(cargaHorariaAnterior != null){
+			if(operadorCargaHorariaAnterior != null)
+				where += "  o.creditoAnterior " + operadorCargaHorariaAnterior + " :creditoAnterior and ";
+			else
+				where += "  o.creditoAnterior = :creditoAnterior and ";
+		}
+		
+		if(custoCreditoSemanal != null){
+			if(operadorCustoCreditoSemanal != null)
+				where += "  o.valorCredito " + operadorCustoCreditoSemanal + " :valorCredito and ";
+			else
+				where += "  o.valorCredito = :valorCredito and ";
+		}
+		
+		if(maxDiasSemana != null){
+			if(operadorMaxDiasSemana != null)
+				where += "  o.maxDiasSemana " + operadorMaxDiasSemana + " :maxDiasSemana and ";
+			else
+				where += "  o.maxDiasSemana = :maxDiasSemana and ";
+		}
+		
+		if(minCreditosSemanais != null){
+			if(operadorMinCreditosSemanais != null)
+				where += "  o.minCreditosDia " + operadorMinCreditosSemanais + " :minCreditosDia and ";
+			else
+				where += "  o.minCreditosDia = :minCreditosDia and ";
+		}
+		
+		//String operadorTotalCreditosSemanais,Integer totalCreditosSemanais, String operadorCargaHorariaSemanal, Integer cargaHorariaSemanal,
 
 		Query q = entityManager().createQuery(
-			" SELECT COUNT ( o ) FROM Professor o " + where );
+			" SELECT COUNT ( o ) FROM Professor o " +
+			" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
+			 + where + " 1 = 1 ");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "nome", nome );
 
 		if ( cpf != null )
 		{
 			q.setParameter( "cpf", cpf );
 		}
-
+		
 		if ( tipoContrato != null )
 		{
 			q.setParameter( "tipoContrato", tipoContrato );
@@ -655,18 +715,64 @@ public class Professor
 		{
 			q.setParameter( "areaTitulacao", areaTitulacao );
 		}
+		
+		if ( areaTitulacao != null )
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+		
+		if(cargaHorariaMin != null){
+			q.setParameter("cargaHorariaMin", cargaHorariaMin);
+		}
+		
+		if(cargaHorariaMax != null){
+			q.setParameter("cargaHorariaMax", cargaHorariaMax);
+		}
+		
+		if(notaDesempenho != null){
+			q.setParameter("notaDesempenho", notaDesempenho);
+		}
+
+		if(cargaHorariaAnterior != null){
+			q.setParameter("creditoAnterior", cargaHorariaAnterior);
+		}
+		
+		if(custoCreditoSemanal != null){
+			q.setParameter("valorCredito", custoCreditoSemanal);
+		}
+		
+		if(maxDiasSemana != null){
+			q.setParameter("maxDiasSemana", maxDiasSemana);
+		}
+		
+		if(minCreditosSemanais != null){
+			q.setParameter("minCreditosDia", minCreditosSemanais);
+		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findBy( InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, String cpf, TipoContrato tipoContrato, Titulacao titulacao,
-		AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy )
+		Cenario cenario, String cpf, String nome, TipoContrato tipoContrato, Titulacao titulacao,
+		AreaTitulacao areaTitulacao,
+		String operadorCargaHorariaMin, Integer cargaHorariaMin, 
+		String operadorCargaHorariaMax, Integer cargaHorariaMax, 
+		String operadorNotaDesempenho, Double notaDesempenho, 
+		String operadorCargaHorariaAnterior, Integer cargaHorariaAnterior, 
+		String operadorCustoCreditoSemanal, Double custoCreditoSemanal, 
+		String operadorMaxDiasSemana,Integer maxDiasSemana, 
+		String operadorMinCreditosSemanais,	Integer minCreditosSemanais, 
+		String operadorTotalCreditosSemanais,	Long totalCreditosSemanais, 
+		String operadorCargaHorariaSemanal,	Long cargaHorariaSemanal, 
+		int firstResult, int maxResults, String orderBy )
 	{
 		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND" +
 				" o.cenario = :cenario AND ";
 
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		
 		if ( cpf != null )
 		{
 			where += " o.cpf = :cpf AND ";
@@ -686,11 +792,71 @@ public class Professor
 		{
 			where += " o.areaTitulacao = :areaTitulacao AND ";
 		}
-
-		if ( where.length() > 1 )
-		{
-			where = " WHERE " + where.substring( 0, where.length() - 4 );
+		
+		if(cargaHorariaMin != null){
+			if(operadorCargaHorariaMin != null)
+				where += " o.cargaHorariaMin " + operadorCargaHorariaMin + " :cargaHorariaMin and ";
+			else
+				where += "  o.cargaHorariaMin = :cargaHorariaMin and ";
 		}
+		if(cargaHorariaMax != null){
+			if(operadorCargaHorariaMax != null)
+				where += "  o.cargaHorariaMax " + operadorCargaHorariaMax + " :cargaHorariaMax and ";
+			else
+				where += "  o.cargaHorariaMax = :cargaHorariaMax and ";
+		}
+		
+		
+		if(notaDesempenho != null){
+			if(operadorNotaDesempenho != null)
+				where += "  (select AVG(nota) from ProfessorDisciplina p where p.professor = o) " + operadorNotaDesempenho + " :notaDesempenho and ";
+			else
+				where += "  (select AVG(nota) from ProfessorDisciplina p where p.professor = o) = :notaDesempenho and ";
+		}
+		
+		if(cargaHorariaAnterior != null){
+			if(operadorCargaHorariaAnterior != null)
+				where += "  o.creditoAnterior " + operadorCargaHorariaAnterior + " :creditoAnterior and ";
+			else
+				where += "  o.creditoAnterior = :creditoAnterior and ";
+		}
+		
+		if(custoCreditoSemanal != null){
+			if(operadorCustoCreditoSemanal != null)
+				where += "  o.valorCredito " + operadorCustoCreditoSemanal + " :valorCredito and ";
+			else
+				where += "  o.valorCredito = :valorCredito and ";
+		}
+		
+		if(maxDiasSemana != null){
+			if(operadorMaxDiasSemana != null)
+				where += "  o.maxDiasSemana " + operadorMaxDiasSemana + " :maxDiasSemana and ";
+			else
+				where += "  o.maxDiasSemana = :maxDiasSemana and ";
+		}
+		
+		if(minCreditosSemanais != null){
+			if(operadorMinCreditosSemanais != null)
+				where += "  o.minCreditosDia " + operadorMinCreditosSemanais + " :minCreditosDia and ";
+			else
+				where += "  o.minCreditosDia = :minCreditosDia and ";
+		}
+		
+		if(totalCreditosSemanais != null){
+			if(operadorTotalCreditosSemanais != null)
+				where += " (select sum(p) from AtendimentoOperacional p where p.professor = o )  " + operadorTotalCreditosSemanais + " :totalCreditosSemanais and ";
+			else
+				where += " (select sum(p) from AtendimentoOperacional p where p.professor = o ) = :totalCreditosSemanais and ";
+		}
+		
+		if(cargaHorariaSemanal != null){
+			if(operadorCargaHorariaSemanal != null)
+				where += " (select sum(a.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) from AtendimentoOperacional a where a.professor = o )  " + operadorCargaHorariaSemanal + " :cargaHorariaSemanal and ";
+			else
+				where += " (select sum(a.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) from AtendimentoOperacional a where a.professor = o ) = :cargaHorariaSemanal and ";
+		}
+		//atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo();
+		//String operadorTotalCreditosSemanais,Integer totalCreditosSemanais, String operadorCargaHorariaSemanal, Integer cargaHorariaSemanal,
 
 		if ( orderBy != null )
 		{
@@ -705,10 +871,15 @@ public class Professor
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT o FROM Professor o LEFT JOIN FETCH o.atendimentosOperacionais LEFT JOIN o.disciplinas d " + where + orderBy);
+			" SELECT DISTINCT o FROM Professor o " +
+			"LEFT JOIN FETCH o.atendimentosOperacionais " +
+			"LEFT JOIN o.disciplinas d " +
+			" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
+			+ where + " 1 = 1 "+ orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "nome", nome );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
@@ -731,7 +902,46 @@ public class Professor
 		{
 			q.setParameter( "areaTitulacao", areaTitulacao );
 		}
+		
+		if ( notaDesempenho != null )
+		{
+			q.setParameter( "notaDesempenho", notaDesempenho );
+		}
+		
+		if(cargaHorariaMin != null){
+			q.setParameter("cargaHorariaMin", cargaHorariaMin);
+		}
+		
+		if(cargaHorariaMax != null){
+			q.setParameter("cargaHorariaMax", cargaHorariaMax);
+		}
 
+		if(cargaHorariaAnterior != null){
+			q.setParameter("creditoAnterior", cargaHorariaAnterior);
+		}
+		
+		if(custoCreditoSemanal != null){
+			q.setParameter("valorCredito", custoCreditoSemanal);
+		}
+		
+		if(maxDiasSemana != null){
+			q.setParameter("maxDiasSemana", maxDiasSemana);
+		}
+		
+		if(minCreditosSemanais != null){
+			q.setParameter("minCreditosDia", minCreditosSemanais);
+		}
+		
+		if(totalCreditosSemanais != null){
+			q.setParameter("totalCreditosSemanais", totalCreditosSemanais);
+		}
+		
+		if(cargaHorariaSemanal != null){
+			q.setParameter("cargaHorariaSemanal", cargaHorariaSemanal);
+		}
+		
+		
+		
 		return q.getResultList();
 	}
 	
