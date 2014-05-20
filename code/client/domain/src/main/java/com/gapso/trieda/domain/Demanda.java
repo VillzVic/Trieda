@@ -363,6 +363,10 @@ public class Demanda
 		if ( curriculo != null )
 		{
 			queryString += " o.oferta.curriculo = :curriculo AND ";
+			if(periodo != null){
+				queryString += " o.disciplina in (select d from Disciplina d where d in" +
+						" (select distinct c.disciplina from CurriculoDisciplina c where c.periodo = :periodo and c.curriculo = :curriculo)) and ";
+			}
 		}
 
 		if ( turno != null )
@@ -375,10 +379,6 @@ public class Demanda
 			queryString	+= " o.disciplina = :disciplina AND ";
 		}
 		
-		if(periodo != null){
-			queryString += " o.oferta in (select d from Disciplina d where d in" +
-					" (select  c.disciplina from CurriculoDisciplina c where c.periodo = :periodo ))";
-		}
 		
 		if(demandaReal != null){
 			if(demandaRealOperador != null)
@@ -584,6 +584,10 @@ public class Demanda
 		if ( curriculo != null )
 		{
 			queryString += " o.oferta.curriculo = :curriculo AND ";
+			if(periodo != null){
+				queryString += " o.disciplina in (select d from Disciplina d where d in" +
+						" (select distinct c.disciplina from CurriculoDisciplina c where c.periodo = :periodo and c.curriculo = :curriculo)) and ";
+			}
 		}
 
 		if ( turno != null )
@@ -596,10 +600,6 @@ public class Demanda
 			queryString += " o.disciplina = :disciplina AND ";
 		}
 		
-		if(periodo != null){
-			queryString += " o.disciplina in (select d from Disciplina d where d in" +
-					" (select distinct c.disciplina from CurriculoDisciplina c where c.periodo = :periodo )) and ";
-		}
 		
 		if(demandaReal != null){
 			if(demandaRealOperador != null)

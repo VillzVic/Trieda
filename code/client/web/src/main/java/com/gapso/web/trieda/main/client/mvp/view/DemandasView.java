@@ -140,17 +140,18 @@ public class DemandasView
 
 		this.curriculoBuscaCB = new CurriculoComboBox( cenarioDTO );
 		this.filter.addField( this.curriculoBuscaCB );
+		
+		this.periodoField = new NumberField();
+		this.periodoField.setFieldLabel(getI18nConstants().periodo());
+		this.periodoField.setWidth( "75" );
+		this.periodoField.setEnabled(false);
+		this.filter.addField(periodoField);
 
 		this.turnoBuscaCB = new TurnoComboBox( cenarioDTO );
 		this.filter.addField( this.turnoBuscaCB );
 
 		this.disciplinaBuscaCB = new DisciplinaAutoCompleteBox( cenarioDTO );
 		this.filter.addField( this.disciplinaBuscaCB );
-
-		this.periodoField = new NumberField();
-		this.periodoField.setFieldLabel(getI18nConstants().periodo());
-		this.periodoField.setWidth( "75" );
-		//this.filter.addField(periodoField);
 		
 		this.demandaRealOperadorComboBox = new OperadorComboBox();
 		this.demandaRealOperadorComboBox.setFieldLabel(getI18nConstants().demandaDeAlunosReal());

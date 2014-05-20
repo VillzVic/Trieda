@@ -7,6 +7,8 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
@@ -281,6 +283,7 @@ public class DemandasPresenter
 				display.getTurnoBuscaComboBox().setValue( null );
 				display.getDisciplinaBuscaComboBox().setValue( null );
 				display.getPeriodoField().setValue( null );
+				display.getPeriodoField().setEnabled(false);
 				display.getDemandaRealField().setValue( null );
 				display.getDemandaVirtualField().setValue( null );
 				display.getDemandaTotalField().setValue( null );
@@ -289,6 +292,14 @@ public class DemandasPresenter
 				display.getDemandaTotalOperadorComboBox().setValue( null );
 
 				display.getGrid().updateList();
+			}
+		});
+		
+		this.display.getCurriculoBuscaComboBox().addSelectionChangedListener(new SelectionChangedListener<CurriculoDTO>() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent<CurriculoDTO> se) {
+				display.getPeriodoField().setEnabled(true);
 			}
 		});
 
