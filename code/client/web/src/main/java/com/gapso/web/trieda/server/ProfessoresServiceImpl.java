@@ -133,7 +133,7 @@ public class ProfessoresServiceImpl
 		
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		List< Professor > listProfessores
-			= Professor.findByCenario( getInstituicaoEnsinoUser(), cenario );
+			= Professor.findByCenarioFetchAtendimentos( getInstituicaoEnsinoUser(), cenario );
 
 		Collections.sort( listProfessores );
 

@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "CURRICULOS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "CRC_COD", "CUR_ID" } ) )
 public class Curriculo
-	implements Serializable, Comparable< Curriculo >
+	implements Serializable, Comparable< Curriculo >, Clonable< Curriculo >
 {
 	private static final long serialVersionUID = -9204016994046445376L;
 
@@ -676,5 +676,23 @@ public class Curriculo
 		}
 
 		return true;
+	}
+
+	public Curriculo clone(CenarioClone novoCenario) {
+		Curriculo clone = new Curriculo();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCodigo(this.getCodigo());
+		clone.setCurso(novoCenario.getEntidadeClonada(this.getCurso()));
+		clone.setDescricao(this.getDescricao());
+		clone.setSemanaLetiva(novoCenario.getEntidadeClonada(this.getSemanaLetiva()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Curriculo entidadeClone) {
+		for (CurriculoDisciplina curriculoDisciplina : this.getDisciplinas())
+		{
+			entidadeClone.getDisciplinas().add(novoCenario.clone(curriculoDisciplina));
+		}
 	}
 }

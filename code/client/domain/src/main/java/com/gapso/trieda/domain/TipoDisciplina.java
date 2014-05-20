@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "TDI_ID" )
 @Table( name = "TIPOS_DISCIPLINA" )
 public class TipoDisciplina
-	implements Serializable, Comparable< TipoDisciplina >
+	implements Serializable, Comparable< TipoDisciplina >, Clonable< TipoDisciplina >
 {
 	private static final long serialVersionUID = 3145587865770084666L;
 
@@ -344,5 +344,19 @@ public class TipoDisciplina
 		}
 
 		return result;
+	}
+
+	public TipoDisciplina clone(CenarioClone novoCenario) {
+		TipoDisciplina clone = new TipoDisciplina();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setNome(this.getNome());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			TipoDisciplina entidadeClone) {
+		
 	}
 }

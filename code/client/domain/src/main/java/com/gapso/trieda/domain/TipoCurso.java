@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity(identifierColumn = "TCU_ID")
 @Table(name = "TIPOS_CURSO")
 public class TipoCurso	
-	implements java.io.Serializable
+	implements java.io.Serializable, Clonable<TipoCurso>
 {
 	private static final long serialVersionUID = 8519531461330290008L;
 
@@ -335,4 +335,19 @@ public class TipoCurso
         List< TipoCurso > listTipos = q.getResultList(); 
         return listTipos;
     }
+
+	public TipoCurso clone(CenarioClone novoCenario) {
+		TipoCurso clone = new TipoCurso();
+		
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCodigo(this.getCodigo());
+		clone.setDescricao(this.getDescricao());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, TipoCurso entidadeClone) {
+
+	}
 }

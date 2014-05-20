@@ -51,7 +51,7 @@ import com.gapso.trieda.misc.Semanas;
 @Table( name = "DISCIPLINAS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "DIS_CODIGO", "CEN_ID" } ) )
 public class Disciplina
-	implements Serializable, Comparable< Disciplina >
+	implements Serializable, Comparable< Disciplina >, Clonable< Disciplina >
 {
 	private static final long serialVersionUID = 7980821696468062987L;
 
@@ -1620,5 +1620,51 @@ public class Disciplina
 
 	public void setTurmas(Set< Turma > turmas) {
 		this.turmas = turmas;
+	}
+
+	public Disciplina clone(CenarioClone novoCenario) {
+		Disciplina clone = new Disciplina();
+		clone.setAulasContinuas(this.getAulasContinuas());
+		clone.setCargaHoraria(this.getCargaHoraria());
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCodigo(this.getCodigo());
+		clone.setCreditosPratico(this.getCreditosPratico());
+		clone.setCreditosTeorico(this.getCreditosTeorico());
+		clone.setDificuldade(this.getDificuldade());
+		clone.setLaboratorio(this.getLaboratorio());
+		clone.setMaxAlunosPratico(this.getMaxAlunosPratico());
+		clone.setMaxAlunosTeorico(this.getMaxAlunosTeorico());
+		clone.setNome(this.getNome());
+		clone.setProfessorUnico(this.getProfessorUnico());
+		clone.setDivisaoCreditos(this.getDivisaoCreditos());
+		clone.setUsaDomingo(this.getUsaDomingo());
+		clone.setUsaSabado(this.getUsaSabado());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Disciplina entidadeClone) {
+		entidadeClone.setTipoDisciplina(novoCenario.getEntidadeClonada(this.getTipoDisciplina()));
+		if (this.getDivisaoCreditos() != null)
+		{
+			entidadeClone.setDivisaoCreditos(novoCenario.clone(this.getDivisaoCreditos()));
+		}
+		for (HorarioDisponivelCenario horarioDisponivel : this.getHorarios())
+		{
+			entidadeClone.getHorarios().add(novoCenario.getEntidadeClonada(horarioDisponivel));
+			novoCenario.getEntidadeClonada(horarioDisponivel).getDisciplinas().add(entidadeClone);
+		}
+		
+		for (GrupoSala grupoSala : this.getGruposSala())
+		{
+			entidadeClone.getGruposSala().add(novoCenario.getEntidadeClonada(grupoSala));
+			novoCenario.getEntidadeClonada(grupoSala).getDisciplinas().add(entidadeClone);
+		}
+		
+		for (Sala sala : this.getSalas())
+		{
+			entidadeClone.getSalas().add(novoCenario.getEntidadeClonada(sala));
+			novoCenario.getEntidadeClonada(sala).getDisciplinas().add(entidadeClone);
+		}
 	}
 }

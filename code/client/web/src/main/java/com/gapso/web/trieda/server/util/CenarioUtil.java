@@ -1,12 +1,18 @@
 package com.gapso.web.trieda.server.util;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.CenarioClone;
 import com.gapso.trieda.domain.Incompatibilidade;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
@@ -20,19 +26,29 @@ import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.TipoContrato;
+import com.gapso.trieda.domain.TipoCurso;
+import com.gapso.trieda.domain.TipoDisciplina;
+import com.gapso.trieda.domain.TipoSala;
+import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 
 @Transactional
 public class CenarioUtil
 {
 	private SemanaLetiva semanaLetiva;
 	private Cenario cenario;
+	private Cenario cenarioOriginal;
+	private InstituicaoEnsino instituicaoEnsino;
+	private Set< SemanaLetiva > semanasLetivasList = new HashSet< SemanaLetiva >();
 	private Set< Turno > turnoList = new HashSet< Turno >();
 	private Set< HorarioAula > horarioAulaList = new HashSet< HorarioAula >();
 	private Set< Curso > cursoList = new HashSet< Curso >();
@@ -53,6 +69,7 @@ public class CenarioUtil
 	private Set< Oferta > ofertaList = new HashSet< Oferta >();
 	private Set< Demanda > demandaList = new HashSet< Demanda >();
 	private Set< HorarioDisponivelCenario > horarioDisponivelCenarioList = new HashSet< HorarioDisponivelCenario >();
+	private Set< AtendimentoOperacional > atendimentosOperacionalList = new HashSet< AtendimentoOperacional >();
 
 	@Transactional
 	public void criarCenario( Cenario cenario,
@@ -79,9 +96,9 @@ public class CenarioUtil
 	}
 
 	@Transactional
-	public void clonarCenario( Cenario cenario )
+	public void clonarCenario( Cenario cenario, Cenario cenarioOriginal )
 	{
-		if ( cenario == null )
+		if ( cenarioOriginal == null )
 		{
 			System.out.println(
 				"Erro ao criar um novo cenário: cenário inválido." );
@@ -89,7 +106,7 @@ public class CenarioUtil
 			return;
 		}
 
-		new Clonar( cenario );
+		new Clonar( cenario, cenarioOriginal );
 	}
 
 	@Transactional
@@ -169,9 +186,11 @@ public class CenarioUtil
 	@Transactional
 	private class Clonar
 	{
-		public Clonar( Cenario cen )
+		public Clonar( Cenario cen, Cenario cenOriginal )
 		{
 			cenario = cen;
+			cenarioOriginal = cenOriginal;
+			instituicaoEnsino = InstituicaoEnsino.find(cenario.getInstituicaoEnsino().getId());
 
 			this.popularListas();
 			detachList();
@@ -181,17 +200,7 @@ public class CenarioUtil
 		@Transactional
 		private void popularListas()
 		{
-			Set< HorarioAula > horariosAula
-				= semanaLetiva.getHorariosAula();
-
-			for ( HorarioAula horarioAula : horariosAula )
-			{
-				horarioAulaList.add( horarioAula );
-				turnoList.add( horarioAula.getTurno() );
-				horarioDisponivelCenarioList.addAll(
-					horarioAula.getHorariosDisponiveisCenario() );
-			}
-
+/*
 			cursoList.addAll( cenario.getCursos() );
 			campusList.addAll( cenario.getCampi() );
 
@@ -233,18 +242,155 @@ public class CenarioUtil
 			{
 				curriculoDisciplinaList.addAll( c.getDisciplinas() );
 			}
+			
+			atendimentosOperacionalList.addAll(cenario.getAtendimentosOperacionais());*/
 		}
 	}
 
 	@Transactional
 	private void detachList()
 	{
-		this.semanaLetiva.setId( null );
-		this.semanaLetiva.detach();
-
 		this.cenario.setId( null );
-		this.cenario.detach();
-
+		this.cenario.persist();
+		
+		CenarioClone cenarioClone = new CenarioClone(cenario);
+		
+		//criarTiposContrato(cenario);
+		//criarTiposDisciplina(cenario);
+		//criarTiposSala(cenario);
+		//criarTitulacoes(cenario);
+		for (TipoSala tipoSala : TipoSala.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoSala ts = cenarioClone.clone(tipoSala);
+			ts.persist();
+		}
+		
+		for (TipoDisciplina tipoDisciplina : TipoDisciplina.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoDisciplina td = cenarioClone.clone(tipoDisciplina);
+			td.persist();
+		}
+		
+		for (TipoContrato tipoContrato : TipoContrato.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoContrato tc = cenarioClone.clone(tipoContrato);
+			tc.persist();
+		}
+		
+		for (Titulacao titulacao : Titulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			Titulacao t = cenarioClone.clone(titulacao);
+			t.persist();
+		}
+			
+		for (Turno turno : cenarioOriginal.getTurnos())
+		{
+			Turno t = cenarioClone.clone(turno);
+			t.persist();
+		}
+		
+		for (SemanaLetiva semanaLetiva : cenarioOriginal.getSemanasLetivas())
+		{
+			SemanaLetiva sl = cenarioClone.clone(semanaLetiva);
+			sl.persist();
+		}
+		
+		for (Campus campus : cenarioOriginal.getCampi())
+		{
+			Campus c = cenarioClone.clone(campus);
+			c.persist();
+		}
+		
+		for (DeslocamentoCampus deslocamentoCampus : DeslocamentoCampus.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			DeslocamentoCampus dc = cenarioClone.clone(deslocamentoCampus);
+			dc.persist();
+		}
+		
+		for (DeslocamentoUnidade deslocamentoUnidade : DeslocamentoUnidade.findAll(instituicaoEnsino, cenarioOriginal))
+		{
+			DeslocamentoUnidade du = cenarioClone.clone(deslocamentoUnidade);
+			du.persist();
+		}
+		
+		for (TipoCurso tipoCurso : TipoCurso.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoCurso tc = cenarioClone.clone(tipoCurso);
+			tc.persist();
+		}
+		
+		for (AreaTitulacao areaTitulacao : AreaTitulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			AreaTitulacao at = cenarioClone.clone(areaTitulacao);
+			at.persist();
+		}
+		
+		for (Curso curso : cenarioOriginal.getCursos())
+		{
+			Curso c = cenarioClone.clone(curso);
+			c.persist();
+		}
+		
+		for (Disciplina disciplina : cenarioOriginal.getDisciplinas())
+		{
+			Disciplina d = cenarioClone.clone(disciplina);
+			d.persist();
+		}
+		
+		for (DivisaoCredito divisaoCredito : cenarioOriginal.getDivisoesCredito())
+		{
+			divisaoCredito.getCenario().add(cenario);
+		}
+		
+		for (Equivalencia equivalencia : Equivalencia.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			Equivalencia eq = cenarioClone.clone(equivalencia);
+			eq.persist();
+		}
+		
+		for (Curriculo curriculo : cenarioOriginal.getCurriculos())
+		{
+			Curriculo c = cenarioClone.clone(curriculo);
+			c.persist();
+		}
+		
+		for (Aluno aluno : cenarioOriginal.getAlunos())
+		{
+			Aluno a = cenarioClone.clone(aluno);
+			a.persist();
+		}
+		
+		for (Oferta oferta : Oferta.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			Oferta o = cenarioClone.clone(oferta);
+			o.persist();
+		}
+		
+		for (Professor professor : cenarioOriginal.getProfessores())
+		{
+			Professor p = cenarioClone.clone(professor);
+			p.persist();
+		}
+		
+		/*for ( SemanaLetiva o : semanasLetivasList )
+		{
+			o.setId(null);
+			o.detach();
+			for (HorarioAula ho : this.horarioAulaList)
+			{
+				ho.setId(null);
+				ho.detach();
+				for (HorarioDisponivelCenario hdc : this.horarioDisponivelCenarioList)
+				{
+					hdc.setId(null);
+					hdc.detach();
+					hdc.setHorarioAula(ho);
+				}
+				ho.setSemanaLetiva(o);
+			}
+			this.cenario.getSemanasLetivas().add(o);
+		}*/
+		/*
 		for ( Turno o : this.turnoList )
 		{
 			o.setId( null );
@@ -369,34 +515,39 @@ public class CenarioUtil
 			o.setId( null );
 			o.detach();
 		}
+		
+		for ( AtendimentoOperacional o
+				: this.atendimentosOperacionalList )
+		{
+			o.setId(null);
+			o.detach();
+		}*/
 	}
 
 	@Transactional
 	private void saveList()
 	{
-		//this.semanaLetiva.persist();
-		this.cenario.persist();
-
-		//this.semanaLetiva.merge();
-
+		/*
+		System.out.println("flushing semana Letiva");
 		for ( Turno o : this.turnoList )
 		{
 			o.persist();
 		}
-
+		System.out.println("flushing turno");
 		for ( HorarioAula o : this.horarioAulaList )
 		{
 			o.persist();
 		}
 
+		System.out.println("flushing horarios");
 		for ( Curso o : this.cursoList ) 
 		{
 			o.persist();
 		}
-
+		System.out.println("flushing curso");
 		for ( Campus o : this.campusList )
 		{
-			o.persistAndPreencheHorarios();
+			o.persist();
 		}
 
 		for ( DeslocamentoCampus o
@@ -407,7 +558,7 @@ public class CenarioUtil
 
 		for ( Unidade o : this.unidadeList )
 		{
-			o.persistAndPreencheHorarios();
+			o.persist();
 		}
 
 		for ( DeslocamentoUnidade o
@@ -418,7 +569,7 @@ public class CenarioUtil
 
 		for ( Sala o : this.salaList )
 		{
-			o.persistAndPreencheHorarios();
+			o.persist();
 		}
 
 		for ( GrupoSala o : this.grupoSalaList )
@@ -428,7 +579,7 @@ public class CenarioUtil
 
 		for ( Disciplina o : this.disciplinaList )
 		{
-			o.persistAndPreencheHorarios();
+			o.persist();
 		}
 
 		for ( Incompatibilidade o : this.compatibilidadeList )
@@ -443,12 +594,13 @@ public class CenarioUtil
 
 		for ( DivisaoCredito o : this.divisaoCreditoList )
 		{
-			o.persist();
+			o.getCenario().add(cenario);
+			o.merge();
 		}
 
 		for ( Professor o : this.professorList )
 		{
-			o.persistAndPreencheHorarios();
+			o.persist();
 		}
 
 		for ( ProfessorDisciplina o
@@ -484,6 +636,6 @@ public class CenarioUtil
 				: this.horarioDisponivelCenarioList )
 		{
 			o.persist();
-		}
+		}*/
 	}
 }

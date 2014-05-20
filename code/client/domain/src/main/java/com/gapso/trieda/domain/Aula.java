@@ -43,7 +43,7 @@ import com.gapso.trieda.misc.Semanas;
 @RooEntity( identifierColumn = "AUL_ID" )
 @Table( name = "AULAS" )
 public class Aula
-	implements Serializable
+	implements Serializable, Clonable<Aula>
 {
 	private static final long serialVersionUID = -8810399104404941276L;
 
@@ -624,5 +624,27 @@ public class Aula
 			hdcs.add(hdc);
 		}
 		return hdcs;
+	}
+
+	public Aula clone(CenarioClone novoCenario) {
+		Aula clone = new Aula();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCreditosPraticos(this.getCreditosPraticos());
+		clone.setCreditosTeoricos(this.getCreditosTeoricos());
+		clone.setHorarioDisponivelCenario(novoCenario.getEntidadeClonada(this.getHorarioDisponivelCenario()));
+		if (this.getProfessor() != null)
+			clone.setProfessor(novoCenario.getEntidadeClonada(this.getProfessor()));
+		if (this.getProfessorVirtual() != null)
+			clone.setProfessorVirtual(novoCenario.getEntidadeClonada(this.getProfessorVirtual()));
+		clone.setSala(novoCenario.getEntidadeClonada(this.getSala()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Aula entidadeClone) {
+		for (Turma turma : this.getTurmas())
+		{
+			entidadeClone.getTurmas().add(novoCenario.getEntidadeClonada(turma));
+		}
 	}
 }

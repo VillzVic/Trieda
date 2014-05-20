@@ -24,7 +24,8 @@ public interface CenariosServiceAsync
 	void editar( CenarioDTO cenarioDTO, AsyncCallback< Void > callback );
 	void criar( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO,
 		Set< CampusDTO > campiDTO, AsyncCallback< Void > callback );
-	void clonar( CenarioDTO cenarioDTO, AsyncCallback< Void > callback );
+	void clonar(CenarioDTO cenarioDTO, CenarioDTO clone, boolean clonarSolucao,
+			AsyncCallback<Void> callback);
 	void remove( List< CenarioDTO > cenarioDTOList, AsyncCallback< Void > callback );
 	void getResumos( CenarioDTO cenario, AsyncCallback< List< TreeNodeDTO > > callback );
 	void checkDBVersion(AsyncCallback<Integer> callback);

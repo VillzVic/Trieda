@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "ATI_ID" )
 @Table( name = "AREAS_TITULACAO" )
 public class AreaTitulacao
-	implements Serializable, Comparable<AreaTitulacao>
+	implements Serializable, Comparable<AreaTitulacao>, Clonable<AreaTitulacao>
 {
 	private static final long serialVersionUID = 8739246006672184100L;
 
@@ -423,5 +423,20 @@ public class AreaTitulacao
 		}
 
 		return compare;
+	}
+
+	public AreaTitulacao clone(CenarioClone novoCenario) {
+		AreaTitulacao clone = new AreaTitulacao();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCodigo(this.getCodigo());
+		clone.setDescricao(this.getDescricao());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			AreaTitulacao entidadeClone) {
+		
 	}
 }

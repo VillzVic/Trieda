@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "HOR_ID" )
 @Table( name = "HORARIOS_AULA" )
 public class HorarioAula
-	implements Serializable, Comparable< HorarioAula >
+	implements Serializable, Comparable< HorarioAula >, Clonable< HorarioAula >
 {
 	private static final long serialVersionUID = 6415195416443296422L;
 
@@ -467,5 +467,22 @@ public class HorarioAula
     	oHorario.set(1979,Calendar.NOVEMBER,6);
     	
 		return thisHorario.compareTo( oHorario );
+	}
+	
+	public HorarioAula clone(CenarioClone novoCenario)
+	{
+		HorarioAula clone = new HorarioAula();
+		clone.setHorario(this.getHorario());
+		clone.setSemanaLetiva(novoCenario.getEntidadeClonada(this.getSemanaLetiva()));
+		clone.setTurno(novoCenario.getEntidadeClonada(this.getTurno()));
+
+		return clone;
+	}
+	
+	public void cloneChilds(CenarioClone novoCenario, HorarioAula clone) {
+		for (HorarioDisponivelCenario horarioDisponivelCenario : this.getHorariosDisponiveisCenario())
+		{
+			clone.getHorariosDisponiveisCenario().add(novoCenario.clone(horarioDisponivelCenario));
+		}
 	}
 }

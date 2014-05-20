@@ -51,6 +51,7 @@ public enum ExcelInformationType
 	TURNOS("Turnos"),
 	TIPOS_CURSO("Tipos de Curso"),
 	DIVISOES_CREDITO("Divisoes de Credito"),
+	DIVISOES_CREDITO_DISCIPLINA("Divisoes Credito Disciplinas"),
 	CAMPI_DESLOCAMENTO("Deslocamento entre Campi"),
 	UNIDADES_DESLOCAMENTO("Deslocamento entre Unidades"),
 	RESUMO_CENARIO("Resumo por Cenario"),

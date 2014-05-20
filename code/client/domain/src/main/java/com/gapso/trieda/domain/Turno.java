@@ -43,7 +43,7 @@ import com.gapso.trieda.misc.Semanas;
 @RooEntity( identifierColumn = "TUR_ID" )
 @Table( name = "TURNOS" )
 public class Turno
-	implements Serializable, Comparable< Turno >
+	implements Serializable, Comparable< Turno >, Clonable< Turno >
 {
 	private static final long serialVersionUID = 2608398950191790873L;
 
@@ -250,20 +250,20 @@ public class Turno
     	return q.getResultList();
     }
     
-    @SuppressWarnings( "unchecked" )
-    public static List< Turno > findByNome(
-    	InstituicaoEnsino instituicaoEnsino, String nome )
+    public static Turno findByNome(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome )
     {
     	Query q = entityManager().createQuery(
     		" SELECT o FROM Turno o " +
     		" WHERE o.nome = :nome " +
-    		" AND o.instituicaoEnsino = :instituicaoEnsino " );
+    		" AND o.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.cenario = :cenario ");
 
     	q.setParameter( "nome", nome );
+    	q.setParameter( "cenario", cenario );
     	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-    	List< Turno > list = q.getResultList();
-    	return list;
+    	return (Turno) q.getSingleResult();
     }
 
     @SuppressWarnings( "unchecked" )
@@ -542,5 +542,20 @@ public class Turno
 		}
 
 		return true;
+	}
+	
+	public Turno clone(CenarioClone novoCenario)
+	{
+		Turno clone = new Turno();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setNome(this.getNome());
+		
+		return clone;
+	}
+	
+	public void cloneChilds(CenarioClone novoCenario, Turno clone)
+	{
+		
 	}
 }

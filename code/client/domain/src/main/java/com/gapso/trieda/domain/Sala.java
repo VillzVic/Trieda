@@ -49,7 +49,7 @@ import com.gapso.trieda.misc.Semanas;
 @Table( name = "SALAS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "UNI_ID", "SAL_CODIGO" } ) )
 public class Sala
-	implements Serializable, Comparable< Sala >
+	implements Serializable, Comparable< Sala >, Clonable< Sala >
 {
 	@Override
 	public int hashCode() {
@@ -1250,5 +1250,28 @@ public class Sala
 		q.setMaxResults(1);
 
         return (Sala)q.getSingleResult();
+	}
+
+	public Sala clone(CenarioClone novoCenario) {
+		Sala clone = new Sala();
+		clone.setAndar(this.getAndar());
+		clone.setCapacidadeInstalada(this.getCapacidadeInstalada());
+		clone.setCapacidadeMax(this.getCapacidadeInstalada());
+		clone.setCodigo(this.getCodigo());
+		clone.setCustoOperacaoCred(this.getCustoOperacaoCred());
+		clone.setDescricao(this.getDescricao());
+		clone.setNumero(this.getNumero());
+		clone.setTipoSala(novoCenario.getEntidadeClonada(this.getTipoSala()));
+		clone.setUnidade(novoCenario.getEntidadeClonada(this.getUnidade()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Sala entidadeClone) {
+		for (HorarioDisponivelCenario horarioDisponivel : this.getHorarios())
+		{
+			entidadeClone.getHorarios().add(novoCenario.getEntidadeClonada(horarioDisponivel));
+			novoCenario.getEntidadeClonada(horarioDisponivel).getSalas().add(entidadeClone);
+		}
 	}
 }

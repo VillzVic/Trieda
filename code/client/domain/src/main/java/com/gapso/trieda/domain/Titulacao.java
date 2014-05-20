@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "TIT_ID" )
 @Table( name = "TITULACOES" )
 public class Titulacao
-	implements Serializable
+	implements Serializable, Clonable< Titulacao >
 {
 	private static final long serialVersionUID = 8929281662490204744L;
 
@@ -240,4 +240,17 @@ public class Titulacao
 	{
         this.nome = nome;
     }
+
+	public Titulacao clone(CenarioClone novoCenario) {
+		Titulacao clone = new Titulacao();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setNome(this.getNome());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Titulacao entidadeClone) {
+		
+	}
 }

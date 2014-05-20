@@ -12,6 +12,7 @@ public class TurmaDTO
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	public static final String PROPERTY_NOME = "nome";
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
+	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_CAMPUS_ID = "campusId";
 	public static final String PROPERTY_PARCIAL = "parcial";
 	public static final String PROPERTY_NO_ALUNOS = "noAlunos";
@@ -70,6 +71,16 @@ public class TurmaDTO
 	public Long getDisciplinaId()
 	{
 		return get( PROPERTY_DISCIPLINA_ID );
+	}
+	
+	public void setDisciplinaString( String value )
+	{
+		set( PROPERTY_DISCIPLINA_STRING, value );
+	}
+
+	public String getDisciplinaString()
+	{
+		return get( PROPERTY_DISCIPLINA_STRING );
 	}
 	
 	public void setCampusId( Long value )

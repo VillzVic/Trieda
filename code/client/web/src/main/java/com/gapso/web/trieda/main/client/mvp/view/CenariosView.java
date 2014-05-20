@@ -6,6 +6,8 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -19,12 +21,10 @@ import com.gapso.web.trieda.main.client.mvp.presenter.CenariosPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.ConfirmationButton;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class CenariosView
 	extends MyComposite
@@ -32,6 +32,7 @@ public class CenariosView
 {
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CenarioDTO> gridPanel;
+	private Button clonarCenarioBt;
 	private Button abrirCenarioBT;
 	private Button limparSolucaoBt;
 	private SimpleFilter filter;
@@ -69,13 +70,20 @@ public class CenariosView
 	{
 		this.toolBar = new SimpleToolBar( true, true, true, false, false, this );
 		this.toolBar.add( new SeparatorToolItem() );
+		
+		this.clonarCenarioBt = toolBar.createButton(
+				"Clonar Cenário",
+				Resources.DEFAULTS.cenarioClonar16() );
+		clonarCenarioBt.disable();
 
 		this.abrirCenarioBT = toolBar.createButton(
 			"Selecionar como Contexto Atual",
 			Resources.DEFAULTS.cenarioAbrir16() );
+		abrirCenarioBT.disable();
 		
 		this.limparSolucaoBt = toolBar.createButton("Limpar Solucao do Cenário",Resources.DEFAULTS.limpaSolucao16() );
 
+		this.toolBar.add( this.clonarCenarioBt );
 		this.toolBar.add( this.abrirCenarioBT );
 		this.toolBar.add( this.limparSolucaoBt );
 		this.panel.setTopComponent( this.toolBar );
@@ -86,7 +94,24 @@ public class CenariosView
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-	    this.gridPanel = new SimpleGrid< CenarioDTO >( getColumnList(), this, this.toolBar );
+	    this.gridPanel = new SimpleGrid< CenarioDTO >( getColumnList(), this, this.toolBar )
+		{
+			@Override
+			protected void afterRender() {
+				super.afterRender();
+				
+				this.getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<CenarioDTO>() {
+					
+					@Override
+				    public void selectionChanged(SelectionChangedEvent<CenarioDTO> se) {
+						if(getSelectionModel().getSelectedItems().size() == 1) {
+							clonarCenarioBt.enable();
+							abrirCenarioBT.enable();
+				        }
+				    }
+				});
+			}
+		};
 	    this.panel.add( this.gridPanel, bld );
 	}
 
@@ -190,5 +215,11 @@ public class CenariosView
 	public Button getLimparSolucaoButton()
 	{
 		return this.limparSolucaoBt;
+	}
+	
+	@Override
+	public Button getClonarCenarioButton()
+	{
+		return this.clonarCenarioBt;
 	}
 }

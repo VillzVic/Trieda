@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "UNI_ID" )
 @Table( name = "UNIDADES", uniqueConstraints =
 @UniqueConstraint( columnNames = { "CAM_ID", "UNI_CODIGO" } ) )
-public class Unidade implements Serializable
+public class Unidade implements Serializable, Clonable< Unidade >
 {
     private static final long serialVersionUID = -5763084706316974453L;
 
@@ -760,4 +760,32 @@ public class Unidade implements Serializable
 
 		return true;
 	}
+
+	public Unidade clone(CenarioClone novoCenario) {
+		Unidade clone = new Unidade();
+		clone.setCampus(novoCenario.getEntidadeClonada(this.getCampus()));
+		clone.setCodigo(this.getCodigo());
+		clone.setNome(this.getNome());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Unidade entidadeClone) {
+		for (Sala sala : this.getSalas())
+		{
+			entidadeClone.getSalas().add(novoCenario.clone(sala));
+		}
+		
+		for (GrupoSala grupoSala : this.getGruposSalas())
+		{
+			entidadeClone.getGruposSalas().add(novoCenario.clone(grupoSala));
+		}
+		
+		for (HorarioDisponivelCenario horarioDisponivel : this.getHorarios())
+		{
+			entidadeClone.getHorarios().add(novoCenario.getEntidadeClonada(horarioDisponivel));
+			novoCenario.getEntidadeClonada(horarioDisponivel).getUnidades().add(entidadeClone);
+		}
+	}
+	
 }

@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "EQV_ID" )
 @Table( name = "EQUIVALENCIAS" )
 public class Equivalencia
-	implements java.io.Serializable
+	implements java.io.Serializable, Clonable< Equivalencia >
 {
 	private static final long serialVersionUID = -8632323368932009356L;
 
@@ -414,6 +414,22 @@ public class Equivalencia
 		q.setParameter( "elimina", elimina);
 		
 		return q.getResultList();
+	}
+
+	public Equivalencia clone(CenarioClone novoCenario) {
+		Equivalencia clone = new Equivalencia();
+		clone.setCursou(novoCenario.getEntidadeClonada(this.getCursou()));
+		clone.setElimina(novoCenario.getEntidadeClonada(this.getElimina()));
+		clone.setEquivalenciaGeral(this.getEquivalenciaGeral());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Equivalencia entidadeClone) {
+		for (Curso curso : this.getCursos())
+		{
+			entidadeClone.getCursos().add(novoCenario.getEntidadeClonada(curso));
+		}
 	}
 
 }

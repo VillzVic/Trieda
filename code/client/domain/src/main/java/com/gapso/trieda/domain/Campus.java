@@ -46,7 +46,7 @@ import com.gapso.trieda.misc.Estados;
 @Table( name = "CAMPI", uniqueConstraints =
 @UniqueConstraint( columnNames = { "CAM_CODIGO", "CEN_ID" } ) )
 public class Campus
-	implements Serializable, Comparable< Campus >
+	implements Serializable, Comparable< Campus >, Clonable< Campus >
 {
 	private static final long serialVersionUID = 6690100103369325015L;
 
@@ -1159,5 +1159,50 @@ public class Campus
 	public int compareTo( Campus c )
 	{
 		return this.getCodigo().compareTo( c.getCodigo() );
+	}
+	
+	public Campus clone(Cenario novoCenario)
+	{
+		Campus clone = new Campus();
+		clone.setBairro(this.getBairro());
+		clone.setCenario(novoCenario);
+		clone.setCodigo(this.getCodigo());
+		clone.setEstado(this.getEstado());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setMunicipio(this.getMunicipio());
+		clone.setNome(this.getNome());
+		clone.setPublicado(this.getPublicado());
+		clone.setValorCredito(this.getValorCredito());
+		
+		return clone;
+	}
+
+	public Campus clone(CenarioClone novoCenario) {
+		Campus clone = new Campus();
+		clone.setBairro(this.getBairro());
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCodigo(this.getCodigo());
+		clone.setEstado(this.getEstado());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setMunicipio(this.getMunicipio());
+		clone.setNome(this.getNome());
+		clone.setPublicado(this.getPublicado());
+		clone.setValorCredito(this.getValorCredito());
+		
+		return clone;
+	}
+
+	@Transactional
+	public void cloneChilds(CenarioClone novoCenario, Campus entidadeClone) {
+		for (Unidade unidade : this.getUnidades())
+		{
+			entidadeClone.getUnidades().add(novoCenario.clone(unidade));
+		}
+		
+		for (HorarioDisponivelCenario horarioDisponivel : this.getHorarios())
+		{
+			entidadeClone.getHorarios().add(novoCenario.getEntidadeClonada(horarioDisponivel));
+			novoCenario.getEntidadeClonada(horarioDisponivel).getCampi().add(entidadeClone);
+		}
 	}
 }

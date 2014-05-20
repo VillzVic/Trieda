@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "CDI_ID" )
 @Table( name = "CURRICULOS_DISCIPLINAS" )
 public class CurriculoDisciplina
-	implements Serializable
+	implements Serializable, Clonable< CurriculoDisciplina >
 {
 	private static final long serialVersionUID = -5429743673577487971L;
 
@@ -816,5 +816,27 @@ public class CurriculoDisciplina
 
 
 		return (CurriculoDisciplina) q.getSingleResult();
+	}
+
+	public CurriculoDisciplina clone(CenarioClone novoCenario) {
+		CurriculoDisciplina clone = new CurriculoDisciplina();
+		clone.setCurriculo(novoCenario.getEntidadeClonada(this.getCurriculo()));
+		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
+		clone.setMaturidade(this.getMaturidade());
+		clone.setPeriodo(this.getPeriodo());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, CurriculoDisciplina entidadeClone) {
+		for (Disciplina disciplina : this.getCoRequisitos())
+		{
+			entidadeClone.getCoRequisitos().add(novoCenario.getEntidadeClonada(disciplina));
+		}
+		
+		for (Disciplina disciplina : this.getPreRequisitos())
+		{
+			entidadeClone.getPreRequisitos().add(novoCenario.getEntidadeClonada(disciplina));
+		}
 	}
 }

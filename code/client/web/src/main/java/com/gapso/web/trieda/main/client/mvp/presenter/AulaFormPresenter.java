@@ -262,7 +262,8 @@ public class AulaFormPresenter
 					{
 						display.getQtdeCreditosComboBox().setValue(null);
 						display.getQtdeCreditosComboBox().removeAll();
-						for (int i = 1; i <= display.getDisciplinaDTO().getCreditosTeorico() - creditosAlocadosTeorico; i++)
+						int creditosJaAlocados = display.getAulaDTO().getCreditosTeoricos() == null ? 0 : display.getAulaDTO().getCreditosTeoricos();
+						for (int i = 1; i <= display.getDisciplinaDTO().getCreditosTeorico() - creditosAlocadosTeorico + creditosJaAlocados; i++)
 						{
 							display.getQtdeCreditosComboBox().add(i);
 						}
@@ -271,7 +272,8 @@ public class AulaFormPresenter
 					{
 						display.getQtdeCreditosComboBox().setValue(null);
 						display.getQtdeCreditosComboBox().removeAll();
-						for (int i = 1; i <= display.getDisciplinaDTO().getCreditosPratico() - creditosAlocadosPratico; i++)
+						int creditosJaAlocados = display.getAulaDTO().getCreditosPraticos() == null ? 0 : display.getAulaDTO().getCreditosPraticos();
+						for (int i = 1; i <= display.getDisciplinaDTO().getCreditosPratico() - creditosAlocadosPratico + creditosJaAlocados; i++)
 						{
 							display.getQtdeCreditosComboBox().add(i);
 						}

@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
+import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.AulaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
@@ -172,6 +173,7 @@ implements AulaFormPresenter.Display
 		qtdeCreditosCB.setSimpleValue(aulaDTO.getCreditosPraticos());
 		qtdeCreditosCB.setEditable(false);
 		qtdeCreditosCB.setAllowBlank(false);
+		qtdeCreditosCB.setTriggerAction(TriggerAction.ALL);
 		if (aulaDTO.getCreditosPraticos() == null)
 		{
 			qtdeCreditosCB.disable();

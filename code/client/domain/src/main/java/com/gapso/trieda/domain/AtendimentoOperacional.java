@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "ATP_ID" )
 @Table( name = "ATENDIMENTO_OPERACIONAL" )
 public class AtendimentoOperacional
-	implements Serializable
+	implements Serializable, Clonable< AtendimentoOperacional >
 {
 	private static final long serialVersionUID = -1061352455612316076L;
 
@@ -2249,5 +2249,50 @@ public class AtendimentoOperacional
 		Long disciplinaId, Integer turma2, Boolean credTeorico) 
 	{
 		return null;
+	}
+
+	public AtendimentoOperacional clone(CenarioClone novoCenario) {
+		AtendimentoOperacional clone = new AtendimentoOperacional();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setConfirmada(this.getConfirmada());
+		clone.setCreditoTeorico(this.getCreditoTeorico());
+		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
+		if (this.getDisciplinaSubstituta() != null)
+			clone.setDisciplinaSubstituta(novoCenario.getEntidadeClonada(this.getDisciplinaSubstituta()));
+		clone.setHorarioDisponivelCenario(novoCenario.getEntidadeClonada(this.getHorarioDisponivelCenario()));
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setOferta(novoCenario.getEntidadeClonada(this.getOferta()));
+		if (this.getProfessor() != null)
+			clone.setProfessor(novoCenario.getEntidadeClonada(this.getProfessor()));
+		clone.setQuantidadeAlunos(this.getQuantidadeAlunos());
+		clone.setSala(novoCenario.getEntidadeClonada(this.getSala()));
+		clone.setTurma(this.getTurma());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			AtendimentoOperacional entidadeClone) {
+		if (this.getProfessorVirtual() != null)
+		{
+			entidadeClone.setProfessorVirtual(novoCenario.getEntidadeClonada(this.getProfessorVirtual()));
+			novoCenario.getEntidadeClonada(this.getProfessorVirtual()).getAtendimentos().add(entidadeClone);
+		}
+
+		for (AlunoDemanda alunoDemanda : this.getAlunosDemanda())
+		{
+			entidadeClone.getAlunosDemanda().add(novoCenario.getEntidadeClonada(alunoDemanda));
+			novoCenario.getEntidadeClonada(alunoDemanda).getAtendimentosOperacional().add(entidadeClone);
+		}
+		
+		for (DicaEliminacaoProfessorVirtual dicaEliminacao : this.getDicasEliminacaoProfessorVirtual())
+		{
+			entidadeClone.getDicasEliminacaoProfessorVirtual().add(novoCenario.getEntidadeClonada(dicaEliminacao));
+		}
+		
+		for (MotivoUsoProfessorVirtual motivoUso : this.getMotivoUsoProfessorVirtual())
+		{
+			entidadeClone.getMotivoUsoProfessorVirtual().add(novoCenario.getEntidadeClonada(motivoUso));
+		}
 	}
 }

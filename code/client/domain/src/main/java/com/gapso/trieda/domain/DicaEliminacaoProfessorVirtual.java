@@ -2,6 +2,7 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -33,7 +36,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooEntity( identifierColumn = "DIC_PRV_ID" )
 @Table( name = "DICAS_ELIMINACAO_PROF_VIRTUAL" )
 public class DicaEliminacaoProfessorVirtual
-	implements Serializable
+	implements Serializable, Clonable< DicaEliminacaoProfessorVirtual >
 {
 	private static final long serialVersionUID = 5135175685795497437L;
 
@@ -104,5 +107,60 @@ public class DicaEliminacaoProfessorVirtual
 
 	public void setAtendimentosOperacional(Set<AtendimentoOperacional> atendimentosOperacional) {
 		this.atendimentosOperacional = atendimentosOperacional;
+	}
+
+	@Transactional
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.persist( this );
+	}
+	
+	public static final EntityManager entityManager()
+	{
+		EntityManager em = new DicaEliminacaoProfessorVirtual().entityManager;
+
+		if ( em == null )
+		{
+			throw new IllegalStateException(
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?) " );
+		}
+
+		return em;
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< DicaEliminacaoProfessorVirtual > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o )" +
+			" FROM DicaEliminacaoProfessorVirtual o, IN (o.atendimentosOperacional) at " +
+			" WHERE at.cenario = :cenario " +
+			" AND at.instituicaoEnsino = :instituicaoEnsino" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+
+
+	public DicaEliminacaoProfessorVirtual clone(CenarioClone novoCenario) {
+		DicaEliminacaoProfessorVirtual clone = new DicaEliminacaoProfessorVirtual();
+		clone.setDicaEliminacao(this.getDicaEliminacao());
+		clone.setProfessor(novoCenario.getEntidadeClonada(this.getProfessor()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			DicaEliminacaoProfessorVirtual entidadeClone) {
+		
 	}
 }

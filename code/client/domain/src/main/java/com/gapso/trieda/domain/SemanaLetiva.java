@@ -50,7 +50,7 @@ import com.gapso.trieda.misc.Semanas;
 @Table( name = "SEMANA_LETIVA", uniqueConstraints =
 @UniqueConstraint( columnNames = { "SLE_CODIGO" } ) )
 public class SemanaLetiva
-	implements Serializable, Comparable< SemanaLetiva >
+	implements Serializable, Comparable< SemanaLetiva >, Clonable< SemanaLetiva >
 {
 	private static final long serialVersionUID = 6807360646327130208L;
 
@@ -728,5 +728,26 @@ public class SemanaLetiva
 		
 		return HorarioDisponivelCenario.findBy(getInstituicaoEnsino(), horariosAula.get(horariosAula.indexOf(hdc.getHorarioAula())+1), hdc.getDiaSemana());
 		
+	}
+	
+	//Clona semanaLetiva para a funcionalidade de clonar cenario
+	public SemanaLetiva clone(CenarioClone novoCenario)
+	{
+		SemanaLetiva clone = new SemanaLetiva();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCodigo(this.getCodigo());
+		clone.setDescricao(this.getDescricao());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setPermiteIntervaloAula(this.getPermiteIntervaloAula());
+		clone.setTempo(this.getTempo());
+		
+		return clone;
+	}
+	
+	public void cloneChilds(CenarioClone novoCenario, SemanaLetiva clone) {
+		for(HorarioAula horario : this.getHorariosAula())
+		{
+			clone.getHorariosAula().add(novoCenario.clone(horario));
+		}
 	}
 }

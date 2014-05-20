@@ -350,4 +350,12 @@ public class GTriedaI18nMessages
 		return this.languageManager.getFormattedText(
 			"excelAvisoMesmaEntidadeDeslocamento", params );
 	}
+
+	@Override
+	public String excelErroLogicoTotalCreditosDiferenteTotalDisciplina(String linhasComErro) {
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoTotalCreditosDiferenteTotalDisciplina", params );
+	}
 }

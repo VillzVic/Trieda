@@ -43,6 +43,7 @@ public interface TriedaI18nMessages
 	String sucessoSalvarNoBD( String codigoItem );
 	String excelErroLogicoCapacidadeInstaladaMaiorCapacidadeMax( String linhasComErro );
 	String excelErroLogicoRegraCreditoInvalida( String linhasComErro );
+	String excelErroLogicoTotalCreditosDiferenteTotalDisciplina(String string);
 	String excelAvisoMesmaEntidadeDeslocamento( String linhasComErro );
 
   // Exemplo com data

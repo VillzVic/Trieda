@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity(identifierColumn = "TSA_ID")
 @Table(name = "TIPOS_SALA")
 public class TipoSala	
-	implements java.io.Serializable
+	implements java.io.Serializable, Clonable< TipoSala >
 {
 	private static final long serialVersionUID = -1633461518380764117L;
 	
@@ -284,4 +284,77 @@ public class TipoSala
 		List< TipoSala > list = q.getResultList();
         return list;
     }
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		int code = this.nome == null ? 0 : this.nome.hashCode();
+		code += this.cenario == null ? 0 : this.cenario.getId().hashCode();
+		result = prime * result + code;
+		return result;
+	}
+	
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof TipoSala ) )
+		{
+			return false;
+		}
+
+		TipoSala other = (TipoSala) obj;
+
+		if ( this.id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.id.equals( other.id ) )
+		{
+			return false;
+		}
+		if ( this.nome == null )
+		{
+			if ( other.nome != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.nome.equals( other.nome ) )
+		{
+			return false;
+		}
+		if ( this.cenario == null )
+		{
+			if ( other.cenario != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.cenario.equals( other.cenario ) )
+		{
+			return false;
+		}
+		
+
+		return true;
+	}
+
+	public TipoSala clone(CenarioClone novoCenario) {
+		TipoSala clone = new TipoSala();
+		clone.setAceitaAulaPratica(this.getAceitaAulaPratica());
+		clone.setCenario(novoCenario.getCenario());
+		clone.setDescricao(this.getDescricao());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setNome(this.getNome());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, TipoSala entidadeClone) {
+		
+	}
 }

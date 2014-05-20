@@ -236,7 +236,7 @@ public class HabilitacoesProfessoresImportExcel
 		// [ CódigoDisciplina -> Disciplina ]
 		Map< String, Disciplina > disciplinasBDMap
 			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-				Disciplina.findAll( this.instituicaoEnsino ) );
+				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors
 			= new ArrayList< Integer >();

@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "ALUNOS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "ALN_MATRICULA", "CEN_ID" } ) )
 public class Aluno
-	implements Serializable, Comparable< Aluno >
+	implements Serializable, Comparable< Aluno >, Clonable< Aluno >
 {
 	private static final long serialVersionUID = 265242535107921721L;
 
@@ -751,5 +751,26 @@ public class Aluno
 		}
 
 		return q.getResultList();
+	}
+
+	public Aluno clone(CenarioClone novoCenario) {
+		Aluno clone = new Aluno();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCriadoTrieda(this.getCriadoTrieda());
+		clone.setFormando(this.getFormando());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setMatricula(this.getMatricula());
+		clone.setNome(this.getNome());
+		clone.setPeriodo(this.getPeriodo());
+		clone.setVirtual(this.getVirtual());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Aluno entidadeClone) {
+		for (CurriculoDisciplina curriculoDisciplina : this.getCursou())
+		{
+			entidadeClone.getCursou().add(novoCenario.getEntidadeClonada(curriculoDisciplina));
+		}
 	}
 }

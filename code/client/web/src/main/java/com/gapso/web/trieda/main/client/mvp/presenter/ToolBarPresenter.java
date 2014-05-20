@@ -46,6 +46,7 @@ import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasCoRequisitosView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasPreRequisitosView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasView;
+import com.gapso.web.trieda.main.client.mvp.view.DivisoesCreditoDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.DivisoesCreditosView;
 import com.gapso.web.trieda.main.client.mvp.view.EquivalenciasView;
 import com.gapso.web.trieda.main.client.mvp.view.ExportExcelFormView;
@@ -173,6 +174,7 @@ public class ToolBarPresenter
 		Button getAssociarDisciplinasSalasListDisciplinasButton();
 		Button getAssociarDisciplinasGruposSalasListDisciplinasButton();
 		Button getDivisaoCreditosListDisciplinasButton();
+		Button getDivisaoCreditosDisciplinaListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
 		Button getCompatibilidadesListDisciplinasButton();
 
@@ -612,6 +614,19 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new DivisoesCreditosPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, new DivisoesCreditosView( cenarioDTO ) );
+
+				presenter.go(gTab);
+			}
+		});
+		
+		this.toolBar.getDivisaoCreditosDisciplinaListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DivisoesCreditoDisciplinaPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DivisoesCreditoDisciplinaView( cenarioDTO ) );
 
 				presenter.go(gTab);
 			}

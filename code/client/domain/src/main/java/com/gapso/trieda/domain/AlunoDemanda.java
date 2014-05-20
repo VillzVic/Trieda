@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "ALUNOS_DEMANDA", uniqueConstraints =
 @UniqueConstraint( columnNames = { "ALN_ID", "DEM_ID" } ) )
 public class AlunoDemanda
-	implements Serializable, Comparable< AlunoDemanda >
+	implements Serializable, Comparable< AlunoDemanda >, Clonable< AlunoDemanda >
 {
 	private static final long serialVersionUID = 5574796519360717359L;
 
@@ -875,18 +875,20 @@ public class AlunoDemanda
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByDisciplinaAndCampus(
-		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Campus campus )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Disciplina disciplina, Campus campus )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus.cenario = :cenario " +
 			" AND o.demanda.disciplina = :disciplina " +
 			" AND o.demanda.oferta.campus = :campus ");
 		
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "disciplina", disciplina );
 		q.setParameter( "campus", campus );
+		q.setParameter( "cenario", cenario );
 
 		return q.getResultList();
 	}
@@ -1452,5 +1454,20 @@ public class AlunoDemanda
 
 	public void setTurmas(Set<Turma> turmas) {
 		this.turmas = turmas;
+	}
+
+	public AlunoDemanda clone(CenarioClone novoCenario) {
+		AlunoDemanda clone = new AlunoDemanda();
+		clone.setAluno(novoCenario.getEntidadeClonada(this.getAluno()));
+		clone.setAtendido(this.getAtendido());
+		clone.setDemanda(novoCenario.getEntidadeClonada(this.getDemanda()));
+		clone.setPeriodo(this.getPeriodo());
+		clone.setPrioridade(this.getPrioridade());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, AlunoDemanda entidadeClone) {
+
 	}
 }

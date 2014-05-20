@@ -25,7 +25,7 @@ public interface CenariosService
 	PagingLoadResult< CenarioDTO > getBuscaList( Integer ano, Integer semestre, PagingLoadConfig config );
 	void editar( CenarioDTO cenarioDTO );
 	void criar( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO, Set< CampusDTO > campiDTO );
-	void clonar( CenarioDTO cenarioDTO );
+	void clonar( CenarioDTO cenarioDTO, CenarioDTO clone, boolean clonarSolucao );
 	void remove( List< CenarioDTO > cenarioDTOList );
 	List< TreeNodeDTO > getResumos( CenarioDTO cenario );
 	Integer checkDBVersion();

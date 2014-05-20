@@ -3774,7 +3774,7 @@ public class ConvertBeans {
 		MotivoUsoProfessorVirtualDTO dto = new MotivoUsoProfessorVirtualDTO();
 		
 		dto.setId(domain.getId());
-		dto.setMotivo(domain.getMotivoUso());
+		dto.setMotivo(domain.getMotivoUso().replace("magistério", "habilitação").replace("magisterio", "habilitação"));
 		dto.setProfessorCpf(domain.getProfessor() == null ? null : domain.getProfessor().getCpf());
 		dto.setProfessorString(domain.getProfessor() == null ? null : domain.getProfessor().getNome());
 		
@@ -3803,6 +3803,7 @@ public class ConvertBeans {
 		dto.setVersion(domain.getVersion());
 		dto.setCenarioId(domain.getCenario().getId());
 		dto.setDisciplinaId(domain.getDisciplina().getId());
+		dto.setDisciplinaString(domain.getDisciplina().getCodigo());
 		dto.setParcial(domain.getParcial());
 		dto.setNoAlunos(domain.getAlunos().size());
 		

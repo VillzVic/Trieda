@@ -46,7 +46,7 @@ import com.gapso.trieda.misc.Semanas;
 @RooEntity( identifierColumn = "ATT_ID" )
 @Table( name = "ATENDIMENTO_TATICO" )
 public class AtendimentoTatico
-	implements Serializable
+	implements Serializable, Clonable< AtendimentoTatico >
 {
 	private static final long serialVersionUID = 6191028820294903254L;
 
@@ -1390,5 +1390,34 @@ public class AtendimentoTatico
 				q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 				return q.getResultList();
+	}
+
+	public AtendimentoTatico clone(CenarioClone novoCenario) {
+		AtendimentoTatico clone = new AtendimentoTatico();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setConfirmada(this.getConfirmada());
+		clone.setCreditosPratico(this.getCreditosPratico());
+		clone.setCreditosTeorico(this.getCreditosTeorico());
+		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
+		if (this.getDisciplinaSubstituta() != null)
+			clone.setDisciplinaSubstituta(novoCenario.getEntidadeClonada(this.getDisciplinaSubstituta()));
+		clone.setHorarioAula(novoCenario.getEntidadeClonada(this.getHorarioAula()));
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setOferta(novoCenario.getEntidadeClonada(this.getOferta()));
+		clone.setQuantidadeAlunos(this.getQuantidadeAlunos());
+		clone.setSala(novoCenario.getEntidadeClonada(this.getSala()));
+		clone.setSemana(this.getSemana());
+		clone.setTurma(this.getTurma());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			AtendimentoTatico entidadeClone) {
+		for (AlunoDemanda alunoDemanda : this.getAlunosDemanda())
+		{
+			entidadeClone.getAlunosDemanda().add(novoCenario.getEntidadeClonada(alunoDemanda));
+			novoCenario.getEntidadeClonada(alunoDemanda).getAtendimentosTatico().add(entidadeClone);
+		}
 	}
 }

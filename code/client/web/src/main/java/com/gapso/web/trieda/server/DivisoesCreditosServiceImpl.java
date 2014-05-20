@@ -64,6 +64,41 @@ public class DivisoesCreditosServiceImpl
 	}
 	
 	@Override
+	public PagingLoadResult< DivisaoCreditoDTO > getListComDisciplinas(
+		CenarioDTO cenarioDTO, PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find( cenarioDTO.getId(),
+			this.getInstituicaoEnsinoUser() );
+
+		List< DivisaoCreditoDTO > list = new ArrayList< DivisaoCreditoDTO >();
+		List< DivisaoCredito > divisoesCreditos = DivisaoCredito.findWithDisciplina(
+			cenario, config.getOffset(), config.getLimit(), getInstituicaoEnsinoUser() );
+
+		for ( DivisaoCredito divisaoCredito : divisoesCreditos )
+		{
+			list.add( ConvertBeans.toDivisaoCreditoDTO( divisaoCredito ) );
+		}
+
+		Collections.sort( list, new Comparator< DivisaoCreditoDTO >()
+		{
+			@Override
+			public int compare( DivisaoCreditoDTO d1, DivisaoCreditoDTO d2 )
+			{
+				return d1.getTotalCreditos().compareTo( d2.getTotalCreditos() );
+			}
+		});
+
+		BasePagingLoadResult< DivisaoCreditoDTO > result
+			= new BasePagingLoadResult< DivisaoCreditoDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( DivisaoCredito.countWithDisciplina(
+			cenario, getInstituicaoEnsinoUser() ) );
+
+		return result;
+	}
+	
+	@Override
 	public void save( DivisaoCreditoDTO divisaoCreditoDTO ) throws TriedaException
 	{
 		Cenario cenario = Cenario.find(divisaoCreditoDTO.getCenarioId(), getInstituicaoEnsinoUser());
@@ -87,6 +122,25 @@ public class DivisoesCreditosServiceImpl
 			}
 		}
 	}
+	
+	@Override
+	public void saveWithDisciplina( DivisaoCreditoDTO divisaoCreditoDTO )
+	{
+		DivisaoCredito divisaoCredito
+			= ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
+
+		if ( divisaoCredito.getId() != null
+			&& divisaoCredito.getId() > 0 )
+		{
+			divisaoCredito.merge();
+		}
+		else
+		{
+			divisaoCredito.persist();
+			divisaoCredito.getDisciplina().setDivisaoCreditos(divisaoCredito);
+			divisaoCredito.getDisciplina().merge();
+		}
+	}
 
 	@Override
 	public void remove( List< DivisaoCreditoDTO > divisaoCreditoDTOList )
@@ -98,6 +152,22 @@ public class DivisoesCreditosServiceImpl
 
 			if ( divisaoCredito != null )
 			{
+				divisaoCredito.remove();
+			}
+		}
+	}
+	
+	@Override
+	public void removeWithDisciplina( List< DivisaoCreditoDTO > divisaoCreditoDTOList )
+	{
+		for ( DivisaoCreditoDTO divisaoCreditoDTO : divisaoCreditoDTOList )
+		{
+			DivisaoCredito divisaoCredito
+				= ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
+
+			if ( divisaoCredito != null )
+			{
+				divisaoCredito.getDisciplina().setDivisaoCreditos(null);
 				divisaoCredito.remove();
 			}
 		}

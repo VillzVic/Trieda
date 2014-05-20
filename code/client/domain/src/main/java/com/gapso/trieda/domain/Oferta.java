@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "OFE_ID" )
 @Table( name = "OFERTAS" )
 public class Oferta
-	implements Serializable, Comparable< Oferta >
+	implements Serializable, Comparable< Oferta >, Clonable< Oferta >
 {
 	private static final long serialVersionUID = -976299446108675926L;
 
@@ -662,5 +662,23 @@ public class Oferta
 		long tmp = Math.round(d);
 		
 		this.setReceita( (double)tmp/factor );
+	}
+
+	public Oferta clone(CenarioClone novoCenario) {
+		Oferta clone = new Oferta();
+		clone.setCampus(novoCenario.getEntidadeClonada(this.getCampus()));
+		clone.setCurriculo(novoCenario.getEntidadeClonada(this.getCurriculo()));
+		clone.setCurso(novoCenario.getEntidadeClonada(this.getCurso()));
+		clone.setReceita(this.getReceita());
+		clone.setTurno(novoCenario.getEntidadeClonada(this.getTurno()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Oferta entidadeClone) {
+		for (Demanda demanda : this.getDemandas())
+		{
+			entidadeClone.getDemandas().add(novoCenario.clone(demanda));
+		}
 	}
 }

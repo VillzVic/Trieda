@@ -925,7 +925,7 @@ public class AlocacaoManualView
 		textContainer.setWidth(200);
 		LabelField turmaLabel = new LabelField();
 		turmaLabel.setFieldLabel("<b>Turma:</b>");
-		turmaLabel.setValue(turmasGrid.getSelectionModel().getSelectedItem().getDisplayText());
+		turmaLabel.setValue(turmaSelecionada.getNome() + " (" + turmaSelecionada.getDisciplinaString() + ")");
 		
 		LabelField noAlunosLabel = new LabelField();
 		noAlunosLabel.setFieldLabel("<b>Nº Alunos:</b>");

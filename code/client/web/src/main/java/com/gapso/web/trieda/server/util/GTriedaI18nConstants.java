@@ -1037,5 +1037,8 @@ public class GTriedaI18nConstants
 		return this.languageManager.getText("virtual");
 	}
 
-
+	@Override
+	public String divisoesCreditoDisciplina() {
+		return this.languageManager.getText("divisoesCreditoDisciplina");
+	}
 }

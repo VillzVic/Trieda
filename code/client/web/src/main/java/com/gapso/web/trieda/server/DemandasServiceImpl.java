@@ -698,30 +698,43 @@ public class DemandasServiceImpl
 	}
 
 	@Override
+	@Transactional
 	public void remove( List< DemandaDTO > demandaDTOList )
 	{
+		Set<Aluno> alunosVirtuaisComDemanda = new HashSet<Aluno>();
+		Set<Demanda> demandas = new HashSet<Demanda>();
 		for ( DemandaDTO demandaDTO : demandaDTOList )
 		{
-			Demanda demanda = ConvertBeans.toDemanda( demandaDTO );
-
-			if ( demanda != null )
-			{
-				removeAlunosVirtuais(demanda);
-				demanda.remove();
-			}
+			if (Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser()) != null)
+				demandas.add(Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser()));
 		}
+		for ( Demanda demanda : demandas )
+		{
+			for (AlunoDemanda alunosDemanda : demanda.getAlunosDemanda())
+			{
+				if (alunosDemanda.getAluno().getVirtual())
+				{
+					Set<Demanda> demandaDoAluno = new HashSet<Demanda>();
+					for (AlunoDemanda alunoDemanda : 
+						AlunoDemanda.findByAluno(getInstituicaoEnsinoUser(), alunosDemanda.getAluno()))
+					{
+						demandaDoAluno.add(alunoDemanda.getDemanda());
+					}
+					if (demandas.containsAll(demandaDoAluno))
+						alunosVirtuaisComDemanda.add(alunosDemanda.getAluno());
+				}
+			}
+			demanda.remove();
+		}
+		removeAlunosVirtuais(alunosVirtuaisComDemanda);
 	}
 	
 	@Transactional
-	private void removeAlunosVirtuais(Demanda demanda)
+	private void removeAlunosVirtuais(Set<Aluno> alunos)
 	{
-		for (AlunoDemanda alunoDemanda : demanda.getAlunosDemanda())
+		for (Aluno aluno : alunos)
 		{
-			if (alunoDemanda.getAluno().getNome().contains("Aluno Virtual")
-					&& AlunoDemanda.findByAluno(getInstituicaoEnsinoUser(), alunoDemanda.getAluno()).size() == 1)
-			{
-				alunoDemanda.getAluno().remove();
-			}
+			aluno.remove();
 		}
 	}
 	

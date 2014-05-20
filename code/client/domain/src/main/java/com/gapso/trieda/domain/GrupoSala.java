@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "GRUPOS_SALA", uniqueConstraints =
 @UniqueConstraint( columnNames = { "GRS_CODIGO", "UNI_ID" } ) )
 public class GrupoSala
-	implements Serializable
+	implements Serializable, Clonable< GrupoSala >
 {
 	private static final long serialVersionUID = -3068409934520158819L;
 
@@ -374,4 +374,20 @@ public class GrupoSala
 		
         return q.getResultList();
     }
+
+	public GrupoSala clone(CenarioClone novoCenario) {
+		GrupoSala clone = new GrupoSala();
+		clone.setCodigo(this.getCodigo());
+		clone.setNome(this.getNome());
+		clone.setUnidade(novoCenario.getEntidadeClonada(this.getUnidade()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, GrupoSala entidadeClone) {
+		for (Sala sala : this.getSalas())
+		{
+			entidadeClone.getSalas().add(novoCenario.getEntidadeClonada(sala));
+		}
+	}
 }

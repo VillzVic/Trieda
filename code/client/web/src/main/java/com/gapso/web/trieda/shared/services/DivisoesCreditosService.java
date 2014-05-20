@@ -20,5 +20,8 @@ public interface DivisoesCreditosService extends RemoteService {
 	PagingLoadResult<DivisaoCreditoDTO> getList(CenarioDTO cenarioDTO, PagingLoadConfig config);
 	void save(DivisaoCreditoDTO divisaoCreditoDTO) throws TriedaException;
 	void remove(List<DivisaoCreditoDTO> divisaoCreditoDTOList);
+	PagingLoadResult<DivisaoCreditoDTO> getListComDisciplinas(CenarioDTO cenarioDTO, PagingLoadConfig config);
+	void saveWithDisciplina(DivisaoCreditoDTO divisaoCreditoDTO);
+	void removeWithDisciplina(List<DivisaoCreditoDTO> divisaoCreditoDTOList);
 
 }

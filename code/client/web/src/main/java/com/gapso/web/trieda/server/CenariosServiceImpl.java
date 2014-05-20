@@ -19,21 +19,36 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
+import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoOperacional;
+import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Aula;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.CenarioClone;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.DeslocamentoCampus;
+import com.gapso.trieda.domain.DeslocamentoUnidade;
+import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.DivisaoCredito;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.MotivoUsoProfessorVirtual;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
+import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Titulacao;
+import com.gapso.trieda.domain.Turma;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.CenarioUtil;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -359,12 +374,190 @@ public class CenariosServiceImpl
 
 	@Override
 	@Transactional
-	public void clonar( CenarioDTO cenarioDTO )
+	public void clonar( CenarioDTO cenarioDTO, CenarioDTO clone, boolean clonarSolucao )
 	{
-		Cenario cenario = ConvertBeans.toCenario( cenarioDTO );
+		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
+		Cenario cenarioOriginal = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
-		CenarioUtil cenarioUtil = new CenarioUtil();
-		cenarioUtil.clonarCenario( cenario );
+		cenario.setCriadoPor(getUsuario());
+		cenario.setDataCriacao(new Date());
+		cenario.setAtualizadoPor(getUsuario());
+		cenario.setDataAtualizacao(new Date());
+		cenario.setNome(clone.getNome());
+		cenario.setOficial(clone.getOficial());
+		cenario.setAno(clone.getAno());
+		cenario.setSemestre(clone.getSemestre());
+		cenario.setComentario(clone.getComentario());
+		
+		clonarEntidades( cenario, cenarioOriginal, clonarSolucao );
+	}
+
+	@Transactional
+	private void clonarEntidades(Cenario cenario, Cenario cenarioOriginal, boolean clonarSolucao) {
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(cenario.getInstituicaoEnsino().getId());
+		
+		cenario.setId( null );
+		cenario.persist();
+		
+		CenarioClone cenarioClone = new CenarioClone(cenario);
+
+		for (TipoSala tipoSala : TipoSala.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoSala ts = cenarioClone.clone(tipoSala);
+			ts.persist();
+		}
+		
+		for (TipoDisciplina tipoDisciplina : TipoDisciplina.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoDisciplina td = cenarioClone.clone(tipoDisciplina);
+			td.persist();
+		}
+		
+		for (TipoContrato tipoContrato : TipoContrato.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoContrato tc = cenarioClone.clone(tipoContrato);
+			tc.persist();
+		}
+		
+		for (Titulacao titulacao : Titulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			Titulacao t = cenarioClone.clone(titulacao);
+			t.persist();
+		}
+			
+		for (Turno turno : cenarioOriginal.getTurnos())
+		{
+			Turno t = cenarioClone.clone(turno);
+			t.persist();
+		}
+		
+		for (SemanaLetiva semanaLetiva : cenarioOriginal.getSemanasLetivas())
+		{
+			SemanaLetiva sl = cenarioClone.clone(semanaLetiva);
+			sl.persist();
+		}
+		
+		for (Campus campus : cenarioOriginal.getCampi())
+		{
+			Campus c = cenarioClone.clone(campus);
+			c.persist();
+		}
+		
+		for (DeslocamentoCampus deslocamentoCampus : DeslocamentoCampus.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			DeslocamentoCampus dc = cenarioClone.clone(deslocamentoCampus);
+			dc.persist();
+		}
+		
+		for (DeslocamentoUnidade deslocamentoUnidade : DeslocamentoUnidade.findAll(instituicaoEnsino, cenarioOriginal))
+		{
+			DeslocamentoUnidade du = cenarioClone.clone(deslocamentoUnidade);
+			du.persist();
+		}
+		
+		for (TipoCurso tipoCurso : TipoCurso.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			TipoCurso tc = cenarioClone.clone(tipoCurso);
+			tc.persist();
+		}
+		
+		for (AreaTitulacao areaTitulacao : AreaTitulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			AreaTitulacao at = cenarioClone.clone(areaTitulacao);
+			at.persist();
+		}
+		
+		for (Curso curso : cenarioOriginal.getCursos())
+		{
+			Curso c = cenarioClone.clone(curso);
+			c.persist();
+		}
+		
+		for (Disciplina disciplina : cenarioOriginal.getDisciplinas())
+		{
+			Disciplina d = cenarioClone.clone(disciplina);
+			d.persist();
+		}
+		
+		for (DivisaoCredito divisaoCredito : cenarioOriginal.getDivisoesCredito())
+		{
+			divisaoCredito.getCenario().add(cenario);
+		}
+		
+		for (Equivalencia equivalencia : Equivalencia.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			Equivalencia eq = cenarioClone.clone(equivalencia);
+			eq.persist();
+		}
+		
+		for (Curriculo curriculo : cenarioOriginal.getCurriculos())
+		{
+			Curriculo c = cenarioClone.clone(curriculo);
+			c.persist();
+		}
+		
+		for (Aluno aluno : cenarioOriginal.getAlunos())
+		{
+			Aluno a = cenarioClone.clone(aluno);
+			a.persist();
+		}
+		
+		for (Oferta oferta : Oferta.findByCenario(instituicaoEnsino, cenarioOriginal))
+		{
+			Oferta o = cenarioClone.clone(oferta);
+			o.persist();
+		}
+		
+		for (Professor professor : cenarioOriginal.getProfessores())
+		{
+			Professor p = cenarioClone.clone(professor);
+			p.persist();
+		}
+		
+		if (clonarSolucao)
+		{
+			for (AtendimentoTatico atendimentoTatico : cenarioOriginal.getAtendimentosTaticos())
+			{
+				AtendimentoTatico at = cenarioClone.clone(atendimentoTatico);
+				at.persist();
+			}
+			
+			for (ProfessorVirtual professorVirtual : ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenarioOriginal))
+			{
+				ProfessorVirtual pv = cenarioClone.clone(professorVirtual);
+				pv.persist();
+			}
+			
+			for (DicaEliminacaoProfessorVirtual dicaEliminacao : DicaEliminacaoProfessorVirtual.findByCenario(instituicaoEnsino, cenarioOriginal))
+			{
+				DicaEliminacaoProfessorVirtual d = cenarioClone.clone(dicaEliminacao);
+				d.persist();
+			}
+			
+			for (MotivoUsoProfessorVirtual motivoUso : MotivoUsoProfessorVirtual.findByCenario(instituicaoEnsino, cenarioOriginal))
+			{
+				MotivoUsoProfessorVirtual m = cenarioClone.clone(motivoUso);
+				m.persist();
+			}
+			
+			for (AtendimentoOperacional atendimentoOperacional : cenarioOriginal.getAtendimentosOperacionais())
+			{
+				AtendimentoOperacional ao = cenarioClone.clone(atendimentoOperacional);
+				ao.persist();
+			}
+			
+			for (Turma turma : cenarioOriginal.getTurmas())
+			{
+				Turma t = cenarioClone.clone(turma);
+				t.persist();
+			}
+			
+			for (Aula aula : cenarioOriginal.getAulas())
+			{
+				Aula a = cenarioClone.clone(aula);
+				a.persist();
+			}
+		}
 	}
 
 	@Override

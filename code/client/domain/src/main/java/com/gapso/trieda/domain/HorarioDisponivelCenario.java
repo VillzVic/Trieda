@@ -38,7 +38,7 @@ import com.gapso.trieda.misc.Semanas;
 @RooEntity( identifierColumn = "HDC_ID" )
 @Table( name = "HORARIO_DISPONIVEL_CENARIO" )
 public class HorarioDisponivelCenario
-	implements Serializable
+	implements Serializable, Clonable<HorarioDisponivelCenario>
 {
 	private static final long serialVersionUID = 9128639869205918403L;
 
@@ -253,6 +253,22 @@ public class HorarioDisponivelCenario
 	}
     
     @SuppressWarnings("unchecked")
+    public static List<HorarioDisponivelCenario> findBy(
+        	InstituicaoEnsino instituicaoEnsino,
+        	HorarioAula horarioAula )
+        {
+    		Query q = entityManager().createQuery(
+    			" SELECT o FROM HorarioDisponivelCenario o " +
+    			" WHERE o.horarioAula.turno.instituicaoEnsino = :instituicaoEnsino " +
+    			" AND o.horarioAula = :horarioAula " );
+
+    		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+    		q.setParameter( "horarioAula", horarioAula );
+
+    		return q.getResultList();
+    	}
+    
+    @SuppressWarnings("unchecked")
 	public static List<HorarioDisponivelCenario> findBy(
         	InstituicaoEnsino instituicaoEnsino, Cenario cenario,
         	Sala sala, Disciplina disciplina, SemanaLetiva semanaLetiva, Semanas semana )
@@ -457,5 +473,19 @@ public class HorarioDisponivelCenario
 
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;
+	}
+	
+	public HorarioDisponivelCenario clone(CenarioClone novoCenario)
+	{
+		HorarioDisponivelCenario clone = new HorarioDisponivelCenario();
+		clone.setHorarioAula(novoCenario.getEntidadeClonada(this.getHorarioAula()));
+		clone.setDiaSemana(this.getDiaSemana());
+		
+		return clone;
+	}
+	
+	public void cloneChilds(CenarioClone novoCenario, HorarioDisponivelCenario clone)
+	{
+		
 	}
 }

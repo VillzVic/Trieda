@@ -51,6 +51,7 @@ public class ExportExcelFactory {
 			case DISCIPLINAS_PRE_REQUISITOS: exporter = new DisciplinasPreRequisitosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DISCIPLINAS_CO_REQUISITOS: exporter = new DisciplinasCoRequisitosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DIVISOES_CREDITO: exporter = new DivisoesCreditoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case DIVISOES_CREDITO_DISCIPLINA: exporter = new DivisoesCreditoDisciplinaExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case EQUIVALENCIAS: exporter = new EquivalenciasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case HABILITACAO_PROFESSORES: exporter = new HabilitacoesProfessoresExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case PERCENT_MESTRES_DOUTORES: exporter = new PercentMestresDoutoresExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;

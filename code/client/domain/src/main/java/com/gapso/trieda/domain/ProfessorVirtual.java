@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "PRV_ID" )
 @Table( name = "PROFESSORES_VIRTUAIS" )
 public class ProfessorVirtual
-	implements Serializable, Comparable< ProfessorVirtual >
+	implements Serializable, Comparable< ProfessorVirtual >, Clonable< ProfessorVirtual >
 {
 	private static final long serialVersionUID = 265242535107921721L;
 
@@ -467,5 +467,27 @@ public class ProfessorVirtual
 
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;
+	}
+
+	public ProfessorVirtual clone(CenarioClone novoCenario) {
+		ProfessorVirtual clone = new ProfessorVirtual();
+		if (this.getAreaTitulacao() != null)
+			clone.setAreaTitulacao(novoCenario.getEntidadeClonada(this.getAreaTitulacao()));
+		clone.setCargaHorariaMax(this.getCargaHorariaMax());
+		clone.setCargaHorariaMin(this.getCargaHorariaMin());
+		clone.setCenario(novoCenario.getCenario());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setTipoContrato(novoCenario.getEntidadeClonada(this.getTipoContrato()));
+		clone.setTitulacao(novoCenario.getEntidadeClonada(this.getTitulacao()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			ProfessorVirtual entidadeClone) {
+		for (Disciplina disciplina : this.getDisciplinas())
+		{
+			entidadeClone.getDisciplinas().add(novoCenario.getEntidadeClonada(disciplina));
+		}
 	}
 }

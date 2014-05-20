@@ -15,4 +15,10 @@ public interface DivisoesCreditosServiceAsync
 		AsyncCallback< PagingLoadResult< DivisaoCreditoDTO > > callback );
 	void save( DivisaoCreditoDTO divisaoCreditoDTO, AsyncCallback< Void > callback );
 	void remove( List< DivisaoCreditoDTO > divisaoCreditoDTOList, AsyncCallback< Void > callback );
+	void getListComDisciplinas(CenarioDTO cenarioDTO, PagingLoadConfig config,
+			AsyncCallback<PagingLoadResult<DivisaoCreditoDTO>> callback);
+	void saveWithDisciplina(DivisaoCreditoDTO divisaoCreditoDTO,
+			AsyncCallback<Void> callback);
+	void removeWithDisciplina(List<DivisaoCreditoDTO> divisaoCreditoDTOList,
+			AsyncCallback<Void> callback);
 }

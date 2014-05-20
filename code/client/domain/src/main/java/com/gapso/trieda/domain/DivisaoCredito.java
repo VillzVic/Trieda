@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "DCR_ID" )
 @Table( name = "DIVISOES_CREDITO" )
 public class DivisaoCredito
-	implements Serializable
+	implements Serializable, Clonable< DivisaoCredito >
 {
 	private static final long serialVersionUID = 4185000264330934580L;
 
@@ -96,7 +96,8 @@ public class DivisaoCredito
     	CascadeType.MERGE, CascadeType.REFRESH } )
     private Set< Cenario > cenario = new HashSet< Cenario >();
 
-    @OneToOne( cascade = CascadeType.ALL,
+    @OneToOne( cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+    		CascadeType.REFRESH },
     	targetEntity = Disciplina.class, mappedBy = "divisaoCreditos" )
     private Disciplina disciplina;
     
@@ -262,6 +263,21 @@ public class DivisaoCredito
 
         return ( (Number) q.getSingleResult() ).intValue();
     }
+	
+    public static int countWithDisciplina(
+    	Cenario cenario, InstituicaoEnsino instituicaoEnsino )
+    {
+        Query q = entityManager().createQuery(
+        	" SELECT DISTINCT(o.divisaoCreditos) FROM Disciplina o " +
+        	" WHERE o.cenario = :cenario " +
+        	" AND o.divisaoCreditos.instituicaoEnsino = :instituicaoEnsino " +
+        	" ORDER BY o.divisaoCreditos.creditos ASC " );
+
+        q.setParameter( "cenario", cenario );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList().size();
+    }
 
 	public static DivisaoCredito find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
@@ -355,6 +371,27 @@ public class DivisaoCredito
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );
+
+        return q.getResultList();
+    }
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< DivisaoCredito > findWithDisciplina(
+    	Cenario cenario, Integer firstResult,
+    	Integer maxResults, InstituicaoEnsino instituicaoEnsino )
+    {
+        Query q = entityManager().createQuery(
+        	" SELECT DISTINCT(o.divisaoCreditos) FROM Disciplina o " +
+        	" WHERE o.cenario = :cenario " +
+        	" AND o.divisaoCreditos.instituicaoEnsino = :instituicaoEnsino " +
+        	" ORDER BY o.divisaoCreditos.creditos ASC " );
+
+        q.setParameter( "cenario", cenario );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        if (firstResult != null)
+        	q.setFirstResult( firstResult );
+        if (maxResults != null)
+        	q.setMaxResults( maxResults );
 
         return q.getResultList();
     }
@@ -519,9 +556,33 @@ public class DivisaoCredito
 				+ "-" + divisaoCredito.getDia4() + "-" + divisaoCredito.getDia5() + "-" + divisaoCredito.getDia6()
 				+ "-" + divisaoCredito.getDia7();
 			
+			key = divisaoCredito.getDisciplina() == null ? key : divisaoCredito.getDisciplina().getCodigo();
+			
 			divisoesMap.put(key, divisaoCredito);
 		}
 		
 		return divisoesMap;
+	}
+
+	public DivisaoCredito clone(CenarioClone novoCenario) {
+		DivisaoCredito clone = new DivisaoCredito();
+		clone.setCreditos(this.getCreditos());
+		clone.setDia1(this.getDia1());
+		clone.setDia2(this.getDia2());
+		clone.setDia3(this.getDia3());
+		clone.setDia4(this.getDia4());
+		clone.setDia5(this.getDia5());
+		clone.setDia6(this.getDia6());
+		clone.setDia7(this.getDia7());
+		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			DivisaoCredito entidadeClone) {
+		// TODO Auto-generated method stub
+		
 	}
 }

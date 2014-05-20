@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "CURSOS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "CEN_ID", "CUR_CODIGO" } ) )
 public class Curso
-	implements Serializable, Comparable< Curso >
+	implements Serializable, Comparable< Curso >, Clonable< Curso >
 {
 	private static final long serialVersionUID = 2645879541329424105L;
 
@@ -825,5 +825,30 @@ public class Curso
 	public int compareTo( Curso c )
 	{
 		return this.getCodigo().compareTo( c.getCodigo() );
+	}
+
+	public Curso clone(CenarioClone novoCenario) {
+		Curso clone = new Curso();
+		clone.setAdmMaisDeUmDisciplina(this.getAdmMaisDeUmDisciplina());
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCodigo(this.getCodigo());
+		clone.setMaxDisciplinasPeloProfessor(this.getMaxDisciplinasPeloProfessor());
+		clone.setMinTempoIntegral(this.getMinTempoIntegral());
+		clone.setMinTempoIntegralParcial(this.getMinTempoIntegralParcial());
+		clone.setNome(this.getNome());
+		clone.setNumMinDoutores(this.getNumMinDoutores());
+		clone.setNumMinMestres(this.getNumMinMestres());
+		clone.setTipoCurso(novoCenario.getEntidadeClonada(this.getTipoCurso()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Curso entidadeClone) {
+		
+		for (AreaTitulacao areaTitulacao : this.getAreasTitulacao())
+		{
+			entidadeClone.getAreasTitulacao().add(novoCenario.getEntidadeClonada(areaTitulacao));
+			novoCenario.getEntidadeClonada(areaTitulacao).getCursos().add(entidadeClone);
+		}
 	}
 }

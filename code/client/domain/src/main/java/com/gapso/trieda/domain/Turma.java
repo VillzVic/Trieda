@@ -38,7 +38,7 @@ import com.gapso.trieda.misc.Semanas;
 @RooEntity( identifierColumn = "TUR_ID" )
 @Table( name = "TURMAS" )
 public class Turma 
-	implements Serializable
+	implements Serializable, Clonable<Turma>
 {
 
 	private static final long serialVersionUID = 2635105670922575311L;
@@ -339,5 +339,23 @@ public class Turma
 		q.setParameter( "campus", campus );
 		
 		return q.getResultList();
+	}
+
+	public Turma clone(CenarioClone novoCenario) {
+		Turma clone = new Turma();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
+		clone.setNome(this.getNome());
+		clone.setParcial(this.getParcial());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Turma entidadeClone) {
+		for (AlunoDemanda alunoDemanda : this.getAlunos())
+		{
+			entidadeClone.getAlunos().add(novoCenario.getEntidadeClonada(alunoDemanda));
+			
+		}
 	}
 }

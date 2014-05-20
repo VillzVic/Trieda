@@ -1089,9 +1089,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		List<String> warningsAux = new ArrayList<String>();
 		
 		boolean todos = true;
+		boolean professoresVazios = true;
 		
 		for (Campus campus : parametro.getCampi()) {
 			for (Professor professor : campus.getProfessores()) {
+				professoresVazios = false;
 				if(professor.getCargaHorariaMax() == 0){
 					warningsAux.add(HtmlUtils.htmlUnescape("O professor "+professor.getNome() + " de CPF "+professor.getCpf()+" está com carga horária máxima igual a zero e, portanto, não poderá ser utilizado"));
 				} else {
@@ -1099,11 +1101,13 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 			}
 		}
-		
-		if(todos){
-			errors.add(HtmlUtils.htmlUnescape("Todos os professores estão com a carga horária máxima zerada"));
-		} else
-			warnings.addAll(warningsAux);
+		if (!professoresVazios)
+		{
+			if(todos){
+				errors.add(HtmlUtils.htmlUnescape("Todos os professores estão com a carga horária máxima zerada"));
+			} else
+				warnings.addAll(warningsAux);
+		}
 	}
 	
 	private void checkOfertaComCargaReceitaCreditoZerada(Parametro parametro, List<String> errors, List<String> warnings) {

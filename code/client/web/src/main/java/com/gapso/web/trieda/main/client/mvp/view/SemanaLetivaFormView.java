@@ -50,8 +50,8 @@ public class SemanaLetivaFormView
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.semanaLetiva16() );
-		this.simpleModal.setHeight( 230 );
-		this.simpleModal.setWidth( 300 );
+		this.simpleModal.setHeight( 200 );
+		this.simpleModal.setWidth( 400 );
 		this.createForm();
 
 		this.simpleModal.setContent( this.formPanel );
@@ -62,6 +62,7 @@ public class SemanaLetivaFormView
 		FormData formData = new FormData( "-20" );
 		this.formPanel = new FormPanel();
 		this.formPanel.setHeaderVisible( false );
+		this.formPanel.setLabelWidth(150);
 
 		this.codigoTF = new UniqueTextField(
 			this.cenarioDTO, UniqueDomain.SEMANA_LETIVA );

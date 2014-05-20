@@ -16,6 +16,7 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 	private List<String> horariosDeInicioDeAula;
 	private List<String> horariosDeFimDeAula;
 	private List<Integer> qtdColunasPorDiaSemana;
+	private List<ParDTO<String, Integer>> horariosDisponiveis;
 
 	public AtendimentoServiceRelatorioResponse(){}
 	
@@ -27,6 +28,18 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 		this.horariosDeInicioDeAula = (List<String>) result.getQuarto();
 		this.horariosDeFimDeAula = (List<String>) result.getQuinto();
 		this.qtdColunasPorDiaSemana = null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <A, B, C, D, E> AtendimentoServiceRelatorioResponse(QuintetoDTO<A, B, C, D, E> result,
+			List<ParDTO<String, Integer>> horariosDisponiveis){
+		this.atendimentosDTO = (List<AtendimentoRelatorioDTO>) result.getPrimeiro();
+		this.mdcTemposAulaNumSemanasLetivas = (ParDTO<Integer, Boolean>) result.getSegundo();
+		this.labelsDasLinhasDaGradeHoraria = (List<String>) result.getTerceiro();
+		this.horariosDeInicioDeAula = (List<String>) result.getQuarto();
+		this.horariosDeFimDeAula = (List<String>) result.getQuinto();
+		this.qtdColunasPorDiaSemana = null;
+		this.horariosDisponiveis = horariosDisponiveis;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -42,6 +55,12 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 	@SuppressWarnings("unchecked")
 	public static <A, B, C, D, E , F> AtendimentoServiceRelatorioResponse create(Object t){
 		if(t instanceof QuintetoDTO) return new AtendimentoServiceRelatorioResponse((QuintetoDTO<A, B, C, D, E>) t);
+		return new AtendimentoServiceRelatorioResponse((SextetoDTO<A, B, C, D, E, F>) t);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <A, B, C, D, E , F> AtendimentoServiceRelatorioResponse create(Object t, List<ParDTO<String, Integer>> horarioDisponiveis){
+		if(t instanceof QuintetoDTO) return new AtendimentoServiceRelatorioResponse((QuintetoDTO<A, B, C, D, E>) t, horarioDisponiveis);
 		return new AtendimentoServiceRelatorioResponse((SextetoDTO<A, B, C, D, E, F>) t);
 	}
 
@@ -67,5 +86,10 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 
 	public List<Integer> getQtdColunasPorDiaSemana() {
 		return qtdColunasPorDiaSemana;
+	}
+	
+	public List<ParDTO<String, Integer>> getHorariosDisponiveis()
+	{
+		return horariosDisponiveis;
 	}
 }

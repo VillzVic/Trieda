@@ -206,8 +206,8 @@ public class MotivosUsoProfessorVirtualView
 	    ColumnConfig nome = new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_MOTIVO, "Motivo", 360 );
 	    nome.setRenderer(change);
 		list.add( nome );
-		list.add( new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_PROFESSOR_CPF, "Nome", 100 ) );
-		list.add( new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_PROFESSOR_STRING, "Teóricos", 110 ) );
+		list.add( new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_PROFESSOR_CPF, "Cpf", 100 ) );
+		list.add( new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_PROFESSOR_STRING, "Nome", 110 ) );
 
 		ColumnModel cm = new ColumnModel(list);
 		

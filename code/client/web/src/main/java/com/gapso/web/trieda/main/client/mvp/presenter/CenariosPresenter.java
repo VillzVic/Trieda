@@ -12,9 +12,9 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.main.client.mvp.view.CenarioClonarFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioEditarFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -35,6 +35,7 @@ public class CenariosPresenter
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
+		Button getClonarCenarioButton();
 		Button getAbrirCenarioButton();
 		Button getLimparSolucaoButton();
 		TextField< Integer > getAnoBuscaTextField();
@@ -174,6 +175,19 @@ public class CenariosPresenter
 						});
 					}
 				});
+			}
+		});
+		
+		this.display.getClonarCenarioButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CenarioClonarFormPresenter( instituicaoEnsinoDTO,
+					new CenarioClonarFormView( display.getGrid().getSelectionModel().getSelectedItem() ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
 

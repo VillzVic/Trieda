@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "DEM_ID" )
 @Table( name = "DEMANDAS" )
 public class Demanda
-	implements Serializable
+	implements Serializable, Clonable< Demanda >
 {
 	private static final long serialVersionUID = -3935898184270072639L;
 
@@ -900,5 +900,20 @@ public class Demanda
 
 	public void setAlunosDemanda(Set< AlunoDemanda > alunosDemanda) {
 		this.alunosDemanda = alunosDemanda;
+	}
+
+	public Demanda clone(CenarioClone novoCenario) {
+		Demanda clone = new Demanda();
+		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
+		clone.setOferta(novoCenario.getEntidadeClonada(this.getOferta()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Demanda entidadeClone) {
+		for (AlunoDemanda alunoDemanda : this.getAlunosDemanda())
+		{
+			entidadeClone.getAlunosDemanda().add(novoCenario.clone(alunoDemanda));
+		}
 	}
 }

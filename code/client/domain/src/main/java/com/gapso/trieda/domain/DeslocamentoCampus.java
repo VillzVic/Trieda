@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity(identifierColumn = "DEC_ID")
 @Table(name = "DESLOCAMENTOS_CAMPI")
 public class DeslocamentoCampus
-	implements java.io.Serializable
+	implements java.io.Serializable, Clonable< DeslocamentoCampus >
 {
 	private static final long serialVersionUID = -7559927105823983148L;
 
@@ -168,6 +168,23 @@ public class DeslocamentoCampus
 
         return q.getResultList();
     }
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< DeslocamentoCampus > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM DeslocamentoCampus o " +
+	        " WHERE o.origem.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.destino.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.destino.cenario = :cenario " +
+	        " AND o.origem.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+        return q.getResultList();
+    }
 
 	public static DeslocamentoCampus findDeslocamentoCampus(
 		Long id, InstituicaoEnsino instituicaoEnsino )
@@ -258,4 +275,19 @@ public class DeslocamentoCampus
 	{
         this.custo = custo;
     }
+
+	public DeslocamentoCampus clone(CenarioClone novoCenario) {
+		DeslocamentoCampus clone = new DeslocamentoCampus();
+		clone.setCusto(this.getCusto());
+		clone.setTempo(this.getTempo());
+		clone.setOrigem(novoCenario.getEntidadeClonada(this.getOrigem()));
+		clone.setDestino(novoCenario.getEntidadeClonada(this.getDestino()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			DeslocamentoCampus entidadeClone) {
+		
+	}
 }

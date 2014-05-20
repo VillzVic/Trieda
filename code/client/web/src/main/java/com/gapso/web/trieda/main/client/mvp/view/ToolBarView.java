@@ -92,6 +92,7 @@ public class ToolBarView
 	private Button associarDisciplinasSalasListDisciplinasBt;
 	private Button associarDisciplinasGruposSalasListDisciplinasBt;
 	private Button divisaoCreditosListDisciplinasBt;
+	private Button divisaoCreditosDisciplinaListDisciplinasBt;
 	private Button equivalenciasListDisciplinasBt;
 	private Button compatibilidadesListDisciplinasBt;
 
@@ -477,6 +478,10 @@ public class ToolBarView
 		divisaoCreditosListDisciplinasBt = createButton( "Regras de Divisão<br />de Créditos",
 			"Regras de Divisão de Créditos", Resources.DEFAULTS.divisaoCredito24() );
 		disciplinasToolBar.add( divisaoCreditosListDisciplinasBt );
+
+		divisaoCreditosDisciplinaListDisciplinasBt = createButton( "Divisão de Créditos<br />das Disciplinas",
+				"Regras de Divisão de Créditos", Resources.DEFAULTS.divisaoCreditoDisciplina24() );
+			disciplinasToolBar.add( divisaoCreditosDisciplinaListDisciplinasBt );
 		
 		equivalenciasListDisciplinasBt = createButton( "Equivalências",
 			"Equivalências", Resources.DEFAULTS.equivalencia24() );
@@ -885,6 +890,12 @@ public class ToolBarView
 	public Button getDivisaoCreditosListDisciplinasButton()
 	{
 		return divisaoCreditosListDisciplinasBt;
+	}
+	
+	@Override
+	public Button getDivisaoCreditosDisciplinaListDisciplinasButton()
+	{
+		return divisaoCreditosDisciplinaListDisciplinasBt;
 	}
 
 	@Override

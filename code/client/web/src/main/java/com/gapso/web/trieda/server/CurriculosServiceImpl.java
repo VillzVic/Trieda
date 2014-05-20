@@ -269,8 +269,17 @@ public class CurriculosServiceImpl
 	@Override
 	public List< Integer > getPeriodos( CurriculoDTO curriculoDTO, CenarioDTO cenarioDTO )
 	{
-		Cenario cenario = Cenario.find(
-			cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Cenario cenario;
+		if (cenarioDTO == null)
+		{
+			cenario = Cenario.find(
+					curriculoDTO.getCenarioId(), getInstituicaoEnsinoUser());
+		}
+		else
+		{
+			cenario = Cenario.find(
+					cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		}
 
 		if ( curriculoDTO == null )
 		{

@@ -47,7 +47,7 @@ import com.gapso.trieda.misc.Semanas;
 @Table( name = "PROFESSORES", uniqueConstraints =
 @UniqueConstraint( columnNames = { "PRF_CPF", "CEN_ID" } ) )
 public class Professor
-	implements Serializable, Comparable< Professor >
+	implements Serializable, Comparable< Professor >, Clonable < Professor >
 {
 	private static final long serialVersionUID = 265242535107921721L;
 
@@ -393,7 +393,7 @@ public class Professor
 		int count = 0;
 		for (SemanaLetiva semanaLetiva : semanasLetivas) {
 			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+				for (HorarioDisponivelCenario hdc : HorarioDisponivelCenario.findBy(semanaLetiva.getInstituicaoEnsino(), horarioAula)) {
 					hdc.getProfessores().addAll(professores);
 					hdc.merge();
 					count++;if (count == 100) {System.out.println("   100 hor�rios de professores processados"); count = 0;}
@@ -598,7 +598,23 @@ public class Professor
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List< Professor > findByCenarioFetchAtendimentos(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT o FROM Professor o " +
+			" LEFT JOIN FETCH o.atendimentosOperacionais " +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
 
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+	
 	public static int count( InstituicaoEnsino instituicaoEnsino, Cenario cenario, String cpf, String nome,
 		TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao,
 		String operadorCargaHorariaMin,
@@ -1228,5 +1244,42 @@ public class Professor
 
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;
+	}
+
+	public Professor clone(CenarioClone novoCenario) {
+		Professor clone = new Professor();
+		clone.setAreaTitulacao(novoCenario.getEntidadeClonada(this.getAreaTitulacao()));
+		clone.setCargaHorariaMax(this.getCargaHorariaMax());
+		clone.setCargaHorariaMin(this.getCargaHorariaMin());
+		clone.setCenario(novoCenario.getCenario());
+		clone.setCpf(this.getCpf());
+		clone.setCreditoAnterior(this.getCreditoAnterior());
+		clone.setMaxDiasSemana(this.getMaxDiasSemana());
+		clone.setMinCreditosDia(this.getMinCreditosDia());
+		clone.setNome(this.getNome());
+		clone.setTipoContrato(novoCenario.getEntidadeClonada(this.getTipoContrato()));
+		clone.setTitulacao(novoCenario.getEntidadeClonada(this.getTitulacao()));
+		clone.setValorCredito(this.getValorCredito());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, Professor entidadeClone) {
+		for (Campus campus : this.getCampi())
+		{
+			entidadeClone.getCampi().add(novoCenario.getEntidadeClonada(campus));
+		}
+		
+		for (ProfessorDisciplina professorDisciplina : this.getDisciplinas())
+		{
+			entidadeClone.getDisciplinas().add(novoCenario.clone(professorDisciplina));
+		}
+		
+		for (HorarioDisponivelCenario horarioDisponivel : this.getHorarios())
+		{
+			entidadeClone.getHorarios().add(novoCenario.getEntidadeClonada(horarioDisponivel));
+			novoCenario.getEntidadeClonada(horarioDisponivel).getProfessores().add(entidadeClone);
+		}
+		
 	}
 }

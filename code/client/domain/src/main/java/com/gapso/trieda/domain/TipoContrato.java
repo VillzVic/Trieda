@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "TCO_ID" )
 @Table( name = "TIPOS_CONTRATO" )
 public class TipoContrato
-	implements Serializable
+	implements Serializable, Clonable< TipoContrato >
 {
 	private static final long serialVersionUID = -6475305286240446247L;
 
@@ -248,4 +248,17 @@ public class TipoContrato
 	{
         this.nome = nome;
     }
+
+	public TipoContrato clone(CenarioClone novoCenario) {
+		TipoContrato clone = new TipoContrato();
+		clone.setCenario(novoCenario.getCenario());
+		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
+		clone.setNome(this.getNome());
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario, TipoContrato entidadeClone) {
+		
+	}
 }

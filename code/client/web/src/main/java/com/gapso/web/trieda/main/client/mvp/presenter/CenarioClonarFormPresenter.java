@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.main.client.mvp.presenter.CenarioEditarFormPresenter.Display;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -18,7 +19,7 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CenarioCloneFormPresenter
+public class CenarioClonarFormPresenter
 	implements Presenter
 {
 	public interface Display
@@ -32,13 +33,14 @@ public class CenarioCloneFormPresenter
 		CenarioDTO getCenarioDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
+		CheckBox getClonarSolucaoCheckBox();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< CenarioDTO > gridPanel;
 	private Display display;
-	
-	public CenarioCloneFormPresenter(
+
+	public CenarioClonarFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< CenarioDTO > gridPanel )
 	{
@@ -60,14 +62,13 @@ public class CenarioCloneFormPresenter
 				if ( isValid() )
 				{
 					final CenariosServiceAsync service = Services.cenarios();
-
-					service.clonar( getDTO(), getDTO(), display.getOficialCheckBox().getValue(), new AsyncCallback< Void >()
+					service.clonar( display.getCenarioDTO(), getClone(), display.getClonarSolucaoCheckBox().getValue(), new AsyncCallback< Void >()
 					{
 						@Override
 						public void onFailure( Throwable caught )
 						{
 							MessageBox.alert( "ERRO!",
-								"Deu falha na conexão", null);
+								"Deu falha na conexão", null );
 						}
 
 						@Override
@@ -75,9 +76,7 @@ public class CenarioCloneFormPresenter
 						{
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-
-							Info.display( "Salvo",
-								"Item salvo com sucesso!" );
+							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
 				}
@@ -90,24 +89,20 @@ public class CenarioCloneFormPresenter
 		});
 	}
 	
+	private CenarioDTO getClone() {
+		CenarioDTO clone = new CenarioDTO();
+		clone.setNome(display.getNomeTextField().getValue());
+		clone.setOficial(display.getOficialCheckBox().getValue());
+		clone.setAno(display.getAnoTextField().getValue().intValue());
+		clone.setSemestre(display.getSemestreTextField().getValue().intValue());
+		clone.setComentario(display.getComentarioTextField().getValue());
+		
+		return clone;
+	}
+
 	private boolean isValid()
 	{
 		return this.display.isValid();
-	}
-
-	private CenarioDTO getDTO()
-	{
-		CenarioDTO cenarioDTO = this.display.getCenarioDTO();
-
-		cenarioDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
-		cenarioDTO.setMasterData( false );
-		cenarioDTO.setOficial( this.display.getOficialCheckBox().getValue() );
-		cenarioDTO.setNome( this.display.getNomeTextField().getValue() );
-		cenarioDTO.setAno( this.display.getAnoTextField().getValue().intValue() );
-		cenarioDTO.setSemestre( this.display.getSemestreTextField().getValue().intValue() );
-		cenarioDTO.setComentario( this.display.getComentarioTextField().getValue() );
-
-		return cenarioDTO;
 	}
 
 	@Override

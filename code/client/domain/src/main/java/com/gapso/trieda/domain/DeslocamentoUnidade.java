@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "DEU_ID" )
 @Table( name = "DESLOCAMENTOS_UNIDADES" )
 public class DeslocamentoUnidade
-	implements Serializable
+	implements Serializable, Clonable< DeslocamentoUnidade >
 {
 	private static final long serialVersionUID = -8847212098556601964L;
 
@@ -348,4 +348,20 @@ public class DeslocamentoUnidade
 
         return sb.toString();
     }
+
+	public DeslocamentoUnidade clone(CenarioClone novoCenario) {
+		DeslocamentoUnidade clone = new DeslocamentoUnidade();
+		clone.setCusto(this.getCusto());
+		clone.setTempo(this.getTempo());
+		clone.setOrigem(novoCenario.getEntidadeClonada(this.getOrigem()));
+		clone.setDestino(novoCenario.getEntidadeClonada(this.getDestino()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			DeslocamentoUnidade entidadeClone) {
+		// TODO Auto-generated method stub
+		
+	}
 }

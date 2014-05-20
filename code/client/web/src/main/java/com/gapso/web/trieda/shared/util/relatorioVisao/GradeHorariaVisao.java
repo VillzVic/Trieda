@@ -48,6 +48,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected List<String> labelsDasLinhasDaGradeHoraria;
 	protected List<String> horariosDeInicioDeAula;
 	protected List<Boolean> horarioEhIntervalo;
+	protected List<ParDTO<String, Integer>> horariosDisponiveis;
 	protected TurnoDTO turnoDTO;
 	protected QuickTip quickTip;
 	protected List<Long> disciplinasCores = new ArrayList<Long>();
@@ -170,6 +171,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				horariosDeInicioDeAula.clear();
 				horarioEhIntervalo.clear();
 				atendimentoDTO = result.getAtendimentosDTO();
+				horariosDisponiveis = result.getHorariosDisponiveis();
 				if(!atendimentoDTO.isEmpty() || gradeHorariaAlocacaoManual){
 					if (atendimentoDTO.isEmpty())
 					{
@@ -302,6 +304,30 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					aulaDTO = getAulaPorHorario(model.getLinhaNaGradeHoraria(),semana);
 				} else {
 					aulaDTO = getProximaAula(rowIndex+1,semana);
+				}
+				//Verifica se a celula da grade horaria eh um horario indisponivel (somente para sala ou professor)
+				if (horariosDisponiveis != null && !model.getDisplay().isEmpty())
+				{
+					boolean horarioVazio = true;
+					for (ParDTO<String, Integer> hoarioDisponivel : horariosDisponiveis)
+					{
+						if (hoarioDisponivel.getPrimeiro().equals(horariosDeInicioDeAula.get(rowIndex))
+								&& hoarioDisponivel.getSegundo().equals(semana+1))
+						{
+							horarioVazio = false;
+						}
+					}
+					if (horarioVazio)
+					{
+						Html html = new Html("");
+						
+						html.setStyleAttribute("height", tamanhoLinhaGradeHorariaEmPixels + "px");
+						html.setStyleAttribute("margin-top", "-5px");
+						html.setStyleAttribute("background-color", "black");
+						html.setStyleAttribute("opacity", "0.3");
+						
+						return html;
+					}
 				}
 				if (aulaDTO == null) {
 					Html html = new Html("");

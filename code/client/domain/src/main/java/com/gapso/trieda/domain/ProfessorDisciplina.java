@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "DIP_ID" )
 @Table( name = "PROFESSORES_DISCIPLINAS" )
 public class ProfessorDisciplina
-	implements java.io.Serializable
+	implements java.io.Serializable, Clonable< ProfessorDisciplina >
 {
 	private static final long serialVersionUID = -6254398976446496178L;
 
@@ -505,5 +505,20 @@ public class ProfessorDisciplina
 
 		return professor.getCpf()
 			+ "-" + getDisciplina().getCodigo();
+	}
+
+	public ProfessorDisciplina clone(CenarioClone novoCenario) {
+		ProfessorDisciplina clone = new ProfessorDisciplina();
+		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
+		clone.setNota(this.getNota());
+		clone.setPreferencia(this.getPreferencia());
+		clone.setProfessor(novoCenario.getEntidadeClonada(this.getProfessor()));
+		
+		return clone;
+	}
+
+	public void cloneChilds(CenarioClone novoCenario,
+			ProfessorDisciplina entidadeClone) {
+		
 	}
 }

@@ -238,7 +238,7 @@ public class AlunosDemandaServiceImpl
 		Map< Long, List<AlunoDemanda> > demandaMapAluno = new HashMap< Long, List<AlunoDemanda> >();
 		if (numTotalDisciplinas > 100) 
 		{
-			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser() );			
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser(), cenario );			
 			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
 				long key = 31*(31 + alunoDemanda.getDemanda().getDisciplina().getId()) + alunoDemanda.getDemanda().getOferta().getCampus().getId();
 				if (demandaMapAluno.get(key) == null) {
@@ -262,7 +262,7 @@ public class AlunosDemandaServiceImpl
 			}
 			else 
 			{
-				alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
+				alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(), cenario,
 						disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
 			}
 			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
@@ -365,7 +365,7 @@ public class AlunosDemandaServiceImpl
 		Map< Long, List<AlunoDemanda> > demandaMapAluno = new HashMap< Long, List<AlunoDemanda> >();
 		if (config.getLimit() > 100) 
 		{
-			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser() );			
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser(), cenario );			
 			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
 				long key = 31*(31 + alunoDemanda.getDemanda().getDisciplina().getId()) + alunoDemanda.getDemanda().getOferta().getCampus().getId();
 				if (demandaMapAluno.get(key) == null) {
@@ -389,7 +389,7 @@ public class AlunosDemandaServiceImpl
 			}
 			else 
 			{
-				alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
+				alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(), cenario,
 						disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
 			}
 			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();

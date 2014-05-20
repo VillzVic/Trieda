@@ -275,6 +275,8 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 			newHorario.setTurno(bean.getTurno());
 			newHorario.setHorario(bean.getHorario().getTime());
 			newHorario.persist();
+			bean.getSemanaLetiva().getHorariosAula().add(newHorario);
+			bean.getSemanaLetiva().merge();
 			
 			List< Campus > campi = Campus.findByCenario( instituicaoEnsino, cenario );
 			List< Unidade > unidades = Unidade.findByCenario( instituicaoEnsino, cenario );
@@ -299,8 +301,10 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 					hdc.getProfessores().addAll( professores );
 	
 					hdc.persist();
+					newHorario.getHorariosDisponiveisCenario().add(hdc);
 				}
 			}
+			newHorario.merge();
 		}
 	}
 
