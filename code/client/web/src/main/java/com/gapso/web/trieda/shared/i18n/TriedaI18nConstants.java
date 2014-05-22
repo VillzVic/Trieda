@@ -13,6 +13,7 @@ public interface TriedaI18nConstants
 	String areaTitulacao();
 	String areasTitulacao();
 	String associacaoAlunoDemanda();
+	String associacaoDisciplinas();
 	String atendimentosDisciplina();
 	String atendimentosFaixaDemanda();
 	String atendimentosFaixaCredito();

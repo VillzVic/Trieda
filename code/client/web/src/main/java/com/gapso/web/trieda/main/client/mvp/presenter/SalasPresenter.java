@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.main.client.mvp.view.AssociarDisciplinasView;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -60,6 +61,7 @@ public class SalasPresenter
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
 		Button getDisciplinasAssociadasButton();
+		Button getAssociarDisciplinasButton();
 		UnidadeComboBox getUnidadeCB();
 		CampusComboBox getCampusCB();
 		Button getSubmitBuscaButton();
@@ -322,6 +324,20 @@ public class SalasPresenter
 					}
 				});
 			}
+		});
+		
+		this.display.getAssociarDisciplinasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new AssociarDisciplinasPresenter(
+						instituicaoEnsinoDTO, cenario,new AssociarDisciplinasView( cenario ), display.getGrid() );
+
+				presenter.go( null );
+				
+			}
+			
+			
 		});
 
 		this.display.getResetBuscaButton().addSelectionListener(

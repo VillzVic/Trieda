@@ -26,11 +26,14 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
@@ -1084,5 +1087,31 @@ public class SalasServiceImpl
 		Sala proxSala = Sala.findAnt(getInstituicaoEnsinoUser(), cenario, sala);
 
 		return ConvertBeans.toSalaDTO(proxSala);
+	}
+
+	@Override
+	public void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		List<Sala> listaSala = Sala.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		List<Equivalencia> listaEquivalencia =  Equivalencia.find(getInstituicaoEnsinoUser());
+		
+		for(Equivalencia equivalencia : listaEquivalencia){
+			for(Sala sala : listaSala){
+				if(!salas && !sala.isLaboratorio()){
+					continue;
+				}
+				if(!lab && sala.isLaboratorio()){
+					continue;
+				}
+				for(Disciplina disciplina : sala.getDisciplinas()){
+					if(disciplina.equals(equivalencia.getCursou())){
+						sala.getDisciplinas().add(equivalencia.getElimina());
+						sala.persist();
+					}
+				}
+			}
+		}
+		
+		
 	}
 }

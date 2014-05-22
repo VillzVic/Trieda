@@ -1041,4 +1041,9 @@ public class GTriedaI18nConstants
 	public String divisoesCreditoDisciplina() {
 		return this.languageManager.getText("divisoesCreditoDisciplina");
 	}
+
+	@Override
+	public String associacaoDisciplinas() {
+		return this.languageManager.getText("associacaoDisciplinas");
+	}
 }

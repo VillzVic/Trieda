@@ -19,6 +19,7 @@ import com.gapso.web.trieda.shared.dtos.SalaUtilizadaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.util.view.RelatorioSalaFiltro;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -54,4 +55,5 @@ public interface SalasService
 	PagingLoadResult<SalaUtilizadaDTO> getSalasUtilizadas( CenarioDTO cenarioDTO, Long campusDTO, RelatorioSalaFiltro salaFiltro, BasePagingLoadConfig loadConfig);
 	SalaDTO getProxSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	SalaDTO getAntSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
+	void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab);
 }

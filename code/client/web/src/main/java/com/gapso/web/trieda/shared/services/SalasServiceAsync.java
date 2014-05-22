@@ -58,4 +58,6 @@ public interface SalasServiceAsync
 			AsyncCallback<SalaDTO> callback);
 	void getAntSala(CenarioDTO cenarioDTO, SalaDTO salaDTO,
 			AsyncCallback<SalaDTO> callback);
+	void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab,
+			AsyncCallback<Void> asyncCallback);
 }

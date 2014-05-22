@@ -45,6 +45,7 @@ public class SalasView
 	private GTabItem tabItem;
 	private Button disciplinasAssociadasBT;
 	private Button disponibilidadeBT;
+	private Button associarDisciplinasBT;
 	private UnidadeComboBox unidadeCB;
 	private CampusComboBox campusCB;
 	private TipoSalaComboBox tipoSalaCB;
@@ -113,6 +114,11 @@ public class SalasView
 			Resources.DEFAULTS.disponibilidade16() );
 
 		this.toolBar.add( this.disponibilidadeBT );
+		
+		this.associarDisciplinasBT = this.toolBar.createButton(getI18nConstants().associacaoDisciplinas(),
+				Resources.DEFAULTS.associacaoDisciplinaSala16());
+		this.toolBar.add(this.associarDisciplinasBT);
+		
 		this.panel.setTopComponent( this.toolBar );
 	}
 
@@ -367,5 +373,10 @@ public class SalasView
 	@Override
 	public TipoSalaComboBox getTipoSalaCB() {
 		return tipoSalaCB;
+	}
+
+	@Override
+	public Button getAssociarDisciplinasButton() {
+		return associarDisciplinasBT;
 	}
 }
