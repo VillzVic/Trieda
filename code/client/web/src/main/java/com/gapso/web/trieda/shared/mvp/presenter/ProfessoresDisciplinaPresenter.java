@@ -70,6 +70,7 @@ public class ProfessoresDisciplinaPresenter
 		SimpleGrid< ProfessorDisciplinaDTO > getGrid();
 		Component getComponent();
 		Button getAssociarMassaButton();
+		Button getHabilitarEquivalenciasButton();
 		void setProxy( RpcProxy< PagingLoadResult< ProfessorDisciplinaDTO > > proxy );
 	}
 
@@ -319,6 +320,34 @@ public class ProfessoresDisciplinaPresenter
 
 					presenter.go( null );
 				}
+			});
+			
+			display.getHabilitarEquivalenciasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					final ProfessoresDisciplinaServiceAsync service = Services.professoresDisciplina();
+					
+					service.habilitarEquivalenciasProfessores(cenarioDTO, new AsyncCallback< Void >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						}
+
+						@Override
+						public void onSuccess( Void result )
+						{
+							display.getGrid().updateList();
+
+							Info.display( "Sucesso", "Habilitação das equivalências foi realizado com sucesso!" );
+						}
+					});
+					
+					
+				}
+				
 			});
 		}
 	}

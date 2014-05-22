@@ -47,6 +47,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 	private UsuarioDTO usuario;
 	private CenarioDTO cenarioDTO;
 	private Button associarMassaBt;
+	private Button habilitarEquivalenciasBt;
 
 	public ProfessoresDisciplinaView( CenarioDTO cenarioDTO, UsuarioDTO usuario )
 	{
@@ -102,7 +103,10 @@ public class ProfessoresDisciplinaView extends MyComposite
 		{
 			toolBar = new SimpleToolBar( this );
 			associarMassaBt = toolBar.createButton("Associar em Massa", Resources.DEFAULTS.add216());
+			habilitarEquivalenciasBt = toolBar.createConfirmationButton("Habilitar Equivalências", Resources.DEFAULTS.equivalencia16(),"Deseja realmente habilitar equivalência dos professores ?");
 			toolBar.insert(associarMassaBt, 1);
+			toolBar.insert(habilitarEquivalenciasBt, 7);
+			
 		}
 
 		panel.setTopComponent( toolBar );
@@ -164,8 +168,8 @@ public class ProfessoresDisciplinaView extends MyComposite
 
 		this.filter.addField( this.cpfBuscaTF );
 		this.filter.addField( this.nomeBuscaTF );
-		filter.addField( professorBuscaCB );
-		filter.addField( disciplinaBuscaCB );
+		this.filter.addField( this.professorBuscaCB );
+		this.filter.addField( this.disciplinaBuscaCB );
 		this.filter.addMultiField(this.preferenciaOperadorCB, this.preferenciaField);
 		this.filter.addMultiField(this.notaDesempenhoOperadorCB, this.notaDesempenhoBuscaField);
 
@@ -252,6 +256,11 @@ public class ProfessoresDisciplinaView extends MyComposite
 	}
 	
 	@Override
+	public Button getHabilitarEquivalenciasButton() {
+		return habilitarEquivalenciasBt;
+	}
+	
+	@Override
 	public TextField< String > getCpfBuscaTextField()
 	{
 		return this.cpfBuscaTF;
@@ -281,6 +290,5 @@ public class ProfessoresDisciplinaView extends MyComposite
 	public OperadorComboBox getNotaDesempenhoOperadorCB() {
 		return notaDesempenhoOperadorCB;
 	}
-	
-	
+
 }

@@ -175,6 +175,15 @@ public class SimpleToolBar extends ToolBar
 		return bt;
 	}
 	
+	public Button createConfirmationButton( String toolTip, ImageResource img, String confirmacao )
+	{
+		Button bt = new ConfirmationButton(i18nGateway, confirmacao);
+		bt.setIcon( AbstractImagePrototype.create( img ) );
+		bt.setToolTip( toolTip );
+
+		return bt;
+	}
+	
 	public Button createMenuButton ( String toolTip, ImageResource img, String menus[] )
 	{
 		Button bt = new Button();

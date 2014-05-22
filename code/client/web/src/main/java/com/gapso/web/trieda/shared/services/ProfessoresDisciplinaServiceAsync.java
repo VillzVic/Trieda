@@ -22,5 +22,6 @@ public interface ProfessoresDisciplinaServiceAsync {
 	void remove(List<ProfessorDisciplinaDTO> professorDisciplinaDTOList, AsyncCallback<Void> callback);
 	void save(ProfessorDTO professorDTO, List<ProfessorDisciplinaDTO> professorDisciplinasDTO, AsyncCallback<Void> callback);
 	void getDisciplinasAssociadas(CenarioDTO cenarioDTO, ProfessorDTO professorDTO,	AsyncCallback<ParDTO<List<DisciplinaDTO>, List<DisciplinaDTO>>> callback);
+	void habilitarEquivalenciasProfessores(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
 
 }

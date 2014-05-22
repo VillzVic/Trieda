@@ -25,5 +25,6 @@ public interface ProfessoresDisciplinaService extends RemoteService {
 	void remove(List<ProfessorDisciplinaDTO> professorDisciplinaDTOList);
 	void save(ProfessorDTO professorDTO, List<ProfessorDisciplinaDTO> professorDisciplinasDTO);
 	ParDTO<List<DisciplinaDTO>, List<DisciplinaDTO>> getDisciplinasAssociadas(CenarioDTO cenarioDTO, ProfessorDTO professorDTO);
+	void habilitarEquivalenciasProfessores(CenarioDTO cenarioDTO);
 	
 }

@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
@@ -9,6 +10,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -18,6 +20,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaService;
+import com.google.gwt.dev.util.collect.HashMap;
 
 public class ProfessoresDisciplinaServiceImpl
 	extends RemoteService implements ProfessoresDisciplinaService
@@ -146,5 +149,46 @@ public class ProfessoresDisciplinaServiceImpl
 		for(ProfessorDisciplinaDTO professorDisciplinaDTO : professorDisciplinaDTOList) {
 			ConvertBeans.toProfessorDisciplina(professorDisciplinaDTO).remove();
 		}
+	}
+
+	@Override
+	public void habilitarEquivalenciasProfessores(CenarioDTO cenarioDTO) {
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		List<Professor> listaProfessores = Professor.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		List<Equivalencia> listaEquivalencia =  Equivalencia.find(getInstituicaoEnsinoUser());
+		Map<Professor,List<Disciplina>> mapProfDisciplina = new HashMap<Professor, List<Disciplina>>();
+		
+		for(Professor professor : listaProfessores){
+			for(ProfessorDisciplina pd : professor.getDisciplinas()){
+				if(mapProfDisciplina.get(professor) == null){
+					List<Disciplina> listaDisciplina = new ArrayList<Disciplina>();
+					listaDisciplina.add(pd.getDisciplina());
+					mapProfDisciplina.put(professor, listaDisciplina);
+				} else {
+					mapProfDisciplina.get(professor).add(pd.getDisciplina());
+				}
+			}
+		}
+		
+		
+		for(Equivalencia equivalencia : listaEquivalencia){
+			for(Professor professor : listaProfessores){
+				for(ProfessorDisciplina pd : professor.getDisciplinas()){
+					if(pd.getDisciplina().equals(equivalencia.getCursou())){
+						if(!mapProfDisciplina.get(professor).contains(equivalencia.getElimina())){
+							ProfessorDisciplina elimina = new ProfessorDisciplina();
+							elimina.setDisciplina(equivalencia.getElimina());
+							elimina.setProfessor(professor);
+							elimina.setNota(pd.getNota());
+							elimina.setPreferencia(pd.getPreferencia());
+							elimina.persist();
+						}
+					}
+					
+				}
+			}
+		}
+		
 	}
 }
