@@ -177,6 +177,8 @@ public class ConvertBeans {
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
+		
+		Usuario criadoPor = Usuario.find(dto.getCriadoUsuarioId());
 
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
@@ -187,6 +189,8 @@ public class ConvertBeans {
 		domain.setSemestre( dto.getSemestre() );
 		domain.setComentario( dto.getComentario() );
 		domain.setInstituicaoEnsino(instituicaoEnsino);
+		domain.setDataCriacao(dto.getCriadoUsuarioDate());
+		domain.setCriadoPor(criadoPor);
 
 		return domain;
 	}
@@ -206,6 +210,7 @@ public class ConvertBeans {
 		dto.setAno( domain.getAno() );
 		dto.setSemestre( domain.getSemestre() );
 		dto.setComentario( domain.getComentario() );
+		dto.setCriadoUsuarioId(domain.getCriadoPor() == null ? null: domain.getCriadoPor().getUsername());
 		dto.setCriadoUsuarioString( domain.getCriadoPor() == null ? null : domain.getCriadoPor().getNome() );
 		dto.setCriadoUsuarioDate( domain.getDataCriacao() );
 		dto.setAtualizadoUsuarioString( domain.getAtualizadoPor() == null ? null : domain.getAtualizadoPor().getNome() );

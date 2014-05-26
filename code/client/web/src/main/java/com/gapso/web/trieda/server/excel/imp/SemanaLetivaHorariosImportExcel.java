@@ -214,35 +214,53 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 	
 	private void checkIntervaloHorarios(List<SemanaLetivaHorariosImportExcelBean> sheetContent) 
 	{
-		Map<SemanaLetiva, List<Calendar>> semanaLetivaMapHorario = new HashMap<SemanaLetiva, List<Calendar>>();
+		Map<SemanaLetiva, Map<Turno, List<Calendar>>> semanaLetivaTurnoMapHorario = new HashMap<SemanaLetiva, Map<Turno, List<Calendar>>>();
 		String horariosComErros = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent) 
 		{
-			if (semanaLetivaMapHorario.get(bean.getSemanaLetiva()) == null)
+			if (semanaLetivaTurnoMapHorario.get(bean.getSemanaLetiva()) == null)
 			{
+				
+				Map<Turno, List<Calendar>> turnoMapHorarios = new HashMap<Turno, List<Calendar>>();
 				List<Calendar> horarios = new ArrayList<Calendar>();
 				horarios.add(bean.getHorario());
-				semanaLetivaMapHorario.put(bean.getSemanaLetiva(),horarios);
+				
+				turnoMapHorarios.put(bean.getTurno(), horarios);
+				
+				semanaLetivaTurnoMapHorario.put(bean.getSemanaLetiva(),turnoMapHorarios);
 			}
 			else
 			{
-				semanaLetivaMapHorario.get(bean.getSemanaLetiva()).add(bean.getHorario());
+				if(semanaLetivaTurnoMapHorario.get(bean.getSemanaLetiva()).get(bean.getTurno()) == null){
+					Map<Turno, List<Calendar>> turnoMapHorarios = new HashMap<Turno, List<Calendar>>();
+					List<Calendar> horarios = new ArrayList<Calendar>();
+					horarios.add(bean.getHorario());
+					turnoMapHorarios.put(bean.getTurno(), horarios);
+					semanaLetivaTurnoMapHorario.put(bean.getSemanaLetiva(),turnoMapHorarios);
+				} else {
+					semanaLetivaTurnoMapHorario.get(bean.getSemanaLetiva()).get(bean.getTurno()).add(bean.getHorario());
+				}
 			}
 		}
-		for (SemanaLetiva key : semanaLetivaMapHorario.keySet())
+		for (SemanaLetiva key : semanaLetivaTurnoMapHorario.keySet())
 		{
-			List<Calendar> horariosOrdenados = new ArrayList<Calendar>();
-			horariosOrdenados.addAll(semanaLetivaMapHorario.get(key));
 			
-			Collections.sort(horariosOrdenados);
+			for(Turno turnoKey : semanaLetivaTurnoMapHorario.get(key).keySet()){
 			
-			for (int i = 1; i<horariosOrdenados.size(); i++)
-			{
-				if ((horariosOrdenados.get(i).getTimeInMillis() - horariosOrdenados.get(i-1).getTimeInMillis()) < (key.getTempo() * 60000))
+				List<Calendar> horariosOrdenados = new ArrayList<Calendar>();
+				horariosOrdenados.addAll(semanaLetivaTurnoMapHorario.get(key).get(turnoKey));
+				
+				Collections.sort(horariosOrdenados);
+				
+				for (int i = 1; i<horariosOrdenados.size(); i++)
 				{
-					horariosComErros += " \"" + sdf.format(horariosOrdenados.get(i-1).getTime()) + "-" + sdf.format(horariosOrdenados.get(i).getTime()) + "\"";
+					if ((horariosOrdenados.get(i).getTimeInMillis() - horariosOrdenados.get(i-1).getTimeInMillis()) < (key.getTempo() * 60000))
+					{
+						horariosComErros += " \"" + sdf.format(horariosOrdenados.get(i-1).getTime()) + "-" + sdf.format(horariosOrdenados.get(i).getTime()) + "\"";
+					}
 				}
+			
 			}
 		}
 		

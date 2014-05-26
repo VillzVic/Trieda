@@ -88,11 +88,11 @@ public class CenarioDTO extends AbstractDTO<String> implements
 		return get(PROPERTY_SEMESTRE);
 	}
 
-	public void setCriadoUsuarioId(Long value) {
+	public void setCriadoUsuarioId(String value) {
 		set(PROPERTY_CRIADO_USUARIO_ID, value);
 	}
 
-	public Long getCriadoUsuarioId() {
+	public String getCriadoUsuarioId() {
 		return get(PROPERTY_CRIADO_USUARIO_ID);
 	}
 

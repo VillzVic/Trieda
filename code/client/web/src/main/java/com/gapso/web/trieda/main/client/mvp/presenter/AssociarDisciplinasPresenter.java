@@ -74,7 +74,6 @@ public class AssociarDisciplinasPresenter implements Presenter
 									@Override
 									public void onSuccess( Void result )
 									{
-										//display.getGrid().updateList();
 
 										Info.display( "Sucesso", "Associação das discipilnas à ambientes foi realizada com sucesso!" );
 									}
