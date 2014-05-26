@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.springframework.format.number.NumberFormatter;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.HtmlUtils;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
@@ -271,6 +270,7 @@ public class CenariosServiceImpl
 		catch( Exception e )
 		{
 			System.out.println( e.getCause() );
+			e.printStackTrace();
 		}
 	}
 

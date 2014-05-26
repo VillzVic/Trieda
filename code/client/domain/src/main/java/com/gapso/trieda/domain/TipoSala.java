@@ -290,7 +290,8 @@ public class TipoSala
 		final int prime = 31;
 		int result = 1;
 		int code = this.nome == null ? 0 : this.nome.hashCode();
-		code += this.cenario == null ? 0 : this.cenario.getId().hashCode();
+		if (this.cenario != null)
+			code += this.cenario.getId() == null ? 0 : this.cenario.getId().hashCode();
 		result = prime * result + code;
 		return result;
 	}
