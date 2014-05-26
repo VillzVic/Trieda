@@ -37,6 +37,7 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -143,6 +144,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			checkDisciplinasComMaxAlunosTeoricosZerados(parametro,errors);
 			checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
 			
+			checkDivisoesCreditos(parametro,errors);
+			
 			if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
 				System.out.print("Checando disciplinas repetidas por curriculo");start = System.currentTimeMillis(); // TODO: retirar
 				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors,warnings);
@@ -223,6 +226,23 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		return response;
 	}
 	
+	private void checkDivisoesCreditos(Parametro parametro, List<String> errors) {
+		Set< DivisaoCredito > divisoesCredito = parametro.getCenario().getDivisoesCredito();
+		List<String> divisoesCreditoIncorretas = new ArrayList<String>();
+		
+		for(DivisaoCredito bean : divisoesCredito ){
+			int somaCreditos = bean.getDia1() + bean.getDia2() + bean.getDia3()
+					+ bean.getDia4() + bean.getDia5() + bean.getDia6()
+					+ bean.getDia7();
+			if (bean.getCreditos() != somaCreditos)
+			{
+				divisoesCreditoIncorretas.add(Integer.toString(bean.getCreditos()));
+			}
+		}
+		errors.add(HtmlUtils.htmlUnescape("A(s) divisão(s) de créditos com total iguala a " + divisoesCreditoIncorretas + " está com sua soma incorreta."));
+		
+	}
+
 	/** 
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#registraRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
 	 */
