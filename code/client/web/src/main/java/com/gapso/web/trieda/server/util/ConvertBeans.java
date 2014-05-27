@@ -2355,7 +2355,7 @@ public class ConvertBeans {
 			= new ArrayList< AtendimentoOperacionalDTO >();
 
 		for ( AtendimentoOperacional domain : listDomains )
-		{
+		{	
 			listDTOs.add( ConvertBeans.toAtendimentoOperacionalDTO( domain ) );
 		}
 
@@ -2447,12 +2447,13 @@ public class ConvertBeans {
 
 			HorarioAula ha = hdc.getHorarioAula();
 			dto.setHorarioAulaId( ha.getId() );
-			dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );
-			dto.setTurnoId( ha.getTurno().getId() );
-			dto.setTurnoString( ha.getTurno().getNome() );
+			dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );			
 			
 			ProfessorVirtual professorVirtual = domain.getProfessorVirtual();
 			Oferta oferta = domain.getOferta();
+			dto.setTurnoId( oferta.getTurno().getId() );
+			dto.setTurnoString( oferta.getTurno().getNome() );
+			
 			Disciplina disciplinaSubstituta = domain.getDisciplinaSubstituta();
 			Disciplina disciplina = domain.getDisciplina();
 

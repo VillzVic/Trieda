@@ -966,6 +966,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	/**
 	 * Processa os atendimentos do operacional e os transforma em aulas. Uma aula compreende um ou mais atendimentos do operacional,
 	 * mais especificamente, dois atendimentos pertencem a uma mesma aula sempre que:
+	 *    - se referem ao mesmo turno, e
 	 *    - se referem ao mesmo curso, e
 	 *    - se referem à mesma disciplina, e
 	 *    - se referem à mesma turma, e
@@ -976,11 +977,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @return lista com as aulas
 	 */
 	public List<AtendimentoOperacionalDTO> extraiAulas(List<AtendimentoOperacionalDTO> atendimentosDTO) {
-		// [Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala -> List<AtendimentoOperacionalDTO>]
+		// [Turno-Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala -> List<AtendimentoOperacionalDTO>]
 		Map<String,List<AtendimentoOperacionalDTO>> atendimentosAgrupadosMap = new HashMap<String,List<AtendimentoOperacionalDTO>>();
-		// Agrupa os DTOS pela chave Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala
-		for (AtendimentoOperacionalDTO atendimento : atendimentosDTO) {
-			String key = atendimento.getCursoString() + "-" + atendimento.getCurriculoString() + "-" + atendimento.getDisciplinaString() + "-" + atendimento.getTurma() + "-" + atendimento.getSemana() + "-" + atendimento.getSalaId();
+		// Agrupa os DTOS pela chave Turno-Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala
+		for (AtendimentoOperacionalDTO atendimento : atendimentosDTO) {			
+			String key = atendimento.getTurnoString() + "-" + atendimento.getCursoString() + "-" + atendimento.getCurriculoString() + "-" + atendimento.getDisciplinaString() + "-" + atendimento.getTurma() + "-" + atendimento.getSemana() + "-" + atendimento.getSalaId();
 
 			List<AtendimentoOperacionalDTO> grupoAtendimentos = atendimentosAgrupadosMap.get(key);
 			if (grupoAtendimentos == null) {
@@ -990,7 +991,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			grupoAtendimentos.add(atendimento);
 		}
 		
-		// Quando há mais de um DTO por chave [Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala], concatena as informações de todos em um único DTO.
+		// Quando há mais de um DTO por chave [Turno-Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala], concatena as informações de todos em um único DTO.
 		// Na prática, um grupo de atendimentos concentra os atendimentos relacionados a uma mesma aula. Por exemplo, para uma aula da
 		// disciplina INF110, na segunda-feira, na sala 103, para a turma 1, do curso de Computação, de 07:00h às  08:40h, supondo que
 		// 1 crédito seja equivalente a 50min de hora-aula teremos 2 atendimentos para representar esta aula, são eles:

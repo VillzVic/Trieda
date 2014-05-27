@@ -472,7 +472,7 @@ public class CampiServiceImpl extends RemoteService
 		Set<Turno> turnosConsiderados = new HashSet<Turno>();
 		Set<Sala> salasUtilizadas = new HashSet<Sala>();
 		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
-		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+		Map<Long,List<AtendimentoRelatorioDTO>> salaIdToAtendimentosMap = new HashMap<Long,List<AtendimentoRelatorioDTO>>();
 		String statusOtimizacao = "";
 		if (!campus.isOtimizado(getInstituicaoEnsinoUser()))
 		{
@@ -493,11 +493,11 @@ public class CampiServiceImpl extends RemoteService
 			for (AtendimentoTatico atendimento : atendimentosTaticos) {
 				Oferta oferta = atendimento.getOferta();
 				turnosConsiderados.add(oferta.getTurno());
-				String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
-				List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+				Long key = atendimento.getSala().getId();
+				List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdToAtendimentosMap.get(key);
 				if (aulasPorSalaTurno == null) {
 					aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
-					salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
+					salaIdToAtendimentosMap.put(key,aulasPorSalaTurno);
 				}
 				aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(atendimento));
 				
@@ -516,11 +516,11 @@ public class CampiServiceImpl extends RemoteService
 				Turno turno = oferta.getTurno();
 				Sala sala = atendimento.getSala();
 				turnosConsiderados.add(turno);
-				String key = sala.getId() + "-" + turno.getId();
-				List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+				Long key = sala.getId();
+				List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdToAtendimentosMap.get(key);
 				if (atendimetosPorSalaTurno == null) {
 					atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
-					salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
+					salaIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
 				}
 				atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
 				
@@ -544,7 +544,7 @@ public class CampiServiceImpl extends RemoteService
 		Double mediaUtilizacaoHorarioSalas = 0.0;
 		Double mediaUtilizacaoHorarioLaboratorios = 0.0;
 		Double receitaSemestral = 0.0;
-		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+		if (!salaIdToAtendimentosMap.isEmpty()) {
 			double somatorioDeAlunosDeTodasAsAulasEmAmbientes = 0.0;
 			double somatorioDeAlunosDeTodasAsAulasEmSalasDeAula = 0.0;
 			double somatorioDeAlunosDeTodasAsAulasEmLaboratorios = 0.0;
@@ -556,53 +556,50 @@ public class CampiServiceImpl extends RemoteService
 			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			Map<Long,Integer> laboratorioIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
-			for (Turno turno : turnosConsiderados) {
-				for (Sala sala : salasUtilizadas) {
-					String key = sala.getId() + "-" + turno.getId();
-					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
-					if (atendimentosPorSalaTurno != null) {
-						List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
-						if (ehTatico) {
-							aulas.addAll(atendimentosPorSalaTurno);
-						} else {
-							List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
-							for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
-								atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
-							}
-							// processa os atendimentos do operacional e os transforma em aulas
-							List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
-							// insere as aulas do modo operacional na lista de atendimentos
-							aulas.addAll(aulasOperacional);
+			for (Sala sala : salasUtilizadas) {
+				List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdToAtendimentosMap.get(sala.getId());
+				if (atendimentosPorSalaTurno != null) {
+					List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+					if (ehTatico) {
+						aulas.addAll(atendimentosPorSalaTurno);
+					} else {
+						List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
+						for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
+							atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
 						}
-						
-						// trata compartilhamento de turmas entre cursos
-						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
-						
-						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
-							somatorioDeAlunosDeTodasAsAulasEmAmbientes += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
-							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
-							if (!sala.isLaboratorio()) {
-								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
-								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
-							} else {
-								somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
-								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
-							}
-							totalCreditosSemanais += aula.getTotalCreditos();
-							totalCreditosSemanaisProfessores += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos();
-							totalCreditosSemanaisProfessoresVirtuais += (aula.getProfessorVirtualId() == null) ? 0 : aula.getTotalCreditos();
-							custoDocenteSemanal += aula.getTotalCreditos() * aula.getProfessorCustoCreditoSemanal();
+						// processa os atendimentos do operacional e os transforma em aulas
+						List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
+						// insere as aulas do modo operacional na lista de atendimentos
+						aulas.addAll(aulasOperacional);
+					}
+					
+					// trata compartilhamento de turmas entre cursos
+					List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
+					
+					for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+						somatorioDeAlunosDeTodasAsAulasEmAmbientes += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+						somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+						if (!sala.isLaboratorio()) {
+							somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+						} else {
+							somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+							somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+						}
+						totalCreditosSemanais += aula.getTotalCreditos();
+						totalCreditosSemanaisProfessores += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos();
+						totalCreditosSemanaisProfessoresVirtuais += (aula.getProfessorVirtualId() == null) ? 0 : aula.getTotalCreditos();
+						custoDocenteSemanal += aula.getTotalCreditos() * aula.getProfessorCustoCreditoSemanal();
 
-							if(!sala.isLaboratorio()){
-								Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
-								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-								salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
-							}
-							else {
-								Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
-								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-								laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
-							}
+						if(!sala.isLaboratorio()){
+							Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+							if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+							salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+						}
+						else {
+							Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+							if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+							laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
 						}
 					}
 				}

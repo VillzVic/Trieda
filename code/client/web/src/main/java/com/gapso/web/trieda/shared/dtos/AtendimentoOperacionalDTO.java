@@ -824,9 +824,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	@Override
 	public String toString()
 	{
-		return getDisciplinaString() + "@" + getTurma()
-			+ "@" + getSalaString() + "@" + getSemana()
-			+ "#" + getTotalCreditos() + "#" + getHorarioAulaId();
+		return getId() + "_[" + getTurnoString() + "][" + getSalaString() + "][" + getSemana() + "][" + getHorarioAulaString() + "(" + getHorarioAulaId() + ")][" + getDisciplinaString() + "/" + getTurma() + "][" + getTotalCreditos() + "][" + getQuantidadeAlunosString() + "]";
 	}
 
 	static public boolean compatibleByApproach1(
