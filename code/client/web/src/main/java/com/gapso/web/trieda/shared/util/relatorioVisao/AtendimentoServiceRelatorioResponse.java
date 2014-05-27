@@ -7,6 +7,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 
 public class AtendimentoServiceRelatorioResponse implements Serializable{
 	private static final long serialVersionUID = -3735259680645261872L;
@@ -16,7 +17,7 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 	private List<String> horariosDeInicioDeAula;
 	private List<String> horariosDeFimDeAula;
 	private List<Integer> qtdColunasPorDiaSemana;
-	private List<ParDTO<String, Integer>> horariosDisponiveis;
+	private List<TrioDTO<String, Integer, Integer>> horariosDisponiveis;
 
 	public AtendimentoServiceRelatorioResponse(){}
 	
@@ -32,7 +33,7 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 	
 	@SuppressWarnings("unchecked")
 	public <A, B, C, D, E> AtendimentoServiceRelatorioResponse(QuintetoDTO<A, B, C, D, E> result,
-			List<ParDTO<String, Integer>> horariosDisponiveis){
+			List<TrioDTO<String, Integer, Integer>> horariosDisponiveis){
 		this.atendimentosDTO = (List<AtendimentoRelatorioDTO>) result.getPrimeiro();
 		this.mdcTemposAulaNumSemanasLetivas = (ParDTO<Integer, Boolean>) result.getSegundo();
 		this.labelsDasLinhasDaGradeHoraria = (List<String>) result.getTerceiro();
@@ -59,7 +60,7 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <A, B, C, D, E , F> AtendimentoServiceRelatorioResponse create(Object t, List<ParDTO<String, Integer>> horarioDisponiveis){
+	public static <A, B, C, D, E , F> AtendimentoServiceRelatorioResponse create(Object t, List<TrioDTO<String, Integer, Integer>> horarioDisponiveis){
 		if(t instanceof QuintetoDTO) return new AtendimentoServiceRelatorioResponse((QuintetoDTO<A, B, C, D, E>) t, horarioDisponiveis);
 		return new AtendimentoServiceRelatorioResponse((SextetoDTO<A, B, C, D, E, F>) t);
 	}
@@ -88,7 +89,7 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 		return qtdColunasPorDiaSemana;
 	}
 	
-	public List<ParDTO<String, Integer>> getHorariosDisponiveis()
+	public List<TrioDTO<String, Integer, Integer>> getHorariosDisponiveis()
 	{
 		return horariosDisponiveis;
 	}

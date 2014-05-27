@@ -48,7 +48,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected List<String> labelsDasLinhasDaGradeHoraria;
 	protected List<String> horariosDeInicioDeAula;
 	protected List<Boolean> horarioEhIntervalo;
-	protected List<ParDTO<String, Integer>> horariosDisponiveis;
+	protected List<TrioDTO<String, Integer, Integer>> horariosDisponiveis;
 	protected TurnoDTO turnoDTO;
 	protected QuickTip quickTip;
 	protected List<Long> disciplinasCores = new ArrayList<Long>();
@@ -309,10 +309,10 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				if (horariosDisponiveis != null && !model.getDisplay().isEmpty())
 				{
 					boolean horarioVazio = true;
-					for (ParDTO<String, Integer> hoarioDisponivel : horariosDisponiveis)
+					for (TrioDTO<String, Integer, Integer> hoarioDisponivel : horariosDisponiveis)
 					{
-						if (hoarioDisponivel.getPrimeiro().equals(horariosDeInicioDeAula.get(rowIndex))
-								&& hoarioDisponivel.getSegundo().equals(semana+1))
+						if ( hoarioDisponivel.getSegundo().equals(semana+1)
+								&& checkEntreHorarioDisponivel(hoarioDisponivel.getPrimeiro(), horariosDeInicioDeAula.get(rowIndex), hoarioDisponivel.getTerceiro() ))
 						{
 							horarioVazio = false;
 						}
@@ -365,7 +365,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAulaNumSemanasLetivas.getPrimeiro();
 				int qtdIntervalosNaAula = getNumeroIntervalos(rowIndex+aulaDTO.getTotalCreditos()) - getNumeroIntervalos(rowIndex);
 				html.setStyleAttribute("height", (aulaDTO.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula * tamanhoLinhaGradeHorariaEmPixels - 3 + (qtdIntervalosNaAula*10)) + "px");
-				if (!gradeHorariaAlocacaoManual)
+				if (!gradeHorariaAlocacaoManual && horariosDisponiveis == null)
 				{
 					html.addStyleName("s" + aulaDTO.getSemana()); // Posiciona na coluna ( dia semana )
 				}
@@ -383,6 +383,34 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				return html;
 			}
 		};
+	}
+	
+	// Recebe um horario disponivel + tempo de aula e checa se a linha na grade horaria esta disponivel
+	// Eh preciso desse metodo para quando os horarios estao divididos por causa do MDC
+	private boolean checkEntreHorarioDisponivel(String hoarioDisponivel, String horarioAula, Integer tempo) {
+		String[] horarioInicialArray = hoarioDisponivel.split(":");
+		int horarioInicialHoras = Integer.parseInt(horarioInicialArray[0]);
+		int horarioInicialMinutos = Integer.parseInt(horarioInicialArray[1]);
+		
+		
+		int horarioFinalHoras = Integer.parseInt(horarioInicialArray[0]);
+		int horarioFinalMinutos = Integer.parseInt(horarioInicialArray[1]) + tempo;
+		while (horarioFinalMinutos >= 60)
+		{
+			horarioFinalHoras++;
+			horarioFinalMinutos -= tempo;
+		}
+		
+		String[] horarioLinhaArray = horarioAula.split(":");
+		int horarioLinhaHoras = Integer.parseInt(horarioLinhaArray[0]);
+		int horarioLinhaMinutos = Integer.parseInt(horarioLinhaArray[1]);
+		
+		return ((horarioLinhaHoras > horarioInicialHoras
+				|| (horarioLinhaHoras == horarioInicialHoras && horarioLinhaMinutos >= horarioInicialMinutos))
+				&&
+				((horarioLinhaHoras < horarioFinalHoras) 
+				|| (horarioLinhaHoras == horarioFinalHoras && horarioLinhaMinutos <= horarioFinalMinutos)));		
+		
 	}
 	
 	protected int getNumeroIntervalos(int rowIndex) {
@@ -407,7 +435,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected abstract TrioDTO<String, String, String> getHTMLInfo(AtendimentoRelatorioDTO atendimentoDTO);
 	
 	protected AtendimentoRelatorioDTO getAulaPorHorario(int linhaGradeHoraria, int colunaGradeHoraria){
-		if (gradeHorariaAlocacaoManual)
+		if (gradeHorariaAlocacaoManual || horariosDisponiveis != null)
 		{
 			colunaGradeHoraria += 1;
 		}
@@ -415,7 +443,10 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 			String labelHorario = horariosDeInicioDeAula.get(linhaGradeHoraria);
 			for(AtendimentoRelatorioDTO aula : this.atendimentoDTO){
 				if(aula.getSemana() == colunaGradeHoraria){
-					if(labelHorario.contains(aula.getHorarioAulaString())) return aula;
+					if(labelHorario.contains(aula.getHorarioAulaString()))
+					{
+						return aula;
+					}
 				}
 			}
 		}

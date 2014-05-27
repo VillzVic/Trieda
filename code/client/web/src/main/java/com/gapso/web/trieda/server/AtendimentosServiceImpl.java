@@ -194,7 +194,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		QuintetoDTO<List<AtendimentoRelatorioDTO>, ParDTO<Integer, Boolean>, List<String>, List<String>, List<String>> q;
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
-		List<ParDTO<String, Integer>> horariosDisponiveis = new ArrayList<ParDTO<String, Integer>>();
+		List<TrioDTO<String, Integer, Integer>> horariosDisponiveis = new ArrayList<TrioDTO<String, Integer, Integer>>();
 		boolean temInfoDeHorario = true;
 		DateFormat df = new SimpleDateFormat( "HH:mm" );
 
@@ -243,7 +243,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				for (HorarioDisponivelCenario horario : sala.getHorarios())
 				{
 					String inicio = df.format( horario.getHorarioAula().getHorario() );
-					horariosDisponiveis.add(ParDTO.create(inicio, Semanas.toInt(horario.getDiaSemana())));
+					horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(horario.getDiaSemana()), horario.getHorarioAula().getSemanaLetiva().getTempo()));
 				}
 				
 				q = QuintetoDTO.create(aulasComCompartilhamentos,mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
@@ -613,7 +613,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		QuintetoDTO<List<AtendimentoRelatorioDTO>,ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> q;
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
-		List<ParDTO<String, Integer>> horariosDisponiveis = null;
+		List<TrioDTO<String, Integer, Integer>> horariosDisponiveis = null;
 		boolean temInfoDeHorario = true;
 		boolean isAdmin = isAdministrador();
 		DateFormat df = new SimpleDateFormat( "HH:mm" );
@@ -661,11 +661,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				List<String> horariosDeFimDeAula = quarteto.getQuarto();
 				if (professor != null)
 				{
-					horariosDisponiveis = new ArrayList<ParDTO<String, Integer>>();
+					horariosDisponiveis = new ArrayList<TrioDTO<String, Integer, Integer>>();
 					for (HorarioDisponivelCenario horario : professor.getHorarios())
 					{
 						String inicio = df.format( horario.getHorarioAula().getHorario() );
-						horariosDisponiveis.add(ParDTO.create(inicio, Semanas.toInt(horario.getDiaSemana())));
+						horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(horario.getDiaSemana()), horario.getHorarioAula().getSemanaLetiva().getTempo()));
 					}
 				}
 				q = QuintetoDTO.create(atendimentosParaEscrita,mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
