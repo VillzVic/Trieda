@@ -144,6 +144,8 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 			
 			private void writeCells(int row, AlunoDemandaDTO alunoDTO, AtendimentoRelatorioDTO aula, String horarioInicio, String horarioFim) {
 				int column = 2;
+				// Campus
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getCampusString());
 				// Sala
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getSalaString());
 				// Dia Semana
@@ -158,8 +160,7 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 					disciplinaAula = aula.getDisciplinaString();
 				}
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],disciplinaAula);
-				// Disciplina da Demanda
-				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getDisciplinaString());
+				
 				// Turma
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getTurma());
 				// Professor
@@ -178,8 +179,18 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 				// Aula - Carga Horária Prática
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],credP*aula.getDuracaoDeUmaAulaEmMinutos());
 				// Aula - Carga Horária Total
-				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],(credT+credP)*aula.getDuracaoDeUmaAulaEmMinutos());
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],(credT+credP)*aula.getDuracaoDeUmaAulaEmMinutos());				
 				
+				// Turno
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getTurnoString());
+				// Curso
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getCursoString());
+				// Currículo
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getCurriculoString());
+				// Período
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],alunoDTO.getPeriodo());
+				// Disciplina da Demanda
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getDisciplinaString());
 				// Aluno - Matrícula
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getAlunoMatricula());
 				// Aluno - Prioridade

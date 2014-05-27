@@ -2298,6 +2298,9 @@ public class ConvertBeans {
 			dto.setQtdDemandaAlunosP2(trio[1]);
 			dto.setQtdDemandaAlunosTotal(trio[2]);			
 		}
+		
+		if (dto.getQtdDemandaAlunosP1() == null)
+			System.out.println(1);
 
 		return dto;
 	}
@@ -2431,7 +2434,7 @@ public class ConvertBeans {
 			dto.setVersion( domain.getVersion() );
 			dto.setCenarioId( domain.getCenario().getId() );
 			dto.setCampusId( campus.getId() );
-			dto.setCampusString( unidade.getCodigo() );
+			dto.setCampusString( campus.getCodigo() );
 			dto.setUnidadeId( unidade.getId() );
 			dto.setUnidadeString( unidade.getCodigo() );
 			dto.setSalaId( sala.getId() );
@@ -3458,7 +3461,7 @@ public class ConvertBeans {
 		// Demanda
 		dto.setCampusString( domain.getDemanda().getOferta().getCampus().getCodigo() );
 		dto.setTurnoString( domain.getDemanda().getOferta().getTurno().getNome() );
-		dto.setCursoString( domain.getDemanda().getOferta().getCurriculo().getCodigo() );
+		dto.setCursoString( domain.getDemanda().getOferta().getCurso().getCodigo() );
 		dto.setCurriculoString( domain.getDemanda().getOferta().getCurriculo().getCodigo() );
 		dto.setDemandaId( domain.getDemanda().getId() );
 
