@@ -2653,8 +2653,7 @@ public class ConvertBeans {
 		dto.setDia5( domain.getDia5() );
 		dto.setDia6( domain.getDia6() );
 		dto.setDia7( domain.getDia7() );
-		dto.setTotalCreditos( dto.getDia1() + dto.getDia2() + dto.getDia3()
-			+ dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7() );
+		dto.setTotalCreditos( domain.getCreditos() );
 
 		if ( instituicaoEnsino != null )
 		{

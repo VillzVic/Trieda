@@ -286,7 +286,7 @@ public class DivisoesCreditoImportExcel
 				divisaoBD.setDia4( divisaoExcel.getDia4() );
 				divisaoBD.setDia5( divisaoExcel.getDia5() );
 				divisaoBD.setDia6( divisaoExcel.getDia6() );
-				divisaoBD.setDia7( divisaoExcel.getDia6() );
+				divisaoBD.setDia7( divisaoExcel.getDia7() );
 	
 				divisaoBD.merge();
 			}
@@ -303,7 +303,7 @@ public class DivisoesCreditoImportExcel
 				newDivisao.setDia4( divisaoExcel.getDia4() );
 				newDivisao.setDia5( divisaoExcel.getDia5() );
 				newDivisao.setDia6( divisaoExcel.getDia6() );
-				newDivisao.setDia7( divisaoExcel.getDia6() );
+				newDivisao.setDia7( divisaoExcel.getDia7() );
 	
 				newDivisao.getCenario().add(getCenario());
 				

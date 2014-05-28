@@ -227,20 +227,58 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	}
 	
 	private void checkDivisoesCreditos(Parametro parametro, List<String> errors) {
-		Set< DivisaoCredito > divisoesCredito = parametro.getCenario().getDivisoesCredito();
-		List<String> divisoesCreditoIncorretas = new ArrayList<String>();
 		
-		for(DivisaoCredito bean : divisoesCredito ){
-			int somaCreditos = bean.getDia1() + bean.getDia2() + bean.getDia3()
-					+ bean.getDia4() + bean.getDia5() + bean.getDia6()
-					+ bean.getDia7();
-			if (bean.getCreditos() != somaCreditos)
+		Set< DivisaoCredito > divisoesCredito = parametro.getCenario().getDivisoesCredito();
+		
+		for(DivisaoCredito divisaoCredito : divisoesCredito ){
+			int somaCreditos = divisaoCredito.getDia1() + divisaoCredito.getDia2() + divisaoCredito.getDia3()
+					+ divisaoCredito.getDia4() + divisaoCredito.getDia5() + divisaoCredito.getDia6()
+					+ divisaoCredito.getDia7();
+			if (divisaoCredito.getCreditos() != somaCreditos)
 			{
-				divisoesCreditoIncorretas.add(Integer.toString(bean.getCreditos()));
+				errors.add(HtmlUtils.htmlUnescape("A regra genérica de divisão de créditos de [" +
+						divisaoCredito.getCreditos() + 
+						"] créditos na forma " + formataDivisoesCredito(divisaoCredito) +
+						" está com a soma diferente de ["+divisaoCredito.getCreditos()+"]."));
 			}
 		}
-		errors.add(HtmlUtils.htmlUnescape("A(s) divisão(s) de créditos com total iguala a " + divisoesCreditoIncorretas + " está com sua soma incorreta."));
+
 		
+		
+		for(Disciplina disciplina : parametro.getCenario().getDisciplinas()){
+			DivisaoCredito divisaoCredito = disciplina.getDivisaoCreditos(); 
+			
+			if(divisaoCredito != null){
+			
+				int somaCreditos = divisaoCredito.getDia1() + divisaoCredito.getDia2() + divisaoCredito.getDia3()
+						+ divisaoCredito.getDia4() + divisaoCredito.getDia5() + divisaoCredito.getDia6()
+						+ divisaoCredito.getDia7();
+				if (divisaoCredito.getCreditos() != somaCreditos)
+				{
+					errors.add(HtmlUtils.htmlUnescape("A regra de divisão de créditos de  [" +
+							divisaoCredito.getCreditos() + 
+							"] créditos na forma " + formataDivisoesCredito(divisaoCredito) +
+							" da disciplina [" + disciplina.getCodigo() + 
+							"] está com a soma diferente de ["+divisaoCredito.getCreditos()+"]."));
+				}
+			}
+		}
+		
+		
+	}
+
+	private String formataDivisoesCredito(DivisaoCredito divisaoCredito) {
+		List<String> output = new ArrayList<String>();
+			
+		output.add((divisaoCredito.getDia1()==0)?"_":divisaoCredito.getDia1().toString());
+		output.add((divisaoCredito.getDia2()==0)?"_":divisaoCredito.getDia2().toString());
+		output.add((divisaoCredito.getDia3()==0)?"_":divisaoCredito.getDia3().toString());
+		output.add((divisaoCredito.getDia4()==0)?"_":divisaoCredito.getDia4().toString());
+		output.add((divisaoCredito.getDia5()==0)?"_":divisaoCredito.getDia5().toString());
+		output.add((divisaoCredito.getDia6()==0)?"_":divisaoCredito.getDia6().toString());
+		output.add((divisaoCredito.getDia7()==0)?"_":divisaoCredito.getDia7().toString());
+		
+		return output.toString();
 	}
 
 	/** 
