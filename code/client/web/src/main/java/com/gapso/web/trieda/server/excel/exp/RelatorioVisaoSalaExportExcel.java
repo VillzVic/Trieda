@@ -308,7 +308,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		
 		row = new ArrayList<ParDTO<String, ?>>();
 		row.add(ParDTO.create(this.getI18nConstants().unidade(), sala.getUnidade().getCodigo()));
-		row.add(ParDTO.create(this.getI18nConstants().nomeAmbiente(), sala.getNumero()));
+		row.add(ParDTO.create(this.getI18nConstants().nomeAmbiente(), sala.getDescricao()));
 		row.add(ParDTO.create(this.getI18nConstants().tipo(), sala.getTipoSala().getNome()));
 		
 		list.add(row);
