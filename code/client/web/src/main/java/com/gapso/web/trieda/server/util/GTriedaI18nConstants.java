@@ -1046,4 +1046,9 @@ public class GTriedaI18nConstants
 	public String associacaoDisciplinas() {
 		return this.languageManager.getText("associacaoDisciplinas");
 	}
+
+	@Override
+	public String exigeEquivalenciaForcada() {
+		return this.languageManager.getText("exigeEquivalenciaForcada");
+	}
 }

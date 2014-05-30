@@ -27,6 +27,7 @@ public class AlunosDemandaImportExcelBean
 	private String cpfAlunoStr;
 	private String nomeAlunoStr;
 	private String prioridadeAlunoStr;
+	private String exigeEquivalenciaForcadaStr;
 
 	private Campus campus;
 	private Turno turno;
@@ -37,6 +38,7 @@ public class AlunosDemandaImportExcelBean
 	private Disciplina disciplina;
 	private Aluno aluno;
 	private AlunoDemanda alunoDemanda;
+	private Boolean exigeEquivalenciaForcada;
 
 	public AlunosDemandaImportExcelBean( int row )
 	{
@@ -57,6 +59,7 @@ public class AlunosDemandaImportExcelBean
 			checkMandatoryField( this.disciplinaCodigoStr, ImportExcelError.ALUNO_DEMANDA_DISCIPLINA_VAZIO, erros );
 			checkMandatoryField( this.matriculaAlunoStr, ImportExcelError.ALUNO_DEMANDA_MATRICULA_ALUNO_VAZIO, erros );
 			checkMandatoryField( this.nomeAlunoStr, ImportExcelError.ALUNO_DEMANDA_NOME_ALUNO_VAZIO, erros );
+			checkMandatoryField( this.exigeEquivalenciaForcadaStr, ImportExcelError.ALUNO_DEMANDA_EXIGE_EQ_FORCADA_VAZIO, erros );
 
 			this.periodo = checkNonNegativeIntegerField( this.periodoStr,
 				ImportExcelError.ALUNO_DEMANDA_PERIODO_FORMATO_INVALIDO,
@@ -65,6 +68,8 @@ public class AlunosDemandaImportExcelBean
 			this.prioridade = checkNonNegativeIntegerField( this.prioridadeAlunoStr,
 					ImportExcelError.ALUNO_DEMANDA_PRIORIDADE_FORMATO_INVALIDO,
 					ImportExcelError.ALUNO_DEMANDA_PRIORIDADE_NEGATIVO, erros );
+			
+			this.exigeEquivalenciaForcada = checkBooleanField( exigeEquivalenciaForcadaStr, ImportExcelError.ALUNO_DEMANDA_EXIGE_EQ_FORCADA_INVALIDO, erros );
 		}
 		else
 		{
@@ -84,7 +89,8 @@ public class AlunosDemandaImportExcelBean
 			&& isEmptyField( this.disciplinaCodigoStr )
 			&& isEmptyField( this.matriculaAlunoStr )
 			&& isEmptyField( this.nomeAlunoStr )
-			&& isEmptyField( this.prioridadeAlunoStr ) );
+			&& isEmptyField( this.prioridadeAlunoStr )
+			&& isEmptyField( this.exigeEquivalenciaForcadaStr ));
 	}
 
 	public String getNaturalKeyString()
@@ -97,7 +103,8 @@ public class AlunosDemandaImportExcelBean
 			"-" + getDisciplinaCodigoStr() +
 			"-" + getMatriculaAlunoStr() +
 			"-" + getNomeAlunoStr() +
-			"-" + getPrioridadeAlunoStr();
+			"-" + getPrioridadeAlunoStr() +
+			"-" + getExigeEquivalenciaForcadaStr();
 	}
 
 	public String getCodigoCampusStr()
@@ -341,4 +348,17 @@ public class AlunosDemandaImportExcelBean
 
 		return beansMap;
 	}
+
+	public String getExigeEquivalenciaForcadaStr() {
+		return exigeEquivalenciaForcadaStr;
+	}
+
+	public Boolean getExigeEquivalenciaForcada() {
+		return exigeEquivalenciaForcada;
+	}
+
+	public void setExigeEquivalenciaForcadaStr(String exigeEquivalenciaForcadaStr) {
+		this.exigeEquivalenciaForcadaStr = exigeEquivalenciaForcadaStr;
+	}
+
 }

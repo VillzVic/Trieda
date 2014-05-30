@@ -46,6 +46,7 @@ public class AlunosDemandaImportExcel
 	static public String MATRICULA_ALUNO_COLUMN_NAME;
 	static public String PERIODO_COLUMN_NAME;
 	static public String PRIORIDADE_COLUMN_NAME;
+	static public String EXIGE_EQ_FORCADA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -67,6 +68,7 @@ public class AlunosDemandaImportExcel
 		this.headerColumnsNames.add( MATRICULA_ALUNO_COLUMN_NAME );
 		this.headerColumnsNames.add( NOME_ALUNO_COLUMN_NAME );
 		this.headerColumnsNames.add( PRIORIDADE_COLUMN_NAME );
+		this.headerColumnsNames.add( EXIGE_EQ_FORCADA_COLUMN_NAME );
 	}
 
 	@Override
@@ -114,6 +116,10 @@ public class AlunosDemandaImportExcel
 					{
 						bean.setCodigoTurnoStr( cellValue );
 					}
+					else if ( EXIGE_EQ_FORCADA_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setExigeEquivalenciaForcadaStr ( cellValue );
+					}
 					else if ( CURSO_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setCodigoCursoStr( cellValue );
@@ -144,6 +150,7 @@ public class AlunosDemandaImportExcel
 					{
 						bean.setPrioridadeAlunoStr( cellValue );
 					}
+					
         		}
         	}
         }
@@ -476,6 +483,7 @@ public class AlunosDemandaImportExcel
 					// Update
 					alunoDemandaBD.setPrioridade( alunosDemandaExcel.getPrioridade() );
 					alunoDemandaBD.setPeriodo( alunosDemandaExcel.getPeriodo() );
+					alunoDemandaBD.setExigeEquivalenciaForcada(alunosDemandaExcel.getExigeEquivalenciaForcada());
 
 					alunoDemandaBD.merge();
 				}
@@ -489,6 +497,7 @@ public class AlunosDemandaImportExcel
 					newAlunoDemanda.setAtendido( false );
 					newAlunoDemanda.setPrioridade( alunosDemandaExcel.getPrioridade() );
 					newAlunoDemanda.setPeriodo( alunosDemandaExcel.getPeriodo() );
+					newAlunoDemanda.setExigeEquivalenciaForcada(alunosDemandaExcel.getExigeEquivalenciaForcada());
 
 					newAlunoDemanda.persist();
 
@@ -590,6 +599,7 @@ public class AlunosDemandaImportExcel
 			NOME_ALUNO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeAluno() );
 			MATRICULA_ALUNO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().matriculaAluno() );
 			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
+			EXIGE_EQ_FORCADA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().exigeEquivalenciaForcada() );
 			PRIORIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().prioridadeAlunoDemanda() );
 		}
 	}

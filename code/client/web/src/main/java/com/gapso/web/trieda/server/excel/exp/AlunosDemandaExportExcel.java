@@ -252,8 +252,14 @@ public class AlunosDemandaExportExcel
 		setCell( row, 11, sheet,
 			this.cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ], alunoAtendido );
 		
+		//Exige equivalêcias forçada
+		setCell(row, 12, sheet,
+				this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
+				alunoDemanda.getExigeEquivalenciaForcada() ? getI18nConstants().sim()
+						: HtmlUtils.htmlUnescape(getI18nConstants().nao()));
+		
 		// Motivo Nao Atendimento
-		setCell( row, 12, sheet,
+		setCell( row, 13, sheet,
 			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], alunoDemanda.getMotivoNaoAtendimento() );
 
 		row++;

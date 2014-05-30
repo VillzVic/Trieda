@@ -85,6 +85,7 @@ public interface TriedaI18nConstants
 	String elimina();
 	String equivalencias();
 	String estado();
+	String exigeEquivalenciaForcada();
 	String exportarExcel();
 	String formando();
 	String habilitacaoProfessores();
