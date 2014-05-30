@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="alunoId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="demandaId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="prioridade" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="exigeEquivalenciaForcada" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,7 +41,8 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "alunoId",
     "demandaId",
-    "prioridade"
+    "prioridade",
+    "exigeEquivalenciaForcada"
 })
 public class ItemAlunoDemanda {
 
@@ -48,6 +50,7 @@ public class ItemAlunoDemanda {
     protected int alunoId;
     protected int demandaId;
     protected int prioridade;
+    protected boolean exigeEquivalenciaForcada;
 
     /**
      * Gets the value of the id property.
@@ -112,5 +115,22 @@ public class ItemAlunoDemanda {
     public void setPrioridade(int value) {
         this.prioridade = value;
     }
+    
+    /**
+     * Gets the value of the exigeEquivalenciaForcada property.
+     * 
+     */
+    public boolean getExigeEquivalenciaForcada() {
+        return exigeEquivalenciaForcada;
+    }
+
+    /**
+     * Sets the value of the exigeEquivalenciaForcada property.
+     * 
+     */
+    public void setExigeEquivalenciaForcada(boolean value) {
+        this.exigeEquivalenciaForcada = value;
+    }
+
 
 }

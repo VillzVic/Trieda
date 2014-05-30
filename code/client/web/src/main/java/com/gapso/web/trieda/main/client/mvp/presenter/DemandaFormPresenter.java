@@ -57,6 +57,7 @@ public class DemandaFormPresenter
 		EditorGrid<DisciplinaDemandaDTO> getGrid();
 		Button getPreencheTudoButton();
 		NumberField getPreencheTudoNumberField();
+		Button getMarcarEquivalenciasForcadasButton();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -157,6 +158,16 @@ public class DemandaFormPresenter
 				}
 			}
 		});
+		
+		display.getMarcarEquivalenciasForcadasButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		@Override
+		public void componentSelected(ButtonEvent ce) {
+			for (DisciplinaDemandaDTO model : display.getGrid().getStore().getModels())
+			{
+				display.getGrid().getStore().getRecord(model).set(DisciplinaDemandaDTO.PROPERTY_EXIGE_EQUIVALENCIA_FORCADA, true);
+			}
+		}
+	});
 	}
 	
 	private boolean isValid() {

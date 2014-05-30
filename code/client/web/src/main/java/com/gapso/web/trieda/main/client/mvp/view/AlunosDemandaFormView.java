@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
@@ -26,6 +27,7 @@ public class AlunosDemandaFormView
 	private DemandaDTO demandaDTO;
 	private NumberField prioridade;
 	private NumberField periodoNF;
+	private CheckBox exigeEquivalenciaForcadaCB;
 	private CenarioDTO cenarioDTO;
 
 	public AlunosDemandaFormView( CenarioDTO cenarioDTO,
@@ -43,7 +45,8 @@ public class AlunosDemandaFormView
 		this.simpleModal = new SimpleModal( title,
 			Resources.DEFAULTS.disciplina16() );
 
-		this.simpleModal.setHeight( 280 );
+		this.simpleModal.setHeight( 310 );
+		this.simpleModal.setWidth( 330 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
 	}
@@ -53,6 +56,7 @@ public class AlunosDemandaFormView
 		FormData formData = new FormData( "-20" );
 		this.formPanel = new FormPanel();
 		this.formPanel.setHeaderVisible( false );
+		this.formPanel.setLabelWidth(100);
 
 		// Campus
 		TextField< String > campusTF = new TextField< String >();
@@ -111,6 +115,12 @@ public class AlunosDemandaFormView
 		prioridade.setMaxValue(10);
 		prioridade.setEmptyText("Prioridade");
 		this.formPanel.add(prioridade, formData);
+		
+		exigeEquivalenciaForcadaCB = new CheckBox();
+		exigeEquivalenciaForcadaCB.setName(AlunoDemandaDTO.PROPERTY_EXIGE_EQUIVALENCIA_FORCADA);
+		exigeEquivalenciaForcadaCB.setValue(alunoDemandaDTO.getExigeEquivalenciaForcada());
+		exigeEquivalenciaForcadaCB.setFieldLabel("Exige Equivalência Forçada?");
+		formPanel.add( exigeEquivalenciaForcadaCB, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
@@ -162,5 +172,11 @@ public class AlunosDemandaFormView
 	@Override
 	public NumberField getPrioridadeField(){
 		return this.prioridade;
+	}
+	
+	@Override
+	public CheckBox getExigeEquivalenciaForcadaCheckBox()
+	{
+		return this.exigeEquivalenciaForcadaCB;
 	}
 }

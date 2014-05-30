@@ -142,6 +142,7 @@ public class DemandasPorAlunoView
 		list.add( new ColumnConfig( AlunoDemandaDTO.PROPERTY_ALUNO_MATRICULA, "Matrícula", 100 ) );
 		list.add( new ColumnConfig( AlunoDemandaDTO.PROPERTY_ALUNO_STRING, "Nome Aluno", 200 ) );
 		list.add( new ColumnConfig( AlunoDemandaDTO.PROPERTY_ALUNO_PRIORIDADE, "Prioridade", 100 ) );
+		list.add( new ColumnConfig( AlunoDemandaDTO.PROPERTY_EXIGE_EQUIVALENCIA_FORCADA_STRING, "Exige Equivalência Forçada", 150 ) );
 		list.add( new ColumnConfig( AlunoDemandaDTO.PROPERTY_ALUNO_ATENDIDO_STRING, "Atendido", 70 ) );
 	
 		return list;

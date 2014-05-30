@@ -47,6 +47,8 @@ import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.ParametroConfiguracao;
 import com.gapso.trieda.domain.ParametroGeracaoDemanda;
+/*import com.gapso.trieda.domain.PerfilAcesso;
+import com.gapso.trieda.domain.PerfilAcessoTransacao;*/
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.ProfessorVirtual;
@@ -166,6 +168,32 @@ public class ConvertBeans {
 			dto.setProfessorDisplayText( domain.getProfessor().getNome() );
 			dto.setProfessorCpf( domain.getProfessor().getCpf() );
 		}
+		
+/*		for (PerfilAcesso perfilAcesso : domain.getPerfisAcesso())
+		{
+			for (PerfilAcessoTransacao perfilAcessoTransacao : perfilAcesso.getPerfisAcessoTransacao())
+			{
+				if (dto.getTransacaoMapVisivel().get(perfilAcessoTransacao.getTransacao().getNome()) == null)
+				{
+					dto.getTransacaoMapVisivel().put(perfilAcessoTransacao.getTransacao().getNome(), perfilAcessoTransacao.getVisivel());
+				}
+				else
+				{
+					Boolean novoValor = dto.getTransacaoMapVisivel().get(perfilAcessoTransacao.getTransacao().getNome()) || perfilAcessoTransacao.getVisivel();
+					dto.getTransacaoMapVisivel().put(perfilAcessoTransacao.getTransacao().getNome(), novoValor);
+				}
+				
+				if (dto.getTransacaoMapEditavel().get(perfilAcessoTransacao.getTransacao().getNome()) == null)
+				{
+					dto.getTransacaoMapEditavel().put(perfilAcessoTransacao.getTransacao().getNome(), perfilAcessoTransacao.getEditavel());
+				}
+				else
+				{
+					Boolean novoValor = dto.getTransacaoMapEditavel().get(perfilAcessoTransacao.getTransacao().getNome()) || perfilAcessoTransacao.getEditavel();
+					dto.getTransacaoMapEditavel().put(perfilAcessoTransacao.getTransacao().getNome(), novoValor);
+				}
+			}
+		}*/
 
 		return dto;
 	}
@@ -3414,6 +3442,7 @@ public class ConvertBeans {
 		domain.setPeriodo( dto.getPeriodo() );
 		domain.setAtendido( ( dto.getAlunoAtendido() == null ) ?
 			false : dto.getAlunoAtendido() );
+		domain.setExigeEquivalenciaForcada(dto.getExigeEquivalenciaForcada());
 		domain.setPrioridade(dto.getAlunoPrioridade());
 
 		InstituicaoEnsino instituicaoEnsino
@@ -3440,6 +3469,7 @@ public class ConvertBeans {
 		dto.setPeriodo( domain.getPeriodo() );
 		dto.setAlunoAtendido( ( domain.getAtendido() == null ) ?
 			false : domain.getAtendido() );
+		dto.setExigeEquivalenciaForcada(domain.getExigeEquivalenciaForcada());
 		dto.setAlunoPrioridade(domain.getPrioridade());
 
 		if ( dto.getAlunoAtendido() )
@@ -3450,6 +3480,16 @@ public class ConvertBeans {
 		{
 			dto.setAlunoAtendidoString(
 				HtmlUtils.htmlUnescape( "N&atilde;o" ) );
+		}
+		
+		if ( dto.getExigeEquivalenciaForcada() )
+		{
+			dto.setExigeEquivalenciaForcadaString( "Sim" );
+		}
+		else
+		{
+			dto.setExigeEquivalenciaForcadaString(
+				HtmlUtils.htmlUnescape( "Não" ) );
 		}
 
 		// Aluno

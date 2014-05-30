@@ -25,6 +25,7 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_ALUNO_PRIORIDADE = "alunoPrioridade";
 	public static final String PROPERTY_MOTIVO_NAO_ATENDIMENTO = "motivoNaoAtendimento";
 	public static final String PROPERTY_EXIGE_EQUIVALENCIA_FORCADA = "exigeEquivalenciaForcada";
+	public static final String PROPERTY_EXIGE_EQUIVALENCIA_FORCADA_STRING = "exigeEquivalenciaForcadaString";
 
 	public AlunoDemandaDTO()
 	{
@@ -217,6 +218,16 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public void setExigeEquivalenciaForcada( Boolean value )
 	{
 		set( PROPERTY_EXIGE_EQUIVALENCIA_FORCADA, value );
+	}
+	
+	public String getExigeEquivalenciaForcadaString()
+	{
+		return get( PROPERTY_EXIGE_EQUIVALENCIA_FORCADA_STRING );
+	}
+
+	public void setExigeEquivalenciaForcadaString( String value )
+	{
+		set( PROPERTY_EXIGE_EQUIVALENCIA_FORCADA_STRING, value );
 	}
 
 	@Override

@@ -1731,6 +1731,7 @@ public class SolverInput
 					itemAlunoDemanda.setAlunoId(alunoDemanda.getAluno().getId().intValue());
 					itemAlunoDemanda.setDemandaId(alunoDemanda.getDemanda().getId().intValue());
 					itemAlunoDemanda.setPrioridade(alunoDemanda.getPrioridade());
+					itemAlunoDemanda.setExigeEquivalenciaForcada(alunoDemanda.getExigeEquivalenciaForcada());
 		
 					grupoAlunosDemanda.getAlunoDemanda().add(itemAlunoDemanda);
 				}

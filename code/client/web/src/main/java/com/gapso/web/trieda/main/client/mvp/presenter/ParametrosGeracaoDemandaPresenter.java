@@ -151,7 +151,7 @@ public class ParametrosGeracaoDemandaPresenter
 			}
 		});
 		
-		this.display.getOfertasDemandasButton().addSelectionListener(
+		this.display.getOfertasCursosButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
 		{
 			@Override

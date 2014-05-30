@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -15,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CellEditor;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
@@ -61,6 +63,8 @@ public class DemandaFormView
 	private CenarioDTO cenarioDTO;
 	private NumberField preencheTudoNF;
 	private Button preencheTudoBT;
+	private Button marcaEquivalenciasForcadasBt;
+	private CheckColumnConfig checkColumn;
 	private ListStore< DisciplinaDemandaDTO > store = new ListStore< DisciplinaDemandaDTO >();
 	
 	private EditorGrid<DisciplinaDemandaDTO> grid;
@@ -173,8 +177,15 @@ public class DemandaFormView
 		preencheTudoBT.setText("Preenche Tudo");
 		preencheTudoBT.setStyleAttribute("margin-left", "9px");
 		
+		marcaEquivalenciasForcadasBt = new Button("Marcar Todas<br />Equivalencias");
+		marcaEquivalenciasForcadasBt.setStyleAttribute("margin-left", "9px");
+		marcaEquivalenciasForcadasBt.setStyleAttribute("margin-top", "10px");
+		marcaEquivalenciasForcadasBt.setWidth(85);
+		marcaEquivalenciasForcadasBt.setHeight(40);
+		
 		container.add(preencheTudoNF);
 		container.add(preencheTudoBT);
+		container.add(marcaEquivalenciasForcadasBt);
 		
 		quantidadeAlunosFS.add(grid);
 		quantidadeAlunosFS.add(container);
@@ -196,6 +207,7 @@ public class DemandaFormView
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 	    
 	    this.grid = new EditorGrid<DisciplinaDemandaDTO>( this.getStore(),  getColumnList() );
+	    grid.addPlugin(checkColumn);
 	    grid.setHeight(200);
 	    grid.setBorders(true);
 	    grid.setWidth(430);
@@ -217,12 +229,17 @@ public class DemandaFormView
 		novaDemanda.setEditor(new CellEditor(fieldNumber2));
 		
 		list.add( novaDemanda );
+		checkColumn = new CheckColumnConfig(
+				DisciplinaDemandaDTO.PROPERTY_EXIGE_EQUIVALENCIA_FORCADA, "Exige Equivalência Forçada", 150 );
+		CellEditor checkBoxEditor = new CellEditor(new CheckBox());        
+		checkColumn.setEditor(checkBoxEditor);
+		list.add( checkColumn );
 
 		ColumnModel cm = new ColumnModel(list);
 		
 		cm.addHeaderGroup(0, 0 , new HeaderGroupConfig("", 1, 1));
 		cm.addHeaderGroup(0, 1, new HeaderGroupConfig("Demanda Existente de Alunos", 1, 3));
-		cm.addHeaderGroup(0, 4, new HeaderGroupConfig("", 1, 1));
+		cm.addHeaderGroup(0, 4, new HeaderGroupConfig("", 1, 2));
 		
 		return cm;
 	}
@@ -314,6 +331,12 @@ public class DemandaFormView
 	public Button getPreencheTudoButton()
 	{
 		return preencheTudoBT;
+	}
+	
+	@Override
+	public Button getMarcarEquivalenciasForcadasButton()
+	{
+		return marcaEquivalenciasForcadasBt;
 	}
 	
 	@Override

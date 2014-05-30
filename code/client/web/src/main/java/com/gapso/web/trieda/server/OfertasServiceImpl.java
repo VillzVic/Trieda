@@ -166,6 +166,7 @@ public class OfertasServiceImpl
 				novaDisciplina.setDemandaTotal(demandaReal+demandaVirtual);
 				
 				novaDisciplina.setNovaDemanda(0);
+				novaDisciplina.setExigeEquivalenciaForcada(false);
 				
 				disciplinasDemandaDTO.add(novaDisciplina);
 			}

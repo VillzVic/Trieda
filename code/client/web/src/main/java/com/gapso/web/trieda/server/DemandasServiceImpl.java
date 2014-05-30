@@ -679,6 +679,7 @@ public class DemandasServiceImpl
 						novoAlunoDemanda.setPeriodo(periodo);
 						novoAlunoDemanda.setPrioridade(1);
 						novoAlunoDemanda.setAtendido(false);
+						novoAlunoDemanda.setExigeEquivalenciaForcada(disciplinaDemanda.getExigeEquivalenciaForcada());
 						
 						novoAlunoDemanda.persist();
 					}

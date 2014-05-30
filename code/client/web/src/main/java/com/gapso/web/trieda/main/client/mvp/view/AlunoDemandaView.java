@@ -157,6 +157,11 @@ public class AlunoDemandaView
 		cc1 = new SummaryColumnConfig< Integer >(
 			AlunoDemandaDTO.PROPERTY_PERIODO_STRING, "Período", 30 );
 		list.add( cc1 );
+		
+		// Informa se a disciplina do aluno precisa ser atendida por equivalencia
+		cc1 = new SummaryColumnConfig< Integer >(
+			AlunoDemandaDTO.PROPERTY_EXIGE_EQUIVALENCIA_FORCADA_STRING, "Exige Equivalência Forçada", 30 );
+		list.add( cc1 );
 
 		// Informa se o aluno foi ou não atendido na otimização
 		cc1 = new SummaryColumnConfig< Integer >(

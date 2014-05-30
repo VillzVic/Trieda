@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
@@ -32,6 +33,7 @@ public class AlunosDemandaFormPresenter
 		boolean isValid();
 		SimpleModal getSimpleModal();
 		NumberField getPrioridadeField();
+		CheckBox getExigeEquivalenciaForcadaCheckBox();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -97,6 +99,7 @@ public class AlunosDemandaFormPresenter
 		alunoDemandaDTO.setDemandaId( this.display.getDemandaDTO().getId() );
 		alunoDemandaDTO.setPeriodo( this.display.getPeriodoNumberField().getValue().intValue() );
 		alunoDemandaDTO.setAlunoPrioridade(display.getPrioridadeField().getValue().intValue());
+		alunoDemandaDTO.setExigeEquivalenciaForcada(this.display.getExigeEquivalenciaForcadaCheckBox().getValue());
 
 		return alunoDemandaDTO;
 	}

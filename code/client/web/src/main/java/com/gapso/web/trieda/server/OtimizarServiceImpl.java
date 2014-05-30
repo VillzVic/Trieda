@@ -1889,9 +1889,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		ret.put("error", new ArrayList<String>());
 
 		try {
-			System.out.println("Algo");
 			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
-			System.out.println("Algo2");
 			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 
 			System.out.println("Carregando xml( round ). Passo 1 de 4...");// TODO:
