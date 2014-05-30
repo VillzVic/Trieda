@@ -165,6 +165,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 
 			checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
+			checkExigeEquivalenciaForcadaAlunosDemanda(parametro,getInstituicaoEnsinoUser(),errors);
 			
 //			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 //			checkSemanasLetivasIncompativeis(parametro, errors);
@@ -226,6 +227,29 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		return response;
 	}
 	
+	private void checkExigeEquivalenciaForcadaAlunosDemanda(
+			Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
+		
+		// obtém os alunos do campus selecionado para otimização
+		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,parametro.getCampi(),parametro.getTurnos());
+		
+		for(AlunoDemanda  alunoDemanda : demandasDeAlunoDosCampiSelecionados){
+			if(alunoDemanda.getExigeEquivalenciaForcada()){
+				if(alunoDemanda.getDemanda().getDisciplina().getEliminadasPor().isEmpty()){
+					errors.add(HtmlUtils.htmlUnescape("A demanda do aluno ["+alunoDemanda.getAluno().getMatricula() +
+							"] pela disciplina ["+alunoDemanda.getDemanda().getDisciplina().getCodigo() +
+							"] exige uma equivalência forçada, porém não há regras de equivalencia " +
+							" aplicaveis à discipina ["+alunoDemanda.getDemanda().getDisciplina().getCodigo()+ "]"));
+					// Matricula do aluno, Codigo da disciplina
+					// A demanda do aluno [matricula] pela disciplina [codigo] exige uma equivalencia forçada, parém não há regras de equivalencia
+					// aplicaveis à discipina [código]
+				}
+			}
+		}
+		
+		
+	}
+
 	private void checkDivisoesCreditos(Parametro parametro, List<String> errors) {
 		
 		Set< DivisaoCredito > divisoesCredito = parametro.getCenario().getDivisoesCredito();
