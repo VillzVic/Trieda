@@ -87,6 +87,9 @@ public class AlunoDemanda
 
 	@Column( name = "ALD_ATENDIDO" )
 	private Boolean atendido;
+	
+	@Column( name = "ALD_EXIGE_EQ_FORCADA" )
+	private Boolean exigeEquivalenciaForcada;
 
 	@NotNull
 	@Column( name = "ALD_PRIORIDADE" )
@@ -152,6 +155,16 @@ public class AlunoDemanda
 	public void setAtendido( Boolean atendido )
 	{
 		this.atendido = atendido;
+	}
+	
+	public Boolean getExigeEquivalenciaForcada()
+	{
+		return this.exigeEquivalenciaForcada;
+	}
+
+	public void setExigeEquivalenciaForcada( Boolean exigeEquivalenciaForcada )
+	{
+		this.exigeEquivalenciaForcada = exigeEquivalenciaForcada;
 	}
 
 	public Integer getPrioridade()
