@@ -534,6 +534,9 @@ public class CampiServiceImpl extends RemoteService
 		Integer totalCreditosSemanais = 0;
 		Integer totalCreditosSemanaisProfessores = 0;
 		Integer totalCreditosSemanaisProfessoresVirtuais = 0;
+		Integer totalCargaHorariaSemanal = 0;
+		Integer totalCargaHorariaSemanalProfessores = 0;
+		Integer totalCargaHorariaSemanalProfessoresVirtuais = 0;
 		Double custoDocenteSemanal = 0.0;
 		//Integer qtdAlunosAtendidos = 0;
 		//Integer qtdAlunosNaoAtendidos = 0;
@@ -590,6 +593,10 @@ public class CampiServiceImpl extends RemoteService
 						totalCreditosSemanaisProfessores += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos();
 						totalCreditosSemanaisProfessoresVirtuais += (aula.getProfessorVirtualId() == null) ? 0 : aula.getTotalCreditos();
 						custoDocenteSemanal += aula.getTotalCreditos() * aula.getProfessorCustoCreditoSemanal();
+						
+						totalCargaHorariaSemanal += aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos();
+						totalCargaHorariaSemanalProfessores  += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos();
+						totalCargaHorariaSemanalProfessoresVirtuais += (aula.getProfessorVirtualId() == null) ? 0 : aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos();
 
 						if(!sala.isLaboratorio()){
 							Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
@@ -772,7 +779,7 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Créditos de professores da instituição: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessores,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"|--- Crédito de professores virtuais: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+				"|--- Créditos de professores virtuais: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Créditos pagos pelos alunos (B): ", "<b>" + numberFormatter.print(totalCreditosSemanaisAlunos,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
@@ -781,6 +788,13 @@ public class CampiServiceImpl extends RemoteService
 				"|--- Docentes da instituição: ", "<b>" + numberFormatter.print(qtdTurmasAbertasProfessoresInstituicao,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Docentes virtuais: ", "<b>" + numberFormatter.print(qtdTurmasAbertasProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Carga Horária paga aos docentes: ", "<b>" + numberFormatter.print(totalCargaHorariaSemanal/60,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Carga Horária de professores da instituição: ", "<b>" + numberFormatter.print(totalCargaHorariaSemanalProfessores/60,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Carga Horária de professores virtuais: ", "<b>" + numberFormatter.print(totalCargaHorariaSemanalProfessoresVirtuais/60,pt_BR) + "</b>") ,currentNode, true) );
+
 		
 		//Eficiencia de alocacao
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
