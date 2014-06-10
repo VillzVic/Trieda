@@ -50,7 +50,7 @@ public class PercentMestresDoutoresDTO extends AbstractDTO< String >
 	}
 	
 	public Integer getOutros() {
-		return get(PROPERTY_DOUTORES);
+		return get(PROPERTY_OUTROS);
 	}
 	
 	public void setOutros(Integer value) {
