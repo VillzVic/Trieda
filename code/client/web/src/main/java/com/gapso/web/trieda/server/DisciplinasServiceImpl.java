@@ -914,6 +914,7 @@ public class DisciplinasServiceImpl
 			resumoDTO.setQuantidadeAlunos( atendimento.getQuantidadeAlunos() );
 			resumoDTO.setDiaSemanaId(atendimento.getSemana());
 			resumoDTO.setHorarioId(atendimento.getHorarioAulaId());
+			resumoDTO.setOfertaId(oferta.getId());
 			if (ehTatico) {
 				resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
 			} else {
@@ -1032,6 +1033,7 @@ public class DisciplinasServiceImpl
 		for ( String key1 : map2.keySet() ) {
 			// key2 = disciplinaId-turma-tipoCredito
 			for ( String key2 : map2.get( key1 ).keySet() ) {
+				
 				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 );
 				ResumoDisciplinaDTO mainDTO = pair.getLeft();
 				
@@ -1043,7 +1045,7 @@ public class DisciplinasServiceImpl
 				Map<String,List<ResumoDisciplinaDTO>> dtoPorDiaSemanaMap = new HashMap<String,List<ResumoDisciplinaDTO>>();
 				for (ResumoDisciplinaDTO dto : pair.getRight()) {
 					// curso-curriculo-disciplinaDemandada
-					String cursoCurriculoDisciplinaKey = dto.getCursoId()+"-"+dto.getCurriculoId()+"-"+dto.getDisciplinaIdDemandada();
+					String cursoCurriculoDisciplinaKey = dto.getCursoId()+"-"+dto.getCurriculoId()+"-"+dto.getDisciplinaIdDemandada()+"-"+dto.getOfertaId();
 					List<ResumoDisciplinaDTO> list1 = dtoPorCursoCurriculoDisciplinaMap.get(cursoCurriculoDisciplinaKey);
 					if (list1 == null) {
 						list1 = new ArrayList<ResumoDisciplinaDTO>();
@@ -1065,11 +1067,10 @@ public class DisciplinasServiceImpl
 				if (dtoPorCursoCurriculoDisciplinaMap.keySet().size() > 1) {
 					String primeiroCursoCurriculoDisciplinaId = dtoPorCursoCurriculoDisciplinaMap.keySet().iterator().next();
 					//System.out.println("   # "+primeiroCursoCurriculoId);//TODO: retirar
-					
 					for (ResumoDisciplinaDTO dto : dtoPorCursoCurriculoDisciplinaMap.get(primeiroCursoCurriculoDisciplinaId)) {
 						// acumula a qtde de créditos
 						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
-						//System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos()+" "+dto.getCursoId()+"-"+dto.getCurriculoId());//TODO: retirar
+						//System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos()+" "+dto.getCursoId()+"-"+dto.getCurriculoId()+"-"+dto.getOfertaId());//TODO: retirar
 						// calcula e acumula custo docente
 						Double docente = dto.getCustoDocente().getDoubleValue();
 						int creditos = dto.getCreditos();
@@ -1081,9 +1082,9 @@ public class DisciplinasServiceImpl
 					for (ResumoDisciplinaDTO dto : pair.getRight()) {
 						// calcula e acumula receita
 						double receita = dto.getReceita().getDoubleValue();
-						int qtdAlunos = dto.getQuantidadeAlunos();
-						int creditos = dto.getCreditos();
-						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
+						double qtdAlunos = dto.getQuantidadeAlunos();
+						double creditos = dto.getCreditos();
+						double receitaLocal = TriedaUtil.round(creditos * receita * qtdAlunos * 4.5 * 6.0, 2);
 						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
 						mainDTO.setReceitaString(currencyFormatter.print(mainDTO.getReceita().getDoubleValue(),pt_BR));
 					}
@@ -1091,17 +1092,18 @@ public class DisciplinasServiceImpl
 					for (ResumoDisciplinaDTO dto : pair.getRight()) {
 						// acumula a qtde de créditos
 						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
+						//System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos()+" "+dto.getCursoId()+"-"+dto.getCurriculoId());//TODO: retirar
 						//System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos());//TODO: retirar
 						// calcula e acumula custo docente
 						Double docente = dto.getCustoDocente().getDoubleValue();
 						Double receita = dto.getReceita().getDoubleValue();
-						int qtdAlunos = dto.getQuantidadeAlunos();
-						int creditos = dto.getCreditos();
+						double qtdAlunos = dto.getQuantidadeAlunos();
+						double creditos = dto.getCreditos();
 						double custoDocenteLocal = creditos * docente * 4.5 * 6.0;
 						mainDTO.setCustoDocente(TriedaUtil.parseTriedaCurrency(custoDocenteLocal + mainDTO.getCustoDocente().getDoubleValue()));
 						mainDTO.setCustoDocenteString(currencyFormatter.print(mainDTO.getCustoDocente().getDoubleValue(),pt_BR));
 						// calcula e acumula receita
-						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
+						double receitaLocal = TriedaUtil.round(creditos * receita * qtdAlunos * 4.5 * 6.0, 2);
 						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
 						mainDTO.setReceitaString(currencyFormatter.print(mainDTO.getReceita().getDoubleValue(),pt_BR));
 					}
@@ -1213,6 +1215,7 @@ public class DisciplinasServiceImpl
 			dtoMain.setTipoCreditoTeorico( resumoDTO.getTipoCreditoTeorico() );
 			dtoMain.setTotalCreditos( resumoDTO.getTotalCreditos() );
 			dtoMain.setQuantidadeAlunos( resumoDTO.getQuantidadeAlunos() );
+			dtoMain.setOfertaId( resumoDTO.getOfertaId() );
 			pair = Pair.create(dtoMain,list);
 			map2.get(key1).put(key2, pair);
 		}
@@ -1233,6 +1236,7 @@ public class DisciplinasServiceImpl
 		dtoNew.setHorarioId( resumoDTO.getHorarioId() );
 		dtoNew.setCustoDocente( resumoDTO.getCustoDocente() );
 		dtoNew.setReceita( resumoDTO.getReceita() );
+		dtoNew.setOfertaId( resumoDTO.getOfertaId() );
 		
 		pair.getRight().add(dtoNew);
 	}

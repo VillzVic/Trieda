@@ -326,8 +326,10 @@ public class CursosServiceImpl
 				resumoDTO.setMatrizCurricularString(aula.getCurriculoString());
 				resumoDTO.setPeriodo(Integer.valueOf(aula.getPeriodoString()));
 				resumoDTO.setQuantidadeAlunos(aula.getQuantidadeAlunos());
-				resumoDTO.setDisciplinaId(aula.getDisciplinaId());
-				resumoDTO.setDisciplinaString(aula.getDisciplinaNome() + "(" + aula.getDisciplinaString() + ")");
+				resumoDTO.setDisciplinaId(aula.getDisciplinaSubstitutaId() == null ? aula.getDisciplinaId() : aula.getDisciplinaSubstitutaId());
+				resumoDTO.setDisciplinaString(aula.getDisciplinaSubstitutaId() == null ? 
+						aula.getDisciplinaNome() + "(" + aula.getDisciplinaString() + ")" :
+						aula.getDisciplinaSubstitutaNome() + "(" + aula.getDisciplinaSubstitutaString() + ")");
 				resumoDTO.setTurma(aula.getTurma());
 				resumoDTO.setTipoCreditoTeorico(aula.isTeorico());
 				resumoDTO.setCreditos(aula.getTotalCreditos());
@@ -422,7 +424,7 @@ public class CursosServiceImpl
 						mainDTO.setCustoDocente(TriedaUtil.parseTriedaCurrency(custoDocenteLocal + mainDTO.getCustoDocente().getDoubleValue()));
 						mainDTO.setCustoDocenteString(currencyFormatter.print(mainDTO.getCustoDocente().getDoubleValue(),pt_BR));
 						// calcula e acumula receita
-						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
+						double receitaLocal = TriedaUtil.round(creditos * receita * qtdAlunos * 4.5 * 6.0, 2);
 						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
 						mainDTO.setReceitaString(currencyFormatter.print(mainDTO.getReceita().getDoubleValue(),pt_BR));
 					}

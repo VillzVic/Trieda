@@ -32,6 +32,7 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	public static final String PROPERTY_CURRICULO_ID = "curriculoId";
 	public static final String PROPERTY_DIA_SEMANA_ID = "diaSemanaId";
 	public static final String PROPERTY_HORARIO_ID = "horarioId";
+	public static final String PROPERTY_OFERTA_ID = "ofertaId";
 
 	private boolean hasChildren = false;
 
@@ -258,6 +259,14 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 
 	public Long getHorarioId() {
 		return get(PROPERTY_HORARIO_ID);
+	}
+	
+	public void setOfertaId(Long value) {
+		set(PROPERTY_OFERTA_ID, value);
+	}
+
+	public Long getOfertaId() {
+		return get(PROPERTY_OFERTA_ID);
 	}
 
 	public boolean hasChildren()
