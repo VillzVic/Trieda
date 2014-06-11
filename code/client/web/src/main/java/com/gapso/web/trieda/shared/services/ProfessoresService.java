@@ -62,7 +62,7 @@ public interface ProfessoresService
 			CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox);
 	List<RelatorioQuantidadeDTO> getProfessoresDisciplinasHabilitadas( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	ListLoadResult<TipoProfessorDTO> getTiposProfessor();
-	List<RelatorioQuantidadeDTO> getProfessoresTitulacoes( CenarioDTO cenarioDTO, CampusDTO campusDTO, boolean somenteAlocados );
+	List<RelatorioQuantidadeDTO> getProfessoresTitulacoes( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	List<RelatorioQuantidadeDTO> getProfessoresAreasConhecimento( CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO, boolean somenteAlocados );
 	List<RelatorioDTO> getRelatorio( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro, RelatorioDTO currentNode );
 	PagingLoadResult<ProfessorDTO> getBuscaListAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO,

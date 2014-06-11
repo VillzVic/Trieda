@@ -83,7 +83,7 @@ public class ProfessoresTitulacoesPresenter
 					return;
 				}
 				display.getGrid().mask( display.getI18nMessages().loading() );
-				Services.professores().getProfessoresTitulacoes( cenarioDTO, se.getSelectedItem(), somenteAlocados,
+				Services.professores().getProfessoresTitulacoes( cenarioDTO, se.getSelectedItem(),
 					new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
 				{
 					@Override

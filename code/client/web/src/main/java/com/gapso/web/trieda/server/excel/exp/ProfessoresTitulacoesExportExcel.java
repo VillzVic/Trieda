@@ -134,7 +134,7 @@ public class ProfessoresTitulacoesExportExcel
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
 			relatorioDocenteDTO.addAll(
-					professoresServiceImpl.getProfessoresTitulacoes(ConvertBeans.toCenarioDTO(getCenario()), campusDTO, false) );
+					professoresServiceImpl.getProfessoresTitulacoes(ConvertBeans.toCenarioDTO(getCenario()), campusDTO) );
 		}
 
 		if ( !relatorioDocenteDTO.isEmpty() )
@@ -173,16 +173,20 @@ public class ProfessoresTitulacoesExportExcel
 				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				relatorioDocenteDTO.getFaixaCredito() );
 		
+		// Professores da Instituicao qtde total
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+				relatorioDocenteDTO.getQuantidade2() );
+
+		// Professores da Instituicao qtde utilizados
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+				relatorioDocenteDTO.getQuantidade3() );
+		
 		// Professores Virtuais
 		setCell( row, i++, sheet,
 				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
 				relatorioDocenteDTO.getQuantidade() );
-
-		// Professores da Instituicao
-		setCell( row, i++, sheet,
-				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
-				relatorioDocenteDTO.getQuantidade2() );
-		
 		row++;
 		return row;
 	}
