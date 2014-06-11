@@ -143,6 +143,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			checkDisciplinasComMaxAlunosTeoricosZerados(parametro,errors);
 			checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
+			checkDisciplinasComMaxAlunosDiferentes(parametro,errors);
 			
 			checkDivisoesCreditos(parametro,errors);
 			
@@ -822,6 +823,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	
 	private void checkDisciplinasSemLaboratorios(Campus campus, List<String> errors) {
 		// coleta as disciplinas que serão enviadas para o solver e que exigem laboratório
+		
+		System.out.print("for 1");long start = System.currentTimeMillis(); // TODO: retirar
+		
 		Set<Disciplina> disciplinasQueExigemLaboratio = new HashSet<Disciplina>();
 		for (Oferta oferta : campus.getOfertas()) {
 			for (Demanda demanda : oferta.getDemandas()) {
@@ -831,6 +835,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 			}
 		}
+		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("for 2");start = System.currentTimeMillis(); // TODO: retirar
 		
 		// verifica se há disciplinas que exigem laboratório, porém, não estão associadas a laboratórios
 		for (Disciplina disciplina : disciplinasQueExigemLaboratio) {
@@ -873,6 +880,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + campus.getCodigo() + ", são eles: " + pares));
 			}
 		}
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 	}
 	
 	private void checkDisciplinasComSomenteLaboratorios(Parametro parametro, List<String> warnings) {
@@ -979,6 +987,52 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		if (!disciplinasComCreditosTeoricosZerados.isEmpty()) {
 			errors.add(HtmlUtils.htmlUnescape("A(s) disciplina(s) " + disciplinasComCreditosTeoricosZerados + " possui créditos teóricos, porém o máximos de alunos teóricos é igual a zero."));
 		}
+		
+	}
+	/**
+	 * ISSUE TRIEDA-1926
+	 * 
+	 * Método que verifica as disciplinas que possuem:
+	 * 	a) créditos teóricos e práticos diferentes de zero;
+	 *  b) não exigem laboratórios;
+	 *  c) e com valores diferentes nos campos dis_max_alun_teorico e dis_max_alun_pratico
+	 *  
+	 *  Para essas disciplinas será retornado um erro, quando ocorrer os casos a) e b) 
+	 *  os valores dis_max_alun_teorico e dis_max_alun_pratico devem ser iguais
+	 * 
+	 * 
+	 * @param parametro
+	 * @param errors
+	 */
+	
+	private void checkDisciplinasComMaxAlunosDiferentes(Parametro parametro, List<String> errors) {
+		// colhe as disciplinas de acordo com os campi selecionados para otimização
+		Set<Disciplina> disciplinasSelecionadas = new HashSet<Disciplina>();
+		for (Campus campus : parametro.getCampi()) {
+			for (Disciplina disciplina : campus.getCenario().getDisciplinas()) {
+				disciplinasSelecionadas.add(disciplina);
+			}
+		}
+		
+		for (Disciplina disciplina : disciplinasSelecionadas) {
+			if (disciplina.getCreditosPratico() != 0 &&  disciplina.getMaxAlunosPratico() != 0)
+			{
+				if(!disciplina.getLaboratorio())
+				{
+					if(!disciplina.getMaxAlunosPratico().equals(disciplina.getMaxAlunosTeorico()))
+					{
+						
+						errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "] "+
+								" (com ["+ disciplina.getCreditosTeorico() + "] crédito(s) teórico(s), ["+
+								 disciplina.getCreditosPratico() + "] crédito(s) práticos(s) e e \"Exige Laboratório?\"=["+
+								(disciplina.getLaboratorio()?"Sim":"Não") +  "]) está com valores diferentes para \"Máx. Alunos Teóricos\"=["+
+								disciplina.getMaxAlunosTeorico()+"] e \"Máx. Alunos Práticos\"= ["+disciplina.getMaxAlunosPratico()+"]"
+								));
+					}
+				}
+			}
+		}
+		
 		
 	}
 	

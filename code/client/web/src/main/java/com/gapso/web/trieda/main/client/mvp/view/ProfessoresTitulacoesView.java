@@ -120,7 +120,7 @@ public class ProfessoresTitulacoesView extends MyComposite
 		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Titulações", 240 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Professores da Instituição (Qtde. Professores Totais)", 280 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE3, 
-				"Professores da Instituição (Qtde. Professores Utilizados no Atendimento", 340 ) );
+				"Professores da Instituição (Qtde. Professores Utilizados no Atendimento", 350 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Professores Virtuais", 170 ) );
 		
 		return list;
