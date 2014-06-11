@@ -945,7 +945,7 @@ public class AlunoDemanda
 			" AND  o.demanda.oferta.campus.cenario = :cenario " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
 			" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) " +
-			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + " AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
+			" AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
 			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
 			" GROUP BY o.aluno ");
 
@@ -1061,7 +1061,7 @@ public class AlunoDemanda
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND  o.demanda.oferta.campus.cenario = :cenario " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
-			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + " AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
+			" AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
 			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
 			" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) ");
 

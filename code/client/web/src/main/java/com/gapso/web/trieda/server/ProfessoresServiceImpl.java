@@ -877,7 +877,7 @@ public class ProfessoresServiceImpl
 		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
 		Map<Professor, Set<String>> professorToCreditosMap = new HashMap<Professor, Set<String>>();
 		Map<Professor, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<Professor, Set<HorarioDisponivelCenario>>();
-		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		Map<Professor, Map<Semanas, Set<Unidade>>> professoresToUnidadesMap = new HashMap<Professor, Map<Semanas, Set<Unidade>>>();
 		Set<Disciplina> totalDisciplinasProfessorVirtual = new HashSet<Disciplina>();
 		Set<String> totalCreditosProfessorVirtual = new HashSet<String>();
 		Set<String> totalTurmasProfessorVirtual = new HashSet<String>();
@@ -902,23 +902,34 @@ public class ProfessoresServiceImpl
 			
 				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
 				{
+					Map<Semanas, Set<Unidade>> unidadeMapDiaSemana = new HashMap<Semanas, Set<Unidade>>();
 					Set<Unidade> novaUnidade = new HashSet<Unidade>();
 					novaUnidade.add(atendimento.getSala().getUnidade());
-					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+					unidadeMapDiaSemana.put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novaUnidade);
+					professoresToUnidadesMap.put(atendimento.getProfessor(), unidadeMapDiaSemana);
 				}
 				else
 				{
-					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+					if (professoresToUnidadesMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()) == null )
+					{
+						Set<Unidade> novaUnidade = new HashSet<Unidade>();
+						novaUnidade.add(atendimento.getSala().getUnidade());
+						professoresToUnidadesMap.get(atendimento.getProfessor()).put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novaUnidade);
+					}
+					else
+					{
+						professoresToUnidadesMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()).add(atendimento.getSala().getUnidade());
+					}
 				}
 			}
 		}
 		
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
-			String keyCreditos = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
+			String keyCreditos = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getId() :
 				atendimento.getDisciplina().getId()) + "-" +
 				atendimento.getTurma() + "-" + atendimento.getHorarioDisponivelCenario().getId();
-			String keyTurmas = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
+			String keyTurmas = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getId() :
 				atendimento.getDisciplina().getId()) + "-" +
 				atendimento.getTurma();
 			if (atendimento.getProfessor().getCpf() != null)
@@ -989,20 +1000,23 @@ public class ProfessoresServiceImpl
 		
 		Set<Professor> professoresComDeslocamentosUnidades = new HashSet<Professor>();
 		Set<Professor> professoresComDeslocamentosCampi = new HashSet<Professor>();
-		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		for (Entry<Professor, Map<Semanas, Set<Unidade>>> professorUnidades : professoresToUnidadesMap.entrySet())
 		{
-			Set<Campus> campi = new HashSet<Campus>();
-			if (professoresToUnidadesMap.get(professorUnidades.getKey()).size() > 1)
+			for (Entry<Semanas, Set<Unidade>> professorDia : professoresToUnidadesMap.get(professorUnidades.getKey()).entrySet() )
 			{
-				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
-				for (Unidade unidade : professorUnidades.getValue())
+				Set<Campus> campi = new HashSet<Campus>();
+				if (professorDia.getValue().size() > 1)
 				{
-					campi.add(unidade.getCampus());
+					professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
+					for (Unidade unidade : professorDia.getValue())
+					{
+						campi.add(unidade.getCampus());
+					}
 				}
-			}
-			if (campi.size() > 1)
-			{
-				professoresComDeslocamentosCampi.add(professorUnidades.getKey());
+				if (campi.size() > 1)
+				{
+					professoresComDeslocamentosCampi.add(professorUnidades.getKey());
+				}
 			}
 		}
 		
@@ -2109,34 +2123,43 @@ public class ProfessoresServiceImpl
 		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
-		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		Map<Professor, Map<Semanas, Set<Unidade>>> professoresToUnidadesMap = new HashMap<Professor, Map<Semanas, Set<Unidade>>>();
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
 			if (atendimento.getProfessor().getCpf() != null)
 			{
 				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
 				{
+					Map<Semanas, Set<Unidade>> unidadeMapDiaSemana = new HashMap<Semanas, Set<Unidade>>();
 					Set<Unidade> novaUnidade = new HashSet<Unidade>();
 					novaUnidade.add(atendimento.getSala().getUnidade());
-					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+					unidadeMapDiaSemana.put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novaUnidade);
+					professoresToUnidadesMap.put(atendimento.getProfessor(), unidadeMapDiaSemana);
 				}
 				else
 				{
-					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+					if (professoresToUnidadesMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()) == null )
+					{
+						Set<Unidade> novaUnidade = new HashSet<Unidade>();
+						novaUnidade.add(atendimento.getSala().getUnidade());
+						professoresToUnidadesMap.get(atendimento.getProfessor()).put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novaUnidade);
+					}
+					else
+					{
+						professoresToUnidadesMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()).add(atendimento.getSala().getUnidade());
+					}
 				}
 			}
 		}
 		
 		List<Professor> professoresComDeslocamentosUnidades = new ArrayList<Professor>();
-		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		for (Entry<Professor, Map<Semanas, Set<Unidade>>> professorUnidades : professoresToUnidadesMap.entrySet())
 		{
-			Set<Campus> campi = new HashSet<Campus>();
-			if (professoresToUnidadesMap.get(professorUnidades.getKey()).size() > 1)
+			for (Entry<Semanas, Set<Unidade>> professorDia : professoresToUnidadesMap.get(professorUnidades.getKey()).entrySet() )
 			{
-				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
-				for (Unidade unidade : professorUnidades.getValue())
+				if (professorDia.getValue().size() > 1)
 				{
-					campi.add(unidade.getCampus());
+					professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
 				}
 			}
 		}
@@ -2193,30 +2216,44 @@ public class ProfessoresServiceImpl
 		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
-		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		Map<Professor, Map<Semanas, Set<Unidade>>> professoresToUnidadesMap = new HashMap<Professor, Map<Semanas, Set<Unidade>>>();
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
 			if (atendimento.getProfessor().getCpf() != null)
 			{
 				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
 				{
+					Map<Semanas, Set<Unidade>> unidadeMapDiaSemana = new HashMap<Semanas, Set<Unidade>>();
 					Set<Unidade> novaUnidade = new HashSet<Unidade>();
 					novaUnidade.add(atendimento.getSala().getUnidade());
-					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+					unidadeMapDiaSemana.put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novaUnidade);
+					professoresToUnidadesMap.put(atendimento.getProfessor(), unidadeMapDiaSemana);
 				}
 				else
 				{
-					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+					if (professoresToUnidadesMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()) == null )
+					{
+						Set<Unidade> novaUnidade = new HashSet<Unidade>();
+						novaUnidade.add(atendimento.getSala().getUnidade());
+						professoresToUnidadesMap.get(atendimento.getProfessor()).put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novaUnidade);
+					}
+					else
+					{
+						professoresToUnidadesMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()).add(atendimento.getSala().getUnidade());
+					}
 				}
 			}
 		}
 		
 		List<Professor> professoresComDeslocamentosUnidades = new ArrayList<Professor>();
-		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		for (Entry<Professor, Map<Semanas, Set<Unidade>>> professorUnidades : professoresToUnidadesMap.entrySet())
 		{
-			if (professoresToUnidadesMap.get(professorUnidades.getKey()).size() > 1)
+			for (Entry<Semanas, Set<Unidade>> professorDia : professoresToUnidadesMap.get(professorUnidades.getKey()).entrySet() )
 			{
-				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
+				if (professorDia.getValue().size() > 1)
+				{
+					professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
+				}
 			}
 		}
 		
@@ -2249,34 +2286,43 @@ public class ProfessoresServiceImpl
 		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
-		Map<Professor, Set<Campus>> professoresToCampiMap = new HashMap<Professor, Set<Campus>>();
+		Map<Professor, Map<Semanas, Set<Campus>>> professoresToCampiMap = new HashMap<Professor, Map<Semanas, Set<Campus>>>();
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
 			if (atendimento.getProfessor().getCpf() != null)
 			{
 				if (professoresToCampiMap.get(atendimento.getProfessor()) == null)
 				{
+					Map<Semanas, Set<Campus>> campiMapDiasSemana = new HashMap<Semanas, Set<Campus>>(); 
 					Set<Campus> novoCampus = new HashSet<Campus>();
 					novoCampus.add(atendimento.getSala().getUnidade().getCampus());
-					professoresToCampiMap.put(atendimento.getProfessor(), novoCampus);
+					campiMapDiasSemana.put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novoCampus);
+					professoresToCampiMap.put(atendimento.getProfessor(), campiMapDiasSemana);
 				}
 				else
 				{
-					professoresToCampiMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade().getCampus());
+					if (professoresToCampiMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()) == null )
+					{
+						Set<Campus> novoCampus = new HashSet<Campus>();
+						novoCampus.add(atendimento.getSala().getUnidade().getCampus());
+						professoresToCampiMap.get(atendimento.getProfessor()).put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novoCampus);
+					}
+					else
+					{
+						professoresToCampiMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()).add(atendimento.getSala().getUnidade().getCampus());
+					}
 				}
 			}
 		}
 		
 		List<Professor> professoresComDeslocamentosCampi = new ArrayList<Professor>();
-		for (Entry<Professor, Set<Campus>> professorCampus : professoresToCampiMap.entrySet())
+		for (Entry<Professor, Map<Semanas, Set<Campus>>> professorCampus : professoresToCampiMap.entrySet())
 		{
-			Set<Campus> campi = new HashSet<Campus>();
-			if (professoresToCampiMap.get(professorCampus.getKey()).size() > 1)
+			for (Entry<Semanas, Set<Campus>> professorDia : professoresToCampiMap.get(professorCampus.getKey()).entrySet() )
 			{
-				professoresComDeslocamentosCampi.add(professorCampus.getKey());
-				for (Campus unidade : professorCampus.getValue())
+				if (professorDia.getValue().size() > 1)
 				{
-					campi.add(unidade);
+					professoresComDeslocamentosCampi.add(professorCampus.getKey());
 				}
 			}
 		}
@@ -2332,31 +2378,44 @@ public class ProfessoresServiceImpl
 		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
-		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		Map<Professor, Map<Semanas, Set<Campus>>> professoresToCampiMap = new HashMap<Professor, Map<Semanas, Set<Campus>>>();
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
 			if (atendimento.getProfessor().getCpf() != null)
 			{
-				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
+				if (professoresToCampiMap.get(atendimento.getProfessor()) == null)
 				{
-					Set<Unidade> novaUnidade = new HashSet<Unidade>();
-					novaUnidade.add(atendimento.getSala().getUnidade());
-					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+					Map<Semanas, Set<Campus>> campiMapDiasSemana = new HashMap<Semanas, Set<Campus>>(); 
+					Set<Campus> novoCampus = new HashSet<Campus>();
+					novoCampus.add(atendimento.getSala().getUnidade().getCampus());
+					campiMapDiasSemana.put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novoCampus);
+					professoresToCampiMap.put(atendimento.getProfessor(), campiMapDiasSemana);
 				}
 				else
 				{
-					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+					if (professoresToCampiMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()) == null )
+					{
+						Set<Campus> novoCampus = new HashSet<Campus>();
+						novoCampus.add(atendimento.getSala().getUnidade().getCampus());
+						professoresToCampiMap.get(atendimento.getProfessor()).put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), novoCampus);
+					}
+					else
+					{
+						professoresToCampiMap.get(atendimento.getProfessor()).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()).add(atendimento.getSala().getUnidade().getCampus());
+					}
 				}
 			}
 		}
 		
 		List<Professor> professoresComDeslocamentosCampi = new ArrayList<Professor>();
-		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		for (Entry<Professor, Map<Semanas, Set<Campus>>> professorCampus : professoresToCampiMap.entrySet())
 		{
-			Set<Campus> campi = new HashSet<Campus>();
-			if (campi.size() > 1)
+			for (Entry<Semanas, Set<Campus>> professorDia : professoresToCampiMap.get(professorCampus.getKey()).entrySet() )
 			{
-				professoresComDeslocamentosCampi.add(professorUnidades.getKey());
+				if (professorDia.getValue().size() > 1)
+				{
+					professoresComDeslocamentosCampi.add(professorCampus.getKey());
+				}
 			}
 		}
 		

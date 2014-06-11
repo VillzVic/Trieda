@@ -477,8 +477,10 @@ public class ProfessorVirtual
 		clone.setCargaHorariaMin(this.getCargaHorariaMin());
 		clone.setCenario(novoCenario.getCenario());
 		clone.setInstituicaoEnsino(this.getInstituicaoEnsino());
-		clone.setTipoContrato(novoCenario.getEntidadeClonada(this.getTipoContrato()));
-		clone.setTitulacao(novoCenario.getEntidadeClonada(this.getTitulacao()));
+		if (this.getTipoContrato() != null)
+			clone.setTipoContrato(novoCenario.getEntidadeClonada(this.getTipoContrato()));
+		if (this.getTitulacao() != null)
+			clone.setTitulacao(novoCenario.getEntidadeClonada(this.getTitulacao()));
 		
 		return clone;
 	}
