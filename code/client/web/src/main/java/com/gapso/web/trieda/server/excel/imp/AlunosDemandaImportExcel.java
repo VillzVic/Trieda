@@ -178,7 +178,9 @@ public class AlunosDemandaImportExcel
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -391,8 +393,7 @@ public class AlunosDemandaImportExcel
 	}
 
 	@Transactional
-	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
-	private void updateDataBase(
+	protected void updateDataBase(
 		String sheetName, List< AlunosDemandaImportExcelBean > sheetContent )
 	{
 		Map< String, Aluno > alunosBDMap

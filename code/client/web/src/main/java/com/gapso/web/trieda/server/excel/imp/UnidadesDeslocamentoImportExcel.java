@@ -20,11 +20,14 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
+@ProgressDeclarationAnnotation
 public class UnidadesDeslocamentoImportExcel
 	extends AbstractImportExcel< UnidadesDeslocamentoImportExcelBean >
 {
@@ -253,13 +256,16 @@ public class UnidadesDeslocamentoImportExcel
 	}
 	
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(
 		String sheetName, List< UnidadesDeslocamentoImportExcelBean > sheetContent )
 	{
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 	

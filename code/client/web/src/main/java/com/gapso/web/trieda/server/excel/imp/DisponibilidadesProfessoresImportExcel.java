@@ -102,7 +102,9 @@ public class DisponibilidadesProfessoresImportExcel extends AbstractImportExcel<
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(String sheetName, List<DisponibilidadesProfessoresImportExcelBean> sheetContent) {
 		if (doSyntacticValidation(sheetName, sheetContent) && doLogicValidation(sheetName, sheetContent)) {
-			updateDataBase(sheetName, sheetContent);
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
+			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 

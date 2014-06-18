@@ -16,10 +16,13 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class AreasTitulacaoImportExcel
 	extends AbstractImportExcel< AreasTitulacaoImportExcelBean >
 {
@@ -108,13 +111,16 @@ public class AreasTitulacaoImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(
 		String sheetName, List< AreasTitulacaoImportExcelBean > sheetContent )
 	{
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -205,7 +211,7 @@ public class AreasTitulacaoImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase( String sheetName,
+	protected void updateDataBase( String sheetName,
 		List< AreasTitulacaoImportExcelBean > sheetContent )
 	{
 		Map< String, AreaTitulacao > areasTitulacaoBDMap

@@ -63,7 +63,7 @@ public class ExcelFormListener
 			if (gridToBeUpdated != null) {
 				gridToBeUpdated.updateList();
 			}
-			MessageBox.info(i18nConstants.informacao(),i18nMessages.sucessoImportacaoExcel(),null);
+			//MessageBox.info(i18nConstants.informacao(),i18nMessages.sucessoImportacaoExcel(),null);
 		}
 	}
 }

@@ -130,7 +130,9 @@ public class CampiTrabalhoImportExcel
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -239,7 +241,7 @@ public class CampiTrabalhoImportExcel
 
 	@Transactional
 	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
-	private void updateDataBase( String sheetName,
+	protected void updateDataBase( String sheetName,
 		List< CampiTrabalhoImportExcelBean > sheetContent )
 	{
 		Set< Professor > professorMerge = new HashSet< Professor >();

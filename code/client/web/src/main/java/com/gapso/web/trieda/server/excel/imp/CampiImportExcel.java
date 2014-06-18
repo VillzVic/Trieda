@@ -133,14 +133,16 @@ public class CampiImportExcel
 	}
 	
 	@Override
-	@ProgressReportMethodScan(texto = "Sheet Content of Campi")
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	public void processSheetContent( String sheetName,
 		List< CampiImportExcelBean > sheetContent )
 	{
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -231,7 +233,7 @@ public class CampiImportExcel
 	}
 
 	@Transactional
-	@ProgressReportMethodScan(texto = "Update do Banco de Dados")
+	@ProgressReportMethodScan(texto = "Atualizando Banco de Dados")
 	public void updateDataBase( String sheetName,
 		List< CampiImportExcelBean > sheetContent )
 	{

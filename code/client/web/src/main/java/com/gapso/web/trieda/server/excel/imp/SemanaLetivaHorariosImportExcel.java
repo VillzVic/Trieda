@@ -29,11 +29,13 @@ import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaLetivaHorariosImportExcelBean> {
 	static public String SEMANA_LETIVA_CODIGO_COLUMN_NAME;
 	static public String TURNO_COLUMN_NAME;
@@ -135,7 +137,9 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(String sheetName, List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
 		if (doSyntacticValidation(sheetName, sheetContent) && doLogicValidation(sheetName, sheetContent)) {
-			updateDataBase(sheetName, sheetContent);
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
+			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -271,7 +275,6 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 	}
 
 	@Transactional
-	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
 	private void updateDataBase(String sheetName, List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
 		Set<SemanaLetiva> semanasLetivasAtualizadas = new HashSet<SemanaLetiva>();
 		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent)

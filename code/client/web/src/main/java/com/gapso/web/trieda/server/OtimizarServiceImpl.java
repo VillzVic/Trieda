@@ -129,9 +129,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			checkDisciplinasSemCurriculo(parametro,warnings);
 			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
-			System.out.print("Checando disciplinas sem laboratorios");start = System.currentTimeMillis(); // TODO: retirar
+			//System.out.print("Checando disciplinas sem laboratorios");start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasSemLaboratorios(parametro,errors);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			//time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			System.out.print("Checando disciplinas que nao exigem laboratorio associadas somente a laboratorios");start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasComSomenteLaboratorios(parametro,warnings);
@@ -835,6 +835,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 			}
 		}
+		
+		System.out.println(disciplinasQueExigemLaboratio.size()+ " tamanhoDisciplinasQueExigemLaboratio");
+		
 		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
 		System.out.print("for 2");start = System.currentTimeMillis(); // TODO: retirar

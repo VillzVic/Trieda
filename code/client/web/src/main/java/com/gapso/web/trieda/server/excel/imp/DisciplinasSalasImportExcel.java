@@ -18,11 +18,14 @@ import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.google.gwt.dev.util.collect.HashSet;
 
+@ProgressDeclarationAnnotation
 public class DisciplinasSalasImportExcel
 	extends AbstractImportExcel< DisciplinasSalasImportExcelBean >
 {
@@ -110,10 +113,13 @@ public class DisciplinasSalasImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent) {
 		if (doSyntacticValidation(sheetName,sheetContent)) {
 			if (doLogicValidation(sheetName,sheetContent)) {
-				updateDataBase(sheetName,sheetContent);
+				getProgressReport().setInitNewPartial("Atualizando banco de dados");
+				updateDataBase( sheetName, sheetContent );
+				getProgressReport().setPartial("Fim de Atualizando banco de dados");
 			}
 		}
 	}

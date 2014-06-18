@@ -23,11 +23,14 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.google.gwt.dev.util.Pair;
 
+@ProgressDeclarationAnnotation
 public class CurriculosImportExcel
 	extends AbstractImportExcel< CurriculosImportExcelBean >
 {
@@ -137,13 +140,16 @@ public class CurriculosImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(
 		String sheetName, List< CurriculosImportExcelBean > sheetContent )
 	{
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -605,7 +611,7 @@ public class CurriculosImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase( String sheetName,
+	protected void updateDataBase( String sheetName,
 		List< CurriculosImportExcelBean > sheetContent )
 	{
 		// ATUALIZA CURRICULOS

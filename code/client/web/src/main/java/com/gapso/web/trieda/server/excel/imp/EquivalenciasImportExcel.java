@@ -123,7 +123,9 @@ public class EquivalenciasImportExcel
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -374,8 +376,7 @@ public class EquivalenciasImportExcel
 	}
 
 	@Transactional
-	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
-	private void updateDataBase( String sheetName,
+	protected void updateDataBase( String sheetName,
 		List< EquivalenciasImportExcelBean > sheetContent )
 	{
 		Map< String, Equivalencia > equivalenciasBDMap

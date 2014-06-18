@@ -67,7 +67,7 @@ public class MultiImportExcel extends ProgressDeclarationImpl implements IImport
 			}
 
 			for (IImportExcel importer : importers) {
-				getProgressReport().setInitNewPartial("Importando " + importer.getSheetName());
+				getProgressReport().setInitNewPartial("Importandos " + importer.getSheetName());
 				flag = (importer.load(fileName, workbook) && flag);
 				getProgressReport().setPartial("Etapa concluída");
 

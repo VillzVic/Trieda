@@ -58,7 +58,8 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 
 	protected abstract void processSheetContent(
 		String sheetName, List< ExcelBeanType > sheetContent );
-
+	
+	
 	//@Transactional
 	@Override
 	public boolean load( String fileName, Workbook workbook )
@@ -331,4 +332,5 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	{
 		return this.i18nMessages;
 	}
+
 }

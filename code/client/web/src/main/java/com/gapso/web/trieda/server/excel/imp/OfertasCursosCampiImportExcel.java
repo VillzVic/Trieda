@@ -22,10 +22,13 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.TriedaPar;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class OfertasCursosCampiImportExcel extends
 		AbstractImportExcel<OfertasCursosCampiImportExcelBean> {
 
@@ -112,11 +115,14 @@ public class OfertasCursosCampiImportExcel extends
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(String sheetName,
 			List<OfertasCursosCampiImportExcelBean> sheetContent) {
 		if (doSyntacticValidation(sheetName, sheetContent)
 				&& doLogicValidation(sheetName, sheetContent)) {
-			updateDataBase(sheetName, sheetContent);
+			getProgressReport().setInitNewPartial("Atualizando banco de dados");
+			updateDataBase( sheetName, sheetContent );
+			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -169,7 +175,7 @@ public class OfertasCursosCampiImportExcel extends
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName,
+	protected void updateDataBase(String sheetName,
 			List<OfertasCursosCampiImportExcelBean> sheetContent) {
 		Map<String, Oferta> ofertasBDMap = Oferta
 				.buildCampusTurnoCurriculoToOfertaMap(Oferta.findByCenario(
