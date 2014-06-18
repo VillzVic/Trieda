@@ -66,6 +66,13 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.util.solverclient.SolverClient;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoHorarioAula;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoSala;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTatico;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
 import com.gapso.web.trieda.server.xml.output.ItemError;
 import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
@@ -1949,13 +1956,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 
-			System.out.println("Carregando xml( round ). Passo 1 de 4...");// TODO:
+			getProgressReport().setPartial("Carregando xml( round ). Passo 1 de 4...");// TODO:
 			
-			Parametro parametro1 = cenario.getUltimoParametro(this.getInstituicaoEnsinoUser());
-			for (Campus campus : parametro1.getCampi())
-			{
-				System.out.println("campus:" + campus.getNome());
-			}
 			byte[] xmlBytes = solverClient.getContent(round);
 
 			if (xmlBytes == null) {
@@ -1981,32 +1983,103 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				return ret;
 			}
 
-			Parametro parametro = cenario.getUltimoParametro(this.getInstituicaoEnsinoUser());
-			System.out.println("Carregando xml( round ). Passo 1 de 4 FINALIZADO");// TODO:
+			getProgressReport().setPartial("Processando campi e turnos utilizados...");// TODO:
+			Set<Campus> campi = new HashSet<Campus>();
+			Set<Turno> turnos = new HashSet<Turno>();
+			boolean ehTatico = false;
+			// preenche horários
+			Map<Long,HorarioAula> horarioAulaIdToHorarioAulaMap = new HashMap<Long,HorarioAula>();
+			Map<String,Campus> campusIdToCampusMap =  Campus.buildCampusCodigoToCampusMap(new ArrayList<Campus>(cenario.getCampi()));
+			for (Turno turno : cenario.getTurnos()) {
+				for (HorarioAula horarioAula : turno.getHorariosAula()) {
+					horarioAulaIdToHorarioAulaMap.put(horarioAula.getId(),horarioAula);
+				}
+			}
+			for (ItemAtendimentoCampus atendimento: triedaOutput.getAtendimentos().getAtendimentoCampus())
+			{
+				if (campusIdToCampusMap.get(atendimento.getCampusCodigo()) != null)
+					campi.add(campusIdToCampusMap.get(atendimento.getCampusCodigo()));
+				else
+				{
+					ret.get("error").add("Campus Codigo("+ atendimento.getCampusCodigo() +") especificado na solução não esta cadastrado");
+					return ret;
+				}
+					
+				for (ItemAtendimentoUnidade atendimentoUnidade : atendimento.getAtendimentosUnidades().getAtendimentoUnidade())
+				{
+					for (ItemAtendimentoSala atendimentoSala : atendimentoUnidade.getAtendimentosSalas().getAtendimentoSala())
+					{
+						for (ItemAtendimentoDiaSemana atendimentoDia : atendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana())
+						{
+							if (atendimentoDia.getAtendimentosTatico() != null )
+							{
+								System.out.println("AtendimentoTatico: " + atendimentoDia.getAtendimentosTatico());
+								System.out.println("AtendimentoTaticoSize: " + atendimentoDia.getAtendimentosTatico().getAtendimentoTatico().size());
+								ehTatico = true;
+								for (ItemAtendimentoTatico atendimentoTatico : atendimentoDia.getAtendimentosTatico().getAtendimentoTatico())
+								{
+									for (Integer id : atendimentoTatico.getHorariosAula().getHorarioAulaId())
+									{
+										if (horarioAulaIdToHorarioAulaMap.get(Long.valueOf(id)).getTurno() != null)
+											turnos.add(horarioAulaIdToHorarioAulaMap.get(Long.valueOf(id)).getTurno());
+										else
+										{
+											ret.get("error").add("Turno id("+ id +") especificado na solução não esta cadastrado");
+											return ret;
+										}
+									}
+								}
+							}
+							else if (atendimentoDia.getAtendimentosTurnos() != null)
+							{
+								for (ItemAtendimentoTurno atendimentoTurno : atendimentoDia.getAtendimentosTurnos().getAtendimentoTurno())
+								{
+									for (ItemAtendimentoHorarioAula atendimentoHorarioAula : atendimentoTurno.getAtendimentosHorariosAula().getAtendimentoHorarioAula())
+									{
+										if (horarioAulaIdToHorarioAulaMap.get(Long.valueOf(atendimentoHorarioAula.getHorarioAulaId())).getTurno() != null)
+											turnos.add(horarioAulaIdToHorarioAulaMap.get(Long.valueOf(atendimentoHorarioAula.getHorarioAulaId())).getTurno());
+										else
+										{
+											ret.get("error").add("Turno id("+ atendimentoTurno.getTurnoId() +") especificado na solução não esta cadastrado");
+											return ret;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			for (Campus campus : campi)
+			{
+				System.out.println("campus:" + campus.getNome());
+			}
+			getProgressReport().setPartial("Processando campi e turnos utilizados FINALIZADO");// TODO:
+			getProgressReport().setPartial("Carregando xml( round ). Passo 1 de 4 FINALIZADO");// TODO:
 
 			SolverOutput solverOutput = new SolverOutput(getInstituicaoEnsinoUser(), cenario, triedaOutput);
-			System.out.println("Atualizando demandas de alunos. Passo 2 de 4");// TODO:
-			solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurnos());
-			System.out.println("Atualizando demandas de alunos. Passo 2 de 4 FINALIZADO");// TODO:
+			getProgressReport().setPartial("Atualizando demandas de alunos. Passo 2 de 4");// TODO:
+			solverOutput.atualizarAlunosDemanda(campi,turnos);
+			getProgressReport().setPartial("Atualizando demandas de alunos. Passo 2 de 4 FINALIZADO");// TODO:
 
-			if (parametro.isTatico()) {
-				System.out.println("Gerando atendimentos tatico. Passo 3 de 4");// TODO:
-				solverOutput.generateAtendimentosTatico(parametro.getTurnos());
-				System.out.println("Gerando atendimentos tatico. Passo 3 de 4 FINALIZADO");// TODO:
+			if (ehTatico) {
+				getProgressReport().setPartial("Gerando atendimentos tatico. Passo 3 de 4");// TODO:
+				solverOutput.generateAtendimentosTatico(turnos);
+				getProgressReport().setPartial("Gerando atendimentos tatico. Passo 3 de 4 FINALIZADO");// TODO:
 
-				System.out.println("Salvando atendimentos tatico. Passo 4 de 4");// TODO:
-				solverOutput.salvarAtendimentosTatico(parametro.getCampi(),parametro.getTurnos());
-				System.out.println("Salvando atendimentos tatico. Passo 4 de 4 FINALIZADO");// TODO:
+				getProgressReport().setPartial("Salvando atendimentos tatico. Passo 4 de 4");// TODO:
+				solverOutput.salvarAtendimentosTatico(campi,turnos);
+				getProgressReport().setPartial("Salvando atendimentos tatico. Passo 4 de 4 FINALIZADO");// TODO:
 			} else {
-				System.out.println("Gerando atendimentos operacional. Passo 3 de 4");// TODO:
-				solverOutput.generateAtendimentosOperacional(parametro.getTurnos());
-				System.out.println("Gerando atendimentos operacional. Passo 3 de 4 FINALIZADO");// TODO:
+				getProgressReport().setPartial("Gerando atendimentos operacional. Passo 3 de 4");// TODO:
+				solverOutput.generateAtendimentosOperacional(turnos);
+				getProgressReport().setPartial("Gerando atendimentos operacional. Passo 3 de 4 FINALIZADO");// TODO:
 
-				System.out.println("Salvando atendimentos operacional. Passo 4 de 4");// TODO:
-				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(), parametro.getTurnos());
-				System.out.println("Salvando atendimentos operacional. Passo 4 de 4 FINALIZADO");// TODO:
+				getProgressReport().setPartial("Salvando atendimentos operacional. Passo 4 de 4");// TODO:
+				solverOutput.salvarAtendimentosOperacional(campi, turnos);
+				getProgressReport().setPartial("Salvando atendimentos operacional. Passo 4 de 4 FINALIZADO");// TODO:
 			}
-			System.out.println("Atualizando motivos de nao atendimento FINALIZADO");// TODO:
+			getProgressReport().setPartial("Atualizando motivos de nao atendimento FINALIZADO");// TODO:
 			solverOutput.generateMotivosNaoAtendimento();
 		} catch (JAXBException e) {
 			e.printStackTrace();
