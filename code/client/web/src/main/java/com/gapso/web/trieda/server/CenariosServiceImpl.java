@@ -87,7 +87,7 @@ public class CenariosServiceImpl
 	{
 		Cenario cenario = getCenario();
 				
-		return cenario == null ? getMasterData() : ConvertBeans.toCenarioDTO(cenario);
+		return cenario == null ? getMasterData() : ConvertBeans.toCenarioDTO(cenario, false);
 	}
 	
 	@Override
@@ -209,7 +209,7 @@ public class CenariosServiceImpl
 
 		for ( Cenario cenario : listCenarios )
 		{
-			list.add( ConvertBeans.toCenarioDTO( cenario ) );
+			list.add( ConvertBeans.toCenarioDTO( cenario, false ) );
 		}
 
 		BasePagingLoadResult< CenarioDTO > result

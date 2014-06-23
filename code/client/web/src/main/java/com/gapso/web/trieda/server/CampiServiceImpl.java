@@ -505,12 +505,9 @@ public class CampiServiceImpl extends RemoteService
 				semanasLetivasUtilizadas.add(oferta.getCurriculo().getSemanaLetiva());
 			}
 		} else {
-			System.out.print("Checando atendimentos operacionais");long start = System.currentTimeMillis(); // TODO: retirar
 			// atendimentos operacionais
 			List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosOperacionaisByCampus(getInstituicaoEnsinoUser(), campus);
-			 long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
-			 System.out.print("Checando ConvertBeans.toAtendimentoOperacionalDTO(atendimento)"); start = System.currentTimeMillis(); // TODO: retirar
 			for (AtendimentoOperacional atendimento : atendimentos) {
 				Oferta oferta = atendimento.getOferta();
 				Turno turno = oferta.getTurno();
@@ -527,7 +524,7 @@ public class CampiServiceImpl extends RemoteService
 				salasUtilizadas.add(sala);
 				semanasLetivasUtilizadas.add(oferta.getCurriculo().getSemanaLetiva());
 			}
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+
 		}
 		
 		
@@ -656,60 +653,39 @@ public class CampiServiceImpl extends RemoteService
 		
 		// cálculo de outros indicadores
 		long startIndic = System.currentTimeMillis(); // TODO: retirar
-		System.out.print("Checando Aluno.findByCampus");long start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTotalAlunos = Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
-		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando numAlunosComDemanda"); start = System.currentTimeMillis(); // TODO: retirar
 		int numAlunosComDemanda = AlunoDemanda.sumAlunosComDemanda(getInstituicaoEnsinoUser(), campus);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando Professor.findByCampus"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTotalDocentes = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus).size();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando Professor.findProfessoresUteis"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdDocentesHabilitados = Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, campus).size();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando AtendimentoOperacional.countTurmaProfessoresVirtuais"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTurmasAbertasProfessoresVirtuais = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresVirtuais(getInstituicaoEnsinoUser(),campus);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando AtendimentoOperacional.countTurmaProfessoresInstituicao"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTurmasAbertasProfessoresInstituicao = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresInstituicao(getInstituicaoEnsinoUser(),campus);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando qtdTurmasAbertas"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTurmasAbertas = ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
 		Double qtdMediaDeCreditosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)totalCreditosSemanais/qtdTurmasAbertas)),2);
 		
-		System.out.print("Checando  AlunoDemanda.sumDemandaPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer demandaTotalP1QtdeAlunos = AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando AlunoDemanda.sumDemandaPresencialPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer demandaTotalPresencialP1QtdeAlunos = AlunoDemanda.sumDemandaPresencialPorPrioridade(getInstituicaoEnsinoUser(),cenario,campus,1);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
 		Integer demandaTotalNaoPresencialP1QtdeAlunos = demandaTotalP1QtdeAlunos-demandaTotalPresencialP1QtdeAlunos;
 		
-		System.out.print("Checando AlunoDemanda.sumDemandaAtendidaPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer demandaAtendidaP1QtdeAlunos = AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando AlunoDemanda.sumDemandaAtendidaPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer demandaAtendidaP2QtdeAlunos = AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,2);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
 		
 		Integer demandaAtendidaQtdeAlunos = demandaAtendidaP1QtdeAlunos + demandaAtendidaP2QtdeAlunos + demandaTotalNaoPresencialP1QtdeAlunos;
 		Double qtdMediaDeAlunosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)demandaAtendidaQtdeAlunos/qtdTurmasAbertas)),2);
 		Double custoMedioSemanalPorCredito = TriedaUtil.round(((totalCreditosSemanais != 0) ? custoDocenteSemanal/totalCreditosSemanais : 0.0),2);
 		Double custoDocenteSemestral = TriedaUtil.round((custoDocenteSemanal*4.5*6.0),2);
 		
-		System.out.print("Checando  totalCreditosSemanaisAlunos"); start = System.currentTimeMillis(); // TODO: retirar
+		
 		Double margemContribuicaoSemestral = TriedaUtil.round(receitaSemestral - custoDocenteSemestral, 2);
 		Double razaoCustoDocentePorReceitaSemestral = (receitaSemestral == 0.0) ? null : TriedaUtil.round((custoDocenteSemestral/receitaSemestral*100.0),2);
 		Integer demandaNaoAtendidaQtdeAlunos = demandaTotalP1QtdeAlunos - demandaAtendidaQtdeAlunos;
@@ -719,23 +695,17 @@ public class CampiServiceImpl extends RemoteService
 		Integer totalCreditosSemanaisAlunos = ehTatico ? AtendimentoTatico.sumCredAlunosAtendidos(getInstituicaoEnsinoUser(),cenario,campus) :
 			AtendimentoOperacional.sumCredAlunosAtendidos(getInstituicaoEnsinoUser(),cenario,campus);
 		
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando AtendimentoOperacional.countProfessores"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdProfessores = ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
 				AtendimentoOperacional.countProfessores(getInstituicaoEnsinoUser(), campus) : 0);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando AtendimentoOperacional.countProfessoresVirtuais"); start = System.currentTimeMillis(); // TODO: retirar
 		
 		Integer qtdProfessoresVirtuais = ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
 				AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		
-		System.out.print("Checando somas finais"); start = System.currentTimeMillis(); // TODO: retirar
 		
 		Integer qtdDocentes = qtdProfessores + qtdProfessoresVirtuais;
-		
+
 		Double produtividadeTempoAula = TriedaUtil.round( totalCreditosSemanais == 0 ? 0.0 : ((double)totalCreditosSemanaisAlunos)/totalCreditosSemanais, 2 );
 		Double custoSobreReceitaCreditoPercent = TriedaUtil.round( totalCreditosSemanaisAlunos == 0 ? 0.0 : (((double)totalCreditosSemanais)/totalCreditosSemanaisAlunos)*100, 2 );
 		Double mediaCreditosPorDocente = TriedaUtil.round( qtdDocentes == 0 ? 0.0 : ((double)totalCreditosSemanais)/qtdDocentes, 2 );
@@ -745,8 +715,6 @@ public class CampiServiceImpl extends RemoteService
 		Double mediaTurmasPorProfessor = TriedaUtil.round( qtdProfessores == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresInstituicao)/qtdProfessores, 2 );
 		Double mediaTurmasPorProfessorVirtual = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresVirtuais)/qtdProfessoresVirtuais, 2 );
 		
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		time = (System.currentTimeMillis() - startIndic)/1000;System.out.println("Checando indicadores tempo = " + time + " segundos"); // TODO: retirar
 		
 		// disponibilização dos indicadores
 		Locale pt_BR = new Locale("pt","BR");
@@ -879,7 +847,6 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Média de turmas por docente virtual: ", "<b>" + numberFormatter.print(mediaTurmasPorProfessorVirtual,pt_BR) + "</b>") ,currentNode, true) );
 		
-		time = (System.currentTimeMillis() - primeiro)/1000;System.out.println(" tempo total = " + time + " segundos"); // TODO: retirar
 		return itensDoRelatorioParaUmCampus;
 	}
 	

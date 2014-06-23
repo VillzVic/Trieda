@@ -222,8 +222,13 @@ public class ConvertBeans {
 
 		return domain;
 	}
-
+	
 	public static CenarioDTO toCenarioDTO( Cenario domain )
+	{
+		return toCenarioDTO(domain,true);
+	}
+
+	public static CenarioDTO toCenarioDTO( Cenario domain, boolean todasInformacoes )
 	{
 		CenarioDTO dto = new CenarioDTO();
 
@@ -243,18 +248,22 @@ public class ConvertBeans {
 		dto.setCriadoUsuarioDate( domain.getDataCriacao() );
 		dto.setAtualizadoUsuarioString( domain.getAtualizadoPor() == null ? null : domain.getAtualizadoPor().getNome() );
 		dto.setAtualizadoUsuarioDate( domain.getDataAtualizacao() );
-		dto.setAlunos(domain.hasAlunos());
-		dto.setProfessores(domain.hasProfessores());
-		dto.setSalas(domain.hasSalas());
-		dto.setOptimized(domain.isOptimized());
-
-		if ( instituicaoEnsino != null )
+		
+		if(todasInformacoes)
 		{
-			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
-			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+			dto.setAlunos(domain.hasAlunos());
+			dto.setProfessores(domain.hasProfessores());
+			dto.setSalas(domain.hasSalas());
+			dto.setOptimized(domain.isOptimized());
+	
+			if ( instituicaoEnsino != null )
+			{
+				dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
+				dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+			}
+	
+			dto.setDisplayText( domain.getNome() );
 		}
-
-		dto.setDisplayText( domain.getNome() );
 
 		return dto;
 	}

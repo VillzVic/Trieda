@@ -1254,7 +1254,7 @@ public class AlunoDemanda
 		matricula = ( "%" + matricula.replace( '*', '%' ) + "%" );
 
         Query q = entityManager().createQuery(
-        	" SELECT o FROM AlunoDemanda o " +
+        	" SELECT count( o ) FROM AlunoDemanda o " +
         	" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.demanda.oferta.campus.cenario = :cenario " +
         	" AND LOWER ( o.aluno.nome ) LIKE LOWER ( :nome ) " +
@@ -1304,7 +1304,7 @@ public class AlunoDemanda
         	q.setParameter("atendido", atendido);
         }
 
-        return q.getResultList().size();
+		return ( (Number)q.getSingleResult() ).intValue();
 	}
 	
 	@SuppressWarnings("unchecked")
