@@ -80,6 +80,7 @@ public class SalasPresenter
 		 TextField<String> getNumeroTF();
 		 TextField<String> getDescricaoTF(); 
 		 TextField<String> getAndarTF();
+		 TextField<String> getCodigoAmbienteTF();
 		 TipoSalaComboBox getTipoSalaCB();
 	}
 
@@ -121,15 +122,16 @@ public class SalasPresenter
 				String operadorCustoOperacao = (display.getOperadorCustoOperacaoCB().getValue()==null)?null: display.getOperadorCustoOperacaoCB().getValue().getValue().getOperadorSQL();
 				Double custoOperacao = display.getCustoOperacao().getValue() == null?null:display.getCustoOperacao().getValue().doubleValue();
 				
+				String codigo =  display.getCodigoAmbienteTF().getValue();
 				String numero =  display.getNumeroTF().getValue();
 				String descricao = display.getDescricaoTF().getValue();
 				String andar = display.getAndarTF().getValue();
 				
 
-				service.getList( cenario, campusDTO, unidadeDTO,
+				service.getList( cenario,  campusDTO, unidadeDTO,
 						tipoSalaDTO, operadorCapacidadeInstalada, capacidadeInstalada,
 						operadorCapacidadeMaxima, capacidadeMaxima, operadorCustoOperacao, custoOperacao,
-						numero, descricao, andar,
+						numero, descricao, andar, codigo,
 					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
@@ -357,6 +359,7 @@ public class SalasPresenter
 				 display.getCustoOperacao().setValue(null);
 				 display.getNumeroTF().setValue(null);
 				 display.getDescricaoTF().setValue(null);
+				 display.getCodigoAmbienteTF().setValue(null);
 				 display.getAndarTF().setValue(null);
 
 				display.getGrid().updateList();

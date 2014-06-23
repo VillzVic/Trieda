@@ -47,6 +47,7 @@ public class SalasView
 	private Button disponibilidadeBT;
 	private Button associarDisciplinasBT;
 	private UnidadeComboBox unidadeCB;
+	private TextField< String > codigoAmbienteTF;
 	private CampusComboBox campusCB;
 	private TipoSalaComboBox tipoSalaCB;
 	private OperadorComboBox operadorCapacidadeInstaladaCB;
@@ -191,6 +192,8 @@ public class SalasView
 		this.custoOperacao = new NumberField();
 		this.custoOperacao.setWidth(75);
 		
+		this.codigoAmbienteTF = new TextField< String >();
+		this.codigoAmbienteTF.setFieldLabel(getI18nConstants().codigoSala());
 		this.numeroTF = new TextField< String >();
 		this.numeroTF.setFieldLabel(getI18nConstants().numero());
 		this.descricaoTF = new TextField< String >();
@@ -198,6 +201,7 @@ public class SalasView
 		this.andarTF = new TextField< String >();
 		this.andarTF.setFieldLabel(getI18nConstants().andar());
 
+		this.filter.addField( this.codigoAmbienteTF );
 		this.filter.addField( this.campusCB );
 		this.filter.addField( this.unidadeCB );
 		this.filter.addField( this.tipoSalaCB );
@@ -305,6 +309,12 @@ public class SalasView
 	public UnidadeComboBox getUnidadeCB()
 	{
 		return unidadeCB;
+	}
+	
+	
+	@Override
+	public TextField<String> getCodigoAmbienteTF() {
+		return codigoAmbienteTF;
 	}
 
 	@Override

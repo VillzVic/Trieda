@@ -30,7 +30,7 @@ public interface SalasService
 	PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO,
 			TipoSalaDTO tipoSalaDTO, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
 			String operadorCapacidadeMaxima, Integer capacidadeMaxima, String operadorCustoOperacao, Double custoOperacao,
-			String  numero, String descricao, String andar,	 PagingLoadConfig config );
+			String  numero, String descricao, String andar,	String codigo, PagingLoadConfig config );
 	ListLoadResult< SalaDTO > getList();
 	void save( SalaDTO salaDTO );
 	void remove( List< SalaDTO > salaDTOList );

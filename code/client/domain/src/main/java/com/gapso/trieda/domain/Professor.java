@@ -630,6 +630,9 @@ public class Professor
 	{
 		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND" +
 				" o.cenario = :cenario AND";
+		
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 
 		if ( cpf != null )
 		{

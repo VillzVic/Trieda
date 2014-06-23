@@ -720,12 +720,15 @@ public class Sala
 		Cenario cenario, Campus campus, Unidade unidade,
 		TipoSala tipoSala, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
 		String operadorCapacidadeMaxima, Integer capacidadeMax, String operadorCustoOperacao, Double custoOperacao,
-		String  numero, String descricao, String andar)
+		String  numero, String descricao, String andar, String codigo)
 	{
 		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
 				" AND o.unidade.campus.cenario = :cenario and ";
 
-
+		if ( codigo != null )
+		{
+			whereString += " o.codigo = :codigo and ";
+		}
 		
 		if ( campus != null )
 		{
@@ -788,6 +791,11 @@ public class Sala
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
 
+		if ( codigo != null )
+		{
+			q.setParameter( "codigo", codigo );
+		}
+		
 		if ( campus != null )
 		{
 			q.setParameter( "campus", campus );
@@ -838,13 +846,18 @@ public class Sala
     	Campus campus, Unidade unidade,
     	TipoSala tipoSala, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
 		String operadorCapacidadeMaxima, Integer capacidadeMax, String operadorCustoOperacao, Double custoOperacao,
-		String  numero, String descricao, String andar,
+		String  numero, String descricao, String andar, String codigo,
     	int firstResult, int maxResults, String orderBy )
     {
 		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
 				" AND o.unidade.campus.cenario = :cenario and ";
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
+		if ( codigo != null )
+		{
+			whereString += " o.codigo = :codigo and ";
+		}
+		
 		if ( campus != null )
 		{
 			whereString += " o.unidade.campus = :campus and ";
@@ -908,6 +921,12 @@ public class Sala
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
+		
+		if ( codigo != null )
+		{
+			q.setParameter( "codigo", codigo );
+		}
+		
 		if ( campus != null )
 		{
 			q.setParameter( "campus", campus );

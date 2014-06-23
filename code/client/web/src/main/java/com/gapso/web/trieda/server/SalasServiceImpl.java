@@ -175,7 +175,7 @@ public class SalasServiceImpl
 	public PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, 
 			TipoSalaDTO tipoSalaDTO, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
 			String operadorCapacidadeMaxima, Integer capacidadeMaxima, String operadorCustoOperacao, Double custoOperacao,
-			String  numero, String descricao, String andar,
+			String  numero, String descricao, String andar, String codigo,
 		PagingLoadConfig config )
 	{
 		List< SalaDTO > list = new ArrayList< SalaDTO >();
@@ -207,7 +207,7 @@ public class SalasServiceImpl
 		List< Sala > listDomains = Sala.find( getInstituicaoEnsinoUser(), cenario,
 			campus, unidade, tipoSala, operadorCapacidadeInstalada, capacidadeInstalada,
 			 operadorCapacidadeMaxima,  capacidadeMaxima,  operadorCustoOperacao, custoOperacao,
-			 numero,  descricao,  andar, 
+			 numero,  descricao,  andar, codigo,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Sala sala : listDomains )
@@ -222,7 +222,7 @@ public class SalasServiceImpl
 				getInstituicaoEnsinoUser(), cenario, campus, unidade,
 				tipoSala, operadorCapacidadeInstalada, capacidadeInstalada,
 				 operadorCapacidadeMaxima,  capacidadeMaxima,  operadorCustoOperacao, custoOperacao,
-				 numero,  descricao,  andar) );
+				 numero,  descricao,  andar, codigo) );
 		return result;
 	}
 

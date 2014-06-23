@@ -26,7 +26,7 @@ public interface SalasServiceAsync
 	void getList( CenarioDTO cenarioDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO,
 			TipoSalaDTO tipoSalaDTO, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
 			String operadorCapacidadeMaxima, Integer capacidadeMaxima, String operadorCustoOperacao, Double custoOperacao,
-			String  numero, String descricao, String andar,
+			String  numero, String descricao, String andar, String codigo,
 			PagingLoadConfig config, AsyncCallback< PagingLoadResult< SalaDTO > > callback );
 	void getList( AsyncCallback< ListLoadResult< SalaDTO > > callback );
 	void save( SalaDTO salaDTO, AsyncCallback< Void > callback );
