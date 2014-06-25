@@ -34,6 +34,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -163,12 +165,14 @@ public class Cenario
 	private Set< Curso > cursos = new HashSet< Curso >();
 
 	@OneToMany( mappedBy = "cenario" )
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	private Set< Campus > campi = new HashSet< Campus >();
 
 	@OneToMany( mappedBy = "cenario" )
 	private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
 
 	@OneToMany( mappedBy = "cenario" )
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	private Set< Professor > professores = new HashSet< Professor >();
 
 	@OneToMany( mappedBy = "cenario" )
@@ -190,6 +194,7 @@ public class Cenario
 	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
 	
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	private Set< Aluno > alunos = new HashSet< Aluno >();
 	
 	@OneToMany(mappedBy = "cenario")
