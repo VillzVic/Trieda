@@ -207,7 +207,7 @@ public class ConvertBeans {
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
 		
 		Usuario criadoPor = Usuario.find(dto.getCriadoUsuarioId());
-
+		
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 		domain.setNome( dto.getNome() );
@@ -219,16 +219,12 @@ public class ConvertBeans {
 		domain.setInstituicaoEnsino(instituicaoEnsino);
 		domain.setDataCriacao(dto.getCriadoUsuarioDate());
 		domain.setCriadoPor(criadoPor);
+		
 
 		return domain;
 	}
 	
 	public static CenarioDTO toCenarioDTO( Cenario domain )
-	{
-		return toCenarioDTO(domain,true);
-	}
-
-	public static CenarioDTO toCenarioDTO( Cenario domain, boolean todasInformacoes )
 	{
 		CenarioDTO dto = new CenarioDTO();
 
@@ -248,22 +244,18 @@ public class ConvertBeans {
 		dto.setCriadoUsuarioDate( domain.getDataCriacao() );
 		dto.setAtualizadoUsuarioString( domain.getAtualizadoPor() == null ? null : domain.getAtualizadoPor().getNome() );
 		dto.setAtualizadoUsuarioDate( domain.getDataAtualizacao() );
-		
-		if(todasInformacoes)
+		dto.setAlunos(domain.hasAlunos());
+		dto.setProfessores(domain.hasProfessores());
+		dto.setSalas(domain.hasSalas());
+		dto.setOptimized(domain.isOptimized());
+			
+		if ( instituicaoEnsino != null )
 		{
-			dto.setAlunos(domain.hasAlunos());
-			dto.setProfessores(domain.hasProfessores());
-			dto.setSalas(domain.hasSalas());
-			dto.setOptimized(domain.isOptimized());
-	
-			if ( instituicaoEnsino != null )
-			{
-				dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
-				dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
-			}
-	
-			dto.setDisplayText( domain.getNome() );
+			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
+			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 		}
+			
+		dto.setDisplayText( domain.getNome() );
 
 		return dto;
 	}

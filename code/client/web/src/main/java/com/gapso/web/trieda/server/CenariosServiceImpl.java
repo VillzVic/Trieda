@@ -87,7 +87,7 @@ public class CenariosServiceImpl
 	{
 		Cenario cenario = getCenario();
 				
-		return cenario == null ? getMasterData() : ConvertBeans.toCenarioDTO(cenario, false);
+		return cenario == null ? getMasterData() : ConvertBeans.toCenarioDTO(cenario);
 	}
 	
 	@Override
@@ -209,7 +209,7 @@ public class CenariosServiceImpl
 
 		for ( Cenario cenario : listCenarios )
 		{
-			list.add( ConvertBeans.toCenarioDTO( cenario, false ) );
+			list.add( ConvertBeans.toCenarioDTO( cenario ) );
 		}
 
 		BasePagingLoadResult< CenarioDTO > result
@@ -250,9 +250,15 @@ public class CenariosServiceImpl
 			if ( cenario.getId() != null
 				&& cenario.getId() > 0 )
 			{
-				cenario.setAtualizadoPor(getUsuario());
-				cenario.setDataAtualizacao(new Date());
-				cenario.merge();
+				Cenario cenarioBD = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+				cenarioBD.setComentario(cenarioDTO.getComentario());
+				cenarioBD.setAno(cenarioDTO.getAno());
+				cenarioBD.setOficial(cenarioDTO.getOficial());
+				cenarioBD.setSemestre(cenarioDTO.getSemestre());
+				cenarioBD.setNome(cenarioDTO.getNome());
+				cenarioBD.setAtualizadoPor(getUsuario());
+				cenarioBD.setDataAtualizacao(new Date());
+				cenarioBD.persist();
 			}
 			else
 			{

@@ -82,4 +82,14 @@ public abstract class ProgressReportWriter extends ProgressReport{
 		totalTime += interval;
 	}
 	
+	public void setPartial(String msg, boolean semSomatorio){
+		Integer interval = Math.round((System.currentTimeMillis() - time)/1000);
+		
+		if(semSomatorio)
+			time = System.currentTimeMillis();
+		
+		writeMsg(msg + " - " + descricaoTempo(interval));
+		totalTime += interval;
+	}
+	
 }
