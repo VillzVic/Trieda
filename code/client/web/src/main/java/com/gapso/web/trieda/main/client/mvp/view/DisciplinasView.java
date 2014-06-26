@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -177,6 +178,8 @@ public class DisciplinasView
 
 		this.filter = new SimpleFilter();
 		this.filter.setLabelWidth(150);
+		this.filter.setScrollMode(Style.Scroll.AUTOY);
+		
 		this.nomeBuscaTextField = new TextField<String>();
 		this.nomeBuscaTextField.setFieldLabel("Nome");
 		this.codigoBuscaTextField = new TextField<String>();

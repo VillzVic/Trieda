@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -146,6 +147,7 @@ public class ProfessoresView extends MyComposite
 
 		this.filter = new SimpleFilter();
 		this.filter.setLabelWidth(205);
+		this.filter.setScrollMode(Style.Scroll.AUTOY);
 
 		this.cpfBuscaTF = new TextField< String >();
 		this.cpfBuscaTF.setFieldLabel( "CPF" );
