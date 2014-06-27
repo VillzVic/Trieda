@@ -100,6 +100,13 @@ public class DisponibilidadesSalasExportExcel extends AbstractExportExcel {
 
 			for (Sala sala : salas) {
 				for (HorarioDisponivelCenario hdc : sala.getHorarios()) {
+					if (isXls()){
+						Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(nextRow,1,sheet);
+						if (newSheet != null) {
+							nextRow = this.initialRow;
+							sheet = newSheet;
+						}
+					}
 					nextRow = writeData(sala, hdc, nextRow, sheet);
 				}
 			}

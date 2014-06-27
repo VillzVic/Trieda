@@ -16,8 +16,10 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioClonarFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioEditarFormView;
+import com.gapso.web.trieda.main.client.mvp.view.SituacaoCadastrosView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -30,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class CenariosPresenter
 	implements Presenter
 {
-	public interface Display
+	public interface Display extends ITriedaI18nGateway
 	{
 		Button getNewButton();
 		Button getEditButton();
@@ -38,6 +40,7 @@ public class CenariosPresenter
 		Button getClonarCenarioButton();
 		Button getAbrirCenarioButton();
 		Button getLimparSolucaoButton();
+		Button getProgressBarButton();
 		TextField< Integer > getAnoBuscaTextField();
 		TextField< Integer > getSemestreBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -124,7 +127,7 @@ public class CenariosPresenter
 			{
 				final CenariosServiceAsync service = Services.cenarios();
 				List< CenarioDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
-				display.getGrid().mask();
+				display.getGrid().mask(display.getI18nMessages().loading(), "loading");
 
 				service.remove( list, new AsyncCallback< Void >()
 				{
@@ -149,6 +152,7 @@ public class CenariosPresenter
 							public void onFailure(Throwable caught) {
 								MessageBox.alert( "ERRO!",
 										"Deu falha na conexão", null );
+								display.getGrid().unmask();
 							}
 
 							@Override
@@ -160,6 +164,7 @@ public class CenariosPresenter
 									public void onFailure(Throwable caught) {
 										MessageBox.alert( "ERRO!",
 												"Deu falha na conexão", null );
+										display.getGrid().unmask();
 										
 									}
 
@@ -167,6 +172,7 @@ public class CenariosPresenter
 									public void onSuccess(Void result) {
 										MessageBox.alert( "Contexto modificado!",
 												"Contexto alterado para Master Data", null );
+										display.getGrid().unmask();
 									}
 									
 								});
@@ -223,7 +229,7 @@ public class CenariosPresenter
 				CenariosServiceAsync service = Services.cenarios();
 				
 				CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				
+				display.getGrid().mask(display.getI18nMessages().loading(), "loading");
 				service.setCurrentCenario(cenarioDTO.getId(), new AsyncCallback<Void>(){
 
 					@Override
@@ -240,6 +246,7 @@ public class CenariosPresenter
 							public void onFailure(Throwable caught) {
 								MessageBox.alert( "ERRO!",
 										"Deu falha na conexão", null );
+								display.getGrid().unmask();
 								
 							}
 
@@ -248,6 +255,7 @@ public class CenariosPresenter
 								presenter.changeCenario(result);
 								MessageBox.alert( "Contexto modificado!",
 										"Contexto alterado para " + result.getNome(), null );
+								display.getGrid().unmask();
 							}
 							
 						});
@@ -299,6 +307,21 @@ public class CenariosPresenter
 
 				}
 			});
+		
+		this.display.getProgressBarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+	
+				Presenter presenter = new SituacaoCadastrosPresenter( instituicaoEnsinoDTO, cenarioDTO,
+						new SituacaoCadastrosView( cenarioDTO ) );
+				
+				presenter.go(gTab);
+			}
+		});
 	}
 
 	@Override

@@ -45,6 +45,7 @@ extends AbstractImportExcel< SemanaLetivaImportExcelBean >
 		this.headerColumnsNames.add( DESCRICAO_COLUMN_NAME );
 		this.headerColumnsNames.add( DURACAO_COLUMN_NAME );
 		this.headerColumnsNames.add( PERMITE_INTEVALO_COLUMN_NAME );
+		
 	}
 
 	@Override

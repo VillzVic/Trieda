@@ -124,7 +124,7 @@ public class ItemAlunoDemanda {
         return exigeEquivalenciaForcada;
     }
 
-    /**
+	/**
      * Sets the value of the exigeEquivalenciaForcada property.
      * 
      */

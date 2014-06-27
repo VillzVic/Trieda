@@ -35,6 +35,7 @@ import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -55,6 +56,9 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected CenarioDTO cenarioDTO;
 	protected AulaDTO aulaDestaque;
 	protected boolean gradeHorariaAlocacaoManual;
+	protected Set<String> horarioInicioAula = new HashSet<String>();
+	protected Set<String> horarioFimAula = new HashSet<String>();
+	protected List<String> horariosEscritos = new ArrayList<String>();
 
 	protected String emptyTextBeforeSearch = "Preencha o filtro acima";
 	protected String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
@@ -186,7 +190,8 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 						TrioDTO<List<String>,List<String>, List<Boolean>> trioDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(result.getLabelsDasLinhasDaGradeHoraria(),result.getHorariosDeInicioDeAula(),result.getHorariosDeFimDeAula());
 						labelsDasLinhasDaGradeHoraria.addAll(trioDTO.getPrimeiro());
 						horariosDeInicioDeAula.addAll(trioDTO.getSegundo());//horariosDeInicioDeAula.addAll(result.getHorariosDeInicioDeAula());
-						horarioEhIntervalo.addAll(trioDTO.getTerceiro());					
+						horarioEhIntervalo.addAll(trioDTO.getTerceiro());			
+						geraLinhasReduzidas();
 					} else {
 						labelsDasLinhasDaGradeHoraria.addAll(result.getLabelsDasLinhasDaGradeHoraria());
 						for (int i = 0; i < result.getLabelsDasLinhasDaGradeHoraria().size(); i++) {
@@ -219,6 +224,49 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				}
 				grid.unmask();
 			}
+
+			private void geraLinhasReduzidas() {
+				String pattern = "00";
+				//Pegando horarios de inicio e fim das aulas para minimizar numero de linhas
+				if (atendimentoDTO != null)
+				{
+					for(AtendimentoRelatorioDTO aula : atendimentoDTO){
+						String[] horarioInicialArray = aula.getHorarioAulaString().split(":");
+						int horarioInicialHoras = Integer.parseInt(horarioInicialArray[0]);
+						int horarioInicialMinutos = Integer.parseInt(horarioInicialArray[1]);
+						
+						horarioInicioAula.add(aula.getHorarioAulaString());
+						for (int i = 1; i <= aula.getTotalCreditos() ; i++)
+						{
+							int horarioFinalHoras = horarioInicialHoras;
+							int horarioFinalMinutos = horarioInicialMinutos + (aula.getDuracaoDeUmaAulaEmMinutos() * i);
+							while (horarioFinalMinutos >= 60)
+							{
+								horarioFinalHoras++;
+								horarioFinalMinutos -= 60;
+							}
+							horarioFimAula.add(NumberFormat.getFormat(pattern).format(horarioFinalHoras) + ":" + NumberFormat.getFormat(pattern).format(horarioFinalMinutos));
+						}
+					}
+				}
+
+				String horarioASerEscrito = "";
+				if (!labelsDasLinhasDaGradeHoraria.isEmpty())
+					horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0, 5);
+				for (int i = 1; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
+					if (horarioInicioAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)) || horarioFimAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
+					{
+						horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+						horariosEscritos.add(horarioASerEscrito);
+						horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+					}
+				}
+				if (!labelsDasLinhasDaGradeHoraria.isEmpty())
+				{
+					horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(labelsDasLinhasDaGradeHoraria.size()-1).substring(0, 5);
+					horariosEscritos.add(horarioASerEscrito);
+				}
+			}
 		};
 	}
 	
@@ -226,13 +274,8 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		if(this.store == null) this.store = new ListStore<LinhaDeCredito>();
 		else this.store.removeAll();
 
-		for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-			if(horarioEhIntervalo.get(i) && !mdcTemposAulaNumSemanasLetivas.getSegundo()) {
-				this.store.add(new LinhaDeCredito("", i));
-			}
-			else {
-				this.store.add(new LinhaDeCredito(labelsDasLinhasDaGradeHoraria.get(i), i));
-			}
+		for (int i = 0; i < horariosEscritos.size(); i++) {
+			this.store.add(new LinhaDeCredito(horariosEscritos.get(i), i));
 		}
 		
 		return this.store;
@@ -362,9 +405,9 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				}
 				html.setStyleAttribute("top", ((rowIndex-getNumeroIntervalos(rowIndex)) * (tamanhoLinhaGradeHorariaEmPixels) + (12 * getNumeroIntervalos(rowIndex))) + "px");
 				// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
-				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAulaNumSemanasLetivas.getPrimeiro();
+				int qtdLinhasNaGradeHorariaPorCreditoDaAula = getIndexHorario(getHorarioFinalAula(aulaDTO), horariosEscritos) - getIndexHorario(aulaDTO.getHorarioAulaString(), horariosEscritos) - 1;
 				int qtdIntervalosNaAula = getNumeroIntervalos(rowIndex+aulaDTO.getTotalCreditos()) - getNumeroIntervalos(rowIndex);
-				html.setStyleAttribute("height", (aulaDTO.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula * tamanhoLinhaGradeHorariaEmPixels - 3 + (qtdIntervalosNaAula*10)) + "px");
+				html.setStyleAttribute("height", (aulaDTO.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula * tamanhoLinhaGradeHorariaEmPixels - 3 + (qtdIntervalosNaAula*0)) + "px");
 				if (!gradeHorariaAlocacaoManual && horariosDisponiveis == null)
 				{
 					html.addStyleName("s" + aulaDTO.getSemana()); // Posiciona na coluna ( dia semana )
@@ -440,7 +483,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 			colunaGradeHoraria += 1;
 		}
 		if(this.atendimentoDTO != null){
-			String labelHorario = horariosDeInicioDeAula.get(linhaGradeHoraria);
+			String labelHorario = horariosEscritos.get(linhaGradeHoraria).substring(0,5);
 			for(AtendimentoRelatorioDTO aula : this.atendimentoDTO){
 				if(aula.getSemana() == colunaGradeHoraria){
 					if(labelHorario.contains(aula.getHorarioAulaString()))
@@ -475,6 +518,36 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		}
 
 		return null;
+	}
+	
+	protected String getHorarioFinalAula(AtendimentoRelatorioDTO aula)
+	{
+		String pattern = "00";
+		String[] horarioInicialArray = aula.getHorarioAulaString().split(":");
+		int horarioInicialHoras = Integer.parseInt(horarioInicialArray[0]);
+		int horarioInicialMinutos = Integer.parseInt(horarioInicialArray[1]);
+		
+		
+		int horarioFinalHoras = horarioInicialHoras;
+		int horarioFinalMinutos = horarioInicialMinutos + (aula.getDuracaoDeUmaAulaEmMinutos() * aula.getTotalCreditos());
+		while (horarioFinalMinutos >= 60)
+		{
+			horarioFinalHoras++;
+			horarioFinalMinutos -= 60;
+		}
+		return (NumberFormat.getFormat(pattern).format(horarioFinalHoras) + ":" + NumberFormat.getFormat(pattern).format(horarioFinalMinutos));
+	}
+	
+	protected int getIndexHorario(String horario, List<String> labels)
+	{
+		for (String label : labels)
+		{
+			if (label.substring(0, 5).equals(horario))
+			{
+				return labels.indexOf(label);
+			}
+		}
+		return labels.size();
 	}
 	
 	public String getCssDisciplina(long id){

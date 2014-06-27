@@ -35,6 +35,7 @@ public class CenariosView
 	private Button clonarCenarioBt;
 	private Button abrirCenarioBT;
 	private Button limparSolucaoBt;
+	private Button progressBarBt;
 	private SimpleFilter filter;
 	private TextField< Integer > anoBuscaTextField;
 	private TextField< Integer > semestreBuscaTextField;
@@ -82,10 +83,16 @@ public class CenariosView
 		abrirCenarioBT.disable();
 		
 		this.limparSolucaoBt = toolBar.createButton("Limpar Solucao do Cenário",Resources.DEFAULTS.limpaSolucao16() );
+		
+		this.progressBarBt = toolBar.createButton(
+			"Visualizar informações cadastradas",
+			Resources.DEFAULTS.detalhes16() );
+		progressBarBt.disable();
 
 		this.toolBar.add( this.clonarCenarioBt );
 		this.toolBar.add( this.abrirCenarioBT );
 		this.toolBar.add( this.limparSolucaoBt );
+		this.toolBar.add( this.progressBarBt );
 		this.panel.setTopComponent( this.toolBar );
 	}
 	
@@ -107,6 +114,7 @@ public class CenariosView
 						if(getSelectionModel().getSelectedItems().size() == 1) {
 							clonarCenarioBt.enable();
 							abrirCenarioBT.enable();
+							progressBarBt.enable();
 				        }
 				    }
 				});
@@ -221,5 +229,11 @@ public class CenariosView
 	public Button getClonarCenarioButton()
 	{
 		return this.clonarCenarioBt;
+	}
+	
+	@Override
+	public Button getProgressBarButton()
+	{
+		return this.progressBarBt;
 	}
 }

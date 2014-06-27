@@ -27,6 +27,7 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,6 +43,7 @@ public class AlocacaoManualDisciplinaFormPresenter
 		CampusComboBox getCampusBuscaComboBox();
 		CursoComboBox getCursoBuscaComboBox();
 		Button getSalvarButton();
+		SimpleFilter getFiltro();
 	}
 	
 	private Display display;
@@ -91,6 +93,30 @@ public class AlocacaoManualDisciplinaFormPresenter
 				});
 			}
 		});
+		
+		this.display.getFiltro().getResetButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getCodigoBuscaTextField().setValue( null );
+				display.getCampusBuscaComboBox().setValue( null );
+				display.getCursoBuscaComboBox().setValue( null );
+				
+				load();
+			}
+		});
+		
+		this.display.getFiltro().getSubmitButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				load();
+			}
+		});
 	}
 
 	private void load()
@@ -109,6 +135,7 @@ public class AlocacaoManualDisciplinaFormPresenter
 				cursoDTO, new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<ResumoMatriculaDTO>>(display.getI18nMessages().falhaOperacao(),display) {
 			@Override
 			public void onSuccess(ListLoadResult<ResumoMatriculaDTO> result) {
+				display.getStore().removeAll();
 				display.getStore().add(result.getData());
 				display.getGrid().getView().refresh(false);
 				display.getGrid().unmask();

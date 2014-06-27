@@ -14,6 +14,8 @@ import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -62,6 +64,7 @@ public class CenarioClonarFormPresenter
 				if ( isValid() )
 				{
 					final CenariosServiceAsync service = Services.cenarios();
+					new AcompanhamentoPanelPresenter("chaveClonarCenario", new AcompanhamentoPanelView());
 					service.clonar( display.getCenarioDTO(), getClone(), display.getClonarSolucaoCheckBox().getValue(), new AsyncCallback< Void >()
 					{
 						@Override

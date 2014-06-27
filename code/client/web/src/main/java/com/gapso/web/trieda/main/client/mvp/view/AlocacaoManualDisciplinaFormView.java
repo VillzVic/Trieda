@@ -178,4 +178,10 @@ public class AlocacaoManualDisciplinaFormView
 	{
 		return this.simpleModal.getSalvarBt();
 	}
+	
+	@Override
+	public SimpleFilter getFiltro()
+	{
+		return this.filter;
+	}
 }

@@ -2038,7 +2038,7 @@ public class SolverInput
 				continue;
 			}
 			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda(),
-					at.getConfirmada());
+					at.getConfirmada(), at.getHorarioAula());
 		}
 	}
 
@@ -2243,7 +2243,7 @@ public class SolverInput
 	private ItemAtendimentoTaticoSolucao createItemAtendimentoTaticoSolucao(
 		Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina, Disciplina disciplinaSubstituta,
 		int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos, Set<AlunoDemanda> alunosDemanda,
-		boolean confirmada)
+		boolean confirmada, HorarioAula horarioAula)
 	{
 		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao
 			= getItemAtendimentoDiaSemanaSolucao( sala, semana );
@@ -2279,7 +2279,15 @@ public class SolverInput
 		atTaticoSolucao.setAtendimentoOferta( atOfertaSolucao );
 		atTaticoSolucao.setQtdeCreditosPraticos( qtdCreditosPraticos );
 		atTaticoSolucao.setQtdeCreditosTeoricos( qtdCreditosTeoricos );
-		atTaticoSolucao.setHorariosAula(this.of.createGrupoIdentificador()); // TODO: finalizar implementação que trata horário no tático
+		GrupoIdentificador horarioAulaIdentificador = this.of.createGrupoIdentificador();
+		horarioAulaIdentificador.getId().add(horarioAula.getId().intValue());
+		HorarioAula proximoHorario = horarioAula;
+		for (int i = 1; i<qtdCreditosPraticos+qtdCreditosTeoricos; i++)
+		{
+			proximoHorario = horarioAula.getSemanaLetiva().getNextHorario(proximoHorario);
+			horarioAulaIdentificador.getId().add(proximoHorario.getId().intValue());
+		}
+		atTaticoSolucao.setHorariosAula(horarioAulaIdentificador); // TODO: finalizar implementação que trata horário no tático
 		if (confirmada)
 		{
 			atTaticoSolucao.setFixaAbertura(confirmada);

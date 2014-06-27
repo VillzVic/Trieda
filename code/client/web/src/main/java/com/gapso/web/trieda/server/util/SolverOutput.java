@@ -531,6 +531,7 @@ public class SolverOutput
 		for(AlunoDemanda alunoDemandaBD : alunosDemandasBD){
 			if(alunoDemandaBD.getAtendido()){
 				alunoDemandaBD.setAtendido(false);
+				alunoDemandaBD.setMotivoNaoAtendimento(null);
 			}
 		}
 	}

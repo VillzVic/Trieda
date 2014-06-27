@@ -194,4 +194,5 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("comparar_cenarios_16.png") ImageResource compararCenarios16();
 	@Source("divisao_credito_disciplina_16.png") ImageResource divisaoCreditoDisciplina16();
 	@Source("divisao_credito_disciplina_24.png") ImageResource divisaoCreditoDisciplina24();
+	@Source("detalhes_16.png") ImageResource detalhes16();
 }

@@ -118,7 +118,7 @@ public class AtendimentosFaixaDemandaExportExcel
 		if ( this.getFilter() == null
 			|| this.getFilter().getCampusDTO() == null )
 		{
-			List< Campus > campi = Campus.findAll( this.instituicaoEnsino );
+			List< Campus > campi = Campus.findByCenario( this.instituicaoEnsino, getCenario() );
 			campusDTOList = new ArrayList< CampusDTO >( campi.size() );
 			for ( Campus campus : campi )
 			{
