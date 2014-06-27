@@ -26,7 +26,10 @@ public class ComboBoxBoolean
 			@Override
 			public String getStringValue( SimpleComboValue< Operador > value )
 			{
-				return value.getValue().getNome();
+				if(value.getValue().getValue() == null){
+					return "";
+				} else
+					return value.getValue().getNome();
 			}
 		});
 
@@ -36,13 +39,14 @@ public class ComboBoxBoolean
 
 	public enum Operador
 	{
+		EMPTY("&nbsp;",null),
 		TRUE( "Sim", true ),
 	    FALSE( "Não", false );
 
-		private boolean value;
+		private Boolean value;
 	    private String nome;
 
-	    Operador( String nome, boolean value )
+	    Operador( String nome, Boolean value )
 	    {
 	    	this.nome = nome;
 	    	this.value = value;
@@ -53,7 +57,7 @@ public class ComboBoxBoolean
 	    	return this.nome;
 	    }
 	    
-	    public boolean getValue()
+	    public Boolean getValue()
 	    {
 	    	return this.value;
 	    }
