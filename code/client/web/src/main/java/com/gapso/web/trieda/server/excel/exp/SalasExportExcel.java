@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -132,6 +133,8 @@ public class SalasExportExcel extends AbstractExportExcel {
 		setCell(row,9,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],sala.getCapacidadeMax());
 		// Custo de Operacao por Credito
 		setCell(row,10,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],sala.getCustoOperacaoCred());
+		// Ambiente Externo?
+		setCell(row,11,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()], sala.getExterna() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao()));
 		
 		row++;
 		return row;

@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -156,7 +157,9 @@ public class SalasView
 				getI18nConstants().capacidadeMaxAlunos(), 160, "É a capacidade máxima do ambiente, em número de alunos, em situações extremas." ) );
 		list.add( createDecimalColumnConfig( SalaDTO.PROPERTY_CUSTO_OPERACAO_CRED,
 				getI18nConstants().custoOperacaoCred(), 185, "Custo de uso do ambiente por tempo de aula. Pode considerar custo de aluguel, limpeza, energia elétrica, móveis e equipamentos instalados, etc." ) );
-
+		list.add( new CheckColumnConfig( SalaDTO.PROPERTY_EXTERNA,
+				"Externo", 60 ) );
+		
 		return list;
 	}
 

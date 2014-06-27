@@ -17,12 +17,14 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 	private String capacidadeInstaladaStr;
 	private String capacidadeMaxStr;
 	private String custoOperacaoCredStr;
+	private String externaStr;
 	
 	private TipoSala tipo;
 	private Unidade unidade;
 	private Integer capacidadeInstalada;
 	private Integer capacidadeMax;
 	private Double custoOperacaoCred;
+	private Boolean externa;
 	
 	public SalasImportExcelBean( int row )
 	{
@@ -44,6 +46,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 			checkMandatoryField( this.capacidadeInstaladaStr, ImportExcelError.SALA_CAPACIDADE_INSTALADA_VAZIO, erros );
 			checkMandatoryField( this.capacidadeMaxStr, ImportExcelError.SALA_CAPACIDADE_MAX_VAZIO, erros );
 			checkMandatoryField( this.custoOperacaoCredStr, ImportExcelError.SALA_CUSTO_OPERACAO_CRED_VAZIO, erros );
+			checkMandatoryField( this.externaStr, ImportExcelError.SALA_EXTERNA_VAZIO, erros );
 
 			this.capacidadeInstalada = checkNonNegativeIntegerField( this.capacidadeInstaladaStr,
 				ImportExcelError.SALA_CAPACIDADE_INSTALADA_FORMATO_INVALIDO,
@@ -54,6 +57,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 			this.custoOperacaoCred = checkNonNegativeDoubleField( this.custoOperacaoCredStr,
 				ImportExcelError.SALA_CUSTO_OPERACAO_CRED_FORMATO_INVALIDO,
 				ImportExcelError.SALA_CUSTO_OPERACAO_CRED_VALOR_NEGATIVO, erros );
+			this.externa = checkBooleanField( externaStr, ImportExcelError.SALA_EXTERNA_FORMATO_INVALIDO, erros );
 		}
 		else
 		{
@@ -71,7 +75,8 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 			&& isEmptyField( this.numeroStr )
 			&& isEmptyField( this.desricaoStr )
 			&& isEmptyField( this.andarStr )
-			&& isEmptyField( this.capacidadeInstaladaStr ) );
+			&& isEmptyField( this.capacidadeInstaladaStr )
+			&& isEmptyField( this.externaStr ) );
 	}
 
 	public String getCodigoStr()
@@ -164,6 +169,16 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 		this.custoOperacaoCredStr = custoOperacaoCredStr;
 	}
 	
+	public String getExternaStr()
+	{
+		return this.externaStr;
+	}
+	
+	public void setExternaStr( String externaStr )
+	{
+		this.externaStr = externaStr;
+	}
+	
 	public Unidade getUnidade()
 	{
 		return this.unidade;
@@ -197,6 +212,11 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 	public Double getCustoOperacaoCred()
 	{
 		return this.custoOperacaoCred;
+	}
+	
+	public Boolean getExterna()
+	{
+		return this.externa;
 	}
 
 	@Override

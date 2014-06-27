@@ -192,6 +192,21 @@ public class AmbientesFaixaOcupacaoCapacidadeExportExcel
 		setCell( row, i++, sheet,
 				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
 				relatorioDocenteDTO.getQuantidade3() );
+		
+		// Quantidade P1 Externos
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+				relatorioDocenteDTO.getQuantidade4() );
+	
+		// Salas Externas
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+				relatorioDocenteDTO.getQuantidade5() );
+		
+		// Laboratorios Externos
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+				relatorioDocenteDTO.getQuantidade6() );
 
 		row++;
 		return row;

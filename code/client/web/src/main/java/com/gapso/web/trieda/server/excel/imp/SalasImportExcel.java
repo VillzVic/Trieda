@@ -38,6 +38,7 @@ public class SalasImportExcel
 	static public String CAPACIDADE_INSTALADA_COLUMN_NAME;
 	static public String CAPACIDADE_MAX_COLUMN_NAME;
 	static public String CUSTO_OPERACAO_CRED_COLUMN_NAME;
+	static public String EXTERNA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -59,6 +60,7 @@ public class SalasImportExcel
 		this.headerColumnsNames.add( CAPACIDADE_INSTALADA_COLUMN_NAME );
 		this.headerColumnsNames.add( CAPACIDADE_MAX_COLUMN_NAME );
 		this.headerColumnsNames.add( CUSTO_OPERACAO_CRED_COLUMN_NAME );
+		this.headerColumnsNames.add( EXTERNA_COLUMN_NAME );
 	}
 
 	@Override
@@ -133,6 +135,10 @@ public class SalasImportExcel
 					{
 						bean.setCustoOperacaoCredStr( cellValue );
 					}
+					else if ( EXTERNA_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setExternaStr( cellValue );
+					}
         		}
         	}
         }
@@ -160,9 +166,7 @@ public class SalasImportExcel
 		if ( doSyntacticValidation( sheetName, sheetContent )
 			&& doLogicValidation( sheetName, sheetContent ) )
 		{
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
 			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
 		}
 	}
 
@@ -370,6 +374,7 @@ public class SalasImportExcel
 				salaBD.setCustoOperacaoCred( salaExcel.getCustoOperacaoCred() );
 				salaBD.setTipoSala( salaExcel.getTipo() );
 				salaBD.setUnidade( salaExcel.getUnidade() );
+				salaBD.setExterna( salaExcel.getExterna() );
 
 				salaBD.merge();
 			}
@@ -387,6 +392,7 @@ public class SalasImportExcel
 				newSala.setCustoOperacaoCred( salaExcel.getCustoOperacaoCred() );
 				newSala.setTipoSala( salaExcel.getTipo() );
 				newSala.setUnidade( salaExcel.getUnidade() );
+				newSala.setExterna( salaExcel.getExterna() );
 
 				newSala.persist();
 				persistedSalas.add(newSala);
@@ -412,6 +418,7 @@ public class SalasImportExcel
 			CAPACIDADE_INSTALADA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeInstaladaAlunos() );
 			CAPACIDADE_MAX_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeMaxAlunos() );
 			CUSTO_OPERACAO_CRED_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().custoOperacaoCred() );
+			EXTERNA_COLUMN_NAME = HtmlUtils.htmlUnescape( "Ambiente Externo?" );
 		}
 	}
 }

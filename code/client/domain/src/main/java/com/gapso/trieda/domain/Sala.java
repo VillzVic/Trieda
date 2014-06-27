@@ -122,6 +122,10 @@ public class Sala
 	@Column( name = "SAL_CUSTO_OPERACAO_CRED" )
 	@Digits( integer = 6, fraction = 2 )
 	private Double custoOperacaoCred;
+	
+	@NotNull
+	@Column( name = "SAL_EXTERNA" )
+	private Boolean externa;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
@@ -481,20 +485,37 @@ public class Sala
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	public static int countLaboratorio(
+	public static int countLaboratorioNaoExternos(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.tipoSala.aceitaAulaPratica IS true " +
 			" AND o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.unidade.campus.cenario = :cenario " );
+			" AND o.unidade.campus.cenario = :cenario " +
+			" AND o.externa IS FALSE ");
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
+	
+	public static int countLaboratorioExternos(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT COUNT ( o ) FROM Sala o " +
+				" WHERE o.tipoSala.aceitaAulaPratica IS true " +
+				" AND o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.unidade.campus.cenario = :cenario " +
+				" AND o.externa IS TRUE " );
+
+			q.setParameter( "cenario", cenario );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			return ( (Number) q.getSingleResult() ).intValue();
+		}
 
 	public static int countLaboratorio(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
@@ -511,20 +532,37 @@ public class Sala
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	public static int countSalaDeAula(
+	public static int countSalaDeAulaNaoExternas(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.tipoSala.aceitaAulaPratica IS false " +
-			" AND o.unidade.campus.cenario = :cenario " );
+			" AND o.unidade.campus.cenario = :cenario " +
+			" AND o.externa IS FALSE ");
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
+	
+	public static int countSalaDeAulaExternas(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT COUNT ( o ) FROM Sala o " +
+				" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.tipoSala.aceitaAulaPratica IS false " +
+				" AND o.unidade.campus.cenario = :cenario " +
+				" AND o.externa IS TRUE ");
+
+			q.setParameter( "cenario", cenario );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			return ( (Number) q.getSingleResult() ).intValue();
+		}
 
 	public static int countSalaDeAula(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
@@ -1131,6 +1169,16 @@ public class Sala
 	public Double setCustoOperacaoCred( Double custoOperacaoCred )
 	{
 		return this.custoOperacaoCred = custoOperacaoCred;
+	}
+	
+	public void setExterna( Boolean externa )
+	{
+		this.externa = externa;
+	}
+	
+	public Boolean getExterna()
+	{
+		return this.externa;
 	}
 
 	public Set< HorarioDisponivelCenario > getHorarios()

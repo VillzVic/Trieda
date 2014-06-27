@@ -528,6 +528,7 @@ public class ConvertBeans {
 		domain.setCapacidadeInstalada( dto.getCapacidadeInstalada() );
 		domain.setCapacidadeMax( dto.getCapacidadeMax() );
 		domain.setCustoOperacaoCred( dto.getCustoOperacaoCred() );
+		domain.setExterna( dto.getExterna() );
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );  
@@ -559,6 +560,7 @@ public class ConvertBeans {
 		dto.setCapacidadeInstalada( domain.getCapacidadeInstalada() );
 		dto.setCapacidadeMax( domain.getCapacidadeMax() );
 		dto.setCustoOperacaoCred( domain.getCustoOperacaoCred() );
+		dto.setExterna(domain.getExterna());
 		dto.setTipoId( domain.getTipoSala().getId() );
 		dto.setTipoString( domain.getTipoSala().getNome() );
 		dto.setCampusId( domain.getUnidade().getCampus().getId() );

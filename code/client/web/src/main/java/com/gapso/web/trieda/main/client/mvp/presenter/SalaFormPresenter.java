@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -32,6 +33,7 @@ public class SalaFormPresenter implements Presenter
 		NumberField getCapacidadeInstaladaNumberField();
 		NumberField getCapacidadeMaxNumberField();
 		NumberField getCustoOperacaoCredNumberField();
+		CheckBox getExternaCheckBox();
 		UnidadeComboBox getUnidadeComboBox();
 		TipoSalaComboBox getTipoComboBox();
 		SalaDTO getSalaDTO();
@@ -132,6 +134,7 @@ public class SalaFormPresenter implements Presenter
 		salaDTO.setCapacidadeInstalada( display.getCapacidadeInstaladaNumberField().getValue().intValue() );
 		salaDTO.setCapacidadeMax( display.getCapacidadeMaxNumberField().getValue().intValue() );
 		salaDTO.setCustoOperacaoCred( display.getCustoOperacaoCredNumberField().getValue().doubleValue() );
+		salaDTO.setExterna( display.getExternaCheckBox().getValue() );
 		salaDTO.setTipoId( display.getTipoComboBox().getSelection().get( 0 ).getId() );
 		salaDTO.setTipoString( display.getTipoComboBox().getSelection().get( 0 ).getNome() );
 		salaDTO.setUnidadeId( display.getUnidadeComboBox().getSelection().get( 0 ).getId() );

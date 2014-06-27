@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
@@ -34,6 +35,7 @@ public class SalaFormView extends MyComposite implements
 	private NumberField capacidadeInstaladaNF;
 	private NumberField capacidadeMaxNF;
 	private NumberField custoOperacaoCredNF;
+	private CheckBox externaCB;
 	private UnidadeComboBox unidadeCB;
 	private TipoSalaComboBox tipoSalaCB;
 	private SalaDTO salaDTO;
@@ -66,8 +68,8 @@ public class SalaFormView extends MyComposite implements
 			( getI18nConstants().edicaoDe() + getI18nConstants().sala() );
 
 		simpleModal = new SimpleModal( title, Resources.DEFAULTS.sala16() );
-		simpleModal.setHeight( 440 );
-		simpleModal.setWidth( 313 );
+		simpleModal.setHeight( 435 );
+		simpleModal.setWidth( 343 );
 
 		createForm();
 		simpleModal.setContent( formPanel );
@@ -78,6 +80,7 @@ public class SalaFormView extends MyComposite implements
 		FormData formData = new FormData( "-20" );
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible( false );
+		formPanel.setLabelWidth(120);
 
 		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.SALA );
 		codigoTF.setName( SalaDTO.PROPERTY_CODIGO );
@@ -171,6 +174,12 @@ public class SalaFormView extends MyComposite implements
 		custoOperacaoCredNF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().custoOperacaoCred());
 		custoOperacaoCredNF.setToolTip("Custo de uso do ambiente por tempo de aula. Pode considerar custo de aluguel, limpeza, energia elétrica, móveis e equipamentos instalados, etc.");
 		formPanel.add( custoOperacaoCredNF, formData );
+		
+		externaCB = new CheckBox();
+		externaCB.setName(SalaDTO.PROPERTY_EXTERNA);
+		externaCB.setValue(salaDTO.getExterna());
+		externaCB.setFieldLabel("Ambiente Externo?");
+		formPanel.add( externaCB, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );
 		binding.addButton( simpleModal.getSalvarBt() );
@@ -229,6 +238,12 @@ public class SalaFormView extends MyComposite implements
 	public NumberField getCustoOperacaoCredNumberField()
 	{
 		return custoOperacaoCredNF;
+	}
+	
+	@Override
+	public CheckBox getExternaCheckBox()
+	{
+		return externaCB;
 	}
 	
 	@Override

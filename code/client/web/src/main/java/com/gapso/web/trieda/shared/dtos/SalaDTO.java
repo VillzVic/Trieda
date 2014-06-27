@@ -22,6 +22,7 @@ public class SalaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_CAPACIDADE_INSTALADA = "capacidadeInstalada";
 	public static final String PROPERTY_CAPACIDADE_MAX = "capacidadeMax";
 	public static final String PROPERTY_CUSTO_OPERACAO_CRED = "custoOperacaoCred";
+	public static final String PROPERTY_EXTERNA = "externa";
 	public static final String PROPERTY_CONTAINS_CURRICULO_DISCIPLINA = "containsCurriculoDisciplina";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
@@ -127,6 +128,13 @@ public class SalaDTO extends AbstractDTO< String >
 	}
 	public void setCustoOperacaoCred(Double value) {
 		set(PROPERTY_CUSTO_OPERACAO_CRED, value);
+	}
+	
+	public Boolean getExterna() {
+		return get(PROPERTY_EXTERNA);
+	}
+	public void setExterna(Boolean value) {
+		set(PROPERTY_EXTERNA, value);
 	}
 	
 	public Boolean getContainsCurriculoDisciplina() {

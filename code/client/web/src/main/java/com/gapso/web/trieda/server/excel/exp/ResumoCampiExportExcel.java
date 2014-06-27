@@ -77,9 +77,9 @@ public class ResumoCampiExportExcel
 		this.initialRow = 5;
 		initialColumn = 0;
 		rowsEspaco.add(26);
-		rowsEspaco.add(33);
-		rowsEspaco.add(42);
-		rowsEspaco.add(49);
+		rowsEspaco.add(35);
+		rowsEspaco.add(44);
+		rowsEspaco.add(57);
 	}
 
 	@Override

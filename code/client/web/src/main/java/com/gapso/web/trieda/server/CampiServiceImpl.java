@@ -538,23 +538,37 @@ public class CampiServiceImpl extends RemoteService
 		//Integer qtdAlunosAtendidos = 0;
 		//Integer qtdAlunosNaoAtendidos = 0;
 		double utilizacaoMediaDosAmbientes = 0.0;
+		double utilizacaoMediaDosAmbientesExternos = 0.0;
 		double utilizacaoMediaDasSalasDeAula = 0.0;
+		double utilizacaoMediaDasSalasDeAulaExternas = 0.0;
 		double utilizacaoMediaDosLaboratorios = 0.0;
+		double utilizacaoMediaDosLaboratoriosExternos = 0.0;
 		Double mediaUtilizacaoHorarioAmbientes = 0.0;
+		Double mediaUtilizacaoHorarioAmbientesExternos = 0.0;
 		Double mediaUtilizacaoHorarioSalas = 0.0;
+		Double mediaUtilizacaoHorarioSalasExternas = 0.0;
 		Double mediaUtilizacaoHorarioLaboratorios = 0.0;
+		Double mediaUtilizacaoHorarioLaboratoriosExternos = 0.0;
 		Double receitaSemestral = 0.0;
 		if (!salaIdToAtendimentosMap.isEmpty()) {
 			double somatorioDeAlunosDeTodasAsAulasEmAmbientes = 0.0;
+			double somatorioDeAlunosDeTodasAsAulasEmAmbientesExternos = 0.0;
 			double somatorioDeAlunosDeTodasAsAulasEmSalasDeAula = 0.0;
+			double somatorioDeAlunosDeTodasAsAulasEmSalasDeAulaExternas = 0.0;
 			double somatorioDeAlunosDeTodasAsAulasEmLaboratorios = 0.0;
+			double somatorioDeAlunosDeTodasAsAulasEmLaboratoriosExternos = 0.0;
 			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes = 0.0;
+			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientesExternos = 0.0;
 			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula = 0.0;
+			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAulaExternas = 0.0;
 			double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios = 0.0;
+			double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratoriosExternos = 0.0;
 			
 			// [SalaId -> Tempo de uso (min) semanal]
 			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			Map<Long,Integer> laboratorioIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
+			Map<Long,Integer> salaExternaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
+			Map<Long,Integer> laboratorioExternoIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
 			for (Sala sala : salasUtilizadas) {
 				List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdToAtendimentosMap.get(sala.getId());
@@ -577,14 +591,28 @@ public class CampiServiceImpl extends RemoteService
 					List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
 					
 					for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
-						somatorioDeAlunosDeTodasAsAulasEmAmbientes += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
-						somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
-						if (!sala.isLaboratorio()) {
-							somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
-							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
-						} else {
-							somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
-							somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+						if (sala.getExterna())
+						{
+							somatorioDeAlunosDeTodasAsAulasEmAmbientesExternos += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientesExternos += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+							if (!sala.isLaboratorio()) {
+								somatorioDeAlunosDeTodasAsAulasEmSalasDeAulaExternas += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAulaExternas += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+							} else {
+								somatorioDeAlunosDeTodasAsAulasEmLaboratoriosExternos += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratoriosExternos += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+							}
+						} else
+						{
+							somatorioDeAlunosDeTodasAsAulasEmAmbientes += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+							if (!sala.isLaboratorio()) {
+								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+							} else {
+								somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
+							}
 						}
 						totalCreditosSemanais += aula.getTotalCreditos();
 						totalCreditosSemanaisProfessores += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos();
@@ -595,15 +623,30 @@ public class CampiServiceImpl extends RemoteService
 						totalCargaHorariaSemanalProfessores  += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos();
 						totalCargaHorariaSemanalProfessoresVirtuais += (aula.getProfessorVirtualId() == null) ? 0 : aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos();
 
-						if(!sala.isLaboratorio()){
-							Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
-							if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-							salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
-						}
-						else {
-							Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
-							if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-							laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+						if (sala.getExterna())
+						{
+							if(!sala.isLaboratorio()){
+								Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+								salaExternaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							}
+							else {
+								Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+								laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							}
+						} else
+						{
+							if(!sala.isLaboratorio()){
+								Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+								salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							}
+							else {
+								Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+								laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							}
 						}
 					}
 				}
@@ -611,6 +654,10 @@ public class CampiServiceImpl extends RemoteService
 			utilizacaoMediaDosAmbientes = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmAmbientes/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes*100.0,2);
 			utilizacaoMediaDasSalasDeAula = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAula/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula*100.0,2);
 			utilizacaoMediaDosLaboratorios = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratorios/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios*100.0,2);
+			
+			utilizacaoMediaDosAmbientesExternos = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmAmbientesExternos/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientesExternos*100.0,2);
+			utilizacaoMediaDasSalasDeAulaExternas = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAulaExternas/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAulaExternas*100.0,2);
+			utilizacaoMediaDosLaboratoriosExternos = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratoriosExternos/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratoriosExternos*100.0,2);
 			
 			//calculo do indicador de taxa de uso dos horarios das salas de aula
 			SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
@@ -640,6 +687,20 @@ public class CampiServiceImpl extends RemoteService
 			}
 			mediaUtilizacaoHorarioLaboratorios = TriedaUtil.round(mediaUtilizacaoHorarioLaboratorios / laboratorioIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
 			mediaUtilizacaoHorarioAmbientes = TriedaUtil.round(mediaUtilizacaoHorarioAmbientes / (laboratorioIdToTempoUsoSemanalEmMinutosMap.size()+salaIdToTempoUsoSemanalEmMinutosMap.size()) * 100, 2);
+			
+			for(Long salaId : salaExternaIdToTempoUsoSemanalEmMinutosMap.keySet()){
+				Integer tempoUsoSalaSemanalEmMinutos = salaExternaIdToTempoUsoSemanalEmMinutosMap.get(salaId);
+				mediaUtilizacaoHorarioSalasExternas += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientesExternos += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+			}
+			mediaUtilizacaoHorarioSalasExternas = TriedaUtil.round(mediaUtilizacaoHorarioSalasExternas / salaExternaIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
+			for(Long salaId : laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.keySet()){
+				Integer tempoUsoSalaSemanalEmMinutos = laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.get(salaId);
+				mediaUtilizacaoHorarioLaboratoriosExternos += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientesExternos += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+			}
+			mediaUtilizacaoHorarioLaboratoriosExternos = TriedaUtil.round(mediaUtilizacaoHorarioLaboratoriosExternos / laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
+			mediaUtilizacaoHorarioAmbientesExternos = TriedaUtil.round(mediaUtilizacaoHorarioAmbientesExternos / (laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.size()+salaExternaIdToTempoUsoSemanalEmMinutosMap.size()) * 100, 2);
 			
 			// cálculo das quantidades de alunos atendidos e não atendidos
 			//DemandasServiceImpl demandasService = new DemandasServiceImpl();
@@ -777,6 +838,10 @@ public class CampiServiceImpl extends RemoteService
 				"Ocupação geral da capacidade de ambientes: ", "<b>" + numberFormatter.print(utilizacaoMediaDosAmbientes,pt_BR) + "%</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Utilização geral de horários de ambientes: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Ocupação geral da capacidade de ambientes externos: ", "<b>" + numberFormatter.print(utilizacaoMediaDosAmbientesExternos,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Utilização geral de horários de ambientes externos: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientesExternos,pt_BR) + "%</b>") ,currentNode, true) );
 		
 		//Financeiro
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
@@ -804,11 +869,23 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Ocupação média da capacidade dos laboratórios: ", "<b>" + numberFormatter.print(utilizacaoMediaDosLaboratorios,pt_BR) + "%</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Ocupação média da capacidade dos ambientes externos: ", "<b>" + numberFormatter.print(utilizacaoMediaDosAmbientesExternos,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Ocupação média da capacidade das salas de aula externas:  ", "<b>" + numberFormatter.print(utilizacaoMediaDasSalasDeAulaExternas,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Ocupação média da capacidade dos laboratórios externos: ", "<b>" + numberFormatter.print(utilizacaoMediaDosLaboratoriosExternos,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Utilização média dos horários dos ambientes: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes,pt_BR) + "%</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Utilização média dos horários das salas de aula: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioSalas,pt_BR) + "%</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Utilização média dos horários dos laboratorios: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioLaboratorios,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Utilização média dos horários dos ambientes externos: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientesExternos,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Utilização média dos horários das salas de aula externas: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioSalasExternas,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Utilização média dos horários dos laboratorios externos: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioLaboratoriosExternos,pt_BR) + "%</b>") ,currentNode, true) );
 		
 		//Uso dos Docentes
 		//|--- Total

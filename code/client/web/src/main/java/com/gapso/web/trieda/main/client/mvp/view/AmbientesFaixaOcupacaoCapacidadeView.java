@@ -121,6 +121,9 @@ public class AmbientesFaixaOcupacaoCapacidadeView extends MyComposite
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Quantidade de Ambientes", 140 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Salas", 140 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE3, "Laboratórios", 140 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE4, "Quantidade de Ambientes Externos", 190 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE5, "Salas Externas", 140 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE6, "Laboratórios Externos", 140 ) );
 		
 		return list;
 	}

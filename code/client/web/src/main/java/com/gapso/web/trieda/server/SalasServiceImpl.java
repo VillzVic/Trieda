@@ -531,18 +531,39 @@ public class SalasServiceImpl
 		
 		List<Sala> todasSalas = Sala.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
 		
+		int numAmbientes = 0;
 		int numSalas = 0;
 		int numLaboratorios = 0;
 		
+		int numAmbientesExternos = 0;
+		int numSalasExternas = 0;
+		int numLaboratoriosExternos = 0;
+		
 		for (Sala sala : todasSalas)
 		{
-			if (sala.isLaboratorio())
+			if (sala.getExterna())
 			{
-				numLaboratorios++;
+				numAmbientesExternos++;
+				if (sala.isLaboratorio())
+				{
+					numLaboratoriosExternos++;
+				}
+				else
+				{
+					numSalasExternas++;
+				}
 			}
 			else
 			{
-				numSalas++;
+				numAmbientes++;
+				if (sala.isLaboratorio())
+				{
+					numLaboratorios++;
+				}
+				else
+				{
+					numSalas++;
+				}
 			}
 		}
 		
@@ -614,6 +635,42 @@ public class SalasServiceImpl
 			}
 		}
 		
+		
+		int numAmbientesUtilizados = 0;
+		int numSalasUtilizadas = 0;
+		int numLaboratoriosUtilizados = 0;
+		
+		int numAmbientesUtilizadosExternos = 0;
+		int numSalasUtilizadasExternas = 0;
+		int numLaboratoriosUtilizadosExternos = 0;
+		for (Sala sala : salasUtilizadas)
+		{
+			if (sala.getExterna())
+			{
+				numAmbientesUtilizadosExternos++;
+				if (sala.isLaboratorio())
+				{
+					numLaboratoriosUtilizadosExternos++;
+				}
+				else
+				{
+					numSalasUtilizadasExternas++;
+				}
+			}
+			else
+			{
+				numAmbientesUtilizados++;
+				if (sala.isLaboratorio())
+				{
+					numLaboratoriosUtilizados++;
+				}
+				else
+				{
+					numSalasUtilizadas++;
+				}
+			}
+		}
+		
 		double utilizacaoMediaDosAmbientes = 0.0;
 		double utilizacaoMediaDasSalasDeAula = 0.0;
 		double utilizacaoMediaDosLaboratorios = 0.0;
@@ -627,11 +684,27 @@ public class SalasServiceImpl
 		double mediaAlunosPorTurmaPorSala = 0;
 		double mediaAlunosPorTurmaPorLaboratorio = 0;
 		double mediaAlunosPorTurmaPorAmbientes = 0;
+		
+		double utilizacaoMediaDosAmbientesExternos = 0.0;
+		double utilizacaoMediaDasSalasDeAulaExternas = 0.0;
+		double utilizacaoMediaDosLaboratoriosExternos = 0.0;
+		Double mediaUtilizacaoHorarioAmbientesExternos = 0.0;
+		Double mediaUtilizacaoHorarioSalasExternas = 0.0;
+		Double mediaUtilizacaoHorarioLaboratoriosExternos = 0.0;
+		double somatorioDeAlunosDeTodasAsAulasEmSalasDeAulaExternas = 0.0;
+		double somatorioDeAlunosDeTodasAsAulasEmLaboratoriosExternos = 0.0;
+		double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAulaExternas = 0.0;
+		double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratoriosExternos = 0.0;
+		double mediaAlunosPorTurmaPorSalaExternas = 0;
+		double mediaAlunosPorTurmaPorLaboratorioExternos = 0;
+		double mediaAlunosPorTurmaPorAmbientesExternos = 0;
 		Map<Sala, List<Integer>> mediaAlunosPorTurmaPorSalaMap =  new HashMap<Sala, List<Integer>>();
 		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
 			// [SalaId -> Tempo de uso (min) semanal]
 			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			Map<Long,Integer> laboratorioIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
+			Map<Long,Integer> salaExternaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
+			Map<Long,Integer> laboratorioExternoIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
 			for (Turno turno : turnosConsiderados) {
 				for (Sala sala : salasUtilizadas) {
@@ -666,24 +739,47 @@ public class SalasServiceImpl
 							{
 								mediaAlunosPorTurmaPorSalaMap.get(sala).add(aula.getQuantidadeAlunos());
 							}
-							
-							if (!sala.isLaboratorio()) {
-								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos();
-								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada();
-							} else {
-								somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos();
-								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada();
-							}
+							if (sala.getExterna())
+							{
+								if (!sala.isLaboratorio()) {
+									somatorioDeAlunosDeTodasAsAulasEmSalasDeAulaExternas += aula.getQuantidadeAlunos();
+									somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAulaExternas += sala.getCapacidadeInstalada();
+								} else {
+									somatorioDeAlunosDeTodasAsAulasEmLaboratoriosExternos += aula.getQuantidadeAlunos();
+									somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratoriosExternos += sala.getCapacidadeInstalada();
+								}
 
-							if(!sala.isLaboratorio()){
-								Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
-								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-								salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+								if(!sala.isLaboratorio()){
+									Integer tempoUsoSemanalEmMinutos = salaExternaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+									salaExternaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+								}
+								else {
+									Integer tempoUsoSemanalEmMinutos = laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+									laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+								}
 							}
-							else {
-								Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
-								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-								laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							else
+							{
+								if (!sala.isLaboratorio()) {
+									somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos();
+									somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada();
+								} else {
+									somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos();
+									somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada();
+								}
+
+								if(!sala.isLaboratorio()){
+									Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+									salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+								}
+								else {
+									Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+									laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+								}
 							}
 						}
 					}
@@ -693,6 +789,11 @@ public class SalasServiceImpl
 					/(somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula+somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios)*100.0,2);
 			utilizacaoMediaDasSalasDeAula = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAula/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula*100.0,2);
 			utilizacaoMediaDosLaboratorios = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratorios/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios*100.0,2);
+			
+			utilizacaoMediaDosAmbientesExternos = TriedaUtil.round((somatorioDeAlunosDeTodasAsAulasEmSalasDeAulaExternas+somatorioDeAlunosDeTodasAsAulasEmLaboratoriosExternos)
+					/(somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAulaExternas+somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratoriosExternos)*100.0,2);
+			utilizacaoMediaDasSalasDeAulaExternas = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAulaExternas/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAulaExternas*100.0,2);
+			utilizacaoMediaDosLaboratoriosExternos = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratoriosExternos/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratoriosExternos*100.0,2);
 			
 			//calculo do indicador de taxa de uso dos horarios das salas de aula
 			SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
@@ -724,76 +825,127 @@ public class SalasServiceImpl
 			mediaUtilizacaoHorarioLaboratorios = TriedaUtil.round(mediaUtilizacaoHorarioLaboratorios / laboratorioIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
 			mediaUtilizacaoHorarioAmbientes = TriedaUtil.round(mediaUtilizacaoHorarioAmbientes / (laboratorioIdToTempoUsoSemanalEmMinutosMap.size()+salaIdToTempoUsoSemanalEmMinutosMap.size()) * 100, 2);
 			
+			for(Long salaId : salaExternaIdToTempoUsoSemanalEmMinutosMap.keySet()){
+				Integer tempoUsoSalaSemanalEmMinutos = salaExternaIdToTempoUsoSemanalEmMinutosMap.get(salaId);
+				mediaUtilizacaoHorarioSalasExternas += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientesExternos += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+			}
+			mediaUtilizacaoHorarioSalasExternas = TriedaUtil.round(mediaUtilizacaoHorarioSalasExternas / salaExternaIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
+			for(Long salaId : laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.keySet()){
+				Integer tempoUsoSalaSemanalEmMinutos = laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.get(salaId);
+				mediaUtilizacaoHorarioLaboratoriosExternos += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientesExternos += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+			}
+			mediaUtilizacaoHorarioLaboratoriosExternos = TriedaUtil.round(mediaUtilizacaoHorarioLaboratoriosExternos / laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
+			mediaUtilizacaoHorarioAmbientesExternos = TriedaUtil.round(mediaUtilizacaoHorarioAmbientesExternos / (laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.size()+salaExternaIdToTempoUsoSemanalEmMinutosMap.size()) * 100, 2);
+			
 			for (Entry<Sala, List<Integer>> salaQuantidadeAlunosPorTurma : mediaAlunosPorTurmaPorSalaMap.entrySet())
 			{
 				int totalAlunos = 0;
-				if (salaQuantidadeAlunosPorTurma.getKey().isLaboratorio())
+				if (salaQuantidadeAlunosPorTurma.getKey().getExterna())
 				{
-					for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+					if (salaQuantidadeAlunosPorTurma.getKey().isLaboratorio())
 					{
-						totalAlunos += quantidadeAlunos;
+						for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+						{
+							totalAlunos += quantidadeAlunos;
+						}
+						mediaAlunosPorTurmaPorLaboratorioExternos += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
 					}
-					mediaAlunosPorTurmaPorLaboratorio += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
+					else
+					{
+						for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+						{
+							totalAlunos += quantidadeAlunos;
+						}
+						mediaAlunosPorTurmaPorSalaExternas += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
+					}
 				}
 				else
 				{
-					for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+					if (salaQuantidadeAlunosPorTurma.getKey().isLaboratorio())
 					{
-						totalAlunos += quantidadeAlunos;
+						for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+						{
+							totalAlunos += quantidadeAlunos;
+						}
+						mediaAlunosPorTurmaPorLaboratorio += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
 					}
-					mediaAlunosPorTurmaPorSala += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
+					else
+					{
+						for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+						{
+							totalAlunos += quantidadeAlunos;
+						}
+						mediaAlunosPorTurmaPorSala += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
+					}
 				}
 			}
-			mediaAlunosPorTurmaPorAmbientes = (mediaAlunosPorTurmaPorSala + mediaAlunosPorTurmaPorLaboratorio) / salasUtilizadas.size();
+			mediaAlunosPorTurmaPorAmbientes = (mediaAlunosPorTurmaPorSala + mediaAlunosPorTurmaPorLaboratorio) / numAmbientesUtilizados;
+			mediaAlunosPorTurmaPorAmbientesExternos = (mediaAlunosPorTurmaPorSalaExternas + mediaAlunosPorTurmaPorLaboratorioExternos) / numAmbientesUtilizadosExternos;
 		}
-		
-		int numSalasUtilizadas = 0;
-		int numLaboratoriosUtilizados = 0;
-		for (Sala sala : salasUtilizadas)
-		{
-			if (sala.isLaboratorio())
-			{
-				numLaboratoriosUtilizados++;
-			}
-			else
-			{
-				numSalasUtilizadas++;
-			}
-		}
+
 		mediaAlunosPorTurmaPorLaboratorio = mediaAlunosPorTurmaPorLaboratorio/numLaboratoriosUtilizados;
 		mediaAlunosPorTurmaPorSala = mediaAlunosPorTurmaPorSala/numSalasUtilizadas;
+		
+		mediaAlunosPorTurmaPorLaboratorioExternos = mediaAlunosPorTurmaPorLaboratorioExternos/numLaboratoriosUtilizadosExternos;
+		mediaAlunosPorTurmaPorSalaExternas = mediaAlunosPorTurmaPorSalaExternas/numSalasUtilizadasExternas;
 		
 		Locale pt_BR = new Locale("pt","BR");
 		NumberFormatter numberFormatter = new NumberFormatter();
 
 		RelatorioDTO perfil = new RelatorioDTO( "<b>Perfil</b>");
-		perfil.add( new RelatorioDTO( " Total de Ambientes Cadastrados: <b>" + numberFormatter.print(todasSalas.size(),pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " Total de Ambientes Cadastrados: <b>" + numberFormatter.print(numAmbientes,pt_BR) + "</b>") );
 		perfil.add( new RelatorioDTO( " |--Total de Salas de Aula: <b>" + numberFormatter.print(numSalas,pt_BR) + "</b>") );
 		perfil.add( new RelatorioDTO( " |--Total de Laboratorios: <b>" + numberFormatter.print(numLaboratorios,pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " Total de Ambientes Externos Cadastrados: <b>" + numberFormatter.print(numAmbientesExternos,pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " |--Total de Salas de Aula Externas: <b>" + numberFormatter.print(numSalasExternas,pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " |--Total de Laboratorios Externos: <b>" + numberFormatter.print(numLaboratoriosExternos,pt_BR) + "</b>") );
 		currentNode.add(perfil);
 		
 		RelatorioDTO atendimento = new RelatorioDTO( "<b>Atendimento</b>");
-		atendimento.add( new RelatorioDTO( " Total de Ambientes Utilizados: <b>" + numberFormatter.print(salasUtilizadas.size(),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Total de Ambientes Utilizados: <b>" + numberFormatter.print(numAmbientesUtilizados,pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Total de Salas de Aula Utilizadas: <b>" + numberFormatter.print(numSalasUtilizadas,pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Total de Laboratorios Utilizados: <b>" + numberFormatter.print(numLaboratoriosUtilizados,pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Total de Ambientes Externos Utilizados: <b>" + numberFormatter.print(numAmbientesUtilizadosExternos,pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Total de Salas de Aula Externas Utilizadas: <b>" + numberFormatter.print(numSalasUtilizadasExternas,pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Total de Laboratorios Externos Utilizados: <b>" + numberFormatter.print(numLaboratoriosUtilizadosExternos,pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Média de Alunos por Turma Alocada por Ambiente: <b>" + numberFormatter.print(
 				TriedaUtil.round(mediaAlunosPorTurmaPorAmbientes, 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Sala de Aula: <b>" + numberFormatter.print(
 				TriedaUtil.round(mediaAlunosPorTurmaPorSala, 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Laboratório: <b>" + numberFormatter.print(
 				TriedaUtil.round(mediaAlunosPorTurmaPorLaboratorio, 2),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Média de Alunos por Turma Alocada por Ambiente Externo: <b>" + numberFormatter.print(
+				TriedaUtil.round(mediaAlunosPorTurmaPorAmbientesExternos, 2),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Sala de Aula Externa: <b>" + numberFormatter.print(
+				TriedaUtil.round(mediaAlunosPorTurmaPorSalaExternas, 2),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Laboratório Externo: <b>" + numberFormatter.print(
+				TriedaUtil.round(mediaAlunosPorTurmaPorLaboratorioExternos, 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Ocupação Média da Capacidade dos Ambientes (%): <b>" + TriedaServerUtil.percentFormat(
 				utilizacaoMediaDosAmbientes) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade das Salas de Aula: <b>" + TriedaServerUtil.percentFormat(
 				utilizacaoMediaDasSalasDeAula) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade dos Laboratórios: <b>" + TriedaServerUtil.percentFormat(
 				utilizacaoMediaDosLaboratorios) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Ocupação Média da Capacidade dos Ambientes Externos(%): <b>" + TriedaServerUtil.percentFormat(
+				utilizacaoMediaDosAmbientesExternos) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade das Salas de Aula Externas: <b>" + TriedaServerUtil.percentFormat(
+				utilizacaoMediaDasSalasDeAulaExternas) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade dos Laboratórios Externos: <b>" + TriedaServerUtil.percentFormat(
+				utilizacaoMediaDosLaboratoriosExternos) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Utilização Média dos Horários dos Ambientes (%): <b>" + TriedaServerUtil.percentFormat(
 				mediaUtilizacaoHorarioAmbientes) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários das Salas de Aula: <b>" + TriedaServerUtil.percentFormat(
 				mediaUtilizacaoHorarioSalas) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários dos Laboratórios: <b>" + TriedaServerUtil.percentFormat(
 				mediaUtilizacaoHorarioLaboratorios) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Utilização Média dos Horários dos Ambientes Externos(%): <b>" + TriedaServerUtil.percentFormat(
+				mediaUtilizacaoHorarioAmbientesExternos) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários das Salas de Aula Externas: <b>" + TriedaServerUtil.percentFormat(
+				mediaUtilizacaoHorarioSalasExternas) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários dos Laboratórios Externos: <b>" + TriedaServerUtil.percentFormat(
+				mediaUtilizacaoHorarioLaboratoriosExternos) + "</b>") );
 		RelatorioDTO listaAmbientes = new RelatorioDTO( "Lista de Ambientes" );
 		listaAmbientes.setButtonText(listaAmbientes.getText());
 		listaAmbientes.setButtonIndex(2);

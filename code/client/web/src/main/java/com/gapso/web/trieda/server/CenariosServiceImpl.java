@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.server;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -51,6 +53,12 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.CenarioUtil;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportListReader;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportListWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -62,9 +70,25 @@ import com.gapso.web.trieda.shared.services.CenariosService;
 @Transactional
 public class CenariosServiceImpl
 	extends RemoteService
-	implements CenariosService
+	implements CenariosService, ProgressDeclaration
 {
 	private static final long serialVersionUID = -5951529933566541220L;
+	private ProgressReportWriter progressReport;
+	
+	public void initProgressReport(String chave) {
+		try {
+			List<String> feedbackList = new ArrayList<String>();
+			
+			setProgressReport(feedbackList);
+			ProgressReportReader progressSource = new ProgressReportListReader(feedbackList);
+			progressSource.start();
+			ProgressReportServiceImpl.getProgressReportSession(getThreadLocalRequest()).put(chave, progressSource);
+			getProgressReport().start();
+		}
+		catch(Exception e){
+			System.out.println("Nao foi possivel realizar o acompanhamento da progressao.");
+		}
+	}
 
 	public InstituicaoEnsinoDTO getInstituicaoEnsinoDTO()
 	{
@@ -382,6 +406,10 @@ public class CenariosServiceImpl
 	@Transactional
 	public void clonar( CenarioDTO cenarioDTO, CenarioDTO clone, boolean clonarSolucao )
 	{
+		//Inicializa o relatorio de progresso
+		initProgressReport("chaveClonarCenario");
+		getProgressReport().setInitNewPartial("Iniciando checagem dos dados");
+
 		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
 		Cenario cenarioOriginal = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
@@ -396,6 +424,9 @@ public class CenariosServiceImpl
 		cenario.setComentario(clone.getComentario());
 		
 		clonarEntidades( cenario, cenarioOriginal, clonarSolucao );
+		
+		getProgressReport().setPartial("Etapa concluída");
+		getProgressReport().finish();
 	}
 
 	@Transactional
@@ -406,114 +437,114 @@ public class CenariosServiceImpl
 		cenario.persist();
 		
 		CenarioClone cenarioClone = new CenarioClone(cenario);
-
+		getProgressReport().setPartial("Clonando TipoSala");
 		for (TipoSala tipoSala : TipoSala.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoSala ts = cenarioClone.clone(tipoSala);
 			ts.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando TipoDisciplina");
 		for (TipoDisciplina tipoDisciplina : TipoDisciplina.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoDisciplina td = cenarioClone.clone(tipoDisciplina);
 			td.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando TipoContrato");
 		for (TipoContrato tipoContrato : TipoContrato.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoContrato tc = cenarioClone.clone(tipoContrato);
 			tc.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Titulacoes");
 		for (Titulacao titulacao : Titulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			Titulacao t = cenarioClone.clone(titulacao);
 			t.persist();
 		}
-			
+		getProgressReport().setPartial("Clonando Turnos");
 		for (Turno turno : cenarioOriginal.getTurnos())
 		{
 			Turno t = cenarioClone.clone(turno);
 			t.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Semanas Letivas");
 		for (SemanaLetiva semanaLetiva : cenarioOriginal.getSemanasLetivas())
 		{
 			SemanaLetiva sl = cenarioClone.clone(semanaLetiva);
 			sl.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Campi");
 		for (Campus campus : cenarioOriginal.getCampi())
 		{
 			Campus c = cenarioClone.clone(campus);
 			c.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Deslocamento Campi");
 		for (DeslocamentoCampus deslocamentoCampus : DeslocamentoCampus.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			DeslocamentoCampus dc = cenarioClone.clone(deslocamentoCampus);
 			dc.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Deslocamento Unidade");
 		for (DeslocamentoUnidade deslocamentoUnidade : DeslocamentoUnidade.findAll(instituicaoEnsino, cenarioOriginal))
 		{
 			DeslocamentoUnidade du = cenarioClone.clone(deslocamentoUnidade);
 			du.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Tipos Curso");
 		for (TipoCurso tipoCurso : TipoCurso.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoCurso tc = cenarioClone.clone(tipoCurso);
 			tc.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Areas Titulacoes");
 		for (AreaTitulacao areaTitulacao : AreaTitulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			AreaTitulacao at = cenarioClone.clone(areaTitulacao);
 			at.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Cursos");
 		for (Curso curso : cenarioOriginal.getCursos())
 		{
 			Curso c = cenarioClone.clone(curso);
 			c.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Disciplinas");
 		for (Disciplina disciplina : cenarioOriginal.getDisciplinas())
 		{
 			Disciplina d = cenarioClone.clone(disciplina);
 			d.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Divisões de Creditos");
 		for (DivisaoCredito divisaoCredito : cenarioOriginal.getDivisoesCredito())
 		{
 			divisaoCredito.getCenario().add(cenario);
 		}
-		
+		getProgressReport().setPartial("Clonando Equivalencias");
 		for (Equivalencia equivalencia : Equivalencia.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			Equivalencia eq = cenarioClone.clone(equivalencia);
 			eq.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Curriculos");
 		for (Curriculo curriculo : cenarioOriginal.getCurriculos())
 		{
 			Curriculo c = cenarioClone.clone(curriculo);
 			c.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Alunos");
 		for (Aluno aluno : cenarioOriginal.getAlunos())
 		{
 			Aluno a = cenarioClone.clone(aluno);
 			a.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Ofertas");
 		for (Oferta oferta : Oferta.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			Oferta o = cenarioClone.clone(oferta);
 			o.persist();
 		}
-		
+		getProgressReport().setPartial("Clonando Professor");
 		for (Professor professor : cenarioOriginal.getProfessores())
 		{
 			Professor p = cenarioClone.clone(professor);
@@ -522,42 +553,43 @@ public class CenariosServiceImpl
 		
 		if (clonarSolucao)
 		{
+			getProgressReport().setPartial("Clonando Atendimentos Tatico");
 			for (AtendimentoTatico atendimentoTatico : cenarioOriginal.getAtendimentosTaticos())
 			{
 				AtendimentoTatico at = cenarioClone.clone(atendimentoTatico);
 				at.persist();
 			}
-			
+			getProgressReport().setPartial("Clonando Professores Virtuais");
 			for (ProfessorVirtual professorVirtual : ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenarioOriginal))
 			{
 				ProfessorVirtual pv = cenarioClone.clone(professorVirtual);
 				pv.persist();
 			}
-			
+			getProgressReport().setPartial("Clonando Dicas Eliminacao");
 			for (DicaEliminacaoProfessorVirtual dicaEliminacao : DicaEliminacaoProfessorVirtual.findByCenario(instituicaoEnsino, cenarioOriginal))
 			{
 				DicaEliminacaoProfessorVirtual d = cenarioClone.clone(dicaEliminacao);
 				d.persist();
 			}
-			
+			getProgressReport().setPartial("Clonando Motivos de Uso");
 			for (MotivoUsoProfessorVirtual motivoUso : MotivoUsoProfessorVirtual.findByCenario(instituicaoEnsino, cenarioOriginal))
 			{
 				MotivoUsoProfessorVirtual m = cenarioClone.clone(motivoUso);
 				m.persist();
 			}
-			
+			getProgressReport().setPartial("Clonando Atendimentos Operacionais");
 			for (AtendimentoOperacional atendimentoOperacional : cenarioOriginal.getAtendimentosOperacionais())
 			{
 				AtendimentoOperacional ao = cenarioClone.clone(atendimentoOperacional);
 				ao.persist();
 			}
-			
+			getProgressReport().setPartial("Clonando Turmas");
 			for (Turma turma : cenarioOriginal.getTurmas())
 			{
 				Turma t = cenarioClone.clone(turma);
 				t.persist();
 			}
-			
+			getProgressReport().setPartial("Clonando Aulas");
 			for (Aula aula : cenarioOriginal.getAulas())
 			{
 				Aula a = cenarioClone.clone(aula);
@@ -584,9 +616,13 @@ public class CenariosServiceImpl
 		Locale pt_BR = new Locale("pt","BR");
 		NumberFormatter numberFormatter = new NumberFormatter();
 		
-		int totalSalas = Sala.countSalaDeAula( getInstituicaoEnsinoUser(), cenario );
-		int totalLaboratorios = Sala.countLaboratorio( getInstituicaoEnsinoUser(), cenario );
+		int totalSalas = Sala.countSalaDeAulaNaoExternas( getInstituicaoEnsinoUser(), cenario );
+		int totalLaboratorios = Sala.countLaboratorioNaoExternos( getInstituicaoEnsinoUser(), cenario );
 		int totalAmbientes = totalSalas + totalLaboratorios;
+		
+		int totalSalasExternas = Sala.countSalaDeAulaExternas( getInstituicaoEnsinoUser(), cenario );
+		int totalLaboratoriosExternos = Sala.countLaboratorioExternos( getInstituicaoEnsinoUser(), cenario );
+		int totalAmbientesExternos = totalSalasExternas + totalLaboratoriosExternos;
 
 		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
 
@@ -613,6 +649,11 @@ public class CenariosServiceImpl
 				 numberFormatter.print( totalSalas,pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Total de laboratórios ", "<b>" +
 				 numberFormatter.print( totalLaboratorios,pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de ambientes externos ", "<b>" +  numberFormatter.print( totalAmbientesExternos,pt_BR )), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Total de salas de aula externas ", "<b>" +
+				 numberFormatter.print( totalSalasExternas,pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Total de laboratórios externos ", "<b>" +
+				 numberFormatter.print( totalLaboratoriosExternos,pt_BR ) + "</b>"), null, true ) );
 		
 		return list;
 	}
@@ -629,5 +670,17 @@ public class CenariosServiceImpl
 	{
 		//Cenario.executeSqlUpdate(13, 14);
 		return Cenario.getDBVersion();
+	}
+	
+	public void setProgressReport(List<String> fbl){
+		progressReport = new ProgressReportListWriter(fbl);
+	}
+	
+	public void setProgressReport(File f) throws IOException{
+		progressReport = new ProgressReportFileWriter(f);
+	}
+	
+	public ProgressReportWriter getProgressReport(){
+		return progressReport;
 	}
 }
