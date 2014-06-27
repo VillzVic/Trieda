@@ -998,7 +998,6 @@ public class Professor
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Professor o " +
-			" LEFT JOIN FETCH o.atendimentosOperacionais LEFT JOIN o.disciplinas d " +
 			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino" +
 			" AND o.cenario = :cenario" +
 			where 
@@ -1027,6 +1026,9 @@ public class Professor
 	{
 		if ( cpf == null && nome == null ) return null;
 		else if ( cpf.isEmpty() && nome.isEmpty() ) return null;
+		
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 		
 		String cpfQuery = "";
 		
