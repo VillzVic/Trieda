@@ -730,6 +730,15 @@ public class SemanaLetiva
 		
 	}
 	
+	public HorarioAula getNextHorario(HorarioAula ha) {
+		List<HorarioAula> horariosAula = new ArrayList<HorarioAula>(this.getHorariosAula());
+		
+		Collections.sort(horariosAula);
+		
+		return horariosAula.get(horariosAula.indexOf(ha)+1);
+		
+	}
+	
 	//Clona semanaLetiva para a funcionalidade de clonar cenario
 	public SemanaLetiva clone(CenarioClone novoCenario)
 	{
