@@ -907,8 +907,6 @@ public class Professor
 
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT o FROM Professor o " +
-			"LEFT JOIN FETCH o.atendimentosOperacionais " +
-			"LEFT JOIN o.disciplinas d " +
 			" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
 			+ where + " 1 = 1 "+ orderBy);
 
