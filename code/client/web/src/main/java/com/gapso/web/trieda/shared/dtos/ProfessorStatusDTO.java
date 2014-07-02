@@ -125,11 +125,17 @@ public class ProfessorStatusDTO
 
 	@Override
 	public int compareTo(ProfessorStatusDTO o) {
-		return this.getProfessorId().compareTo(o.getProfessorId());
+		if( this.getProfessorId() == null){
+			return this.getProfessorVirtualId().compareTo(o.getProfessorVirtualId());
+		} else 
+			return this.getProfessorId().compareTo(o.getProfessorId());
 	}
 
 	@Override
 	public String getNaturalKey() {
-		return getProfessorId().toString();
+		if( this.getProfessorId() == null)
+			return getProfessorVirtualId().toString();
+		else
+			return getProfessorId().toString();
 	}
 }

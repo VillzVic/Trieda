@@ -697,8 +697,9 @@ public class AlocacaoManualView
 		CellEditor checkBoxEditor = new CellEditor(new CheckBox());        
 		checkProfessorColumn.setEditor(checkBoxEditor);
 		
-		list.add( checkAlunoColumn );
+		list.add( checkProfessorColumn );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CPF, "Cpf", 60 ) );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
 		ColumnConfig column = new ColumnConfig( ProfessorStatusDTO.PROPERTY_STATUS, "Status", 70 );
 		column.setRenderer(change);
 		list.add( column );
@@ -706,7 +707,6 @@ public class AlocacaoManualView
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CUSTO, "Custo", 60 ) );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOTA, "Nota", 60 ) );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_PREFERENCIA, "Pref.", 60 ) );
-		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
 		
 		return list;
 	}
