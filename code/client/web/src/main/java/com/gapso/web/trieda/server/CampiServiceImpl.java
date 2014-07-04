@@ -732,7 +732,11 @@ public class CampiServiceImpl extends RemoteService
 		
 		Integer demandaTotalP1QtdeAlunos = AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
 		
+		Integer demandaTotalP2QtdeAlunos = AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),campus,2);
+		
 		Integer demandaTotalPresencialP1QtdeAlunos = AlunoDemanda.sumDemandaPresencialPorPrioridade(getInstituicaoEnsinoUser(),cenario,campus,1);
+		
+		Integer demandaTotalPresencialP2QtdeAlunos = AlunoDemanda.sumDemandaPresencialPorPrioridade(getInstituicaoEnsinoUser(),cenario,campus,2);
 		
 		Integer demandaTotalNaoPresencialP1QtdeAlunos = demandaTotalP1QtdeAlunos-demandaTotalPresencialP1QtdeAlunos;
 		
@@ -775,7 +779,11 @@ public class CampiServiceImpl extends RemoteService
 		Double mediaTurmasPorDocente = TriedaUtil.round( qtdDocentes == 0 ? 0.0 : ((double)qtdTurmasAbertas)/qtdDocentes, 2 );
 		Double mediaTurmasPorProfessor = TriedaUtil.round( qtdProfessores == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresInstituicao)/qtdProfessores, 2 );
 		Double mediaTurmasPorProfessorVirtual = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresVirtuais)/qtdProfessoresVirtuais, 2 );
+		Double mediaDisciplinasPorAluno = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)demandaAtendidaQtdeAlunos)/qtdTotalAlunos, 2 );
 		
+		Double demandasAtendidasPercent = TriedaUtil.round( demandaTotalP1QtdeAlunos == 0 ? 0.0 : (((double)demandaAtendidaQtdeAlunos)/demandaTotalP1QtdeAlunos)*100, 2 );
+		Double demandasAtendidasP1Percent = TriedaUtil.round( demandaAtendidaQtdeAlunos == 0 ? 0.0 : (((double)demandaAtendidaP1QtdeAlunos)/demandaAtendidaQtdeAlunos)*100, 2 );
+		Double demandasAtendidasP2Percent = TriedaUtil.round( demandaAtendidaQtdeAlunos == 0 ? 0.0 : (((double)demandaAtendidaP2QtdeAlunos)/demandaAtendidaQtdeAlunos)*100, 2 );
 		
 		// disponibilização dos indicadores
 		Locale pt_BR = new Locale("pt","BR");
@@ -804,6 +812,12 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Presencial P2: ", "<b>" + numberFormatter.print(demandaAtendidaP2QtdeAlunos,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Demanda atendida (%): ", "<b>" + numberFormatter.print(demandasAtendidasPercent,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Presencial P1 %: ", "<b>" + numberFormatter.print(demandasAtendidasP1Percent,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Presencial P2 %: ", "<b>" + numberFormatter.print(demandasAtendidasP2Percent,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Créditos pagos aos docentes (A): ", "<b>" + numberFormatter.print(totalCreditosSemanais,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Créditos de professores da instituição: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessores,pt_BR) + "</b>") ,currentNode, true) );
@@ -831,6 +845,8 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Custo/ receita do crédito (A/B): ", "<b>" + numberFormatter.print(custoSobreReceitaCreditoPercent,pt_BR) + "%</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de Disciplinas por Aluno: ", "<b>" + numberFormatter.print(mediaDisciplinasPorAluno,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Média de alunos por turma: ", "<b>" + numberFormatter.print(qtdMediaDeAlunosPorTurma,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Média de créditos por turma: ", "<b>" + numberFormatter.print(qtdMediaDeCreditosPorTurma,pt_BR) + "</b>") ,currentNode, true) );
@@ -854,8 +870,6 @@ public class CampiServiceImpl extends RemoteService
 				"% do custo docente sobre a receita: ", "<b>" + ((razaoCustoDocentePorReceitaSemestral == null) ? "n.d.a." : numberFormatter.print(razaoCustoDocentePorReceitaSemestral, pt_BR)) + "%</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Ticket médio: ", "<b>" + "-" + "</b>") ,currentNode, true) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"Custo médio do crédito: ", "<b>" + numberFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Custo médio docente (fornecido): ", "<b>" + numberFormatter.print(campus.getValorCredito(), pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(

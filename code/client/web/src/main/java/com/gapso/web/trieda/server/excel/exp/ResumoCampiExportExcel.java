@@ -76,10 +76,10 @@ public class ResumoCampiExportExcel
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 5;
 		initialColumn = 0;
-		rowsEspaco.add(26);
-		rowsEspaco.add(35);
-		rowsEspaco.add(44);
-		rowsEspaco.add(57);
+		rowsEspaco.add(29);
+		rowsEspaco.add(38);
+		rowsEspaco.add(47);
+		rowsEspaco.add(60);
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class ResumoCampiExportExcel
 				}
 				nextColumn += 1;
 			}
-			autoSizeColumns((short)3, (short)20, sheet);
+			autoSizeColumns((short)4, (short)20, sheet);
 			return true;
 		}
 
