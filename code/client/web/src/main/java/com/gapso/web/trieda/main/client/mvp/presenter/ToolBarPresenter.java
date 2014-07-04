@@ -22,11 +22,13 @@ import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosDisciplinasCursadasView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
+import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoDiaSemanaView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoCapacidadeView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaCreditoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaDisciplinaView;
+import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaTurmaView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
@@ -201,12 +203,13 @@ public class ToolBarPresenter
 		MenuItem getRelatorioSalasMenuItem();
 		MenuItem getResumoMatriculasMenuItem();
 		MenuItem getResumoAtendimentosDisciplinaMenuItem();
-		//MenuItem getResumoAtendimentosFaixaTurmaMenuItem();
+		MenuItem getResumoAtendimentosFaixaTurmaMenuItem();
 		MenuItem getResumoAtendimentosFaixaDemandaMenuItem();
 		MenuItem getAtendimentosFaixaCreditoMenuItem();
 		MenuItem getAtendimentosFaixaDisciplinaMenuItem();
 		MenuItem getAmbientesFaixaOcupacaoHorariosMenuItem();
 		MenuItem getAmbientesFaixaUtilizacaoCapacidadeMenuItem();
+		MenuItem getAmbientesFaixaUtilizacaoDiaSemanaItem();
 		MenuItem getResumoPercentMestresDoutoresMenuItem();
 		MenuItem getProfessoresJanelasGradeMenuItem();
 		MenuItem getProfessoresDisciplinasHabilitadasMenuItem();
@@ -1071,7 +1074,7 @@ public class ToolBarPresenter
 			}
 		});
 		
-/*		this.toolBar.getResumoAtendimentosFaixaTurmaMenuItem().addSelectionListener(
+		this.toolBar.getResumoAtendimentosFaixaTurmaMenuItem().addSelectionListener(
 				new SelectionListener< MenuEvent >()
 		{
 			@Override
@@ -1082,7 +1085,7 @@ public class ToolBarPresenter
 
 				presenter.go( gTab );
 			}
-		});*/
+		});
 
 		this.toolBar.getResumoAtendimentosFaixaDemandaMenuItem().addSelectionListener(
 				new SelectionListener< MenuEvent >()
@@ -1144,6 +1147,19 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new AmbientesFaixaOcupacaoCapacidadePresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new AmbientesFaixaOcupacaoCapacidadeView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAmbientesFaixaUtilizacaoDiaSemanaItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AmbientesFaixaOcupacaoDiaSemanaPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AmbientesFaixaOcupacaoDiaSemanaView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}

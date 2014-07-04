@@ -24,6 +24,7 @@ import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDoubleDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -185,4 +186,8 @@ public interface AtendimentosServiceAsync {
 
 	void getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO,
 			AsyncCallback<ListLoadResult<SalaDTO>> callback);
+
+	void getAmbientesFaixaUtilizacaoPorDiaSemana(CenarioDTO cenarioDTO,
+			CampusDTO campusDTO,
+			AsyncCallback<List<RelatorioQuantidadeDoubleDTO>> callback);
 }

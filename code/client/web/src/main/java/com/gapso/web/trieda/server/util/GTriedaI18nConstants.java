@@ -961,6 +961,11 @@ public class GTriedaI18nConstants
 	public String ambientesFaixaUsoCapacidade() {
 		return this.languageManager.getText("ambientesFaixaUsoCapacidade");
 	}
+	
+	@Override
+	public String ambientesFaixaOcupacaoSemana() {
+		return this.languageManager.getText("ambientesFaixaOcupacaoSemana");
+	}
 
 	@Override
 	public String divisoesCredito() {

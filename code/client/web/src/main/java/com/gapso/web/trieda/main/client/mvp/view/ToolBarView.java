@@ -569,12 +569,13 @@ public class ToolBarView
 		Menu menuAtendimentos = new Menu();
 		menuAtendimentos.add( createMenuItem("Atendimentos por Matrícula", Resources.DEFAULTS.resumoMatricula16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );
-		//menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Turma", Resources.DEFAULTS.disciplinaCurriculo16()) );
+		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Turma", Resources.DEFAULTS.disciplinaCurriculo16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Demanda", Resources.DEFAULTS.resumoFaixaDemanda16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Crédito", Resources.DEFAULTS.divisaoDeCreditos16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );
 		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Utilização dos Horários", Resources.DEFAULTS.sala16()) );
 		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Ocupação Média da Capacidade", Resources.DEFAULTS.sala16()) );
+		menuAtendimentos.add( createMenuItem("Ocupação dos Ambientes por Dia da Semana", Resources.DEFAULTS.sala16()) );
 		atendimentosDropDownBt.setMenu(menuAtendimentos);
 		relatoriosToolBar.add(atendimentosDropDownBt);
 		
@@ -1036,40 +1037,46 @@ public class ToolBarView
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(1);
 	}
 	
-/*	@Override
+	@Override
 	public MenuItem getResumoAtendimentosFaixaTurmaMenuItem()
 	{
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(2);
-	}*/
+	}
 
 	@Override
 	public MenuItem getResumoAtendimentosFaixaDemandaMenuItem()
-	{
-		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(2);
-	}
-	
-	@Override
-	public MenuItem getAtendimentosFaixaCreditoMenuItem()
 	{
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(3);
 	}
 	
 	@Override
-	public MenuItem getAtendimentosFaixaDisciplinaMenuItem()
+	public MenuItem getAtendimentosFaixaCreditoMenuItem()
 	{
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(4);
 	}
 	
 	@Override
-	public MenuItem getAmbientesFaixaOcupacaoHorariosMenuItem()
+	public MenuItem getAtendimentosFaixaDisciplinaMenuItem()
 	{
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(5);
 	}
 	
 	@Override
-	public MenuItem getAmbientesFaixaUtilizacaoCapacidadeMenuItem()
+	public MenuItem getAmbientesFaixaOcupacaoHorariosMenuItem()
 	{
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(6);
+	}
+	
+	@Override
+	public MenuItem getAmbientesFaixaUtilizacaoCapacidadeMenuItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(7);
+	}
+	
+	@Override
+	public MenuItem getAmbientesFaixaUtilizacaoDiaSemanaItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(8);
 	}
 	
 	@Override

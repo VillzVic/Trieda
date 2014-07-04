@@ -9,6 +9,7 @@ public interface TriedaI18nConstants
 	String adicionar();
 	String ambientesFaixaOcupacao();
 	String ambientesFaixaUsoCapacidade();
+	String ambientesFaixaOcupacaoSemana();
 	String andar();
 	String areaTitulacao();
 	String areasTitulacao();

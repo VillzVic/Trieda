@@ -86,6 +86,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDoubleDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
@@ -2240,7 +2241,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 			} else {
 				// atendimentos operacionais
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta, campus.getCenario());
 				for (AtendimentoOperacional atendimento : atendimentos) {
 					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
 					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
@@ -2496,7 +2497,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 			} else {
 				// atendimentos operacionais
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta, campus.getCenario());
 				for (AtendimentoOperacional atendimento : atendimentos) {
 					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
 					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
@@ -2719,6 +2720,225 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					}
 				}
 			}
+		}
+		return faixasUtilizacaoCapacidade;		
+	}
+	
+	@Override
+	public List<RelatorioQuantidadeDoubleDTO> getAmbientesFaixaUtilizacaoPorDiaSemana(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	{
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		// cálculo dos indicadores de utilização das salas de aula e laboratórios
+		Set<Turno> turnosConsiderados = new HashSet<Turno>();
+		Set<Sala> todasSalas = new HashSet<Sala>();
+		for(Unidade unidade : campus.getUnidades() ){
+			todasSalas.addAll(unidade.getSalas());
+		}
+		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
+		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+		for (Oferta oferta : campus.getOfertas()) {
+			turnosConsiderados.add(oferta.getTurno());
+			if (ehTatico) {
+				// atendimentos táticos
+				for (AtendimentoTatico aula : oferta.getAtendimentosTaticos()) {
+					String key = aula.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (aulasPorSalaTurno == null) {
+						aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
+					}
+					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
+					
+					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			} else {
+				// atendimentos operacionais
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta, campus.getCenario());
+				for (AtendimentoOperacional atendimento : atendimentos) {
+					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimetosPorSalaTurno == null) {
+						atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
+					}
+					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
+					
+					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			}
+		}
+		
+		Double externos = 0.0;
+		Double laboratorios = 0.0;
+		Double salas = 0.0;
+		for (Sala sala : todasSalas)
+		{
+			if(sala.getExterna())
+			{
+				externos++;
+			}
+			else if(sala.isLaboratorio())
+			{
+				laboratorios++;
+			}
+			else
+			{
+				salas++;
+			}
+		}
+		
+		List<RelatorioQuantidadeDoubleDTO> faixasUtilizacaoCapacidade = new ArrayList<RelatorioQuantidadeDoubleDTO>();
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDoubleDTO("Externos", externos));
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDoubleDTO("Laboratórios", laboratorios));
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDoubleDTO("Salas", salas));
+		
+		for(RelatorioQuantidadeDoubleDTO faixa : faixasUtilizacaoCapacidade){
+			faixa.setCampusNome(campusDTO.getCodigo());
+		}
+		
+		Map<Sala, Set<Integer>> salasToDiasSemanaMap = new HashMap<Sala, Set<Integer>>();
+		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+			// [SalaId -> Tempo de uso (min) semanal]
+			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+			for (Turno turno : turnosConsiderados) {
+				for (Sala sala : todasSalas) {
+					String key = sala.getId() + "-" + turno.getId();
+					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimentosPorSalaTurno != null) {
+						List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+						if (ehTatico) {
+							aulas.addAll(atendimentosPorSalaTurno);
+						} else {
+							List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
+							for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
+								atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
+							}
+							// processa os atendimentos do operacional e os transforma em aulas
+							List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
+							// insere as aulas do modo operacional na lista de atendimentos
+							aulas.addAll(aulasOperacional);
+						}
+						
+						// trata compartilhamento de turmas entre cursos
+						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
+						
+						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+							if (salasToDiasSemanaMap.get(sala) == null )
+							{
+								Set<Integer> diasSemana = new HashSet<Integer>();
+								diasSemana.add(aula.getSemana());
+								salasToDiasSemanaMap.put(sala, diasSemana);
+							}
+							else
+							{
+								salasToDiasSemanaMap.get(sala).add(aula.getSemana());
+							}
+						}
+					} else {
+						if (salasToDiasSemanaMap.get(sala) == null )
+						{
+							Set<Integer> diasSemana = new HashSet<Integer>();
+							diasSemana.add(0);
+							salasToDiasSemanaMap.put(sala, diasSemana);
+						}
+						else
+						{
+							salasToDiasSemanaMap.get(sala).add(0);
+						}
+					}
+				}
+			}
+
+			for(Entry<Sala, Set<Integer>> sala : salasToDiasSemanaMap.entrySet()){
+				for (Integer diaSemana : sala.getValue())
+				{
+					if (sala.getKey().getExterna())
+					{
+						switch (diaSemana) {
+						case 2:
+							faixasUtilizacaoCapacidade.get(0).setQuantidade(faixasUtilizacaoCapacidade.get(0).getQuantidade() + 1);
+							break;
+						case 3:
+							faixasUtilizacaoCapacidade.get(0).setQuantidade2(faixasUtilizacaoCapacidade.get(0).getQuantidade2() + 1);
+							break;
+						case 4:
+							faixasUtilizacaoCapacidade.get(0).setQuantidade3(faixasUtilizacaoCapacidade.get(0).getQuantidade3() + 1);
+							break;
+						case 5:
+							faixasUtilizacaoCapacidade.get(0).setQuantidade4(faixasUtilizacaoCapacidade.get(0).getQuantidade4() + 1);
+							break;
+						case 6:
+							faixasUtilizacaoCapacidade.get(0).setQuantidade5(faixasUtilizacaoCapacidade.get(0).getQuantidade5() + 1);
+							break;
+						case 7:
+							faixasUtilizacaoCapacidade.get(0).setQuantidade6(faixasUtilizacaoCapacidade.get(0).getQuantidade6() + 1);
+							break;
+						default:
+							break;
+						}
+					}
+					else if (sala.getKey().isLaboratorio())
+					{
+						switch (diaSemana) {
+						case 2:
+							faixasUtilizacaoCapacidade.get(1).setQuantidade(faixasUtilizacaoCapacidade.get(1).getQuantidade() + 1);
+							break;
+						case 3:
+							faixasUtilizacaoCapacidade.get(1).setQuantidade2(faixasUtilizacaoCapacidade.get(1).getQuantidade2() + 1);
+							break;
+						case 4:
+							faixasUtilizacaoCapacidade.get(1).setQuantidade3(faixasUtilizacaoCapacidade.get(1).getQuantidade3() + 1);
+							break;
+						case 5:
+							faixasUtilizacaoCapacidade.get(1).setQuantidade4(faixasUtilizacaoCapacidade.get(1).getQuantidade4() + 1);
+							break;
+						case 6:
+							faixasUtilizacaoCapacidade.get(1).setQuantidade5(faixasUtilizacaoCapacidade.get(1).getQuantidade5() + 1);
+							break;
+						case 7:
+							faixasUtilizacaoCapacidade.get(1).setQuantidade6(faixasUtilizacaoCapacidade.get(1).getQuantidade6() + 1);
+							break;
+						default:
+							break;
+						}
+					}
+					else
+					{
+						switch (diaSemana) {
+						case 2:
+							faixasUtilizacaoCapacidade.get(2).setQuantidade(faixasUtilizacaoCapacidade.get(2).getQuantidade() + 1);
+							break;
+						case 3:
+							faixasUtilizacaoCapacidade.get(2).setQuantidade2(faixasUtilizacaoCapacidade.get(2).getQuantidade2() + 1);
+							break;
+						case 4:
+							faixasUtilizacaoCapacidade.get(2).setQuantidade3(faixasUtilizacaoCapacidade.get(2).getQuantidade3() + 1);
+							break;
+						case 5:
+							faixasUtilizacaoCapacidade.get(2).setQuantidade4(faixasUtilizacaoCapacidade.get(2).getQuantidade4() + 1);
+							break;
+						case 6:
+							faixasUtilizacaoCapacidade.get(2).setQuantidade5(faixasUtilizacaoCapacidade.get(2).getQuantidade5() + 1);
+							break;
+						case 7:
+							faixasUtilizacaoCapacidade.get(2).setQuantidade6(faixasUtilizacaoCapacidade.get(2).getQuantidade6() + 1);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+			}
+		}
+		for(RelatorioQuantidadeDoubleDTO faixa : faixasUtilizacaoCapacidade){
+			faixa.setQuantidade(TriedaUtil.round( faixa.getQuantidadeTotal() == 0 ? 0.0 : (((double)faixa.getQuantidade())/faixa.getQuantidadeTotal())*100, 2 ));
+			faixa.setQuantidade2(TriedaUtil.round( faixa.getQuantidadeTotal() == 0 ? 0.0 : (((double)faixa.getQuantidade2())/faixa.getQuantidadeTotal())*100, 2 ));
+			faixa.setQuantidade3(TriedaUtil.round( faixa.getQuantidadeTotal() == 0 ? 0.0 : (((double)faixa.getQuantidade3())/faixa.getQuantidadeTotal())*100, 2 ));
+			faixa.setQuantidade4(TriedaUtil.round( faixa.getQuantidadeTotal() == 0 ? 0.0 : (((double)faixa.getQuantidade4())/faixa.getQuantidadeTotal())*100, 2 ));
+			faixa.setQuantidade5(TriedaUtil.round( faixa.getQuantidadeTotal() == 0 ? 0.0 : (((double)faixa.getQuantidade5())/faixa.getQuantidadeTotal())*100, 2 ));
+			faixa.setQuantidade6(TriedaUtil.round( faixa.getQuantidadeTotal() == 0 ? 0.0 : (((double)faixa.getQuantidade6())/faixa.getQuantidadeTotal())*100, 2 ));
 		}
 		return faixasUtilizacaoCapacidade;		
 	}

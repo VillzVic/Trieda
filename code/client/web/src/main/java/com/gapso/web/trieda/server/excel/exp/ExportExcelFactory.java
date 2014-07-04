@@ -30,6 +30,7 @@ public class ExportExcelFactory {
 			case ALUNOS_DISCIPLINAS_CURSADAS: exporter = new AlunosDisciplinasCursadasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case AMBIENTES_FAIXA_UTILIZACAO: exporter = new AmbientesFaixaUtilizacaoHorariosExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case AMBIENTES_FAIXA_OCUPACAO: exporter = new AmbientesFaixaOcupacaoCapacidadeExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break; 
+			case AMBIENTES_FAIXA_OCUPACAO_SEMANA: exporter = new AmbientesFaixaOcupacaoDiaSemanaExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break; 
 			case AREAS_TITULACAO: exporter = new AreasTitulacaoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case ATENDIMENTOS_MATRICULA: exporter = new AtendimentosMatriculaExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension); break;
 			case ATENDIMENTOS_DISCIPLINA: exporter = new AtendimentosDisciplinaExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension); break;

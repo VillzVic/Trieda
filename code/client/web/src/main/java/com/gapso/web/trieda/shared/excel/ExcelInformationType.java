@@ -47,6 +47,7 @@ public enum ExcelInformationType
 	PROFESSORES_TITULACOES("Professores Titulacoes"),
 	PROFESSORES_AREAS_CONHECIMENTO("Professores Areas Conhecimento"),
 	AMBIENTES_FAIXA_OCUPACAO("Ambientes Faixa Ocupacao"),
+	AMBIENTES_FAIXA_OCUPACAO_SEMANA("Ambientes Faixa Ocupacao Semana"),
 	AMBIENTES_FAIXA_UTILIZACAO("Ambientes Faixa Utilizacao"),
 	TURNOS("Turnos"),
 	TIPOS_CURSO("Tipos de Curso"),

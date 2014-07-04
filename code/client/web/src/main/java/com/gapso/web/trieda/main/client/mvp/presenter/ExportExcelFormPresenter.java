@@ -73,6 +73,7 @@ public class ExportExcelFormPresenter
 		CheckBox getProfessoresTitulacoes();
 		CheckBox getProfessoresAreasConhecimento();
 		CheckBox getAmbientesFaixaOcupacao();
+		CheckBox getOcupacaoAmbientesSemana();
 		CheckBox getAmbientesFaixaUtilizacao();
 		CheckBox getTurnos();
 		CheckBox getTiposCurso();
