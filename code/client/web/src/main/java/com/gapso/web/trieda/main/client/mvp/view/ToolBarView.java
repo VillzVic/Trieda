@@ -400,8 +400,8 @@ public class ToolBarView
 		salasToolBar.add( new SeparatorToolItem() );
 		
 		associarDisciplinasSalasListSalasBt = createButton(
-			"Associação de<br />Disciplinas à Ambientes",
-			"Associação de Disciplinas à Ambientes", Resources.DEFAULTS.associacaoDisciplinaSala24() );
+			"Associação de<br />Ambientes à Disciplinas",
+			"Associação de Ambientes à Disciplinas", Resources.DEFAULTS.associacaoDisciplinaSala24() );
 		salasToolBar.add( associarDisciplinasSalasListSalasBt );
 
 		gruposSalasListSalasBt = createButton( "Grupos de<br />Ambientes",

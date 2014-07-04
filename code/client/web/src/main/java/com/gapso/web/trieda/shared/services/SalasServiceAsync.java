@@ -45,6 +45,10 @@ public interface SalasServiceAsync
 	void getSalasDoAndareList( UnidadeDTO unidade, List< String > andares,
 		AsyncCallback< ListLoadResult< SalaDTO > > callback );
 	void getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void vincula(SalaDTO salaDTO, List<DisciplinaDTO> disciplinasDTO, AsyncCallback<Void> callback);
+	void desvincula(SalaDTO salaDTO, List<DisciplinaDTO> disciplinasDTO, AsyncCallback<Void> callback);
+	void getListDisciplinasVinculadas(SalaDTO salaDTO,	AsyncCallback<List<DisciplinaDTO>> callback);
+	void getListDisciplinasNaoVinculadas(CenarioDTO cenarioDTO,SalaDTO salaDTO, AsyncCallback<List<DisciplinaDTO>> callback);
 	void vincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO, AsyncCallback<Void> callback);
 	void desvincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO, AsyncCallback<Void> callback);
 	void getListVinculadas(DisciplinaDTO disciplinaDTO,	AsyncCallback<List<SalaDTO>> callback);

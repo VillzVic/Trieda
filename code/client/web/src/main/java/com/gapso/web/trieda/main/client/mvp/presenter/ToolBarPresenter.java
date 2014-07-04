@@ -12,9 +12,9 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.TabItem;
+import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
 import com.gapso.web.trieda.main.client.mvp.view.AlocacaoManualDisciplinaFormView;
@@ -23,8 +23,8 @@ import com.gapso.web.trieda.main.client.mvp.view.AlunosDisciplinasCursadasView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoDiaSemanaView;
-import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoCapacidadeView;
+import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaCreditoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaDisciplinaView;
@@ -44,6 +44,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CursosView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandasPorAlunoView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandasView;
+import com.gapso.web.trieda.main.client.mvp.view.DisciplinaAssociarSalasView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasCoRequisitosView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasPreRequisitosView;
@@ -100,6 +101,7 @@ import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroConfiguracaoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -828,8 +830,8 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new SalasAssociarDisciplinaPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new SalasAssociarDisciplinaView( cenarioDTO, new DisciplinaDTO() ) );
+				Presenter presenter = new DisciplinaAssociarSalasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DisciplinaAssociarSalasView( cenarioDTO, new SalaDTO() ) );
 
 				presenter.go( gTab );
 			}

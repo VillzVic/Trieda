@@ -46,6 +46,10 @@ public interface SalasService
 	void saveHorariosDisponiveis( SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	ListLoadResult< SalaDTO > getSalasDoAndareList( UnidadeDTO unidade, List< String > andares );
 	ListLoadResult<SalaDTO> getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig);
+	void vincula(SalaDTO salaDTO, List<DisciplinaDTO> disciplinasDTO);
+	void desvincula(SalaDTO salaDTO, List<DisciplinaDTO> disciplinasDTO);
+	List<DisciplinaDTO> getListDisciplinasVinculadas(SalaDTO salaDTO);
+	List<DisciplinaDTO> getListDisciplinasNaoVinculadas(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	void vincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO);
 	void desvincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO);
 	List<SalaDTO> getListVinculadas(DisciplinaDTO disciplinaDTO);

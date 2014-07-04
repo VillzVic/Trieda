@@ -32,8 +32,6 @@ import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
-import com.gapso.trieda.domain.Professor;
-import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
@@ -449,8 +447,36 @@ public class SalasServiceImpl
 			salaDTOList.add(
 				ConvertBeans.toSalaDTO( sala ) );
 		}
+		
+		Collections.sort(salaDTOList);
 
 		return salaDTOList;
+	}
+	
+	@Override
+	public List<DisciplinaDTO> getListDisciplinasVinculadas(SalaDTO salaDTO) {
+		if ( salaDTO == null )
+		{
+			return Collections.< DisciplinaDTO >emptyList();
+		}
+
+		Sala sala = Sala.find(
+				salaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		Set< Disciplina > disciplinaList = sala.getDisciplinas();
+
+		List< DisciplinaDTO > disciplinaDTOList
+			= new ArrayList< DisciplinaDTO >( disciplinaList.size() );
+
+		for ( Disciplina disciplina : disciplinaList )
+		{
+			disciplinaDTOList.add(
+				ConvertBeans.toDisciplinaDTO(disciplina) );
+		}
+		
+		Collections.sort(disciplinaDTOList);
+
+		return disciplinaDTOList;
 	}
 
 	@Override
@@ -480,10 +506,45 @@ public class SalasServiceImpl
 			areaTitulacaoDTOList.add(
 				ConvertBeans.toSalaDTO( sala ) );
 		}
+		
+		Collections.sort(salaDTOList);
 
 		return areaTitulacaoDTOList;
 	}
 	
+	
+	@Override
+	public List<DisciplinaDTO> getListDisciplinasNaoVinculadas(CenarioDTO cenarioDTO,
+			SalaDTO salaDTO) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		if ( salaDTO == null )
+		{
+			return Collections.< DisciplinaDTO >emptyList();
+		}
+
+		Sala sala = Sala.find(
+				salaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		Set< Disciplina > disciplinaList = sala.getDisciplinas();
+		List< Disciplina > disciplinaCenarioList
+			= new ArrayList< Disciplina >( Disciplina.findByCenario(getInstituicaoEnsinoUser(), cenario) );
+
+		disciplinaCenarioList.removeAll( disciplinaList );
+
+		List< DisciplinaDTO > disciplinaDTOList
+			= new ArrayList< DisciplinaDTO >( disciplinaCenarioList.size() );
+
+		for ( Disciplina disciplina : disciplinaCenarioList )
+		{
+			disciplinaDTOList.add(
+				ConvertBeans.toDisciplinaDTO( disciplina ) );
+		}
+		
+		Collections.sort(disciplinaDTOList);
+
+		return disciplinaDTOList;
+	}
 	@Override
 	public ListLoadResult<FaixaCapacidadeSalaDTO> getFaixasCapacidadeSala(CenarioDTO cenarioDTO, Integer tamanhoFaixa)
 	{
@@ -1266,4 +1327,35 @@ public class SalasServiceImpl
 		
 		
 	}
+
+	@Override
+	public void vincula(SalaDTO salaDTO, List<DisciplinaDTO> disciplinasDTO) {
+		Sala sala = Sala.find(
+				salaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		for ( DisciplinaDTO disciplinaDTO : disciplinasDTO )
+		{
+			Disciplina disciplina = Disciplina.find(
+					disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+			disciplina.getSalas().add( sala );
+			disciplina.merge();
+		}
+		
+	}
+
+	@Override
+	public void desvincula(SalaDTO salaDTO, List<DisciplinaDTO> disciplinasDTO) {
+		Sala sala = Sala.find(
+				salaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		for ( DisciplinaDTO disciplinaDTO : disciplinasDTO )
+		{
+			Disciplina disciplina = Disciplina.find(
+					disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+			disciplina.getSalas().remove( sala );
+			disciplina.merge();
+		}
+		
+	}
+
 }

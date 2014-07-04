@@ -171,6 +171,6 @@ public class DisciplinaDTO extends AbstractDTO<String>
 
 	@Override
 	public int compareTo(DisciplinaDTO o) {
-		return getNome().compareTo(o.getNome());
+		return getCodigo().compareTo(o.getCodigo());
 	}
 }
