@@ -1330,6 +1330,7 @@ public class Sala
 		clone.setNumero(this.getNumero());
 		clone.setTipoSala(novoCenario.getEntidadeClonada(this.getTipoSala()));
 		clone.setUnidade(novoCenario.getEntidadeClonada(this.getUnidade()));
+		clone.setExterna(this.getExterna());
 		
 		return clone;
 	}
