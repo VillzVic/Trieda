@@ -1744,6 +1744,23 @@ public class AtendimentoOperacional
 		}
 	
 	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> getAtendimentosByOferta(
+			InstituicaoEnsino instituicaoEnsino, Oferta oferta, Cenario cenario )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT o FROM AtendimentoOperacional o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.oferta = :oferta " +
+				" AND o.cenario = :cenario " );
+
+				q.setParameter( "oferta", oferta );
+				q.setParameter( "cenario", cenario );
+				q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+				return q.getResultList();
+		}
+	
+	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> getAtendimentosOperacionaisByCampus(
 			InstituicaoEnsino instituicaoEnsino, Campus campus)
 		{

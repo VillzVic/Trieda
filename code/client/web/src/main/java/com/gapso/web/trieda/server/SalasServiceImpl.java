@@ -669,7 +669,7 @@ public class SalasServiceImpl
 				}
 			} else {
 				// atendimentos operacionais
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta, campus.getCenario());
 				for (AtendimentoOperacional atendimento : atendimentos) {
 					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
 					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
@@ -1081,7 +1081,7 @@ public class SalasServiceImpl
 				}
 			} else {
 				// atendimentos operacionais
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta, cenario);
 				for (AtendimentoOperacional atendimento : atendimentos) {
 					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
 					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
@@ -1134,12 +1134,12 @@ public class SalasServiceImpl
 		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
 			// [SalaId -> Tempo de uso (min) semanal]
 			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
-			for (Turno turno : turnosConsiderados) {
-				for (Sala sala : salasUtilizadas) {
-					double somatorioDeAlunos = 0.0;
-					double somatorioDaCapacidade = 0.0;
-					int cargaHoraria = 0;
-					double mediaUtilizacaoHorario = 0.0;
+			for (Sala sala : salasUtilizadas) {
+				double somatorioDeAlunos = 0.0;
+				double somatorioDaCapacidade = 0.0;
+				int cargaHoraria = 0;
+				double mediaUtilizacaoHorario = 0.0;
+				for (Turno turno : turnosConsiderados) {
 					
 					String key = sala.getId() + "-" + turno.getId();
 					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
@@ -1180,6 +1180,7 @@ public class SalasServiceImpl
 						}
 						mediaUtilizacaoHorario += (double) cargaHoraria / cargaHorariaSemanalEmMinutos;
 					}
+				}
 					SalaUtilizadaDTO novaSalaUtilizada = new SalaUtilizadaDTO();
 					novaSalaUtilizada.setId(sala.getId());
 					novaSalaUtilizada.setCodigo(sala.getCodigo());
@@ -1192,7 +1193,6 @@ public class SalasServiceImpl
 					novaSalaUtilizada.setUtilizacaoHorario(numberFormatter.print(TriedaUtil.round(mediaUtilizacaoHorario*100, 2), pt_BR) + "%");
 					
 					salaUtilizadaDTOList.add(novaSalaUtilizada);
-				}
 			}
 		}
 		final String orderBy = loadConfig.getSortField();
