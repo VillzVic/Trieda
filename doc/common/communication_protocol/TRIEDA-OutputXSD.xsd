@@ -4,6 +4,7 @@
   <xs:element name="TriedaOutput">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="cenarioId" type="xs:int" />
         <xs:element name="atendimentos" type="GrupoAtendimentoCampus">
           <xs:annotation>
             <xs:documentation>lista de todos os atendimentos realizados em cada campus que foi considerado no planejamento</xs:documentation>

@@ -4,6 +4,11 @@
   <xs:element name="TriedaInput">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="cenarioId" type="xs:int">
+          <xs:annotation>
+            <xs:documentation>Número identificador de cenário</xs:documentation>
+          </xs:annotation>
+        </xs:element>
         <xs:element name="calendarios" type="GrupoCalendario">
           <xs:annotation>
             <xs:documentation>Define o calendário base, isto é, os turnos e horários de aula dos dias da semana que serão considerados no planejamento</xs:documentation>
@@ -140,6 +145,7 @@
       <xs:element name="alunoId" type="xs:int" />
       <xs:element name="demandaId" type="xs:int" />
       <xs:element name="prioridade" type="xs:string" />
+      <xs:element name="exigeEquivalenciaForcada" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemTurno">
