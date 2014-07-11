@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,6 +63,10 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	protected List<CellStyle> excelColorsPool;
 	protected boolean removeUnusedSheets;
 	protected int initialRow;
+	protected Set<String> horarioInicioAula = new HashSet<String>();
+	protected Set<String> horarioFimAula = new HashSet<String>();
+	protected List<String> labelsDasLinhasDaGradeHoraria;
+	protected List<Boolean> horarioEhIntervalo = new ArrayList<Boolean>();
 	
 	public RelatorioVisaoExportExcel(boolean removeUnusedSheets, Cenario cenario, 
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
@@ -161,15 +166,59 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		return result;
 	}
 	
+	protected String getHorarioFinalAula(AtendimentoRelatorioDTO aula)
+	{
+		String[] horarioInicialArray = aula.getHorarioAulaString().split(":");
+		int horarioInicialHoras = Integer.parseInt(horarioInicialArray[0]);
+		int horarioInicialMinutos = Integer.parseInt(horarioInicialArray[1]);
+		
+		
+		int horarioFinalHoras = horarioInicialHoras;
+		int horarioFinalMinutos = horarioInicialMinutos + (aula.getDuracaoDeUmaAulaEmMinutos() * aula.getTotalCreditos());
+		while (horarioFinalMinutos >= 60)
+		{
+			horarioFinalHoras++;
+			horarioFinalMinutos -= 60;
+		}
+		//System.out.println("HorarioFInal: " + String.format("%02d", horarioFinalHoras) + ":" + String.format("%02d", horarioFinalMinutos));
+		return (String.format("%02d", horarioFinalHoras) + ":" + String.format("%02d", horarioFinalMinutos));
+	}
+	
+	protected boolean isHorarioIntervalo(String horario)
+	{
+		for (int i = 0; i<labelsDasLinhasDaGradeHoraria.size(); i++)
+		{
+			if (labelsDasLinhasDaGradeHoraria.get(i).contains(horario))
+				return horarioEhIntervalo.get(i);
+		}
+		
+		return false;
+	}
+	
+	protected int getIndexHorario(String horario, List<String> labels)
+	{
+		for (String label : labels)
+		{
+			//System.out.println("substring: " + label.substring(0, 5) + "-" + horario);
+			if (label.substring(0, 5).equals(horario))
+			{
+			//	System.out.println("returning: " + labels.indexOf(label));
+				return labels.indexOf(label);
+			}
+		}
+		//System.out.println("nao achou returning: " + (labels.size() -1));
+		return labels.size();
+	}
+	
 	protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, 
 				List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{		
-		List<String> labelsDasLinhasDaGradeHoraria;
 		List<String> hiDasLinhasDaGradeHoraria = new ArrayList<String>();
 		if (temInfoDeHorarios) { 
 			TrioDTO<List<String>,List<String>, List<Boolean>> parDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			labelsDasLinhasDaGradeHoraria = parDTO.getPrimeiro();
 			hiDasLinhasDaGradeHoraria = parDTO.getSegundo();
+			horarioEhIntervalo = parDTO.getTerceiro();
 		} else {
 			labelsDasLinhasDaGradeHoraria = horariosDaGradeHoraria;
 		}
@@ -197,17 +246,6 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		int initialRow = row;
 		int col = 2;
 
-		// preenche grade vazia
-		for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-			// coluna de carga horária
-			setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], labelsDasLinhasDaGradeHoraria.get(i));
-			// colunas dos dias da semana
-			for(int j = 0; j < Semanas.values().length; j++) {
-				setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
-			}
-			col = 2;
-		}
-
 		// agrupa as aulas por dia da semana e coleta disciplinas
 		Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
 		for(AtendimentoRelatorioDTO aula : aulas){
@@ -217,7 +255,69 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				colunaGradeHorariaToAulasMap.put(aula.getSemana(), aulasDoDia);
 			}
 			aulasDoDia.add(aula);
+			
+			String[] horarioInicialArray = aula.getHorarioAulaString().split(":");
+			int horarioInicialHoras = Integer.parseInt(horarioInicialArray[0]);
+			int horarioInicialMinutos = Integer.parseInt(horarioInicialArray[1]);
+			
+			
+			horarioInicioAula.add(aula.getHorarioAulaString());
+			for (int i = 1; i <= aula.getTotalCreditos() ; i++)
+			{
+				int horarioFinalHoras = horarioInicialHoras;
+				int horarioFinalMinutos = horarioInicialMinutos + (aula.getDuracaoDeUmaAulaEmMinutos() * i);
+				while (horarioFinalMinutos >= 60)
+				{
+					horarioFinalHoras++;
+					horarioFinalMinutos -= 60;
+				}
+				horarioFimAula.add(String.format("%02d", horarioFinalHoras) + ":" + String.format("%02d", horarioFinalMinutos));
+			}
 		}
+/*		for (String horarioInicio : horarioFimAula)
+		{
+			System.out.println("horario fim: " + horarioInicio);
+		}
+		for (String horarioInicio : horarioInicioAula)
+		{
+			System.out.println("horario inicio: " + horarioInicio);
+		}*/
+		// preenche grade vazia
+		int rowAdd = 0;
+		List<String> horariosEscritos = new ArrayList<String>();
+		if (!labelsDasLinhasDaGradeHoraria.isEmpty())
+		{
+			String horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0, 5);
+			for (int i = 1; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
+				if (horarioInicioAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)) || horarioFimAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
+				{
+					horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+					// coluna de carga horária
+					if (!isHorarioIntervalo(horarioASerEscrito))
+						setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], horarioASerEscrito);
+					else
+					{
+						setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
+						getRow((row + rowAdd -1), sheet).setHeight((short)200);
+					}
+					horariosEscritos.add(horarioASerEscrito);
+					// colunas dos dias da semana
+					for(int j = 0; j < Semanas.values().length; j++) {
+						setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
+					}
+					col = 2;
+					rowAdd++;
+					horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+				}
+			}
+			horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(labelsDasLinhasDaGradeHoraria.size() -1).substring(8, 13);
+			setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], horarioASerEscrito);
+			horariosEscritos.add(horarioASerEscrito);
+			for(int j = 0; j < Semanas.values().length; j++) {
+				setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
+			}
+		}
+		
 
 		// para cada dia da semana, escreve as aulas no excel
 		for (Integer colunaGradeHoraria : colunaGradeHorariaToAulasMap.keySet()) {
@@ -239,10 +339,11 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 				
 				if (temInfoDeHorarios) {
-					int index = hiDasLinhasDaGradeHoraria.indexOf(aula.getHorarioAulaString());//int index = horariosDeInicioDeAula.indexOf(aula.getHorarioAulaString());
+					int index = getIndexHorario(aula.getHorarioAulaString(), horariosEscritos);//int index = horariosDeInicioDeAula.indexOf(aula.getHorarioAulaString());
 					if (index != -1) {
 						row = initialRow + index;
 					}
+					linhasDeExcelPorCreditoDaAula = getIndexHorario(getHorarioFinalAula(aula), horariosEscritos) - index - 1;
 				}
 
 				String contentString = "", contentToolTipString = "";
@@ -260,8 +361,11 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				// escreve célula principal
 				setCell(row, col, sheet, style, HtmlUtils.htmlUnescape(contentString), HtmlUtils.htmlUnescape(contentToolTipString));
 				// une células de acordo com a quantidade de créditos da aula
-				int rowF = row + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula - 1;
+				int rowF = row + linhasDeExcelPorCreditoDaAula;
 				if ( (row != rowF)){
+					if (rowF < row)
+						rowF = row;
+					//System.out.println("merging: " + row + "-" + rowF);
 					mergeCells(row, rowF, col, col, sheet, style);
 				}
 				
@@ -273,8 +377,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				}
 			}
 		}
-		
-		return (initialRow + labelsDasLinhasDaGradeHoraria.size() + 1);
+		return (initialRow + horariosEscritos.size() + 1);
 	}
 	
 	protected void buildCodigoDisciplinaToColorMap(Set<Long> disciplinasIDs) {
