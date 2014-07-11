@@ -490,6 +490,7 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
+	@Transactional
 	public void save( DisciplinaDTO disciplinaDTO )
 	{
 		Disciplina disciplina = ConvertBeans.toDisciplina( disciplinaDTO );
@@ -497,7 +498,9 @@ public class DisciplinasServiceImpl
 
 		if ( disciplina.getId() != null && disciplina.getId() > 0 )
 		{
-		
+			InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(disciplinaDTO.getInstituicaoEnsinoId());
+			disciplina = Disciplina.find(disciplina.getId(), instituicaoEnsino);
+
 			List< SemanaLetiva > semanasLetivas
 			= SemanaLetiva.findByCenario( getInstituicaoEnsinoUser(), cenario );
 
@@ -507,16 +510,18 @@ public class DisciplinasServiceImpl
 			{
 				horariosAula.addAll( semanaLetiva.getHorariosAula() );
 			}
-	
 			for ( HorarioAula horarioAula : horariosAula )
 			{
 				for ( HorarioDisponivelCenario horarioDisponivel : horarioAula.getHorariosDisponiveisCenario() )
 				{
-					horarioDisponivel.getDisciplinas().remove( disciplina );
 					if (horarioDisponivel.getDiaSemana() == Semanas.SAB)
 					{
 						if (disciplina.getUsaSabado()) {
 							horarioDisponivel.getDisciplinas().add( disciplina );
+						}
+						else
+						{
+							horarioDisponivel.getDisciplinas().remove( disciplina );
 						}
 					}
 					else if (horarioDisponivel.getDiaSemana() == Semanas.DOM)
@@ -524,12 +529,11 @@ public class DisciplinasServiceImpl
 						if (disciplina.getUsaDomingo()) {
 							horarioDisponivel.getDisciplinas().add( disciplina );
 						}
+						else
+						{
+							horarioDisponivel.getDisciplinas().remove( disciplina );
+						}
 					}
-					else
-					{
-						horarioDisponivel.getDisciplinas().add( disciplina );
-					}
-					horarioDisponivel.merge();
 				}
 			}
 			disciplina.merge();
@@ -537,43 +541,6 @@ public class DisciplinasServiceImpl
 		else
 		{
 			disciplina.persistAndPreencheHorarios();
-
-			List< SemanaLetiva > semanasLetivas
-				= SemanaLetiva.findByCenario( getInstituicaoEnsinoUser(), cenario );
-
-			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
-
-			for ( SemanaLetiva semanaLetiva : semanasLetivas )
-			{
-				horariosAula.addAll( semanaLetiva.getHorariosAula() );
-			}
-
-			for ( HorarioAula horarioAula : horariosAula )
-			{
-				Set< HorarioDisponivelCenario> horariosDisponiveis
-					= horarioAula.getHorariosDisponiveisCenario();
-
-				for ( HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis )
-				{
-					if (horarioDisponivel.getDiaSemana() == Semanas.SAB)
-					{
-						if (disciplina.getUsaSabado()) {
-							horarioDisponivel.getDisciplinas().add( disciplina );
-						}
-					}
-					else if (horarioDisponivel.getDiaSemana() == Semanas.DOM)
-					{
-						if (disciplina.getUsaDomingo()) {
-							horarioDisponivel.getDisciplinas().add( disciplina );
-						}
-					}
-					else
-					{
-						horarioDisponivel.getDisciplinas().add( disciplina );
-					}
-					horarioDisponivel.merge();
-				}
-			}
 		}
 	}
 

@@ -416,6 +416,7 @@ public class Disciplina
 		}
 	}
 
+	@Transactional
 	public void preencheHorarios()
 	{
 		InstituicaoEnsino instituicaoEnsino
@@ -448,7 +449,6 @@ public class Disciplina
 					{
 						hdc.getDisciplinas().add( this );
 					}
-					hdc.merge();
 				}
 			}
 		}
