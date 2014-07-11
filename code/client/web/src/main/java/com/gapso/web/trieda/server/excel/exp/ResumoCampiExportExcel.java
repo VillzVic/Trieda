@@ -76,10 +76,7 @@ public class ResumoCampiExportExcel
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 5;
 		initialColumn = 0;
-		rowsEspaco.add(29);
-		rowsEspaco.add(38);
-		rowsEspaco.add(47);
-		rowsEspaco.add(60);
+		getResumoCampiEspacamento(rowsEspaco);
 	}
 
 	@Override
