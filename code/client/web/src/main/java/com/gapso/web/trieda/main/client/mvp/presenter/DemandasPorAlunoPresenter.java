@@ -78,6 +78,7 @@ public class DemandasPorAlunoPresenter
 		TextField<String> getNomeTextField();
 		NumberField getAlunoPrioridadeField();
 		ComboBoxBoolean getAtentido();
+		ComboBoxBoolean getExigeEquivalenciaForcada();
 	}
 	
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -118,9 +119,10 @@ public class DemandasPorAlunoPresenter
 				String nome = display.getNomeTextField().getValue();
 				Integer alunoPrioridade = ( display.getAlunoPrioridadeField().getValue() == null ) ? null : display.getAlunoPrioridadeField().getValue().intValue();
 				Boolean atendido = (display.getAtentido().getValue()==null)?null:display.getAtentido().getValue().getValue().getValue();
+				Boolean exigeEquivalenciaForcada = (display.getExigeEquivalenciaForcada().getValue()==null)?null:display.getExigeEquivalenciaForcada().getValue().getValue().getValue();
 	
 				service.getAlunosDemandaList( cenarioDTO, campus, curso, curriculo, turno,
-					disciplina, periodo, matricula, nome, alunoPrioridade, atendido, (PagingLoadConfig) loadConfig, callback );
+					disciplina, periodo, matricula, nome, alunoPrioridade, atendido, exigeEquivalenciaForcada, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 	

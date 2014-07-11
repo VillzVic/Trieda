@@ -907,6 +907,24 @@ public class AlunoDemanda
 	}
 	
 	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByAtendimento(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, AtendimentoOperacional atendimentoOperacional)
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o, IN (o.atendimentosOperacional) atendimentos " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus.cenario = :cenario " +
+			" AND atendimentos = :atendimentoOperacional " );
+		
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "atendimentoOperacional", atendimentoOperacional );
+		q.setParameter( "cenario", cenario );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findMatriculasBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		String aluno, String matricula, Campus campus, Curso curso,
@@ -1208,7 +1226,7 @@ public class AlunoDemanda
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Campus campus, Curso curso, Curriculo curriculo, Turno turno,
 			Disciplina disciplina, Integer periodo,String matricula,String nome,
-			Integer prioridade, Boolean atendido ) {
+			Integer prioridade, Boolean atendido, Boolean exigeEquivalenciaForcada ) {
 	   	
 		String queryString = "";
 		if ( campus != null )
@@ -1246,6 +1264,10 @@ public class AlunoDemanda
 		
 		if(atendido != null){
 			queryString += " o.atendido = :atendido and ";
+		}
+		
+		if(exigeEquivalenciaForcada != null){
+			queryString += " o.exigeEquivalenciaForcada = :exigeEquivalenciaForcada and ";
 		}
 		
 		nome = ( ( nome == null ) ? "" : nome );
@@ -1303,6 +1325,10 @@ public class AlunoDemanda
         if(atendido != null){
         	q.setParameter("atendido", atendido);
         }
+        
+        if(exigeEquivalenciaForcada != null){
+        	q.setParameter("exigeEquivalenciaForcada", exigeEquivalenciaForcada);
+        }
 
 		return ( (Number)q.getSingleResult() ).intValue();
 	}
@@ -1312,7 +1338,7 @@ public class AlunoDemanda
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Campus campus, Curso curso, Curriculo curriculo, Turno turno,Disciplina disciplina,
 			 Integer periodo,String matricula,String nome,
-				Integer prioridade, Boolean atendido,
+				Integer prioridade, Boolean atendido, Boolean exigeEquivalenciaForcada,
 			int firstResult, int maxResults, String orderBy ) {
 	   	
         if (orderBy != null)
@@ -1365,6 +1391,10 @@ public class AlunoDemanda
 		
 		if(atendido != null){
 			queryString += " o.atendido = :atendido and ";
+		}
+		
+		if(exigeEquivalenciaForcada != null){
+			queryString += " o.exigeEquivalenciaForcada = :exigeEquivalenciaForcada and ";
 		}
 		
 		nome = ( ( nome == null ) ? "" : nome );
@@ -1423,6 +1453,10 @@ public class AlunoDemanda
         
         if(atendido != null){
         	q.setParameter("atendido", atendido);
+        }
+        
+        if(exigeEquivalenciaForcada != null){
+        	q.setParameter("exigeEquivalenciaForcada", exigeEquivalenciaForcada);
         }
 
         return q.getResultList();

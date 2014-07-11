@@ -78,6 +78,7 @@ public class DisciplinaFormPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
+					display.getSalvarButton().mask();
 					final DisciplinasServiceAsync service = Services.disciplinas();
 					service.save(getDTO(), new AsyncCallback<Void>() {
 						@Override
@@ -91,10 +92,12 @@ public class DisciplinaFormPresenter
 								gridPanel.updateList();
 							}
 							Info.display("Salvo", "Item salvo com sucesso!");
+							display.getSalvarButton().unmask();
 						}
 					});
 				} else {
 					MessageBox.alert("ERRO!", errorMessage, null);
+					display.getSalvarButton().unmask();
 				}
 			}
 		});

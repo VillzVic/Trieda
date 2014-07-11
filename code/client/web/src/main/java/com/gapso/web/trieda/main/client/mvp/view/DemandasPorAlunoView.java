@@ -50,6 +50,7 @@ public class DemandasPorAlunoView
 	private TextField< String > matriculaBuscaTextField;
 	private TextField< String > nomeTextField;
 	private NumberField alunoPrioridadeField;
+	private ComboBoxBoolean equivalenciaForcada;
 	private ComboBoxBoolean atentido;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -158,6 +159,7 @@ public class DemandasPorAlunoView
 	
 		this.filter = new SimpleFilter();
 		this.filter.setFieldWidth(150);
+		this.filter.setLabelWidth(120);
 	
 		this.campusBuscaCB = new CampusComboBox( cenarioDTO );
 		this.filter.addField( this.campusBuscaCB );
@@ -191,6 +193,10 @@ public class DemandasPorAlunoView
 		this.alunoPrioridadeField.setFieldLabel(getI18nConstants().prioridadeAlunoDemanda());
 		this.alunoPrioridadeField.setWidth( "75" );
 		this.filter.addField(alunoPrioridadeField);
+		
+		this.equivalenciaForcada = new ComboBoxBoolean();
+		this.equivalenciaForcada.setFieldLabel("Exige Equivalência Forçada");
+		this.filter.addField(equivalenciaForcada);
 		
 		this.atentido = new ComboBoxBoolean();
 		this.atentido.setFieldLabel("Atendido");
@@ -339,5 +345,9 @@ public class DemandasPorAlunoView
 
 	public ComboBoxBoolean getAtentido() {
 		return atentido;
+	}
+	
+	public ComboBoxBoolean getExigeEquivalenciaForcada() {
+		return equivalenciaForcada;
 	}
 }
