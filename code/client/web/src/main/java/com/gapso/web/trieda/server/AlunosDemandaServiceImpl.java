@@ -229,7 +229,10 @@ public class AlunosDemandaServiceImpl
 		}
 		
 		// Conta numero total de matriculas (para ser mostrado na paginacao)
+		long start = System.currentTimeMillis(); // TODO: retirar
 		int numTotalDisciplinas = AlunoDemanda.countDisciplinas( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso );
+		long time = (System.currentTimeMillis() - start)/1000;System.out.println("countDisciplinas tempo = " + time + " segundos"); // TODO: retirar
+		
 		
 		// Busca as disciplinas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de disciplinas.
 		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso,
@@ -240,7 +243,11 @@ public class AlunosDemandaServiceImpl
 		Map< Long, List<AlunoDemanda> > demandaMapAluno = new HashMap< Long, List<AlunoDemanda> >();
 		if (numTotalDisciplinas > 100) 
 		{
-			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser(), cenario );			
+			 start = System.currentTimeMillis(); // TODO: retirar
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser(), cenario );	
+			System.out.println("totalAlunoDemando size "+totalAlunoDemanda.size());
+			time = (System.currentTimeMillis() - start)/1000;System.out.println("findAll tempo = " + time + " segundos"); // TODO: retirar
+			 start = System.currentTimeMillis(); // TODO: retirar
 			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
 				long key = 31*(31 + alunoDemanda.getDemanda().getDisciplina().getId()) + alunoDemanda.getDemanda().getOferta().getCampus().getId();
 				if (demandaMapAluno.get(key) == null) {
@@ -252,8 +259,9 @@ public class AlunosDemandaServiceImpl
 					demandaMapAluno.get(key).add(alunoDemanda);
 				}
 			}
+			time = (System.currentTimeMillis() - start)/1000;System.out.println("for - tempo = " + time + " segundos"); // TODO: retirar
 		}
-		
+		 start = System.currentTimeMillis(); // TODO: retirar
 		List < AlunoDemanda > alunoDemanda;
 		for ( AlunoDemanda disciplinas : busca )
 		{
@@ -316,7 +324,7 @@ public class AlunosDemandaServiceImpl
 		}
 		BaseListLoadResult< ResumoMatriculaDTO > result
 		= new BaseListLoadResult< ResumoMatriculaDTO >( list );
-
+		time = (System.currentTimeMillis() - start)/1000;System.out.println("return tempo = " + time + " segundos"); // TODO: retirar
 		return result;
 	}
 	

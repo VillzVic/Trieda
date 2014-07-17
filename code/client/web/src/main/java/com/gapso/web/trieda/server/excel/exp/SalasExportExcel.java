@@ -81,7 +81,7 @@ public class SalasExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Sala > salas = Sala.findByCenario( this.instituicaoEnsino, getCenario() );
 
@@ -93,13 +93,7 @@ public class SalasExportExcel extends AbstractExportExcel {
 		if ( !salas.isEmpty() )
 		{
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 
 			for ( Sala s : salas )

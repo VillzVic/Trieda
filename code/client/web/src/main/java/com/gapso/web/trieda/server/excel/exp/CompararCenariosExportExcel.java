@@ -105,7 +105,7 @@ public class CompararCenariosExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook ) {
+	protected boolean fillInExcel( Workbook workbook ) {
 		
 		cenariosDTO = filter.getCenariosDTO();
 		

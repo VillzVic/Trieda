@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 public interface IExportExcel {
 	public String getFileName();
 	public Workbook export();
-	public boolean export(Workbook workbook, Workbook templateWorkbook);
+	public boolean export(Workbook workbook);
 	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, Workbook workbook);
 
 	public Map<String,Map<String,Map<String,String>>> getHyperlinksMap();

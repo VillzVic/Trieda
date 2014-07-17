@@ -85,8 +85,8 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 	
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook){
-		return this.<List<AtendimentoServiceRelatorioResponse>>fillInExcelImpl(workbook, templateWorkbook);
+	protected boolean fillInExcel( Workbook workbook ){
+		return this.<List<AtendimentoServiceRelatorioResponse>>fillInExcelImpl(workbook);
 	}
 	
 	protected List<AtendimentoRelatorioDTO> getAtendimentosRelatorioDTOFromCenario(Cenario cenario) {

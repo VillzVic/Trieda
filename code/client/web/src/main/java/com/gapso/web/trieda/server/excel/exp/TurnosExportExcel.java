@@ -88,7 +88,7 @@ public class TurnosExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Turno > turnos = Turno.findByCenario(
 		 	this.instituicaoEnsino, getCenario() );
@@ -99,13 +99,7 @@ public class TurnosExportExcel
 		
 		if (!turnos.isEmpty()) {
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 			for ( Turno t : turnos )
 			{

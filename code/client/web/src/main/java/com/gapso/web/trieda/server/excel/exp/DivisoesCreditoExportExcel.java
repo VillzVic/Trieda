@@ -88,7 +88,7 @@ public class DivisoesCreditoExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< DivisaoCredito > divisaoCredito = DivisaoCredito.findByCenario(instituicaoEnsino, getCenario());
 
@@ -98,13 +98,7 @@ public class DivisoesCreditoExportExcel
 		}
 		if (!divisaoCredito.isEmpty()) {
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 			for ( DivisaoCredito d : divisaoCredito )
 			{

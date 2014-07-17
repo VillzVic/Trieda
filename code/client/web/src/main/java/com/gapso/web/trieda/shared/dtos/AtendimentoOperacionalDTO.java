@@ -758,11 +758,11 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		     + BG + "Turma: " + ED + getTurma() + BR
 		     + BG + "Professor: " + ED + professor + BR
 			 + BG + "Cr&eacute;dito(s) " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
+			 + ((flagQuantidadeAlunos) ? (BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR ) : "")
 			 + BG + "Curso(s): " + ED + getCursoNome() + BR
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
 			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + ((flagQuantidadeAlunos) ? (BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR ) : "")
 			 + ((usouEquivalencia) ? (BG + "Demanda(s): " + ED + getDisciplinaOriginalCodigo()) : "");
 			 //+ nomesAlunos;
 	}

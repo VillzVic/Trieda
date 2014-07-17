@@ -96,7 +96,7 @@ public class OfertasCursosCampiExportExcel  extends AbstractExportExcel{
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		boolean result = false;
 		
@@ -110,13 +110,7 @@ public class OfertasCursosCampiExportExcel  extends AbstractExportExcel{
 		{
 			
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			
 			int nextRow = this.initialRow;
 			for ( Oferta oferta : ofertas )

@@ -135,7 +135,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		
 	}
 
-	protected <T> boolean fillInExcelImpl(Workbook workbook, Workbook templateWorkbook){
+	protected <T> boolean fillInExcelImpl(Workbook workbook){
 		boolean result = false;
 		
 		T structureControl = this.<T>getStructureReportControl();
@@ -144,24 +144,18 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 			sheet = workbook.getSheet(this.getSheetName());
 			
 			// monta estruturas de estilos
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			buildColorPaletteCellStyles(workbook);
 			
 			processStructureReportControl(structureControl);
 			
 			result = true;
 			
-			if (isXls())
-				autoSizeColumns((short)1,(short)1,sheet);
+			/*if (isXls())
+				autoSizeColumns((short)1,(short)1,sheet);*/
 		}
 		
-		if(this.removeUnusedSheets) removeUnusedSheets(this.getSheetName(), workbook);
+		//if(this.removeUnusedSheets) removeUnusedSheets(this.getSheetName(), workbook);
 
 		return result;
 	}

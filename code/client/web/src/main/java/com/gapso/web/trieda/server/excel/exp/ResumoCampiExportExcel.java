@@ -101,7 +101,7 @@ public class ResumoCampiExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook ) {
+	protected boolean fillInExcel( Workbook workbook ) {
 		List<Campus> campi = Campus.findAll(instituicaoEnsino);
 		
 		CampiServiceImpl campiServiceImpl = new CampiServiceImpl();

@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,11 +23,11 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
@@ -74,7 +75,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 
 	protected abstract String getPathExcelTemplate();
 	protected abstract String getReportName();
-	protected abstract boolean fillInExcel( Workbook workbook, Workbook templateWorkbook );
+	protected abstract boolean fillInExcel( Workbook workbook );
 
 	@Override
 	public Workbook export()
@@ -83,12 +84,9 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		this.warnings.clear();
 
 		Workbook workbook = null;
-		Workbook templateWorkbook = null;
 		try
 		{
 			workbook = getExcelTemplate( getPathExcelTemplate() );
-			if ( !isXls() )
-				templateWorkbook = getSimpleExcelTemplate( getPathExcelTemplate() );
 		}
 		catch ( Exception e )
 		{
@@ -100,12 +98,12 @@ public abstract class AbstractExportExcel implements IExportExcel {
 				getPathExcelTemplate(), getReportName(), msg ) );
 		}
 
-		export( workbook, templateWorkbook );
+		export( workbook );
 		return workbook;
 	}
 
 	@Override
-	public boolean export( Workbook workbook, Workbook templateWorkbook )
+	public boolean export( Workbook workbook )
 	{
 		if ( workbook != null )
 		{
@@ -114,7 +112,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			this.errors.clear();
 			this.warnings.clear();
 			
-			if (fillInExcel( workbook, templateWorkbook )) {
+			if (fillInExcel( workbook )) {
 				if (this.autoSizeColumns) {
 					if( isXls() )
 						autoSizeColumns(workbook);
@@ -333,25 +331,31 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		cell.setCellValue( getCreationHelper(sheet.getWorkbook()).createRichTextString( value ) );
 		cell.setCellStyle( style );
 	}
-
+	
 	protected void setCell(int row, int col, Sheet sheet, CellStyle style, String value, String comment) {
 		Cell cell = getCell( row, col, sheet );
 		cell.setCellValue( getCreationHelper(sheet.getWorkbook()).createRichTextString( value ) );
-
+		
+		//Maneira de tornar o tamanho do Tool Tip de acordo com o tamanho da informação no comentário
+		int linhasExtras = 1;
+		String[] commentSplit = comment.split("\n");
+		for (String split : commentSplit) {
+			linhasExtras += split.length() / 110;
+		}
 		Comment cellComment = cell.getCellComment();
 		if (cellComment == null) {
 			ClientAnchor anchor = getCreationHelper(sheet.getWorkbook()).createClientAnchor();
 		    anchor.setCol1(cell.getColumnIndex());
 		    anchor.setCol2(cell.getColumnIndex()+4);
 		    anchor.setRow1(row);
-		    anchor.setRow2(row+12);
+		  //Maneira de tornar o tamanho do Tool Tip de acordo com o tamanho da informação no comentário
+		    anchor.setRow2(row+commentSplit.length+linhasExtras);
 		    if (drawing == null) {
 		    	drawing = sheet.createDrawingPatriarch();
 		    }
 			cellComment = drawing.createCellComment(anchor);
 			cell.setCellComment(cellComment);
 		}
-
 		cellComment.setString(getCreationHelper(sheet.getWorkbook()).createRichTextString(comment));
 		cell.setCellStyle(style);
 	}
@@ -502,7 +506,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			}
 			else if ( fileExtension.equals("xlsx") )
 			{
-				workBook = new SXSSFWorkbook(new XSSFWorkbook(inTemplate));
+				workBook = new XSSFWorkbook(inTemplate);
 			}
 		}
 		catch ( IOException e )

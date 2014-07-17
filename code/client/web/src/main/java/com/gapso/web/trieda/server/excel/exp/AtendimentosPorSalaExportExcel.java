@@ -88,7 +88,7 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
+	protected boolean fillInExcel(Workbook workbook) {
 		RelatorioVisaoSalaExportExcel visaoSalaExpExcel = new RelatorioVisaoSalaExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino, fileExtension) {
 			@Override
 			protected int writeHeader(List<List<ParDTO<String,?>>> rowsHeadersPairs, int row, boolean ehTatico) {
@@ -206,13 +206,7 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 		if (visaoSalaExpExcel.getAtendimentosRelatorioDTOList(structureReportControl)) {
 			
 			visaoSalaExpExcel.sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(visaoSalaExpExcel.sheet);
-			}
-			else {
-				visaoSalaExpExcel.templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(visaoSalaExpExcel.templateSheet);
-			}
+			fillInCellStyles(visaoSalaExpExcel.sheet);
 			visaoSalaExpExcel.buildColorPaletteCellStyles(workbook);
 			visaoSalaExpExcel.initialRow = 7;
 			visaoSalaExpExcel.processStructureReportControl(structureReportControl);

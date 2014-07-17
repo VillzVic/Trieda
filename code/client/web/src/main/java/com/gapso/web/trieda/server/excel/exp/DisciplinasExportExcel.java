@@ -89,7 +89,7 @@ public class DisciplinasExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Disciplina > disciplinas
 			= Disciplina.findByCenario( this.instituicaoEnsino, getCenario() );
@@ -99,13 +99,7 @@ public class DisciplinasExportExcel
 		}
 		if (!disciplinas.isEmpty()) {
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 			for (Disciplina disciplina : disciplinas) {
 				nextRow = writeData(disciplina, nextRow, sheet);

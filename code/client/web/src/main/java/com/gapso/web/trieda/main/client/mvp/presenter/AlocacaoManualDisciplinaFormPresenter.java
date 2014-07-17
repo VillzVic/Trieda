@@ -135,10 +135,19 @@ public class AlocacaoManualDisciplinaFormPresenter
 				cursoDTO, new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<ResumoMatriculaDTO>>(display.getI18nMessages().falhaOperacao(),display) {
 			@Override
 			public void onSuccess(ListLoadResult<ResumoMatriculaDTO> result) {
+				long start = System.currentTimeMillis(); // TODO: retirar
 				display.getStore().removeAll();
+				long time = (System.currentTimeMillis() - start)/1000;System.out.println("onSuccess 1 tempo = " + time + " segundos"); // TODO: retirar
+				start = System.currentTimeMillis(); // TODO: retirar
 				display.getStore().add(result.getData());
+				time = (System.currentTimeMillis() - start)/1000;System.out.println("onSuccess 2 tempo = " + time + " segundos"); // TODO: retirar
+				start = System.currentTimeMillis(); // TODO: retirar
 				display.getGrid().getView().refresh(false);
+				time = (System.currentTimeMillis() - start)/1000;System.out.println("onSuccess 3 tempo = " + time + " segundos"); // TODO: retirar
+				start = System.currentTimeMillis(); // TODO: retirar
 				display.getGrid().unmask();
+				time = (System.currentTimeMillis() - start)/1000;System.out.println("onSuccess 4 tempo = " + time + " segundos"); // TODO: retirar
+				start = System.currentTimeMillis(); // TODO: retirar
 			}
 		});
 		

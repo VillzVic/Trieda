@@ -107,7 +107,7 @@ public class UnidadesDeslocamentosExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< CampusDTO > campusDTOList = null;
 		if ( this.getFilter() == null
@@ -128,13 +128,7 @@ public class UnidadesDeslocamentosExportExcel
 
 		if (campusDTOList.size() >= 1) {
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			int row = this.initialRow;
 			for ( CampusDTO campusDTO : campusDTOList )
 			{

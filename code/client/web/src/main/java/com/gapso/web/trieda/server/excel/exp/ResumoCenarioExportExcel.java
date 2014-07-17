@@ -87,7 +87,7 @@ public class ResumoCenarioExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook ) {
+	protected boolean fillInExcel( Workbook workbook ) {
 		CenariosServiceImpl cenariosServiceImpl = new CenariosServiceImpl();
 		List<TreeNodeDTO> resumo = cenariosServiceImpl.getResumos(ConvertBeans.toCenarioDTO(getCenario()));
 		
@@ -96,13 +96,7 @@ public class ResumoCenarioExportExcel
 		}
 		if (!resumo.isEmpty()) {
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 			for (TreeNodeDTO node : resumo) {
 				nextRow = writeData(node,nextRow,sheet);

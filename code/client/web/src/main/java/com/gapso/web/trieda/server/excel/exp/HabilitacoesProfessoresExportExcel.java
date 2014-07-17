@@ -49,6 +49,7 @@ public class HabilitacoesProfessoresExportExcel
 		}
 	}
 
+	private Sheet sheet;
 	private CellStyle[] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
@@ -96,7 +97,7 @@ public class HabilitacoesProfessoresExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< ProfessorDisciplina > professoresDisciplinas
 			= ProfessorDisciplina.findAll( this.instituicaoEnsino );
@@ -110,14 +111,8 @@ public class HabilitacoesProfessoresExportExcel
 		}
 		if ( !professoresDisciplinas.isEmpty() )
 		{
-			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			 sheet = workbook.getSheet( this.getSheetName() );
+			 fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 
 			for ( ProfessorDisciplina professorDisciplina : professoresDisciplinas )
@@ -132,7 +127,7 @@ public class HabilitacoesProfessoresExportExcel
 //
 //					if ( data == null || data == false )
 //					{
-						nextRow = writeData( null, professorDisciplina, nextRow, sheet );
+						nextRow = writeData( null, professorDisciplina, nextRow );
 //						registeredData.put( key, true );
 //					}
 //				}
@@ -154,9 +149,17 @@ public class HabilitacoesProfessoresExportExcel
 			"-" + pd.getPreferencia() + "-" + pd.getNota();
 	}
 
-	private int writeData( Campus campus, ProfessorDisciplina pd, int row, Sheet sheet )
+	private int writeData( Campus campus, ProfessorDisciplina pd, int row)
 	{
 		Professor professor = pd.getProfessor();
+		
+		if (isXls()){
+			Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+			if (newSheet != null) {
+				row = this.initialRow;
+				sheet = newSheet;
+			}
+		}
 		
 		// CPF Professor
 		setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], professor.getCpf() );

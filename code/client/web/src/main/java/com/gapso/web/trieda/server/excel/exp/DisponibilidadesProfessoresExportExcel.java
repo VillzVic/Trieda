@@ -40,6 +40,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 		}
 	}
 
+	private Sheet sheet;
 	private CellStyle[] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
@@ -82,26 +83,20 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
+	protected boolean fillInExcel(Workbook workbook) {
 		List<Professor> professores = Professor.findByCenario(this.instituicaoEnsino,getCenario());
 		
 		if (this.removeUnusedSheets) {
 			removeUnusedSheets(this.getSheetName(), workbook);
 		}
 		if (!professores.isEmpty()) {
-			Sheet sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			sheet = workbook.getSheet(this.getSheetName());
+			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 
 			for (Professor professor : professores) {
 				for (HorarioDisponivelCenario hdc : professor.getHorarios()) {
-					nextRow = writeData(professor, hdc, nextRow, sheet);
+					nextRow = writeData(professor, hdc, nextRow);
 				}
 			}
 
@@ -111,7 +106,16 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 		return false;
 	}
 
-	private int writeData(Professor professor, HorarioDisponivelCenario hdc, int row, Sheet sheet) {
+	private int writeData(Professor professor, HorarioDisponivelCenario hdc, int row) {
+		
+		if (isXls()){
+			Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+			if (newSheet != null) {
+				row = this.initialRow;
+				sheet = newSheet;
+			}
+		}
+		
 		// CPF
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],professor.getCpf());
 		// Dia

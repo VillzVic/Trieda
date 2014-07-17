@@ -189,7 +189,7 @@ public class SalasAssociarDisciplinaPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
+					ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 	
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
