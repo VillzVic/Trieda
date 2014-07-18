@@ -6,6 +6,8 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressReportListWriter;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public aspect ProgressDeclarationAspect{
@@ -21,6 +23,8 @@ public aspect ProgressDeclarationAspect{
 	}
 	
 	public ProgressReportWriter ProgressDeclaration.getProgressReport(){
+		if (progressReport == null)
+			progressReport = new ProgressReportListWriter(new ArrayList<String>());
 		return progressReport;
 	}
 	

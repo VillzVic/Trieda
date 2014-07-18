@@ -152,4 +152,7 @@ public interface AtendimentosService extends RemoteService {
 
 	List<RelatorioQuantidadeDoubleDTO> getAmbientesFaixaUtilizacaoPorDiaSemana(
 			CenarioDTO cenarioDTO, CampusDTO campusDTO);
+
+	List<RelatorioQuantidadeDoubleDTO> getAmbientesFaixaOcupacaoHorariosPorDiaSemana(
+			CenarioDTO cenarioDTO, CampusDTO campusDTO);
 }

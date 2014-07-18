@@ -1,11 +1,14 @@
 package com.gapso.web.trieda.server;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -228,103 +231,37 @@ public class AlunosDemandaServiceImpl
 			curso = ConvertBeans.toCurso(cursoDTO);
 		}
 		
-		// Conta numero total de matriculas (para ser mostrado na paginacao)
-		long start = System.currentTimeMillis(); // TODO: retirar
-		int numTotalDisciplinas = AlunoDemanda.countDisciplinas( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso );
-		long time = (System.currentTimeMillis() - start)/1000;System.out.println("countDisciplinas tempo = " + time + " segundos"); // TODO: retirar
+		List< Object > busca = AlunoDemanda.findDisciplinasWithAtendimentosBy( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso );
 		
-		
-		// Busca as disciplinas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de disciplinas.
-		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso,
-				0, numTotalDisciplinas, null );
-		
-		// Se a busca tiver um tamanho muito grande (por exemplo no caso da exportacao do excel). 
-		// Faz um pre-processamento antes para melhorar o desempenho.
-		Map< Long, List<AlunoDemanda> > demandaMapAluno = new HashMap< Long, List<AlunoDemanda> >();
-		if (numTotalDisciplinas > 100) 
+		for ( Object disciplinas : busca )
 		{
-			 start = System.currentTimeMillis(); // TODO: retirar
-			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser(), cenario );	
-			System.out.println("totalAlunoDemando size "+totalAlunoDemanda.size());
-			time = (System.currentTimeMillis() - start)/1000;System.out.println("findAll tempo = " + time + " segundos"); // TODO: retirar
-			 start = System.currentTimeMillis(); // TODO: retirar
-			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
-				long key = 31*(31 + alunoDemanda.getDemanda().getDisciplina().getId()) + alunoDemanda.getDemanda().getOferta().getCampus().getId();
-				if (demandaMapAluno.get(key) == null) {
-					List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
-					demandas.add(alunoDemanda);
-					demandaMapAluno.put(key, demandas);
-				}
-				else {
-					demandaMapAluno.get(key).add(alunoDemanda);
-				}
-			}
-			time = (System.currentTimeMillis() - start)/1000;System.out.println("for - tempo = " + time + " segundos"); // TODO: retirar
-		}
-		 start = System.currentTimeMillis(); // TODO: retirar
-		List < AlunoDemanda > alunoDemanda;
-		for ( AlunoDemanda disciplinas : busca )
-		{
-			if (numTotalDisciplinas > 100)
-			{
-				alunoDemanda = demandaMapAluno.get( 31*(31 + disciplinas.getDemanda().getDisciplina().getId()) +
-						disciplinas.getDemanda().getOferta().getCampus().getId() );
-			}
-			else 
-			{
-				alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(), cenario,
-						disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
-			}
+			Disciplina dis = ((Disciplina)((Object[])disciplinas)[0]);
+			int demanda = ((Long)((Object[])disciplinas)[1]).intValue();
+			int total = ((Long)((Object[])disciplinas)[2]).intValue();
+			int atendidoP1 = ((Long)((Object[])disciplinas)[3]).intValue();
+			int atendidoP2 = ((Long)((Object[])disciplinas)[4]).intValue();
+			
+			Campus cam = ((Campus)((Object[])disciplinas)[5]);
+			
 			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
-			resumoMatricula.setCampusString(disciplinas.getDemanda().getOferta().getCampus().getNome());
-			resumoMatricula.setCampusId(disciplinas.getDemanda().getOferta().getCampus().getId());
-			resumoMatricula.setCodDisciplina(disciplinas.getDemanda().getDisciplina().getCodigo());
-			resumoMatricula.setDisciplinaId(disciplinas.getDemanda().getDisciplina().getId());
-			int disDemandaP1 = 0;
-			int disAtendidosP1 = 0;
-			int disNaoAtendidosP1 = 0;
-			int disAtendidosP2 = 0;
-			int disAtendidosSoma = 0;
-			int disDemandaNaoAtendida = 0;
-			for ( AlunoDemanda demandas : alunoDemanda )
-			{
-				if ( demandas.getDemanda().ocupaGrade() )
-				{
-					if ( demandas.getPrioridade() == 1 )
-					{
-						disDemandaP1++;
-						if ( demandas.getAtendido() )
-						{
-							disAtendidosP1++;
-						}
-						else
-						{
-							disNaoAtendidosP1++;
-						}
-					}
-					else
-					{
-						if ( demandas.getAtendido() )
-						{
-							disAtendidosP2++;
-						}
-					}
-				}
-				disAtendidosSoma = disAtendidosP1 + disAtendidosP2;
-				disDemandaNaoAtendida = disDemandaP1 - (disAtendidosSoma);
-			}
-			resumoMatricula.setDisDemandaP1(disDemandaP1);
-			resumoMatricula.setDisAtendidosP1(disAtendidosP1);
-			resumoMatricula.setDisNaoAtendidosP1(disNaoAtendidosP1);
-			resumoMatricula.setDisAtendidosP2(disAtendidosP2);
-			resumoMatricula.setDisAtendidosSoma(disAtendidosSoma);
-			resumoMatricula.setDisDemandaNaoAtendida(disDemandaNaoAtendida);
+			resumoMatricula.setCampusString(cam.getNome());
+			resumoMatricula.setCampusId(cam.getId());
+			resumoMatricula.setCodDisciplina(dis.getCodigo());
+			resumoMatricula.setDisciplinaId(dis.getId());
+			resumoMatricula.setNomeDisciplina(dis.getNome());
+			resumoMatricula.setDisCredPratico(dis.getCreditosPratico());
+			resumoMatricula.setDisCredTeorico(dis.getCreditosTeorico());
+			resumoMatricula.setDisExigeLab(dis.getLaboratorio());
+
+			resumoMatricula.setDisDemandaP1(demanda);
+			resumoMatricula.setDisAtendidosP1(atendidoP1);
+			resumoMatricula.setDisAtendidosP2(atendidoP2);
+			resumoMatricula.setDisAtendidosSoma(total);
 			
 			list.add(resumoMatricula);
 		}
 		BaseListLoadResult< ResumoMatriculaDTO > result
 		= new BaseListLoadResult< ResumoMatriculaDTO >( list );
-		time = (System.currentTimeMillis() - start)/1000;System.out.println("return tempo = " + time + " segundos"); // TODO: retirar
 		return result;
 	}
 	
@@ -503,7 +440,7 @@ public class AlunosDemandaServiceImpl
 		Map< Aluno, List<AlunoDemanda> > demandaMapAluno = new HashMap< Aluno, List<AlunoDemanda> >();
 		if (config.getLimit() > 100) 
 		{
-			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll(getInstituicaoEnsinoUser());			
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll(getInstituicaoEnsinoUser(), cenario);
 			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
 				if (demandaMapAluno.get(alunoDemanda.getAluno()) == null) {
 					List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();

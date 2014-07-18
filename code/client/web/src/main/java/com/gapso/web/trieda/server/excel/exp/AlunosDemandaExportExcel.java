@@ -105,7 +105,6 @@ public class AlunosDemandaExportExcel
 
 //		Set< AlunoDemanda > alunosDemanda
 //			= new HashSet< AlunoDemanda >( listAlunosDemanda );
-
 		if ( !alunosDemanda.isEmpty() )
 		{
 			this.sheet = workbook.getSheet(this.getSheetName());

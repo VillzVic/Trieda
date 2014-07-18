@@ -24,6 +24,7 @@ import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoDiaSemanaView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoCapacidadeView;
+import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosDiaSemanaView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaCreditoView;
@@ -212,6 +213,7 @@ public class ToolBarPresenter
 		MenuItem getAmbientesFaixaOcupacaoHorariosMenuItem();
 		MenuItem getAmbientesFaixaUtilizacaoCapacidadeMenuItem();
 		MenuItem getAmbientesFaixaUtilizacaoDiaSemanaItem();
+		MenuItem getAmbientesFaixaUtilizacaoHorariosDiaSemanaItem();
 		MenuItem getResumoPercentMestresDoutoresMenuItem();
 		MenuItem getProfessoresJanelasGradeMenuItem();
 		MenuItem getProfessoresDisciplinasHabilitadasMenuItem();
@@ -1162,6 +1164,19 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new AmbientesFaixaOcupacaoDiaSemanaPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new AmbientesFaixaOcupacaoDiaSemanaView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAmbientesFaixaUtilizacaoHorariosDiaSemanaItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AmbientesFaixaUtilizacaoHorariosDiaSemanaPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AmbientesFaixaUtilizacaoHorariosDiaSemanaView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}

@@ -190,4 +190,8 @@ public interface AtendimentosServiceAsync {
 	void getAmbientesFaixaUtilizacaoPorDiaSemana(CenarioDTO cenarioDTO,
 			CampusDTO campusDTO,
 			AsyncCallback<List<RelatorioQuantidadeDoubleDTO>> callback);
+
+	void getAmbientesFaixaOcupacaoHorariosPorDiaSemana(CenarioDTO cenarioDTO,
+			CampusDTO campusDTO,
+			AsyncCallback<List<RelatorioQuantidadeDoubleDTO>> callback);
 }

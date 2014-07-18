@@ -2448,9 +2448,21 @@ public class ConvertBeans {
 
 		return domain;
 	}
-
+	
 	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTO(
 			AtendimentoOperacional domain )
+	{
+		return toAtendimentoOperacionalDTO(domain, true);
+	}
+	
+	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTOSemAlunosDemanda(
+			AtendimentoOperacional domain )
+	{
+		return toAtendimentoOperacionalDTO(domain, false);
+	}
+
+	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTO(
+			AtendimentoOperacional domain, boolean processaAlunosDemanda )
 		{
 			AtendimentoOperacionalDTO dto = new AtendimentoOperacionalDTO();
 
@@ -2560,14 +2572,17 @@ public class ConvertBeans {
 			int totalAtendimentosP1 = 0;
 			int totalAtendimentosP2 = 0;
 			dto.getAlunosDemandas().clear();
-			for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
-				dto.getAlunosDemandas().add(toAlunoDemandaDTO(alunoDemanda));
-				Aluno aluno = alunoDemanda.getAluno();
-				str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
-				if (alunoDemanda.getPrioridade() == 1) {
-					totalAtendimentosP1++;	
-				} else {
-					totalAtendimentosP2++;
+			if (processaAlunosDemanda)
+			{
+				for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
+					dto.getAlunosDemandas().add(toAlunoDemandaDTO(alunoDemanda));
+					Aluno aluno = alunoDemanda.getAluno();
+					str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
+					if (alunoDemanda.getPrioridade() == 1) {
+						totalAtendimentosP1++;	
+					} else {
+						totalAtendimentosP2++;
+					}
 				}
 			}
 			if (str.length() > 1) {

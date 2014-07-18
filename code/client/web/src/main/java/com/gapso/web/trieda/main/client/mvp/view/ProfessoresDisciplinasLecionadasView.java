@@ -53,13 +53,13 @@ public class ProfessoresDisciplinasLecionadasView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Quantidade de Disciplinas Lecionadas" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Quantidade de Turmas Lecionadas" );
 	}
 	
 	private void createTabItem()
 	{
 		tabItem = new GTabItem(
-			"Professores por Quantidade de Disciplinas Lecionadas", Resources.DEFAULTS.resumoDisciplinas16() );
+			"Professores por Quantidade de Turmas Lecionadas", Resources.DEFAULTS.resumoDisciplinas16() );
 	
 		tabItem.setContent( panel );
 	}
@@ -117,7 +117,7 @@ public class ProfessoresDisciplinasLecionadasView extends MyComposite
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 	
-		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Quantidade de Disciplinas Habilitadas", 240 ) );
+		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Quantidade de Turmas Lecionadas", 240 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Professores Virtuais", 170 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Professores da Instituição", 170 ) );
 		

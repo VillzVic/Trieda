@@ -71,6 +71,7 @@ public class ExportExcelFormView
 	private CheckBox professoresAreasConhecimentoCB;
 	private CheckBox ambientesFaixaOcupacaoCB;
 	private CheckBox ocupacaoAmbientesSemanaCB;
+	private CheckBox utilizacaoAmbientesSemanaCB;
 	private CheckBox ambientesFaixaUtilizacaoCB;
 	private CheckBox turnosCB;
 	private CheckBox tiposCursoCB;
@@ -415,8 +416,15 @@ public class ExportExcelFormView
 		ocupacaoAmbientesSemanaCB.setStyleAttribute("height", "40");
 		ocupacaoAmbientesSemanaCB.addStyleName("boxLabel");
 		
+		utilizacaoAmbientesSemanaCB = new CheckBox();
+		utilizacaoAmbientesSemanaCB.setName(PlanilhasExportExcel.AMBIENTES_UTILIZACAO_SEMANA);
+		utilizacaoAmbientesSemanaCB.setValue(false);
+		utilizacaoAmbientesSemanaCB.setBoxLabel("Utilização dos Horários dos Ambientes por Dia da Semana");
+		utilizacaoAmbientesSemanaCB.setStyleAttribute("height", "40");
+		utilizacaoAmbientesSemanaCB.addStyleName("boxLabel");
+		
 		ambientesFS.add(createCheckBoxGroup(ambientesFaixaOcupacaoCB, ambientesFaixaUtilizacaoCB));
-		ambientesFS.add(createCheckBoxGroup(ocupacaoAmbientesSemanaCB, null));
+		ambientesFS.add(createCheckBoxGroup(ocupacaoAmbientesSemanaCB, utilizacaoAmbientesSemanaCB));
 		main.add(ambientesFS, new FormData());
 		
 		//GradeHoraria
@@ -733,6 +741,12 @@ public class ExportExcelFormView
 	public CheckBox getAmbientesFaixaUtilizacao() {
 		return ambientesFaixaUtilizacaoCB;
 	}
+	
+	@Override
+	public CheckBox getUtilizacaoAmbientesSemana() {
+		return utilizacaoAmbientesSemanaCB;
+	}
+
 	
 	@Override
 	public CheckBox getTurnos() {

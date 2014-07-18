@@ -75,6 +75,7 @@ public class ExportExcelFormPresenter
 		CheckBox getAmbientesFaixaOcupacao();
 		CheckBox getOcupacaoAmbientesSemana();
 		CheckBox getAmbientesFaixaUtilizacao();
+		CheckBox getUtilizacaoAmbientesSemana();
 		CheckBox getTurnos();
 		CheckBox getTiposCurso();
 		CheckBox getDivisaoCreditos();

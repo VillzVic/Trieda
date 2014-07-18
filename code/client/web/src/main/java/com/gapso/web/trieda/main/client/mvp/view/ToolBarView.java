@@ -576,6 +576,7 @@ public class ToolBarView
 		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Utilização dos Horários", Resources.DEFAULTS.sala16()) );
 		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Ocupação Média da Capacidade", Resources.DEFAULTS.sala16()) );
 		menuAtendimentos.add( createMenuItem("Ocupação dos Ambientes por Dia da Semana", Resources.DEFAULTS.sala16()) );
+		menuAtendimentos.add( createMenuItem("Utilização dos Horários dos Ambientes por Dia da Semana", Resources.DEFAULTS.sala16()) );
 		atendimentosDropDownBt.setMenu(menuAtendimentos);
 		relatoriosToolBar.add(atendimentosDropDownBt);
 		
@@ -585,7 +586,7 @@ public class ToolBarView
 		menuDocentes.add( createMenuItem("Porcentagem de Mestres e Doutores", Resources.DEFAULTS.resumoMatricula16()) );
 		menuDocentes.add( createMenuItem("Professores por Quantidade de Janelas", Resources.DEFAULTS.resumoMatricula16()) );
 		menuDocentes.add( createMenuItem("Professores por Quantidade de Disciplinas Habilitadas", Resources.DEFAULTS.resumoDisciplinas16()) );
-		menuDocentes.add( createMenuItem("Professores por Quantidade de Disciplinas Lecionadas", Resources.DEFAULTS.resumoDisciplinas16()) );
+		menuDocentes.add( createMenuItem("Professores por Quantidade de Turmas Lecionadas", Resources.DEFAULTS.resumoDisciplinas16()) );
 		menuDocentes.add( createMenuItem("Professores por Titulações", Resources.DEFAULTS.tipoCurso16()) );
 		menuDocentes.add( createMenuItem("Professores por Areas de Conhecimento", Resources.DEFAULTS.habilitacaoProfessor16()) );
 		docentesDropDownBt.setMenu(menuDocentes);
@@ -1077,6 +1078,12 @@ public class ToolBarView
 	public MenuItem getAmbientesFaixaUtilizacaoDiaSemanaItem()
 	{
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(8);
+	}
+	
+	@Override
+	public MenuItem getAmbientesFaixaUtilizacaoHorariosDiaSemanaItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(9);
 	}
 	
 	@Override

@@ -49,6 +49,7 @@ public enum ExcelInformationType
 	AMBIENTES_FAIXA_OCUPACAO("Ambientes Faixa Ocupacao"),
 	AMBIENTES_FAIXA_OCUPACAO_SEMANA("Ambientes Faixa Ocupacao Semana"),
 	AMBIENTES_FAIXA_UTILIZACAO("Ambientes Faixa Utilizacao"),
+	AMBIENTES_FAIXA_UTILIZACAO_SEMANA("Ambientes Faixa Utilizacao Sem"),
 	TURNOS("Turnos"),
 	TIPOS_CURSO("Tipos de Curso"),
 	DIVISOES_CREDITO("Divisoes de Credito"),

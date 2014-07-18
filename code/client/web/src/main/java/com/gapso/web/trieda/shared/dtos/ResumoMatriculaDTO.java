@@ -23,7 +23,11 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_CODIGO_DISCIPLINA = "codDisciplina";
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_ATENDIDOS_SOMA = "disAtendidosSoma";
-	public static final String PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA = "disDemandaNaoAtendida"; 
+	public static final String PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA = "disDemandaNaoAtendida";
+	public static final String PROPERTY_NOME_DISCIPLINA = "nomeDisciplina";
+	public static final String PROPERTY_DISCIPLINA_CRED_PRATICO = "disciplinaCredPratico";
+	public static final String PROPERTY_DISCIPLINA_CRED_TEORICO = "disciplinaCredTeorico";
+	public static final String PROPERTY_DISCIPLINA_EXIGE_LAB = "disciplinaExigeLab";
 	
 	public ResumoMatriculaDTO()
 	{
@@ -156,6 +160,38 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	
 	public Integer getDisAtendidosSoma(){
 		return get(PROPERTY_DISCIPLINA_ATENDIDOS_SOMA);
+	}
+	
+	public void setNomeDisciplina(String value) {
+		set(PROPERTY_NOME_DISCIPLINA, value);
+	}
+	
+	public String getNomeDisciplina(){
+		return get(PROPERTY_NOME_DISCIPLINA);
+	}
+	
+	public void setDisCredPratico(Integer value) {
+		set(PROPERTY_DISCIPLINA_CRED_PRATICO, value);
+	}
+	
+	public Integer getDisCredPratico(){
+		return get(PROPERTY_DISCIPLINA_CRED_PRATICO);
+	}
+	
+	public void setDisCredTeorico(Integer value) {
+		set(PROPERTY_DISCIPLINA_CRED_TEORICO, value);
+	}
+	
+	public Integer getDisCredTeorico(){
+		return get(PROPERTY_DISCIPLINA_CRED_TEORICO);
+	}
+	
+	public void setDisExigeLab(Boolean value) {
+		set(PROPERTY_DISCIPLINA_EXIGE_LAB, value);
+	}
+	
+	public Boolean getDisExigeLab(){
+		return get(PROPERTY_DISCIPLINA_EXIGE_LAB);
 	}
 	
 	@Override
