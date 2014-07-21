@@ -1806,7 +1806,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			
 			PercentMestresDoutoresDTO percentMestresDoutoresDTO = new PercentMestresDoutoresDTO();
 			percentMestresDoutoresDTO.setCampusString(campus.getNome());
-			percentMestresDoutoresDTO.setCursoString(curso.getNome());
+			percentMestresDoutoresDTO.setCursoString(curso.getNome()+" ("+curso.getCodigo()+") ");
 			
 			for ( String professor : cursoToProfessoresMap.get(curso).values() )
 			{
