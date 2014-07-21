@@ -1078,6 +1078,7 @@ public class AlunoDemanda
 			" SUM(case when o.atendido = TRUE then 1 else 0 end), " +
 			" SUM(case when o.atendido = TRUE and o.prioridade = 1 then 1 else 0 end), " +
 			" SUM(case when o.atendido = TRUE and o.prioridade = 2 then 1 else 0 end)," +
+			" SUM(case when o.atendido = FALSE and o.prioridade = 1 then 1 else 0 end), " +
 			" o.demanda.oferta.campus " +
 			" FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +

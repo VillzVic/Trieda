@@ -240,8 +240,9 @@ public class AlunosDemandaServiceImpl
 			int total = ((Long)((Object[])disciplinas)[2]).intValue();
 			int atendidoP1 = ((Long)((Object[])disciplinas)[3]).intValue();
 			int atendidoP2 = ((Long)((Object[])disciplinas)[4]).intValue();
+			int naoAtendidoP1 = ((Long)((Object[])disciplinas)[5]).intValue();
 			
-			Campus cam = ((Campus)((Object[])disciplinas)[5]);
+			Campus cam = ((Campus)((Object[])disciplinas)[6]);
 			
 			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
 			resumoMatricula.setCampusString(cam.getNome());
@@ -256,6 +257,7 @@ public class AlunosDemandaServiceImpl
 			resumoMatricula.setDisDemandaP1(demanda);
 			resumoMatricula.setDisAtendidosP1(atendidoP1);
 			resumoMatricula.setDisAtendidosP2(atendidoP2);
+			resumoMatricula.setDisNaoAtendidosP1(naoAtendidoP1);
 			resumoMatricula.setDisAtendidosSoma(total);
 			
 			list.add(resumoMatricula);
