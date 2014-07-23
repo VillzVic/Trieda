@@ -155,7 +155,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				autoSizeColumns((short)1,(short)1,sheet);*/
 		}
 		
-		//if(this.removeUnusedSheets) removeUnusedSheets(this.getSheetName(), workbook);
+		if(this.removeUnusedSheets) removeUnusedSheets(this.getSheetName(), workbook);
 
 		return result;
 	}

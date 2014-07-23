@@ -340,7 +340,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		int linhasExtras = 1;
 		String[] commentSplit = comment.split("\n");
 		for (String split : commentSplit) {
-			linhasExtras += split.length() / 110;
+			linhasExtras += split.length() / 90;
 		}
 		Comment cellComment = cell.getCellComment();
 		if (cellComment == null) {
