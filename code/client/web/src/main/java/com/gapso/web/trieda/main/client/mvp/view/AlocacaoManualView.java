@@ -48,7 +48,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
-import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaStatusDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -80,7 +80,7 @@ public class AlocacaoManualView
 	private SimpleUnpagedGrid<TurmaStatusDTO> turmasGrid;
 	private SimpleUnpagedGrid<AlunoStatusDTO> alunosGrid;
 	private SimpleUnpagedGrid<ProfessorStatusDTO> professoresGrid;
-	private SimpleUnpagedGrid<SalaDTO> ambientesGrid;
+	private SimpleUnpagedGrid<SalaStatusDTO> ambientesGrid;
 	private SimpleToolBar toolBar;
 	private SimpleToolBar alunosToolBar;
 	private SimpleToolBar professoresToolBar;
@@ -222,9 +222,9 @@ public class AlocacaoManualView
 		return professoresAlunosTabPanel;
 	}
 	
-	private SimpleUnpagedGrid<SalaDTO> createAmbientesGrid()
+	private SimpleUnpagedGrid<SalaStatusDTO> createAmbientesGrid()
 	{
-	    this.ambientesGrid = new SimpleUnpagedGrid< SalaDTO >( new ColumnModel(getAmbientesColumnList()), this, new SimpleToolBar(
+	    this.ambientesGrid = new SimpleUnpagedGrid< SalaStatusDTO >( new ColumnModel(getAmbientesColumnList()), this, new SimpleToolBar(
 				false, false, false, false, false, this ) );
 	    
 	    return ambientesGrid;
@@ -603,10 +603,39 @@ public class AlocacaoManualView
 	{
 		List< ColumnConfig > list
 			= new ArrayList< ColumnConfig >();
+		
+	    GridCellRenderer<SalaStatusDTO> change = new GridCellRenderer<SalaStatusDTO>() {
 
-		list.add( new ColumnConfig( SalaDTO.PROPERTY_CODIGO, "Ambiente", 100 ) );
-		list.add( new ColumnConfig( SalaDTO.PROPERTY_CAPACIDADE_INSTALADA, "Capacidade", 80 ) );
-		list.add( new ColumnConfig( SalaDTO.PROPERTY_TIPO_STRING, "Tipo do Ambiente", 120 ) );
+			@Override
+			public Object render(SalaStatusDTO model, String property,
+					com.extjs.gxt.ui.client.widget.grid.ColumnData config,
+					int rowIndex, int colIndex,
+					ListStore<SalaStatusDTO> store, Grid<SalaStatusDTO> grid) {
+			    
+		          String val = (String) model.get(property);  
+		          String style = "";
+		          if (val.equals("Hor. Disponível"))
+		          {
+		        	  style = "green";
+		          }
+		          else if(val.equals("Conflito"))
+		          {
+		        	  style = "red";
+		          }
+		          else
+		          {
+		        	  style = "blue";
+		          }
+		          return "<span style='color:" + style + "'>" + val + "</span>";
+			}
+	    }; 
+
+		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_CODIGO, "Ambiente", 70 ) );
+		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_CAPACIDADE_INSTALADA, "Capacidade", 80 ) );
+		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_TIPO_STRING, "Tipo do Ambiente", 100 ) );
+		ColumnConfig column = new ColumnConfig( SalaStatusDTO.PROPERTY_STATUS, "Status", 70 );
+		column.setRenderer(change);
+		list.add( column );
 		
 		return list;
 	}
@@ -718,7 +747,7 @@ public class AlocacaoManualView
 	}
 	
 	@Override
-	public SimpleUnpagedGrid< SalaDTO > getAmbientesGrid()
+	public SimpleUnpagedGrid<SalaStatusDTO> getAmbientesGrid()
 	{
 		return this.ambientesGrid;
 	}
@@ -742,7 +771,7 @@ public class AlocacaoManualView
 	}
 	
 	@Override
-	public void setAmbientesProxy( RpcProxy< ListLoadResult< SalaDTO > > proxy )
+	public void setAmbientesProxy( RpcProxy< ListLoadResult< SalaStatusDTO > > proxy )
 	{
 		this.ambientesGrid.setProxy( proxy );
 	}

@@ -3941,7 +3941,7 @@ public class ConvertBeans {
 		Calendar fimCal = Calendar.getInstance();
 		fimCal.setTime( domain.getHorarioDisponivelCenario().getHorarioAula().getHorario() );
 
-		fimCal.add( Calendar.MINUTE, domain.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo() );
+		fimCal.add( Calendar.MINUTE, domain.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo() * (dto.getCreditosPraticos() + dto.getCreditosTeoricos()));
 		String fim = df.format( fimCal.getTime() );
 
 		String tipoCredito = domain.getCreditosPraticos() == 0 ? domain.getCreditosTeoricos() + "T" : domain.getCreditosPraticos() + "P";
@@ -3977,7 +3977,7 @@ public class ConvertBeans {
 		Calendar fimCal = Calendar.getInstance();
 		fimCal.setTime( hdc.getHorarioAula().getHorario() );
 
-		fimCal.add( Calendar.MINUTE, hdc.getHorarioAula().getSemanaLetiva().getTempo() );
+		fimCal.add( Calendar.MINUTE, hdc.getHorarioAula().getSemanaLetiva().getTempo() * (aulaDTO.getCreditosPraticos() + aulaDTO.getCreditosTeoricos()));
 		String fim = df.format( fimCal.getTime() );
 
 		String tipoCredito = aula.getCreditoTeoricoBoolean() ? aula.getTotalCreditos() + "T" : aula.getTotalCreditos() + "P";

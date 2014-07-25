@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -88,6 +89,7 @@ import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDoubleDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaStatusDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -4696,7 +4698,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				Set<HorarioDisponivelCenario> horariosDisponiveisAluno = findHorariosDisponiveis(alunoDemanda.getAluno(), ehTatico);
 				for (AulaDTO aula : aulasDTO)
 				{
-					if (horariosDisponiveisAluno.contains(HorarioDisponivelCenario.find(aula.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+					if (isHorarioConflitante(horariosDisponiveisAluno, HorarioDisponivelCenario.find(aula.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
 					{
 						status = "Conflito";
 					}
@@ -4740,19 +4742,82 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	@Override
-	public ListLoadResult<SalaDTO> getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO)
+	public ListLoadResult<SalaStatusDTO> getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulas)
 	{
-		List<SalaDTO> result = new ArrayList<SalaDTO>();
+		List<SalaStatusDTO> result = new ArrayList<SalaStatusDTO>();
 		if (turmaDTO == null)
 		{
-			return new BaseListLoadResult<SalaDTO>(result);
+			return new BaseListLoadResult<SalaStatusDTO>(result);
 		}
 		Disciplina disciplina = Disciplina.find(turmaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
 		for (Sala sala : disciplina.getSalas())
 		{
-			result.add(ConvertBeans.toSalaDTO(sala));
+			SalaStatusDTO salaStatus = new SalaStatusDTO();
+			salaStatus.setId(sala.getId());
+			salaStatus.setVersion(sala.getVersion());
+			salaStatus.setCodigo(sala.getCodigo());
+			salaStatus.setCapacidadeInstalada(sala.getCapacidadeInstalada());
+			salaStatus.setTipoString(sala.getTipoSala().getNome());
+			
+			String status = "";
+			
+			for (AulaDTO aulaDTO : aulas)
+			{
+				HorarioAula horarioAula = HorarioAula.find(aulaDTO.getHorarioAulaId(), getInstituicaoEnsinoUser());
+				if (aulaDTO.getSalaId() != null && sala.getId().equals(aulaDTO.getSalaId()))
+				{
+						status = "Alocado";
+				}
+				else if (!sala.getHorarios().contains(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), horarioAula, Semanas.get(aulaDTO.getSemana()))))
+				{
+					status = "Indisponível";
+				}
+				else {
+					Set<HorarioDisponivelCenario> horariosDisponiveisAluno =
+							findHorariosDisponiveis(sala.getUnidade().getCampus().getCenario(), sala, sala.getUnidade().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser()));
+					if (isHorarioConflitante(horariosDisponiveisAluno, HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+					{
+						status = "Conflito";
+					}
+					else
+					{
+						status = "Disponível";
+					}
+				}
+			}
+			salaStatus.setStatus(status);
+			
+			result.add(salaStatus);
 		}
-		return new BaseListLoadResult<SalaDTO>(result);
+		return new BaseListLoadResult<SalaStatusDTO>(result);
+	}
+	
+	private boolean isHorarioConflitante(Collection<HorarioDisponivelCenario> horarios, HorarioDisponivelCenario horarioAula)
+	{
+		for (HorarioDisponivelCenario horario : horarios)
+		{
+			if(horario.getHorarioAula().compareTo(horarioAula.getHorarioAula()) == 0 && horario.getDiaSemana().equals(horarioAula.getDiaSemana()))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private Set<HorarioDisponivelCenario> findHorariosDisponiveis(Cenario cenario, Sala sala, boolean ehTatico)
+	{
+		Set<HorarioDisponivelCenario> horariosDisponiveis = new HashSet<HorarioDisponivelCenario>();
+		if (!ehTatico)
+		{
+			List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBySalaAndTurno(sala, null, null, getInstituicaoEnsinoUser(), cenario);
+			for(AtendimentoOperacional atendimento : atendimentos)
+			{
+				horariosDisponiveis.add(atendimento.getHorarioDisponivelCenario());
+			}
+		}
+		
+		return horariosDisponiveis;
 	}
 	
 	@Override
@@ -4800,7 +4865,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			}
 			else {
 				Set<HorarioDisponivelCenario> horariosDisponiveisAluno = findHorariosDisponiveis(cenario, professorDisciplina.getProfessor(), ehTatico);
-				if (horariosDisponiveisAluno.contains(HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+				if (isHorarioConflitante(horariosDisponiveisAluno, HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
 				{
 					status = "Conflito";
 				}

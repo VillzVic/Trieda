@@ -26,6 +26,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDoubleDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaStatusDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
@@ -147,8 +148,8 @@ public interface AtendimentosService extends RemoteService {
 
 	void removeAula(TurmaDTO turmaDTO, AulaDTO aulaDTO);
 
-	ListLoadResult<SalaDTO> getAmbientesTurma(CenarioDTO cenarioDTO,
-			TurmaDTO turmaDTO);
+	ListLoadResult<SalaStatusDTO> getAmbientesTurma(CenarioDTO cenarioDTO,
+			TurmaDTO turmaDTO, List<AulaDTO> aulas);
 
 	List<RelatorioQuantidadeDoubleDTO> getAmbientesFaixaUtilizacaoPorDiaSemana(
 			CenarioDTO cenarioDTO, CampusDTO campusDTO);

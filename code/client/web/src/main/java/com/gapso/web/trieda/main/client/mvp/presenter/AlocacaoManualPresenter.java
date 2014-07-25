@@ -35,6 +35,7 @@ import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaStatusDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
@@ -70,7 +71,7 @@ public class AlocacaoManualPresenter
 		Component getComponent();
 		SimpleUnpagedGrid< TurmaStatusDTO > getGrid();
 		SimpleUnpagedGrid< AlunoStatusDTO > getAlunosGrid();
-		SimpleUnpagedGrid< SalaDTO > getAmbientesGrid();
+		SimpleUnpagedGrid<SalaStatusDTO> getAmbientesGrid();
 		void setProxy( RpcProxy< ListLoadResult< TurmaStatusDTO > > proxy );
 		DemandaDTO getDemanda();
 		CampusDTO getCampusDTO();
@@ -98,7 +99,7 @@ public class AlocacaoManualPresenter
 		List<Button> getEditarAulaBts();
 		List<Button> getRemoverAulaBts();
 		List<AulaDTO> getAulasSelecionadas();
-		void setAmbientesProxy( RpcProxy< ListLoadResult< SalaDTO > > proxy );
+		void setAmbientesProxy( RpcProxy<ListLoadResult<SalaStatusDTO>> ambientesProxy );
 		void setAlunosProxy( RpcProxy< ListLoadResult< AlunoStatusDTO > > proxy );
 		void setProfessoresProxy( RpcProxy< ListLoadResult< ProfessorStatusDTO > > proxy );
 		Button getCancelarMarcacoesAlunosButton();
@@ -948,12 +949,12 @@ public class AlocacaoManualPresenter
  			}
  		};
  		
- 		RpcProxy< ListLoadResult< SalaDTO > > ambientesProxy =
- 			new RpcProxy< ListLoadResult< SalaDTO > >()
+ 		RpcProxy< ListLoadResult< SalaStatusDTO > > ambientesProxy =
+ 			new RpcProxy< ListLoadResult< SalaStatusDTO > >()
  		{
  			@Override
  			public void load( Object loadConfig,
- 				AsyncCallback< ListLoadResult< SalaDTO > > callback)
+ 				AsyncCallback< ListLoadResult< SalaStatusDTO > > callback)
  			{
  				if (getDisplay().getTurmaSelecionada() == null)
  				{
@@ -963,7 +964,7 @@ public class AlocacaoManualPresenter
  				{
  	 				getDisplay().getAmbientesGrid().getGrid().getView().setEmptyText("Não existem ambientes relacionados a esta disciplina");
  				}
- 				service.getAmbientesTurma(cenarioDTO, getDisplay().getTurmaSelecionada(), callback);
+ 				service.getAmbientesTurma(cenarioDTO, getDisplay().getTurmaSelecionada(), getDisplay().getAulasSelecionadas(), callback);
  			}
  		};
  		
