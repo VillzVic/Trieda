@@ -53,6 +53,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox alunoEmMuitosCampiCheckBox;
 	private CheckBox minimizarDeslocamentoAlunoCheckBox;
 	private CheckBox priorizarCalourosCheckBox;
+	private CheckBox considerarPrioridadePorAlunosCheckBox;
 
 	private CheckBox cargaHorariaProfessorCheckBox;
 	private CargaHorariaComboBox cargaHorariaProfessorComboBox;
@@ -60,6 +61,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox minimizarDeslocamentoProfessorCheckBox;
 	private NumberField minimizarDeslocamentoProfessorNumberField;
 	private CheckBox minimizarGapProfessorCheckBox;
+	private CheckBox proibirGapProfessorCheckBox;
 	private CheckBox evitarReducaoCargaHorariaProfessorCheckBox;
 	private NumberField evitarReducaoCargaHorariaProfessorNumberField;
 	private NumberField evitarUltimoEPrimeiroHorarioProfessorNumberField;
@@ -90,6 +92,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox considerarCapacidadeMaximaDasSalasCheckBox;
 	private CheckBox percentuaisMinimosTempoParcialIntegralCheckBox;
 	private CheckBox percentuaisMinimosTempoIntegralCheckBox;
+	private CheckBox considerarCoRequisitosCheckBox;
 
 	private Button maximizarNotaAvaliacaoCorpoDocenteButton; 
 	private Button minimizarCustoDocenteCursosButton; 
@@ -158,6 +161,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.considerarCapacidadeMaximaDasSalasCheckBox= createCheckBox("Considerar capacidade máxima das salas",this.parametroDTO.getConsiderarCapacidadeMaxSalas());;
 		this.percentuaisMinimosTempoParcialIntegralCheckBox = createCheckBox("Considerar percentuais mínimos de tempo parcial + integral",this.parametroDTO.getPercentuaisMinimosParcialIntegral());
 		this.percentuaisMinimosTempoIntegralCheckBox = createCheckBox("Considerar percentuais mínimos de tempo integral",this.parametroDTO.getPercentuaisMinimosIntegral());
+		this.considerarCoRequisitosCheckBox = createCheckBox("Considerar Co-Requisitos",this.parametroDTO.getConsiderarCoRequisitos());
 		
 		// coluna 2
 		this.minAlunosParaAbrirTurmaValueNumberField = new NumberField();
@@ -239,6 +243,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoFS.add(this.considerarCapacidadeMaximaDasSalasCheckBox);
 		instituicaoFS.add(this.percentuaisMinimosTempoParcialIntegralCheckBox);
 		instituicaoFS.add(this.percentuaisMinimosTempoIntegralCheckBox);
+		instituicaoFS.add(this.considerarCoRequisitosCheckBox);
 		
 		return instituicaoFS;
 	}
@@ -250,6 +255,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar Deslocamentos de Professores entre Campi",this.parametroDTO.getMinimizarDeslocamentoProfessor());
 		this.minimizarDeslocamentoProfessorCheckBox.disable();
 		this.minimizarGapProfessorCheckBox = createCheckBox("Minimizar Gaps nos Horários dos Professores",this.parametroDTO.getMinimizarGapProfessor());
+		this.proibirGapProfessorCheckBox = createCheckBox("Proibir Gaps nos Horários dos Professores",this.parametroDTO.getProibirGapProfessor());
 		this.evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar Redução de Carga Horária de Professor",this.parametroDTO.getEvitarReducaoCargaHorariaProfessor());
 		this.evitarReducaoCargaHorariaProfessorCheckBox.disable();
 		this.evitarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Considerar interjornada mínima (em horas)",this.parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessor());
@@ -295,7 +301,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		professorFS.add(cargaHorariaSemanalProfessorContainer);
 		professorFS.add(this.professorEmMuitosCampiCheckBox);
 		professorFS.add(minDeslocamentoProfessorContainer);
-		professorFS.add(this.minimizarGapProfessorCheckBox);
+		LayoutContainer gapsContainer = new LayoutContainer(new ColumnLayout());
+		gapsContainer.add(this.minimizarGapProfessorCheckBox);
+		gapsContainer.add(this.proibirGapProfessorCheckBox);
+		professorFS.add(gapsContainer);
 		professorFS.add(evitarReducaoCHProfessorContainer);
 		professorFS.add(evitarUltimoEPrimeiroHorarioProfessorContainer);
 		professorFS.add(this.preferenciaDeProfessoresCheckBox);
@@ -315,6 +324,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.cargaHorariaAlunoComboBox = createComboBox(this.parametroDTO.getCargaHorariaAlunoSel());
 		this.cargaHorariaAlunoComboBox.disable();
 		this.priorizarCalourosCheckBox = createCheckBox("Priorizar Calouros", this.parametroDTO.getPriorizarCalouros());
+		this.considerarPrioridadePorAlunosCheckBox = createCheckBox("Considerar prioridade por aluno?", this.parametroDTO.getConsiderarPrioridadePorAlunos());
 		
 		LayoutContainer cargaHorariaSemanalAlunoContainer = new LayoutContainer(new ColumnLayout());
 		cargaHorariaSemanalAlunoContainer.add(this.cargaHorariaAlunoCheckBox);
@@ -329,6 +339,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		preferenciasAlunosFS.add(this.alunoEmMuitosCampiCheckBox);
 		preferenciasAlunosFS.add(this.minimizarDeslocamentoAlunoCheckBox);
 		preferenciasAlunosFS.add(this.priorizarCalourosCheckBox);
+		preferenciasAlunosFS.add(this.considerarPrioridadePorAlunosCheckBox);
 		
 		return preferenciasAlunosFS;
 	}
@@ -454,6 +465,13 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	{
 		return this.priorizarCalourosCheckBox;
 	}
+	
+	
+	@Override
+	public CheckBox getConsiderarPrioridadePorAlunosCheckBox()
+	{
+		return this.considerarPrioridadePorAlunosCheckBox;
+	}
 
 	@Override
 	public CheckBox getAlunoDePeriodoMesmaSalaCheckBox()
@@ -508,6 +526,12 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	{
 		return this.minimizarGapProfessorCheckBox;
 	}
+	
+	@Override
+	public CheckBox getProibirGapProfessorCheckBox()
+	{
+		return this.proibirGapProfessorCheckBox;
+	}
 
 	@Override
 	public CheckBox getEvitarReducaoCargaHorariaProfessorCheckBox()
@@ -555,6 +579,11 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	public CheckBox getPercentuaisMinimosTempoIntegralCheckBox()
 	{
 		return this.percentuaisMinimosTempoIntegralCheckBox;
+	}
+	
+	@Override
+	public CheckBox getConsiderarCoRequisitosCheckBox() {
+		return considerarCoRequisitosCheckBox;
 	}
 	
 	@Override

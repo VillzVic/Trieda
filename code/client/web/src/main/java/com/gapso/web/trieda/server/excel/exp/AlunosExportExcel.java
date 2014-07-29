@@ -107,12 +107,14 @@ public class AlunosExportExcel extends AbstractExportExcel {
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],aluno.getMatricula());
 		// Nome
 		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],aluno.getNome());
+		// Prioridade
+		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()], aluno.getPrioridade());
 		// Formando?
-		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(aluno.getFormando() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
+		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(aluno.getFormando() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 		// Virtual?
-		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(aluno.getVirtual() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
+		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(aluno.getVirtual() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 		// Criado por Trieda?
-		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(aluno.getCriadoTrieda() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
+		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],(aluno.getCriadoTrieda() ? getI18nConstants().sim() : HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 
 		row++;
 		return row;

@@ -63,6 +63,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getMinimizarDeslocamentoProfessorCheckBox();
 		NumberField getMinimizarDeslocamentoProfessorNumberField();
 		CheckBox getMinimizarGapProfessorCheckBox();
+		CheckBox getProibirGapProfessorCheckBox();
 		CheckBox getEvitarReducaoCargaHorariaProfessorCheckBox();
 		NumberField getEvitarReducaoCargaHorariaProfessorNumberField();
 		CheckBox getEvitarUltimoEPrimeiroHorarioProfessorCheckBox();
@@ -91,11 +92,13 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getConsiderarCapacidadeMaximaDasSalasCheckBox();
 		CheckBox getPercentuaisMinimosTempoParcialIntegralCheckBox();
 		CheckBox getPercentuaisMinimosTempoIntegralCheckBox();
+		CheckBox getConsiderarCoRequisitosCheckBox();
 		FuncaoObjetivoComboBox getFuncaoObjetivoComboBox();
 		Button getMaximizarNotaAvaliacaoCorpoDocenteButton();
 		Button getMinimizarCustoDocenteCursosButton();
 		Button getCompartilharDisciplinasCampiButton();
 		CheckBox getPriorizarCalourosComboBox();
+		CheckBox getConsiderarPrioridadePorAlunosCheckBox();
 		Button getSubmitButton();
 		Component getComponent();
 		void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados);
@@ -283,6 +286,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setMinimizarDeslocamentoProfessor(this.display.getMinimizarDeslocamentoProfessorCheckBox().getValue());
 		dto.setPercentuaisMinimosParcialIntegral(this.display.getPercentuaisMinimosTempoParcialIntegralCheckBox().getValue());
 		dto.setPercentuaisMinimosIntegral(this.display.getPercentuaisMinimosTempoIntegralCheckBox().getValue());
+		dto.setConsiderarCoRequisitos(this.display.getConsiderarCoRequisitosCheckBox().getValue());
 
 		Number minimizarDeslocamentoProfessorValue = this.display.getMinimizarDeslocamentoProfessorNumberField().getValue();
 		if (minimizarDeslocamentoProfessorValue == null) {
@@ -291,6 +295,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setMinimizarDeslocamentoProfessorValue(minimizarDeslocamentoProfessorValue.intValue());
 
 		dto.setMinimizarGapProfessor(this.display.getMinimizarGapProfessorCheckBox().getValue());
+		dto.setProibirGapProfessor(this.display.getProibirGapProfessorCheckBox().getValue());
 		dto.setEvitarReducaoCargaHorariaProfessor(this.display.getEvitarReducaoCargaHorariaProfessorCheckBox().getValue());
 
 		Number evitarReducaoCargaHorariaProfessorValue = this.display.getEvitarReducaoCargaHorariaProfessorNumberField().getValue();
@@ -336,6 +341,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		
 		dto.setConsiderarCapacidadeMaxSalas(this.display.getConsiderarCapacidadeMaximaDasSalasCheckBox().getValue());
 		dto.setPriorizarCalouros(this.display.getPriorizarCalourosComboBox().getValue());
+		dto.setConsiderarPrioridadePorAlunos(this.display.getConsiderarPrioridadePorAlunosCheckBox().getValue());
 
 		return dto;
 	}

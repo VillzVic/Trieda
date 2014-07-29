@@ -9,6 +9,7 @@ public class AlunosImportExcelBean
 {
 	private String matriculaStr;
 	private String nomeStr;
+	private String prioridadeStr;
 	private String formandoStr;
 	private String virtualStr;
 
@@ -28,6 +29,7 @@ public class AlunosImportExcelBean
 		{
 			checkMandatoryField( matriculaStr, ImportExcelError.ALUNO_MATRICULA_VAZIO, erros );
 			checkMandatoryField( nomeStr, ImportExcelError.ALUNO_NOME_VAZIO, erros );
+			checkMandatoryField( prioridadeStr, ImportExcelError.ALUNO_PRIORIDADE_VAZIO, erros );
 			checkMandatoryField( formandoStr, ImportExcelError.ALUNO_FORMANDO_VAZIO, erros );
 			checkMandatoryField( virtualStr, ImportExcelError.ALUNO_VIRTUAL_VAZIO, erros );
 
@@ -46,6 +48,7 @@ public class AlunosImportExcelBean
 	{
 		return ( isEmptyField( matriculaStr )
 			&& isEmptyField( nomeStr )
+			&& isEmptyField( prioridadeStr )
 			&& isEmptyField( formandoStr )
 			&& isEmptyField( virtualStr ) );
 	}
@@ -68,6 +71,16 @@ public class AlunosImportExcelBean
 	public void setNomeStr( String nomeStr )
 	{
 		this.nomeStr = nomeStr;
+	}
+	
+	public String getPrioridadeStr()
+	{
+		return prioridadeStr;
+	}
+	
+	public void setPrioridadeStr( String prioridadeStr )
+	{
+		this.prioridadeStr = prioridadeStr;
 	}
 
 	public String getFormandoStr()

@@ -97,6 +97,7 @@ public class AlunosView
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, getI18nConstants().matriculaAluno() , 150 ) );
 		list.add( new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_FORMANDO, getI18nConstants().formando() , 100 ) );
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_PERIODO, getI18nConstants().periodo() , 100 ) );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_PRIORIDADE, getI18nConstants().periodo() , 100 ) );
 		CheckColumnConfig column = new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_VIRTUAL, getI18nConstants().virtual() , 60 );
 		column.setToolTip("Alunos virtuais são aqueles ainda inexistentes, porém, que a Instituição de Ensino" +
 				" deseja simular a sua presenção, por exemplo, alunos entrantes. Além disso, estes alunos virtuais" +

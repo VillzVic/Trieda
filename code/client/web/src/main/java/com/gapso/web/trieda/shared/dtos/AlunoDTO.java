@@ -13,6 +13,7 @@ public class AlunoDTO
 	public static final String PROPERTY_ALUNO_MATRICULA = "matricula";
 	public static final String PROPERTY_ALUNO_FORMANDO = "formando";
 	public static final String PROPERTY_ALUNO_PERIODO = "periodo";
+	public static final String PROPERTY_ALUNO_PRIORIDADE = "prioridade";
 	public static final String PROPERTY_ALUNO_VIRTUAL = "virtual";
 	public static final String PROPERTY_ALUNO_CRIADO_TRIEDA = "criadoTrieda";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
@@ -85,6 +86,16 @@ public class AlunoDTO
 	public void setPeriodo( Integer value )
 	{
 		set( PROPERTY_ALUNO_PERIODO, value );
+	}
+
+	public Integer getPrioridade()
+	{
+		return get( PROPERTY_ALUNO_PRIORIDADE );
+	}
+	
+	public void setPrioridade( Integer value )
+	{
+		set( PROPERTY_ALUNO_PRIORIDADE, value );
 	}
 
 	public Integer getPeriodo()

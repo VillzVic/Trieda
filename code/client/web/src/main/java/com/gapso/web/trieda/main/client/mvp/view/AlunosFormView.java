@@ -27,6 +27,7 @@ public class AlunosFormView
 	private CheckBox formandoCB;
 	private CheckBox virtualCB;
 	private NumberField periodoNF;
+	private NumberField prioridadeNF;
 	private AlunoDTO alunoDTO;
 	private CenarioDTO cenarioDTO;
 
@@ -87,6 +88,16 @@ public class AlunosFormView
 		periodoNF.setMaxValue( 99 );
 		periodoNF.setEmptyText( "Preencha o período" );
 		formPanel.add( periodoNF, formData );
+		
+		prioridadeNF = new NumberField();
+		prioridadeNF.setName( AlunoDTO.PROPERTY_ALUNO_PRIORIDADE );
+		prioridadeNF.setValue( alunoDTO.getPrioridade() );
+		prioridadeNF.setFieldLabel( "Prioridade" );
+		prioridadeNF.setAllowBlank( true );
+		prioridadeNF.setAllowDecimals( false );
+		prioridadeNF.setMaxValue( 99 );
+		prioridadeNF.setEmptyText( "Preencha o prioridade" );
+		formPanel.add( prioridadeNF, formData );
 		
 		formandoCB = new CheckBox();
 		formandoCB.setName(AlunoDTO.PROPERTY_ALUNO_FORMANDO);
@@ -161,5 +172,10 @@ public class AlunosFormView
 	@Override
 	public NumberField getPeriodoNumberField() {
 		return periodoNF;
+	}
+	
+	@Override
+	public NumberField getPrioridadeNumberField() {
+		return prioridadeNF;
 	}
 }

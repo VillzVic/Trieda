@@ -124,6 +124,11 @@ public class Parametro
     //Indicar se o atendimento de alunos calouros (de 1o periodo) deve ser prioritario
     @Column(name = "PAR_PRIORIZARCALOUROS")
     private Boolean priorizarCalouros = true;
+    
+    // Considerar prioridade por alunos
+    @Column(name = "PAR_CONSIDEARARPRIORIDADEALUNOS")
+    private Boolean considerarPrioridadePorAlunos = false;
+    
 
     //////////////////////////////////////////////
 	// PREFERENCIAS DO PROFESSOR
@@ -149,6 +154,10 @@ public class Parametro
     //Minimizar Gaps nos Horários dos Professores
     @Column(name = "PAR_MINGAPPROF")
     private Boolean minimizarGapProfessor = false;
+    
+    //Proibir Gaps nos Horários dos Professores
+    @Column(name = "PAR_PROIBIRGAPPROF")
+    private Boolean proibirGapProfessor = false;
     
     //Evitar Redução de Carga Horária de Professor
     @Column(name = "PAR_EVITARREDCARGAHORPROF")
@@ -246,6 +255,10 @@ public class Parametro
     //Considerar percentuais mínimos de tempo integral
     @Column(name = "PAR_PERCMININT")
     private Boolean percentuaisMinimosIntegral = false;
+    
+    //Considerar percentuais mínimos de tempo integral
+    @Column(name = "PAR_CONSIDERARCOREQUI")
+    private Boolean considerarCoRequisitos = false;
 
     //Considerar áreas de titulação dos professores e cursos
     @Column(name = "PAR_AREATITPROFCUR")
@@ -467,6 +480,13 @@ public class Parametro
 	public void setPriorizarCalouros(Boolean priorizarCalouros) {
 		this.priorizarCalouros = priorizarCalouros;
 	}
+	
+	public Boolean getConsiderarPrioridadePorAlunos() {
+		return considerarPrioridadePorAlunos;
+	}
+	public void setConsiderarPrioridadePorAlunos(Boolean considerarPrioridadePorAlunos) {
+		this.considerarPrioridadePorAlunos = considerarPrioridadePorAlunos;
+	}
 
 	public Boolean getCargaHorariaProfessor() {
 		return cargaHorariaProfessor;
@@ -494,6 +514,13 @@ public class Parametro
 	}
 	public void setMinimizarGapProfessor(Boolean minimizarGapProfessor) {
 		this.minimizarGapProfessor = minimizarGapProfessor;
+	}
+	
+	public Boolean getProibirGapProfessor() {
+		return proibirGapProfessor;
+	}
+	public void setProibirGapProfessor(Boolean proibirGapProfessor) {
+		this.proibirGapProfessor = proibirGapProfessor;
 	}
 
 	public Boolean getEvitarReducaoCargaHorariaProfessor() {
@@ -664,6 +691,14 @@ public class Parametro
 		this.percentuaisMinimosIntegral = percentuaisMinimosIntegral;
 	}
 	
+	public Boolean getConsiderarCoRequisitos() {
+		return considerarCoRequisitos;
+	}
+
+	public void setConsiderarCoRequisitos(Boolean considerarCoRequisitos) {
+		this.considerarCoRequisitos = considerarCoRequisitos;
+	}
+
 	public Boolean getAreaTitulacaoProfessoresECursos() {
 		return areaTitulacaoProfessoresECursos;
 	}
@@ -791,6 +826,7 @@ public class Parametro
         sb.append("MinimizarDeslocamentoProfessor: ").append(getMinimizarDeslocamentoProfessor()).append(", ");
         sb.append("MinimizarDeslocamentoProfessorValue: ").append(getMinimizarDeslocamentoProfessorValue()).append(", ");
         sb.append("MinimizarGapProfessor: ").append(getMinimizarGapProfessor()).append(", ");
+        sb.append("ProibirGapProfessor: ").append(getProibirGapProfessor()).append(", ");
         sb.append("EvitarReducaoCargaHorariaProfessor: ").append(getEvitarReducaoCargaHorariaProfessor()).append(", ");
         sb.append("EvitarReducaoCargaHorariaProfessorValue: ").append(getEvitarReducaoCargaHorariaProfessorValue()).append(", ");
         sb.append("EditarUltimoEPrimeiroHorarioProfessor: ").append(getEvitarUltimoEPrimeiroHorarioProfessor()).append(", ");

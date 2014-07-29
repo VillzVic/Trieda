@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="alunoId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="nomeAluno" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="prioridade" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="formando" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ItemAluno", propOrder = {
     "alunoId",
     "nomeAluno",
+    "prioridade",
     "formando"
 })
 public class ItemAluno {
@@ -46,6 +48,7 @@ public class ItemAluno {
     protected int alunoId;
     @XmlElement(required = true)
     protected String nomeAluno;
+	protected int prioridade;
     protected boolean formando;
 
     /**
@@ -103,4 +106,21 @@ public class ItemAluno {
     public void setFormando(boolean value) {
         this.formando = value;
     }
+    
+    
+    /**
+     * Gets the value of the Prioridade property.
+     * 
+     */
+    public int getPrioridade() {
+		return prioridade;
+	}
+
+    /**
+     * Sets the value of the Prioridade property.
+     * 
+     */
+	public void setPrioridade(int prioridade) {
+		this.prioridade = prioridade;
+	}
 }

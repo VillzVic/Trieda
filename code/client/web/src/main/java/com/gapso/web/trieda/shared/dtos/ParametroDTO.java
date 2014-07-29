@@ -32,6 +32,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_MINIMIZARDESLOCAMENTOPROFESSOR = "minimizardeslocamentoprofessor";
 	public static final String PROPERTY_MINIMIZARDESLOCAMENTOPROFESSORVALUE = "minimizardeslocamentoprofessorvalue";
 	public static final String PROPERTY_MINIMIZARGAPPROFESSOR = "minimizargapprofessor";
+	public static final String PROPERTY_PROIBIRGAPPROFESSOR = "proibirgapprofessor";
 	public static final String PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSOR = "evitarreducaocargahorariaprofessor";
 	public static final String PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSORVALUE = "evitarreducaocargahorariaprofessorvalue";
 	public static final String PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSOR = "evitarultimoeprimeirohorarioprofessor";
@@ -63,7 +64,9 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_CONSIDERARCAPACIDADEMAXSALAS = "considerarCapacidadeMaxSalas";
 	public static final String PROPERTY_PERCENTUAISMINIMOSPARCIALINTEGRAL = "percentuaisminimosparcialintegral";
 	public static final String PROPERTY_PERCENTUAISMINIMOSINTEGRAL = "percentuaisminimosintegral";
+	public static final String PROPERTY_CONSIDERARCORQUISITOS = "considerarcorequisitos";
 	public static final String PROPERTY_PRIORIZARCALOUROS = "priorizarcalouros";
+	public static final String PROPERTY_CONSIDEARARPRIORIDADEALUNOS = "considerarprioridadealunos";
 
 	public ParametroDTO() {
 		super();
@@ -185,8 +188,17 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public Boolean getMinimizarGapProfessor() {
 		return get(PROPERTY_MINIMIZARGAPPROFESSOR);
 	}
+	
 	public void setMinimizarGapProfessor(Boolean value) {
 		set(PROPERTY_MINIMIZARGAPPROFESSOR, value);
+	}
+	
+	public Boolean getProibirGapProfessor() {
+		return get(PROPERTY_PROIBIRGAPPROFESSOR);
+	}
+	
+	public void setProibirGapProfessor(Boolean value) {
+		set(PROPERTY_PROIBIRGAPPROFESSOR, value);
 	}
 
 	public Boolean getEvitarReducaoCargaHorariaProfessor() {
@@ -350,6 +362,14 @@ public class ParametroDTO extends AbstractDTO<Long>
 		set(PROPERTY_PERCENTUAISMINIMOSINTEGRAL, value);
 	}
 	
+	public Boolean getConsiderarCoRequisitos(){
+		return get(	PROPERTY_CONSIDERARCORQUISITOS);
+	}
+	
+	public void setConsiderarCoRequisitos(Boolean value){
+		set(PROPERTY_CONSIDERARCORQUISITOS, value);
+	}
+	
 	public Boolean getAreaTitulacaoProfessoresECursos() {
 		return get(PROPERTY_AREATITULACAOPROFESSORESECURSOS);
 	}
@@ -414,6 +434,15 @@ public class ParametroDTO extends AbstractDTO<Long>
 		set(PROPERTY_PRIORIZARCALOUROS, value);
 	}
 	
+	public boolean getConsiderarPrioridadePorAlunos() {
+		return get(PROPERTY_CONSIDEARARPRIORIDADEALUNOS);
+	}
+	
+	public void setConsiderarPrioridadePorAlunos(Boolean value) {
+		set(PROPERTY_CONSIDEARARPRIORIDADEALUNOS, value);
+	}
+
+	
 	public Integer getFuncaoObjetivo() {
 		return get(PROPERTY_FUNCAOOBJETIVO);
 	}
@@ -450,4 +479,6 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public int compareTo(ParametroDTO o) {
 		return getId().compareTo(o.getId());
 	}
+
+
 }

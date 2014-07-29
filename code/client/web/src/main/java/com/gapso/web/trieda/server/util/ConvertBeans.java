@@ -3218,6 +3218,7 @@ public class ConvertBeans {
 		domain.setMinimizarDeslocamentoProfessor( dto.getMinimizarDeslocamentoProfessor() );
 		domain.setMinimizarDeslocamentoProfessorValue( dto.getMinimizarDeslocamentoProfessorValue() );
 		domain.setMinimizarGapProfessor( dto.getMinimizarGapProfessor() );
+		domain.setProibirGapProfessor( dto.getProibirGapProfessor() );
 		domain.setEvitarReducaoCargaHorariaProfessor( dto.getEvitarReducaoCargaHorariaProfessor() );
 		domain.setEvitarReducaoCargaHorariaProfessorValue( dto.getEvitarReducaoCargaHorariaProfessorValue() );
 		domain.setEvitarUltimoEPrimeiroHorarioProfessor( dto.getEvitarUltimoEPrimeiroHorarioProfessor() );
@@ -3250,6 +3251,7 @@ public class ConvertBeans {
 		domain.setCapacidadeMaxSalas(dto.getConsiderarCapacidadeMaxSalas());
 		domain.setPercentuaisMinimosParcialIntegral(dto.getPercentuaisMinimosParcialIntegral());
 		domain.setPercentuaisMinimosIntegral(dto.getPercentuaisMinimosIntegral());
+		domain.setConsiderarCoRequisitos(dto.getConsiderarCoRequisitos());
 		domain.setPriorizarCalouros(dto.getPriorizarCalouros());
 
 		for ( CursoDTO cursoDTO
@@ -3310,6 +3312,7 @@ public class ConvertBeans {
 		dto.setProfessorEmMuitosCampi( domain.getProfessorEmMuitosCampi() );
 		dto.setMinimizarDeslocamentoProfessor( domain.getMinimizarDeslocamentoProfessor() );
 		dto.setMinimizarGapProfessor( domain.getMinimizarGapProfessor() );
+		dto.setProibirGapProfessor( domain.getProibirGapProfessor() );
 		dto.setEvitarReducaoCargaHorariaProfessor( domain.getEvitarReducaoCargaHorariaProfessor() );
 		dto.setEvitarUltimoEPrimeiroHorarioProfessor( domain.getEvitarUltimoEPrimeiroHorarioProfessor() );
 		dto.setEvitarUltimoEPrimeiroHorarioProfessorValue( domain.getEvitarUltimoEPrimeiroHorarioProfessorValue() );
@@ -3343,7 +3346,9 @@ public class ConvertBeans {
 		dto.setConsiderarCapacidadeMaxSalas(domain.getCapacidadeMaxSalas());
 		dto.setPercentuaisMinimosParcialIntegral(domain.getPercentuaisMinimosParcialIntegral());
 		dto.setPercentuaisMinimosIntegral(domain.getPercentuaisMinimosIntegral());
+		dto.setConsiderarCoRequisitos(domain.getConsiderarCoRequisitos());
 		dto.setPriorizarCalouros(domain.getPriorizarCalouros());
+		dto.setConsiderarPrioridadePorAlunos(domain.getConsiderarPrioridadePorAlunos());
 
 		Set< Curso > cursosMaxNotaAvalList = domain.getCursosMaxNotaAval();
 		List< CursoDTO > cursosMaxNotaAvalDTOList
@@ -3600,6 +3605,7 @@ public class ConvertBeans {
 		domain.setMatricula( dto.getMatricula() );
 		domain.setFormando( dto.getFormando() );
 		domain.setPeriodo( dto.getPeriodo() );
+		domain.setPrioridade( dto.getPrioridade() );
 		domain.setVirtual( dto.getVirtual() );
 		domain.setCriadoTrieda( dto.getCriadoTrieda() );
 		domain.setCenario( cenario );
@@ -3618,6 +3624,7 @@ public class ConvertBeans {
 		dto.setMatricula( domain.getMatricula() );
 		dto.setFormando( domain.getFormando() );
 		dto.setPeriodo( domain.getPeriodo() );
+		dto.setPrioridade( domain.getPrioridade() );
 		dto.setVirtual( domain.getVirtual() );
 		dto.setCriadoTrieda( domain.getCriadoTrieda() );
 		dto.setCenarioId( domain.getCenario().getId() );

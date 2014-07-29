@@ -30,6 +30,7 @@ public class AlunosFormPresenter
 		CheckBox getFormandoCheckBox();
 		CheckBox getVirtualCheckBox();
 		NumberField getPeriodoNumberField();
+		NumberField getPrioridadeNumberField();
 		Button getSalvarButton();
 		AlunoDTO getAlunoDTO();
 		boolean isValid();
@@ -119,6 +120,8 @@ public class AlunosFormPresenter
 		alunoDTO.setCriadoTrieda(false);
 		alunoDTO.setPeriodo( this.display.getPeriodoNumberField().getValue() != null ? 
 				this.display.getPeriodoNumberField().getValue().intValue() : null );
+		alunoDTO.setPrioridade( this.display.getPrioridadeNumberField().getValue() != null ? 
+				this.display.getPrioridadeNumberField().getValue().intValue() : null );
 		alunoDTO.setCenarioId( this.cenarioDTO.getId() );
 
 		return alunoDTO;

@@ -30,6 +30,7 @@ public class AlunosImportExcel
 	static public String NOME_COLUMN_NAME;
 	static public String FORMANDO_COLUMN_NAME;
 	static public String VIRTUAL_COLUMN_NAME;
+	static public String PRIORIDADE_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -44,6 +45,7 @@ public class AlunosImportExcel
 		this.headerColumnsNames = new ArrayList< String >();
 		this.headerColumnsNames.add( MATRICULA_COLUMN_NAME );
 		this.headerColumnsNames.add( NOME_COLUMN_NAME );
+		this.headerColumnsNames.add( PRIORIDADE_COLUMN_NAME );
 		this.headerColumnsNames.add( FORMANDO_COLUMN_NAME );
 	}
 
@@ -91,6 +93,10 @@ public class AlunosImportExcel
 					else if ( NOME_COLUMN_NAME.endsWith( columnName ) )
 					{
 						bean.setNomeStr( cellValue );
+					}
+					else if ( PRIORIDADE_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setPrioridadeStr( cellValue );
 					}
 					else if ( FORMANDO_COLUMN_NAME.endsWith( columnName ) )
 					{
@@ -255,6 +261,7 @@ public class AlunosImportExcel
 				newAluno.setNome( alunoExcel.getNomeStr() );
 				newAluno.setFormando( alunoExcel.getFormando() );
 				newAluno.setVirtual( alunoExcel.getVirtual() );
+				newAluno.setPrioridade( Integer.parseInt(alunoExcel.getPrioridadeStr()));
 				newAluno.setCriadoTrieda(false);
 				
 				newAluno.persist();
@@ -273,6 +280,7 @@ public class AlunosImportExcel
 		{
 			MATRICULA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().matriculaAluno() );
 			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeAluno() );
+			PRIORIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( "Prioridade" );
 			FORMANDO_COLUMN_NAME = HtmlUtils.htmlUnescape( "Formando?" );
 			VIRTUAL_COLUMN_NAME = HtmlUtils.htmlUnescape( "Virtual?" );
 		}

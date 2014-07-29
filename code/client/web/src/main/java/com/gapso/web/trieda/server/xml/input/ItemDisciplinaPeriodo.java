@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="periodo" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="disciplinaId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *          &lt;element name="disciplinasCoRequisito" type="{}GrupoDisciplinaCoRequisito"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,14 +37,18 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ItemDisciplinaPeriodo", propOrder = {
     "periodo",
-    "disciplinaId"
+    "disciplinaId",
+    "disciplinasCoRequisito"
 })
 public class ItemDisciplinaPeriodo {
 
     protected int periodo;
     protected int disciplinaId;
+    
+    protected GrupoDisciplinaCoRequisito disciplinasCoRequisito;
 
-    /**
+
+	/**
      * Gets the value of the periodo property.
      * 
      */
@@ -74,5 +79,30 @@ public class ItemDisciplinaPeriodo {
     public void setDisciplinaId(int value) {
         this.disciplinaId = value;
     }
+    
+    /**
+     * Gets the value of the disciplinasCoRequisito property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoDisciplinaCoRequisito }
+     *     
+     */
+    public GrupoDisciplinaCoRequisito getDisciplinasCoRequisito() {
+		return disciplinasCoRequisito;
+	}
+
+    /**
+     * Sets the value of the disciplinasCoRequisito property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoDisciplinaCoRequisito }
+     *     
+     */
+	public void setDisciplinasCoRequisito(
+			GrupoDisciplinaCoRequisito disciplinasCoRequisito) {
+		this.disciplinasCoRequisito = disciplinasCoRequisito;
+	}
 
 }

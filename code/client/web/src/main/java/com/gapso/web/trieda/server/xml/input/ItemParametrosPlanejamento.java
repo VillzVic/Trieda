@@ -90,6 +90,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="percentuaisMinimoParcialIntegral" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="percentuaisMinimoIntegral" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *     	   &lt;element name="priorizarCalouros" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *     	   &lt;element name="priorizarCalouros" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *     	   &lt;element name="priorizarCalouros" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -140,7 +142,10 @@ import javax.xml.bind.annotation.XmlType;
     "utilizarDemandasP2",
     "percentuaisMinimoParcialIntegral",
     "percentuaisMinimoIntegral",
-    "priorizarCalouros"
+    "considerarCoRequisitos",
+    "priorizarCalouros",
+    "considerarPrioridadePorAlunos"
+    
 })
 public class ItemParametrosPlanejamento {
 
@@ -159,6 +164,7 @@ public class ItemParametrosPlanejamento {
     protected boolean minimizarDeslocProfessor;
     protected Integer maxDeslocProfessor;
     protected boolean minimizarHorariosVaziosProfessor;
+    protected boolean proibirHorariosVaziosProfessor;
     protected boolean evitarReducaoCargaHorariaProf;
     protected Integer evitarReducaoCargaHorariaProfValor;
     protected boolean evitarProfUltimoPrimeiroHor;
@@ -189,7 +195,9 @@ public class ItemParametrosPlanejamento {
     protected boolean utilizarDemandasP2;
     protected boolean percentuaisMinimoParcialIntegral;
     protected boolean percentuaisMinimoIntegral;
+    protected boolean considerarCoRequisitos;
     protected boolean priorizarCalouros;
+    protected boolean considerarPrioridadePorAlunos;
 
     /**
      * Gets the value of the modoOtimizacao property.
@@ -405,6 +413,22 @@ public class ItemParametrosPlanejamento {
      */
     public void setMinimizarHorariosVaziosProfessor(boolean value) {
         this.minimizarHorariosVaziosProfessor = value;
+    }
+    
+    /**
+     * Gets the value of the proibirHorariosVaziosProfessor property.
+     * 
+     */
+    public boolean isProibirHorariosVaziosProfessor() {
+        return proibirHorariosVaziosProfessor;
+    }
+
+    /**
+     * Sets the value of the proibirHorariosVaziosProfessor property.
+     * 
+     */
+    public void setProibirHorariosVaziosProfessor(boolean value) {
+        this.proibirHorariosVaziosProfessor = value;
     }
 
     /**
@@ -919,7 +943,24 @@ public class ItemParametrosPlanejamento {
         this.percentuaisMinimoIntegral = value;
     }
     
+    
     /**
+     * Gets the value of the considerarCoRequisitos property.
+     * 
+     */
+    public boolean isConsiderarCoRequisitos() {
+		return considerarCoRequisitos;
+	}
+
+    /**
+     * Sets the value of the considerarCoRequisitos property.
+     * 
+     */
+	public void setConsiderarCoRequisitos(boolean considerarCoRequisitos) {
+		this.considerarCoRequisitos = considerarCoRequisitos;
+	}
+
+	/**
      * Gets the value of the priorizarCalouros property.
      * 
      */
@@ -934,6 +975,25 @@ public class ItemParametrosPlanejamento {
     public void setPriorizarCalouros(boolean value) {
         this.priorizarCalouros = value;
     }
+    
+    
+    /**
+     * Gets the value of the considerarPrioridadePorAlunos property.
+     * 
+     */
+    public boolean isConsiderarPrioridadePorAlunos() {
+        return considerarPrioridadePorAlunos;
+    }
+
+    
+    /**
+     * Sets the value of the considerarPrioridadePorAlunos property.
+     * 
+     */
+    public void setConsiderarPrioridadePorAlunos(boolean value) {
+        this.considerarPrioridadePorAlunos = value;
+    }
+    
 
 
     /**

@@ -61,6 +61,7 @@ import com.gapso.web.trieda.server.xml.input.GrupoDemanda;
 import com.gapso.web.trieda.server.xml.input.GrupoDeslocamento;
 import com.gapso.web.trieda.server.xml.input.GrupoDiaSemana;
 import com.gapso.web.trieda.server.xml.input.GrupoDisciplina;
+import com.gapso.web.trieda.server.xml.input.GrupoDisciplinaCoRequisito;
 import com.gapso.web.trieda.server.xml.input.GrupoDisciplinaPeriodo;
 import com.gapso.web.trieda.server.xml.input.GrupoDivisaoCreditos;
 import com.gapso.web.trieda.server.xml.input.GrupoEquivalencia;
@@ -98,6 +99,7 @@ import com.gapso.web.trieda.server.xml.input.ItemCurso;
 import com.gapso.web.trieda.server.xml.input.ItemDemanda;
 import com.gapso.web.trieda.server.xml.input.ItemDeslocamento;
 import com.gapso.web.trieda.server.xml.input.ItemDisciplina;
+import com.gapso.web.trieda.server.xml.input.ItemDisciplinaCoRequisito;
 import com.gapso.web.trieda.server.xml.input.ItemDisciplinaPeriodo;
 import com.gapso.web.trieda.server.xml.input.ItemDivisaoCreditos;
 import com.gapso.web.trieda.server.xml.input.ItemEquivalencia;
@@ -1535,6 +1537,16 @@ public class SolverInput
 
 					itemDisciplinaPeriodo.setDisciplinaId(
 						curriculoPeriodo.getDisciplina().getId().intValue() );
+					
+					GrupoDisciplinaCoRequisito disciplinasCoRequisito = this.of.createGrupoDisciplinaCoRequisito();
+					
+					for(Disciplina disciplinaCoRequisito : curriculoPeriodo.getCoRequisitos()){
+						ItemDisciplinaCoRequisito itemDisciplinaCoRequisito = this.of.createItemDisciplinaCoRequisito();
+						itemDisciplinaCoRequisito.setDisciplinaCoRequisitoId(disciplinaCoRequisito.getId().intValue());
+						disciplinasCoRequisito.getDisciplinaCoRequisito().add(itemDisciplinaCoRequisito);
+					}
+					
+					itemDisciplinaPeriodo.setDisciplinasCoRequisito(disciplinasCoRequisito);
 
 					grupoDisciplinaPeriodo.getDisciplinaPeriodo().add( itemDisciplinaPeriodo );
 				}
@@ -1744,6 +1756,7 @@ public class SolverInput
 				itemAluno.setAlunoId(aluno.getId().intValue());
 				itemAluno.setNomeAluno(aluno.getNome());
 				itemAluno.setFormando(aluno.getFormando());
+				itemAluno.setPrioridade(aluno.getPrioridade());
 	
 				grupoAlunos.getAluno().add(itemAluno);
 			}
@@ -1830,6 +1843,9 @@ public class SolverInput
 
 		itemParametrosPlanejamento.setMinimizarHorariosVaziosProfessor(
 			this.parametro.getMinimizarGapProfessor() );
+		
+		itemParametrosPlanejamento.setProibirHorariosVaziosProfessor(
+				this.parametro.getProibirGapProfessor() );
 
 		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProfValor(
 			this.parametro.getEvitarReducaoCargaHorariaProfessorValue() );
@@ -1945,8 +1961,12 @@ public class SolverInput
 		itemParametrosPlanejamento.setPercentuaisMinimoParcialIntegral(this.parametro.getPercentuaisMinimosParcialIntegral());
 		
 		itemParametrosPlanejamento.setPercentuaisMinimoIntegral(this.parametro.getPercentuaisMinimosIntegral());
+
+		itemParametrosPlanejamento.setConsiderarCoRequisitos(this.parametro.getConsiderarCoRequisitos());
 		
 		itemParametrosPlanejamento.setPriorizarCalouros(this.parametro.getPriorizarCalouros());
+		
+		itemParametrosPlanejamento.setConsiderarPrioridadePorAlunos(this.parametro.getConsiderarPrioridadePorAlunos());
 
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}

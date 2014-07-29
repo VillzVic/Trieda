@@ -259,6 +259,22 @@ public class ObjectFactory {
     public ItemDisciplinaPeriodo createItemDisciplinaPeriodo() {
         return new ItemDisciplinaPeriodo();
     }
+    
+    /**
+     * Create an instance of {@link GrupoDisciplinaCoRequisito }
+     * 
+     */
+    public GrupoDisciplinaCoRequisito createGrupoDisciplinaCoRequisito() {
+        return new GrupoDisciplinaCoRequisito();
+    }
+    
+    /**
+     * Create an instance of {@link ItemDisciplinaCoRequisito }
+     * 
+     */
+    public ItemDisciplinaCoRequisito createItemDisciplinaCoRequisito(){
+    	return new ItemDisciplinaCoRequisito();
+    }
 
     /**
      * Create an instance of {@link GrupoNivelDificuldadeHorario }

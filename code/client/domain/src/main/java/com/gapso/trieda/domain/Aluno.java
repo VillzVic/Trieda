@@ -82,6 +82,12 @@ public class Aluno
 	@NotNull
 	@Column( name = "ALN_CRIADO_POR_TRIEDA" )
 	private Boolean criadoTrieda;
+	
+	@NotNull
+	@Column( name = "ALN_PRIORIDADE" )
+	@Min( 0L )
+	@Max( 10L )
+	private Integer prioridade;
     
     @ManyToMany( cascade = { CascadeType.PERSIST,
     CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
@@ -228,6 +234,16 @@ public class Aluno
 	public void setCursou( Set<CurriculoDisciplina> cursou )
 	{
 		this.cursou = cursou;
+	}
+	
+	public Integer getPrioridade()
+	{
+		return this.prioridade;
+	}
+
+	public void setPrioridade( Integer prioridade )
+	{
+		this.prioridade = prioridade;
 	}
 
 	@Transactional
