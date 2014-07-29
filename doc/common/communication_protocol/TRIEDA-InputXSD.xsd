@@ -786,6 +786,20 @@
           <xs:documentation>identificador (ItemDisciplina) da disciplina que é oferecida no período da matriz curricular em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
+	  <xs:element name="disciplinasCoRequisito" type="GrupoDisciplinaCoRequisito">
+        <xs:annotation>
+          <xs:documentation>disciplinas co-requisito da matriz curricular</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+    <xs:complexType name="ItemDisciplinaCoRequisito">
+    <xs:sequence>
+      <xs:element name="disciplinaCoRequisitoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>identificador (ItemDisciplina) da disciplina co-requisito</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemOfertaCurso">
@@ -1037,6 +1051,8 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       <xs:element name="percentuaisMinimoParcialIntegral" type="xs:boolean" />
       <xs:element name="percentuaisMinimoIntegral" type="xs:boolean" />
       <xs:element name="priorizarCalouros" type="xs:boolean" />
+      <xs:element name="considerarPrioridadePorAlunos" type="xs:boolean" />
+      <xs:element name="considerarCoRequisitos" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemNivelDificuldadeHorario">
@@ -1253,6 +1269,15 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       <xs:element name="DisciplinaPeriodo" type="ItemDisciplinaPeriodo">
         <xs:annotation>
           <xs:documentation>representa um par (disciplina, período)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDisciplinaCoRequisito">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="DisciplinaCoRequisito" type="ItemDisciplinaCoRequisito">
+        <xs:annotation>
+          <xs:documentation>representa uma disciplina co-requisito</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -1487,6 +1512,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       </xs:element>
       <xs:element name="nomeAluno" type="xs:string" />
       <xs:element name="formando" type="xs:boolean" />
+      <xs:element name="prioridade" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemEquivalencia">
