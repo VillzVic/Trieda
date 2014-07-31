@@ -933,6 +933,11 @@
           <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não minimizar gaps (buracos) nos horários dos professores num mesmo dia. Ver requisito RF-PP-1.</xs:documentation>
         </xs:annotation>
       </xs:element>
+	  <xs:element name="proibirHorariosVaziosProfessor" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não proibir gaps (buracos) nos horários dos professores num mesmo dia. Ver requisito RF-PP-1.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="evitarReducaoCargaHorariaProf" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>evitar redução grande de carga horária do docente em relação ao período anterior (para evitar problemas com sindicatos). Ver requisito RF-PP-9.</xs:documentation>
