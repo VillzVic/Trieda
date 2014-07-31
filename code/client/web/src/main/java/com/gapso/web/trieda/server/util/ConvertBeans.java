@@ -3253,6 +3253,7 @@ public class ConvertBeans {
 		domain.setPercentuaisMinimosIntegral(dto.getPercentuaisMinimosIntegral());
 		domain.setConsiderarCoRequisitos(dto.getConsiderarCoRequisitos());
 		domain.setPriorizarCalouros(dto.getPriorizarCalouros());
+		domain.setConsiderarPrioridadePorAlunos(dto.getConsiderarPrioridadePorAlunos());
 
 		for ( CursoDTO cursoDTO
 			: dto.getMaximizarNotaAvaliacaoCorpoDocenteList() )
