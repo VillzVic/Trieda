@@ -3313,6 +3313,9 @@ public class ConvertBeans {
 		dto.setMinimizarDeslocamentoProfessor( domain.getMinimizarDeslocamentoProfessor() );
 		dto.setMinimizarGapProfessor( domain.getMinimizarGapProfessor() );
 		dto.setProibirGapProfessor( domain.getProibirGapProfessor() );
+		if( domain.getProibirGapProfessor()){
+			dto.setMinimizarGapProfessor( false );
+		}
 		dto.setEvitarReducaoCargaHorariaProfessor( domain.getEvitarReducaoCargaHorariaProfessor() );
 		dto.setEvitarUltimoEPrimeiroHorarioProfessor( domain.getEvitarUltimoEPrimeiroHorarioProfessor() );
 		dto.setEvitarUltimoEPrimeiroHorarioProfessorValue( domain.getEvitarUltimoEPrimeiroHorarioProfessorValue() );

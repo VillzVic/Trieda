@@ -1846,6 +1846,10 @@ public class SolverInput
 		
 		itemParametrosPlanejamento.setProibirHorariosVaziosProfessor(
 				this.parametro.getProibirGapProfessor() );
+		
+		if(this.parametro.getProibirGapProfessor()){
+			itemParametrosPlanejamento.setMinimizarHorariosVaziosProfessor(false);
+		}
 
 		itemParametrosPlanejamento.setEvitarReducaoCargaHorariaProfValor(
 			this.parametro.getEvitarReducaoCargaHorariaProfessorValue() );

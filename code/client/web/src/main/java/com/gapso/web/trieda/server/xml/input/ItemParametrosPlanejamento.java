@@ -113,6 +113,7 @@ import javax.xml.bind.annotation.XmlType;
     "minimizarDeslocProfessor",
     "maxDeslocProfessor",
     "minimizarHorariosVaziosProfessor",
+    "proibirHorariosVaziosProfessor",
     "evitarReducaoCargaHorariaProf",
     "evitarReducaoCargaHorariaProfValor",
     "evitarProfUltimoPrimeiroHor",
