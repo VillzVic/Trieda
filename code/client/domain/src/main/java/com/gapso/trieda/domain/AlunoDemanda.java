@@ -1104,6 +1104,65 @@ public class AlunoDemanda
 		return q.getResultList();
 	}
 	
+	@SuppressWarnings( "unchecked" )
+	public static List< Object > findRelatorioPorDisciplinasBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, 
+		String codigo, Campus campus, Curso curso, String turma )
+	{
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+
+		String queryCampus = "";
+		if ( campus != null )
+		{
+			queryCampus = ( " o.demanda.oferta.campus = :campus AND " );
+		}
+		
+		String queryCurso = "";
+		if ( curso != null )
+		{
+			queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
+		}
+
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findByCenario(instituicaoEnsino, cenario);
+		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
+		for (TipoDisciplina td : tiposDisciplinas) {
+			if (td.ocupaGrade()) {
+				tiposDisciplinasPresenciais.add(td);
+			}
+		}
+		
+		Query q = entityManager().createQuery(
+			" SELECT o.demanda.disciplina, COUNT(o.aluno), " +
+			" SUM(case when o.atendido = TRUE then 1 else 0 end), " +
+			" SUM(case when o.atendido = TRUE and o.prioridade = 1 then 1 else 0 end), " +
+			" SUM(case when o.atendido = TRUE and o.prioridade = 2 then 1 else 0 end)," +
+			" SUM(case when o.atendido = FALSE and o.prioridade = 1 then 1 else 0 end), " +
+			" o.demanda.oferta.campus " +
+			" FROM AlunoDemanda o " +
+			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND  o.demanda.oferta.campus.cenario = :cenario " +
+			" AND " + queryCampus + queryCurso + " LOWER ( o.demanda.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
+			" AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) " +
+			" GROUP BY o.demanda.disciplina, o.demanda.oferta.campus ");
+
+		if ( curso != null )
+		{
+			q.setParameter("curso", curso);
+		}
+		if ( campus != null )
+		{
+			q.setParameter("campus", campus);
+		}
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
+		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
+
+		return q.getResultList();
+	}
+	
 	public static int countMatriculas(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		String aluno, String matricula, Campus campus, Curso curso )

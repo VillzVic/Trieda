@@ -540,6 +540,23 @@ public class AtendimentoOperacional
 	}
 	
 	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAll(
+		Campus campus, Cenario cenario, String turma, InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario ");
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllBy(
 		Campus campus, Cenario cenario, ProfessorVirtual professorVirtual, InstituicaoEnsino instituicaoEnsino )
 	{
