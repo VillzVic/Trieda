@@ -246,9 +246,10 @@ public class AlunosImportExcel
 				alunoBD.setNome( alunoExcel.getNomeStr() );
 				alunoBD.setFormando( alunoExcel.getFormando() );
 				alunoBD.setVirtual( alunoExcel.getVirtual() );
+				alunoBD.setPrioridade( Integer.parseInt(alunoExcel.getPrioridadeStr()));
 				alunoBD.setCriadoTrieda(false);
 				
-				alunoBD.merge();
+				//alunoBD.merge();
 			}
 			else
 			{

@@ -179,7 +179,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 									}
 								});
 							} catch(Exception e) {
-								MessageBox.alert("ERRO!","Não foi possível gerar a grade de horários.",null);
+								MessageBox.alert("ERRO!","Não foi possível executar a checagem feita antes da otimização.",null);
 								habilitarBotao();
 							}
 						} else {

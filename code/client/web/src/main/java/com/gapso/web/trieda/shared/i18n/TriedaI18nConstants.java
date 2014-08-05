@@ -126,6 +126,7 @@ public interface TriedaI18nConstants
 	String ofertasEDemandas();
 	String otimizado();
 	String periodo();
+	String prioridade();
 	String periodos();
 	String percentMestresDoutores();
 	String pratico();

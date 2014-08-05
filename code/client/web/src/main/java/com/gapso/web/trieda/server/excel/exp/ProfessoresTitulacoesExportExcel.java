@@ -20,6 +20,7 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @ProgressDeclarationAnnotation
 public class ProfessoresTitulacoesExportExcel
@@ -133,8 +134,12 @@ public class ProfessoresTitulacoesExportExcel
 		ProfessoresServiceImpl professoresServiceImpl = new ProfessoresServiceImpl();
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
-			relatorioDocenteDTO.addAll(
-					professoresServiceImpl.getProfessoresTitulacoes(ConvertBeans.toCenarioDTO(getCenario()), campusDTO) );
+			try {
+				relatorioDocenteDTO.addAll(
+						professoresServiceImpl.getProfessoresTitulacoes(ConvertBeans.toCenarioDTO(getCenario()), campusDTO) );
+			} catch (TriedaException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if ( !relatorioDocenteDTO.isEmpty() )

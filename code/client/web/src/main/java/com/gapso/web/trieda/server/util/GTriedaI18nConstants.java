@@ -810,6 +810,12 @@ public class GTriedaI18nConstants
 	{
 		return this.languageManager.getText( "nomeAluno" );
 	}
+	
+	@Override
+	public String prioridade()
+	{
+		return this.languageManager.getText( "prioridade" );
+	}
 
 	@Override
 	public String prioridadeAlunoDemanda()

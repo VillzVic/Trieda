@@ -637,7 +637,7 @@ public class ProfessoresServiceImpl
 	
 
 	@Override
-	public List<RelatorioQuantidadeDTO> getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	public List<RelatorioQuantidadeDTO> getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO) throws TriedaException
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
@@ -678,7 +678,11 @@ public class ProfessoresServiceImpl
 		}
 		for (ProfessorVirtual professor : professoresVirtuaisList)
 		{
-			titulacoesToNumProfessoresVirtuaisMap.put(professor.getTitulacao(), titulacoesToNumProfessoresVirtuaisMap.get(professor.getTitulacao())+1 );
+			try{
+				titulacoesToNumProfessoresVirtuaisMap.put(professor.getTitulacao(), titulacoesToNumProfessoresVirtuaisMap.get(professor.getTitulacao())+1 );
+			} catch(NullPointerException e){
+				throw new TriedaException("Um ou mais professores não possui(em) titulação cadastrada. Não é possível gerar a tabela.");
+			}
 		}
 		
 		for (Entry<Titulacao, Integer> titulacao : titulacoesToNumProfessoresMap.entrySet())

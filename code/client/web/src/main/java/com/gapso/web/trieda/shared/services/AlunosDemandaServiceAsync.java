@@ -6,12 +6,12 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
@@ -38,4 +38,5 @@ public interface AlunosDemandaServiceAsync
 			AsyncCallback<PagingLoadResult<AlunoDemandaDTO>> callback);
 	void getResumoAtendimentosDisciplinaList( CenarioDTO cenarioDTO, String codigo, CampusDTO campusDTO, CursoDTO cursoDTO,
 			AsyncCallback<ListLoadResult<ResumoMatriculaDTO>> callback );
+	
 }

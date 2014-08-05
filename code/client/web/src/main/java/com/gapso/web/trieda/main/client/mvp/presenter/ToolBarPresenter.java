@@ -22,14 +22,15 @@ import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosDisciplinasCursadasView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
-import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoDiaSemanaView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoCapacidadeView;
+import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoDiaSemanaView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosDiaSemanaView;
 import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaCreditoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaTurmaView;
+import com.gapso.web.trieda.main.client.mvp.view.AtendimentosPesquisaPorDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
@@ -214,6 +215,7 @@ public class ToolBarPresenter
 		MenuItem getAmbientesFaixaUtilizacaoCapacidadeMenuItem();
 		MenuItem getAmbientesFaixaUtilizacaoDiaSemanaItem();
 		MenuItem getAmbientesFaixaUtilizacaoHorariosDiaSemanaItem();
+		MenuItem getRelatorioPorDisciplinaMenuItem();
 		MenuItem getResumoPercentMestresDoutoresMenuItem();
 		MenuItem getProfessoresJanelasGradeMenuItem();
 		MenuItem getProfessoresDisciplinasHabilitadasMenuItem();
@@ -1177,6 +1179,19 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new AmbientesFaixaUtilizacaoHorariosDiaSemanaPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new AmbientesFaixaUtilizacaoHorariosDiaSemanaView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getRelatorioPorDisciplinaMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AtendimentosPesquisaPorDisciplinaPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AtendimentosPesquisaPorDisciplinaView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}

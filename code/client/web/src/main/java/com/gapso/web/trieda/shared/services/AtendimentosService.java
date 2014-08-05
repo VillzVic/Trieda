@@ -23,6 +23,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.PesquisaPorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDoubleDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -84,6 +85,9 @@ public interface AtendimentosService extends RemoteService {
 
 	PagingLoadResult<ConfirmacaoTurmaDTO> getConfirmacaoTurmasList(
 			CenarioDTO cenarioDTO, PagingLoadConfig config);
+	
+	PagingLoadResult<PesquisaPorDisciplinaDTO> getAtendimentosPesquisaPorDisciplinaList( CenarioDTO cenarioDTO, String codigo, 
+			CampusDTO campusDTO, String turma, PagingLoadConfig config);
 
 	void saveConfirmacoes(CenarioDTO cenarioDTO, List<ConfirmacaoTurmaDTO> list);
 

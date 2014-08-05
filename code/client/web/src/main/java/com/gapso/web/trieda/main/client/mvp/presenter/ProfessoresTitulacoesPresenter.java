@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -94,6 +95,14 @@ public class ProfessoresTitulacoesPresenter
 							display.getStore().add( list );
 							display.getGrid().unmask();
 						}
+					
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERRO!",caught.getMessage(),null);
+						display.getStore().removeAll();
+						display.getGrid().unmask();
+					}
 				});
 			}
 		});

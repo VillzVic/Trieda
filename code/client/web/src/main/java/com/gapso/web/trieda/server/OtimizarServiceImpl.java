@@ -129,50 +129,68 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			List<String> errors = new ArrayList<String>();
 			
 			// realiza verificações
-			
+			System.out.print("Checando Semanas Letivas");long start = System.currentTimeMillis(); // TODO: retirar
+			getProgressReport().setInitNewPartial("Checando Semanas Letivas");
 			checkSemanasLetivas(parametro,warnings);
-			
-			System.out.print("Checando disciplinas sem curriculos");long start = System.currentTimeMillis(); // TODO: retirar
-			checkDisciplinasSemCurriculo(parametro,warnings);
 			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			System.out.print("Checando disciplinas sem curriculos"); start = System.currentTimeMillis(); // TODO: retirar
+			getProgressReport().setInitNewPartial("Checando disciplinas sem currículos");
+			checkDisciplinasSemCurriculo(parametro,warnings);
+			 time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
-			//System.out.print("Checando disciplinas sem laboratorios");start = System.currentTimeMillis(); // TODO: retirar
+			System.out.print("Checando disciplinas sem laboratorios");start = System.currentTimeMillis(); // TODO: retirar
+			getProgressReport().setInitNewPartial("Checando disciplinas sem laboratórios");
 			checkDisciplinasSemLaboratorios(parametro,errors);
-			//time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			System.out.print("Checando disciplinas que nao exigem laboratorio associadas somente a laboratorios");start = System.currentTimeMillis(); // TODO: retirar
+			getProgressReport().setInitNewPartial("Checando disciplinas que não exigem laboratório associadas somente a laboratórios");
 			checkDisciplinasComSomenteLaboratorios(parametro,warnings);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			System.out.print("Checando disciplinas com creditos zerados");start = System.currentTimeMillis(); // TODO: retirar
+			getProgressReport().setInitNewPartial("Checando disciplinas com créditos zerados");
 			checkDisciplinasComCreditosZerados(parametro,warnings);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
+			getProgressReport().setInitNewPartial("Checando disciplinas com número máximo de alunos teóricos zerados");
 			checkDisciplinasComMaxAlunosTeoricosZerados(parametro,errors);
+			
+			getProgressReport().setInitNewPartial("Checando disciplinas com número máximo de alunos práticos zerado");
 			checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
+			
+			getProgressReport().setInitNewPartial("Checando disciplinas com número máximo de aluno teóricos e práticos diferentes");
 			checkDisciplinasComMaxAlunosDiferentes(parametro,errors);
 			
+			getProgressReport().setInitNewPartial("Checando divisões de crédito");
 			checkDivisoesCreditos(parametro,errors);
 			
 			if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
 				System.out.print("Checando disciplinas repetidas por curriculo");start = System.currentTimeMillis(); // TODO: retirar
+				getProgressReport().setInitNewPartial("Checando disciplinas repetidas por currículo");
 				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors,warnings);
 				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			} else {
 				System.out.print("Checando creditos semanais e disciplinas repetidas por aluno");start = System.currentTimeMillis(); // TODO: retirar
+				getProgressReport().setInitNewPartial("Checando créditos semanais e disciplinas repetidas por aluno");
 				checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors,warnings);
 				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			}
 
 			System.out.print("Checando demandas com disciplinas sem curriculo");start = System.currentTimeMillis(); // TODO: retirar
+			getProgressReport().setInitNewPartial("Checando demandas com disciplinas sem currículo");
 			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			System.out.print("Checando professoress com Carga Horária Máxima zerada");start = System.currentTimeMillis(); // TODO: retirar
+			getProgressReport().setInitNewPartial("Checando professoress com Carga Horária Máxima zerada");
 			checkProfessorComCargaHorariaMaximaZerada(parametro,errors, warnings);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 
+			getProgressReport().setInitNewPartial("Checando oferta com receita de crédito zerada");
 			checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
+			
+			getProgressReport().setInitNewPartial("Checando exige equivalência forçada em Demandas de alunos");
 			checkExigeEquivalenciaForcadaAlunosDemanda(parametro,getInstituicaoEnsinoUser(),errors);
 			
 //			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
@@ -182,6 +200,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			if (parametro.getConsiderarEquivalencia()) {
 				if (parametro.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia()) {
 					System.out.print("Checando equivalencias que levam para disciplinas online ou sem creditos");start = System.currentTimeMillis(); // TODO: retirar
+					getProgressReport().setInitNewPartial("Checando equivalências que levam para disciplinas on-line ou sem créditos");
 					checkEquivalenciasQueLevamParaDisciplinasOnlineOuSemCreditos(parametro.getCenario(),errors);
 					time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 				}
@@ -193,10 +212,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				if (!detectouCiclo || !parametro.getConsiderarTransitividadeEmEquivalencia()) {
 					if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
 						System.out.print("Checando equivalencias que geram disciplinas repetidas em um mesmo curriculo");start = System.currentTimeMillis(); // TODO: retirar
+						getProgressReport().setInitNewPartial("Checando equivalências que geram disciplinas repetidas em um mesmo currículo");
 						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,warnings);
 						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 					} else {
 						System.out.print("Checando equivalencias que geram disciplinas repetidas em um aluno");start = System.currentTimeMillis(); // TODO: retirar
+						getProgressReport().setInitNewPartial("Checando equivalências que geram disciplinas repetidas em um aluno");
 						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,warnings);
 						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 					}
@@ -204,9 +225,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			}
 			
 			if (parametro.getProfessorEmMuitosCampi()) {
+				getProgressReport().setInitNewPartial("Chegando campi sem deslocamentos");
 				checkCampiSemDeslocamentos(parametro,errors);
 			}
-			checksCleiton();//TODO: revisar
 			
 			response.setErrors(errors);
 			response.setWarnings(warnings);
@@ -428,18 +449,15 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						initProgressReport("chaveOtimizacaoReq");
 					}
 					getProgressReport().setInitNewPartial("Enviando requisicao de otimizacao");
-					
 					Parametro parametro = ConvertBeans.toParametro(parametroDTO);
-			
 					parametro.setId(null);
 					parametro.flush();
 					parametro.save();
-			
 					Cenario cenario = parametro.getCenario();
 					cenario.getParametros().add(parametro);
 					List<Campus> campi = new ArrayList<Campus>(parametro.getCampi().size());
 					campi.addAll(parametro.getCampi());
-			
+					System.out.println("antes gerando");
 					SolverInput solverInput = new SolverInput(getInstituicaoEnsinoUser(),cenario,parametro,campi);
 					TriedaInput triedaInput = null;
 					if (parametro.isTatico()) {
@@ -447,7 +465,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					} else {
 						triedaInput = solverInput.generateOperacionalTriedaInput();
 					}
-			
+					System.out.println("depois gerando");
 					final ByteArrayOutputStream temp = new ByteArrayOutputStream();
 					JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
 					Marshaller m = jc.createMarshaller();
@@ -457,7 +475,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					byte [] fileBytes = temp.toByteArray();
 					ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 					SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
-			
 					Long round = solverClient.requestOptimization(fileBytes);
 					
 					return ParDTO.<Long,ParametroDTO>create(round,ConvertBeans.toParametroDTO(parametro));
@@ -467,8 +484,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			exception = new TriedaException(e);
+			//e.printStackTrace();
+			System.out.println(e.getMessage());
+			exception = new TriedaException(e.getMessage());
 		}
 		
 		getProgressReport().setPartial("Etapa concluída");
@@ -831,8 +849,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	private void checkDisciplinasSemLaboratorios(Campus campus, List<String> errors) {
 		// coleta as disciplinas que serão enviadas para o solver e que exigem laboratório
 		
-		System.out.print("for 1");long start = System.currentTimeMillis(); // TODO: retirar
-		
 		Set<Disciplina> disciplinasQueExigemLaboratio = new HashSet<Disciplina>();
 		for (Oferta oferta : campus.getOfertas()) {
 			for (Demanda demanda : oferta.getDemandas()) {
@@ -842,12 +858,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 			}
 		}
-		
-		System.out.println(disciplinasQueExigemLaboratio.size()+ " tamanhoDisciplinasQueExigemLaboratio");
-		
-		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		
-		System.out.print("for 2");start = System.currentTimeMillis(); // TODO: retirar
 		
 		// verifica se há disciplinas que exigem laboratório, porém, não estão associadas a laboratórios
 		for (Disciplina disciplina : disciplinasQueExigemLaboratio) {
@@ -890,7 +900,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + campus.getCodigo() + ", são eles: " + pares));
 			}
 		}
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 	}
 	
 	private void checkDisciplinasComSomenteLaboratorios(Parametro parametro, List<String> warnings) {

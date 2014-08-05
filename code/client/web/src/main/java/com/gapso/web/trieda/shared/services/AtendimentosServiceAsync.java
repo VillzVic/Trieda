@@ -23,6 +23,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.PesquisaPorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDoubleDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -84,6 +85,9 @@ public interface AtendimentosServiceAsync {
 
 	void getConfirmacaoTurmasList(CenarioDTO cenarioDTO, PagingLoadConfig config,
 			AsyncCallback<PagingLoadResult<ConfirmacaoTurmaDTO>> callback);
+	
+	void getAtendimentosPesquisaPorDisciplinaList( CenarioDTO cenarioDTO, String codigo, CampusDTO campusDTO, String turma,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<PesquisaPorDisciplinaDTO>> callback );
 
 	void saveConfirmacoes(CenarioDTO cenarioDTO, List<ConfirmacaoTurmaDTO> list, AsyncCallback<Void> callback);
 

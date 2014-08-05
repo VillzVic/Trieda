@@ -577,6 +577,7 @@ public class ToolBarView
 		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Ocupação Média da Capacidade", Resources.DEFAULTS.sala16()) );
 		menuAtendimentos.add( createMenuItem("Ocupação dos Ambientes por Dia da Semana", Resources.DEFAULTS.sala16()) );
 		menuAtendimentos.add( createMenuItem("Utilização dos Horários dos Ambientes por Dia da Semana", Resources.DEFAULTS.sala16()) );
+		menuAtendimentos.add( createMenuItem("Pesquisa por Disciplina", Resources.DEFAULTS.sala16()) );
 		atendimentosDropDownBt.setMenu(menuAtendimentos);
 		relatoriosToolBar.add(atendimentosDropDownBt);
 		
@@ -1084,6 +1085,11 @@ public class ToolBarView
 	public MenuItem getAmbientesFaixaUtilizacaoHorariosDiaSemanaItem()
 	{
 		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(9);
+	}
+	
+	@Override
+	public MenuItem getRelatorioPorDisciplinaMenuItem() {
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(10);
 	}
 	
 	@Override

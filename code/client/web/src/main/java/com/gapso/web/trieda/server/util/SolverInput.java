@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.server.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,6 +51,9 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportListWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunos;
 import com.gapso.web.trieda.server.xml.input.GrupoAreaTitulacao;
@@ -150,6 +155,8 @@ public class SolverInput
 	private Set< Demanda > demandasCampusTurno = new HashSet< Demanda >();
 	private Set< Disciplina > disciplinasComDemandaCurriculo = new HashSet< Disciplina >();
 	private Map< Curriculo, List< Integer > > mapCurriculosPeriodos = new HashMap< Curriculo, List< Integer > >();
+	
+	private ProgressReportWriter progressReport;
 
 	public SolverInput(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
@@ -175,9 +182,15 @@ public class SolverInput
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
 
+		long start = System.currentTimeMillis(); // TODO: retirar
 		this.preencheMapHorarios();
+		long time = (System.currentTimeMillis() - start)/1000;System.out.println("preencheMapHorarios tempo = " + time + " segundos"); // TODO: retirar
+		start = System.currentTimeMillis(); // TODO: retirar
 		this.carregaDemandasDisciplinas();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println("carregaDemandasDisciplinas tempo = " + time + " segundos"); // TODO: retirar
+		start = System.currentTimeMillis(); // TODO: retirar
 		this.relacionaCurriculosPeriodos();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println("relacionaCurriculosPeriodos tempo = " + time + " segundos"); // TODO: retirar
 	}
 
 	private void relacionaCurriculosPeriodos()
@@ -483,12 +496,15 @@ public class SolverInput
 	private void generate( boolean tatico )
 	{
 		System.out.print("Gerando Calendario");long start = System.currentTimeMillis(); // TODO: retirar
+		getProgressReport().setInitNewPartial("Gerando Calendario");
 		generateCalendario();
 		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando tiposSala");start = System.currentTimeMillis(); // TODO: retirar
+		getProgressReport().setInitNewPartial("Gerando tipos de sala");
 		generateTiposSala();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando tiposContrato");start = System.currentTimeMillis(); // TODO: retirar
+		getProgressReport().setInitNewPartial("Gerando tipos de contrato");
 		generateTiposContrato();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando tiposTitulacao");start = System.currentTimeMillis(); // TODO: retirar
@@ -2450,5 +2466,17 @@ public class SolverInput
 		}
 		
 		this.triedaInput.setEquivalencias( grupoEquivalencia );	
+	}
+	
+	public void setProgressReport(List<String> fbl){
+		progressReport = new ProgressReportListWriter(fbl);
+	}
+	
+	public void setProgressReport(File f) throws IOException{
+		progressReport = new ProgressReportFileWriter(f);
+	}
+	
+	public ProgressReportWriter getProgressReport(){
+		return progressReport;
 	}
 }
