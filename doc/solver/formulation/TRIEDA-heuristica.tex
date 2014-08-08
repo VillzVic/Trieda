@@ -1,0 +1,979 @@
+%% LyX 2.0.6 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[brazil,landscape, lettersize]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{luainputenc}
+\usepackage[dvips]{geometry}
+\geometry{verbose,lmargin=3cm,rmargin=3cm}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage[dvips]{geometry} 
+\usepackage[brazil]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{epsfig}
+%\usepackage[pdftex,hyperfigures]{hyperref}
+
+\usepackage[lined,boxed,commentsnumbered]{algorithm2e}
+
+\textheight 17.29cm
+\textwidth 22.94cm 
+
+\oddsidemargin -0.6mm
+\evensidemargin -0.6mm
+
+\topmargin -1.5cm
+
+\makeatother
+
+
+\begin{document}
+
+\title{TRIEDA - Documentação da Heurística}
+
+
+\author{Autor: Gapso}
+
+\maketitle
+
+\section{Introdução}
+
+Este documento foi escrito com o âmbito de documentar simbolicamente
+o framework e o funcionamento da heurística construtiva usada na ferramenta
+TRIEDA. 
+
+Na secção \ref{sec:Par=0000E2metros-Gerais} são introduzidos alguns
+dos parâmetros gerais que condicionam o funcionamento da heurística
+e são necessários para descrever os seus algoritmos mais relevantes.
+Estes parâmetros gerias são identificados ao longo do documento com
+o sobrescrito {*}. Os algoritmos principais da heurística são introduzidos
+na secção \ref{sec:Algoritmos-Principais}, sendo apresentado para
+cada um o seu objectivo, o pseudo-código, os principais sub-métodos
+usados e o arquivo onde se encontra implementado o código. Os MIPs
+usados pela heurística são descritos nas secções \ref{sec:MIP-Realocar-Alunos}
+e \ref{sec:MIP-Alocar-Professores}, onde são apresentados os métodos
+de pré e pós-processamento da solução e toda a estrutura do modelo,
+assim como a sua localização no código.
+
+
+\section{Parâmetros Gerais\label{sec:Par=0000E2metros-Gerais}}
+
+Nesta secção são apresentados alguns parâmetros gerais da heurística
+que podem ser fixados internamente (pré-compilação) ou através de
+argumentos opcionais inseridos aquando da execução do programa.
+\begin{itemize}
+\item \emph{versaoFast}: Determina se o algoritmo terminará sem o uso de
+MIPs para realocação de alunos e professores. A alocação de professores
+desta solução pode não ser válida.
+\item \emph{limMinAlunos}: Limite mínimo de alunos que é usado em alguns
+casos especiais.
+\item \emph{mipRealocSalas}: Determina se o MIP de realocação de alunos
+também realoca as salas das turmas.
+\item \emph{heurRealocAlunos}: Determina se nas fases de construção heurísticas
+são usados os mecanismos de realocação de alunos.
+\item \emph{relaxMinAlunos}: Relaxamento no minimo de alunos usado na fase
+de abertura de turmas legais.
+\item \emph{profsVirtuaisIndiv}: Determina se o algoritmo deve criar professores
+virtuais individualizados.
+\item \emph{minRecCred}: Mínimo imposto no MIP de alocação de alunos sobre
+a razão $\frac{cr\acute{e}ditos\, alunos}{cr\acute{e}ditos\, professores}$.
+\item \emph{desvioMax}: Desvio percentual máximo usado para a escolha das
+turmas potenciais candidatas a ser abertas.
+\item \emph{relacPraticas}: Relação imposta entre turmas teóricas e práticas:
+$M \times N$, $1 \times N$ ou $1 \times 1$
+\item \emph{percChAnt}: Percentagem da carga horária do semestre anterior
+que se deve tentar atender para cada professor.
+\item \emph{minChForte}: Determina se a restrição de mínimo de carga horária
+de um professor deve ser forte.
+\item \emph{fecharTurmasCarregadas} : Indica se é permitido fechar turmas
+carregadas de uma solução.
+\end{itemize}
+
+\section{Algoritmos Principais\label{sec:Algoritmos-Principais}}
+
+Nesta secção são descritos os métodos chave usados pela heurística.
+A apresentação de cada um deles começa com uma introdução ao propósito
+do algoritmo, seguida de uma breve descrição dos sub-métodos e dos
+seus parâmetros, sendo o pseudo-código exibido e analisado no final.
+Os arquivos a consultar no código do projecto são identificado no
+final da sub-secção.
+
+
+\subsection{Develop Solução\label{sub:Develop-Solu=0000E7=0000E3o}}
+
+
+\paragraph*{Objetivo}
+
+O propósito do método \emph{Develop Solução }é construir e melhorar
+uma solução a partir de um estado inicial. Esta solução tanto pode
+não ter nenhuma alocação como conter já algumas alocações definidas.
+
+
+\paragraph*{Sub-métodos}
+\begin{itemize}
+\item \emph{abrirTurmas} \emph{(bool equiv, bool usarVirtual, bool realoc,
+bool formAnySize, int priorAluno = 0, double relaxMin = 1.0)}. Este
+método tenta abrir turmas na solução atual com base nas demandas não
+atendidas de prioridade 1, alocando alunos, salas e professores a
+estas. Uma turma pode ser aberta com um professor virtual, mas em
+nenhuma circunstância pode ser aberta sem ter uma sala disponível.
+Os parâmetros deste método têm o seguinte impacto:
+
+\begin{itemize}
+\item \emph{equiv} : determina se a alocação de demandas equivalentes é
+ou não usada.
+\item \emph{usarVirtual} : determina se é possivel abrir uma turma sem professor
+real.
+\item \emph{realoc} : determina se os mecanismos de realocação de alunos
+são usados ao longo da abertura de turmas. Estes mecanismos procuram
+atender mais demandas ao realocar alunos entre turmas.
+\item \emph{formAnySize} : determina se é permitido abrir uma turma com
+formando de qualquer tamanho (considerando que é possível violar o
+mínimo). Se o valor do parâmetro for \emph{false}, o mínimo de alunos
+para abrir uma turma com formando é definido pelo parâmetro \emph{limMinAlunos{*}}.
+\item \emph{priorAluno} : define a prioridade máxima de aluno que pode ser
+atendida. Caso este valor for zero, qualquer aluno pode ser atendido.
+\emph{Default: 0}.
+\item \emph{relaxMin} : determina o grau de relaxamento que é dado ao mínimo
+de alunos turma. O valor mínimo de alunos turma considerado para a
+abertura das turmas será calculado pela expressão $\left\lceil relaxMin\cdot min\right\rceil $,
+onde \emph{min} é o parâmetro pre-estabelecido para o mínimo de alunos
+requerido para a turma em questão. \emph{Default: 1.0}.
+\end{itemize}
+\item \emph{tryAlocPDois} \emph{(int priorAluno = 0)}. Este método tenta
+alocar heuristicamente demandas não atendidas de prioridade 2 em turmas
+já abertas.
+
+\begin{itemize}
+\item \emph{priorAluno} : define a prioridade máxima de aluno que pode ser
+atendida. Caso este valor for zero, qualquer aluno pode ser atendido.
+\emph{Default: 0}.
+\end{itemize}
+\item \emph{realocarAlunosMIP} \emph{(Solucao solucaoInicial, bool realocSalas,
+int minRecCred, int priorAluno = 0, bool alocarP2 = true)}. Este método
+resolve um MIP que realoca os alunos às turmas abertas e decide que
+turmas devem ser fechadas, procurando maximizar a demanda atendida.
+Pode ou não permitir a realocação das turmas para novas salas da mesma
+unidade da sala atual.
+
+\begin{itemize}
+\item \emph{solucaoInicial} : solução inicial que é carregada no MIP.
+\item \emph{realocSalas} : determina se é permitida ou não a realocação
+de salas dentro da mesma unidade.
+\item \emph{minRecCred }: mínimo imposto através do MIP para a relação $\frac{cr\acute{e}ditos\, alunos}{cr\acute{e}ditos\, professores}$.
+\item \emph{priorAluno} : define a prioridade máxima de aluno que pode ser
+atendida. Caso este valor for zero, qualquer aluno pode ser atendido.
+Quando este valor é maior que zero, todos os alunos de maior prioridade
+são fixados nas suas turmas atuais, e estas são obrigadas a ser abertas.
+\emph{Default: 0}.
+\item \emph{alocarP2} : determina se o MIP deve tentar alocar demandas de
+prioridade 2 ou não. \emph{Default: true}.
+\end{itemize}
+\item \emph{realocarProfsMIP(bool profsVirtuaisIndiv). }Este método realoca
+os professores às turmas através da resolução de um modelo MIP, tentando
+minimizar o número de turmas com professor virtual e o número de professores
+virtuais individualizados necessários, assim como a sua respetiva
+titulação e tipo de contrato.
+
+\begin{itemize}
+\item \emph{profsVirtuaisIndiv }: determina se devem ser criados professores
+virtuais individualizados para atender turmas às quais não seja possível
+alocar um professor real. Se o parâmetro for \emph{false}, todas as
+turmas com professor virtual serão alocadas a um 'professor virtual
+único' que é nada mais que uma etiqueta mostrando que não foi possivel
+encontrar professor real para essas turmas. Se o parâmetro for \emph{true},
+a estimativa de professores virtuais necessários vai ser baseada no
+número de turmas com professor virtual \emph{a priori}.
+\end{itemize}
+\end{itemize}
+
+\paragraph*{Pseudo-código}
+
+Fazendo referência aos sub-métodos apresentados, é possivel definir
+o pseudo-código do método \emph{Develop Solução, }apresentado no Algoritmo
+\ref{algo_develop}\emph{.}
+
+\IncMargin{1em}
+\LinesNumbered
+\begin{algorithm}[H]
+	\SetKwComment{Comment}{\textbackslash\textbackslash}{}
+	\SetKwFunction{abrirTurmas}{abrirTurmas} \SetKwFunction{tryAlocPDois}{tryAlocPDois}
+	\SetKwFunction{realocarAlunosMIP}{realocarAlunosMIP} \SetKwFunction{realocarProfsMIP}{realocarProfsMIP}
+	\SetKwData{solucaoLegal}{solucaoLegal}\SetKwData{this}{this}
+	\abrirTurmas{$true, true, heurRealocAlunos^{*}, false$}\label{abrirUm}\;
+	\If{$versaoFast^{*}$}{\label{fast}
+		\tryAlocPDois{}\;
+		\Return{}\; \label{endFast}
+	}
+	\solucaoLegal $\leftarrow$ \this\label{guardar}\;
+	\abrirTurmas{$true, true, heurRealocAlunos^{*}, true, 0, relaxMinAlunos^{*}$}\label{ilegal}\;
+	\realocarAlunosMIP{\solucaoLegal, $mipRealocSalas^{*}, minRecCred^{*}$}\label{mipAlunos}\;
+	\abrirTurmas($true, true, false, true$)\label{posMip}\;
+	\If{novas turmas depois do MIP}{
+		\tryAlocPDois{}\label{maisPdois}\;
+	}
+	\realocarProfsMIP{$false$}\label{mipProfUm}\;
+	\If{$profsVirtuaisIndiv^{*}$}{
+		\realocarProfsMIP{$true$}\label{mipProfDois}\;
+	}
+	\caption{Algoritmo Develop Solução}\label{algo_develop}
+\end{algorithm}
+\DecMargin{1em}\medskip{}
+
+
+O primeiro passo no desenvolvimento da solução e abrir turmas legais
+{[}linha \ref{abrirUm}{]}, i.e. que respeitem o mínimo de alunos.
+A utilização de métodos heurísticos de realocação de alunos durante
+a abertura de turmas é determinada pelo parâmetro geral $heurRealocAlunos^{*}$.
+Depois desta fase a solução encontra-se num estado válido. Caso o
+parâmetro geral $versaoFast^{*}$ estiver ativo, o método termina
+{[}linha \ref{fast}-\ref{endFast}{]}. Caso contrário, o estado atual
+da solução é guardado para ser usado posteriormente como solução inicial
+do MIP de realocação de alunos e fechamento de turmas {[}linhas \ref{guardar}{]}.
+Na fase seguinte são abertas mais turmas, relaxando o mínimo de alunos
+obrigatório {[}linha \ref{ilegal}{]}. 
+
+Tendo em conta todas as turmas abertas naquele momento, legais e ilegais,
+o MIP realoca os alunos e fecha as turmas inválidas, tendo por objectivo
+maximizar a demanda atendida, respeitando as diversas restrições associadas
+ao problema {[}linha \ref{mipAlunos}{]}. Depois do MIP a solução
+está num estado válido e é feita uma última tentativa de abrir turmas
+legais, sem recursos aos métodos de realocação e permitindo a abertura
+de turmas de formandos com qualquer tamanho {[}linha \ref{posMip}{]}.
+Se for aberta alguma turma nesta fase, é chamado o método \emph{tryAlocPDois}
+para tentar alocar mais demandas de prioridade 2 heuristicamente {[}linha
+\ref{maisPdois}{]}. 
+
+Por fim é feita a alocação de professores. Quando mencionamos o estado
+válido de uma solução, isto não diz respeito a algumas restrições
+que possam estar a ser violadas na alocação de professores, nomeadamente
+as restrições que impõem mínimos, como as restrições de mínimo de
+mestres e doutores por curso, mínimo de horas por dia alocado, etc.
+Para que alocação de professores fique de acordo com os regulamentos
+impostos, é necessário realocá-los usando o modelo MIP. Primeiro é
+feita uma realocação sem professores virtuais individuais, na qual
+é considerada que uma turma com professor virtual contribui para o
+mínimo de mestres e doutores do curso {[}linha \ref{mipProfUm}{]}.
+Caso o parâmetro $profsVirtuaisIndiv^{*}$ esteja ligado, são criados
+professores virtuais individualizados {[}linha \ref{mipProfDois}{]}.
+
+
+\paragraph*{Código}
+
+A implementação do método \emph{Develop Solução }encontra-se na classe
+\emph{SolucaoHeur}, definida nos arquivos \emph{'SolucaoHeur.h' }e\emph{
+'SolucaoHeur.cpp'} do projeto. O método é \emph{SolucaoHeur::developSolucao}.
+
+
+\subsection{Abrir Turmas}
+
+Nesta secção será analisado um pouco mais a fundo o método \emph{abrirTurmas
+}introduzido na secção \ref{sub:Develop-Solu=0000E7=0000E3o}, onde
+também foram apresentados os seus parâmetros e devido impacto.
+
+
+\paragraph*{Objectivo}
+
+Este método tenta abrir turmas na solução atual com base nas demandas
+não atendidas de prioridade 1, alocando alunos, salas e professores
+a estas. Uma turma pode ser aberta com um professor virtual, mas em
+nenhuma circunstância pode ser aberta sem ter uma sala disponível.
+
+
+\paragraph*{Sub-métodos}
+\begin{itemize}
+\item \emph{abrirTurmasOfertaDisciplina (OfertaDisciplina oferta)} : Este
+método tenta abrir novas turmas para uma oferta-disciplina, que representa
+um par campus-disciplina. Quando é chamado, tenta abrir uma turma
+da componente principal da disciplina (teórica, ou prática se for
+100\% prática) ao analisar todas as combinações de horários possiveis,
+e escolhendo uma de entre as melhores turmas potenciais caso ela exista.
+É sempre dada prioridade a turmas potenciais que tenham um professor
+real disponível (tipo 0). Caso não haja nenhuma é escolhida uma turma
+potencial com professor virtual que esteja aberta em horários que
+constam das disponibilidades de professores reais (tipo 1). Finalmente,
+caso não houver uma turma do tipo 0 ou 1, é escolhida uma das restantes
+turmas. A turma a abrir é seleccionada randomicamente de entre as
+que têm um desvio máximo $desvioMax^{*}$ relativamente à melhor turma
+daquele tipo. Nenhuma turma é aberta sem sala disponível, e a escolha
+da sala procura maximizar o número de alunos em primeiro lugar e a
+ocupação da sala em segundo.\linebreak{}
+Se a disciplina em questão só tiver uma componente, este método só
+abre uma turma e retorna. Caso tenha dois componentes, comporta-se
+de diferentes maneiras dependendo da relação entre turmas teóricas
+e práticas impostas. Se a relação for NxN, o método vai tentar abrir
+todas as turmas teóricas que conseguir com as demandas não atendidas.
+Depois, tentará abrir turmas práticas para alocar estes alunos. Se
+a relação for 1xN o método so abrirá uma turma teórica antes de tentar
+abrir as práticas. Se a relação for 1x1 só uma teórica e uma prática
+serão abertas. No final são sempre removidos da oferta-disciplina
+os alunos que não foram alocados às duas componentes. Este método
+retorna um booleano que informa se alguma turma foi aberta ou não.
+\item \emph{getOfertasDisciplinaOrdenadas} : Com base nas demandas não atendidas
+e no comparador vigente retorna as ofertas-disciplina ordenadas.
+\item \emph{reordenarOfertasDisciplina (set<OfertaDisciplina> ofertasDisciplina)}:
+Com base nas demandas não atendidas e no comparador vigente reordena
+um conjunto de ofertas-disciplina.
+\end{itemize}
+
+\paragraph*{Pseudo-código}
+
+Fazendo referência aos sub-método apresentados, é possivel definir
+o pseudo-código do método \emph{Abrir Turmas}, apresentado no Algoritmo
+\ref{algo_abrir}\emph{.}
+
+\IncMargin{1em}
+\LinesNumbered
+\begin{algorithm}[H]
+	\SetKwComment{Comment}{\textbackslash\textbackslash}{}
+	\SetKwInOut{Input}{input}\SetKwInOut{Param}{parâmetros}
+	\SetKwFunction{size}{size}\SetKwFunction{first}{first}
+	\SetKwFunction{remove}{remove}\SetKwFunction{insert}{insert}
+	\SetKwFunction{abrirOftDisc}{abrirTurmasOfertaDisciplina} 
+	\SetKwFunction{getOfts}{getOfertasDisciplinaOrdenadas}
+	\SetKwFunction{reordOfts}{reordenarOfertasDisciplina} 
+	\SetKwData{equiv}{equiv}\SetKwData{usarVirtual}{usarVirtual}\SetKwData{realoc}{realoc}
+	\SetKwData{formAnySize}{formAnySize}\SetKwData{priorAluno}{priorAluno}\SetKwData{relaxMin}{relaxMin}
+	\SetKwData{ofertasOrd}{ofertasOrd}\SetKwData{oferta}{oferta}
+	\SetKwData{abriu}{abriu}\SetKwData{relacPrat}{relacPraticas*}
+
+	\Param{\equiv, \usarVirtual, \realoc, \formAnySize, \priorAluno, \relaxMin}
+	\BlankLine
+	\ofertasOrd $\leftarrow$ \getOfts{}\label{getOrd}\;
+	\While{\ofertasOrd.\size{} > 0}{
+		\oferta $\leftarrow$ \ofertasOrd.\first{}\;
+		\ofertasOrd.\remove{\oferta}\;
+		\abriu $\leftarrow$ \abrirOftDisc{\oferta}\;
+		\If{$\abriu$ {\bf and} $\relacPrat \neq M \times N$ }{
+			\ofertasOrd.\insert{\oferta}\;
+			\reordOfts{\ofertasOrd}\;
+		}
+	}
+	\caption{Algoritmo Abrir Turmas}\label{algo_abrir}
+\end{algorithm}
+\DecMargin{1em}\medskip{}
+
+
+O método de abertura de turmas começa por obter uma lista ordenada
+das ofertas-disciplina. Depois entra num ciclo em que vai tentando
+abrir turmas para as ofertas-disciplina por ordem. Caso seja aberta
+uma turma para uma oferta-disciplina, e a relação entre teóricas e
+práticas não for \emph{NxN}, ela é re-inserida na lista, que é reordenada.
+Quando a lista de ofertas-disciplina estiver vazia o método retorna.
+
+
+\paragraph*{Código}
+
+A implementação do método\emph{ Abrir Turmas} encontra-se repartida
+entre as classes \emph{SolucaoHeur} e \emph{AbridorTurmas}, definidas
+nos arquivos \emph{'SolucaoHeur.h'},\emph{ 'SolucaoHeur.cpp', 'AbridorTurmas.h'
+}e\emph{ 'AbridorTurmas.cpp'} do projeto. Os métodos chave são \emph{SolucaoHeur::abrirTurmas}
+e \emph{AbridorTurmas::abrirTurmas}.
+
+
+\subsection{Improve Solução}
+
+
+\paragraph*{Objetivo}
+
+O propósito do método \emph{Improve Solução }é construir e melhorar
+uma solução carregada. Este método pré-processa uma solução carregada
+antes de chamar o método \emph{Develop Solução}, que a expande.
+
+
+\paragraph*{Sub-métodos}
+\begin{itemize}
+\item \emph{removerAlunosIncompletos (bool carregados) }: Remove alunos
+que só estejam alocados em uma de duas componentes, se $relacPratica\neq M\times N$.
+
+\begin{itemize}
+\item \emph{carregados} : caso uma solução inicial tenha sido carregada,
+e a heurística esteja tentando melhorar essa solução, determina se
+as alocações de alunos iniciais devem ser removidas ou não.
+\end{itemize}
+\item \emph{fecharTurmasVazias }: Fecha turmas que tenham sido carregadas
+sem alunos.
+\item \emph{tryReduzirSalas }: Tenta trocar as salas das turmas de forma
+a maximizar a ocupação das salas, e libertar salas maior. As trocas
+só são permitidas em turmas da mesma unidade.
+\item \emph{tryAlocNaoAtendidos (bool mudarSalas, bool equiv, bool realoc,
+int priorAluno) }: Tenta alocar novos alunos às turmas já abertas.
+
+\begin{itemize}
+\item \emph{mudarSalas }: indica se é permitido trocar a sala de uma turma
+dentro da mesma unidade.
+\item \emph{equiv} : determina se a alocação de demandas equivalentes é
+ou não usada.
+\item \emph{realoc}: determina se os mecanismos de realocação de alunos
+são usados. Estes mecanismos procuram atender mais demandas ao realocar
+alunos entre turmas.
+\item \emph{priorAluno}: define a prioridade máxima de aluno que pode ser
+atendida. Caso este valor for zero, qualquer aluno pode ser atendido.
+\end{itemize}
+\item \emph{acertarSolucao (bool carregados, double relaxMin = 1.0) }: Remove
+alunos com alocações incompletas e fecha turmas deficitarias.
+
+\begin{itemize}
+\item \emph{carregados }: caso uma solução inicial tenha sido carregada,
+e a heurística esteja tentando melhorar essa solução, determina se
+as alocações de alunos iniciais devem ser removidas ou não.
+\item \emph{relaxMin }: determina o grau de relaxamento que é dado ao mínimo
+de alunos turma. O valor mínimo de alunos turma considerado para a
+abertura das turmas será calculado pela expressão $\left\lceil relaxMin\cdot min\right\rceil $,
+onde \emph{min} é o parâmetro pre-estabelecido para o mínimo de alunos
+requerido para a turma em questão. \emph{Default: 1.0}.
+\end{itemize}
+\item \emph{developSolucao }: método \emph{Develop Solução} descrito na
+secção \ref{sub:Develop-Solu=0000E7=0000E3o}.
+\item \emph{logMudancas} : escrever log de sugestões de mudanças.
+\end{itemize}
+
+\paragraph*{Pseudo-código}
+
+Fazendo referência aos sub-método apresentados, é possivel definir
+o pseudo-código do método \emph{Improve Solução, }apresentado no Algoritmo
+\ref{algo_improve}\emph{.}
+
+\IncMargin{1em}
+\LinesNumbered
+\begin{algorithm}[H]
+	\SetKwComment{Comment}{\textbackslash\textbackslash}{}
+	\SetKwFunction{remvInc}{removerAlunosIncompletos} 
+	\SetKwFunction{fechVaz}{fecharTurmasVazias}
+	\SetKwFunction{redSalas}{tryReduzirSalas}
+	\SetKwFunction{alocNA}{tryAlocNaoAtendidos} 
+	\SetKwFunction{acertar}{acertarSolucao} 
+	\SetKwFunction{develop}{developSolucao} 
+	\SetKwFunction{log}{logMudancas} 
+	\SetKwData{fechPar}{fecharTurmasCarregadas*}
+	\SetKwData{realPar}{heurRealocAlunos*}
+	\SetKwData{relacPrat}{relacPraticas*}
+
+	\If{$\relacPrat \neq M \times N$}{
+		\remvInc{$true$}\label{l_removInc}\;
+	}
+	\fechVaz{}\label{l_fechar}\;
+	\redSalas{}\label{l_salas}\;
+	\alocNA{$true, true, \realPar, 0$}\label{l_alocNa}\;
+	\If{$\fechPar$}{
+		\acertar{$true$}\label{l_acertar}\;
+	}
+	\develop{}\label{l_develop}\;
+	\log{}\label{l_log}\;
+	\caption{Algoritmo Improve Solução}\label{algo_improve}
+\end{algorithm}
+\DecMargin{1em}\medskip{}
+
+
+O primeiro passo executado, caso a relação entre teóricas e práticas
+seja diferente de $M \times N$, consiste em remover os alunos que
+não estejam alocados completamente a uma disciplina {[}linha \ref{l_removInc}{]}.
+Em seguida, caso haja turmas vazias estas são fechadas {[}linha \ref{l_fechar}{]}.
+Depois há uma tentativa de mudar as salas das turmas de forma a maximizar
+a ocupação das salas, e libertar salas maiores {[}linha \ref{l_salas}{]}.
+O quarto passo é tentar alocar os alunos não atendidos nas turmas
+carregadas, permitindo a mudança de sala das mesmas, dentro da mesma
+unidade {[}linha \ref{l_alocNa}{]}. Se for permitido fechar turmas
+carregadas, a solução é acertada, fechando turmas deficitárias e removendo
+alunos incompletos até estar num estado válido {[}linha \ref{l_acertar}{]}.
+O algoritmo \emph{Develop Solução} é então chamado para abrir mais
+turmas e tentar atender a demanda não atendida e melhorar a solução
+{[}linha \ref{l_develop}{]}. Por fim, é gerado um log com as sugestões
+de mudanças {[}linha \ref{l_log}{]}.
+
+
+\section{MIP Realocar Alunos\label{sec:MIP-Realocar-Alunos}}
+
+Nesta secção será apresentado o MIP por detrás da função \emph{realocarAlunosMIP
+}introduzido na secção \ref{sub:Develop-Solu=0000E7=0000E3o}, onde
+também foram apresentados os seus parâmetros e devido impacto.
+
+
+\paragraph*{Objectivo}
+
+Realocar os alunos às turmas abertas e decidir que turmas devem ser
+fechadas, procurando maximizar a demanda atendida. Pode ou não permitir
+a realocação das turmas para novas salas da mesma unidade da sala
+atual.
+
+
+\paragraph*{Pré-processamento}
+\begin{itemize}
+\item \emph{removerAlunosTurmas (int priorAluno, bool carregados) }: Remove
+os alunos das turmas.
+
+\begin{itemize}
+\item \emph{priorAluno} : determina a prioridade de alunos que deve ser
+removida. Só serão removidos alunos com o valor prioridade igual ou
+superior a \emph{priorAluno}.
+\item \emph{carregados} : caso uma solução inicial tenha sido carregada,
+e a heurística esteja tentando melhorar essa solução, determina se
+as alocações de alunos iniciais devem ser removidas ou não.
+\end{itemize}
+\end{itemize}
+
+\subsection{Notação}
+
+
+\subsubsection{Conjuntos}
+\begin{itemize}
+\item \emph{A} - conjunto de alunos. Os elementos desse conjunto são denotados
+por \emph{a}.
+\item $D_{a}$ - conjunto de demandas não atendidas de um aluno. Os elementos
+desse conjunto são denotados por \emph{d}.
+\item \emph{O} - conjunto de ofertas-disciplina. Os elementos desse conjunto
+são denotados por \emph{o}.
+\item \emph{T} - conjunto de turmas. Os elementos desse conjunto são denotados
+por \emph{t}.
+\item $S$ - conjunto de salas. Os elementos desse conjunto são denotados
+por \emph{s}.
+\item $A_{t}$ - conjunto de alunos disponíveis para ser alocados a uma
+turma \emph{t}. Os elementos desse conjunto são denotados por \emph{a}.
+\item $O^{2}$ - conjunto de ofertas-disciplina com duas componentes. Os
+elementos desse conjunto são denotados por \emph{o}.
+\item $O_{a}$ - conjunto de ofertas-disciplina que um aluno \emph{a} pode
+cursar. Os elementos desse conjunto são denotados por \emph{o}.
+\item $O_{a}^{2}$ - conjunto de ofertas-disciplina com 2 componentes que
+um aluno \emph{a} pode cursar. Os elementos desse conjunto são denotados
+por \emph{o}.
+\item $O_{a,p}$ - conjunto de ofertas-disciplina que um aluno \emph{a}
+pode cursar, associadas demandas com prioridade \emph{p}. Os elementos
+desse conjunto são denotados por \emph{o}.
+\item $O_{a,d}$ - conjunto de ofertas-disciplina que podem atender uma
+demanda não atendida \emph{d} de um aluno \emph{a}. Os elementos desse
+conjunto são denotados por \emph{o}.
+\item $C_{o}$ - conjunto de componentes de uma oferta \emph{o}. Os elementos
+desse conjunto são denotados por \emph{c}.
+\item $T_{o,c}$ - conjunto de turmas de uma componente \emph{c} de uma
+oferta-disciplina \emph{o}. Os elementos desse conjunto são denotados
+por \emph{t}.
+\item $T_{a}$ - conjunto de turmas a que o aluno \emph{a} pode ser alocado.
+Os elementos desse conjunto são denotados por \emph{t}.
+\item $TA$ - conjunto de turmas que têm que ser mantidas abertas. Os elementos
+desse conjunto são denotados por \emph{t}.
+\item $CTI_{a}$ - conjunto de conjuntos turmas que um aluno \emph{a} pode
+cursar e que são todas incompatíveis entre si. Os elementos desse
+conjunto são denotados por \emph{TI}.
+\item $CTI_{s}$ - conjunto de conjuntos turmas que uma sala \emph{s} pode
+acolher e que são todas incompatíveis entre si. Os elementos desse
+conjunto são denotados por \emph{TI}.
+\item $S_{t}$ - conjunto de salas disponíveis para acolher uma turma \emph{t}.
+Os elementos desse conjunto são denotados por \emph{s}.
+\end{itemize}
+
+\subsubsection{Dados do Modelo}
+\begin{itemize}
+\item $creds\left(o\right)$ - total de créditos de uma oferta-disciplina
+\emph{o}.
+\item $creds\left(t\right)$ - número de créditos de uma turma \emph{t}.
+\item $maxCreds\left(a\right)$ - máximo de creditos que um aluno \emph{a}
+pode cursar.
+\item $demsP1\left(a\right)$ - número de demandas P1 não atendidas de um
+aluno \emph{a}.
+\item $demsP2\left(a\right)$ - número de demandas P2 não atendidas de um
+aluno \emph{a}.
+\item $minAlunos\left(t\right)$ - mínimo de alunos imposto para abrir uma
+turma \emph{t}.
+\item $coefMin\left(a,t\right)$ - coeficiente com que o aluno \emph{a}
+contribui para o mínimo de alunos da turma \emph{t}. Se o aluno for
+formando e o mínimo poder ser violado, este valor é $minAlunos\left(t\right)$.
+Caso contrario é 1.
+\item $maxAlunos\left(t,s\right)$ - máximo de alunos que a turma \emph{t}
+pode acolher se for alocada à sala \emph{s}.
+\item $\alpha\left(a,o\right)$ - peso da variável $x_{a,o}$ na função
+objetivo.
+\item $\beta\left(t\right)$ - peso da variável $at_{t}$ na função objetivo.
+\end{itemize}
+
+\subsubsection{Variáveis}
+\begin{itemize}
+\item $x_{a,o}$ - variável binária indicando que o aluno \emph{a} foi alocado
+à oferta-disciplina \emph{o}.
+\item $y_{a,t}$ - variável binária indicando que o aluno \emph{a} foi alocado
+à turma \emph{t}.
+\item $at_{t}$ - variável binária indicando se uma turma \emph{t} foi aberta
+ou não.
+\item $w_{t,t'}$- variável binária indicando que a turma teórica \emph{t
+}foi associada à turma prática \emph{t' }da mesma oferta-disciplina\emph{.
+}Só usadas se $relacPraticas^{*}\neq M\times N$.
+\item $r_{t,s}$ - variável binária indicando que uma turma \emph{t} foi
+alocada a uma sala \emph{s}.
+\end{itemize}
+
+\subsection{Formulação}
+
+
+\subsubsection{Função Objetivo
+\[
+MAX\:\sum_{a\in A}\sum_{o\in O_{a}}\alpha\left(a,o\right)\cdot x_{a,o}+\sum_{t\in T}\beta\left(t\right)
+\]
+}
+
+
+\subsubsection{Máximo de créditos por aluno
+\[
+\sum_{o\in O_{a}}x_{a,o}\cdot creds\left(o\right)\leq maxCreds\left(a\right)\qquad\forall a\in A
+\]
+}
+
+
+\subsubsection{Não atender demandas P2 se tiver atendido todas de P1
+\[
+\sum_{o\in O_{a,1}}x_{a,o}\cdot demsP2\left(a\right)+\sum_{o\in O_{a,2}}x_{a,o}\leq demsP1\left(a\right)\cdot demsP2\left(a\right)\qquad\forall a\in A
+\]
+}
+
+
+\subsubsection{Atender disciplina original ou uma das equivalentes
+\[
+\sum_{o\in O_{a,d}}x_{a,o}\leq1\qquad\forall a\in A\:\forall d\in D_{a}
+\]
+}
+
+
+\subsubsection{Impedir a alocação de alunos a turmas incompativeis
+\[
+\sum_{t\in TI}y_{a,t}\leq1\qquad\forall a\in A\:\forall TI\in CTI_{a}
+\]
+}
+
+
+\subsubsection{Alocar o aluno a uma oferta-disciplina na totalidade
+\[
+\sum_{t\in T_{o,c}}y_{a,t}=x_{a,o}\qquad\forall a\in A\:\forall o\in O_{a}\:\forall c\in C_{o}
+\]
+}
+
+
+\subsubsection{Impede um aluno de ser alocado duas turmas da mesma oferta-disciplina
+se elas não estiverem associadas (só se $relacPraticas^{*}\neq M\times N$)
+\[
+y_{a,t}+y_{a,t'}\leq w_{t,t'}+1\qquad\forall a\in A\,\forall o\in O_{a}\:\forall t\in T_{o,teorico}\:\forall t'\in T_{o,pratico}
+\]
+}
+
+
+\subsubsection{Impedir um aluno de ser alocado a uma turma teórica de uma disciplina
+com duas componentes, quando esta não é associada a uma prática (só
+se $relacPraticas^{*}\neq M\times N$)
+\[
+y_{a,t}\leq\sum_{t'\in T_{o,pratico}}w_{t,t'}\qquad\forall a\in A\,\forall o\in O_{a}^{2}\:\forall t\in T_{o,teorico}
+\]
+}
+
+
+\subsubsection{Alocar cada turma a uma sala
+\[
+\sum_{s\in S_{t}}r_{t,s}=at_{t}\qquad\forall t\in T
+\]
+}
+
+
+\subsubsection{Mínimo de alunos por turma
+\[
+\sum_{a\in A_{t}}y_{a,t}\cdot coefMin\left(a,t\right)\geq minAlunos\left(t\right)\cdot at_{t}\qquad\forall t\in T
+\]
+}
+
+
+\subsubsection{Máximo de alunos por turma
+\[
+\sum_{a\in A_{t}}y_{a,t}\leq\sum_{s\in S_{t}}maxAlunos\left(t,s\right)\cdot r_{t,s}\qquad\forall t\in T
+\]
+}
+
+
+\subsubsection{Relacionar variável de alocação aluno-turma com variável de abertura
+de turma
+\[
+y_{a,t}\leq at_{t}\qquad\forall a\in A\,\forall t\in T{}_{a}
+\]
+}
+
+
+\subsubsection{Obrigar uma turma prática a só se associar com uma turma teórica
+da oferta-disciplina (só se $relacPraticas^{*}\neq M\times N$)
+\[
+\sum_{t^{'}\in T_{o,teorico}}w_{t',t}=at_{t}\qquad\forall o\in O^{2}\,\forall t\in T_{o,pratico}
+\]
+}
+
+
+\subsubsection{Obrigar uma turma teórica a associar-se a pelo menos uma turma prática
+da oferta-disciplina (só se $relacPraticas^{*}=1\times N$ e turma
+teórica)
+\[
+\sum_{t^{'}\in T_{o,pratico}}w_{t,t'}\geq at_{t}\qquad\forall o\in O^{2}\,\forall t\in T_{o,teorico}
+\]
+}
+
+
+\subsubsection{Obrigar uma turma teórica a só se associar com uma turma prática
+da oferta-disciplina (só se $relacPraticas^{*}=1\times1$)
+\[
+\sum_{t^{'}\in T_{o,pratico}}w_{t,t'}=at_{t}\qquad\forall o\in O^{2}\,\forall t\in T_{o,teorico}
+\]
+}
+
+
+\subsubsection{Impedir a alocação de salas a turmas incompativeis
+\[
+\sum_{t\in TI}r_{t,s}\leq1\qquad\forall s\in S\,\forall TI\in CTI_{s}
+\]
+}
+
+
+\subsubsection{Impor um mínimo na produtividade do crédito
+\[
+\sum_{a\in A}\sum_{o\in O_{a}}x_{a,o}\geq minRecCred^{*}\cdot\sum_{t\in T}at_{t}\cdot creds\left(t\right)
+\]
+}
+
+
+\subsubsection{Obrigar um conjunto de turmas pré-definido a ser aberto (casos especiais)
+\[
+\sum_{t\in TA}at_{t}=\left|TA\right|
+\]
+}
+
+
+\paragraph{Pós-processamento}
+\begin{itemize}
+\item \emph{tryReduzirSalas }: Este método tenta trocar as salas das turmas
+de forma a maximizar a ocupação das salas, e libertar salas maior.
+As trocas só são permitidas em turmas da mesma unidade.
+\end{itemize}
+
+\paragraph*{Código}
+
+A implementação do \emph{MIP Realocar Alunos} encontra-se na classe
+\emph{MIPAlocarAlunos}, que herda a classe \emph{MIPAloc}. Ambas estão
+definidas nos arquivos \emph{'MIPAlocarAlunos.h'},\emph{ 'MIPAlocarAlunos.cpp',
+'MIPAloc.h' }e\emph{ 'MIPAloc.cpp'} do projeto.
+
+
+\section{MIP Alocar Professores\label{sec:MIP-Alocar-Professores}}
+
+Nesta secção será apresentado o MIP por trás da função \emph{realocarProfsMIP
+}introduzida na secção \ref{sub:Develop-Solu=0000E7=0000E3o}, onde
+também foram apresentados os seus parâmetros e devido impacto.
+
+
+\paragraph*{Objectivo}
+
+Realocar os professores às turmas tentando minimizar o número de turmas
+com professor virtual e o número de professores virtuais individualizados
+necessários, assim como a sua respetiva titulação e tipo de contrato.
+
+
+\paragraph*{Pré-processamento}
+\begin{itemize}
+\item \emph{criarProfsVirtuaisIndividualizados }: caso o parâmetro \emph{profsVirtuaisIndiv}
+estiver ativo, este método é chamado. Cria cópias de professores virtuais
+individualizados com base em perfis. O número de professores criados
+para cada perfil é estimado com base nas turmas que nesse momento
+estão alocadas a professores virtuais. 
+\end{itemize}
+
+\subsection{Notação}
+
+
+\subsubsection{Conjuntos}
+\begin{itemize}
+\item \emph{P} - conjunto de professores, excluindo o professor virtual
+único. Os elementos desse conjunto são denotados por \emph{p}.
+\item \emph{D} - conjunto de dias da semana. Os elementos desse conjunto
+são denotados por \emph{d}.
+\item \emph{T} - conjunto de turmas. Os elementos desse conjunto são denotados
+por \emph{t}.
+\item \emph{C} - conjunto de cursos. Os elementos desse conjunto sao denotados
+por \emph{c}.
+\item \emph{E} - conjunto de titulações. Os elementos desse conjunto são
+denotados de \emph{e}.
+\item \emph{B} - conjunto de tipos de contrato. Os elementos desse conjunto
+são denotados por \emph{b}.
+\item \emph{Q} - conjunto de perfis de professores virtuais. Os elementos
+desse conjunto são denotados por \emph{q}.
+\item $P_{t}$ - conjunto de professores habilitados e disponíveis para
+leccionar uma turma \emph{t}, incluindo o professor virtual único.
+Os elementos desse conjunto são denotados por \emph{p}.
+\item $P_{t,e}$ - conjunto de professores habilitados e disponíveis para
+leccionar uma turma \emph{t}, com titulação igual ou superior a \emph{e}.
+Inclui o professor virtual único. Os elementos desse conjunto são
+denotados por \emph{p}.
+\item $P_{t,b}$ - conjunto de professores habilitados e disponíveis para
+leccionar uma turma \emph{t}, com tipo de contrato igual ou superior
+a \emph{b}. Inclui o professor virtual único. Os elementos desse conjunto
+são denotados por \emph{p}.
+\item $PV_{c,q}$ - conjunto de professores virtuais individualizados com
+um perfil \emph{q}, associados a um curso \emph{c}. Os elementos desse
+conjunto são denotados por \emph{p}.
+\item $T_{p}$ - conjunto de turmas para as quais um professor \emph{p}
+está habilitado e disponível. Os elementos desse conjunto são denotados
+por \emph{t}.
+\item $T_{p,d}$ - conjunto de turmas que tem aulas num dia \emph{d} e que
+podem ser leccionadas por um professor \emph{p}. Os elementos desse
+conjunto são denotados por \emph{t}.
+\item $CTI_{p}$ - conjunto de conjuntos turmas que um professor \emph{p}
+pode leccionar e que são todas incompatíveis entre si. Os elementos
+desse conjunto são denotados por \emph{TI}.
+\end{itemize}
+
+\subsubsection{Dados do Modelo}
+\begin{itemize}
+\item $creds\left(t,d\right)$ - número de creditos que uma turma \emph{t}
+tem no dia \emph{d}.
+\item $maxDias\left(p\right)$ - máximo de dias a que um professor \emph{p}
+pode ser alocado.
+\item $maxCreds\left(p\right)$- máximo de créditos a que um professor \emph{p}
+pode ser alocado.
+\item $minCreds\left(p\right)$ - mínimo de créditos a que um professor
+\emph{p} tem que ser alocado.
+\item $minCredsDia\left(p\right)$ - mínimo de créditos a que um professor
+\emph{p} tem que ser alocado por dia.
+\item $chAnt\left(p\right)$ - carga horária do semestre anterior anterior
+do professor \emph{p} multiplicada por $percChAnt^{*}$.
+\item $minTit\left(c,e\right)$ - percentagem mínima de professores com
+titulação \emph{e} no curso \emph{c}.
+\item $minCon\left(c,b\right)$ - percentagem mínima de professores com
+tipo de contrato \emph{b} no curso \emph{c}.
+\item $\alpha\left(p,t\right)$ - peso da variável $x_{p,t}$ na função
+objectivo.
+\item $\beta\left(p\right)$ - peso da variável $y_{p}$ na função objectivo.
+\item $\gamma\left(p\right)$ - peso da variável $v_{p}$ na função objectivo.
+\item $\delta\left(p,d\right)$ - peso da variável $w_{p,d}$ na função
+objectivo.
+\item $\theta\left(p\right)$ - peso da variável $u_{p}$ na função objectivo.
+\end{itemize}
+
+\subsubsection{Variáveis}
+\begin{itemize}
+\item $x_{p,t}$ - variável binária indicando que o professor\emph{ p} foi
+alocado à turma \emph{t}.
+\item $y_{p}$ - variável binária indicando se o professor \emph{p} foi
+alocado a alguma turma. 
+\item $v_{p}$ - variável inteira maior ou igual a zero que indica o número
+de créditos que faltaram ao professor \emph{p} é para ser alocado
+a $minCreds\left(p\right)$ .
+\item $w_{p,d}$ - variável binária que indica se o professor \emph{p} foi
+alocado a alguma turma com aulas no dia \emph{d}.
+\item $u_{p}$ - variável inteira maior ou igual a zero o que indica número
+de créditos que faltaram ao professor \emph{p} é para ser alocado
+a $chAnt\left(p\right)$ .
+\end{itemize}
+
+\subsection{Formulação}
+
+
+\subsubsection{Função Objectivo
+\[
+MAX\:\sum_{p\in P}\left(\beta\left(p\right)\cdot y_{p}+\gamma\left(p\right)\cdot v_{p}+\theta\left(p\right)\cdot u_{p}+\sum_{t\in T_{p}}\alpha\left(p,t\right)\cdot x_{p,t}+\sum_{d\in D}\delta\left(p,d\right)\cdot w_{p,d}\right)
+\]
+}
+
+
+\subsubsection{Alocar um professor para cada turma
+\[
+\sum_{p\in P_{t}}x_{p,t}=1\qquad\forall t\in T
+\]
+}
+
+
+\subsubsection{Usar professor
+\[
+\sum_{t\in T_{p}}x_{p,t}\leq y_{p}\cdot\left|T_{p}\right|\qquad\forall p\in P
+\]
+}
+
+
+\subsubsection{Impedir que um professor seja alocado a turmas incompatíveis
+\[
+\sum_{t\in TI}x_{p,t}\leq1\qquad\forall p\in P\:\forall TI\in CTI_{p}
+\]
+}
+
+
+\subsubsection{Identificar quando o professor é alocado num dia da semana
+\[
+\sum_{t\in T_{p,d}}x_{p,t}\leq\left|T_{p,d}\right|\cdot w_{p,d}\qquad\forall p\in P\,\forall d\in D
+\]
+}
+
+
+\subsubsection{Obrigar o professor a ser alocado a um mínimo de créditos por dia
+\[
+\sum_{t\in T_{p,d}}x_{p,t}\cdot creds\left(t\right)\geq minCredsDia\left(p\right)\cdot w_{p,d}\qquad\forall p\in P\,\forall d\in D
+\]
+}
+
+
+\subsubsection{Máximo dias semana do professor
+\[
+\sum_{d\in D}w_{p,d}\leq maxDias\left(p\right)\qquad\forall p\in P
+\]
+}
+
+
+\subsubsection{Máximo de créditos a que um professor pode ser alocado
+\[
+\sum_{t\in T_{p}}x_{p,t}\cdot creds\left(t\right)\leq maxCreds\left(p\right)\qquad\forall p\in P
+\]
+}
+
+
+\subsubsection{Mínimo de créditos de um professor (se $minChForte^{*}$ ligado)
+\[
+\sum_{t\in T_{p}}x_{p,t}\geq minCreds\left(p\right)\cdot y_{p}\qquad\forall p\in P
+\]
+}
+
+
+\subsubsection{Mínimo de créditos de um professor (se $minChForte^{*}$ desligado)
+\[
+\sum_{t\in T_{p}}x_{p,t}+v_{p}\geq minCreds\left(p\right)\qquad\forall p\in P
+\]
+}
+
+
+\subsubsection{Verificar se o professor é alocado à percentagem da carga horária
+anterior que é pretendida
+\[
+\sum_{t\in T_{p}}x_{p,t}+u_{p}\geq chAnt\left(p\right)\qquad\forall p\in P
+\]
+}
+
+
+\subsubsection{Rácio mínimo de professores com uma titulação alocados a turmas com
+alunos de um curso}
+
+\[
+\sum_{t\in T_{c}}\sum_{p\in P_{t,e}}x_{p,t}\geq\sum_{t\in T_{c}}\sum_{p\in P_{t}}x_{p,t}\cdot minTit\left(c,e\right)\qquad\forall c\in C\,\forall e\in E
+\]
+
+
+
+\subsubsection{Rácio mínimo de professores com um tipo de contrato alocados a turmas
+com alunos de um curso}
+
+\[
+\sum_{t\in T_{c}}\sum_{p\in P_{t,b}}x_{p,t}\geq\sum_{t\in T_{c}}\sum_{p\in P_{t}}x_{p,t}\cdot minCon\left(c,b\right)\qquad\forall c\in C\,\forall b\in B
+\]
+
+
+
+\subsubsection{Uso sequencial de professores virtuais individualizados associados
+ao mesmo curso, com o mesmo perfil (caso $profsVirtuaisIndiv$)
+\[
+y_{PV_{c,q}[i+1]}\leq y_{PV_{c,q}[i]}\qquad\forall c\in C\,\forall q\in Q\,\forall i\in\left\{ 0,1,\ldots,\left|PV_{c,q}\right|-1\right\} 
+\]
+}
+
+
+\paragraph*{Código}
+
+A implementação do \emph{MIP Alocar Professores} encontra-se na classe
+\emph{MIPAlocProfs}, que herda a classe \emph{MIPAloc}. Ambas estão
+definidas nos arquivos \emph{'MIPAlocProfs.h'},\emph{ 'MIPAlocProfs.cpp',
+'MIPAloc.h' }e\emph{ 'MIPAloc.cpp'} do projeto.
+\end{document}
