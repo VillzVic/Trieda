@@ -779,6 +779,7 @@ public class Aluno
 		clone.setNome(this.getNome());
 		clone.setPeriodo(this.getPeriodo());
 		clone.setVirtual(this.getVirtual());
+		clone.setPrioridade(this.getPrioridade());
 		
 		return clone;
 	}

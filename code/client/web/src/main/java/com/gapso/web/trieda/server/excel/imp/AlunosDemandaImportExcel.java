@@ -468,6 +468,7 @@ public class AlunosDemandaImportExcel
 				alunoBD.setNome( alunosDemandaExcel.getNomeAlunoStr() );
 				alunoBD.setMatricula( alunosDemandaExcel.getMatriculaAlunoStr() );
 				alunoBD.setFormando(false);
+				alunoBD.setPrioridade(1);
 
 				alunoBD.persist();
 				//Aluno.entityManager().refresh( alunoBD );

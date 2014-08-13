@@ -207,4 +207,5 @@ public interface TriedaI18nConstants
 	String nomeAmbiente();
 	String permiteIntervaloAula();
 	String divisoesCreditoDisciplina();
+	String prioridadeAlunos();
 }

@@ -58,6 +58,7 @@ public class DemandaFormPresenter
 		Button getPreencheTudoButton();
 		NumberField getPreencheTudoNumberField();
 		Button getMarcarEquivalenciasForcadasButton();
+		NumberField getPrioridadeAlunosNumberField();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -190,6 +191,7 @@ public class DemandaFormPresenter
 		DemandaDTO demandaDTO = display.getDemandaDTO();
 		demandaDTO.setInstituicaoEnsinoId(instituicaoEnsinoDTO.getId());
 		demandaDTO.setOfertaId(display.getOfertaComboBox().getValue().getId());
+		demandaDTO.setPrioridadeAlunos(display.getPrioridadeAlunosNumberField().getValue().intValue());
 		
 		return demandaDTO;
 	}

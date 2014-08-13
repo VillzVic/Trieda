@@ -20,6 +20,8 @@ public class DemandasImportExcelBean
 	private String periodoStr;
 	private String disciplinaStr;
 	private String demandaStr;
+	private String exigeEquivalenciaForcadaStr;
+	private String prioridadeAlunosStr;
 
 	private Campus campus;
 	private Turno turno;
@@ -28,6 +30,8 @@ public class DemandasImportExcelBean
 	private Integer periodo;
 	private Disciplina disciplina;
 	private Integer demanda;
+	private Boolean exigeEquivalenciaForcada;
+	private Integer prioridadeAlunos;
 
 	public DemandasImportExcelBean( int row )
 	{
@@ -49,6 +53,8 @@ public class DemandasImportExcelBean
 			checkMandatoryField( this.periodoStr, ImportExcelError.DEMANDA_PERIODO_VAZIO, erros );
 			checkMandatoryField( this.disciplinaStr, ImportExcelError.DEMANDA_DISCIPLINA_VAZIO, erros );
 			checkMandatoryField( this.demandaStr, ImportExcelError.DEMANDA_DEMANDA_VAZIO, erros );
+			checkMandatoryField( this.exigeEquivalenciaForcadaStr, ImportExcelError.DEMANDA_EXIGE_EQUIVALENCIA_FORCADA_VAZIO, erros );
+			checkMandatoryField( this.prioridadeAlunosStr, ImportExcelError.DEMANDA_PRIORIDADE_ALUNO_VAZIO, erros );
 
 			this.periodo = checkNonNegativeIntegerField( this.periodoStr,
 				ImportExcelError.DEMANDA_PERIODO_FORMATO_INVALIDO,
@@ -57,6 +63,13 @@ public class DemandasImportExcelBean
 			this.demanda = checkNonNegativeIntegerField( this.demandaStr,
 				ImportExcelError.DEMANDA_DEMANDA_FORMATO_INVALIDO,
 				ImportExcelError.DEMANDA_DEMANDA_VALOR_NEGATIVO, erros );
+			
+			this.exigeEquivalenciaForcada = checkBooleanField( exigeEquivalenciaForcadaStr,
+					ImportExcelError.DEMANDA_EXIGE_EQUIVALENCIA_FORCADA_FORMATO_INVALIDO, erros );
+			
+			this.prioridadeAlunos = checkNonNegativeIntegerField( this.prioridadeAlunosStr,
+					ImportExcelError.DEMANDA_PRIORIDADE_ALUNOS_FORMATO_INVALIDO,
+					ImportExcelError.DEMANDA_PRIORIDADE_ALUNOS_VALOR_NEGATIVO, erros );
 		}
 		else
 		{
@@ -74,7 +87,9 @@ public class DemandasImportExcelBean
 			&& isEmptyField( this.matrizCurricularStr )
 			&& isEmptyField( this.periodoStr )
 			&& isEmptyField( this.disciplinaStr )
-			&& isEmptyField( this.demandaStr ) );
+			&& isEmptyField( this.demandaStr )
+			&& isEmptyField( this.exigeEquivalenciaForcadaStr )
+			&& isEmptyField( this.prioridadeAlunosStr ));
 	}
 
 
@@ -219,6 +234,31 @@ public class DemandasImportExcelBean
 		this.demanda = demanda;
 	}
 
+	public void setExigeEquivalenciaForcadaStr( String exigeEquivalenciaForcadaStr )
+	{
+		this.exigeEquivalenciaForcadaStr = exigeEquivalenciaForcadaStr;
+	}
+	
+	public Boolean getExigeEquivalenciaForcada()
+	{
+		return exigeEquivalenciaForcada;
+	}
+	
+	public void setPrioridadeAlunosStr( String prioridadeAlunosStr )
+	{
+		this.prioridadeAlunosStr = prioridadeAlunosStr;
+	}
+	
+	public String getPrioridadeAlunosStr()
+	{
+		return prioridadeAlunosStr;
+	}
+	
+	public Integer getPrioridade()
+	{
+		return prioridadeAlunos;
+	}
+	
 	@Override
 	public int compareTo( DemandasImportExcelBean o )
 	{

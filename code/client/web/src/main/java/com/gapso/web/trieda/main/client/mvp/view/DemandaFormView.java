@@ -65,6 +65,7 @@ public class DemandaFormView
 	private Button preencheTudoBT;
 	private Button marcaEquivalenciasForcadasBt;
 	private CheckColumnConfig checkColumn;
+	private NumberField prioridadeAlunosNF;
 	private ListStore< DisciplinaDemandaDTO > store = new ListStore< DisciplinaDemandaDTO >();
 	
 	private EditorGrid<DisciplinaDemandaDTO> grid;
@@ -92,7 +93,7 @@ public class DemandaFormView
 		simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.demanda16() );
 
-		simpleModal.setHeight( 540 );
+		simpleModal.setHeight( 565 );
 		simpleModal.setWidth(600);
 		createForm();
 		simpleModal.setContent( formPanel );
@@ -156,6 +157,13 @@ public class DemandaFormView
 			periodoCB.disable();
 		}
 		ofertaFS.add( periodoCB, formData );
+		
+		prioridadeAlunosNF = new NumberField();
+		prioridadeAlunosNF.setFieldLabel("Prioridade dos Alunos");
+		prioridadeAlunosNF.setAllowBlank(false);
+		prioridadeAlunosNF.setAllowDecimals(false);
+		prioridadeAlunosNF.setValue(1);
+		ofertaFS.add( prioridadeAlunosNF, formData );
 		
 		this.formPanel.add( ofertaFS, formData );
 		
@@ -343,5 +351,11 @@ public class DemandaFormView
 	public NumberField getPreencheTudoNumberField()
 	{
 		return preencheTudoNF;
+	}
+	
+	@Override
+	public NumberField getPrioridadeAlunosNumberField()
+	{
+		return prioridadeAlunosNF;
 	}
 }

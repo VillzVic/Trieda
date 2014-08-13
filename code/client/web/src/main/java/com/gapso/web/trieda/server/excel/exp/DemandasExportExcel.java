@@ -239,95 +239,107 @@ public class DemandasExportExcel
 							continue;
 						}
 
-						DemandaDTO demandaDTO = ConvertBeans.toDemandaDTO(demanda);
-						int quantidadeReal = demandaDTO.getDemandaReal();
-						int quantidadeVirtual = demandaDTO.getDemandaVirtual();
-						int quantidade = quantidadeReal + quantidadeVirtual;
-
-						if ( quantidade == 0 )
+						List<DemandaDTO> demandasDTO = ConvertBeans.toDemandaDTOPorPeriodo(demanda);
+						for (DemandaDTO demandaDTO : demandasDTO)
 						{
-							continue;
-						}
-
-						// Chegando nesse ponto, temos que mais uma linha será escrita
-						// na planilha de exportação. Assim, registramos essa linha
-						String key = "";
-
-						key += oferta.getCampus().getCodigo();
-						key += "-" + oferta.getTurno().getNome();
-						key += "-" + curriculo.getCurso().getCodigo();
-						key += "-" + curriculo.getCodigo();
-						key += "-" + periodo;
-						key += "-" + disciplinaDeUmPeriodo.getDisciplina().getCodigo();
-
-						if ( this.mapDemandasExportadas.containsKey( key ) )
-						{
-							continue;
-						}
-						else
-						{
-							this.mapDemandasExportadas.put( key, true );
-						}
-						
-						ParDTO<Integer,Map<Disciplina,Integer>> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
-						Integer qtdNaoAtendida = par.getPrimeiro();
-						Set<Disciplina> disciplinasSubstitutas = par.getSegundo().keySet();
-
-						// Campus
-						setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							oferta.getCampus().getCodigo() );
-
-						// Turno
-						setCell( row, 3, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							oferta.getTurno().getNome() );
-
-						// Curso
-						setCell( row, 4, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							curriculo.getCurso().getCodigo() );
-
-						// Matriz Curricular
-						setCell( row, 5, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							curriculo.getCodigo() );
-
-						// Período
-						setCell( row, 6, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], periodo );
-
-						// Disciplina
-						setCell( row, 7, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
-
-						// Demanda de Alunos (Real)
-						setCell( row, 8, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeReal );
-						
-						// Demanda de Alunos (Virtual)
-						setCell( row, 9, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeVirtual );
-						
-						// Demanda de Alunos (Total)
-						setCell( row, 10, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeReal+quantidadeVirtual );
-						
-						// Demanda Atendida
-						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], (quantidade - qtdNaoAtendida) );
-						
-						// Demanda Não Atendida
-						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
-						
-						// Disciplinas Substitutas
-						String disciplinasSubstitutasStr = "";
-						if (disciplinasSubstitutas != null && !disciplinasSubstitutas.isEmpty()) {
-							List<String> codigosDisciplinasSubstitutas = new ArrayList<String>();
-							for (Disciplina disciplinaSubistituta : disciplinasSubstitutas) {
-								codigosDisciplinasSubstitutas.add(disciplinaSubistituta.getCodigo());
+							int quantidadeReal = demandaDTO.getDemandaReal();
+							int quantidadeVirtual = demandaDTO.getDemandaVirtual();
+							int quantidade = quantidadeReal + quantidadeVirtual;
+	
+							if ( quantidade == 0 )
+							{
+								continue;
 							}
-							Collections.sort(codigosDisciplinasSubstitutas);
-							StringBuffer disciplinasSubstitutasStrB = new StringBuffer("");
-							for (String codigoDisciplinaSubstituta : codigosDisciplinasSubstitutas) {
-								disciplinasSubstitutasStrB.append(codigoDisciplinaSubstituta + ", ");
+	
+							// Chegando nesse ponto, temos que mais uma linha será escrita
+							// na planilha de exportação. Assim, registramos essa linha
+							String key = "";
+	
+							key += oferta.getCampus().getCodigo();
+							key += "-" + oferta.getTurno().getNome();
+							key += "-" + curriculo.getCurso().getCodigo();
+							key += "-" + curriculo.getCodigo();
+							key += "-" + periodo;
+							key += "-" + disciplinaDeUmPeriodo.getDisciplina().getCodigo();
+							key += "-" + demandaDTO.getExigeEquivalenciaForcada();
+							key += "-" + demandaDTO.getPrioridadeAlunos();
+	
+							if ( this.mapDemandasExportadas.containsKey( key ) )
+							{
+								continue;
 							}
-							disciplinasSubstitutasStr = disciplinasSubstitutasStrB.substring(0, disciplinasSubstitutasStrB.length() - 2);
+							else
+							{
+								this.mapDemandasExportadas.put( key, true );
+							}
+							
+							ParDTO<Integer,Map<Disciplina,Integer>> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
+							Integer qtdNaoAtendida = par.getPrimeiro();
+							Set<Disciplina> disciplinasSubstitutas = par.getSegundo().keySet();
+	
+							// Campus
+							setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+								oferta.getCampus().getCodigo() );
+	
+							// Turno
+							setCell( row, 3, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+								oferta.getTurno().getNome() );
+	
+							// Curso
+							setCell( row, 4, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+								curriculo.getCurso().getCodigo() );
+	
+							// Matriz Curricular
+							setCell( row, 5, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+								curriculo.getCodigo() );
+	
+							// Período
+							setCell( row, 6, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], periodo );
+	
+							// Disciplina
+							setCell( row, 7, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+								disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
+	
+							// Demanda de Alunos (Real)
+							setCell( row, 8, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeReal );
+							
+							// Demanda de Alunos (Virtual)
+							setCell( row, 9, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeVirtual );
+							
+							// Demanda de Alunos (Total)
+							setCell( row, 10, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeReal+quantidadeVirtual );
+							
+							// Exige Equivalencia Forcada
+							setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], 
+									demandaDTO.getExigeEquivalenciaForcada() ? "Sim" : "Não" );
+							
+							// Prioridade Alunos
+							setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], demandaDTO.getPrioridadeAlunos() );
+							
+							// Demanda Atendida
+							setCell( row, 13, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], (quantidade - demandaDTO.getQuantidadeNaoAtendida()) );
+							
+							// Demanda Não Atendida
+							setCell( row, 14, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], demandaDTO.getQuantidadeNaoAtendida() );
+							
+							// Disciplinas Substitutas
+							String disciplinasSubstitutasStr = "";
+							if (disciplinasSubstitutas != null && !disciplinasSubstitutas.isEmpty()) {
+								List<String> codigosDisciplinasSubstitutas = new ArrayList<String>();
+								for (Disciplina disciplinaSubistituta : disciplinasSubstitutas) {
+									codigosDisciplinasSubstitutas.add(disciplinaSubistituta.getCodigo());
+								}
+								Collections.sort(codigosDisciplinasSubstitutas);
+								StringBuffer disciplinasSubstitutasStrB = new StringBuffer("");
+								for (String codigoDisciplinaSubstituta : codigosDisciplinasSubstitutas) {
+									disciplinasSubstitutasStrB.append(codigoDisciplinaSubstituta + ", ");
+								}
+								disciplinasSubstitutasStr = disciplinasSubstitutasStrB.substring(0, disciplinasSubstitutasStrB.length() - 2);
+							}
+							setCell( row, 15, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], disciplinasSubstitutasStr);
+							
+							row++;
 						}
-						setCell( row, 13, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], disciplinasSubstitutasStr);
-						
-						row++;
 					}
 				}
 			}

@@ -665,6 +665,7 @@ public class DemandasServiceImpl
 						novoAluno.setFormando(false);
 						novoAluno.setVirtual(true);
 						novoAluno.setCriadoTrieda(true);
+						novoAluno.setPrioridade(demandaDTO.getPrioridadeAlunos());
 						
 						novoAluno.persist();
 						

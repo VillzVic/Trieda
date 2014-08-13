@@ -12,6 +12,7 @@ public class DisciplinaDemandaDTO extends AbstractDTO<String> implements Compara
 	public static final String PROPERTY_DEMANDA_TOTAL = "demandaTotal";
 	public static final String PROPERTY_NOVA_DEMANDA = "novaDemanda";
 	public static final String PROPERTY_EXIGE_EQUIVALENCIA_FORCADA = "exigeEquivalenciaForcada";
+	public static final String PROPERTY_PRIORIDADE_ALUNOS = "prioridadeAlunos";
 	
 	public DisciplinaDemandaDTO() {
 		super();
@@ -64,6 +65,13 @@ public class DisciplinaDemandaDTO extends AbstractDTO<String> implements Compara
 	}
 	public void setExigeEquivalenciaForcada(Boolean value) {
 		set(PROPERTY_EXIGE_EQUIVALENCIA_FORCADA, value);
+	}
+	
+	public Integer getPrioridadeAlunos() {
+		return get(PROPERTY_PRIORIDADE_ALUNOS);
+	}
+	public void setPrioridadeAlunos(Integer value) {
+		set(PROPERTY_PRIORIDADE_ALUNOS, value);
 	}
 
 	@Override

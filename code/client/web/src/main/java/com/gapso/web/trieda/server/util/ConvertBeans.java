@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -2122,6 +2123,128 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	public static List<DemandaDTO> toDemandaDTOPorPeriodo( Demanda domain )
+	{
+		InstituicaoEnsino instituicaoEnsino
+			= domain.getOferta().getCampus().getInstituicaoEnsino();
+		
+		List<AlunoDemanda> alunosDemanda = new ArrayList<AlunoDemanda>();
+		alunosDemanda.addAll(AlunoDemanda.findByDemandaReal(
+				instituicaoEnsino, domain ));
+		alunosDemanda.addAll(AlunoDemanda.findByDemandaVirtual(
+				instituicaoEnsino, domain ));
+		
+		Map<Integer, Map<Boolean, List<AlunoDemanda>>> periodoMapExigeEquivalenciaMapAlunoDemanda
+			= new HashMap<Integer, Map<Boolean, List<AlunoDemanda>>>();
+		for (AlunoDemanda alunoDemanda : alunosDemanda)
+		{
+			if (periodoMapExigeEquivalenciaMapAlunoDemanda.get(alunoDemanda.getAluno().getPrioridade()) == null)
+			{
+				List<AlunoDemanda> newAlunosDemandaList = new ArrayList<AlunoDemanda>();
+				newAlunosDemandaList.add(alunoDemanda);
+				Map<Boolean, List<AlunoDemanda>> exigeEquivalenciaMapAlunoDemanda = new HashMap<Boolean, List<AlunoDemanda>>();
+				exigeEquivalenciaMapAlunoDemanda.put(alunoDemanda.getExigeEquivalenciaForcada(), newAlunosDemandaList);
+				periodoMapExigeEquivalenciaMapAlunoDemanda.put(alunoDemanda.getAluno().getPrioridade(), exigeEquivalenciaMapAlunoDemanda);
+			}
+			else
+			{
+				if (periodoMapExigeEquivalenciaMapAlunoDemanda.get(alunoDemanda.getAluno().getPrioridade()).get(
+						alunoDemanda.getExigeEquivalenciaForcada()) == null)
+				{
+					List<AlunoDemanda> newAlunosDemandaList = new ArrayList<AlunoDemanda>();
+					newAlunosDemandaList.add(alunoDemanda);
+					periodoMapExigeEquivalenciaMapAlunoDemanda.get(alunoDemanda.getAluno().getPrioridade()).put(alunoDemanda.getExigeEquivalenciaForcada(), newAlunosDemandaList);
+				}
+				else
+				{
+					periodoMapExigeEquivalenciaMapAlunoDemanda.get(alunoDemanda.getAluno().getPrioridade()).get(
+							alunoDemanda.getExigeEquivalenciaForcada()).add(alunoDemanda);
+				}
+					
+			}
+		}
+		
+		List<DemandaDTO> demandasDTO = new ArrayList<DemandaDTO>();
+		for (Entry<Integer, Map<Boolean, List<AlunoDemanda>>> prioridade : periodoMapExigeEquivalenciaMapAlunoDemanda.entrySet())
+		{
+			for (Entry<Boolean, List<AlunoDemanda>> exigeEquivalencia : prioridade.getValue().entrySet())
+			{
+				DemandaDTO dto = new DemandaDTO();
+
+				dto.setId( domain.getId() );
+				dto.setVersion( domain.getVersion() );
+				
+				dto.setExigeEquivalenciaForcada(exigeEquivalencia.getKey());
+				dto.setPrioridadeAlunos(prioridade.getKey());
+
+				Oferta oferta = domain.getOferta();
+				dto.setOfertaId(oferta.getId());
+
+				Campus campus = oferta.getCampus();
+				dto.setCampusString( campus.getCodigo() );
+				dto.setCampusId( campus.getId() );
+
+				Curriculo curriculo = oferta.getCurriculo();
+				dto.setCurriculoString( curriculo.getCodigo() );
+				dto.setCurriculoId( curriculo.getId() );
+
+				Curso curso = curriculo.getCurso();
+				dto.setCursoString( curso.getCodigo() + " (" + curso.getNome() + ")" );
+				dto.setCursoId( curso.getId() );
+
+				Turno turno = oferta.getTurno();
+				dto.setTurnoString( turno.getNome() );
+				dto.setTurnoId( turno.getId() );
+
+				Disciplina disciplina = domain.getDisciplina();
+				dto.setDisciplinaString( disciplina.getCodigo() );
+				dto.setDisciplinaId( disciplina.getId() );
+
+				dto.setCenarioId( disciplina.getCenario().getId() );
+
+				// A quantidade da demandaserá calculada:
+				// Quando houver PELO MENOS Um aluno associado à essa demanda,
+				// então a quantidade será dada pelo total de alunos associados a ela.
+				// Caso contrário, não havendo nenhum aluno associado, o valor exibido
+				// para a quantidade será o valor armazenado no banco de dados.
+				
+				Integer alunosDemandaReal = 0;
+				Integer alunosDemandaVirtual = 0;
+				Integer quantidadeNaoAtendidaPorPrioridade = 0;
+				for (AlunoDemanda alunos : exigeEquivalencia.getValue())
+				{
+					if (alunos.getAluno().getVirtual())
+						alunosDemandaVirtual++;
+					else
+						alunosDemandaReal++;
+					
+					if (!alunos.getAtendido())
+						quantidadeNaoAtendidaPorPrioridade++;
+						
+				}
+
+				dto.setDemanda( domain.getQuantidade() );
+				dto.setDemandaReal( alunosDemandaReal );
+				dto.setDemandaVirtual(alunosDemandaVirtual);
+				dto.setQuantidadeDemandaEnable( true );
+				dto.setQuantidadeNaoAtendida(quantidadeNaoAtendidaPorPrioridade);
+				
+				dto.setPeriodo(curriculo.getPeriodo(disciplina));
+
+				if ( instituicaoEnsino != null )
+				{
+					dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
+					dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+				}
+
+				dto.setDisplayText( dto.getNaturalKey() );
+				demandasDTO.add(dto);
+			}
+		}
+
+		return demandasDTO;
+	}
+	
 	public static List < DemandaDTO > toListDemandaDTO(
 			List< Demanda > listDomains )
 		{
@@ -2218,6 +2341,8 @@ public class ConvertBeans {
 		if (domain.getHorarioAula() != null) {
 			dto.setHorarioAulaId(domain.getHorarioAula().getId());
 			dto.setHorarioAulaString( TriedaUtil.shortTimeString(domain.getHorarioAula().getHorario()));
+			semanaLetiva = domain.getHorarioAula().getSemanaLetiva();
+			semanaLetivaDisciplinaSubstituta = semanaLetiva; 
 		}
 		dto.setOfertaId(oferta.getId());
 		dto.setDisciplinaId(disciplina.getId());
@@ -2490,7 +2615,10 @@ public class ConvertBeans {
 
 			HorarioAula ha = hdc.getHorarioAula();
 			dto.setHorarioAulaId( ha.getId() );
-			dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );			
+			dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );
+			SemanaLetiva semanaLetiva = ha.getSemanaLetiva();
+			dto.setSemanaLetivaId( semanaLetiva.getId() );
+			dto.setSemanaLetivaTempoAula(semanaLetiva.getTempo());
 			
 			ProfessorVirtual professorVirtual = domain.getProfessorVirtual();
 			Oferta oferta = domain.getOferta();
@@ -2528,11 +2656,8 @@ public class ConvertBeans {
 				dto.setDisciplinaSubstitutaString( disciplinaSubstituta.getCodigo() );
 				dto.setDisciplinaSubstitutaNome( disciplinaSubstituta.getNome() );
 				dto.setTotalCreditoDisciplinaSubstituta(disciplinaSubstituta.getCreditosTotal());
-				if (!disciplinaSubstituta.getCurriculos().isEmpty()) {
-					SemanaLetiva semanaLetivaDisciplinaSubstituta = disciplinaSubstituta.getCurriculos().iterator().next().getCurriculo().getSemanaLetiva();
-					dto.setDisciplinaSubstitutaSemanaLetivaId(semanaLetivaDisciplinaSubstituta.getId());
-					dto.setDisciplinaSubstitutaSemanaLetivaTempoAula(semanaLetivaDisciplinaSubstituta.getTempo());
-				}
+				dto.setDisciplinaSubstitutaSemanaLetivaId(semanaLetiva.getId());
+				dto.setDisciplinaSubstitutaSemanaLetivaTempoAula(semanaLetiva.getTempo());
 			}
 			dto.setTotalCreditosTeoricosDisciplina( disciplina.getCreditosTeorico() );
 			dto.setTotalCreditosPraticosDisciplina( disciplina.getCreditosPratico() );
@@ -2543,7 +2668,6 @@ public class ConvertBeans {
 			
 			Curriculo curriculo = oferta.getCurriculo();
 			Curso curso = curriculo.getCurso();
-			SemanaLetiva semanaLetiva = curriculo.getSemanaLetiva();
 
 			dto.setCursoString( curso.getCodigo() );
 			dto.setCursoNome( curso.getNome() );
@@ -2559,8 +2683,6 @@ public class ConvertBeans {
 			dto.setTotalCreditos(1); // todo atendimento operacional representa apenas 1 crédito atendido
 			dto.setDisplayText( dto.getNaturalKey() );
 			dto.setCompartilhamentoCursosString( "" );
-			dto.setSemanaLetivaId( semanaLetiva.getId() );
-			dto.setSemanaLetivaTempoAula(semanaLetiva.getTempo());
 
 			if ( instituicaoEnsino != null )
 			{
@@ -2615,7 +2737,8 @@ public class ConvertBeans {
 //			dto.setQtdDemandaAlunosTotal(demanda.getQuantidade());
 
 			return dto;
-		}	
+		}
+
 	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTO(AtendimentoOperacional domain, Map<String,Integer[]> demandaKeyToQtdAlunosMap) {
 		AtendimentoOperacionalDTO dto = toAtendimentoOperacionalDTO(domain);
 		

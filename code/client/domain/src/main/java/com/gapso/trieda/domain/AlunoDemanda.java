@@ -1624,10 +1624,14 @@ public class AlunoDemanda
 	public AlunoDemanda clone(CenarioClone novoCenario) {
 		AlunoDemanda clone = new AlunoDemanda();
 		clone.setAluno(novoCenario.getEntidadeClonada(this.getAluno()));
-		clone.setAtendido(this.getAtendido());
+		if (novoCenario.getClonarSolucao())
+			clone.setAtendido(this.getAtendido());
+		else
+			clone.setAtendido(false);
 		clone.setDemanda(novoCenario.getEntidadeClonada(this.getDemanda()));
 		clone.setPeriodo(this.getPeriodo());
 		clone.setPrioridade(this.getPrioridade());
+		clone.setExigeEquivalenciaForcada(this.getExigeEquivalenciaForcada());
 		
 		return clone;
 	}

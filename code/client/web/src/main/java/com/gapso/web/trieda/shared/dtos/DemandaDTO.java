@@ -28,6 +28,10 @@ public class DemandaDTO
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 	public static final String PROPERTY_PERIODO = "periodo";
+	public static final String PROPERTY_EXIGE_EQUIVALENCIA_FORCADA = "exigeEquivalenciaForcada";
+	public static final String PROPERTY_PRIORIDADE_ALUNOS = "prioridadeAlunos";
+	public static final String PROPERTY_QUANTIDADE_NAO_ATENDIDA = "quantidadeNaoAtendida";
+	
 
 	public DemandaDTO()
 	{
@@ -221,6 +225,36 @@ public class DemandaDTO
 	public Boolean getQuantidadeDemandaEnable()
 	{
 		return get( PROPERTY_QUANTIDADE_DEMANDA_ENABLE );
+	}
+	
+	public void setExigeEquivalenciaForcada( Boolean value )
+	{
+		set( PROPERTY_EXIGE_EQUIVALENCIA_FORCADA, value );
+	}
+
+	public Boolean getExigeEquivalenciaForcada()
+	{
+		return get( PROPERTY_EXIGE_EQUIVALENCIA_FORCADA );
+	}
+	
+	public void setPrioridadeAlunos( Integer value )
+	{
+		set( PROPERTY_PRIORIDADE_ALUNOS, value );
+	}
+	
+	public Integer getPrioridadeAlunos()
+	{
+		return get( PROPERTY_PRIORIDADE_ALUNOS );
+	}
+	
+	public void setQuantidadeNaoAtendida( Integer value )
+	{
+		set( PROPERTY_QUANTIDADE_NAO_ATENDIDA, value );
+	}
+	
+	public Integer getQuantidadeNaoAtendida()
+	{
+		return get( PROPERTY_QUANTIDADE_NAO_ATENDIDA );
 	}
 
 	@Override

@@ -1067,4 +1067,9 @@ public class GTriedaI18nConstants
 	public String exigeEquivalenciaForcada() {
 		return this.languageManager.getText("exigeEquivalenciaForcada");
 	}
+
+	@Override
+	public String prioridadeAlunos() {
+		return this.languageManager.getText("prioridadeAlunos");
+	}
 }

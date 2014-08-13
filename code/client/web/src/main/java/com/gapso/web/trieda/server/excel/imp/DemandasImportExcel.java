@@ -27,6 +27,7 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.TriedaPar;
+import com.gapso.trieda.domain.TriedaTrio;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
@@ -45,6 +46,8 @@ public class DemandasImportExcel
 	static public String PERIODO_COLUMN_NAME;
 	static public String DISCIPLINA_COLUMN_NAME;
 	static public String DEMANDA_COLUMN_NAME;
+	static public String EXIGE_EQUIVALENCIA_COLUMN_NAME;
+	static public String PRIORIDADE_ALUNOS_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 	private Boolean criarAlunosVirtuais;
@@ -67,6 +70,8 @@ public class DemandasImportExcel
 		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
 		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
 		this.headerColumnsNames.add( DEMANDA_COLUMN_NAME );
+		this.headerColumnsNames.add( EXIGE_EQUIVALENCIA_COLUMN_NAME );
+		this.headerColumnsNames.add( PRIORIDADE_ALUNOS_COLUMN_NAME );
 	}
 	
 	public DemandasImportExcel( Cenario cenario,
@@ -86,6 +91,8 @@ public class DemandasImportExcel
 		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
 		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
 		this.headerColumnsNames.add( DEMANDA_COLUMN_NAME );
+		this.headerColumnsNames.add( EXIGE_EQUIVALENCIA_COLUMN_NAME );
+		this.headerColumnsNames.add( PRIORIDADE_ALUNOS_COLUMN_NAME );
 	}
 
 	@Override
@@ -152,6 +159,14 @@ public class DemandasImportExcel
 					else if ( DEMANDA_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setDemandaStr( cellValue );
+					}
+					else if ( EXIGE_EQUIVALENCIA_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setExigeEquivalenciaForcadaStr( cellValue );
+					}
+					else if ( PRIORIDADE_ALUNOS_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setPrioridadeAlunosStr( cellValue );
 					}
         		}
         	}
@@ -254,7 +269,7 @@ public class DemandasImportExcel
 
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
-			String demandaPeriodo = ( getCodeDemanda( bean ) + bean.getPeriodoStr() );
+			String demandaPeriodo = ( getCodeDemanda( bean ) + "-" + bean.getPeriodoStr() + "-" +bean.getPrioridadeAlunosStr());
 			List< Integer > rows = demandasToRowsMap.get( demandaPeriodo );
 
 			if ( rows == null )
@@ -502,8 +517,8 @@ public class DemandasImportExcel
 			= Oferta.buildCampusTurnoCurriculoToOfertaMap(
 				Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
 		
-		Map<TriedaPar<Oferta, Integer>, List<TriedaPar<Demanda, Integer>>> ofertaParPeriodoMapDemandaParQuantidade
-			= new HashMap<TriedaPar<Oferta, Integer>, List<TriedaPar<Demanda, Integer>>>();
+		Map<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>> ofertaParPeriodoMapPrioridadeMapDemandaQuantidade
+			= new HashMap<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>>();
 
 		for ( DemandasImportExcelBean demandasExcel : sheetContent )
 		{
@@ -519,16 +534,29 @@ public class DemandasImportExcel
 				// Update
 				demandaBD.merge();
 				
-				if (ofertaParPeriodoMapDemandaParQuantidade.get(key) == null)
+				if (ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key) == null)
 				{
-					TriedaPar<Demanda, Integer> newPar = TriedaPar.create(demandaBD, demandasExcel.getDemanda());
-					List<TriedaPar<Demanda, Integer>> newList = new ArrayList<TriedaPar<Demanda, Integer>>();
-					newList.add(newPar);
-					ofertaParPeriodoMapDemandaParQuantidade.put(key, newList);
+					TriedaTrio<Demanda, Integer, Boolean> demandaQuantidade = TriedaTrio.create(demandaBD, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada());
+					List<TriedaTrio<Demanda, Integer, Boolean>> demandaQuantidadeList = new ArrayList<TriedaTrio<Demanda, Integer, Boolean>>();
+					demandaQuantidadeList.add(demandaQuantidade);
+					Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> prioridadeMapDemandaQuantidade
+						= new HashMap<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>();
+					prioridadeMapDemandaQuantidade.put(demandasExcel.getPrioridade(), demandaQuantidadeList);
+					ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.put(key, prioridadeMapDemandaQuantidade);
 				}
 				else
 				{
-					ofertaParPeriodoMapDemandaParQuantidade.get(key).add(TriedaPar.create(demandaBD, demandasExcel.getDemanda()));
+					if (ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade()) == null)
+					{
+						TriedaTrio<Demanda, Integer, Boolean> demandaQuantidade = TriedaTrio.create(demandaBD, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada());
+						List<TriedaTrio<Demanda, Integer, Boolean>> demandaQuantidadeList = new ArrayList<TriedaTrio<Demanda, Integer, Boolean>>();
+						demandaQuantidadeList.add(demandaQuantidade);
+						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).put(demandasExcel.getPrioridade(), demandaQuantidadeList);
+					}
+					else
+					{
+						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade()).add( TriedaTrio.create(demandaBD, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada()));
+					}
 				}
 			}
 			else
@@ -541,72 +569,90 @@ public class DemandasImportExcel
 
 				newDemanda.persist();
 				
-				if (ofertaParPeriodoMapDemandaParQuantidade.get(key) == null)
+				if (ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key) == null)
 				{
-					TriedaPar<Demanda, Integer> newPar = TriedaPar.create(newDemanda, demandasExcel.getDemanda());
-					List<TriedaPar<Demanda, Integer>> newList = new ArrayList<TriedaPar<Demanda, Integer>>();
-					newList.add(newPar);
-					ofertaParPeriodoMapDemandaParQuantidade.put(key, newList);
+					TriedaTrio<Demanda, Integer, Boolean> demandaQuantidade = TriedaTrio.create(newDemanda, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada());
+					List<TriedaTrio<Demanda, Integer, Boolean>> demandaQuantidadeList = new ArrayList<TriedaTrio<Demanda, Integer, Boolean>>();
+					demandaQuantidadeList.add(demandaQuantidade);
+					Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> prioridadeMapDemandaQuantidade
+						= new HashMap<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>();
+					prioridadeMapDemandaQuantidade.put(demandasExcel.getPrioridade(), demandaQuantidadeList);
+					ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.put(key, prioridadeMapDemandaQuantidade);
 				}
 				else
 				{
-					ofertaParPeriodoMapDemandaParQuantidade.get(key).add(TriedaPar.create(newDemanda, demandasExcel.getDemanda()));
+					if (ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade()) == null)
+					{
+						TriedaTrio<Demanda, Integer, Boolean> demandaQuantidade = TriedaTrio.create(newDemanda, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada());
+						List<TriedaTrio<Demanda, Integer, Boolean>> demandaQuantidadeList = new ArrayList<TriedaTrio<Demanda, Integer, Boolean>>();
+						demandaQuantidadeList.add(demandaQuantidade);
+						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).put(demandasExcel.getPrioridade(), demandaQuantidadeList);
+					}
+					else
+					{
+						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade()).add( TriedaTrio.create(newDemanda, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada()));
+					}
 				}
 			}
 		}
 		//Criando Alunos Virtuais
 		if (criarAlunosVirtuais)
 		{
-			for (Entry<TriedaPar<Oferta, Integer>, List<TriedaPar<Demanda, Integer>>> entry : ofertaParPeriodoMapDemandaParQuantidade.entrySet())
+			for (Entry<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>> entry2 : ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.entrySet())
 			{
-				List<TriedaPar<Demanda, Integer>> demandas = entry.getValue();
-				Collections.sort(demandas, new Comparator<TriedaPar<Demanda, Integer>>() {
-					@Override
-					public int compare(TriedaPar<Demanda, Integer> o1, TriedaPar<Demanda, Integer> o2) {
-						return o1.getSegundo().compareTo(o2.getSegundo());
-					}
-				});
-				List<Aluno> alunos = new ArrayList<Aluno>();
-				for (TriedaPar<Demanda, Integer> demanda : demandas)
+				for (Entry<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> entry : entry2.getValue().entrySet())
 				{
-					if (demanda.getSegundo() > 0)
+					List<TriedaTrio<Demanda, Integer, Boolean>> demandas = entry.getValue();
+					Collections.sort(demandas, new Comparator<TriedaTrio<Demanda, Integer, Boolean>>() {
+						@Override
+						public int compare(TriedaTrio<Demanda, Integer, Boolean> o1, TriedaTrio<Demanda, Integer, Boolean> o2) {
+							return o1.getSegundo().compareTo(o2.getSegundo());
+						}
+					});
+					List<Aluno> alunos = new ArrayList<Aluno>();
+					for (TriedaTrio<Demanda, Integer, Boolean> demanda : demandas)
 					{
-						int alunosCriados = alunos.size();
-						for (int i = alunosCriados; i < demanda.getSegundo(); i++)
+						if (demanda.getSegundo() > 0)
 						{
-							Aluno novoAluno = new Aluno();
-							novoAluno.setCenario(getCenario());
-							novoAluno.setInstituicaoEnsino(instituicaoEnsino);
-							novoAluno.setNome("Aluno Virtual " + i);
-							novoAluno.setMatricula("Aluno Virtual " + i);
-							novoAluno.setFormando(false);
-							novoAluno.setVirtual(true);
-							novoAluno.setCriadoTrieda(true);
-							
-							novoAluno.persist();
-							
-							alunos.add(novoAluno);
-						}
-		
-						for (int i = 0; i < demanda.getSegundo(); i++)
-						{
-							AlunoDemanda novoAlunoDemanda = new AlunoDemanda();
-							novoAlunoDemanda.setAluno(alunos.get(i));
-							novoAlunoDemanda.setDemanda(demanda.getPrimeiro());
-							novoAlunoDemanda.setPeriodo(entry.getKey().getSegundo());
-							novoAlunoDemanda.setPrioridade(1);
-							novoAlunoDemanda.setAtendido(false);
-							
-							novoAlunoDemanda.persist();
+							int alunosCriados = alunos.size();
+							for (int i = alunosCriados; i < demanda.getSegundo(); i++)
+							{
+								Aluno novoAluno = new Aluno();
+								novoAluno.setCenario(getCenario());
+								novoAluno.setInstituicaoEnsino(instituicaoEnsino);
+								novoAluno.setNome("Aluno Virtual " + i);
+								novoAluno.setMatricula("Aluno Virtual " + i);
+								novoAluno.setFormando(false);
+								novoAluno.setVirtual(true);
+								novoAluno.setCriadoTrieda(true);
+								novoAluno.setPrioridade(entry.getKey());
+								
+								novoAluno.persist();
+								
+								alunos.add(novoAluno);
+							}
+			
+							for (int i = 0; i < demanda.getSegundo(); i++)
+							{
+								AlunoDemanda novoAlunoDemanda = new AlunoDemanda();
+								novoAlunoDemanda.setAluno(alunos.get(i));
+								novoAlunoDemanda.setDemanda(demanda.getPrimeiro());
+								novoAlunoDemanda.setPeriodo(entry2.getKey().getSegundo());
+								novoAlunoDemanda.setPrioridade(1);
+								novoAlunoDemanda.setAtendido(false);
+								novoAlunoDemanda.setExigeEquivalenciaForcada(demanda.getTerceiro());
+								
+								novoAlunoDemanda.persist();
+							}
 						}
 					}
-				}
-				for (Aluno aluno : alunos)
-				{
-					aluno.setNome("Aluno Virtual " + aluno.getId() + " " + entry.getKey().getPrimeiro().getCurriculo().getCurso().getNome() + " " 
-							+  entry.getKey().getPrimeiro().getCurriculo().getCodigo() + " " +  entry.getKey().getSegundo() );
-					aluno.setMatricula( aluno.getId().toString() );
-					aluno.merge();
+					for (Aluno aluno : alunos)
+					{
+						aluno.setNome("Aluno Virtual " + aluno.getId() + " " + entry2.getKey().getPrimeiro().getCurriculo().getCurso().getNome() + " " 
+								+  entry2.getKey().getPrimeiro().getCurriculo().getCodigo() + " " +  entry2.getKey().getSegundo() );
+						aluno.setMatricula( aluno.getId().toString() );
+						aluno.merge();
+					}
 				}
 			}
 		}
@@ -623,6 +669,8 @@ public class DemandasImportExcel
 			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
 			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
 			DEMANDA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().demandaDeAlunosVirtual() );
+			EXIGE_EQUIVALENCIA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().exigeEquivalenciaForcada() );
+			PRIORIDADE_ALUNOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().prioridadeAlunos() );
 		}
 	}
 

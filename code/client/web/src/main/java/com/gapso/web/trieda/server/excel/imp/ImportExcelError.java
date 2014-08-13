@@ -93,6 +93,11 @@ public enum ImportExcelError
 	DEMANDA_PERIODO_VALOR_NEGATIVO,
 	DEMANDA_PERIODO_VAZIO,
 	DEMANDA_TURNO_VAZIO,
+	DEMANDA_EXIGE_EQUIVALENCIA_FORCADA_VAZIO,
+	DEMANDA_PRIORIDADE_ALUNO_VAZIO,
+	DEMANDA_EXIGE_EQUIVALENCIA_FORCADA_FORMATO_INVALIDO,
+	DEMANDA_PRIORIDADE_ALUNOS_FORMATO_INVALIDO,
+	DEMANDA_PRIORIDADE_ALUNOS_VALOR_NEGATIVO,
 	
 	DISCIPLINA_CODIGO_VAZIO,
 	DISCIPLINA_CREDITOS_TEORICOS_FORMATO_INVALIDO,
@@ -327,6 +332,11 @@ public enum ImportExcelError
 			case DEMANDA_PERIODO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DemandasImportExcel.PERIODO_COLUMN_NAME);
 			case DEMANDA_PERIODO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.PERIODO_COLUMN_NAME);
 			case DEMANDA_TURNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.TURNO_COLUMN_NAME);
+			case DEMANDA_EXIGE_EQUIVALENCIA_FORCADA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.EXIGE_EQUIVALENCIA_COLUMN_NAME);
+			case DEMANDA_PRIORIDADE_ALUNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.PRIORIDADE_ALUNOS_COLUMN_NAME);
+			case DEMANDA_EXIGE_EQUIVALENCIA_FORCADA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DemandasImportExcel.EXIGE_EQUIVALENCIA_COLUMN_NAME);
+			case DEMANDA_PRIORIDADE_ALUNOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DemandasImportExcel.PRIORIDADE_ALUNOS_COLUMN_NAME);
+			case DEMANDA_PRIORIDADE_ALUNOS_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DemandasImportExcel.PRIORIDADE_ALUNOS_COLUMN_NAME);
 			
 			case DISCIPLINA_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.CODIGO_COLUMN_NAME);
 			case DISCIPLINA_CREDITOS_TEORICOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.CRED_TEORICOS_COLUMN_NAME);
