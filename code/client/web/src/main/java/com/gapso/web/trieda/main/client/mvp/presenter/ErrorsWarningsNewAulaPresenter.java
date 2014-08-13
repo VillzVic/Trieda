@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -9,7 +8,6 @@ import com.extjs.gxt.ui.client.store.Record;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -115,11 +113,18 @@ public class ErrorsWarningsNewAulaPresenter
 								@Override
 								public void onSuccess( ParDTO<TurmaDTO, List<AulaDTO>> result )
 								{
+									AulaDTO aulaDestaque = aulaDTO;
+									for (AulaDTO aula : result.getSegundo())
+									{
+										if (aula.getHorarioAulaId().equals(aulaDTO.getHorarioAulaId()) && aula.getSemana().equals(aulaDTO.getSemana()))
+											aulaDestaque = aula;
+									}
 									alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), turmaSelecionada.getStatus());
+									alocacaoManualPresenter.getDisplay().setAulaNaGrade(aulaDestaque);
 									alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 									alocacaoManualPresenter.getDisplay().getAlunosGrid().updateList();
 									alocacaoManualPresenter.getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(aulaDTO.getSalaString());
-									alocacaoManualPresenter.getDisplay().getSalaGridPanel().setAulaDestaque(aulaDTO);
+									alocacaoManualPresenter.getDisplay().getSalaGridPanel().setAulaDestaque(aulaDestaque);
 									alocacaoManualPresenter.getDisplay().getSalaGridPanel().requestAtendimentos();
 									alocacaoManualPresenter.addAulasButtonsListeners();
 									if (alocacaoManualPresenter.getDisplay().getProfessoresGrid().isRendered())

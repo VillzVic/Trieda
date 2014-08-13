@@ -204,7 +204,6 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 						}
 					}
 					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO /** mdcTemposAulaNumSemanasLetivas.getPrimeiro()*/);
-					
 					if(tamanhoLinhaGradeHorariaEmPixels < 20){
 						tamanhoLinhaGradeHorariaEmPixels = 20;
 					}
@@ -424,7 +423,6 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				html.setStyleAttribute("top", calculaPosicaoAula(rowIndex) + "px");
 				// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
 				int qtdLinhasNaGradeHorariaPorCreditoDaAula = getIndexHorario(getHorarioFinalAula(aulaDTO), horariosEscritos) - getIndexHorario(aulaDTO.getHorarioAulaString(), horariosEscritos);
-				int qtdIntervalosNaAula = getNumeroIntervalos(rowIndex+aulaDTO.getTotalCreditos()) - getNumeroIntervalos(rowIndex);
 				int height = 0;
 				for (int i = rowIndex; i < rowIndex+qtdLinhasNaGradeHorariaPorCreditoDaAula; i++)
 				{

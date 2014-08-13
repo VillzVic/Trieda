@@ -69,7 +69,7 @@ public class CarregarSolucaoCommand implements ICommand {
 				Map<String,List<String>> ret = futureBoolean.result();
 
 				if (ret.get("warning").isEmpty() && ret.get("error").isEmpty()) {
-					genericViewGateway.showMessageBoxAlert("OTIMIZADO","Saída salva com sucesso",null);
+					//genericViewGateway.showMessageBoxAlert("OTIMIZADO","Saída salva com sucesso",null);
 				}
 				else {
 					genericViewGateway.showOtimizarMessagesView(ret.get("warning"),ret.get("error"));

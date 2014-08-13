@@ -190,7 +190,7 @@ public interface AtendimentosServiceAsync {
 			AsyncCallback<Void> callback);
 
 	void getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO,
-			List<AulaDTO> aulas,
+			List<AulaDTO> aulas, CampusDTO campusDTO,
 			AsyncCallback<ListLoadResult<SalaStatusDTO>> callback);
 
 	void getAmbientesFaixaUtilizacaoPorDiaSemana(CenarioDTO cenarioDTO,

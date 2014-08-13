@@ -94,6 +94,7 @@ import com.gapso.web.trieda.main.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
+import com.gapso.web.trieda.server.CenariosServiceImpl;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -942,11 +943,25 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( MenuEvent ce )
 			{
-				Presenter presenter = new RelatorioVisaoProfessorPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
-					new RelatorioVisaoProfessorView( cenarioDTO, usuarioDTO, false ), false );
+				Services.cenarios().getCurrentCenario(new AsyncCallback< CenarioDTO >()
+				{
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Erro ao verificar situação do cenário", null );
+					}
 
-				presenter.go( gTab );
+					@Override
+					public void onSuccess(CenarioDTO cenario) {
+						cenarioDTO = cenario;
+						Presenter presenter = new RelatorioVisaoProfessorPresenter(
+							instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
+							new RelatorioVisaoProfessorView( cenarioDTO, usuarioDTO, false ), false );
+
+						presenter.go( gTab );
+					}
+				});
 			}
 		});
 		
@@ -954,11 +969,25 @@ public class ToolBarPresenter
 			new SelectionListener<MenuEvent>(){
 				@Override
 				public void componentSelected(MenuEvent ce){
-					Presenter presenter = new RelatorioVisaoAlunoPresenter(
-						instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoAlunoView(cenarioDTO)
-					);
+				Services.cenarios().getCurrentCenario(new AsyncCallback< CenarioDTO >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!",
+								"Erro ao verificar situação do cenário", null );
+						}
+	
+						@Override
+						public void onSuccess(CenarioDTO cenario) {
+							cenarioDTO = cenario;
+							Presenter presenter = new RelatorioVisaoAlunoPresenter(
+								instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoAlunoView(cenarioDTO)
+							);
 
-					presenter.go(gTab);
+							presenter.go(gTab);
+						}
+					});
 				}
 			}
 		);

@@ -79,12 +79,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		this.cellStyles = new CellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.codigoDisciplinaToColorMap = new HashMap<Long,CellStyle>();
-		if (isXls()) {
-			this.initialRow = 5;
-		}
-		else {
-			this.initialRow = 10;
-		}
+		this.initialRow = 5;
 
 		this.setFilter(filter);
 	}

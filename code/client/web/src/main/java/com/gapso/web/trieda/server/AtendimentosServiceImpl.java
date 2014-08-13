@@ -2300,7 +2300,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
 							Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
 							if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-							salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 						}
 					} else {
 							salaIdToTempoUsoSemanalEmMinutosMap.put(sala.getId(), 0);
@@ -2555,18 +2555,18 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 							if (salaToDiaSemanaToTempoUsoMap.get(sala) == null )
 							{
 								Map<Integer, Integer> diaSemanaMapTempoUso = new HashMap<Integer, Integer>();
-								diaSemanaMapTempoUso.put(aula.getSemana(), aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+								diaSemanaMapTempoUso.put(aula.getSemana(), aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 								salaToDiaSemanaToTempoUsoMap.put(sala, diaSemanaMapTempoUso);
 							}
 							else
 							{
 								if (salaToDiaSemanaToTempoUsoMap.get(sala).get(aula.getSemana()) == null)
 								{
-									salaToDiaSemanaToTempoUsoMap.get(sala).put(aula.getSemana(), aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+									salaToDiaSemanaToTempoUsoMap.get(sala).put(aula.getSemana(), aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 								}
 								else
 								{
-									salaToDiaSemanaToTempoUsoMap.get(sala).put(aula.getSemana(), salaToDiaSemanaToTempoUsoMap.get(sala).get(aula.getSemana()) + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+									salaToDiaSemanaToTempoUsoMap.get(sala).put(aula.getSemana(), salaToDiaSemanaToTempoUsoMap.get(sala).get(aula.getSemana()) + aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 								}
 							}
 						}
@@ -4888,15 +4888,18 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	@Override
-	public ListLoadResult<SalaStatusDTO> getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulas)
+	public ListLoadResult<SalaStatusDTO> getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulas, CampusDTO campusDTO)
 	{
 		List<SalaStatusDTO> result = new ArrayList<SalaStatusDTO>();
 		if (turmaDTO == null)
 		{
 			return new BaseListLoadResult<SalaStatusDTO>(result);
 		}
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
 		Disciplina disciplina = Disciplina.find(turmaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
-		for (Sala sala : disciplina.getSalas())
+		Collection<Sala> salas = disciplina.getSalas().isEmpty() ? Sala.findByCampus(getInstituicaoEnsinoUser(), cenario, campus) : disciplina.getSalas();
+		for (Sala sala : salas)
 		{
 			SalaStatusDTO salaStatus = new SalaStatusDTO();
 			salaStatus.setId(sala.getId());

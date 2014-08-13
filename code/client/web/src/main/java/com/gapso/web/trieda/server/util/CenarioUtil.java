@@ -253,7 +253,7 @@ public class CenarioUtil
 		this.cenario.setId( null );
 		this.cenario.persist();
 		
-		CenarioClone cenarioClone = new CenarioClone(cenario);
+		CenarioClone cenarioClone = new CenarioClone(cenario, false);
 		
 		//criarTiposContrato(cenario);
 		//criarTiposDisciplina(cenario);

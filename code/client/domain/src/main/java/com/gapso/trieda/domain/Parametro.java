@@ -189,7 +189,7 @@ public class Parametro
     
     //Considerar Equivalências entre Disciplinas
     @Column(name = "PAR_CONSIDERAR_EQUIV")
-    private Boolean considerarEquivalencia = false;
+    private Boolean considerarEquivalencia = true;
     @Column(name = "PAR_PROIBIR_CICLOS_EQUIV")
     private Boolean proibirCiclosEmEquivalencia = false;
     @Column(name = "PAR_CONSIDERAR_TRANSITIVIDADE_EQUIV")
@@ -204,7 +204,7 @@ public class Parametro
     private Integer minAlunosParaAbrirTurmaValue;
     // Permite a violação do mínimo de alunos para abertura de uma turma caso haja aluno formando alocado na turma
     @Column(name = "PAR_VIOLAR_MIN_TURMAS_FORMANDOS")
-    private Boolean violarMinTurmasFormandos = true;
+    private Boolean violarMinTurmasFormandos = false;
 
     //Considerar nível de dificuldade de disciplinas
     @Column(name = "PAR_NIVELDIFDISCI")
@@ -216,11 +216,11 @@ public class Parametro
 
     //Considerar regras genéricas de divisão de créditos
     @Column(name = "PAR_REGRASGENDIVCRE")
-    private Boolean regrasGenericasDivisaoCredito = false;
+    private Boolean regrasGenericasDivisaoCredito = true;
 
     //Considerar regras específicas de divisão de créditos
     @Column(name = "PAR_REGRASESPDIVCRED")
-    private Boolean regrasEspecificasDivisaoCredito = false;
+    private Boolean regrasEspecificasDivisaoCredito = true;
 
     //Maximizar nota da avaliação do corpo docente de cursos específicos
     @Column(name = "PAR_MAXNOTAAVALCORDOC")

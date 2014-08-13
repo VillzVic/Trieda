@@ -46,6 +46,9 @@ public class DivisoesCreditoImportExcelBean
 			checkMandatoryField( this.dia6Str, ImportExcelError.DIVISAO_CREDITO_DIA_VAZIO, erros );
 			checkMandatoryField( this.dia7Str, ImportExcelError.DIVISAO_CREDITO_DIA_VAZIO, erros );
 			
+			if(!erros.isEmpty())
+				return erros;
+			
 			this.creditos = checkNonNegativeIntegerField( this.creditosStr,
 					ImportExcelError.DIVISAO_CREDITO_DIA_FORMATO_INVALIDO,
 					ImportExcelError.DIVISAO_CREDITO_DIA_VALOR_NEGATIVO, erros );

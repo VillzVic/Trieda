@@ -101,7 +101,7 @@ public class EquivalenciaFormView extends MyComposite implements
 		formPanel.add(disciplinaEliminaComboBox, formData);
 
 		equivalenciaGeralCheckBox = new CheckBox();
-		equivalenciaGeralCheckBox.setFieldLabel("Equivalencia Geral");
+		equivalenciaGeralCheckBox.setFieldLabel("Equivalência Geral");
 		equivalenciaGeralCheckBox.setValue( equivalenciaDTO.getEquivalenciaGeral() == null
 				? true : equivalenciaDTO.getEquivalenciaGeral());
 		formPanel.add(equivalenciaGeralCheckBox, formData);

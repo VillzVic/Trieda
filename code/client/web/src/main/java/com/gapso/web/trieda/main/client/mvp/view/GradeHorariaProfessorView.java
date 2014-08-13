@@ -38,7 +38,7 @@ public class GradeHorariaProfessorView extends MyComposite implements
 	}
 	
 	private void initUI() {
-		simpleModal = new SimpleModal("Grade Horaria do Professor ("
+		simpleModal = new SimpleModal(null, "Fechar", "Grade Horaria do Professor ("
 				+ (professorDTO != null ? professorDTO.getCpf() : professorVirtualDTO.getNome()) + ")", Resources.DEFAULTS.professor16());
 		simpleModal.setHeight(500);
 		simpleModal.setWidth(820);

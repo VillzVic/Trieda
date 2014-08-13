@@ -964,7 +964,7 @@ public class AlocacaoManualPresenter
  				{
  	 				getDisplay().getAmbientesGrid().getGrid().getView().setEmptyText("Não existem ambientes relacionados a esta disciplina");
  				}
- 				service.getAmbientesTurma(cenarioDTO, getDisplay().getTurmaSelecionada(), getDisplay().getAulasSelecionadas(), callback);
+ 				service.getAmbientesTurma(cenarioDTO, getDisplay().getTurmaSelecionada(), getDisplay().getAulasSelecionadas(), getDisplay().getCampusDTO(), callback);
  			}
  		};
  		

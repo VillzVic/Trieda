@@ -153,7 +153,7 @@ public interface AtendimentosService extends RemoteService {
 	void removeAula(TurmaDTO turmaDTO, AulaDTO aulaDTO);
 
 	ListLoadResult<SalaStatusDTO> getAmbientesTurma(CenarioDTO cenarioDTO,
-			TurmaDTO turmaDTO, List<AulaDTO> aulas);
+			TurmaDTO turmaDTO, List<AulaDTO> aulas, CampusDTO campusDTO);
 
 	List<RelatorioQuantidadeDoubleDTO> getAmbientesFaixaUtilizacaoPorDiaSemana(
 			CenarioDTO cenarioDTO, CampusDTO campusDTO);

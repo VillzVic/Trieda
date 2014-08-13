@@ -323,10 +323,11 @@ public class Aula
 		oHoraFim.set(1979,Calendar.NOVEMBER,6);
 		oHoraFim.add(Calendar.MINUTE,o.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo()*(o.getCreditosPraticos()+o.getCreditosTeoricos()));
 		
-		return (horaInicio.compareTo(oHoraInicio) <= 0 && oHoraInicio.compareTo(horaFim) <= 0 ) || // hi1 < hi2 < hf1
-			   (horaInicio.compareTo(oHoraFim) <= 0  && oHoraFim.compareTo(horaFim) <= 0 ) || // hi1 < hf2 < hf1
-			   (oHoraInicio.compareTo(horaInicio) <= 0 && horaInicio.compareTo(oHoraFim) <= 0 ) || // hi2 < hi1 < hf2
-			   (oHoraInicio.compareTo(horaFim) <= 0 && horaFim.compareTo(oHoraFim) <= 0 ); // hi2 < hf1 < hf2	
+		return (horaInicio.compareTo(oHoraInicio) < 0 && oHoraInicio.compareTo(horaFim) < 0 ) || // hi1 < hi2 < hf1
+				   (horaInicio.compareTo(oHoraFim) < 0  && oHoraFim.compareTo(horaFim) < 0 ) || // hi1 < hf2 < hf1
+				   (oHoraInicio.compareTo(horaInicio) < 0 && horaInicio.compareTo(oHoraFim) < 0 ) || // hi2 < hi1 < hf2
+				   (oHoraInicio.compareTo(horaFim) < 0 && horaFim.compareTo(oHoraFim) < 0 ) ||
+				   (horaInicio.compareTo(oHoraInicio) == 0 && horaFim.compareTo(oHoraFim) == 0 ); // hi1 == hi2 && hf1 = hf2
 	}
 	
 	private boolean comparaPorHorarioSeVemAntesDe(Aula o)

@@ -436,10 +436,10 @@ public class CenariosServiceImpl
 		cenario.setId( null );
 		cenario.persist();
 		
-		int numPartes = 0;
+		int numPartes = 1;
 		int maxPartes = clonarSolucao ? 26 : 19;
 		
-		CenarioClone cenarioClone = new CenarioClone(cenario);
+		CenarioClone cenarioClone = new CenarioClone(cenario, clonarSolucao);
 		getProgressReport().setInitNewPartial("Clonando TipoSala - " + "Parte " + numPartes++ + " De " + maxPartes);
 		for (TipoSala tipoSala : TipoSala.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{

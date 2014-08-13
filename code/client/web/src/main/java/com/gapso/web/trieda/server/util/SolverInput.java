@@ -214,7 +214,7 @@ public class SolverInput
 	
 	private void carregaDemandasDisciplinas() {
 		// Inicialmente, consideramos que todas as disciplinas serão enviadas para o solver
-		this.disciplinasComDemandaCurriculo.addAll(Disciplina.findAll(this.instituicaoEnsino));
+		this.disciplinasComDemandaCurriculo.addAll(Disciplina.findByCenario(this.instituicaoEnsino, cenario));
 
 		// Removemos do input todas as disciplinas que não possuem nenhuma demanda cadastrada
 		this.demandasCampusTurno.addAll(Demanda.findBy(this.instituicaoEnsino,this.parametro.getCampi(),this.parametro.getTurnos()));
@@ -247,7 +247,7 @@ public class SolverInput
 		this.horariosFixacoes = new HashMap< Fixacao, Set< HorarioDisponivelCenario > >();
 
 		this.todosHorarioDisponivelCenario
-			= HorarioDisponivelCenario.findAll( this.instituicaoEnsino );
+			= HorarioDisponivelCenario.findAll( this.instituicaoEnsino, cenario );
 
 		for (HorarioDisponivelCenario hdc : this.todosHorarioDisponivelCenario) {
 			// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
@@ -1737,7 +1737,7 @@ public class SolverInput
 			
 			// cria as demandas por aluno
 			Set<Aluno> alunos = new HashSet<Aluno>(); // armazena somente os alunos cuja alguma demanda será considerada na otimização
-			List<AlunoDemanda> alunosDemanda = AlunoDemanda.findAll(this.instituicaoEnsino);
+			List<AlunoDemanda> alunosDemanda = AlunoDemanda.findAll(this.instituicaoEnsino, cenario);
 			for (AlunoDemanda alunoDemanda : alunosDemanda) {
 				boolean contemDemanda = this.demandasCampusTurno.contains(alunoDemanda.getDemanda());
 				boolean contemDisciplina = this.disciplinasComDemandaCurriculo.contains(alunoDemanda.getDemanda().getDisciplina());

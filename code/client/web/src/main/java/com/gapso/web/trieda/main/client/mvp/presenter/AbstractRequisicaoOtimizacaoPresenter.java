@@ -109,7 +109,7 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 				Map<String,List<String>> ret = futureBoolean.result();
 
 				if (ret.get("warning").isEmpty() && ret.get("error").isEmpty()) {
-					MessageBox.alert("Otimização","Saída salva com sucesso",null);
+					//MessageBox.alert("Otimização","Saída salva com sucesso",null);
 				}
 				else {
 					Presenter presenter = new OtimizarMessagesPresenter(ret.get("warning"),ret.get("error"),new OtimizarMessagesView());

@@ -192,6 +192,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			getProgressReport().setInitNewPartial("Checando exige equivalência forçada em Demandas de alunos");
 			checkExigeEquivalenciaForcadaAlunosDemanda(parametro,getInstituicaoEnsinoUser(),errors);
+			System.out.println("Checou equivalencias forçadas");
 			
 //			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 //			checkSemanasLetivasIncompativeis(parametro, errors);
@@ -448,7 +449,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					if (getProgressReport().getStatus() == 0) {
 						initProgressReport("chaveOtimizacaoReq");
 					}
-					getProgressReport().setInitNewPartial("Enviando requisicao de otimizacao");
+					getProgressReport().setInitNewPartial("Enviando requisição de otimização");
 					Parametro parametro = ConvertBeans.toParametro(parametroDTO);
 					parametro.setId(null);
 					parametro.flush();
@@ -744,7 +745,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			warnings.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, não há nenhuma semana letiva cadastrada no cenário [" + cenario.getNome() + " ]."));
 		}
 		
-		List<HorarioDisponivelCenario> horariosDisponiveisAll = HorarioDisponivelCenario.findAll(getInstituicaoEnsinoUser());
+		List<HorarioDisponivelCenario> horariosDisponiveisAll = HorarioDisponivelCenario.findAll(getInstituicaoEnsinoUser(), cenario);
 		Map<Long, List<HorarioDisponivelCenario>> horariosDisponiveisMap = new HashMap<Long, List<HorarioDisponivelCenario>>();
 		
 		for(HorarioDisponivelCenario hdc : horariosDisponiveisAll){
@@ -1953,7 +1954,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	public Map<String, List<String>> saveContent(CenarioDTO cenarioDTO,Long round) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
 		
-		initProgressReport("chaveOtimizacao");
+		if (getProgressReport() == null || getProgressReport().getStatus() == 0) {
+			initProgressReport("chaveOtimizacao");
+		}
 		getProgressReport().setInitNewPartial("Carregando output");
 		
 		
@@ -1965,7 +1968,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 
-			getProgressReport().setPartial("Carregando xml( round ). Passo 1 de 4...", true);// TODO:
+			getProgressReport().setInitSubPartial("Carregando xml( round )");// TODO:
 			
 			byte[] xmlBytes = solverClient.getContent(round);
 
@@ -1973,14 +1976,13 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				ret.get("error").add("Erro no servidor");
 				return ret;
 			}
-
 			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.output");
 			Unmarshaller u = jc.createUnmarshaller();
 			XMLInputFactory xif = XMLInputFactory.newInstance();
 			XMLStreamReader xsr = xif.createXMLStreamReader(new ByteArrayInputStream(xmlBytes));
 			
 			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(xsr);
-
+			getProgressReport().endSubPartial();
 			for (ItemError erro : triedaOutput.getErrors().getError()) {
 				ret.get("error").add(erro.getMessage());
 			}
@@ -1992,7 +1994,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				return ret;
 			}
 
-			getProgressReport().setPartial("Processando campi e turnos utilizados...", true);// TODO:
+			getProgressReport().setInitSubPartial("Processando campi e turnos utilizados");// TODO:
 			Set<Campus> campi = new HashSet<Campus>();
 			Set<Turno> turnos = new HashSet<Turno>();
 			boolean ehTatico = false;
@@ -2063,33 +2065,33 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			{
 				System.out.println("campus:" + campus.getNome());
 			}
-			getProgressReport().setPartial("Processando campi e turnos utilizados FINALIZADO", true);// TODO:
-			getProgressReport().setPartial("Carregando xml( round ). Passo 1 de 4 FINALIZADO", true);// TODO:
+			getProgressReport().endSubPartial();
 
 			SolverOutput solverOutput = new SolverOutput(getInstituicaoEnsinoUser(), cenario, triedaOutput);
-			getProgressReport().setPartial("Atualizando demandas de alunos. Passo 2 de 4", true);// TODO:
+			getProgressReport().setInitSubPartial("Atualizando demandas de alunos.");// TODO:
 			solverOutput.atualizarAlunosDemanda(campi,turnos);
-			getProgressReport().setPartial("Atualizando demandas de alunos. Passo 2 de 4 FINALIZADO", true);// TODO:
+			getProgressReport().endSubPartial();
 
 			if (ehTatico) {
-				getProgressReport().setPartial("Gerando atendimentos tatico. Passo 3 de 4", true);// TODO:
+				getProgressReport().setInitSubPartial("Gerando atendimentos tático.");// TODO:
 				solverOutput.generateAtendimentosTatico(turnos);
-				getProgressReport().setPartial("Gerando atendimentos tatico. Passo 3 de 4 FINALIZADO", true);// TODO:
+				getProgressReport().endSubPartial();
 
-				getProgressReport().setPartial("Salvando atendimentos tatico. Passo 4 de 4", true);// TODO:
+				getProgressReport().setInitSubPartial("Salvando atendimentos tático.");// TODO:
 				solverOutput.salvarAtendimentosTatico(campi,turnos);
-				getProgressReport().setPartial("Salvando atendimentos tatico. Passo 4 de 4 FINALIZADO", true);// TODO:
+				getProgressReport().endSubPartial();
 			} else {
-				getProgressReport().setPartial("Gerando atendimentos operacional. Passo 3 de 4", true);// TODO:
+				getProgressReport().setInitSubPartial("Gerando atendimentos operacional.");// TODO:
 				solverOutput.generateAtendimentosOperacional(turnos);
-				getProgressReport().setPartial("Gerando atendimentos operacional. Passo 3 de 4 FINALIZADO", true);// TODO:
+				getProgressReport().endSubPartial();
 
-				getProgressReport().setPartial("Salvando atendimentos operacional. Passo 4 de 4", true);// TODO:
+				getProgressReport().setInitSubPartial("Salvando atendimentos operacional.");// TODO:
 				solverOutput.salvarAtendimentosOperacional(campi, turnos);
-				getProgressReport().setPartial("Salvando atendimentos operacional. Passo 4 de 4 FINALIZADO", true);// TODO:
+				getProgressReport().endSubPartial();
 			}
-			getProgressReport().setPartial("Atualizando motivos de nao atendimento FINALIZADO", true);// TODO:
+			getProgressReport().setInitSubPartial("Atualizando motivos de não atendimento.");// TODO:
 			solverOutput.generateMotivosNaoAtendimento();
+			getProgressReport().endSubPartial();
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			ret.get("error").add("Erro ao salvar o resultado na base de dados");
@@ -2101,7 +2103,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 
 		
-		getProgressReport().setPartial("Etapa concluída", true);
 		getProgressReport().finish();
 		
 		return ret;

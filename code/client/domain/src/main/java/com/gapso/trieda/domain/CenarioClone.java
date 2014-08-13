@@ -7,12 +7,14 @@ import java.util.Map;
 public class CenarioClone {
 
 	private Cenario cenarioClone;
+	private boolean clonarSolucao;
 	
 	public Map<Class<? extends Clonable>, Map<Object, Object>> entidadeMapIdNovoMapIdAntigo;
 	
-	public CenarioClone(Cenario cenario)
+	public CenarioClone(Cenario cenario, boolean clonarSolucao)
 	{
 		cenarioClone = cenario;
+		this.clonarSolucao = clonarSolucao;
 		
 		entidadeMapIdNovoMapIdAntigo = new HashMap<Class<? extends Clonable>, Map<Object, Object>>();
 	}
@@ -54,5 +56,10 @@ public class CenarioClone {
 	public Cenario getCenario()
 	{
 		return cenarioClone;
+	}
+	
+	public boolean getClonarSolucao()
+	{
+		return clonarSolucao;
 	}
 }

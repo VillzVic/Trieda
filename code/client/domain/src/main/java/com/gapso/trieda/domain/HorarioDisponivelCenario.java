@@ -212,6 +212,23 @@ public class HorarioDisponivelCenario
 
         return q.getResultList();
     }
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< HorarioDisponivelCenario > findAll(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM HorarioDisponivelCenario o " +
+    		" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.horarioAula.semanaLetiva.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+
+        return q.getResultList();
+    }
+
 
 	public static HorarioDisponivelCenario find(
 		Long id, InstituicaoEnsino instituicaoEnsino )

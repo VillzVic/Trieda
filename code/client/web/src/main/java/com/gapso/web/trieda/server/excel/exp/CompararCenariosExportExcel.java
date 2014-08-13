@@ -125,7 +125,7 @@ public class CompararCenariosExportExcel
 				nextRow += 1;
 				List<ModelData> models = node.getChildren();
 				nextRow = writeHeader(node,nextRow,nextColumn,sheet);
-				int rowEspacoIndex = this.initialRow + 1;
+				int rowEspacoIndex = this.initialRow + 2;
 				for (ModelData data : models)
 				{
 					if (rowsEspaco.contains(rowEspacoIndex))
@@ -138,7 +138,7 @@ public class CompararCenariosExportExcel
 					
 				}
 			}
-			removeRemainingRows(sheet, nextRow);
+			removeRemainingRows(sheet, nextRow+2);
 			autoSizeColumns((short)3, (short)20, sheet);
 			return true;
 		}

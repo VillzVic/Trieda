@@ -150,13 +150,13 @@ public class AlunosDemandaExportExcel
 						String alunoKey = matriculaCell.getStringCellValue();
 						String cellHyperlink = entry.getValue().get(alunoKey);
 						if (cellHyperlink != null) {
-							setCellWithHyperlink(nextRow,12,sheet,cellValue,cellHyperlink,true);
+							setCellWithHyperlink(nextRow,14,sheet,cellValue,cellHyperlink,true);
 						}
 					} else if (cellValue.equals(ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName())) {
 						String visaoCursoKey = campusCell.getStringCellValue()+"-"+turnoCell.getStringCellValue()+"-"+cursoCell.getStringCellValue()+"-"+curriculoCell.getStringCellValue()+"-"+((int)periodoCell.getNumericCellValue());
 						String cellHyperlink = entry.getValue().get(visaoCursoKey);
 						if (cellHyperlink != null) {
-							setCellWithHyperlink(nextRow,13,sheet,cellValue,cellHyperlink,true);
+							setCellWithHyperlink(nextRow,15,sheet,cellValue,cellHyperlink,true);
 						}
 					}
 				}
@@ -170,7 +170,7 @@ public class AlunosDemandaExportExcel
 				matriculaCell = getCell(nextRow,8,sheet);
 			}
 			
-			autoSizeColumns((short)11,(short)12,sheet);
+			autoSizeColumns((short)14,(short)15,sheet);
 		}		
 	}
 

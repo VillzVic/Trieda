@@ -168,13 +168,21 @@ public class AulaFormPresenter
 											@Override
 											public void onSuccess( ParDTO<TurmaDTO, List<AulaDTO>> result )
 											{
+												AulaDTO aulaDestaque = getDTO();
+												for (AulaDTO aula : result.getSegundo())
+												{
+													if (aula.getHorarioAulaId().equals(getDTO().getHorarioAulaId()) && aula.getSemana().equals(getDTO().getSemana()))
+													{
+														aulaDestaque = aula;
+													}
+												}
 												alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), turmaSelecionada.getStatus());
-												alocacaoManualPresenter.getDisplay().setAulaNaGrade(getDTO());
+												alocacaoManualPresenter.getDisplay().setAulaNaGrade(aulaDestaque);
 												alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 												alocacaoManualPresenter.getDisplay().getAlunosGrid().updateList();
 												alocacaoManualPresenter.getDisplay().getSalaComboBox().setValue(display.getSalaComboBox().getValue());
 												alocacaoManualPresenter.getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(getDTO().getSalaString());
-												alocacaoManualPresenter.getDisplay().getSalaGridPanel().setAulaDestaque(getDTO());
+												alocacaoManualPresenter.getDisplay().getSalaGridPanel().setAulaDestaque(aulaDestaque);
 												alocacaoManualPresenter.getDisplay().getSalaGridPanel().requestAtendimentos();
 												alocacaoManualPresenter.addAulasButtonsListeners();
 												if (alocacaoManualPresenter.getDisplay().getProfessoresGrid().isRendered())

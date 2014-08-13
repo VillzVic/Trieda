@@ -813,12 +813,12 @@ public class SalasServiceImpl
 								if(!sala.isLaboratorio()){
 									Integer tempoUsoSemanalEmMinutos = salaExternaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
 									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-									salaExternaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+									salaExternaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 								}
 								else {
 									Integer tempoUsoSemanalEmMinutos = laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
 									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-									laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+									laboratorioExternoIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 								}
 							}
 							else
@@ -834,12 +834,12 @@ public class SalasServiceImpl
 								if(!sala.isLaboratorio()){
 									Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
 									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-									salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+									salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 								}
 								else {
 									Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
 									if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
-									laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+									laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos());
 								}
 							}
 						}
@@ -1176,7 +1176,7 @@ public class SalasServiceImpl
 							somatorioDeAlunos +=  aula.getQuantidadeAlunos();
 							somatorioDaCapacidade += sala.getCapacidadeInstalada();
 							
-							cargaHoraria += aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula();
+							cargaHoraria += aula.getTotalCreditos()*aula.getDuracaoDeUmaAulaEmMinutos();
 						}
 						mediaUtilizacaoHorario += (double) cargaHoraria / cargaHorariaSemanalEmMinutos;
 					}

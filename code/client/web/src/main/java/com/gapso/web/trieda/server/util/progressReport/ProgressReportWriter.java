@@ -6,12 +6,15 @@ import java.io.PrintStream;
 public abstract class ProgressReportWriter extends ProgressReport{
 	private Integer totalTime;
 	private Long time;
+	private Long subTime;
 	private PrintStream ps, antigo;
 	private int cont;
+	private int subCont;
 	
 	public ProgressReportWriter(OutputStream os){
 		super();
 		cont = 0;
+		subCont = 0;
 		ps = new PrintStream(os){
 			@Override
 			public void print(String s) {
@@ -74,6 +77,7 @@ public abstract class ProgressReportWriter extends ProgressReport{
 	public void setInitNewPartial(String msg){
 		writeMsg(++cont + ". " + msg);
 		time = System.currentTimeMillis();
+		subCont = 0;
 	}
 	
 	public void setPartial(String msg){
@@ -90,6 +94,16 @@ public abstract class ProgressReportWriter extends ProgressReport{
 		
 		writeMsg(msg + " - " + descricaoTempo(interval));
 		totalTime += interval;
+	}
+	
+	public void setInitSubPartial(String msg){
+		writeMsg(cont + "." + ++subCont + ". " + msg);
+		subTime = System.currentTimeMillis();
+	}
+	
+	public void endSubPartial(){
+		Integer interval = Math.round((System.currentTimeMillis() - subTime)/1000);
+		writeMsg("Finalizado: " + descricaoTempo(interval));
 	}
 	
 }
