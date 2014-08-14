@@ -351,6 +351,37 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			dto.setSemanaLetivaId( aula.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getId() );
 			dto.setSemanaLetivaTempoAula( aula.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo());
 			
+			Map<Oferta,Map<Disciplina,Set<AlunoDemanda>>> ofeToDiscSubstToAlnDemMap = new HashMap<Oferta,Map<Disciplina,Set<AlunoDemanda>>>();
+			for (AlunoDemanda ald : turma.getAlunos())
+			{
+				Oferta ald_ofe = ald.getDemanda().getOferta();
+				Disciplina ald_dis = ald.getDemanda().getDisciplina();
+				
+				Map<Disciplina,Set<AlunoDemanda>> discSubstToAlnDemMap = ofeToDiscSubstToAlnDemMap.get(ald_ofe);
+				if (discSubstToAlnDemMap == null) {
+					discSubstToAlnDemMap = new HashMap<Disciplina,Set<AlunoDemanda>>();
+					ofeToDiscSubstToAlnDemMap.put(ald_ofe,discSubstToAlnDemMap);
+				}		
+				
+				Set<AlunoDemanda> alnDem = discSubstToAlnDemMap.get(ald_dis);
+				if (alnDem == null) {
+					alnDem = new HashSet<AlunoDemanda>();
+					discSubstToAlnDemMap.put(ald_dis,alnDem);
+				}
+				alnDem.add(ald);
+			}
+			
+			dto.setCursoNome("");
+			dto.setPeriodoString("");
+			dto.setCurricularString("");
+			for (Oferta oferta : ofeToDiscSubstToAlnDemMap.keySet() )
+			{
+				dto.setCursoNome((dto.getCursoNome().isEmpty() ? dto.getCursoNome() : (dto.getCursoNome() + " / ")) + oferta.getCurso().getNome());
+				Integer periodo = oferta.getCurriculo().getPeriodo(Disciplina.find(dto.getDisciplinaId(), getInstituicaoEnsinoUser()));
+				dto.setPeriodoString((dto.getPeriodoString().isEmpty() ? dto.getPeriodoString() : (dto.getPeriodoString() + " / ")) + (periodo == null ? "" : periodo));
+				dto.setCurricularString((dto.getCurriculoString().isEmpty() ? dto.getCurriculoString() : (dto.getCurriculoString() + " / ")) + oferta.getCurriculo().getCodigo());
+			}
+			
 			result.add(dto);
 		}
 		return result;

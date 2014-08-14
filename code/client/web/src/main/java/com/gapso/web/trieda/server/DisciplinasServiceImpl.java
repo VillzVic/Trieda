@@ -495,12 +495,8 @@ public class DisciplinasServiceImpl
 	{
 		Disciplina disciplina = ConvertBeans.toDisciplina( disciplinaDTO );
 		Cenario cenario = Cenario.find(disciplinaDTO.getCenarioId(), getInstituicaoEnsinoUser());
-
 		if ( disciplina.getId() != null && disciplina.getId() > 0 )
 		{
-			InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(disciplinaDTO.getInstituicaoEnsinoId());
-			disciplina = Disciplina.find(disciplina.getId(), instituicaoEnsino);
-
 			List< SemanaLetiva > semanasLetivas
 			= SemanaLetiva.findByCenario( getInstituicaoEnsinoUser(), cenario );
 

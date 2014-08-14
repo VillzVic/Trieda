@@ -156,8 +156,6 @@ public class SolverInput
 	private Set< Disciplina > disciplinasComDemandaCurriculo = new HashSet< Disciplina >();
 	private Map< Curriculo, List< Integer > > mapCurriculosPeriodos = new HashMap< Curriculo, List< Integer > >();
 	
-	private ProgressReportWriter progressReport;
-
 	public SolverInput(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		Parametro parametro, List< Campus > listCampi )
@@ -496,15 +494,12 @@ public class SolverInput
 	private void generate( boolean tatico )
 	{
 		System.out.print("Gerando Calendario");long start = System.currentTimeMillis(); // TODO: retirar
-		getProgressReport().setInitNewPartial("Gerando Calendario");
 		generateCalendario();
 		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando tiposSala");start = System.currentTimeMillis(); // TODO: retirar
-		getProgressReport().setInitNewPartial("Gerando tipos de sala");
 		generateTiposSala();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando tiposContrato");start = System.currentTimeMillis(); // TODO: retirar
-		getProgressReport().setInitNewPartial("Gerando tipos de contrato");
 		generateTiposContrato();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando tiposTitulacao");start = System.currentTimeMillis(); // TODO: retirar
@@ -2466,17 +2461,5 @@ public class SolverInput
 		}
 		
 		this.triedaInput.setEquivalencias( grupoEquivalencia );	
-	}
-	
-	public void setProgressReport(List<String> fbl){
-		progressReport = new ProgressReportListWriter(fbl);
-	}
-	
-	public void setProgressReport(File f) throws IOException{
-		progressReport = new ProgressReportFileWriter(f);
-	}
-	
-	public ProgressReportWriter getProgressReport(){
-		return progressReport;
 	}
 }

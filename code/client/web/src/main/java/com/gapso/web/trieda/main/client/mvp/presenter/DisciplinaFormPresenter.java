@@ -141,6 +141,9 @@ public class DisciplinaFormPresenter
 	{
 		DisciplinaDTO disciplinaDTO = display.getDisciplinaDTO();
 
+		disciplinaDTO.setId( display.getDisciplinaDTO().getId() );
+		disciplinaDTO.setVersion( display.getDisciplinaDTO().getVersion() );
+
 		disciplinaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		disciplinaDTO.setCenarioId(cenario.getId());
 		disciplinaDTO.setNome(display.getNomeTextField().getValue());
