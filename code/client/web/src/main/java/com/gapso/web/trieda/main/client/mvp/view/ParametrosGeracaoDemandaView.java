@@ -159,11 +159,11 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		RadioGroup maxCreditosRadioGroup = new RadioGroup();
 		maxCreditosRadioGroup.setLabelStyle("width: 275px");
 		this.creditoPeriodoRadio = new Radio();  
-		this.creditoPeriodoRadio.setBoxLabel("Crédito máximo igual ao total de créditos do periodo do aluno");
+		this.creditoPeriodoRadio.setBoxLabel("Máximo de creditos igual ao total de créditos do periodo do aluno");
 		this.creditoPeriodoRadio.setValue(parametroGeracaoDemandaDTO.getMaxCreditosPeriodo());
 		maxCreditosRadioGroup.add(this.creditoPeriodoRadio);
 		this.creditoManualRadio = new Radio();
-		this.creditoManualRadio.setBoxLabel("Crédito máximo informado manualmente");
+		this.creditoManualRadio.setBoxLabel("Máximo de creditos informado manualmente");
 		this.creditoManualRadio.setValue(!parametroGeracaoDemandaDTO.getMaxCreditosPeriodo());
 		maxCreditosRadioGroup.add(this.creditoManualRadio);
 		this.creditoManualNumberField = new NumberField();

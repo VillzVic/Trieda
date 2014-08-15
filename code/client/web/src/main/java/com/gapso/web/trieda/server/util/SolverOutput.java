@@ -438,7 +438,10 @@ public class SolverOutput
 				atendimentoAluno.add(atendimento);
 			}
 			else{
-				throw new Exception("Erro ao tentar associar atendimentos a demandas de alunos inexistentes");
+				throw new Exception("Não foi possível carregar o resultado gerado pelo resolvedor matemático. Abaixo seguem mais detalhes sobre o erro\n" +
+						"O ID igual a: " + i + ", que deveria representar um Aluno Demanda, não foi encontrado na base de dados.\n" +
+						"Id da disciplina da demanda:" + itemAtendimentoOferta.getDisciplinaId() + "\n" +
+						"Id da oferta: " + itemAtendimentoOferta.getOfertaCursoCampiId());
 			}
 		}
 		

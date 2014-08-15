@@ -226,6 +226,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				aulas.addAll(getAulasParciais(cenario, filtro.getSalaCodigo()));
 			}
 			
+			for (HorarioDisponivelCenario horario : sala.getHorarios())
+			{
+				String inicio = df.format( horario.getHorarioAula().getHorario() );
+				horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(horario.getDiaSemana()), horario.getHorarioAula().getSemanaLetiva().getTempo()));
+			}
+			
 			if (!aulas.isEmpty()) {
 		 		// trata compartilhamento de turmas entre cursos
 				List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
@@ -245,11 +251,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
 				List<String> horariosDeFimDeAula = quarteto.getQuarto();
-				for (HorarioDisponivelCenario horario : sala.getHorarios())
-				{
-					String inicio = df.format( horario.getHorarioAula().getHorario() );
-					horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(horario.getDiaSemana()), horario.getHorarioAula().getSemanaLetiva().getTempo()));
-				}
 				
 				q = QuintetoDTO.create(aulasComCompartilhamentos,mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			}

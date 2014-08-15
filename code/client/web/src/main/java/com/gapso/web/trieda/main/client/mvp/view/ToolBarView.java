@@ -278,7 +278,7 @@ public class ToolBarView
 
 		container.setHeight( height );
 		
-/*		if (cenarioDTO.getMasterData())
+		if (cenarioDTO.getMasterData())
 		{
 			getCarregarMasterDataButton().hide();
 			getImportarOfertasButton().hide();
@@ -299,7 +299,7 @@ public class ToolBarView
 			getProfessoresListProfessoresVirtuaisBt().show();
 			getPlanejamentoTabItem().getHeader().show();
 			getRelatoriosTabItem().getHeader().show();
-		}*/
+		}
 
 		initComponent( masterDataPanel );
 	}

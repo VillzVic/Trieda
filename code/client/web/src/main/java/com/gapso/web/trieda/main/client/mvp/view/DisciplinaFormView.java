@@ -71,7 +71,7 @@ public class DisciplinaFormView
 	private void createForm() {
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
-		formPanel.setLabelWidth(130);
+		formPanel.setLabelWidth(165);
 		formPanel.setHeaderVisible(false);
 
 		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.DISCIPLINA );
@@ -193,14 +193,14 @@ public class DisciplinaFormView
 		usaSabadoCB = new CheckBox();
 		usaSabadoCB.setName(DisciplinaDTO.PROPERTY_USA_SABADO);
 		usaSabadoCB.setValue(disciplinaDTO.getUsaSabado());
-		usaSabadoCB.setFieldLabel("Usa Sábado");
+		usaSabadoCB.setFieldLabel("Pode ser alocada no sábado");
 		usaSabadoCB.setToolTip("Determina se a disciplina deverá herdar os horários das semanas letivas também no sábado.");
 		formPanel.add(usaSabadoCB, formData);
 
 		usaDomingoCB = new CheckBox();
 		usaDomingoCB.setName(DisciplinaDTO.PROPERTY_USA_DOMINGO);
 		usaDomingoCB.setValue(disciplinaDTO.getUsaDomingo());
-		usaDomingoCB.setFieldLabel("Usa Domingo");
+		usaDomingoCB.setFieldLabel("Pode ser alocada no domingo");
 		usaDomingoCB.setToolTip("Determina se a disciplina deverá herdar os horários das semanas letivas também no domingo.");
 		formPanel.add(usaDomingoCB, formData);
 

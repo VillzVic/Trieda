@@ -58,8 +58,8 @@ public class CampusFormView
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.campus16() );
-		this.simpleModal.setHeight( 360 );
-		this.simpleModal.setWidth( 320 );
+		this.simpleModal.setHeight( 340 );
+		this.simpleModal.setWidth( 400 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
 	}
@@ -74,7 +74,7 @@ public class CampusFormView
 
 		FieldSet geralFS = new FieldSet();
 		FormLayout formLayout = new FormLayout( LabelAlign.RIGHT );
-		formLayout.setLabelWidth( 75 );
+		formLayout.setLabelWidth( 160 );
 		geralFS.setLayout( formLayout );
 		geralFS.setHeadingHtml( "Informações Gerais" );
 
@@ -125,7 +125,7 @@ public class CampusFormView
 
 		FieldSet enderecoFS = new FieldSet();
 		formLayout = new FormLayout( LabelAlign.RIGHT );
-		formLayout.setLabelWidth(75);
+		formLayout.setLabelWidth(160);
 		enderecoFS.setLayout( formLayout );
 		enderecoFS.setHeadingHtml( "Endereço" );
 

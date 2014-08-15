@@ -232,7 +232,7 @@ public class AlocacaoManualPresenter
 				}
 			});
 		
-		this.getDisplay().getTurmasNewButton().addSelectionListener(
+/*		this.getDisplay().getTurmasNewButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -244,7 +244,7 @@ public class AlocacaoManualPresenter
 					presenter.go( null );
 				}
 			});
-		
+		*/
 		this.getDisplay().getEditarTurmaButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
 			{

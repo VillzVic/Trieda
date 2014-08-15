@@ -94,7 +94,6 @@ import com.gapso.web.trieda.main.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
-import com.gapso.web.trieda.server.CenariosServiceImpl;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;

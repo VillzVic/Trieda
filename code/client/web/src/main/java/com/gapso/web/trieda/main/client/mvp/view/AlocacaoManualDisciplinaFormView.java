@@ -56,8 +56,8 @@ public class AlocacaoManualDisciplinaFormView
 		this.simpleModal = new SimpleModal( title,
 			Resources.DEFAULTS.alunoCurriculo16() );
 	
-		this.simpleModal.setHeight( 400 );
-		this.simpleModal.setWidth( 800 );
+		this.simpleModal.setHeight( 600 );
+		this.simpleModal.setWidth( 1200 );
 		createForm();
 		this.simpleModal.setContent( this.panel );
 	}
@@ -125,13 +125,13 @@ public class AlocacaoManualDisciplinaFormView
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_CAMPUS_STRING, getI18nConstants().campus(), 120 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_CODIGO_DISCIPLINA, getI18nConstants().codigoDisciplina(), 100 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_NOME_DISCIPLINA, getI18nConstants().nomeDisciplina(), 100 ) );
-		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_CRED_PRATICO, getI18nConstants().creditosPraticos(), 100 ) );
-		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_CRED_TEORICO, getI18nConstants().creditosTeoricos(), 100 ) );
-		list.add( new CheckColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_EXIGE_LAB, getI18nConstants().exigeLaboratorio(), 100 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_DEMANDA_P1, "Demanda P1",80 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_P1, "Atendidos P1", 80 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_P2, "Atendidos P2", 80 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_SOMA, "Atendidos P1 + P2", 100 ) );
+		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_CRED_PRATICO, getI18nConstants().creditosPraticos(), 100 ) );
+		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_CRED_TEORICO, getI18nConstants().creditosTeoricos(), 100 ) );
+		list.add( new CheckColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_EXIGE_LAB, getI18nConstants().exigeLaboratorio(), 100 ) );
 		
 		ColumnModel cm = new ColumnModel(list);
 

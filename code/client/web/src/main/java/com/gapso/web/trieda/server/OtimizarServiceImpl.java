@@ -458,7 +458,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					cenario.getParametros().add(parametro);
 					List<Campus> campi = new ArrayList<Campus>(parametro.getCampi().size());
 					campi.addAll(parametro.getCampi());
-					System.out.println("antes gerando");
 					SolverInput solverInput = new SolverInput(getInstituicaoEnsinoUser(),cenario,parametro,campi);
 					TriedaInput triedaInput = null;
 					if (parametro.isTatico()) {
@@ -466,7 +465,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					} else {
 						triedaInput = solverInput.generateOperacionalTriedaInput();
 					}
-					System.out.println("depois gerando");
 					final ByteArrayOutputStream temp = new ByteArrayOutputStream();
 					JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
 					Marshaller m = jc.createMarshaller();
@@ -477,7 +475,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 					SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 					Long round = solverClient.requestOptimization(fileBytes);
-					
 					return ParDTO.<Long,ParametroDTO>create(round,ConvertBeans.toParametroDTO(parametro));
 				} else {
 					String msgConflito = parDTOConflito.getSegundo();
@@ -485,10 +482,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
-			System.out.println(e.getMessage());
 			e.printStackTrace();
-			//exception = new TriedaException(e);
+			exception = new TriedaException(e);
 		}
 		
 		getProgressReport().setPartial("Etapa concluída");

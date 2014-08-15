@@ -254,23 +254,30 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					}
 				}
 
-				String horarioASerEscrito = "";
-				if (!labelsDasLinhasDaGradeHoraria.isEmpty())
-					horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0, 5);
-				for (int i = 1; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-					if (horarioInicioAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)) || horarioFimAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
+				if (horarioInicioAula.isEmpty())
+				{
+					horariosEscritos.addAll(labelsDasLinhasDaGradeHoraria);
+				}
+				else
+				{
+					String horarioASerEscrito = "";
+					if (!labelsDasLinhasDaGradeHoraria.isEmpty())
+						horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0, 5);
+					for (int i = 1; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
+						if (horarioInicioAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)) || horarioFimAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
+						{
+							horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+							labelReduzidaTamanho.add(calculaTamanhoLabelReduzida(horarioASerEscrito));
+							horariosEscritos.add(horarioASerEscrito);
+							horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+						}
+					}
+					if (!labelsDasLinhasDaGradeHoraria.isEmpty())
 					{
-						horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+						horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(labelsDasLinhasDaGradeHoraria.size()-1).substring(8, 13);
 						labelReduzidaTamanho.add(calculaTamanhoLabelReduzida(horarioASerEscrito));
 						horariosEscritos.add(horarioASerEscrito);
-						horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
 					}
-				}
-				if (!labelsDasLinhasDaGradeHoraria.isEmpty())
-				{
-					horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(labelsDasLinhasDaGradeHoraria.size()-1).substring(8, 13);
-					labelReduzidaTamanho.add(calculaTamanhoLabelReduzida(horarioASerEscrito));
-					horariosEscritos.add(horarioASerEscrito);
 				}
 			}
 		};

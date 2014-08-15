@@ -190,6 +190,7 @@ public class DemandaFormView
 		marcaEquivalenciasForcadasBt.setStyleAttribute("margin-top", "10px");
 		marcaEquivalenciasForcadasBt.setWidth(85);
 		marcaEquivalenciasForcadasBt.setHeight(40);
+		marcaEquivalenciasForcadasBt.hide();
 		
 		container.add(preencheTudoNF);
 		container.add(preencheTudoBT);

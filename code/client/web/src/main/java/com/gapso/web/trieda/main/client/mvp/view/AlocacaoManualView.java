@@ -172,6 +172,7 @@ public class AlocacaoManualView
 	    ContentPanel topPanel = new ContentPanel(new BorderLayout());
 	    topPanel.setHeadingHtml("Turmas do Campus " + campusDTO.getNome() + "(" + campusDTO.getCodigo() + ")");
 		BorderLayoutData bldNovaTurma = new BorderLayoutData( LayoutRegion.WEST );
+		bldNovaTurma.setSize(160);
 		bldNovaTurma.setMargins( new Margins( 5, 5, 5, 5 ) );
 	    topPanel.add(createNovaTurmaPanel(), bldNovaTurma);
 		BorderLayoutData bldTurmaSelecionada = new BorderLayoutData( LayoutRegion.CENTER );
@@ -436,19 +437,19 @@ public class AlocacaoManualView
 	private Widget createNovaTurmaPanel() {
 		ContentPanel novaTurmaPanel = new ContentPanel();
 		novaTurmaPanel.setHeaderVisible(false);
-		novaTurmaPanel.setWidth(200);
+		novaTurmaPanel.setWidth(160);
 		BorderLayoutData bldCenter = new BorderLayoutData( LayoutRegion.CENTER );
 		bldCenter.setMargins( new Margins( 5, 5, 5, 5 ) );
 		
 		novaTurmaNomeTF = new TextField<String>();
 		novaTurmaNomeTF.setStyleAttribute("margin", "4px");
-		novaTurmaNomeTF.setWidth(190);
+		novaTurmaNomeTF.setWidth(150);
 		novaTurmaNomeTF.setHeight(25);
 		novaTurmaNomeTF.setEmptyText("Coloque o nome da turma");
 
 		novaTurmaBt = new Button();
 		novaTurmaBt.setText("Nova Turma");
-		novaTurmaBt.setWidth(190);
+		novaTurmaBt.setWidth(150);
 		novaTurmaBt.setHeight(25);
 		novaTurmaBt.setStyleAttribute("margin", "4px");
 		novaTurmaBt.setIcon(AbstractImagePrototype.create(
@@ -543,7 +544,7 @@ public class AlocacaoManualView
 		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 		
 		this.toolBar = new SimpleToolBar(
-				true, true, true, false, false, this );
+				false, true, true, false, false, this );
 		
 	    this.turmasGrid = new SimpleUnpagedGrid< TurmaStatusDTO >( getColumnList(), this, this.toolBar );
 	    turmasGridPanel.setTopComponent(toolBar);
@@ -630,12 +631,12 @@ public class AlocacaoManualView
 			}
 	    }; 
 
-		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_CODIGO, "Ambiente", 70 ) );
-		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_CAPACIDADE_INSTALADA, "Capacidade", 80 ) );
-		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_TIPO_STRING, "Tipo do Ambiente", 100 ) );
 		ColumnConfig column = new ColumnConfig( SalaStatusDTO.PROPERTY_STATUS, "Status", 70 );
 		column.setRenderer(change);
 		list.add( column );
+		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_CODIGO, "Ambiente", 70 ) );
+		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_CAPACIDADE_INSTALADA, "Capacidade", 80 ) );
+		list.add( new ColumnConfig( SalaStatusDTO.PROPERTY_TIPO_STRING, "Tipo do Ambiente", 100 ) );
 		
 		return list;
 	}
@@ -676,13 +677,13 @@ public class AlocacaoManualView
 		checkAlunoColumn.setEditor(checkBoxEditor);
 		
 		list.add( checkAlunoColumn );
-		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_MATRICULA, "Matrícula", 60 ) );
 		ColumnConfig column = new ColumnConfig( AlunoStatusDTO.PROPERTY_STATUS, "Status", 70 );
 		column.setRenderer(change);
 		list.add( column );
+		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
+		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_MATRICULA, "Matrícula", 60 ) );
 		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_EQUIVALENCIA_STRING, "Equivalência", 60 ) );
 		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_FORMANDO, "Formando", 60 ) );
-		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
 		
 		return list;
 	}
@@ -727,11 +728,11 @@ public class AlocacaoManualView
 		checkProfessorColumn.setEditor(checkBoxEditor);
 		
 		list.add( checkProfessorColumn );
-		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CPF, "Cpf", 60 ) );
-		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
 		ColumnConfig column = new ColumnConfig( ProfessorStatusDTO.PROPERTY_STATUS, "Status", 70 );
 		column.setRenderer(change);
 		list.add( column );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CPF, "Cpf", 60 ) );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_TITULACAO, "Titulação", 60 ) );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CUSTO, "Custo", 60 ) );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOTA, "Nota", 60 ) );
