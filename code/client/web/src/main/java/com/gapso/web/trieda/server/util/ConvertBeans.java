@@ -2920,8 +2920,49 @@ public class ConvertBeans {
 		dto.setNotaDesempenho( ConvertBeans.getNotaDesempenho( domain ).intValue() );
 		dto.setMaxDiasSemana(domain.getMaxDiasSemana());
 		dto.setMinCreditosDia(domain.getMinCreditosDia());
-		dto.setCargaHorariaSemanal( getCargaHorariaSemanal( domain ) );
-		dto.setTotalCred( getTotalCred( domain ) );
+
+		if ( instituicaoEnsino != null )
+		{
+			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
+			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+		}
+
+		return dto;
+	}
+	
+	public static ProfessorDTO toProfessorDTO( Professor domain, Integer cargaHoraria, Integer totalCred )
+	{
+		ProfessorDTO dto = new ProfessorDTO();
+
+		InstituicaoEnsino instituicaoEnsino = null;
+
+		if ( domain != null
+			&& domain.getTipoContrato() != null )
+		{
+			instituicaoEnsino = domain.getTipoContrato().getInstituicaoEnsino();
+		}
+
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setCenarioId( domain.getCenario().getId() );
+		dto.setNome( domain.getNome() );
+		dto.setCpf( domain.getCpf() );
+		dto.setTipoContratoId( domain.getTipoContrato().getId() );
+		dto.setTipoContratoString( domain.getTipoContrato().getNome() );
+		dto.setCargaHorariaMax( domain.getCargaHorariaMax() );
+		dto.setCargaHorariaMin( domain.getCargaHorariaMin() );
+		dto.setTitulacaoId( domain.getTitulacao().getId() );
+		dto.setTitulacaoString( domain.getTitulacao().getNome() );
+		dto.setAreaTitulacaoId( domain.getAreaTitulacao() == null ? null : domain.getAreaTitulacao().getId() );
+		dto.setAreaTitulacaoString( domain.getAreaTitulacao() == null ? null : domain.getAreaTitulacao().getCodigo() );
+		dto.setCreditoAnterior( domain.getCreditoAnterior() );
+		dto.setValorCredito( TriedaUtil.parseTriedaCurrency( domain.getValorCredito() ) );
+		dto.setDisplayText( domain.getNome() + " (" + domain.getCpf() + ")" );
+		dto.setNotaDesempenho( ConvertBeans.getNotaDesempenho( domain ).intValue() );
+		dto.setMaxDiasSemana(domain.getMaxDiasSemana());
+		dto.setMinCreditosDia(domain.getMinCreditosDia());
+		dto.setCargaHorariaSemanal( cargaHoraria );
+		dto.setTotalCred( totalCred );
 
 		if ( instituicaoEnsino != null )
 		{

@@ -218,7 +218,7 @@ public class ProfessoresServiceImpl
 			}
 		}
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
-		List<Professor> listDomains = Professor.findBy(
+		List<Object> listDomains = Professor.findBy(
 				getInstituicaoEnsinoUser(), cenario, cpf, nome, tipoContrato,
 				titulacao, areaTitulacao, operadorCargaHorariaMin,
 				cargaHorariaMin, operadorCargaHorariaMax, cargaHorariaMax,
@@ -233,9 +233,10 @@ public class ProfessoresServiceImpl
 
 		if ( listDomains != null )
 		{
-			for ( Professor professor : listDomains )
+			for ( Object professor : listDomains )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professor ) );
+				list.add( ConvertBeans.toProfessorDTO( ((Professor)((Object[])professor)[0]),  
+						((Long)((Object[])professor)[2]).intValue() , ((Long)((Object[])professor)[1]).intValue() ));
 			}
 		}
 

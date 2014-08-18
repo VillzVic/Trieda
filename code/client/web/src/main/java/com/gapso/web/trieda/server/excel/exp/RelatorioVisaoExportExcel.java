@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -447,17 +448,20 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		Font blackFont = workbook.createFont();
 		blackFont.setColor(IndexedColors.BLACK.index);
 		for (HSSFColor color : HSSFColor.getIndexHash().values()) {
-			CellStyle cellStyle = workbook.createCellStyle();
-			cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			cellStyle.setFillForegroundColor(color.getIndex());
-			cellStyle.setFont(calculateForegroundColorIndex(color.getTriplet()) == IndexedColors.WHITE.index ? whiteFont : blackFont);
-			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-			cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-			cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-			cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-			cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-			cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-			excelColorsPool.add(cellStyle);
+			if (calculateColorIndexUsage(color.getTriplet()))
+			{
+				CellStyle cellStyle = workbook.createCellStyle();
+				cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				cellStyle.setFillForegroundColor(color.getIndex());
+				cellStyle.setFont(calculateForegroundColorIndex(color.getTriplet()) == IndexedColors.WHITE.index ? whiteFont : blackFont);
+				cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+				cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+				cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+				cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+				cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+				cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+				excelColorsPool.add(cellStyle);
+			}
 		}
 //		Sheet sheet = workbook.getSheet(ExcelInformationType.PALETA_CORES.getSheetName());
 //		if(sheet != null){
@@ -481,5 +485,14 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		}
 		
 		return IndexedColors.BLACK.index;
+	}
+	
+	private boolean calculateColorIndexUsage(short[] colorRGB) {
+		float r = colorRGB[0];
+		float g = colorRGB[1];
+		float b = colorRGB[2];
+		
+		return r > 127 && g > 127 && b > 127;
+
 	}
 }

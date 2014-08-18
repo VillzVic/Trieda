@@ -39,9 +39,9 @@ public class GradeHorariaProfessorView extends MyComposite implements
 	
 	private void initUI() {
 		simpleModal = new SimpleModal(null, "Fechar", "Grade Horaria do Professor ("
-				+ (professorDTO != null ? professorDTO.getCpf() : professorVirtualDTO.getNome()) + ")", Resources.DEFAULTS.professor16());
-		simpleModal.setHeight(500);
-		simpleModal.setWidth(820);
+				+ (professorDTO != null ? (professorDTO.getNome() + " " +  professorDTO.getCpf()) : professorVirtualDTO.getNome()) + ")", Resources.DEFAULTS.professor16());
+		simpleModal.setHeight(600);
+		simpleModal.setWidth(850);
 	}
 	
 	protected GradeHorariaProfessorGrid createGradeHorariaVisao(){

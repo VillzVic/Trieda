@@ -790,7 +790,7 @@ public class Professor
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static List< Professor > findBy( InstituicaoEnsino instituicaoEnsino,
+	public static List< Object > findBy( InstituicaoEnsino instituicaoEnsino,
 		Cenario cenario, String cpf, String nome, TipoContrato tipoContrato, Titulacao titulacao,
 		AreaTitulacao areaTitulacao,
 		String operadorCargaHorariaMin, Integer cargaHorariaMin, 
@@ -906,9 +906,9 @@ public class Professor
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT o FROM Professor o " +
+			" SELECT o, count(p), sum(p.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) FROM Professor o, IN (o.atendimentosOperacionais) p" +
 			" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
-			+ where + " 1 = 1 "+ orderBy);
+			+ where + " 1 = 1 "+  " GROUP BY o " +orderBy );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
