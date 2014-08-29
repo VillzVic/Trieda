@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -163,6 +164,63 @@ public class InstituicaoEnsino
 		return entityManager().createQuery(
 			"SELECT o FROM InstituicaoEnsino o" ).getResultList();
 	}
+	
+   @SuppressWarnings( "unchecked" )
+    public static List< InstituicaoEnsino > findBy(
+    	String nome, int firstResult, int maxResults, String orderBy )
+    {
+    	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
+
+        nome = nome.replace( '*', '%' );
+
+        if ( nome == "" || nome.charAt( 0 ) != '%' )
+        {
+            nome = ( "%" + nome );
+        }
+
+        if ( nome.charAt( nome.length() - 1 ) != '%' )
+        {
+            nome = ( nome + "%" );
+        }
+
+        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM InstituicaoEnsino o " +
+        	" WHERE LOWER ( o.nomeInstituicao ) LIKE LOWER ( :nome ) " + orderBy );
+
+        q.setParameter( "nome", nome );
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
+
+        List< InstituicaoEnsino > list = q.getResultList();
+        return list;
+    }
+   
+   public static int count(	String nome )
+   {
+   	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
+
+       nome = nome.replace( '*', '%' );
+
+       if ( nome == "" || nome.charAt( 0 ) != '%' )
+       {
+           nome = ( "%" + nome );
+       }
+
+       if ( nome.charAt( nome.length() - 1 ) != '%' )
+       {
+           nome = ( nome + "%" );
+       }
+
+       Query q = entityManager().createQuery(
+       	" SELECT o FROM InstituicaoEnsino o " +
+       	" WHERE LOWER ( o.nomeInstituicao ) LIKE LOWER ( :nome ) "  );
+
+       q.setParameter( "nome", nome );
+
+       return q.getResultList().size();
+   }
 
 	public static InstituicaoEnsino find( Long id )
 	{

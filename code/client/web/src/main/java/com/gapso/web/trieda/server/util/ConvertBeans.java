@@ -170,6 +170,8 @@ public class ConvertBeans {
 			dto.setProfessorCpf( domain.getProfessor().getCpf() );
 		}
 		
+		dto.setAdministrador(domain.getAuthority().getAuthority().equals("ROLE_SUPERVISOR"));
+		
 /*		for (PerfilAcesso perfilAcesso : domain.getPerfisAcesso())
 		{
 			for (PerfilAcessoTransacao perfilAcessoTransacao : perfilAcesso.getPerfisAcessoTransacao())

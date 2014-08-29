@@ -340,6 +340,7 @@ public class Cenario
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE cda FROM curriculos_disciplinas_alunos cda JOIN alunos a ON cda.aln_id = a.aln_id WHERE a.cen_id =:cenario "));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE cd FROM curriculos_disciplinas cd JOIN disciplinas d ON cd.dis_id = d.dis_id WHERE d.cen_id =:cenario "));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE pd FROM professores_disciplinas pd JOIN disciplinas d ON pd.dis_id = d.dis_id WHERE d.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE gss FROM disciplinas_grupos_sala gss JOIN grupos_sala gs ON gss.grs_id = gs.grs_id JOIN unidades u ON gs.uni_id = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id = :cenario "));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE gss FROM grupos_sala_salas gss JOIN grupos_sala gs ON gss.grupos_sala = gs.grs_id JOIN unidades u ON gs.uni_id = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE gs FROM grupos_sala gs JOIN unidades u ON gs.uni_id = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE s FROM salas s JOIN unidades u ON s.uni_id = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
@@ -506,14 +507,14 @@ public class Cenario
 	public static Cenario find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
-		if ( id == null || instituicaoEnsino == null )
+		if ( id == null )
 		{
 			return null;
 		}
 
 		Cenario cenario = entityManager().find( Cenario.class, id );
 		
-		if (cenario != null && cenario.getInstituicaoEnsino().equals(instituicaoEnsino))
+		if (cenario != null)
 		{
 			return cenario;
 		}
@@ -525,13 +526,23 @@ public class Cenario
 	public static Cenario findMasterData(
 		InstituicaoEnsino instituicaoEnsino )
 	{
+		
+		String instituicaoEnsinoQuery = "";
+		if (instituicaoEnsino != null)
+		{
+			instituicaoEnsinoQuery = " o.instituicaoEnsino = :instituicaoEnsino AND ";
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Cenario o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.masterData = :masterData " );
+			" WHERE " + instituicaoEnsinoQuery +
+			"o.masterData = :masterData " );
 
 		q.setParameter( "masterData", true );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		if (instituicaoEnsino != null)
+		{
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		}
 
 		Cenario cenario = null;
 
@@ -583,6 +594,7 @@ public class Cenario
 
 		String queryAno = "";
 		String querySemestre = "";
+		String queryInstituicaoEnsino = "";
 
 		if ( ano != null )
 		{
@@ -593,15 +605,18 @@ public class Cenario
 		{
 			querySemestre = " o.semestre = :semestre AND ";
 		}
+		
+		if (instituicaoEnsino != null)
+		{
+			queryInstituicaoEnsino = " o.instituicaoEnsino = :instituicaoEnsino AND ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Cenario o " +
-			" WHERE " + queryAno + querySemestre +
-			" o.masterData = :masterData " +
-			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+			" WHERE " + queryAno + querySemestre + queryInstituicaoEnsino +
+			" o.masterData = :masterData " );
 
 		q.setParameter( "masterData", false );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
@@ -612,7 +627,12 @@ public class Cenario
 
 		if ( semestre != null )
 		{
-			q.setParameter( "ano", semestre );
+			q.setParameter( "semestre", semestre );
+		}
+		
+		if (instituicaoEnsino != null)
+		{
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		}
 
 		return q.getResultList();

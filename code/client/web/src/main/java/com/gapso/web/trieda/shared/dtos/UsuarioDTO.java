@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class UsuarioDTO extends AbstractDTO< String >
 	implements Comparable< UsuarioDTO >
 {
@@ -15,6 +18,7 @@ public class UsuarioDTO extends AbstractDTO< String >
 	public static final String PROPERTY_PROFESSOR_ID = "professorId";
 	public static final String PROPERTY_PROFESSOR_DISPLAYTEXT = "professorDisplayText";
 	public static final String PROPERTY_PROFESSOR_CPF = "professorCpf";
+	public static final String PROPERTY_ADMINISTRADOR = "administrador";
 
 	public UsuarioDTO() { }
 
@@ -113,6 +117,16 @@ public class UsuarioDTO extends AbstractDTO< String >
 		return ( getProfessorId() != null && getProfessorId() > 0 );
 	}
 	
+	public void setAdministrador( Boolean value )
+	{
+		set( PROPERTY_ADMINISTRADOR, value );
+	}
+
+	public Boolean getAdministrador()
+	{
+		return get( PROPERTY_ADMINISTRADOR );
+	}
+	
 	public boolean isAdministrador()
 	{
 		return !isProfessor();
@@ -122,7 +136,21 @@ public class UsuarioDTO extends AbstractDTO< String >
 	public String getNaturalKey()
 	{
 		return getUsername();
-	}	
+	}
+	
+	private Map<String, Boolean> transacaoMapVisivel = new HashMap<String, Boolean>();
+	private Map<String, Boolean> transacaoMapEditavel = new HashMap<String, Boolean>();
+	
+	public Map<String, Boolean> getTransacaoMapVisivel()
+	{
+		return transacaoMapVisivel;
+	}
+	
+	public Map<String, Boolean> getTransacaoMapEditavel()
+	{
+		return transacaoMapEditavel;
+	}
+	
 
 	@Override
 	public int compareTo( UsuarioDTO o )

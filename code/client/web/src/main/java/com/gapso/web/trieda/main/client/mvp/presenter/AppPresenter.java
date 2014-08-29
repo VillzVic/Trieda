@@ -129,7 +129,7 @@ public class AppPresenter
 							", porém a versão mais recente é " + dbCurrentVersion + "." , null );
 
 				RootPanel rp = (RootPanel) widget;
-				toolBar = new ToolBarPresenter(instituicaoEnsino,cenario,usuario,viewport.getCenarioPanel(), viewport.getPanel(), new ToolBarView(cenario));
+				toolBar = new ToolBarPresenter(instituicaoEnsino,cenario,usuario,viewport.getCenarioPanel(), viewport.getPanel(), new ToolBarView(cenario, usuario));
 				toolBar.go(viewport.asWidget());
 				rp.add(viewport.asWidget());
 				RootPanel.get("loading").setVisible(false);
@@ -144,7 +144,7 @@ public class AppPresenter
 					@Override
 					public void componentSelected( MenuEvent ce ) {
 					Presenter presenter = new UsuariosPresenter( instituicaoEnsino,
-							cenario, new UsuariosView( cenario ) );
+							cenario, new UsuariosView( cenario, instituicaoEnsino ) );
 
 					presenter.go( viewport.getGTab() );
 					}

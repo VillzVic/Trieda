@@ -69,11 +69,10 @@ public class Usuario
     @JoinColumn( name = "PRF_ID" )
     private Professor professor;
 
-    @OneToOne( targetEntity = Authority.class, fetch=FetchType.LAZY )
+    @OneToOne( cascade = { CascadeType.MERGE, CascadeType.REFRESH }, targetEntity = Authority.class, fetch=FetchType.LAZY )
     @JoinColumn( name = "USERNAME" )
     private Authority authority;
 
-	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST,
 		CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = InstituicaoEnsino.class )
@@ -82,6 +81,12 @@ public class Usuario
 	
 	@OneToMany(mappedBy = "cenario")
 	private Set<RequisicaoOtimizacao> requisicoesDeOtimizacao = new HashSet<RequisicaoOtimizacao>();
+	
+/*    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
+	@JoinTable(name="PERFIS_ACESSO_USUARIOS",
+	joinColumns=@JoinColumn(name="USERNAME"),
+	inverseJoinColumns=@JoinColumn(name="PER_ACE_ID"))
+    private Set<PerfilAcesso> perfisAcesso = new HashSet<PerfilAcesso>();*/
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
@@ -171,6 +176,14 @@ public class Usuario
 	public void setRequisicoesDeOtimizacao(Set<RequisicaoOtimizacao> requisicoesDeOtimizacao) {
 		this.requisicoesDeOtimizacao = requisicoesDeOtimizacao;
 	}
+	
+/*	public Set<PerfilAcesso> getPerfisAcesso() {
+		return this.perfisAcesso;
+	}
+	
+	public void setPerfisAcesso(Set<PerfilAcesso> perfisAcesso) {
+		this.perfisAcesso = perfisAcesso;
+	}*/
 
 	public String toString()
 	{
@@ -185,7 +198,7 @@ public class Usuario
         sb.append( "Enabled: " ).append( getEnabled() ).append( ", " );
         sb.append( "Professor: " ).append( getProfessor() ).append(", " );
         sb.append( "Authority: " ).append( getAuthority() );
-        sb.append("Requisições de Otimização: ").append(getRequisicoesDeOtimizacao() == null ? "null" : getRequisicoesDeOtimizacao().size() ).append( ", " );
+        sb.append("Requisiï¿½ï¿½es de Otimizaï¿½ï¿½o: ").append(getRequisicoesDeOtimizacao() == null ? "null" : getRequisicoesDeOtimizacao().size() ).append( ", " );
 
         return sb.toString();
     }
@@ -315,12 +328,19 @@ public class Usuario
     	String orderBy, InstituicaoEnsino instituicaoEnsino )
     {
 		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+		
+		String instituicaoEnsinoQuery = "";
+		
+		if (instituicaoEnsino != null)
+		{
+			instituicaoEnsinoQuery = " o.instituicaoEnsino = :instituicaoEnsino AND ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Usuario o WHERE" +
 			" LOWER( o.nome ) LIKE LOWER ( :nome ) AND " +
 			" LOWER( o.username ) LIKE LOWER( :username ) AND " +
-			" o.instituicaoEnsino = :instituicaoEnsino AND " +
+			instituicaoEnsinoQuery + " o.instituicaoEnsino IS NOT NULL AND " +
 			" LOWER( o.email ) LIKE LOWER ( :email ) " + orderBy );
 
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -330,7 +350,10 @@ public class Usuario
 		q.setParameter( "nome", nome );
 		q.setParameter( "username", username );
 		q.setParameter( "email", email );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		if (instituicaoEnsino != null)
+		{
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		}
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
@@ -363,4 +386,17 @@ public class Usuario
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );
 	}
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< Usuario > findBy( InstituicaoEnsino instituicaoEnsino )
+    {
+		
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Usuario o WHERE" +
+			" o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
+    }
 }

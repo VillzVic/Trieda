@@ -58,6 +58,7 @@ import com.gapso.web.trieda.main.client.mvp.view.ExportExcelFormView;
 import com.gapso.web.trieda.main.client.mvp.view.FixacoesView;
 import com.gapso.web.trieda.main.client.mvp.view.GruposSalasAssociarDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.GruposSalasView;
+import com.gapso.web.trieda.main.client.mvp.view.InstituicoesEnsinoView;
 import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosGeracaoDemandaView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosView;
@@ -141,6 +142,7 @@ public class ToolBarPresenter
 		Button getUsuariosButton();
 		MenuItem getListarUsuariosButton();
 		MenuItem getConfiguracoesButton();
+		MenuItem getInstituicoesEnsinoButton();
 		MenuItem getUsuariosAlterarSenhaButton();
 		MenuItem getUsuariosSairButton();
 		MenuItem getUsuariosNomeButton();
@@ -1455,8 +1457,11 @@ public class ToolBarPresenter
 		this.toolBar.getListarUsuariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected( MenuEvent ce ) {
-			Presenter presenter = new UsuariosPresenter( instituicaoEnsinoDTO,
-					cenarioDTO, new UsuariosView( cenarioDTO ) );
+				
+			InstituicaoEnsinoDTO instituicaoEnsinoSuperUserDTO
+				= usuarioDTO.getUsername().equals("trieda.root") ? null : instituicaoEnsinoDTO;
+			Presenter presenter = new UsuariosPresenter( instituicaoEnsinoSuperUserDTO,
+					cenarioDTO, new UsuariosView( cenarioDTO, instituicaoEnsinoSuperUserDTO ) );
 
 			presenter.go( gTab );
 			}
@@ -1482,6 +1487,15 @@ public class ToolBarPresenter
 						presenter.go( gTab );
 					}
 				});
+			}
+		});
+		
+		this.toolBar.getInstituicoesEnsinoButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+				Presenter presenter = new InstituicoesEnsinoPresenter( new InstituicoesEnsinoView() );
+
+				presenter.go( gTab );
 			}
 		});
 		

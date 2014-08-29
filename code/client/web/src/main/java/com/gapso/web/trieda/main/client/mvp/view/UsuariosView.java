@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.UsuariosPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -34,9 +35,11 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	
-	public UsuariosView( CenarioDTO cenarioDTO ) {
+	public UsuariosView( CenarioDTO cenarioDTO, InstituicaoEnsinoDTO instituicaoEnsinoDTO ) {
 		this.cenarioDTO = cenarioDTO;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		initUI();
 	}
 	
@@ -75,6 +78,8 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 		list.add(new ColumnConfig(UsuarioDTO.PROPERTY_USERNAME, "Username", 100));
 		list.add(new ColumnConfig(UsuarioDTO.PROPERTY_EMAIL, "Email", 100));
 		list.add(new ColumnConfig(UsuarioDTO.PROPERTY_PROFESSOR_DISPLAYTEXT, "Professor", 100));
+		if (instituicaoEnsinoDTO == null)
+			list.add(new ColumnConfig(UsuarioDTO.PROPERTY_INSTITUICAO_ENSINO_STRING, "Instituicao de Ensino", 100));
 		return list;
 	}
 

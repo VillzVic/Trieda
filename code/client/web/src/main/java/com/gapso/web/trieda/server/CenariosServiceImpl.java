@@ -228,7 +228,7 @@ public class CenariosServiceImpl
 		}
 
 		List< Cenario > listCenarios = Cenario.findByAnoAndSemestre(
-			this.getInstituicaoEnsinoUser(), ano, semestre,
+			this.getInstituicaoEnsinoSuperUser(), ano, semestre,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Cenario cenario : listCenarios )

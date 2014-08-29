@@ -9,7 +9,10 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Authority;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+/*import com.gapso.trieda.domain.PerfilAcesso;
+import com.gapso.trieda.domain.PerfilAcessoTransacao;*/
 import com.gapso.trieda.domain.Professor;
+/*import com.gapso.trieda.domain.Transacao;*/
 import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Encryption;
@@ -64,7 +67,7 @@ public class UsuariosServiceImpl
 		}
 
 		InstituicaoEnsino instituicaoEnsino
-			= this.getUsuario().getInstituicaoEnsino();
+			= this.getInstituicaoEnsinoSuperUser();
 
 		List< Usuario > usuarios = Usuario.findAllBy(
 			nome, username, email, config.getOffset(),
@@ -106,6 +109,7 @@ public class UsuariosServiceImpl
 					usuarioDTO.getProfessorId(), getInstituicaoEnsinoUser() ) );
 			}
 
+			usuario.getAuthority().setAuthority( usuarioDTO.getAdministrador() ? "ROLE_SUPERVISOR" : "ROLE_USER" );
 			usuario.merge();
 		}
 		else
@@ -113,16 +117,37 @@ public class UsuariosServiceImpl
 			usuario = ConvertBeans.toUsuario( usuarioDTO );
 			usuario.setPassword( Encryption.toMD5( usuario.getPassword() ) );
 			usuario.setEnabled( true );
+/*			usuario.getPerfisAcesso().add(createDefaultProfile());*/
 			usuario.persist();
 
 			Authority authority = new Authority();
-			authority.setAuthority( "ROLE_USER" );
+			authority.setAuthority( usuarioDTO.getAdministrador() ? "ROLE_SUPERVISOR" : "ROLE_USER" );
 			authority.setUsername( usuario.getUsername() );
 			authority.setInstituicaoEnsino(usuario.getInstituicaoEnsino());
 			authority.persist();
 		}
 	}
 	
+/*	@Transactional
+	private PerfilAcesso createDefaultProfile() {
+		PerfilAcesso perfilPadrao = new PerfilAcesso();
+		perfilPadrao.setNome("user");
+		perfilPadrao.persist();
+		
+		List<Transacao> transacoes = Transacao.findAll();
+		for (Transacao transacao : transacoes)
+		{
+			PerfilAcessoTransacao perfilAcessoTransacao = new PerfilAcessoTransacao();
+			perfilAcessoTransacao.setVisivel(true);
+			perfilAcessoTransacao.setPerfilAcesso(perfilPadrao);
+			perfilAcessoTransacao.setTransacao(transacao);
+			
+			perfilAcessoTransacao.persist();
+		}
+		
+		return perfilPadrao;
+	}*/
+
 	@Override
 	public void changePassword( UsuarioDTO usuarioDTO, AlterarSenhaDTO alterarSenhaDTO ) throws TriedaException
 	{

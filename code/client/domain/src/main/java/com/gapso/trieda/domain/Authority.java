@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -40,7 +42,6 @@ public class Authority
     @Column(name = "AUTHORITY")
     private String authority;
 
-	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
@@ -134,4 +135,17 @@ public class Authority
 	{
 		this.authority = authority;
 	}
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< Authority > findBy( InstituicaoEnsino instituicaoEnsino )
+    {
+		
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Authority o WHERE" +
+			" o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
+    }
 }

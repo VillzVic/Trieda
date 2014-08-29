@@ -47,7 +47,15 @@ public class ExportExcelServlet extends HttpServlet
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
 		Usuario usuario = Usuario.find( username );
-		return (usuario == null) ? null : usuario.getInstituicaoEnsino();
+		if (usuario == null)
+			return null;
+		//Caso a instituicaoEnsino for null temos um superusuario.
+		//A instituicaoEnsino do superusuario é transiente e varia de acordo
+		//com o cenário que esta selecionado no momento
+		else if (usuario.getInstituicaoEnsino() == null)
+			return this.cenario.getInstituicaoEnsino();
+		else
+			return usuario.getInstituicaoEnsino();
 	}
 
 	@Override

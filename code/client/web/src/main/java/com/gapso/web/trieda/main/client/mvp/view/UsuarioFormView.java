@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -9,10 +10,12 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.UsuarioFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.InstituicaoEnsinoComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.UniqueDomain;
@@ -28,16 +31,23 @@ public class UsuarioFormView extends MyComposite
 	private TextField<String> usernameTF;
 	private TextField<String> passwordTF;
 	private ProfessorComboBox professorCB;
+	private CheckBox administradorCB;
+	private InstituicaoEnsinoComboBox instituicaoEnsinoCB;
 	private UsuarioDTO usuarioDTO;
 	private CenarioDTO cenarioDTO;
 	private ProfessorDTO professorDTO;
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private InstituicaoEnsinoDTO instituicaoEnsinoUsuarioDTO;
 
 	public UsuarioFormView( CenarioDTO cenarioDTO,
-		UsuarioDTO usuarioDTO, ProfessorDTO professorDTO )
+		UsuarioDTO usuarioDTO, ProfessorDTO professorDTO,
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, InstituicaoEnsinoDTO instituicaoEnsinoUsuarioDTO )
 	{
 		this.usuarioDTO = usuarioDTO;
 		this.cenarioDTO = cenarioDTO;
 		this.professorDTO = professorDTO;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.instituicaoEnsinoUsuarioDTO = instituicaoEnsinoUsuarioDTO;
 
 		initUI();
 	}
@@ -45,8 +55,9 @@ public class UsuarioFormView extends MyComposite
 	private void initUI()
 	{
 		String title = ( ( usuarioDTO.getVersion() == null )? "Inserção de Usuário" : "Edição de Usuário" );
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.turno16());
-		simpleModal.setHeight(255);
+		simpleModal = new SimpleModal(title, Resources.DEFAULTS.usuarios16());
+		simpleModal.setHeight(310);
+		simpleModal.setWidth(330);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -56,6 +67,7 @@ public class UsuarioFormView extends MyComposite
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
+		formPanel.setLabelWidth(120);
 
 		nomeTF = new TextField<String>();
 		nomeTF.setValue(usuarioDTO.getNome());
@@ -92,6 +104,24 @@ public class UsuarioFormView extends MyComposite
 		passwordTF.setEmptyText("Preencha o password");
 		passwordTF.setPassword(true);
 		formPanel.add(passwordTF, formData);
+		
+		instituicaoEnsinoCB = new InstituicaoEnsinoComboBox();
+		instituicaoEnsinoCB.setAllowBlank(false);
+		instituicaoEnsinoCB.setValue(instituicaoEnsinoUsuarioDTO);
+		if (instituicaoEnsinoDTO != null)
+		{
+			instituicaoEnsinoCB.disable();
+		}
+		formPanel.add(instituicaoEnsinoCB, formData);
+		
+		administradorCB = new CheckBox();
+		administradorCB.setFieldLabel("Administrador?");
+		administradorCB.setValue(usuarioDTO.getAdministrador());
+		if (instituicaoEnsinoDTO != null)
+		{
+			administradorCB.disable();
+		}
+		formPanel.add(administradorCB, formData);
 
 	    FieldSet fieldSet = new FieldSet();
 	    FormLayout layout = new FormLayout();  
@@ -164,5 +194,17 @@ public class UsuarioFormView extends MyComposite
 	public ProfessorComboBox getProfessorComboBox()
 	{
 		return professorCB;
+	}
+	
+	@Override
+	public InstituicaoEnsinoComboBox getInstituicaoEnsinoComboBox()
+	{
+		return instituicaoEnsinoCB;
+	}
+	
+	@Override
+	public CheckBox getAdministradorCheckBox()
+	{
+		return administradorCB;
 	}
 }

@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -15,6 +16,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.InstituicaoEnsinoComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
@@ -32,6 +34,8 @@ public class UsuarioFormPresenter
 		TextField< String > getUsernameTextField();
 		TextField< String > getPasswordTextField();
 		ProfessorComboBox getProfessorComboBox();
+		InstituicaoEnsinoComboBox getInstituicaoEnsinoComboBox();
+		CheckBox getAdministradorCheckBox();
 		UsuarioDTO getUsuarioDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
@@ -101,7 +105,8 @@ public class UsuarioFormPresenter
 		usuarioDTO.setEmail( this.display.getEmailTextField().getValue());
 		usuarioDTO.setUsername( this.display.getUsernameTextField().getValue());
 		usuarioDTO.setPassword( this.display.getPasswordTextField().getValue());
-		usuarioDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		usuarioDTO.setInstituicaoEnsinoId( this.display.getInstituicaoEnsinoComboBox().getValue().getId());
+		usuarioDTO.setAdministrador( this.display.getAdministradorCheckBox().getValue() );
 		ProfessorDTO professor = this.display.getProfessorComboBox().getValue();
 
 		if ( professor != null )

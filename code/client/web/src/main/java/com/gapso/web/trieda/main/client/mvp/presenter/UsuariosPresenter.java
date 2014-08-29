@@ -18,6 +18,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.InstituicaoEnsinoServiceAsync;
 import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
@@ -100,7 +101,7 @@ public class UsuariosPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new UsuarioFormPresenter( instituicaoEnsinoDTO,
-					cenario, new UsuarioFormView( cenario, new UsuarioDTO(), null ), display.getGrid() );
+					cenario, new UsuarioFormView( cenario, new UsuarioDTO(), null, instituicaoEnsinoDTO, instituicaoEnsinoDTO ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -114,17 +115,26 @@ public class UsuariosPresenter
 			{
 				final UsuarioDTO usuarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				final ProfessoresServiceAsync professoresService = Services.professores();
+				final InstituicaoEnsinoServiceAsync instituicaoService = Services.instituicoesEnsino();
 
 				professoresService.getProfessor( usuarioDTO.getProfessorId(),
 					new AbstractAsyncCallbackWithDefaultOnFailure< ProfessorDTO >( display )
 				{
 					@Override
-					public void onSuccess( ProfessorDTO professorDTO )
+					public void onSuccess( final ProfessorDTO professorDTO )
 					{
-						Presenter presenter = new UsuarioFormPresenter( instituicaoEnsinoDTO, cenario,
-							new UsuarioFormView( cenario, usuarioDTO, professorDTO ), display.getGrid() );
-
-						presenter.go( null );
+						instituicaoService.getInstituicaoEnsino(usuarioDTO.getInstituicaoEnsinoId(),
+							new AbstractAsyncCallbackWithDefaultOnFailure< InstituicaoEnsinoDTO >( display )
+							{
+								@Override
+								public void onSuccess( InstituicaoEnsinoDTO instituicaoEnsinoUserDTO )
+								{
+									Presenter presenter = new UsuarioFormPresenter( instituicaoEnsinoDTO, cenario,
+										new UsuarioFormView( cenario, usuarioDTO, professorDTO, instituicaoEnsinoDTO, instituicaoEnsinoUserDTO ), display.getGrid() );
+			
+									presenter.go( null );
+								}
+						});
 					}
 				});
 			}

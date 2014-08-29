@@ -37,7 +37,6 @@ import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.DificuldadeComboBox;
-import com.gapso.web.trieda.shared.util.view.DificuldadeComboBox.Dificuldade;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;

@@ -8,7 +8,8 @@ public class InstituicaoEnsinoDTO extends AbstractDTO<String>
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
-	public static final String PROPERTY_CENARIO_ID = "nomeInstituicao";
+	public static final String PROPERTY_NOME_INSTITUICAO = "nomeInstituicao";
+	
 
 	public InstituicaoEnsinoDTO()
 	{
@@ -37,12 +38,12 @@ public class InstituicaoEnsinoDTO extends AbstractDTO<String>
 
 	public void setNomeInstituicao( String value )
 	{
-		set( PROPERTY_CENARIO_ID, value );
+		set( PROPERTY_NOME_INSTITUICAO, value );
 	}
 
 	public String getNomeInstituicao()
 	{
-		return get( PROPERTY_CENARIO_ID );
+		return get( PROPERTY_NOME_INSTITUICAO );
 	}
 
 	@Override

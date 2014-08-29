@@ -5,7 +5,7 @@ import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
-import org.mortbay.naming.NamingContext;
+import org.eclipse.jetty.jndi.NamingContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -22,8 +22,24 @@ public class RemoteService
 	final public InstituicaoEnsino getInstituicaoEnsinoUser()
 	{
 		Usuario usuario = this.getUsuario();
-		return ( usuario == null ? null
-			: usuario.getInstituicaoEnsino() );
+		if (usuario == null)
+			return null;
+		//Caso a instituicaoEnsino for null temos um superusuario.
+		//A instituicaoEnsino do superusuario é transiente e varia de acordo
+		//com o cenário que esta selecionado no momento
+		else if (usuario.getInstituicaoEnsino() == null)
+			return getCenario().getInstituicaoEnsino();
+		else
+			return usuario.getInstituicaoEnsino();
+	}
+	
+	final public InstituicaoEnsino getInstituicaoEnsinoSuperUser()
+	{
+		Usuario usuario = this.getUsuario();
+		if (usuario == null)
+			return null;
+		else
+			return usuario.getInstituicaoEnsino();
 	}
 
 	final protected Usuario getUsuario()
@@ -35,13 +51,13 @@ public class RemoteService
 
 	final protected Cenario getCenario()
 	{
-		if (getThreadLocalRequest().getSession().getAttribute("cenario") != null)
+		if (getThreadLocalRequest().getSession(false).getAttribute("cenario") != null)
 		{
-			return Cenario.find((Long)getThreadLocalRequest().getSession().getAttribute("cenario"), getInstituicaoEnsinoUser());
+			return Cenario.find((Long)getThreadLocalRequest().getSession().getAttribute("cenario"), getInstituicaoEnsinoSuperUser());
 		}
 		else
 		{
-			return Cenario.findMasterData(getInstituicaoEnsinoUser());
+			return Cenario.findMasterData(getInstituicaoEnsinoSuperUser());
 		}
 	}
 	
@@ -60,7 +76,7 @@ public class RemoteService
 	
 	final protected void setCenario(long cenarioId)
 	{
-		 getThreadLocalRequest().getSession().setAttribute("cenario", cenarioId);
+		 getThreadLocalRequest().getSession(false).setAttribute("cenario", cenarioId);
 	}
 	
 	protected boolean isProfessor()

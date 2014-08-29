@@ -377,8 +377,7 @@ public class Parametro
     {
         return entityManager().createQuery(
         	" SELECT o FROM Parametro o " +
-        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND o.turno.instituicaoEnsino = :instituicaoEnsino " )
+        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " )
         	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
     

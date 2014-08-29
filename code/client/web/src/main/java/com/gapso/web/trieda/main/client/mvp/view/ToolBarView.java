@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.main.client.mvp.presenter.ToolBarPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
@@ -27,6 +28,7 @@ public class ToolBarView
 		implements ToolBarPresenter.Display
 {
 	private CenarioDTO cenarioDTO;
+	private UsuarioDTO usuarioDTO;
 	private LayoutContainer container;
 	private TabItem nomeContexto;
 	private ContentPanel masterDataPanel;
@@ -146,9 +148,10 @@ public class ToolBarView
 	TabItem relatoriosTabItem;
 	TabItem calendarioTabItem;
 
-	public ToolBarView( CenarioDTO cenarioDTO)
+	public ToolBarView( CenarioDTO cenarioDTO, UsuarioDTO usuarioDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
+		this.usuarioDTO = usuarioDTO;
 		initUI();
 	}
 
@@ -761,7 +764,13 @@ public class ToolBarView
 		Menu menu = new Menu();
 		menu.add(new MenuItem("Usuários", AbstractImagePrototype.create(Resources.DEFAULTS.usuarios16()) ));
 		menu.add(new MenuItem("Configurações", AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeConsultaRequisicao16()) ));
+		menu.add(new MenuItem("Instituições de Ensino", AbstractImagePrototype.create(Resources.DEFAULTS.campus16()) ));
 		administracaoBt.setMenu(menu);
+		administracaoBt.getMenu().getItem(2).hide();
+		if ( usuarioDTO.getUsername().equals("trieda.root") )
+		{
+			administracaoBt.getMenu().getItem(2).show();
+		}
 		return administracaoBt;
 	}
 	
@@ -1282,6 +1291,10 @@ public class ToolBarView
 		return (MenuItem) administracaoBt.getMenu().getItem(1);
 	}
 	
+	@Override
+	public MenuItem getInstituicoesEnsinoButton() {
+		return (MenuItem) administracaoBt.getMenu().getItem(2);
+	}
 	
 	@Override
 	public Button getUsuariosButton()
