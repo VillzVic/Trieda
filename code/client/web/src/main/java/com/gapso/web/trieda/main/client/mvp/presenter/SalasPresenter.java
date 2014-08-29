@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AssociarDisciplinasView;
+import com.gapso.web.trieda.main.client.mvp.view.DisciplinaAssociarSalasView;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -87,6 +88,7 @@ public class SalasPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private CenarioDTO cenario;
+	private GTab gTab;
 
 	public SalasPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
@@ -341,6 +343,22 @@ public class SalasPresenter
 			
 			
 		});
+		
+		this.display.getDisciplinasAssociadasButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final SalaDTO salaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				Presenter presenter = new DisciplinaAssociarSalasPresenter(
+						instituicaoEnsinoDTO, cenario,new DisciplinaAssociarSalasView( cenario, salaDTO ) );
+
+				presenter.go( gTab );
+				
+			}
+			
+			
+		});
 
 		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
@@ -380,7 +398,7 @@ public class SalasPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		GTab tab = (GTab) widget;
-		tab.add( (GTabItem) this.display.getComponent() );
+		this.gTab = (GTab) widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
 	}
 }

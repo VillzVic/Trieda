@@ -122,31 +122,38 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 		}
 		buildCodigoDisciplinaToColorMap(disciplinas);
 
+		Set<V> entities = new HashSet<V>();
+		Map<V, AtendimentoServiceRelatorioResponse> entityMap = new HashMap<V, AtendimentoServiceRelatorioResponse>();
 		for(Campus campus : mapControl.keySet()){
 			Map<Turno, Map<V, AtendimentoServiceRelatorioResponse>> turnoMap = mapControl.get(campus);
 			for(Turno turno : turnoMap.keySet()){
-				Map<V, AtendimentoServiceRelatorioResponse> entityMap = sortEntityMap(turnoMap.get(turno));
-				for(V entity : entityMap.keySet()){
-					AtendimentoServiceRelatorioResponse quinteto = entityMap.get(entity);
-					
-					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
-					if(atendimentos.isEmpty()) continue;
-					
-					ParDTO<Integer, Boolean> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
-					List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
-					List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();
-					List<String> horariosDeFimDeAula = quinteto.getHorariosDeFimDeAula();
-					boolean ehTatico = atendimentos.get(0) instanceof AtendimentoTaticoDTO;
+				entityMap.putAll(turnoMap.get(turno));
+			}
+		}
+		
+		for(V entity : sortEntityMap(entityMap).keySet()){
+			if (!entities.contains(entity))
+			{
+				AtendimentoServiceRelatorioResponse quinteto = entityMap.get(entity);
+				
+				List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
+				if(atendimentos.isEmpty()) continue;
+				
+				ParDTO<Integer, Boolean> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
+				List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
+				List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();
+				List<String> horariosDeFimDeAula = quinteto.getHorariosDeFimDeAula();
+				boolean ehTatico = atendimentos.get(0) instanceof AtendimentoTaticoDTO;
 
-					nextRow = writeEntity(campus, turno, entity, atendimentos, nextRow, mdcTemposAulaNumSemanasLetivas.getPrimeiro(), ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
-				}
+				nextRow = writeEntity(entity, atendimentos, nextRow, mdcTemposAulaNumSemanasLetivas.getPrimeiro(), ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+				entities.add(entity);
 			}
 		}
 	}
 	
 	protected abstract <V> Map<V, AtendimentoServiceRelatorioResponse> sortEntityMap(Map<V, AtendimentoServiceRelatorioResponse> unsortMap);
 	
-	protected abstract <T> int writeEntity(Campus campus, Turno turno, T entity, List<AtendimentoRelatorioDTO> atendimentos,
+	protected abstract <T> int writeEntity(T entity, List<AtendimentoRelatorioDTO> atendimentos,
 		int row, int mdcTemposAula, boolean ehTatico, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula
 	);
 	

@@ -47,7 +47,7 @@ public class AssociarDisciplinasView extends MyComposite implements
 	private void initUI()
 	{
 
-		simpleModal = new SimpleModal( "Associar", Resources.DEFAULTS.sala16() );
+		simpleModal = new SimpleModal( "Associar Disciplinas à Ambientes por Equivalência", Resources.DEFAULTS.sala16() );
 		simpleModal.setHeight( 150 );
 		simpleModal.setWidth( 250 );
 

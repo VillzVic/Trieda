@@ -118,7 +118,7 @@ public class SalasView
 
 		this.toolBar.add( this.disponibilidadeBT );
 		
-		this.associarDisciplinasBT = this.toolBar.createButton(getI18nConstants().associacaoDisciplinas(),
+		this.associarDisciplinasBT = this.toolBar.createButton("Associar Disciplinas à Ambientes por Equivalência",
 				Resources.DEFAULTS.associacaoDisciplinaSala16());
 		this.toolBar.add(this.associarDisciplinasBT);
 		

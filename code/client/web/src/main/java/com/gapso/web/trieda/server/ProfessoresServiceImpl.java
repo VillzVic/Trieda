@@ -33,9 +33,11 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
@@ -57,6 +59,7 @@ import com.gapso.web.trieda.shared.services.ProfessoresService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.RelatorioProfessorFiltro;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
+import com.ibm.icu.text.SimpleDateFormat;
 
 public class ProfessoresServiceImpl
 	extends RemoteService
@@ -886,7 +889,7 @@ public class ProfessoresServiceImpl
 		Set<Disciplina> totalDisciplinasProfessorVirtual = new HashSet<Disciplina>();
 		Set<String> totalCreditosProfessorVirtual = new HashSet<String>();
 		Set<String> totalTurmasProfessorVirtual = new HashSet<String>();
-	
+		Map<Professor, Set<SemanaLetiva>> professorToSemanasLetivasMap = new HashMap<Professor, Set<SemanaLetiva>>();
 		for (AtendimentoOperacional atendimento : atendimentosSemCampi)
 		{
 			if(todosProfessores.contains(atendimento.getProfessor())){
@@ -941,6 +944,16 @@ public class ProfessoresServiceImpl
 			{
 				creditos.add(keyCreditos);
 				
+				if (professorToSemanasLetivasMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<SemanaLetiva> novaSemanaList = new HashSet<SemanaLetiva>();
+					novaSemanaList.add(atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva());
+					professorToSemanasLetivasMap.put(atendimento.getProfessor(), novaSemanaList);
+				}
+				else
+				{
+					professorToSemanasLetivasMap.get(atendimento.getProfessor()).add(atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva());
+				}
 				if (professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()) == null)
 				{
 					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
@@ -1071,15 +1084,18 @@ public class ProfessoresServiceImpl
 				});
 				if (!horarioProfessorOrdenado.isEmpty())
 				{
-					Calendar h1 = Calendar.getInstance();
-					h1.setTime(horarioProfessorOrdenado.get(0).getHorarioAula().getHorario());
 					for (int i = 1; i < horarioProfessorOrdenado.size(); i++)
 					{
+						Calendar h1 = Calendar.getInstance();
+						h1.setTime(horarioProfessorOrdenado.get(i-1).getHorarioAula().getHorario());
+						h1.set(1979,Calendar.NOVEMBER,6);
 						h1.add(Calendar.MINUTE,horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo());
 						Calendar h2 = Calendar.getInstance();
 						h2.setTime(horarioProfessorOrdenado.get(i).getHorarioAula().getHorario());
+						h2.set(1979,Calendar.NOVEMBER,6);
 						
-						if (h2.getTimeInMillis() - h1.getTimeInMillis() > (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000))
+						if (h2.getTimeInMillis() - h1.getTimeInMillis() >= (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000)
+								&& existeHorarioDeInicioEntre(h1, h2, professorToSemanasLetivasMap.get(professor.getKey())))
 						{
 							janelas++;
 						}
@@ -1236,6 +1252,22 @@ public class ProfessoresServiceImpl
 		currentNode.add(professoresInstituicao);
 		currentNode.add(professoresVirtuais);
 		currentNode.add(histogramas);
+	}
+
+	private boolean existeHorarioDeInicioEntre(Calendar h1, Calendar h2,
+			Set<SemanaLetiva> semanasLetivas) {
+		for (SemanaLetiva semanaLetiva : semanasLetivas)
+		{
+			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula())
+			{
+				Calendar h3 = Calendar.getInstance();
+				h3.setTime(horarioAula.getHorario());
+				h3.set(1979,Calendar.NOVEMBER,6);
+				if (h1.getTimeInMillis() < h3.getTimeInMillis() &&  h3.getTimeInMillis() < h2.getTimeInMillis())
+					return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -1891,11 +1923,21 @@ public class ProfessoresServiceImpl
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
 		Map<Professor, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<Professor, Set<HorarioDisponivelCenario>>();
+		Map<Professor, Set<SemanaLetiva>> professorToSemanasLetivasMap = new HashMap<Professor, Set<SemanaLetiva>>();
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
 			if (atendimento.getProfessor().getCpf() != null)
 			{
-				
+				if (professorToSemanasLetivasMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<SemanaLetiva> novaSemanaList = new HashSet<SemanaLetiva>();
+					novaSemanaList.add(atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva());
+					professorToSemanasLetivasMap.put(atendimento.getProfessor(), novaSemanaList);
+				}
+				else
+				{
+					professorToSemanasLetivasMap.get(atendimento.getProfessor()).add(atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva());
+				}
 				if (professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()) == null)
 				{
 					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
@@ -1949,15 +1991,18 @@ public class ProfessoresServiceImpl
 				});
 				if (!horarioProfessorOrdenado.isEmpty())
 				{
-					Calendar h1 = Calendar.getInstance();
-					h1.setTime(horarioProfessorOrdenado.get(0).getHorarioAula().getHorario());
 					for (int i = 1; i < horarioProfessorOrdenado.size(); i++)
 					{
+						Calendar h1 = Calendar.getInstance();
+						h1.setTime(horarioProfessorOrdenado.get(i-1).getHorarioAula().getHorario());
+						h1.set(1979,Calendar.NOVEMBER,6);
 						h1.add(Calendar.MINUTE,horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo());
 						Calendar h2 = Calendar.getInstance();
 						h2.setTime(horarioProfessorOrdenado.get(i).getHorarioAula().getHorario());
+						h2.set(1979,Calendar.NOVEMBER,6);
 						
-						if (h2.getTimeInMillis() - h1.getTimeInMillis() > (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000))
+						if (h2.getTimeInMillis() - h1.getTimeInMillis() >= (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000)
+								&& existeHorarioDeInicioEntre(h1, h2, professorToSemanasLetivasMap.get(professor.getKey())))
 						{
 							janelas++;
 						}

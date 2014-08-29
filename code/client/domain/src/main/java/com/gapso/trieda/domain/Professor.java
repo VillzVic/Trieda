@@ -905,10 +905,22 @@ public class Professor
 			orderBy = "";
 		}
 
-		Query q = entityManager().createQuery(
-			" SELECT o, count(p), sum(p.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) FROM Professor o, IN (o.atendimentosOperacionais) p" +
-			" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
-			+ where + " 1 = 1 "+  " GROUP BY o " +orderBy );
+		Query q;
+		
+		if(cenario.getAtendimentosOperacionais().isEmpty())
+		{
+			q = entityManager().createQuery(
+					" SELECT o, SUM(0), SUM(0) FROM Professor o " +
+					" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
+					+ where + " 1 = 1 "+  " GROUP BY o " +orderBy );
+		}
+		else
+		{
+			q = entityManager().createQuery(
+				" SELECT o, count(p), sum(p.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) FROM Professor o, IN (o.atendimentosOperacionais) p" +
+				" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
+				+ where + " 1 = 1 "+  " GROUP BY o " +orderBy );
+		}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -1026,7 +1038,7 @@ public class Professor
 		else if ( cpf.isEmpty() && nome.isEmpty() ) return null;
 		
 		nome = ( ( nome == null ) ? "" : nome );
-		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		nome = ( nome.replace( '*', '%' ) );
 		
 		String cpfQuery = "";
 		

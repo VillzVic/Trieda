@@ -32,7 +32,7 @@ public class ConfirmationButton extends Button {
 		super.addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(final ButtonEvent ce) {
-				MessageBox.confirm(i18nGateway.getI18nConstants().confirmacao(), confirmacao, new Listener<MessageBoxEvent>() {
+				MessageBox.confirm(i18nGateway.getI18nMessages().confirmacaoButton(), confirmacao, new Listener<MessageBoxEvent>() {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
 						if(be.getButtonClicked().getHtml().equalsIgnoreCase("yes") ||

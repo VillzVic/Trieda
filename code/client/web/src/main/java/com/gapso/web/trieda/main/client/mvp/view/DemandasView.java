@@ -88,7 +88,7 @@ public class DemandasView
 		this.toolBar = new SimpleToolBar( this );
 		this.toolBar.add( new SeparatorToolItem() );
 		
-		this.associarAlunosDemandaBT = this.toolBar.createButton("Associar Alunos à Demanda",Resources.DEFAULTS.disciplina16());
+		this.associarAlunosDemandaBT = this.toolBar.createButton("Associar Demanda à Oferta",Resources.DEFAULTS.disciplina16());
 		this.toolBar.add( this.associarAlunosDemandaBT );
 
 		this.panel.setTopComponent( this.toolBar );

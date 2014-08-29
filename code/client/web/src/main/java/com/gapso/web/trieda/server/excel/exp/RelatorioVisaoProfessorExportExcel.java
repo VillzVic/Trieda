@@ -222,7 +222,7 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		return sortedMap;
 	}
 
-	protected <T> int writeEntity(Campus campus, Turno turno, T entity, List<AtendimentoRelatorioDTO> atendimentos, int row, 
+	protected <T> int writeEntity(T entity, List<AtendimentoRelatorioDTO> atendimentos, int row, 
 		int mdcTemposAula, boolean ehTatico, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
 		String professorKey;
@@ -240,7 +240,7 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		
 		boolean temInfoDeHorarios = !atendimentos.isEmpty() ? (atendimentos.iterator().next().getHorarioAulaId() != null) : false;
 		
-		row = writeHeader(getRowsHeadersPairs(campus, professor.getProfessor(), professor.getProfessorVirtual(), turno), row, temInfoDeHorarios);
+		row = writeHeader(getRowsHeadersPairs(professor.getProfessor(), professor.getProfessorVirtual()), row, temInfoDeHorarios);
 		
 		return writeAulas(atendimentos, row, mdcTemposAula, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 	}
@@ -250,30 +250,28 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		hyperlinkInfo.add(TrioDTO.create(row,col,aula.getSalaString()));
 	}
 	
-	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Campus campus, Professor professor, 
-		ProfessorVirtual professorVirtual, Turno turno)
+	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Professor professor, 
+		ProfessorVirtual professorVirtual)
 	{
 		List<List<ParDTO<String, ?>>> list = new ArrayList<List<ParDTO<String, ?>>>(); 
 		
-		String professorNome, professorVirtualNome;
+		String professorNome, professorCPF;
 		if(professor == null){
-			professorNome = "";
-			professorVirtualNome = professorVirtual.getNome();
+			professorNome = professorVirtual.getNome();
+			professorCPF = "";
 		}
 		else{
 			professorNome = professor.getNome();
-			professorVirtualNome = "";
+			professorCPF = professor.getCpf();
 		}
 		
 		List<ParDTO<String, ?>> row = new ArrayList<ParDTO<String, ?>>();
-		row.add(ParDTO.create(this.getI18nConstants().campus(), campus.getCodigo()));
 		row.add(ParDTO.create(this.getI18nConstants().professor(), professorNome));
 		
 		list.add(row);
 		
 		row = new ArrayList<ParDTO<String, ?>>();
-		row.add(ParDTO.create(this.getI18nConstants().turno(), turno.getNome()));
-		row.add(ParDTO.create(this.getI18nConstants().professorVirtual(), professorVirtualNome));
+		row.add(ParDTO.create(this.getI18nConstants().cpf(), professorCPF));
 		
 		list.add(row);
 		

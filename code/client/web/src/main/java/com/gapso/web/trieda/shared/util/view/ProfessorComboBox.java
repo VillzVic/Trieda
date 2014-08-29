@@ -22,7 +22,7 @@ public class ProfessorComboBox extends ComboBox<ProfessorDTO>{
 	private CenarioDTO cenarioDTO;
 
 	public ProfessorComboBox(CenarioDTO cenarioDTO){
-		this(null, false);
+		this(cenarioDTO, false);
 	}
 	
 	public ProfessorComboBox(CenarioDTO cenario,boolean readOnly){
