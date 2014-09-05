@@ -17,9 +17,9 @@
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
 	<!-- development | production | otimization -->
-	<context:property-placeholder location="classpath*:META-INF/spring/trieda-development.properties" />
+	<context:property-placeholder location="classpath*:META-INF/spring/trieda-production.properties" />
  	<!-- jdbc/triedaDevelDS | jdbc/triedaProdDS -->
-<!--        	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/triedaDevelDS">	</jee:jndi-lookup> -->
+<!--  		<jee:jndi-lookup id="dataSource" jndi-name="jdbc/triedaDevelDS">	</jee:jndi-lookup> -->
 
 	<context:spring-configured />
 
@@ -37,7 +37,7 @@
 		<property name="username" value="${database.username}" />
 		<property name="password" value="${database.password}" />
 	</bean>
-
+ 
 	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
 		<property name="dataSource" ref="dataSource" />
 	</bean>

@@ -5,12 +5,13 @@
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
             <!--value='create' to build a new database on each run; value='update' to modify an existing database; value='create-drop' means the same as 'create' but also drops tables when Hibernate closes; value='validate' makes no changes to the database-->
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.jdbc.batch_size" value="50" />
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="false" />
             <property name="use_sql_comments" value="false" />
             <property name="hibernate.ejb.event.flush" value="com.gapso.trieda.hibernate.PatchedDefaultFlushEventListener" />
-        </properties>
+        </properties> 
     </persistence-unit>
 </persistence>
