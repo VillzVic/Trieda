@@ -31,8 +31,8 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelator
 @ProgressDeclarationAnnotation
 public class AulasExportExcel extends AbstractExportExcel {
 	enum ExcelCellStyleReference {
-		TEXT(8,2),
-		NUMBER(8,6);
+		TEXT(7,2),
+		NUMBER(7,10);
 
 		private int row;
 		private int col;
@@ -183,8 +183,23 @@ public class AulasExportExcel extends AbstractExportExcel {
 						// Demanda Alunos Total
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],aula.getQtdDemandaAlunosTotal());
 						
+						// Disciplina Substituta
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getDisciplinaSubstitutaString());
+						// Disciplina Aula
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getDisciplinaSubstitutaString() == null ? aula.getDisciplinaString() : aula.getDisciplinaSubstitutaString());
 						// Turma
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getTurma());
+						// Sala
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getSalaString());
+						// Professor
+						String professorCPF = aula.getProfessorCPF();//(aula.getProfessorId() != null) ? aula.getProfessorCPF() : aula.getProfessorVirtualCPF();
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],professorCPF);
+						// Dia Semana
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],Semanas.get(aula.getDiaSemana()).name());
+						// Horário Início
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],horarioInicio);
+						// Horário Fim
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],horarioFim);
 						// Aula - Créditos Teóricos
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],(aula.isTeorico() ? aula.getTotalCreditos() : 0));
 						// Aula - Créditos Práticos
@@ -195,21 +210,6 @@ public class AulasExportExcel extends AbstractExportExcel {
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],aula.getQuantidadeAlunosP2());
 						// Demanda Atendida Total
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],aula.getQuantidadeAlunos());
-						// Dia Semana
-						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],Semanas.get(aula.getDiaSemana()).name());
-						// Horário Início
-						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],horarioInicio);
-						// Horário Fim
-						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],horarioFim);
-						// Professor
-						String professorCPF = aula.getProfessorCPF();//(aula.getProfessorId() != null) ? aula.getProfessorCPF() : aula.getProfessorVirtualCPF();
-						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],professorCPF);
-						// Sala
-						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getSalaString());
-						// Disciplina Substituta
-						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getDisciplinaSubstitutaString());
-						// Disciplina Aula
-						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getDisciplinaSubstitutaString() == null ? aula.getDisciplinaString() : aula.getDisciplinaSubstitutaString());
 						/////////////////////////////////////////////////////////////////
 						row++;
 					}
@@ -228,7 +228,7 @@ public class AulasExportExcel extends AbstractExportExcel {
 			visaoCursoExpExcel.sheet = workbook.getSheet(this.getSheetName());
 			fillInCellStyles(visaoCursoExpExcel.sheet);
 			visaoCursoExpExcel.buildColorPaletteCellStyles(workbook);
-			visaoCursoExpExcel.initialRow = 8;
+			visaoCursoExpExcel.initialRow = 7;
 			visaoCursoExpExcel.processStructureReportControl(structureReportControl);
 			
 			return true;

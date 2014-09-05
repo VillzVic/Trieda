@@ -123,11 +123,11 @@ public class Parametro
     
     //Indicar se o atendimento de alunos calouros (de 1o periodo) deve ser prioritario
     @Column(name = "PAR_PRIORIZARCALOUROS")
-    private Boolean priorizarCalouros = true;
+    private Boolean priorizarCalouros = false;
     
     // Considerar prioridade por alunos
     @Column(name = "PAR_CONSIDEARARPRIORIDADEALUNOS")
-    private Boolean considerarPrioridadePorAlunos = false;
+    private Boolean considerarPrioridadePorAlunos = true;
     
 
     //////////////////////////////////////////////
@@ -143,7 +143,7 @@ public class Parametro
     
     //Permitir que o professor ministre aulas em mais de um Campus
     @Column(name = "PAR_PROFMUITOSCAMPI")
-    private Boolean professorEmMuitosCampi = false;
+    private Boolean professorEmMuitosCampi = true;
     
     //Minimizar Deslocamentos de Professores entre Campi
     @Column(name = "PAR_MINDESLPROF")
@@ -153,7 +153,7 @@ public class Parametro
     
     //Minimizar Gaps nos Horários dos Professores
     @Column(name = "PAR_MINGAPPROF")
-    private Boolean minimizarGapProfessor = false;
+    private Boolean minimizarGapProfessor = true;
     
     //Proibir Gaps nos Horários dos Professores
     @Column(name = "PAR_PROIBIRGAPPROF")
@@ -258,7 +258,7 @@ public class Parametro
     
     //Considerar percentuais mínimos de tempo integral
     @Column(name = "PAR_CONSIDERARCOREQUI")
-    private Boolean considerarCoRequisitos = false;
+    private Boolean considerarCoRequisitos = true;
 
     //Considerar áreas de titulação dos professores e cursos
     @Column(name = "PAR_AREATITPROFCUR")

@@ -57,6 +57,7 @@ public class SolverClient
 			"/isFinished/" + getProblemName() + "/" )
 			.queryParams( queryParams ).post( SolverResponse.class );
 
+
 		return ( ( sr.getStatus() ) ? (Boolean) sr.getObject() : false );
 	}
 

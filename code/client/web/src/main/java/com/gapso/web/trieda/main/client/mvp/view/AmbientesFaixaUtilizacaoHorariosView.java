@@ -117,12 +117,12 @@ public class AmbientesFaixaUtilizacaoHorariosView extends MyComposite
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 	
-		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Faixa de Ocupação dos Horáios", 240 ) );
+		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Faixa de Utilização dos Horáios", 240 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Quantidade de Ambientes", 140 ) );
-		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Salas", 100 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Salas de Aula", 100 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE3, "Laboratórios", 100 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE4, "Quantidade de Ambientes Externos", 190 ) );
-		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE5, "Salas Externas", 100 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE5, "Salas de Aula Externas", 100 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE6, "Laboratórios Externos", 140 ) );
 		
 		return list;

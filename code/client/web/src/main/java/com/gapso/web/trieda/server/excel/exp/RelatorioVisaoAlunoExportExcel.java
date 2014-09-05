@@ -347,9 +347,8 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 
 	protected int writeHeaderAlunos(List<List<TrioDTO<String,Integer,?>>> rowsHeadersPairs, int row, boolean temInfoDeHorarios) {
 		// mescla células relativas ao nome do aluno
-		mergeCells(row,row,4,5,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()]);
-		mergeCells(row,row,7,9,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()]);
-		mergeCells(row+1,row+1,4,5,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()]);
+		mergeCells(row,row,6,7,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()]);
+		mergeCells(row+1,row+1,8,9,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()]);
 
 		
 		for(List<TrioDTO<String, Integer, ?>> headersPairs : rowsHeadersPairs){
@@ -431,16 +430,15 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 		List<List<TrioDTO<String, Integer, ?>>> list = new ArrayList<List<TrioDTO<String, Integer, ?>>>(); 
 		
 		List<TrioDTO<String, Integer, ?>> row = new ArrayList<TrioDTO<String, Integer, ?>>();
-		row.add(TrioDTO.create(this.getI18nConstants().campus(),3, campus.getCodigo()));
-		row.add(TrioDTO.create(this.getI18nConstants().curso(),6, ""));
+		row.add(TrioDTO.create(this.getI18nConstants().campus(),3, campus.getNome()));
+		row.add(TrioDTO.create(this.getI18nConstants().curso(),5, ""));
 		
 		list.add(row);
 		
 		row = new ArrayList<TrioDTO<String, Integer, ?>>();
-		row.add(TrioDTO.create(this.getI18nConstants().nomeAluno(),3, aluno.getNome()));
-		row.add(TrioDTO.create(this.getI18nConstants().matriculaAluno(),6, aluno.getMatricula()));
-		row.add(TrioDTO.create(this.getI18nConstants().formando(),8, aluno.getFormando() ? getI18nConstants().sim()
-				: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
+		row.add(TrioDTO.create(this.getI18nConstants().matriculaAluno(),3, aluno.getMatricula()));
+		row.add(TrioDTO.create(this.getI18nConstants().periodo(),5, aluno.getPeriodo() == null ? "" : aluno.getPeriodo()));
+		row.add(TrioDTO.create(this.getI18nConstants().nomeAluno(),7, aluno.getNome()));
 		
 		list.add(row);
 		

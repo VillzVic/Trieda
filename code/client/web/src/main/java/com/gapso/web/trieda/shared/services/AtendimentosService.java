@@ -87,7 +87,7 @@ public interface AtendimentosService extends RemoteService {
 			CenarioDTO cenarioDTO, PagingLoadConfig config);
 	
 	PagingLoadResult<PesquisaPorDisciplinaDTO> getAtendimentosPesquisaPorDisciplinaList( CenarioDTO cenarioDTO, String codigo, 
-			CampusDTO campusDTO, String turma, PagingLoadConfig config);
+			 String nome, CampusDTO campusDTO, String turma, PagingLoadConfig config);
 
 	void saveConfirmacoes(CenarioDTO cenarioDTO, List<ConfirmacaoTurmaDTO> list);
 

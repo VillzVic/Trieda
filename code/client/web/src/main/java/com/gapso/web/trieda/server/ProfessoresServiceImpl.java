@@ -50,6 +50,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -59,7 +60,6 @@ import com.gapso.web.trieda.shared.services.ProfessoresService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.RelatorioProfessorFiltro;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
-import com.ibm.icu.text.SimpleDateFormat;
 
 public class ProfessoresServiceImpl
 	extends RemoteService
@@ -239,7 +239,7 @@ public class ProfessoresServiceImpl
 			for ( Object professor : listDomains )
 			{
 				list.add( ConvertBeans.toProfessorDTO( ((Professor)((Object[])professor)[0]),  
-						((Long)((Object[])professor)[2]).intValue() , ((Long)((Object[])professor)[1]).intValue() ));
+						(Long)((Object[])professor)[2] == null ? 0 : ((Long)((Object[])professor)[2]).intValue() , ((Long)((Object[])professor)[1]).intValue() ));
 			}
 		}
 
@@ -1187,7 +1187,7 @@ public class ProfessoresServiceImpl
 		docentesMalAlocados.setButtonIndex(8);
 		docentesMalAlocados.setCampusId(campus.getId());
 		atendimento.add( docentesMalAlocados );
-		RelatorioDTO docentesComJanelas = new RelatorioDTO( " Docentes com 1 ou Mais Buracos na Grade: " + numberFormatter.print(professoresComJanelas.size(),pt_BR));
+		RelatorioDTO docentesComJanelas = new RelatorioDTO( " Docentes com 1 ou Mais Janelas na Grade: " + numberFormatter.print(professoresComJanelas.size(),pt_BR));
 		docentesComJanelas.setButtonText(docentesComJanelas.getText());
 		docentesComJanelas.setButtonIndex(9);
 		docentesComJanelas.setCampusId(campus.getId());
@@ -2566,5 +2566,49 @@ public class ProfessoresServiceImpl
 		{
 			return arg1.getId().compareTo(arg2.getId());
 		}
+	}
+	
+	@Override
+	public ProfessorDTO getProxProfessor( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String order)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Professor professor = Professor.find(professorDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Professor proxProfessor = Professor.findProx(getInstituicaoEnsinoUser(), cenario, professor, order);
+
+		return ConvertBeans.toProfessorDTO(proxProfessor);
+	}
+	
+	@Override
+	public ProfessorDTO getAntProfessor( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String order)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Professor professor = Professor.find(professorDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Professor proxProfessor = Professor.findAnt(getInstituicaoEnsinoUser(), cenario, professor, order);
+
+		return ConvertBeans.toProfessorDTO(proxProfessor);
+	}
+	
+	@Override
+	public ProfessorVirtualDTO getProxProfessorVirtual( CenarioDTO cenarioDTO, ProfessorVirtualDTO professorVirtualDTO, String order)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		ProfessorVirtual professorVirtual = ProfessorVirtual.find(professorVirtualDTO.getId(), getInstituicaoEnsinoUser());
+		
+		ProfessorVirtual proxProfessorVirtual = ProfessorVirtual.findAnt(getInstituicaoEnsinoUser(), cenario, professorVirtual, order);
+
+		return ConvertBeans.toProfessorVirtualDTO(proxProfessorVirtual);
+	}
+	
+	@Override
+	public ProfessorVirtualDTO getAntProfessorVirtual( CenarioDTO cenarioDTO, ProfessorVirtualDTO professorVirtualDTO, String order)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		ProfessorVirtual professorVirtual = ProfessorVirtual.find(professorVirtualDTO.getId(), getInstituicaoEnsinoUser());
+		
+		ProfessorVirtual proxProfessorVirtual = ProfessorVirtual.findAnt(getInstituicaoEnsinoUser(), cenario, professorVirtual, order);
+
+		return ConvertBeans.toProfessorVirtualDTO(proxProfessorVirtual);
 	}
 }

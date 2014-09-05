@@ -2027,11 +2027,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					String titulo = "";
 					if (i == 0)
 					{
-						titulo = "Todas as disciplina atendidas";
+						titulo = "Todas as disciplinas atendidas";
 					}
 					else
 					{
-						titulo = i + " disciplina" + ((i != 1) ? "s " : "") + " nao atendida" + ((i != 1) ? "s" : "");
+						titulo = i + " disciplina" + ((i != 1) ? "s " : "") + " não atendida" + ((i != 1) ? "s" : "");
 					}
 					AtendimentoFaixaCreditoDTO novaFaixa = new AtendimentoFaixaCreditoDTO(titulo);
 					novaFaixa.setCampusNome(campus.getCodigo());
@@ -2613,7 +2613,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				if(turnosConsiderados.contains(ha.getTurno()))
 					for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
 						int semanaInt = Semanas.toInt(hdc.getDiaSemana());
-						Integer value = countHorariosAula.get(semanaInt) == null ? 0 : countHorariosAula.get(semanaInt) + maiorSemanaLetiva.getTempo();
+						Integer value = countHorariosAula.get(semanaInt) == null ? maiorSemanaLetiva.getTempo() : countHorariosAula.get(semanaInt) + maiorSemanaLetiva.getTempo();
 						countHorariosAula.put(semanaInt, value);
 					}
 			}
@@ -3511,7 +3511,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	
 	@Override
 	public PagingLoadResult<PesquisaPorDisciplinaDTO> getAtendimentosPesquisaPorDisciplinaList(
-			CenarioDTO cenarioDTO, String codigo, CampusDTO campusDTO,
+			CenarioDTO cenarioDTO, String codigo, String nome, CampusDTO campusDTO,
 			String turma, PagingLoadConfig config) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		List<Campus> campusList = new ArrayList<Campus>();
@@ -3538,45 +3538,56 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				
 				for (AtendimentoTatico atendimento : atendimentos)
 				{
-					
-					PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
-					newRelatorio.setTurma( atendimento.getTurma() );
-					newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
-					newRelatorio.setSalaId(atendimento.getSala().getId());
-					newRelatorio.setDiaSemanaString(atendimento.getSemana().toString());
-					newRelatorio.setHorarioId(atendimento.getHorarioAula().getId());
-					pesquisa.add(newRelatorio);
-					
-					/*
-					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
-							+ "-" + atendimento.getTurma();
-
-					
-							if (turmaMapParOfertasRelatorio.get(key) == null)
+					if (codigo == null || codigo.contains(atendimento.getDisciplinaSubstituta() == null ?
+							atendimento.getDisciplina().getCodigo() : atendimento.getDisciplinaSubstituta().getCodigo()))
 					{
-						Set<String> newOferta = new HashSet<String>();
-						newOferta.add(atendimento.getOferta().getId() + "-" + 
-								atendimento.getDisciplina().getCodigo());
-						PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
-						newRelatorio.setTurma( atendimento.getTurma() );
-						newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
-						newRelatorio.setSalaId(atendimento.getSala().getId());
-						newRelatorio.setDiaSemanaString(atendimento.getSemana().toString());
-						newRelatorio.setHorarioId(atendimento.getHorarioAula().getId());
-						//newRelatorio.setHorarioInicial(atendimento.getHorarioAula().getHorario());
-						turmaMapParOfertasRelatorio.put(key, TriedaPar.create(newOferta, newRelatorio));
-					}
-					else
-					{
-						if (!turmaMapParOfertasConfirmacao.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
-								+ "-" + atendimento.getDisciplina().getCodigo()))
+						if (nome == null || nome.contains(atendimento.getDisciplinaSubstituta() == null ?
+								atendimento.getDisciplina().getNome() : atendimento.getDisciplinaSubstituta().getNome()))
 						{
-							turmaMapParOfertasConfirmacao.get(key).getSegundo().setQuantidadeAlunos(
-									turmaMapParOfertasConfirmacao.get(key).getSegundo().getQuantidadeAlunos() + atendimento.getQuantidadeAlunos());
-							turmaMapParOfertasConfirmacao.get(key).getPrimeiro().add(atendimento.getOferta().getId()
-									+ "-" + atendimento.getDisciplina().getCodigo());
+							PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
+							newRelatorio.setTurma( atendimento.getTurma() );
+							newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
+							newRelatorio.setSalaId(atendimento.getSala().getId());
+							newRelatorio.setDiaSemanaString(atendimento.getSemana().toString());
+							newRelatorio.setHorarioId(atendimento.getHorarioAula().getId());
+							newRelatorio.setDisciplinaCodigo( atendimento.getDisciplinaSubstituta() == null ?
+									atendimento.getDisciplina().getCodigo() : atendimento.getDisciplinaSubstituta().getCodigo() );
+							newRelatorio.setDisciplinaNome( atendimento.getDisciplinaSubstituta() == null ?
+									atendimento.getDisciplina().getNome() : atendimento.getDisciplinaSubstituta().getNome() );
+							pesquisa.add(newRelatorio);
+							
+							/*
+							String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+									+ "-" + atendimento.getTurma();
+		
+							
+									if (turmaMapParOfertasRelatorio.get(key) == null)
+							{
+								Set<String> newOferta = new HashSet<String>();
+								newOferta.add(atendimento.getOferta().getId() + "-" + 
+										atendimento.getDisciplina().getCodigo());
+								PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
+								newRelatorio.setTurma( atendimento.getTurma() );
+								newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
+								newRelatorio.setSalaId(atendimento.getSala().getId());
+								newRelatorio.setDiaSemanaString(atendimento.getSemana().toString());
+								newRelatorio.setHorarioId(atendimento.getHorarioAula().getId());
+								//newRelatorio.setHorarioInicial(atendimento.getHorarioAula().getHorario());
+								turmaMapParOfertasRelatorio.put(key, TriedaPar.create(newOferta, newRelatorio));
+							}
+							else
+							{
+								if (!turmaMapParOfertasConfirmacao.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+										+ "-" + atendimento.getDisciplina().getCodigo()))
+								{
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().setQuantidadeAlunos(
+											turmaMapParOfertasConfirmacao.get(key).getSegundo().getQuantidadeAlunos() + atendimento.getQuantidadeAlunos());
+									turmaMapParOfertasConfirmacao.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+											+ "-" + atendimento.getDisciplina().getCodigo());
+								}
+							}*/
 						}
-					}*/
+					}
 					
 				}
 				
@@ -3586,53 +3597,64 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				
 				for (AtendimentoOperacional atendimento : atendimentos)
 				{
-					
-					PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
-					newRelatorio.setTurma( atendimento.getTurma() );
-					newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
-					newRelatorio.setSalaId(atendimento.getSala().getId());
-					newRelatorio.setDiaSemanaString(atendimento.getHorarioDisponivelCenario().getDiaSemana().toString());
-					SemanaLetiva semanaLetiva = atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva();
-					HorarioAula horarioAula = atendimento.getHorarioDisponivelCenario().getHorarioAula();
-					newRelatorio.setHorarioId(horarioAula.getId());
-					
-					String inicio = df.format( horarioAula.getHorario() );
-					Calendar hi = TriedaServerUtil.dateToCalendar(horarioAula.getHorario());
-					Calendar hf = Calendar.getInstance();
-					hf.clear();
-					hf.setTime(hi.getTime());
-					hf.add(Calendar.MINUTE,semanaLetiva.getTempo());
-					newRelatorio.setHorarioInicial(inicio);
-					newRelatorio.setHorarioFinal(TriedaUtil.shortTimeString(hf.getTime()));
-					
-					newRelatorio.setSalaId(atendimento.getSala().getId());
-					newRelatorio.setSalaString(atendimento.getSala().getDescricao());
-					newRelatorio.setProfessorString(atendimento.getProfessorVirtual() != null ?
-							atendimento.getProfessorVirtual().getNome() : atendimento.getProfessor().getNome());
-					
-					
-					pesquisa.add(newRelatorio);
-					
-					/*
-					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
-							+ "-" + atendimento.getTurma();
-					
-					
-					if (turmaMapParOfertasRelatorio.get(key) == null)
+					if (codigo == null || codigo.contains(atendimento.getDisciplinaSubstituta() == null ?
+							atendimento.getDisciplina().getCodigo() : atendimento.getDisciplinaSubstituta().getCodigo()))
 					{
-						Set<String> newOferta = new HashSet<String>();
-						newOferta.add(atendimento.getOferta().getId() + "-" + 
-								atendimento.getDisciplina().getCodigo());
-						PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
-						newRelatorio.setTurma( atendimento.getTurma() );
-						newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
-						newRelatorio.setSalaId(atendimento.getSala().getId());
-						newRelatorio.setDiaSemanaString(atendimento.getHorarioDisponivelCenario().getDiaSemana().toString());
-						newRelatorio.setHorarioId(atendimento.getHorarioDisponivelCenario().getHorarioAula().getId());
-						//newRelatorio.setHorarioInicial(atendimento.getHorarioDisponivelCenario().getHorarioAula().getHorario());
-						turmaMapParOfertasRelatorio.put(key, TriedaPar.create(newOferta, newRelatorio));
+						if (nome == null || nome.contains(atendimento.getDisciplinaSubstituta() == null ?
+								atendimento.getDisciplina().getNome() : atendimento.getDisciplinaSubstituta().getNome()))
+						{
+							PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
+							newRelatorio.setTurma( atendimento.getTurma() );
+							newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
+							newRelatorio.setSalaId(atendimento.getSala().getId());
+							newRelatorio.setDiaSemanaString(atendimento.getHorarioDisponivelCenario().getDiaSemana().toString());
+							SemanaLetiva semanaLetiva = atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva();
+							HorarioAula horarioAula = atendimento.getHorarioDisponivelCenario().getHorarioAula();
+							newRelatorio.setHorarioId(horarioAula.getId());
+							newRelatorio.setDisciplinaCodigo( atendimento.getDisciplinaSubstituta() == null ?
+									atendimento.getDisciplina().getCodigo() : atendimento.getDisciplinaSubstituta().getCodigo() );
+							newRelatorio.setDisciplinaNome( atendimento.getDisciplinaSubstituta() == null ?
+									atendimento.getDisciplina().getNome() : atendimento.getDisciplinaSubstituta().getNome() );
+							
+							String inicio = df.format( horarioAula.getHorario() );
+							Calendar hi = TriedaServerUtil.dateToCalendar(horarioAula.getHorario());
+							Calendar hf = Calendar.getInstance();
+							hf.clear();
+							hf.setTime(hi.getTime());
+							hf.add(Calendar.MINUTE,semanaLetiva.getTempo());
+							newRelatorio.setHorarioInicial(inicio);
+							newRelatorio.setHorarioFinal(TriedaUtil.shortTimeString(hf.getTime()));
+							
+							newRelatorio.setSalaId(atendimento.getSala().getId());
+							newRelatorio.setSalaString(atendimento.getSala().getDescricao());
+							newRelatorio.setProfessorString(atendimento.getProfessorVirtual() != null ?
+									atendimento.getProfessorVirtual().getNome() : atendimento.getProfessor().getNome());
+							
+							
+							pesquisa.add(newRelatorio);
+							
+							/*
+							String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+									+ "-" + atendimento.getTurma();
+							
+							
+							if (turmaMapParOfertasRelatorio.get(key) == null)
+							{
+								Set<String> newOferta = new HashSet<String>();
+								newOferta.add(atendimento.getOferta().getId() + "-" + 
+										atendimento.getDisciplina().getCodigo());
+								PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
+								newRelatorio.setTurma( atendimento.getTurma() );
+								newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
+								newRelatorio.setSalaId(atendimento.getSala().getId());
+								newRelatorio.setDiaSemanaString(atendimento.getHorarioDisponivelCenario().getDiaSemana().toString());
+								newRelatorio.setHorarioId(atendimento.getHorarioDisponivelCenario().getHorarioAula().getId());
+								//newRelatorio.setHorarioInicial(atendimento.getHorarioDisponivelCenario().getHorarioAula().getHorario());
+								turmaMapParOfertasRelatorio.put(key, TriedaPar.create(newOferta, newRelatorio));
+							}
+							*/
+						}
 					}
-					*/
 				}
 			}
 		}

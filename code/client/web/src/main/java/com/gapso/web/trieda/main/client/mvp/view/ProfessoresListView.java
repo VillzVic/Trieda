@@ -160,12 +160,6 @@ public abstract class ProfessoresListView
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_MIN_CREDITOS_DIA,
 				getI18nConstants().minCreditosDia(), 140 ) );
 		
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TOTAL_CRED,
-				getI18nConstants().totalCreditosSemanais(), 140 ) );
-		
-		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_SEMANAL,
-				getI18nConstants().cargaHorariaSemanal(), 190 ) );
-
 		return list;
 	}
 

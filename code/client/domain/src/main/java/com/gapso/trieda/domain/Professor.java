@@ -907,7 +907,7 @@ public class Professor
 
 		Query q;
 		
-		if(cenario.getAtendimentosOperacionais().isEmpty())
+/*		if(cenario.getAtendimentosOperacionais().isEmpty())
 		{
 			q = entityManager().createQuery(
 					" SELECT o, SUM(0), SUM(0) FROM Professor o " +
@@ -915,12 +915,14 @@ public class Professor
 					+ where + " 1 = 1 "+  " GROUP BY o " +orderBy );
 		}
 		else
-		{
+		{*/
 			q = entityManager().createQuery(
-				" SELECT o, count(p), sum(p.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) FROM Professor o, IN (o.atendimentosOperacionais) p" +
+				" SELECT o, count(p), sum(sl.tempo) FROM Professor o" +
+				" LEFT JOIN o.atendimentosOperacionais p LEFT JOIN p.HorarioDisponivelCenario h LEFT JOIN h.horarioAula ha " +
+				" LEFT JOIN ha.semanaLetiva sl " +
 				" where LOWER ( o.nome ) LIKE LOWER ( :nome ) and "
 				+ where + " 1 = 1 "+  " GROUP BY o " +orderBy );
-		}
+		//}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -1259,6 +1261,42 @@ public class Professor
 
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;
+	}
+	
+	public static Professor findProx(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Professor professor, String order) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Professor o " +
+    		" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.cenario = :cenario " +
+    		" AND o > :professor " +
+    		" ORDER BY o." + order);
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "professor", professor );
+		q.setMaxResults(1);
+
+        return (Professor)q.getSingleResult();
+	}
+	
+	public static Professor findAnt(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Professor professor, String order) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Professor o " +
+    		" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.cenario = :cenario " +
+    		" AND o < :professor " +
+    		" ORDER BY o." + order + " DESC");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "professor", professor );
+		q.setMaxResults(1);
+
+        return (Professor)q.getSingleResult();
 	}
 
 	public Professor clone(CenarioClone novoCenario) {

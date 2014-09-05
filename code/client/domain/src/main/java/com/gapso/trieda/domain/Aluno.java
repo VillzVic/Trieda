@@ -768,6 +768,42 @@ public class Aluno
 
 		return q.getResultList();
 	}
+	
+	public static Aluno findProx(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Aluno aluno, String order) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Aluno o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.cenario = :cenario " +
+    		" AND o > :aluno " +
+    		" ORDER BY o." + order);
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "aluno", aluno );
+		q.setMaxResults(1);
+
+        return (Aluno)q.getSingleResult();
+	}
+	
+	public static Aluno findAnt(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Aluno aluno, String order) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Aluno o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.cenario = :cenario " +
+    		" AND o < :aluno " +
+    		" ORDER BY o." + order + " DESC");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "aluno", aluno );
+		q.setMaxResults(1);
+
+        return (Aluno)q.getSingleResult();
+	}
 
 	public Aluno clone(CenarioClone novoCenario) {
 		Aluno clone = new Aluno();

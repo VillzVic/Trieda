@@ -43,6 +43,7 @@ public class AtendimentosPesquisaPorDisciplinaPresenter
 		TextField< String > getCodigoBuscaTextField();
 		CampusComboBox getCampusBuscaComboBox();
 		TextField< String > getTurmaBuscaTextField();
+		TextField< String > getNomeBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();		
 		SimpleGrid< PesquisaPorDisciplinaDTO > getGrid();
@@ -77,6 +78,8 @@ public class AtendimentosPesquisaPorDisciplinaPresenter
 					AsyncCallback< PagingLoadResult< PesquisaPorDisciplinaDTO > > callback )
 			{
 				String codigo = display.getCodigoBuscaTextField().getValue();
+				
+				String nome = display.getNomeBuscaTextField().getValue();
 	
 				CampusDTO campusDTO
 					= display.getCampusBuscaComboBox().getValue();
@@ -84,7 +87,7 @@ public class AtendimentosPesquisaPorDisciplinaPresenter
 				String turma 
 					= display.getTurmaBuscaTextField().getValue();
 	
-				service.getAtendimentosPesquisaPorDisciplinaList(cenarioDTO, codigo, campusDTO, turma, (PagingLoadConfig) loadConfig, callback);
+				service.getAtendimentosPesquisaPorDisciplinaList(cenarioDTO, codigo, nome, campusDTO, turma, (PagingLoadConfig) loadConfig, callback);
 			}
 		};
 	

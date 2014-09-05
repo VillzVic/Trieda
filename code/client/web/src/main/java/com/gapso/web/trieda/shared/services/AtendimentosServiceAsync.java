@@ -86,8 +86,10 @@ public interface AtendimentosServiceAsync {
 	void getConfirmacaoTurmasList(CenarioDTO cenarioDTO, PagingLoadConfig config,
 			AsyncCallback<PagingLoadResult<ConfirmacaoTurmaDTO>> callback);
 	
-	void getAtendimentosPesquisaPorDisciplinaList( CenarioDTO cenarioDTO, String codigo, CampusDTO campusDTO, String turma,
-			PagingLoadConfig config, AsyncCallback<PagingLoadResult<PesquisaPorDisciplinaDTO>> callback );
+	void getAtendimentosPesquisaPorDisciplinaList(CenarioDTO cenarioDTO,
+			String codigo, String nome, CampusDTO campusDTO, String turma,
+			PagingLoadConfig config,
+			AsyncCallback<PagingLoadResult<PesquisaPorDisciplinaDTO>> callback);
 
 	void saveConfirmacoes(CenarioDTO cenarioDTO, List<ConfirmacaoTurmaDTO> list, AsyncCallback<Void> callback);
 

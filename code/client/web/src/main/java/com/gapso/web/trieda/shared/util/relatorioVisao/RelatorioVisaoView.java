@@ -29,10 +29,10 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public abstract class RelatorioVisaoView extends MyComposite implements RelatorioVisaoPresenter.Display{
 	protected GradeHorariaVisao grid;
-	private Button submitBt;
-	private ContentPanel panel;
+	protected Button submitBt;
+	protected ContentPanel panel;
 	private GTabItem tabItem;
-	private Button exportExcelBt;
+	protected Button exportExcelBt;
 	protected CenarioDTO cenarioDTO;
 	
 	public RelatorioVisaoView(){}

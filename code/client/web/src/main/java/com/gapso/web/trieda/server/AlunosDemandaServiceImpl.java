@@ -590,7 +590,7 @@ public class AlunosDemandaServiceImpl
 		disciplinas = getResumoAtendimentosDisciplinaList( cenarioDTO, null, campusDTO, null, todasPaginas ).getData();
 		
 		Map< String, Disciplina > codigoMapDisciplina = new HashMap< String, Disciplina >();
-		List< Disciplina > totalDisciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
+		List< Disciplina > totalDisciplinas = Disciplina.findByCenario(getInstituicaoEnsinoUser(), cenario);
 		for ( Disciplina disciplina : totalDisciplinas ) 
 		{
 			codigoMapDisciplina.put( disciplina.getCodigo(), disciplina );

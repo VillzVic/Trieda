@@ -255,14 +255,16 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 	{
 		List<List<ParDTO<String, ?>>> list = new ArrayList<List<ParDTO<String, ?>>>(); 
 		
-		String professorNome, professorCPF;
+		String professorNome, professorCPF, titulacao;
 		if(professor == null){
 			professorNome = professorVirtual.getNome();
-			professorCPF = "";
+			professorCPF = professorVirtual.getId().toString();
+			titulacao = professorVirtual.getTitulacao() == null ? "" :  professorVirtual.getTitulacao().getNome();
 		}
 		else{
 			professorNome = professor.getNome();
 			professorCPF = professor.getCpf();
+			titulacao = professor.getTitulacao() == null ? "" :  professor.getTitulacao().getNome();
 		}
 		
 		List<ParDTO<String, ?>> row = new ArrayList<ParDTO<String, ?>>();
@@ -272,6 +274,7 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		
 		row = new ArrayList<ParDTO<String, ?>>();
 		row.add(ParDTO.create(this.getI18nConstants().cpf(), professorCPF));
+		row.add(ParDTO.create(this.getI18nConstants().titulacao(), titulacao));
 		
 		list.add(row);
 		

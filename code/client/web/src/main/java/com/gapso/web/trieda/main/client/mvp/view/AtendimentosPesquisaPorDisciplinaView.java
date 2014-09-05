@@ -35,6 +35,7 @@ public class AtendimentosPesquisaPorDisciplinaView extends MyComposite
 	private TextField< String > codigoBuscaTextField;
 	private CampusComboBox campusBuscaComboBox;
 	private TextField< String > turmaBuscaTextField;
+	private TextField< String > nomeBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
@@ -86,6 +87,9 @@ public class AtendimentosPesquisaPorDisciplinaView extends MyComposite
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		
+		this.nomeBuscaTextField = new TextField<String>();
+		this.nomeBuscaTextField.setFieldLabel("Nome");
 		this.campusBuscaComboBox = new CampusComboBox(cenarioDTO);
 		this.campusBuscaComboBox.setFieldLabel("Campus");
 		this.codigoBuscaTextField = new TextField<String>();
@@ -93,8 +97,8 @@ public class AtendimentosPesquisaPorDisciplinaView extends MyComposite
 		this.turmaBuscaTextField = new TextField<String>();
 		this.turmaBuscaTextField.setFieldLabel("Turma");
 		
-		
 		this.filter.addField( this.campusBuscaComboBox );
+		this.filter.addField( this.nomeBuscaTextField );
 		this.filter.addField( this.codigoBuscaTextField );
 		this.filter.addField( this.turmaBuscaTextField );
 
@@ -114,6 +118,8 @@ public class AtendimentosPesquisaPorDisciplinaView extends MyComposite
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 		
+		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_DISCIPLINA_CODIGO, getI18nConstants().codigoDisciplina(), 100 ) );
+		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_DISCIPLINA_NOME, getI18nConstants().nomeDisciplina(), 120 ) );
 		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_TURMA_STRING, getI18nConstants().turma(), 120 ) );
 		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_DIA_SEMANA_STRING, getI18nConstants().dia(), 100 ) );
 		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_HORARIO_INICIAL, "Hora Inicial",80 ) );
@@ -172,6 +178,10 @@ public class AtendimentosPesquisaPorDisciplinaView extends MyComposite
 		
 	}
 
-
+	@Override
+	public TextField< String > getNomeBuscaTextField()
+	{
+		return this.nomeBuscaTextField;
+	}
 
 }

@@ -218,6 +218,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		if (isXls()){
 			Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,(labelsDasLinhasDaGradeHoraria.size()+12),sheet);
 			if (newSheet != null) {
+				System.out.println("RestructuringWorkbook");
 				row = this.initialRow;
 				sheet = newSheet;
 			}
@@ -347,7 +348,6 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				catch(Exception e){
 					e.printStackTrace();
 				}
-				
 				// escreve célula principal
 				setCell(row, col, sheet, style, HtmlUtils.htmlUnescape(contentString), HtmlUtils.htmlUnescape(contentToolTipString));
 				// une células de acordo com a quantidade de créditos da aula

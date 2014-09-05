@@ -468,6 +468,42 @@ public class ProfessorVirtual
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;
 	}
+	
+	public static ProfessorVirtual findProx(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, ProfessorVirtual professorVirtual, String order) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM ProfessorVirtual o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.cenario = :cenario " +
+    		" AND o > :professorVirtual " +
+    		" ORDER BY o." + order);
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "professorVirtual", professorVirtual );
+		q.setMaxResults(1);
+
+        return (ProfessorVirtual)q.getSingleResult();
+	}
+	
+	public static ProfessorVirtual findAnt(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, ProfessorVirtual professorVirtual, String order) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM ProfessorVirtual o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.cenario = :cenario " +
+    		" AND o < :professorVirtual " +
+    		" ORDER BY o." + order + " DESC");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "professorVirtual", professorVirtual );
+		q.setMaxResults(1);
+
+        return (ProfessorVirtual)q.getSingleResult();
+	}
 
 	public ProfessorVirtual clone(CenarioClone novoCenario) {
 		ProfessorVirtual clone = new ProfessorVirtual();

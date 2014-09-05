@@ -25,4 +25,8 @@ public interface AlunosServiceAsync
 			AsyncCallback<ListLoadResult<AlunoDTO>> callback);
 	void getRelatorio(CenarioDTO cenarioDTO,	RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode,
 			AsyncCallback<List<RelatorioDTO>> callback);
+	void getProxAluno(CenarioDTO cenarioDTO, AlunoDTO alunoDTO, String order,
+			AsyncCallback<AlunoDTO> callback);
+	void getAntAluno(CenarioDTO cenarioDTO, AlunoDTO alunoDTO, String order,
+			AsyncCallback<AlunoDTO> callback);
 }

@@ -440,7 +440,7 @@ public class CenariosServiceImpl
 		int maxPartes = clonarSolucao ? 26 : 19;
 		
 		CenarioClone cenarioClone = new CenarioClone(cenario, clonarSolucao);
-		getProgressReport().setInitNewPartial("Clonando TipoSala - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando TipoSala - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (TipoSala tipoSala : TipoSala.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoSala ts = cenarioClone.clone(tipoSala);
@@ -448,7 +448,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando TipoDisciplina - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando TipoDisciplina - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (TipoDisciplina tipoDisciplina : TipoDisciplina.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoDisciplina td = cenarioClone.clone(tipoDisciplina);
@@ -456,7 +456,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando TipoContrato - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando TipoContrato - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (TipoContrato tipoContrato : TipoContrato.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoContrato tc = cenarioClone.clone(tipoContrato);
@@ -464,7 +464,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Titulacoes - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Titulacoes - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Titulacao titulacao : Titulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			Titulacao t = cenarioClone.clone(titulacao);
@@ -472,7 +472,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Turnos - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Turnos - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Turno turno : cenarioOriginal.getTurnos())
 		{
 			Turno t = cenarioClone.clone(turno);
@@ -480,7 +480,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Semanas Letivas - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Semanas Letivas - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (SemanaLetiva semanaLetiva : cenarioOriginal.getSemanasLetivas())
 		{
 			SemanaLetiva sl = cenarioClone.clone(semanaLetiva);
@@ -488,7 +488,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Campi - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Campi - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Campus campus : cenarioOriginal.getCampi())
 		{
 			Campus c = cenarioClone.clone(campus);
@@ -496,7 +496,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Deslocamento Campi - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Deslocamento Campi - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (DeslocamentoCampus deslocamentoCampus : DeslocamentoCampus.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			DeslocamentoCampus dc = cenarioClone.clone(deslocamentoCampus);
@@ -504,7 +504,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Deslocamento Unidade - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Deslocamento Unidade - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (DeslocamentoUnidade deslocamentoUnidade : DeslocamentoUnidade.findAll(instituicaoEnsino, cenarioOriginal))
 		{
 			DeslocamentoUnidade du = cenarioClone.clone(deslocamentoUnidade);
@@ -512,7 +512,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Tipos Curso - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Tipos Curso - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (TipoCurso tipoCurso : TipoCurso.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			TipoCurso tc = cenarioClone.clone(tipoCurso);
@@ -520,7 +520,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Areas Titulacoes - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Areas Titulacoes - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (AreaTitulacao areaTitulacao : AreaTitulacao.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			AreaTitulacao at = cenarioClone.clone(areaTitulacao);
@@ -528,7 +528,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Cursos - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Cursos - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Curso curso : cenarioOriginal.getCursos())
 		{
 			Curso c = cenarioClone.clone(curso);
@@ -536,7 +536,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Disciplinas - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Disciplinas - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Disciplina disciplina : cenarioOriginal.getDisciplinas())
 		{
 			Disciplina d = cenarioClone.clone(disciplina);
@@ -544,14 +544,14 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Divisões de Creditos - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Divisões de Creditos - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (DivisaoCredito divisaoCredito : cenarioOriginal.getDivisoesCredito())
 		{
 			divisaoCredito.getCenario().add(cenario);
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Equivalencias - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Equivalencias - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Equivalencia equivalencia : Equivalencia.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			Equivalencia eq = cenarioClone.clone(equivalencia);
@@ -559,7 +559,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Curriculos - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Curriculos - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Curriculo curriculo : cenarioOriginal.getCurriculos())
 		{
 			Curriculo c = cenarioClone.clone(curriculo);
@@ -567,7 +567,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Alunos - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Alunos - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Aluno aluno : cenarioOriginal.getAlunos())
 		{
 			Aluno a = cenarioClone.clone(aluno);
@@ -575,7 +575,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Ofertas - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Ofertas - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Oferta oferta : Oferta.findByCenario(instituicaoEnsino, cenarioOriginal))
 		{
 			Oferta o = cenarioClone.clone(oferta);
@@ -583,7 +583,7 @@ public class CenariosServiceImpl
 		}
 		getProgressReport().setPartial("Finalizado");
 		
-		getProgressReport().setInitNewPartial("Clonando Professor - " + "Parte " + numPartes++ + " De " + maxPartes);
+		getProgressReport().setInitNewPartial("Clonando Professor - " + "Parte " + numPartes++ + " de " + maxPartes);
 		for (Professor professor : cenarioOriginal.getProfessores())
 		{
 			Professor p = cenarioClone.clone(professor);
@@ -593,7 +593,7 @@ public class CenariosServiceImpl
 		
 		if (clonarSolucao)
 		{
-			getProgressReport().setInitNewPartial("Clonando Atendimentos Tatico - " + "Parte " + numPartes++ + " De " + maxPartes);
+			getProgressReport().setInitNewPartial("Clonando Atendimentos Tatico - " + "Parte " + numPartes++ + " de " + maxPartes);
 			for (AtendimentoTatico atendimentoTatico : cenarioOriginal.getAtendimentosTaticos())
 			{
 				AtendimentoTatico at = cenarioClone.clone(atendimentoTatico);
@@ -601,7 +601,7 @@ public class CenariosServiceImpl
 			}
 			getProgressReport().setPartial("Finalizado");
 			
-			getProgressReport().setInitNewPartial("Clonando Professores Virtuais - " + "Parte " + numPartes++ + " De " + maxPartes);
+			getProgressReport().setInitNewPartial("Clonando Professores Virtuais - " + "Parte " + numPartes++ + " de " + maxPartes);
 			for (ProfessorVirtual professorVirtual : ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenarioOriginal))
 			{
 				ProfessorVirtual pv = cenarioClone.clone(professorVirtual);
@@ -609,7 +609,7 @@ public class CenariosServiceImpl
 			}
 			getProgressReport().setPartial("Finalizado");
 			
-			getProgressReport().setInitNewPartial("Clonando Dicas Eliminacao - " + "Parte " + numPartes++ + " De " + maxPartes);
+			getProgressReport().setInitNewPartial("Clonando Dicas Eliminacao - " + "Parte " + numPartes++ + " de " + maxPartes);
 			for (DicaEliminacaoProfessorVirtual dicaEliminacao : DicaEliminacaoProfessorVirtual.findByCenario(instituicaoEnsino, cenarioOriginal))
 			{
 				DicaEliminacaoProfessorVirtual d = cenarioClone.clone(dicaEliminacao);
@@ -617,7 +617,7 @@ public class CenariosServiceImpl
 			}
 			getProgressReport().setPartial("Finalizado");
 			
-			getProgressReport().setInitNewPartial("Clonando Motivos de Uso - " + "Parte " + numPartes++ + " De " + maxPartes);
+			getProgressReport().setInitNewPartial("Clonando Motivos de Uso - " + "Parte " + numPartes++ + " de " + maxPartes);
 			for (MotivoUsoProfessorVirtual motivoUso : MotivoUsoProfessorVirtual.findByCenario(instituicaoEnsino, cenarioOriginal))
 			{
 				MotivoUsoProfessorVirtual m = cenarioClone.clone(motivoUso);
@@ -625,7 +625,7 @@ public class CenariosServiceImpl
 			}
 			getProgressReport().setPartial("Finalizado");
 			
-			getProgressReport().setInitNewPartial("Clonando Atendimentos Operacionais - " + "Parte " + numPartes++ + " De " + maxPartes);
+			getProgressReport().setInitNewPartial("Clonando Atendimentos Operacionais - " + "Parte " + numPartes++ + " de " + maxPartes);
 			for (AtendimentoOperacional atendimentoOperacional : cenarioOriginal.getAtendimentosOperacionais())
 			{
 				AtendimentoOperacional ao = cenarioClone.clone(atendimentoOperacional);
@@ -633,7 +633,7 @@ public class CenariosServiceImpl
 			}
 			getProgressReport().setPartial("Finalizado");
 			
-			getProgressReport().setInitNewPartial("Clonando Turmas - " + "Parte " + numPartes++ + " De " + maxPartes);
+			getProgressReport().setInitNewPartial("Clonando Turmas - " + "Parte " + numPartes++ + " de " + maxPartes);
 			for (Turma turma : cenarioOriginal.getTurmas())
 			{
 				Turma t = cenarioClone.clone(turma);
@@ -641,7 +641,7 @@ public class CenariosServiceImpl
 			}
 			getProgressReport().setPartial("Finalizado");
 			
-			getProgressReport().setInitNewPartial("Clonando Aulas - " + "Parte " + numPartes++ + " De " + maxPartes);
+			getProgressReport().setInitNewPartial("Clonando Aulas - " + "Parte " + numPartes++ + " de " + maxPartes);
 			for (Aula aula : cenarioOriginal.getAulas())
 			{
 				Aula a = cenarioClone.clone(aula);

@@ -12,6 +12,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -81,5 +82,13 @@ public interface ProfessoresService
 			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
 	PagingLoadResult<ProfessorDTO> getBuscaListDeslocamentoCampi( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
 			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
+	ProfessorDTO getProxProfessor(CenarioDTO cenarioDTO,
+			ProfessorDTO professorDTO, String order);
+	ProfessorDTO getAntProfessor(CenarioDTO cenarioDTO,
+			ProfessorDTO professorDTO, String order);
+	ProfessorVirtualDTO getProxProfessorVirtual(CenarioDTO cenarioDTO,
+			ProfessorVirtualDTO professorVirtualDTO, String order);
+	ProfessorVirtualDTO getAntProfessorVirtual(CenarioDTO cenarioDTO,
+			ProfessorVirtualDTO professorVirtualDTO, String order);
 	
 }

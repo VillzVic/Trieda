@@ -277,4 +277,26 @@ public class AlunosServiceImpl
 		histogramas.add( histograma2 );
 		currentNode.add(histogramas);
 	}
+	
+	@Override
+	public AlunoDTO getProxAluno( CenarioDTO cenarioDTO, AlunoDTO alunoDTO, String order)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Aluno aluno = Aluno.find(alunoDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Aluno proxAluno = Aluno.findProx(getInstituicaoEnsinoUser(), cenario, aluno, order);
+
+		return ConvertBeans.toAlunoDTO(proxAluno);
+	}
+	
+	@Override
+	public AlunoDTO getAntAluno( CenarioDTO cenarioDTO, AlunoDTO alunoDTO, String order)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Aluno aluno = Aluno.find(alunoDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Aluno proxAluno = Aluno.findAnt(getInstituicaoEnsinoUser(), cenario, aluno, order);
+
+		return ConvertBeans.toAlunoDTO(proxAluno);
+	}
 }

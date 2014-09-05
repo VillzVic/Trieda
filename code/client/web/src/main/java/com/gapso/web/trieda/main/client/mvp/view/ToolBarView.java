@@ -572,7 +572,9 @@ public class ToolBarView
 		Menu menuAtendimentos = new Menu();
 		menuAtendimentos.add( createMenuItem("Atendimentos por Matrícula", Resources.DEFAULTS.resumoMatricula16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );
-		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Turma", Resources.DEFAULTS.disciplinaCurriculo16()) );
+		MenuItem turma = createMenuItem("Atendimentos por Faixa de Turma", Resources.DEFAULTS.disciplinaCurriculo16());
+		turma.hide();
+		menuAtendimentos.add( turma );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Demanda", Resources.DEFAULTS.resumoFaixaDemanda16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Crédito", Resources.DEFAULTS.divisaoDeCreditos16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );

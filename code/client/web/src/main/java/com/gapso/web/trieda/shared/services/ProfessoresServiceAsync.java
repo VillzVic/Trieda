@@ -12,6 +12,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -76,4 +77,14 @@ public interface ProfessoresServiceAsync
 			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
 	void getBuscaListDeslocamentoCampi( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
 			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getProxProfessor(CenarioDTO cenarioDTO, ProfessorDTO professorDTO,
+			String order, AsyncCallback<ProfessorDTO> callback);
+	void getAntProfessor(CenarioDTO cenarioDTO, ProfessorDTO professorDTO,
+			String order, AsyncCallback<ProfessorDTO> callback);
+	void getProxProfessorVirtual(CenarioDTO cenarioDTO,
+			ProfessorVirtualDTO professorVirtualDTO, String order,
+			AsyncCallback<ProfessorVirtualDTO> callback);
+	void getAntProfessorVirtual(CenarioDTO cenarioDTO,
+			ProfessorVirtualDTO professorVirtualDTO, String order,
+			AsyncCallback<ProfessorVirtualDTO> callback);
 }

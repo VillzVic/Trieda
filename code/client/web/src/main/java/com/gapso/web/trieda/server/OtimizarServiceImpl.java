@@ -129,10 +129,14 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			List<String> errors = new ArrayList<String>();
 			
 			// realiza verificações
-			System.out.print("Checando Semanas Letivas");long start = System.currentTimeMillis(); // TODO: retirar
+			System.out.print("Checando Alunos Cadastrados");long start = System.currentTimeMillis(); // TODO: retirar
+			//getProgressReport().setInitNewPartial("Checando Semanas Letivas");
+			checkAlunosCadastrados(parametro,warnings);
+			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			System.out.print("Checando Semanas Letivas");start = System.currentTimeMillis(); // TODO: retirar
 			//getProgressReport().setInitNewPartial("Checando Semanas Letivas");
 			checkSemanasLetivas(parametro,warnings);
-			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			System.out.print("Checando disciplinas sem curriculos"); start = System.currentTimeMillis(); // TODO: retirar
 			//getProgressReport().setInitNewPartial("Checando disciplinas sem currículos");
 			checkDisciplinasSemCurriculo(parametro,warnings);
@@ -711,6 +715,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 //				}
 //			}
 //		}
+	}
+	
+	private void checkAlunosCadastrados(Parametro parametro, List<String> errors) {
+		if ( parametro.getCenario().getAlunos().isEmpty() )
+			errors.add(HtmlUtils.htmlUnescape("Não é possível continuar a otimização sem alunos cadastrados"));
 	}
 	
 	private void checkSemanasLetivas(Parametro parametro, List<String> warnings){

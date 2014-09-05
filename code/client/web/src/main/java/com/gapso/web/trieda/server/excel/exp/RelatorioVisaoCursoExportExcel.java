@@ -375,13 +375,14 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 		
 		List<ParDTO<String, ?>> row = new ArrayList<ParDTO<String, ?>>();
 		row.add(ParDTO.create(this.getI18nConstants().curso(), oferta.getCurriculo().getCurso().getCodigo()));
-		row.add(ParDTO.create(this.getI18nConstants().campus(), oferta.getCampus().getCodigo()));
+		row.add(ParDTO.create(this.getI18nConstants().campus(), oferta.getCampus().getNome()));
 		row.add(ParDTO.create(this.getI18nConstants().turno(), oferta.getTurno().getNome()));
 		
 		list.add(row);
 		
 		row = new ArrayList<ParDTO<String, ?>>();
 		row.add(ParDTO.create(this.getI18nConstants().matrizCurricular(), oferta.getCurriculo().getCodigo()));
+		row.add(ParDTO.create(this.getI18nConstants().nomeCurso(), oferta.getCurriculo().getCurso().getNome()));
 		row.add(ParDTO.create(this.getI18nConstants().periodo(), periodo));
 		
 		list.add(row);

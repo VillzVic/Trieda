@@ -138,7 +138,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 
 	private FieldSet criaParametrosPreferenciasInstituicaoEnsino() {
 		// coluna 1
-		this.considerarEquivalenciaCheckBox = createCheckBox("Considerar Equivalências entre Disciplinas",this.parametroDTO.getConsiderarEquivalencia());
+		this.considerarEquivalenciaCheckBox = createCheckBox("Considerar equivalências entre disciplinas",this.parametroDTO.getConsiderarEquivalencia());
 		this.minAlunosParaAbrirTurmaCheckBox = createCheckBox("Número mínimo de alunos para abertura de turma",this.parametroDTO.getMinAlunosParaAbrirTurma());
 		this.violarMinAlunosAbrirTurmaParaFormandosCheckBox = createCheckBox("Desconsiderar mínimo de alunos para abertura de turma no caso de formandos",this.parametroDTO.getViolarMinAlunosAbrirTurmaParaFormandos());
 		this.nivelDificuldadeDisciplinaCheckBox = createCheckBox("Considerar nível de dificuldade de disciplinas",this.parametroDTO.getNivelDificuldadeDisciplina());
@@ -161,7 +161,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.considerarCapacidadeMaximaDasSalasCheckBox= createCheckBox("Considerar capacidade máxima das salas",this.parametroDTO.getConsiderarCapacidadeMaxSalas());;
 		this.percentuaisMinimosTempoParcialIntegralCheckBox = createCheckBox("Considerar percentuais mínimos de tempo parcial + integral",this.parametroDTO.getPercentuaisMinimosParcialIntegral());
 		this.percentuaisMinimosTempoIntegralCheckBox = createCheckBox("Considerar percentuais mínimos de tempo integral",this.parametroDTO.getPercentuaisMinimosIntegral());
-		this.considerarCoRequisitosCheckBox = createCheckBox("Considerar Co-Requisitos",this.parametroDTO.getConsiderarCoRequisitos());
+		this.considerarCoRequisitosCheckBox = createCheckBox("Considerar co-requisitos",this.parametroDTO.getConsiderarCoRequisitos());
 		
 		// coluna 2
 		this.minAlunosParaAbrirTurmaValueNumberField = new NumberField();
@@ -251,12 +251,12 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private FieldSet criaParametrosPreferenciasProfessores() {
 		this.cargaHorariaProfessorCheckBox = createCheckBox("Distribuição da carga horária semanal do professor",this.parametroDTO.getCargaHorariaProfessor());
 		this.cargaHorariaProfessorCheckBox.disable();
-		this.professorEmMuitosCampiCheckBox = createCheckBox("Permitir que o professor ministre aulas em mais de um Campus",this.parametroDTO.getProfessorEmMuitosCampi());
-		this.minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar Deslocamentos de Professores entre Campi",this.parametroDTO.getMinimizarDeslocamentoProfessor());
+		this.professorEmMuitosCampiCheckBox = createCheckBox("Permitir que o professor ministre aulas em mais de um campus",this.parametroDTO.getProfessorEmMuitosCampi());
+		this.minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar deslocamentos de professores entre campi",this.parametroDTO.getMinimizarDeslocamentoProfessor());
 		this.minimizarDeslocamentoProfessorCheckBox.disable();
-		this.minimizarGapProfessorCheckBox = createCheckBox("Minimizar Gaps nos Horários dos Professores",this.parametroDTO.getMinimizarGapProfessor());
-		this.proibirGapProfessorCheckBox = createCheckBox("Proibir Gaps nos Horários dos Professores",this.parametroDTO.getProibirGapProfessor());
-		this.evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar Redução de Carga Horária de Professor",this.parametroDTO.getEvitarReducaoCargaHorariaProfessor());
+		this.minimizarGapProfessorCheckBox = createCheckBox("Minimizar gaps nos horários dos professores",this.parametroDTO.getMinimizarGapProfessor());
+		this.proibirGapProfessorCheckBox = createCheckBox("Proibir gaps nos horários dos professores",this.parametroDTO.getProibirGapProfessor());
+		this.evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar redução de carga horária dos professores",this.parametroDTO.getEvitarReducaoCargaHorariaProfessor());
 		this.evitarReducaoCargaHorariaProfessorCheckBox.disable();
 		this.evitarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Considerar interjornada mínima (em horas)",this.parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessor());
 		this.preferenciaDeProfessoresCheckBox = createCheckBox("Considerar preferência de professores por disciplinas",this.parametroDTO.getPreferenciaDeProfessores());
@@ -317,14 +317,14 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.cargaHorariaAlunoCheckBox = createCheckBox("Distribuição da carga horária semanal do aluno",this.parametroDTO.getCargaHorariaAluno());
 		this.cargaHorariaAlunoCheckBox.disable();
 		this.alunoDePeriodoMesmaSalaCheckBox = createCheckBox("Manter alunos do mesmo curso-período na mesma sala",this.parametroDTO.getAlunoDePeriodoMesmaSala());
-		this.alunoEmMuitosCampiCheckBox = createCheckBox("Permitir que o aluno estude em mais de um Campus",this.parametroDTO.getAlunoEmMuitosCampi());
+		this.alunoEmMuitosCampiCheckBox = createCheckBox("Permitir que o aluno estude em mais de um campus",this.parametroDTO.getAlunoEmMuitosCampi());
 		this.alunoEmMuitosCampiCheckBox.disable();
-		this.minimizarDeslocamentoAlunoCheckBox = createCheckBox("Minimizar Deslocamento de Alunos entre Campi",this.parametroDTO.getMinimizarDeslocamentoAluno());
+		this.minimizarDeslocamentoAlunoCheckBox = createCheckBox("Minimizar Deslocamento de Alunos entre campi",this.parametroDTO.getMinimizarDeslocamentoAluno());
 		this.minimizarDeslocamentoAlunoCheckBox.disable();
 		this.cargaHorariaAlunoComboBox = createComboBox(this.parametroDTO.getCargaHorariaAlunoSel());
 		this.cargaHorariaAlunoComboBox.disable();
-		this.priorizarCalourosCheckBox = createCheckBox("Priorizar Calouros", this.parametroDTO.getPriorizarCalouros());
-		this.considerarPrioridadePorAlunosCheckBox = createCheckBox("Considerar prioridade por aluno?", this.parametroDTO.getConsiderarPrioridadePorAlunos());
+		this.priorizarCalourosCheckBox = createCheckBox("Priorizar calouros", this.parametroDTO.getPriorizarCalouros());
+		this.considerarPrioridadePorAlunosCheckBox = createCheckBox("Considerar prioridade por aluno", this.parametroDTO.getConsiderarPrioridadePorAlunos());
 		
 		LayoutContainer cargaHorariaSemanalAlunoContainer = new LayoutContainer(new ColumnLayout());
 		cargaHorariaSemanalAlunoContainer.add(this.cargaHorariaAlunoCheckBox);
