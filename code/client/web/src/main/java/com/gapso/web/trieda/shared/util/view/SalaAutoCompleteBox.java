@@ -67,7 +67,7 @@ public class SalaAutoCompleteBox extends ComboBox<SalaDTO> {
 	}
 	
 	private void configureView(boolean readOnly) {
-		setDisplayField(SalaDTO.PROPERTY_DISPLAY_TEXT);
+		setDisplayField(SalaDTO.PROPERTY_CODIGO);
 		setFieldLabel("Ambiente");
 		setEmptyText("Selecione um ambiente");
 		setTemplate(getTemplateCB());

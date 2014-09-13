@@ -514,7 +514,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				// verifica se há interseção de campi selecionados
 				String campiSelecionados = reqOtmDTO.getCampiSelecionados();
 				for (CampusDTO campusDTO : parametroDTO.getCampi()) {
-					if (campiSelecionados.contains(campusDTO.getCodigo())) {
+					if (campiSelecionados.contains(campusDTO.getCodigo()) && reqOtmDTO.getCenarioId().equals(campusDTO.getCenarioId())) {
 						haIntersecaoDeCampi = true;
 						requisicaoConflitanteEmAndamento = reqOtmDTO;
 						break;

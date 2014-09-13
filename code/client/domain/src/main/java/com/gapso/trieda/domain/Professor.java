@@ -1270,12 +1270,16 @@ public class Professor
 	       	" SELECT o FROM Professor o " +
     		" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " + 
     		" AND o.cenario = :cenario " +
-    		" AND o > :professor " +
+    		" AND o." + order + " > :professor " +
     		" ORDER BY o." + order);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "professor", professor );
+		String parameter = professor.getNome();
+		if (order.equals("cpf"))
+			parameter = professor.getCpf();
+		q.setParameter( "professor", parameter);
+		q.setParameter( "professor", parameter );
 		q.setMaxResults(1);
 
         return (Professor)q.getSingleResult();
@@ -1288,12 +1292,15 @@ public class Professor
 	       	" SELECT o FROM Professor o " +
     		" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " + 
     		" AND o.cenario = :cenario " +
-    		" AND o < :professor " +
+    		" AND o." + order + " < :professor " +
     		" ORDER BY o." + order + " DESC");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "professor", professor );
+		String parameter = professor.getNome();
+		if (order.equals("cpf"))
+			parameter = professor.getCpf();
+		q.setParameter( "professor", parameter);
 		q.setMaxResults(1);
 
         return (Professor)q.getSingleResult();

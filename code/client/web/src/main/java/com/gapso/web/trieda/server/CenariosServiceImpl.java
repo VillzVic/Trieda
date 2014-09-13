@@ -233,7 +233,10 @@ public class CenariosServiceImpl
 
 		for ( Cenario cenario : listCenarios )
 		{
-			list.add( ConvertBeans.toCenarioDTO( cenario ) );
+			if (isRoleAdministrator())
+				list.add( ConvertBeans.toCenarioDTO( cenario ) );
+			else if (getUsuario().getUsername().equals(cenario.getCriadoPor().getUsername()))
+				list.add( ConvertBeans.toCenarioDTO( cenario ) );
 		}
 
 		BasePagingLoadResult< CenarioDTO > result

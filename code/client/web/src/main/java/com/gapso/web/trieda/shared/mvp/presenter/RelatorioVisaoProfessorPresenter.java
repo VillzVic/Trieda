@@ -155,6 +155,7 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(ProfessorDTO result) {
+							display.getProfessorTextField().getStore().add(result);
 							display.getProfessorTextField().setValue(result);
 							if (display.getProfessorTextField().getValue() != null)
 							{
@@ -193,6 +194,7 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(ProfessorDTO result) {
+							display.getProfessorTextField().getStore().add(result);
 							display.getProfessorTextField().setValue(result);
 							if (display.getProfessorTextField().getValue() != null)
 							{
@@ -231,6 +233,7 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(ProfessorDTO result) {
+							display.getCpfTextField().getStore().add(result);
 							display.getCpfTextField().setValue(result);
 							if (display.getCpfTextField().getValue() != null)
 							{
@@ -269,6 +272,7 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(ProfessorDTO result) {
+							display.getCpfTextField().getStore().add(result);
 							display.getCpfTextField().setValue(result);
 							if (display.getCpfTextField().getValue() != null)
 							{
@@ -307,6 +311,7 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(ProfessorVirtualDTO result) {
+							display.getProfessorVirtualComboBox().getStore().add(result);
 							display.getProfessorVirtualComboBox().setValue(result);
 							if (display.getProfessorVirtualComboBox().getValue() != null)
 							{
@@ -345,6 +350,7 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(ProfessorVirtualDTO result) {
+							display.getProfessorVirtualComboBox().getStore().add(result);
 							display.getProfessorVirtualComboBox().setValue(result);
 							if (display.getProfessorVirtualComboBox().getValue() != null)
 							{

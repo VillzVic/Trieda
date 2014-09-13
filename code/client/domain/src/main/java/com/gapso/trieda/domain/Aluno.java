@@ -776,12 +776,15 @@ public class Aluno
 	       	" SELECT o FROM Aluno o " +
     		" WHERE o.instituicaoEnsino = :instituicaoEnsino " + 
     		" AND o.cenario = :cenario " +
-    		" AND o > :aluno " +
+    		" AND o." + order + " > :aluno " +
     		" ORDER BY o." + order);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "aluno", aluno );
+		String parameter = aluno.getNome();
+		if (order.equals("matricula"))
+			parameter = aluno.getMatricula();
+		q.setParameter( "aluno", parameter );
 		q.setMaxResults(1);
 
         return (Aluno)q.getSingleResult();
@@ -794,12 +797,15 @@ public class Aluno
 	       	" SELECT o FROM Aluno o " +
     		" WHERE o.instituicaoEnsino = :instituicaoEnsino " + 
     		" AND o.cenario = :cenario " +
-    		" AND o < :aluno " +
+    		" AND o." + order + " < :aluno " +
     		" ORDER BY o." + order + " DESC");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "aluno", aluno );
+		String parameter = aluno.getNome();
+		if (order.equals("matricula"))
+			parameter = aluno.getMatricula();
+		q.setParameter( "aluno", parameter );
 		q.setMaxResults(1);
 
         return (Aluno)q.getSingleResult();

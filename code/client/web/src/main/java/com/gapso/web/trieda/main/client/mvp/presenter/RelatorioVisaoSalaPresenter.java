@@ -88,6 +88,7 @@ public class RelatorioVisaoSalaPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(SalaDTO result) {
+							display.getSalaTextField().getStore().add(result);
 							display.getSalaTextField().setValue(result);
 							if (display.getSalaTextField().getValue() != null)
 							{
@@ -126,6 +127,7 @@ public class RelatorioVisaoSalaPresenter extends RelatorioVisaoPresenter{
 						}
 						@Override
 						public void onSuccess(SalaDTO result) {
+							display.getSalaTextField().getStore().add(result);
 							display.getSalaTextField().setValue(result);
 							if (display.getSalaTextField().getValue() != null)
 							{

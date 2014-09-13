@@ -1225,15 +1225,15 @@ public class ProfessoresServiceImpl
 		histograma1.setButtonIndex(13);
 		histograma1.setCampusId(campus.getId());
 		histogramas.add( histograma1 );
-		RelatorioDTO histograma2 = new RelatorioDTO( "Número de Buracos na Grade" );
+		RelatorioDTO histograma2 = new RelatorioDTO( "Professores por Número de Janelas na Grade" );
 		histograma2.setButtonText(histograma2.getText());
 		histograma2.setButtonIndex(0);
 		histogramas.add( histograma2 );
-		RelatorioDTO histograma3 = new RelatorioDTO( "Número de Disciplinas Habilitadas" );
+		RelatorioDTO histograma3 = new RelatorioDTO( "Professores da Instituição por Número de Disciplinas Habilitadas" );
 		histograma3.setButtonText(histograma3.getText());
 		histograma3.setButtonIndex(1);
 		histogramas.add( histograma3 );
-		RelatorioDTO histograma4 = new RelatorioDTO( "Número de Disciplinas Lecionadas" );
+		RelatorioDTO histograma4 = new RelatorioDTO( "Professores por Número de Disciplinas Lecionadas" );
 		histograma4.setButtonText(histograma4.getText());
 		histograma4.setButtonIndex(2);
 		histogramas.add( histograma4 );

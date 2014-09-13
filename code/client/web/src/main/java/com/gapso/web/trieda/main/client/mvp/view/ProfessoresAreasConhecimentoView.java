@@ -59,13 +59,13 @@ public class ProfessoresAreasConhecimentoView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Areas de Conhecimento" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Áreas de Conhecimento" );
 	}
 	
 	private void createTabItem()
 	{
 		tabItem = new GTabItem(
-			"Professores por Areas de Conhecimento", Resources.DEFAULTS.habilitacaoProfessor16() );
+			"Professores por Áreas de Conhecimento", Resources.DEFAULTS.habilitacaoProfessor16() );
 	
 		tabItem.setContent( panel );
 	}

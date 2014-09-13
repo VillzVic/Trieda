@@ -99,6 +99,11 @@ public class RemoteService
 	{
 		return ( getUsuario().getProfessor() == null );
 	}
+	
+	protected boolean isRoleAdministrator()
+	{
+		return getUsuario().getAuthority().getAuthority().equals("ROLE_SUPERVISOR");
+	}
 
 	protected void onlyAdministrador()
 	{

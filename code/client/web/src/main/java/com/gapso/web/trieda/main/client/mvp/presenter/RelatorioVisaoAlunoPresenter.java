@@ -119,6 +119,7 @@ public class RelatorioVisaoAlunoPresenter extends RelatorioVisaoPresenter{
 							}
 							@Override
 							public void onSuccess(AlunoDTO result) {
+								display.getAlunoTextField().getStore().add(result);
 								display.getAlunoTextField().setValue(result);
 								if (display.getAlunoTextField().getValue() != null)
 								{
@@ -157,6 +158,7 @@ public class RelatorioVisaoAlunoPresenter extends RelatorioVisaoPresenter{
 							}
 							@Override
 							public void onSuccess(AlunoDTO result) {
+								display.getAlunoTextField().getStore().add(result);
 								display.getAlunoTextField().setValue(result);
 								if (display.getAlunoTextField().getValue() != null)
 								{
@@ -195,6 +197,7 @@ public class RelatorioVisaoAlunoPresenter extends RelatorioVisaoPresenter{
 							}
 							@Override
 							public void onSuccess(AlunoDTO result) {
+								display.getAlunoMatriculaTextField().getStore().add(result);
 								display.getAlunoMatriculaTextField().setValue(result);
 								if (display.getAlunoMatriculaTextField().getValue() != null)
 								{
@@ -233,6 +236,7 @@ public class RelatorioVisaoAlunoPresenter extends RelatorioVisaoPresenter{
 							}
 							@Override
 							public void onSuccess(AlunoDTO result) {
+								display.getAlunoMatriculaTextField().getStore().add(result);
 								display.getAlunoMatriculaTextField().setValue(result);
 								if (display.getAlunoMatriculaTextField().getValue() != null)
 								{

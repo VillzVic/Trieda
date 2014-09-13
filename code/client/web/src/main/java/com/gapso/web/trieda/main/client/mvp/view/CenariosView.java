@@ -88,6 +88,7 @@ public class CenariosView
 			"Visualizar informações cadastradas",
 			Resources.DEFAULTS.detalhes16() );
 		progressBarBt.disable();
+		progressBarBt.hide();
 
 		this.toolBar.add( this.clonarCenarioBt );
 		this.toolBar.add( this.abrirCenarioBT );

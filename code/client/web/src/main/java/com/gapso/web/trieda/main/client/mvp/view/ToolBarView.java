@@ -594,7 +594,7 @@ public class ToolBarView
 		menuDocentes.add( createMenuItem("Professores por Quantidade de Disciplinas Habilitadas", Resources.DEFAULTS.resumoDisciplinas16()) );
 		menuDocentes.add( createMenuItem("Professores por Quantidade de Turmas Lecionadas", Resources.DEFAULTS.resumoDisciplinas16()) );
 		menuDocentes.add( createMenuItem("Professores por Titulações", Resources.DEFAULTS.tipoCurso16()) );
-		menuDocentes.add( createMenuItem("Professores por Areas de Conhecimento", Resources.DEFAULTS.habilitacaoProfessor16()) );
+		menuDocentes.add( createMenuItem("Professores por Áreas de Conhecimento", Resources.DEFAULTS.habilitacaoProfessor16()) );
 		docentesDropDownBt.setMenu(menuDocentes);
 		relatoriosToolBar.add(docentesDropDownBt);
 
@@ -763,6 +763,8 @@ public class ToolBarView
 		administracaoBt.setIconAlign(IconAlign.LEFT);
 		administracaoBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
 		administracaoBt.setHeight(24);
+		if (!usuarioDTO.getAdministrador())
+			administracaoBt.hide();
 		Menu menu = new Menu();
 		menu.add(new MenuItem("Usuários", AbstractImagePrototype.create(Resources.DEFAULTS.usuarios16()) ));
 		menu.add(new MenuItem("Configurações", AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeConsultaRequisicao16()) ));

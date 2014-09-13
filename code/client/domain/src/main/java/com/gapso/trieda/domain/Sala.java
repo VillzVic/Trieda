@@ -1290,12 +1290,12 @@ public class Sala
 	       	" SELECT o FROM Sala o " +
     		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " + 
     		" AND o.unidade.campus.cenario = :cenario " +
-    		" AND o > :sala " +
+    		" AND o.codigo > :sala " +
     		" ORDER BY o.codigo");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "sala", sala );
+		q.setParameter( "sala", sala.getCodigo() );
 		q.setMaxResults(1);
 
         return (Sala)q.getSingleResult();
@@ -1308,12 +1308,12 @@ public class Sala
 	       	" SELECT o FROM Sala o " +
     		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " + 
     		" AND o.unidade.campus.cenario = :cenario " +
-    		" AND o < :sala " +
+    		" AND o.codigo < :sala " +
     		" ORDER BY o.codigo DESC");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "sala", sala );
+		q.setParameter( "sala", sala.getCodigo() );
 		q.setMaxResults(1);
 
         return (Sala)q.getSingleResult();
