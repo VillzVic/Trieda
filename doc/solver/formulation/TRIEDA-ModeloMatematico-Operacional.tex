@@ -200,6 +200,11 @@
 
 
 
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
+
 \section{Módulo Operacional - Modelo Matemático}
 
 \subsection{Notação}
@@ -256,7 +261,14 @@
 
 \item $Al$ - conjunto de alunos. 
 
+\item $R$ - conjunto de regimes de contrato para professores. Em geral os tipos de contrato são Integral, Parcial ou Horista.  Os elementos desse conjunto são denotados por $r$.
+
 \end{itemize}
+
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
 
 
 \subsubsection{Dados do Modelo}
@@ -273,8 +285,15 @@
 
 \item $m(h)$ - dateTime do horario h convertida em minutos.
 
+\item $minCont_{c,r}$ - percentual mínimo de professores com o regime de contrato $r$ no curso $c$.
+
 \end{itemize}
 
+
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
 
 
 \subsubsection{Variáveis}
@@ -299,19 +318,27 @@
  e no primeiro horário do dia seguinte $t+1$.
 \item $fd_{a}$ - variável binária de folga de demanda da aula $a$.
 \item $fh_{d,i,cp}$ - variável de folga inteira que indica se a turma $i$ da disciplina $d$ no campus $cp$ foi alocado a mais de um horário durante a semana.
-\item $hip_{p,t}$ - variável inteira que indica o tempo de início da primeira aula ministrada pelo professor $p$ no dia $t$.
-\item $hfp_{p,t}$ - variável inteira que indica o tempo de fim da última aula ministrada pelo professor $p$ no dia $t$.
 \item $np_{c}$ - variável inteira que indica o número de professores reais alocados para o curso $c$.
-\item $npv_{c}$ - variável inteira que indica o número de professores virtuais alocados para o curso $c$.
-\item $npvm_{c}$ - variável inteira que indica o número de professores virtuais mestres alocados para o curso $c$.
-\item $npvd_{c}$ - variável inteira que indica o número de professores virtuais doutores alocados para o curso $c$.
-\item $npvg_{c}$ - variável inteira que indica o número de professores virtuais gerais (nem mestres nem doutores) alocados para o curso $c$.
+\item $npv_{c,r}$ - variável inteira que indica o número de professores virtuais com regime de contrato $r$ alocados para o curso $c$.
+\item $npvm_{c,r}$ - variável inteira que indica o número de professores virtuais mestres com regime de contrato $r$ alocados para o curso $c$.
+\item $npvd_{c,r}$ - variável inteira que indica o número de professores virtuais doutores com regime de contrato $r$ alocados para o curso $c$.
+\item $npvg_{c,r}$ - variável inteira que indica o número de professores virtuais gerais (nem mestres nem doutores) com regime de contrato $r$ alocados para o curso $c$.
 %\item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
+
+\item $hip_{p,t,f}$ - indica o horário de início das aulas do professor $p$ (em minutos) na fase $f$ do dia $t$.
+\item $hfp_{p,t,f}$ - indica o horário de fim das aulas do professor $p$ (em minutos) na fase $f$ do dia $t$.
+\item $fpgap_{p,t,f}$ - folga indicando se existe gap nos horários alocados ao professor $p$ na fase $f$ do dia $t$.
 
 
 \end{itemize}
 
-\subsection{Formulação}
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
+%% ===============================================================================================================
+
+
+\subsection{Formulação - Estimando professores virtuais}
 
 \subsubsection{Função Objetivo}
 
@@ -321,21 +348,6 @@ $$
        + \alpha \cdot \sum\limits_{pv \in PV} \sum\limits_{a \in A} \sum\limits_{h \in H} x_{p,a,s,d,i,t,h}
       \\
       &
-%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{s \in S} \sum\limits_{t \in T} \sum\limits_{h \in H} f1_{p,d,s,t,h}
-%      \\
-%      &
-%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{t \in T} \sum\limits_{h \in H} f2_{p,d,t,h}
-%      \\
-%      &
-%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} f3_{p,d}
-%      \\
-%      &
-%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{s \in S} f4_{p,d,s}
-%      \\
-%      &
-%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{s \in S} f5_{p,s}
-%      \\
-%      &
        + \sum\limits_{p \in P} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D}
        ( ( 10 - nota ) * pesoNota + ( 10 - preferencia ) * pesoPreferencia + custoCred * nCredsDisc ) \cdot y_{p,d,i}
       \\
@@ -358,16 +370,16 @@ $$
        + \gamma \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{cp \in Cp} fh_{d,i,cp}
       \\
       &
-       + \sum\limits_{c \in C} npv_{c}
+       + \sum\limits_{c \in C} \sum\limits_{r \in R} npv_{c,r}
       \\   
       &
-       + \gamma \cdot \sum\limits_{c \in C} npvm_{c}
+       + \gamma \cdot \sum\limits_{c \in C} \sum\limits_{r \in R} npvm_{c,r}
       \\   
       &
-       + \gamma \cdot \sum\limits_{c \in C} npvd_{c}
+       + \gamma \cdot \sum\limits_{c \in C} \sum\limits_{r \in R} npvd_{c,r}
       \\               
       &
-       + \gamma \cdot \sum\limits_{c \in C} npvg_{c}
+       + \gamma \cdot \sum\limits_{c \in C} \sum\limits_{r \in R} npvg_{c,r}
       \\                     
       &
        (+-) \gamma \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} pt_{p,t}
@@ -376,36 +388,27 @@ $$
        + \gamma \cdot \sum\limits_{p \in P}\sum\limits_{t \in T} fupap_{p,t}
       \\      
       &
-       + \sum\limits_{a \in Al} fmd_{a}
-      \\                  
-
+       + \sum\limits_{a \in Al} fmd_{a}         
+      \\
+      &
+      + \omega \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
+      \\
+      
 \end{array}
 $$
 
 \subsubsection{Alocação das aulas}
 
 \begin{eqnarray}
-\sum\limits_{p \in P}\sum\limits_{pv \in PV}\sum\limits_{h \in H} x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} + fd_{a} =  1 \nonumber \qquad 
+\sum\limits_{p \in P \cup PV}\sum\limits_{h \in H} x_{p,a,s,d,i,t,h} =  1 \nonumber \qquad 
 \forall a \in A 
 \end{eqnarray}
-
-
-
-\subsubsection{Impede atendimento parcial (Só necessária quando existe folga de demanda $fd_{a}$) }
-
-\begin{eqnarray}
-\sum\limits_{a \in A} fd_{a} = nroAulas_{a} \cdot ( 1 - \sum\limits_{p \in P \cap PV} y_{p,i,d,cp} ) \nonumber \qquad 
-\forall d \in D \quad
-\forall i \in I_{d} \quad
-\forall cp \in Cp
-\end{eqnarray}
-
 
 
 \subsubsection{Uso das salas para cada horário}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{p,a,h'} + x_{pv,a,h'} \leq  1 \nonumber \qquad 
+\sum\limits_{p \in P \cup PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{p,a,h'} \leq  1 \nonumber \qquad 
 \forall s \in S \quad
 \forall t \in T \quad
 \forall h \in H
@@ -421,24 +424,12 @@ $$
 \forall h \in H
 \end{eqnarray}
 
-% VERIFICAR A MODELAGEM ABAIXO
-%
-%\subsubsection{Aulas de mesmo bloco para cada horário (Somente para otimização por bloco)}
-%
-%\begin{eqnarray}
-%\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S} \sum\limits_{a \in A} x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq  1 \nonumber \qquad 
-%\forall bc \in B \quad
-%\forall i \in I_{bc} \quad
-%\forall t \in T \quad
-%\forall h \in H
-%\end{eqnarray}
 
-
-\subsubsection{Aulas de mesmo aluno para cada horário (Somente para otimização por aluno)}
+\subsubsection{Aulas de mesmo aluno para cada horário}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}}
-  x_{p,a,h'} + x_{pv,a,h'} \leq  1 \nonumber \qquad 
+\sum\limits_{p \in P \cup PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}}
+  x_{p,a,h'} \leq  1 \nonumber \qquad 
 \forall al \in Al \quad
 \forall t \in T \quad
 \forall h \in H
@@ -466,75 +457,24 @@ $$
 \end{eqnarray}
 
 
-\subsubsection{Somente um professor deve ser alocado para duas turmas de disciplina prática e teórica com aluno em comum}
+\subsubsection{Disciplinas que exigem mesmo professor para as aulas práticas e teóricas}
 
 \begin{eqnarray}
 y_{p,dt,it,cpt} = y_{p,dp,ip,cpp} \nonumber \qquad
-\forall p \in P \quad
+\forall p \in P \cup PV \quad
 \forall cpp \in Cp \quad
 \forall cpt \in Cp \quad
-\forall d=(dt,dp) \in D \quad
+\forall d=(dt,dp) \in D* \quad
 \forall it \in I_{dt} \quad
 \forall ip \in I_{dp} \quad \mbox{(ip,dp) tem aluno em comum com (it,dt)} \quad
 \end{eqnarray}
 
 
-% RESTRIÇÕES DE FIXAÇÕES ABAIXO ESTÃO ERRADAS. FIX-ME
-%\subsubsection{Restrição de fixação de professor, disciplina, sala, dia e horário}
-%
-%\begin{eqnarray}
-%\sum\limits_{i \in I_{d}}  x_{p,a,s,d,i,t,h} + f1_{p,d,s,t,h} =  1 \nonumber \qquad 
-%\forall p \in P \quad
-%\forall d \in D \quad
-%\forall s \in S \quad
-%\forall t \in T \quad
-%\forall h \in H \quad
-%\forall f \in F_{p,d,s,t,h}
-%\end{eqnarray}
-%
-%\subsubsection{Restrição de fixação de professor, disciplina, dia e horário}
-%
-%\begin{eqnarray}
-%\sum\limits_{i \in I_{d}} \sum\limits_{s \in S}  x_{p,a,s,d,i,t,h} + f2_{p,d,t,h} =  1 \nonumber \qquad 
-%\forall p \in P \quad
-%\forall d \in D \quad
-%\forall t \in T \quad
-%\forall h \in H \quad
-%\forall f \in F_{p,d,t,h}
-%\end{eqnarray}
-%
-%\subsubsection{Restrição de fixação de professor, disciplina}
-%
-%\begin{eqnarray}
-%\sum\limits_{i \in I_{d}} y_{p,d,i} + f3_{p,d} =  1 \nonumber \qquad 
-%\forall p \in P \quad
-%\forall d \in D \quad
-%\forall f \in F_{p,d}
-%\end{eqnarray}
-%
-%\subsubsection{Restrição de fixação de professor, disciplina e sala}
-%
-%\begin{eqnarray}
-%\sum\limits_{i \in I_{d}} y_{p,d,i} + f4_{p,d,s} =  1 \nonumber \qquad 
-%\forall p \in P \quad
-%\forall d \in D \quad
-%\forall s \in S \quad
-%\forall f \in F_{p,d,s}
-%\end{eqnarray}
-%
-%\subsubsection{Restrição de fixação de professor e sala}
-%
-%\begin{eqnarray}
-%\sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{t \in T} \sum\limits_{h \in H} \sum\limits_{(s1 \neq s) \in S}  x_{p,a,s1,d,i,t,h} - f5_{p,s} =  0 \nonumber \qquad 
-%\forall p \in P \quad
-%\forall s \in S \quad
-%\forall f \in F_{p,s}
-%\end{eqnarray}
 
 \subsubsection{Restrição de horário de disciplina no dia associando x e z}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S_{cp}}  x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq z_{d,i,h,cp} \nonumber \qquad 
+\sum\limits_{p \in P \cup PV} \sum\limits_{s \in S_{cp}}  x_{p,a,s,d,i,t,h} \leq z_{d,i,h,cp} \nonumber \qquad 
 \forall cp \in Cp \quad
 \forall d \in D \quad
 \forall i \in I_{d} \quad
@@ -579,80 +519,97 @@ pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qqu
 \end{eqnarray}
 
 
-\subsubsection{Estima o número de professores virtuais no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
+\subsubsection{\textbf{(R1)} Estima o número de professores virtuais no curso (Somente para PRIMEIRA rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
-\sum\limits_{pv \in PV}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npv_{c} \nonumber \qquad 
+\sum\limits_{pv \in PV_{r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npv_{c,r} \nonumber \qquad 
 \forall h \in H \quad
 \forall c \in C \quad
+\forall r \in R \quad
 \forall t \in T
 \end{eqnarray}
 
 
-\subsubsection{Estima o número de professores virtuais mestres no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
+\subsubsection{\textbf{(R1)} Estima o número de professores virtuais mestres no curso (Somente para PRIMEIRA rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
-\sum\limits_{pv \in PV_{m}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvm_{c} \nonumber \qquad 
+\sum\limits_{pv \in PV_{m,r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvm_{c,r} \nonumber \qquad 
 \forall h \in H \quad
 \forall c \in C \quad
+\forall r \in R \quad
 \forall t \in T
 \end{eqnarray}
 
 
-\subsubsection{Estima o número de professores virtuais doutores no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
+\subsubsection{\textbf{(R1)} Estima o número de professores virtuais doutores no curso (Somente para PRIMEIRA rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
-\sum\limits_{pv \in PV_{d}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvd_{c} \nonumber \qquad 
+\sum\limits_{pv \in PV_{d,r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvd_{c,r} \nonumber \qquad 
 \forall h \in H \quad
 \forall c \in C \quad
+\forall r \in R \quad
 \forall t \in T
 \end{eqnarray}
 
 
-\subsubsection{Estima o número de professores virtuais gerais no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
+\subsubsection{\textbf{(R1)} Estima o número de professores virtuais gerais no curso (Somente para PRIMEIRA rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
-\sum\limits_{pv \in PV_{g}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvg_{c} \nonumber \qquad 
+\sum\limits_{pv \in PV_{g,r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvg_{c,r} \nonumber \qquad 
 \forall h \in H \quad
 \forall c \in C \quad
+\forall r \in R \quad
 \forall t \in T
 \end{eqnarray}
 
 
 
-\subsubsection{Calcula o número de professores virtuais no curso ((Somente para segunda rodada, quando professores virtuais já foram criados)}
+\subsubsection{\textbf{(R1)} Garante número mínimo de professores no curso. É necessária devido à restrição de máximo de disciplinas ministradas por um professor por curso.}
 
 \begin{eqnarray}
-\sum\limits_{p \in PV} w_{p,c} = npv_{c} \nonumber \qquad 
-\forall c \in C
+MaxDiscProfCurso_{c} \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \ge qtdDiscComAulas_{c} \nonumber \qquad 
+\forall c \in C \quad
 \end{eqnarray}
 
 
-\subsubsection{Calcula o número de professores virtuais mestres no curso (Somente para segunda rodada, quando professores virtuais já foram criados)}
+
+\subsubsection{\textbf{(R2)} Calcula o número de professores virtuais no curso ((Somente para SEGUNDA rodada, quando professores virtuais já foram criados)}
 
 \begin{eqnarray}
-\sum\limits_{p \in PV_{m}} w_{p,c} = npvm_{c} \nonumber \qquad 
-\forall c \in C
+\sum\limits_{p \in PV_{r}} w_{p,c} = npv_{c,r} \nonumber \qquad 
+\forall c \in C \quad
+\forall r \in R
 \end{eqnarray}
 
 
-\subsubsection{Calcula o número de professores virtuais doutores no curso (Somente para segunda rodada, quando professores virtuais já foram criados)}
+\subsubsection{\textbf{(R2)} Calcula o número de professores virtuais mestres no curso (Somente para SEGUNDA rodada, quando professores virtuais já foram criados)}
 
 \begin{eqnarray}
-\sum\limits_{p \in PV_{d}} w_{p,c} = npvd_{c} \nonumber \qquad 
-\forall c \in C
+\sum\limits_{p \in PV_{m,r}} w_{p,c} = npvm_{c,r} \nonumber \qquad 
+\forall c \in C \quad
+\forall r \in R
 \end{eqnarray}
 
 
-\subsubsection{Calcula o número de professores virtuais gerais no curso (Somente para segunda rodada, quando professores virtuais já foram criados)}
+\subsubsection{\textbf{(R2)} Calcula o número de professores virtuais doutores no curso (Somente para SEGUNDA rodada, quando professores virtuais já foram criados)}
 
 \begin{eqnarray}
-\sum\limits_{p \in PV_{g}} w_{p,c} = npvg_{c} \nonumber \qquad 
-\forall c \in C
+\sum\limits_{p \in PV_{d,r}} w_{p,c} = npvd_{c,r} \nonumber \qquad 
+\forall c \in C \quad
+\forall r \in R
+\end{eqnarray}
+
+
+\subsubsection{\textbf{(R2)} Calcula o número de professores virtuais gerais no curso (Somente para SEGUNDA rodada, quando professores virtuais já foram criados)}
+
+\begin{eqnarray}
+\sum\limits_{p \in PV_{g,r}} w_{p,c} = npvg_{c,r} \nonumber \qquad 
+\forall c \in C \quad
+\forall r \in R
 \end{eqnarray}
       
 
-\subsubsection{Uso de professor virtual (Somente para segunda rodada, quando professores virtuais já foram criados) }
+\subsubsection{\textbf{(R2)} Uso de professor virtual (Somente para SEGUNDA rodada, quando professores virtuais já foram criados) }
 
 \begin{eqnarray}
 M \cdot pv_{p} \ge \sum\limits_{c \in C} w_{p,c} \nonumber \qquad 
@@ -663,7 +620,7 @@ M \cdot pv_{p} \ge \sum\limits_{c \in C} w_{p,c} \nonumber \qquad
 \subsubsection{Garante o máximo de professores não mestres}
 
 \begin{eqnarray}
-\sum\limits_{p \in P_{g}} w_{p,c} \le (1-mm) \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\sum\limits_{r \in R} npvg_{c,r} + \sum\limits_{p \in P_{g}} w_{p,c} \le (1-mm) \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
 \forall c \in C \quad
 \end{eqnarray}
 
@@ -671,7 +628,7 @@ M \cdot pv_{p} \ge \sum\limits_{c \in C} w_{p,c} \nonumber \qquad
 \subsubsection{Garante o máximo de professores não doutores}
 
 \begin{eqnarray}
-\sum\limits_{p \in P_{g} \cup P_{m} } w_{p,c} \le (1-md) \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\sum\limits_{r \in R}( npvg_{c,r} + npvm_{c,r} ) \sum\limits_{p \in P_{g} \cup P_{m} } w_{p,c} \le (1-md) \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
 \forall c \in C \quad
 \end{eqnarray}
 
@@ -679,7 +636,7 @@ M \cdot pv_{p} \ge \sum\limits_{c \in C} w_{p,c} \nonumber \qquad
 \subsubsection{Garantia do percentual mínimo de mestres}
 
 \begin{eqnarray}
-npvm_{c} + npvd_{c} + \sum\limits_{p \in P_{m}} w_{p,c} \ge mm_{c} \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\sum\limits_{r \in R} (npvm_{c,r} + npvd_{c,r}) + \sum\limits_{p \in P_{m \cup d}} w_{p,c} \ge mm_{c} \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
 \forall c \in C \quad
 \end{eqnarray}
 
@@ -687,64 +644,34 @@ npvm_{c} + npvd_{c} + \sum\limits_{p \in P_{m}} w_{p,c} \ge mm_{c} \cdot (np_{c}
 \subsubsection{Garantia do percentual mínimo de doutores}
 
 \begin{eqnarray}
-npvd_{c} + \sum\limits_{p \in P_{d}} w_{p,c} \ge md_{c} \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\sum\limits_{r \in R} npvd_{c,r} + \sum\limits_{p \in P_{d}} w_{p,c} \ge md_{c} \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
 \forall c \in C \quad
+\end{eqnarray}
+
+
+\subsubsection{Garante o máximo de professores sem um tipo de contrato}
+
+\begin{eqnarray}
+\sum\limits_{r' \in R_{\le r}}( npv_{c,r'} ) \sum\limits_{p \in P_{\le r} } w_{p,c} \le (1-minCont_{c,r}) \cdot (np_{c} + \sum\limits_{r' \in R} npv_{c,r'}) \nonumber \qquad 
+\forall c \in C \quad
+\forall r \in R
+\end{eqnarray}
+
+
+\subsubsection{Garantia do percentual mínimo de professores por tipo de contrato}
+
+\begin{eqnarray}
+\sum\limits_{r' \in R_{\ge r}} npv_{c,r'} + \sum\limits_{p \in P_{\ge r}} w_{p,c} \ge minCont_{c,r} \cdot (np_{c} + \sum\limits_{r' \in R} npv_{c,r'}) \nonumber \qquad 
+\forall c \in C \quad
+\forall r \in R
 \end{eqnarray}
 
 
 \subsubsection{Consistência para o número de professores virtuais}
 
 \begin{eqnarray}
-npvg_{c} + npvm_{c} + npvd_{c} = npv_{c} \nonumber \qquad 
+npvg_{c,r} + npvm_{c,r} + npvd_{c,r} = npv_{c,r} \nonumber \qquad 
 \forall c \in C \quad
-\end{eqnarray}
-
-
-\subsubsection{Garante número mínimo de professores no curso (Somente para Rodada 1). É necessária devido à restrição de máximo de disciplinas ministradas por um professor por curso.}
-
-\begin{eqnarray}
-MaxDiscProfCurso_{c} \cdot (np_{c} + npv_{c}) \ge qtdDiscComAulas_{c} \nonumber \qquad 
-\forall c \in C \quad
-\end{eqnarray}
-
-
-\subsubsection{Calcula tempo de início da primeira aula do professor no dia}
-
-\begin{eqnarray}
-hip_{p,t} \le m(h) + M*( 1 - \sum\limits_{a \in A_{t}} x_{p,a,h} ) \nonumber \qquad 
-\forall p \in P \quad
-\forall t \in T \quad
-\forall h \in H
-\end{eqnarray}
-
-
-\subsubsection{Calcula tempo de fim da última aula do professor no dia}
-
-\begin{eqnarray}
-hfp_{p,t} \ge m(h) \cdot \sum\limits_{a \in A_{t}} x_{p,a,h} \nonumber \qquad 
-\forall p \in P \quad
-\forall t \in T \quad
-\forall h \in H
-\end{eqnarray}
-
-
-\subsubsection{Consistência dos tempos de início de fim das aulas de um professor em uma dia}
-
-\begin{eqnarray}
-hip_{p,t} \le hfp_{p,t} \nonumber \qquad 
-\forall p \in P \quad
-\forall t \in T
-\end{eqnarray}
-
-
-\subsubsection{Evita que um professor seja alocado em aula do último horário do dia $d$ e do primeiro horário do dia seguinte $d+1$}
-
-\begin{eqnarray}
-\sum\limits_{a \in A_{t}} x_{p,a,hf} + \sum\limits_{a \in A_{t+1}} x_{p,a,hi} - fupap_{p,t} \le 1 \nonumber \qquad 
-\forall p \in P \quad
-\forall t \in T \quad 
-hi \in H \mbox{, hi é o primeiro horário do dia} \quad 
-hf \in H \mbox{, hf é o último horário do dia}
 \end{eqnarray}
 
 
@@ -781,7 +708,7 @@ hf \in H \mbox{, hf é o último horário do dia}
 \subsubsection{Garante a carga horária máxima de um professor na semana}
 
 \begin{eqnarray}
-\sum\limits_{a \in A}\sum\limits_{h \in H} nCreds_{a} \cdot x_{p,a,h} - fchs_{p} \le chMax_{p} \nonumber \qquad 
+\sum\limits_{i \in I}\sum\limits_{d \in D}\sum\limits_{cp \in CP} tempo_{d} \cdot y_{p,i,d,cp} \le chMax_{p} \nonumber \qquad 
 \forall p \in P \quad
 \end{eqnarray}
 
@@ -825,15 +752,6 @@ hf \in H \mbox{, hf é o último horário do dia}
 \forall hi,hf \in H
 \end{eqnarray}
 
-
-% Não deve precisar disso, já que o operacional tem que atender tudo, ainda que use prof virtual.
-%\subsubsection{Alocação minima de demanda por aluno}
-%
-%\begin{eqnarray}
-%\sum\limits_{ \substack{ d \in D \\ a \in (i,d,cp) } } nCreds_{d} \cdot \sum\limits_{p \in P} y_{p,d,i,cp} \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
-%\forall a \in Al \quad
-%\end{eqnarray}
-
 	
 
 \subsubsection{Garante interjornada mínima dos professores}
@@ -874,5 +792,65 @@ c \in C_{o}
 \end{eqnarray}
 	
 
+
+\subsubsection{Seta o lower bound para a variável $hip_{p,t,f}$}
+
+\begin{eqnarray}
+hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{x \in X_{dti<dt}} x_{p,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dt \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Seta o upper bound para a variável $hip_{p,t,f}$}
+
+\begin{eqnarray}
+hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{x} x_{p,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dti \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Seta o lower bound para a variável $hfp_{p,t,f}$}
+
+\begin{eqnarray}
+hfp_{p,t,f} \geq \sum\limits_{x} m(dt) \cdot x_{p,t,dtf} \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dtf \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Seta o upper bound para a variável $hfp_{p,t,f}$}
+
+\begin{eqnarray}
+hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{x \in X_{dtf>dt}} x_{p,t,dtf} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dt \in Dt_{f}
+\end{eqnarray}
+
+
+
+\subsubsection{Proíbe gap no horário do professor em uma mesma fase do dia}
+
+\begin{eqnarray}
+\sum\limits_{x \in X_{h \in H_{f}}} tempo_{x} \cdot x_{p,t,h} + delta_{f,t} + fagap_{a,t} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F
+\end{eqnarray}
+
+
+
 \clearpage
+
+
+
 \end{document}

@@ -818,6 +818,7 @@ conjunto s√£o denotados por \emph{t}.
 \item $CTI_{p}$ - conjunto de conjuntos turmas que um professor \emph{p}
 pode leccionar e que s√£o todas incompat√≠veis entre si. Os elementos
 desse conjunto s√£o denotados por \emph{TI}.
+\item $H_{f}$ - conjunto de hor·rios que cujo tempo de inÌcio pertencem ‡ fase do dia $f$.
 \end{itemize}
 
 \subsubsection{Dados do Modelo}
@@ -845,6 +846,9 @@ objectivo.
 \item $\delta\left(p,d\right)$ - peso da vari√°vel $w_{p,d}$ na fun√ß√£o
 objectivo.
 \item $\theta\left(p\right)$ - peso da vari√°vel $u_{p}$ na fun√ß√£o objectivo.
+\item $m(dt)$	- n˙mero de minutos correspondentes ‡ hora e minuto do datetime dt. Por ex: $m(7:30) = 7\cdot60 + 30$.
+\item $duracao_{x}$ - duraÁ„o (em minutos) da aula representada por x.
+\item $delta_{f,t}$ - m·ximo de tempo ocioso permitido entre a primeira e a ˙ltima aula do professor na fase $f$ do dia $t$. Conta, basicamente, o tempo m·ximo possÌvel de intervalo entre aulas.
 \end{itemize}
 
 \subsubsection{Vari√°veis}
@@ -861,6 +865,8 @@ alocado a alguma turma com aulas no dia \emph{d}.
 \item $u_{p}$ - vari√°vel inteira maior ou igual a zero o que indica n√∫mero
 de cr√©ditos que faltaram ao professor \emph{p} √© para ser alocado
 a $chAnt\left(p\right)$ .
+\item $hip_{p,t,f}$ - vari·vel inteira que indica em minutos o hor·rio de inÌcio da primeira aula alocada ao professor $p$ na fase do dia $f$. Por exemplo, se a primeira aula da fase $manh„$ alocada ao professor se inicia ‡s $09:30$, ent„o $hip = 9 \cdot 60 + 30 = 570$.
+\item $hfp_{p,t,f}$ - vari·vel inteira que indica em minutos o hor·rio de fim da ˙ltima aula alocada ao professor $p$ na fase do dia $f$. Por exemplo, se a ˙ltima aula da fase $manh„$ alocada ao professor termina ‡s $11:30$, ent„o $hip = 11 \cdot 60 + 30 = 690$.
 \end{itemize}
 
 \subsection{Formula√ß√£o}
@@ -970,10 +976,54 @@ y_{PV_{c,q}[i+1]}\leq y_{PV_{c,q}[i]}\qquad\forall c\in C\,\forall q\in Q\,\fora
 }
 
 
+
+\subsubsection{Set the lower bound para a vari·vel hip_{p,t,f}}
+
+\[
+hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum_{x \in X_{dti<dt}} x_{p,t,dti} ) \qquad\forall p \in P\,\forall t \in T\,\forall f \in F\,\forall dt \in Dt
+\]
+
+
+
+\subsubsection{Set the upper bound para a vari·vel hip_{p,t,f}}
+
+\[
+hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum_{x \in X_{dti=dt}} x_{p,t,h} ) \qquad\forall p \in P\,\forall t \in T\,\forall f \in F\,\forall dt \in Dt
+\]
+
+
+
+\subsubsection{Set the lower bound para a vari·vel hfp_{p,t,f}}
+
+\[
+hfp_{p,t,f} \geq \sum_{x \in X_{dtf=dt}} m(dt) \cdot x_{p,t,h} \qquad\forall p \in P\,\forall t \in T\,\forall f \in F\,\forall dt \in Dt
+\]
+
+
+
+\subsubsection{Set the upper bound para a vari·vel hfp_{p,t,f}}
+
+\[
+hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum_{x \in X_{dtf>dt}} x_{p,t,h} ) \qquad\forall p \in P\,\forall t \in T\,\forall f \in F\,\forall dt \in Dt
+\]
+
+
+
+
+\subsubsection{ProÌbe gap no hor·rio do professor em uma mesma fase do dia}
+
+\[
+\sum_{x \in X_{h \in H_{f}}} tempo_{x} \cdot x_{p,t,h} + delta_{f,t} \geq hfp_{p,t,f} - hip_{p,t,f} \qquad\forall p \in P\,\forall t \in T\,\forall f \in F
+\]
+
+
+
+
 \paragraph*{C√≥digo}
 
 A implementa√ß√£o do \emph{MIP Alocar Professores} encontra-se na classe
 \emph{MIPAlocProfs}, que herda a classe \emph{MIPAloc}. Ambas est√£o
 definidas nos arquivos \emph{'MIPAlocProfs.h'},\emph{ 'MIPAlocProfs.cpp',
 'MIPAloc.h' }e\emph{ 'MIPAloc.cpp'} do projeto.
+
 \end{document}

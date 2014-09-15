@@ -191,6 +191,9 @@ $$
       \\                  
       &
       + 10 \cdot \sum\limits_{d \in D} k_{d}
+      \\           
+      &
+      + \sum\limits_{cp \in CP} \sum\limits_{d \in D} da_{d,cp}
       \\
                           
 \end{array}
@@ -579,6 +582,16 @@ v_{i,d,sl1,s} + v_{i,d,sl2,s} - sab_{i,d,s} \le 1 \nonumber \qquad
 \begin{eqnarray}
 bigM \cdot k_{d} \ge \sum\limits_{i \in I} z_{i,d,cp} \nonumber \qquad 
 \forall d \in D
+\end{eqnarray}
+
+
+
+\subsubsection{Distribuição equilibrada de alunos nas turmas de mesma disciplina}
+\begin{eqnarray}
+\sum\limits_{s \in S} \sum\limits_{oft \in Oft} a_{i,d,s,oft} \le da_{d,cp} \nonumber \qquad 
+\forall cp \in CP \quad
+\forall d \in D \quad
+\forall i \in I_{d}
 \end{eqnarray}
 
 
