@@ -7,7 +7,23 @@ using namespace std;
 
 #define MIP_ESCOLA
     
+
+// -----------------------------------------------------------------------------------------------
+
 int MIPUnico::idCounter = 0;
+
+// -----------------------------------------------------------------------------------------------
+// Parâmetros
+
+// Professores
+const bool MIPUnico::permiteCriarPV = false;
+const bool MIPUnico::minimizarCustoProf = false;
+const int MIPUnico::pesoGapProf = 1;
+
+// Alunos
+const int MIPUnico::pesoGapAluno = 3;
+
+// -----------------------------------------------------------------------------------------------
 
 MIPUnico::MIPUnico( ProblemData * aProblemData, 
 				GGroup< VariableTatico *, LessPtr<VariableTatico> > *aSolVarsTatico, 
@@ -4383,8 +4399,8 @@ int MIPUnico::criaVariavelTaticoAlunoCreditosAPartirDeX_MaisFiltroAluno( int cam
 		// ---------------------------------------
 		#pragma region Preenche vars_aluno_aula
 		Campus *cp = problemData->refCampus[v.getUnidade()->getIdCampus()];
-		vars_aluno_aula[v.getAluno()][v.getDia()][v.getDateTimeInicial()][cp][v.getDisciplina()][v.getTurma()]
-			= make_pair(colNr,v);
+		vars_aluno_aula[v.getAluno()][v.getDia()][v.getDateTimeInicial()][cp][v.getDisciplina()][v.getTurma()].insert(
+			make_pair(colNr,v) );
 		#pragma endregion
 
 		// ---------------------------------------
@@ -4537,8 +4553,8 @@ int MIPUnico::criaVariavelTaticoAlunoCreditosAPartirDeX( int campusId, int P )
 		// ---------------------------------------
 		#pragma region Preenche vars_aluno_aula
 		Campus *cp = problemData->refCampus[v.getUnidade()->getIdCampus()];
-		vars_aluno_aula[v.getAluno()][v.getDia()][v.getDateTimeInicial()][cp][v.getDisciplina()][v.getTurma()]
-			= make_pair(colNr,v);
+		vars_aluno_aula[v.getAluno()][v.getDia()][v.getDateTimeInicial()][cp][v.getDisciplina()][v.getTurma()].insert(
+			make_pair(colNr,v) );
 		#pragma endregion
 
 		// ---------------------------------------
@@ -6197,11 +6213,11 @@ int MIPUnico::criaVariavelTaticoFolgaCombinacaoDivisaoCreditoAPartirDeO( int cam
 		double coef = 0.0;
 		if ( problemData->parametros->funcao_objetivo == 0 )
 		{
-			coef = -campus->getCusto()/2;
+			coef = -1;
 		}
 		else if ( problemData->parametros->funcao_objetivo == 1 )
 		{
-			coef = campus->getCusto()/2;
+			coef = 1;
 		}
 							
 		Trio<double, double, double> trio;
@@ -7836,7 +7852,7 @@ int MIPUnico::criaVariavelTaticoAberturaAPartirDeX( int campusId, int prior )
 			double lowerBound = 0.0;
 			double upperBound = 1.0;
 			
-			double coef = disciplina->getTotalCreditos() * campus->getCusto();		
+			double coef = disciplina->getTotalCreditos();
 			Trio<double, double, double> trio;
 			trio.set( coef,lowerBound, upperBound );
 
@@ -7931,8 +7947,7 @@ int MIPUnico::criaVariavelTaticoAbertura( int campusId, int prior, int r )
 
                 vHashTatico[v] = lp->getNumCols();
 
-			    //double coef = 1.0;
-				double coef = disciplina->getTotalCreditos() * cp->getCusto();
+				double coef = disciplina->getTotalCreditos();
 				
 				double lowerBound = 0.0;
 				if ( fixar ) lowerBound = 1.0;
@@ -8212,9 +8227,12 @@ int MIPUnico::criaVariavelProfTurmaAPartirDeZ()
 					mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itProf );
 			}
 
-			ITERA_GGROUP_LESSPTR( itPV, problemData->profsVirtuais, Professor )
+			if ( MIPUnico::permiteCriarPV )
 			{
-				mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itPV );
+				ITERA_GGROUP_LESSPTR( itPV, problemData->profsVirtuais, Professor )
+				{
+					mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itPV );
+				}
 			}
 		}
 	}
@@ -8268,8 +8286,13 @@ int MIPUnico::criaVariavelProfTurmaAPartirDeZ()
 
 						double lowerBound = 0.0;
 						double upperBound = 1.0;
-						double coef = 100 * disciplina->getTotalCreditos() * professor->getValorCredito();
-														
+						double coef = 0;
+																			
+						if ( professor->eVirtual() )
+							coef = disciplina->getTotalCreditos();
+						else if ( MIPUnico::minimizarCustoProf )
+							coef = disciplina->getTotalCreditos() * professor->getValorCredito();
+
 						OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str());
 
 						lp->newCol( col );
@@ -8302,9 +8325,12 @@ int MIPUnico::criaVariavelProfAulaAPartirDeX()
 					mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itProf );
 			}
 
-			ITERA_GGROUP_LESSPTR( itPV, problemData->profsVirtuais, Professor )
+			if ( MIPUnico::permiteCriarPV )
 			{
-				mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itPV );
+				ITERA_GGROUP_LESSPTR( itPV, problemData->profsVirtuais, Professor )
+				{
+					mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itPV );
+				}
 			}
 		}
 	}
@@ -8545,7 +8571,7 @@ int MIPUnico::criaVariavelFolgaGapProfAPartirDeK(void)
 				const int dtiMinutes = dti.getDateMinutes();
 				const int dtfMinutes = dtf.getDateMinutes();
 
-				const double coef = 2.0;
+				const double coef = MIPUnico::pesoGapProf;
 				const int lb = 0;
 				const int ub = dtfMinutes - dtiMinutes;
 			
@@ -8669,7 +8695,7 @@ int MIPUnico::criaVariavelFolgaGapAlunoAPartirDeV(void)
 			const int dtiMinutes = dti.getDateMinutes();
 			const int dtfMinutes = dtf.getDateMinutes();
 
-			const double coef = 10.0;
+			const double coef = MIPUnico::pesoGapAluno;
 			const int lb = 0;
 			const int ub = dtfMinutes - dtiMinutes;
 			
@@ -15649,24 +15675,27 @@ int MIPUnico::criarRestricaoAlunoHiHf_()
 					{
 						for(auto itTurma = itDisc->second.begin(); itTurma != itDisc->second.end(); ++itTurma)
 						{
-							const int colV = itTurma->second.first;
-							const VariableMIPUnico var = itTurma->second.second;
+							for(auto itVars = itTurma->second.begin(); itVars != itTurma->second.end(); ++itVars)
+							{
+								const int colV = itVars->first;
+								const VariableMIPUnico var = itVars->second;
 							
-							DateTime dtf = var.getHorarioAulaFinal()->getFinal();			
+								DateTime dtf = var.getHorarioAulaFinal()->getFinal();			
 				
-							// ----------- mapAlunoDiaHiHf
+								// ----------- mapAlunoDiaHiHf
 
-							double bigM = lp->getUB( colHia ); // ub de hia!
-							double coefXiUB = bigM;
-							((*mapAlunoDia1).first)[dti].insert( make_pair(colV,coefXiUB) );
+								double bigM = lp->getUB( colHia ); // ub de hia!
+								double coefXiUB = bigM;
+								((*mapAlunoDia1).first)[dti].insert( make_pair(colV,coefXiUB) );
 
-							double coefXfLB = - dtf.getDateMinutes();
-							((*mapAlunoDia1).second)[dtf].insert( make_pair(colV,coefXfLB) );
+								double coefXfLB = - dtf.getDateMinutes();
+								((*mapAlunoDia1).second)[dtf].insert( make_pair(colV,coefXfLB) );
 
-							// ----------- mapAlunoDia
+								// ----------- mapAlunoDia
 				
-							double duracaoAula = (dtf - dti).getDateMinutes();
-							(*mapAlunoDia2).insert( make_pair(colV,duracaoAula) );
+								double duracaoAula = (dtf - dti).getDateMinutes();
+								(*mapAlunoDia2).insert( make_pair(colV,duracaoAula) );
+							}
 						}
 					}
 				}

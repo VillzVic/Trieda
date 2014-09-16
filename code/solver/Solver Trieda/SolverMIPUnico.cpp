@@ -7,6 +7,7 @@
 #include "AtendimentoHorarioAula.h"
 #include "AtendimentoTurno.h"
 #include "MIPUnico.h"
+#include "CentroDados.h"
 #include "opt_lp.h"
 
 
@@ -170,7 +171,13 @@ int SolverMIPUnico::solve()
 			// -------------------------------------------------
 			// Preenchendo a estrutura "atendimentosTatico".
 			problemData->atendimentosTatico
-				= new GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > >();
+			= new GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > >();
+
+			
+			if ( !problemSolution ){
+				std::cout<<"\nErro2! problemSolution null!"; fflush(0);
+				return 0;
+			}
 
 			ITERA_GGROUP( it_At_Campus,
 				( *problemSolution->atendimento_campus ), AtendimentoCampus )
@@ -351,7 +358,7 @@ void SolverMIPUnico::relacionaAlunosDemandas()
 	// Método que relaciona cada demanda atendida aos
 	// correspondentes alunos que assistirão as aulas 
 
-	std::cout<<"\nRelacionando AlunosDemanda...";
+	std::cout<<"\nRelacionando AlunosDemanda..."; fflush(0);
 
    Campus * campus = NULL;
    Unidade * unidade = NULL;
@@ -360,6 +367,13 @@ void SolverMIPUnico::relacionaAlunosDemandas()
 
    // Lendo os atendimentos oferta da solução
    GGroup< AtendimentoOferta * > atendimentosOferta;
+
+	if (!problemSolution)
+	{
+		CentroDados::printError("void SolverMIPUnico::relacionaAlunosDemandas()",
+								"problemSolution null");
+		return;
+	}
 
    ITERA_GGROUP( it_At_Campus,
       ( *problemSolution->atendimento_campus ), AtendimentoCampus )
@@ -531,7 +545,14 @@ void SolverMIPUnico::getSolutionTaticoPorAlunoComHorario()
 {
 	std::cout<<"\nPreenchendo a estrutura atendimento_campus com a saida.\n"; fflush(NULL);		
 
-   // POVOANDO AS CLASSES DE SAIDA
+    // POVOANDO AS CLASSES DE SAIDA
+
+	if (!problemSolution)
+	{
+		CentroDados::printError("void SolverMIPUnico::getSolutionTaticoPorAlunoComHorario()",
+								"problemSolution null");
+		return;
+	}
 
    int at_Tatico_Counter = 0;
 

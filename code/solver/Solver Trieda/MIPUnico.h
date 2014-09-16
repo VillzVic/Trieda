@@ -205,7 +205,7 @@ private:
 		pair<int /*col*/, VariableMIPUnico> >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Professor> > vars_prof_aula2;	// k_{p,i,d,t,hi}
 	
 	map< Aluno*, map< int /*dia*/, map<DateTime /*dti*/, map< Campus*, map< Disciplina*, map< int /*turma*/,
-		pair<int /*col*/, VariableMIPUnico> >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Aluno> > vars_aluno_aula;		// v_{a,i,d,s,t,hi,hf}
+		set< pair<int /*col*/, VariableMIPUnico> > >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Aluno> > vars_aluno_aula;		// v_{a,i,d,s,t,hi,hf}
 
 	map< Professor*, map< int /*dia*/, map< int /*fase*/, pair<DateTime /*dti*/, DateTime /*dtf*/> > >,
 		LessPtr<Professor> > vars_prof_dia_fase_dt;												// min dti e max dtf para cada prof/dia/fase
@@ -239,11 +239,9 @@ private:
    /* 
 		****************************************************************************************************************
    */
-   
 
+	static int idCounter;
 
-    static int idCounter;
-	
    // The linear problem.	
    
 	#ifdef SOLVER_CPLEX 
@@ -337,6 +335,24 @@ private:
 
 	std::map< int /*discId*/, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
 	int getNroMaxAlunoDemanda( int discId );
+	
+	
+   /* 
+		****************************************************************************************************************
+   */
+	
+	// Constantes e parâmetros
+	    
+	// Geral
+
+	// Professores
+	static const bool minimizarCustoProf;
+	static const bool permiteCriarPV;
+	static const int pesoGapProf;
+
+	// Alunos
+	static const int pesoGapAluno;
+
 
 };
 

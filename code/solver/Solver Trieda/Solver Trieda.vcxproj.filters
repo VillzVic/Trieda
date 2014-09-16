@@ -1,3 +1,1020 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="CentroDados.cpp" />
+    <ClCompile Include="Indicadores.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ProblemData.cpp" />
+    <ClCompile Include="ProblemDataLoader.cpp" />
+    <ClCompile Include="TRIEDA-InputXSD.cpp" />
+    <ClCompile Include="TRIEDA-OutputXSD.cpp" />
+    <ClCompile Include="Aluno.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="AlunoDemanda.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="AreaTitulacao.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="AlocacaoProfVirtual.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoOfertaSolucao.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoCampusSolucao.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoDiaSemanaSolucao.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoSalaSolucao.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoTaticoSolucao.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoUnidadeSolucao.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoUnidade.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoTurno.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoTatico.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoSala.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoOferta.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoHorarioAula.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoDiaSemana.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoCampus.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AtendimentoBase.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="AlunoSolution.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="BlocoCurricular.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Calendario.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Campus.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstraintPre.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstraintTatico.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstraintTatInt.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstraintEstimaTurmas.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstraintMIPUnico.cpp">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstraintOp.cpp">
+      <Filter>Puro MIP\MIP-Operacional</Filter>
+    </ClCompile>
+    <ClCompile Include="Curriculo.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Curso.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Demanda.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Deslocamento.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Disciplina.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="DivisaoCreditos.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\DoubleShiftMove.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\DoubleSwapMove.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="EstimaTurmas.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\GUtil.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\HeuristicaNuno.cpp">
+      <Filter>HeuristicaNuno</Filter>
+    </ClCompile>
+    <ClCompile Include="Horario.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="HorarioAula.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="HorarioDia.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="ILSLPerturbation.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="Equivalencia.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Magisterio.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="NivelDificuldadeHorario.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="NivelDificuldade.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Oferta.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="ParametrosPlanejamento.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Professor.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Sala.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="TipoTitulacao.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="TurnoIES.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="TipoContrato.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="TipoCurso.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="TipoDisciplina.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="TipoSala.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Fixacao.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="MIPUnico.cpp">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClCompile>
+    <ClCompile Include="VariableMIPUnico.cpp">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverMIPUnico.cpp">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveShift.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveShiftValidator.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveSwap.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveSwapEqBlocksValidator.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveSwapEqSchedulesBlocksValidator.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveSwapEqTeachersBlocksValidator.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveValidator.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="Constraint.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="IteratedLocalSearchLevels.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="NSIteratorSwapEqBlocks.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="NSSeqSwapEqBlocks.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="NSShift.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="NSSwapEqSchedulesBlocks.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="NSSwapEqTeachersBlocks.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\ParametrosHeuristica.cpp">
+      <Filter>HeuristicaNuno</Filter>
+    </ClCompile>
+    <ClCompile Include="VariableTatInt.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="VariableTatico.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="VariablePre.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="VariableEstimaTurmas.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="Variable.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="TaticoIntAlunoHor.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverMIP.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\SolverTatico.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="SolucaoTaticoInicial.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="PreModelo.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="Operacional.cpp">
+      <Filter>Puro MIP\MIP-Operacional</Filter>
+    </ClCompile>
+    <ClCompile Include="VariableOp.cpp">
+      <Filter>Puro MIP\MIP-Operacional</Filter>
+    </ClCompile>
+    <ClCompile Include="Unidade.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\SwapMove.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\SwapDivisionMove.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\STVariable.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\STConstraint.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\Node.cpp">
+      <Filter>HeuristicaNuno</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\SaveSolucao.cpp">
+      <Filter>HeuristicaNuno</Filter>
+    </ClCompile>
+    <ClCompile Include="SolutionPool.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\SolutionBuilder.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\ShiftMove.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomDescentMethod.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\SolverTaticoHeur.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="HashUtil.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\Instance.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="ConverteHorariosCreditos.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="$(CODELIB)\CPUTimerWin.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="$(CODELIB)\DateTime.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="$(CODELIB)\ErrorHandler.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="InputMethods.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="OFBase.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\TimeLogger.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="$(OPT_LP)\source\opt_col.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="$(OPT_LP)\source\opt_lp.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="$(OPT_LP)\source\opt_row.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="SolucaoInicialOperacional.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolucaoOperacional.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverTaticoHeur\Solution.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\AlunoHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\AulaHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="ConjUnidades.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\DadosHeuristica.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\EntidadeAlocavel.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\MIPAlocarProfCons.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\MIPAlocarProfVar.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\ObjectiveFunctionHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\OfertaDisciplina.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\ProfessorHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\SalaHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\SolucaoHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\StatsSolucaoHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\TurmaHeur.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\TurmaPotencial.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\AbridorTurmas.cpp">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\ImproveMethods.cpp">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\MIPAloc.cpp">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\MIPAlocarAlunos.cpp">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\MIPAlocarProfs.cpp">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\RecursivePreProc.cpp">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\TurmasIncHorarioDia.cpp">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\ClusterUnidades.cpp">
+      <Filter>HeuristicaNuno\Útil</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\GeradorCombsDiv.cpp">
+      <Filter>HeuristicaNuno\Útil</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\UtilHeur.cpp">
+      <Filter>HeuristicaNuno\Útil</Filter>
+    </ClCompile>
+    <ClCompile Include="RestricaoViolada.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="ProfessorVirtualOutput.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="ProblemSolution.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditoDisponivel.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="Avaliador.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="CustoAlocacao.cpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClCompile>
+    <ClCompile Include="NaoAtendimento.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="SolutionLoader.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="ValidateSolution.cpp">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClCompile>
+    <ClCompile Include="Aula.cpp">
+      <Filter>Puro MIP</Filter>
+    </ClCompile>
+    <ClCompile Include="Solver.cpp">
+      <Filter>Puro MIP</Filter>
+    </ClCompile>
+    <ClCompile Include="CmdLine.cpp" />
+    <ClCompile Include="MainMIPPuro.cpp">
+      <Filter>Puro MIP</Filter>
+    </ClCompile>
+    <ClCompile Include="MainHeuristicaIES.cpp">
+      <Filter>HeuristicaNuno</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CentroDados.h" />
+    <ClInclude Include="Indicadores.h" />
+    <ClInclude Include="ProblemData.h" />
+    <ClInclude Include="ProblemDataLoader.h" />
+    <ClInclude Include="TRIEDA-InputXSD.h" />
+    <ClInclude Include="TRIEDA-OutputXSD.h" />
+    <ClInclude Include="Aluno.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="AlunoDemanda.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="AreaTitulacao.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="AlocacaoProfVirtual.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoCampusSolucao.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoDiaSemanaSolucao.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoOfertaSolucao.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoSalaSolucao.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoTaticoSolucao.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoUnidadeSolucao.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoUnidade.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoTurno.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoTatico.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoSala.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoOferta.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoHorarioAula.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoDiaSemana.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoCampus.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AtendimentoBase.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AlunoSolution.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="BlocoCurricular.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Calendario.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Campus.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstraintPre.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstraintTatico.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstraintTatInt.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstraintEstimaTurmas.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstraintMIPUnico.h">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstraintOp.h">
+      <Filter>Puro MIP\MIP-Operacional</Filter>
+    </ClInclude>
+    <ClInclude Include="Curriculo.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Curso.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="ConjuntoSala.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Demanda.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Deslocamento.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Disciplina.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="DivisaoCreditos.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\DoubleShiftMove.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\DoubleSwapMove.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="EstimaTurmas.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\GUtil.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\HeuristicaNuno.h">
+      <Filter>HeuristicaNuno</Filter>
+    </ClInclude>
+    <ClInclude Include="Horario.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="HorarioAula.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="HorarioDia.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="ILSLPerturbation.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="Equivalencia.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Magisterio.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="NivelDificuldadeHorario.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="NivelDificuldade.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Oferta.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="ParametrosPlanejamento.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Professor.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Sala.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="TipoTitulacao.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnoIES.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="TipoContrato.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="TipoCurso.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="TipoDisciplina.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="TipoSala.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Fixacao.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="MIPUnico.h">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableMIPUnico.h">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverMIPUnico.h">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveShift.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveShiftValidator.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveSwap.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveSwapEqBlocksValidator.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveSwapEqSchedulesBlocksValidator.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveSwapEqTeachersBlocksValidator.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveValidator.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\Move.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="Move.hpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraint.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="IteratedLocalSearchLevels.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NSIteratorSwapEqBlocks.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NSIterator.hpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NSSeq.hpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NSSeqSwapEqBlocks.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NSShift.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NSSwapEqSchedulesBlocks.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NSSwapEqTeachersBlocks.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NS.hpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\ParametrosHeuristica.h">
+      <Filter>HeuristicaNuno</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableTatInt.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableTatico.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="VariablePre.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableEstimaTurmas.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="Variable.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="TaticoIntAlunoHor.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverMIP.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\SolverTatico.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="SolucaoTaticoInicial.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="PreModelo.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="Operacional.h">
+      <Filter>Puro MIP\MIP-Operacional</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableOp.h">
+      <Filter>Puro MIP\MIP-Operacional</Filter>
+    </ClInclude>
+    <ClInclude Include="Unidade.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\SwapMove.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\SwapDivisionMove.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\STVariable.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\STConstraint.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\Node.h">
+      <Filter>HeuristicaNuno</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\SaveSolucao.h">
+      <Filter>HeuristicaNuno</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionPool.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\SolutionBuilder.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\ShiftMove.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="RVND.hpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomDescentMethod.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\SolverTaticoHeur.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="HashUtil.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="Heuristic.hpp">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\Instance.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bibliotecas\codelib\combinatoria.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ConverteHorariosCreditos.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="$(CODELIB)\CPUTimerWin.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="$(CODELIB)\DateTime.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="$(CODELIB)\codelib\ErrorHandler.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="$(CODELIB)\GGroup.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="InputMethods.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="OFBase.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\TimeLogger.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Trio.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="$(OPT_LP)\include\opt_col.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="$(OPT_LP)\include\opt_lp.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="$(OPT_LP)\include\opt_row.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="SolucaoInicialOperacional.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolucaoOperacional.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="SolverTaticoHeur\Solution.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\AlunoHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\AulaHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="ConjUnidades.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\DadosHeuristica.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\EntidadeAlocavel.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\MIPAlocarProfCons.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\MIPAlocarProfVar.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\ObjectiveFunctionHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\OfertaDisciplina.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\ProfessorHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\SalaHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\SolucaoHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\StatsSolucaoHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\TurmaHeur.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\TurmaPotencial.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\AbridorTurmas.h">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\ImproveMethods.h">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\MIPAloc.h">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\MIPAlocarAlunos.h">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\MIPAlocarProfs.h">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\RecursivePreProc.h">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\TurmasIncHorarioDia.h">
+      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\ClusterUnidades.h">
+      <Filter>HeuristicaNuno\Útil</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\GeradorCombsDiv.h">
+      <Filter>HeuristicaNuno\Útil</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\UtilHeur.h">
+      <Filter>HeuristicaNuno\Útil</Filter>
+    </ClInclude>
+    <ClInclude Include="RestricaoViolada.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="ProfessorVirtualOutput.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="ProblemSolution.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditoDisponivel.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="Avaliador.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="CustoAlocacao.h">
+      <Filter>Heuristica-MarcioMine</Filter>
+    </ClInclude>
+    <ClInclude Include="NaoAtendimento.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionLoader.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="ValidateSolution.h">
+      <Filter>Puro MIP\MIPs antigos</Filter>
+    </ClInclude>
+    <ClInclude Include="Aula.h">
+      <Filter>Puro MIP</Filter>
+    </ClInclude>
+    <ClInclude Include="Solver.h">
+      <Filter>Puro MIP</Filter>
+    </ClInclude>
+    <ClInclude Include="cmdLine.h" />
+    <ClInclude Include="MainMIPPuro.h">
+      <Filter>Puro MIP</Filter>
+    </ClInclude>
+    <ClInclude Include="MainHeuristicaIES.h">
+      <Filter>HeuristicaNuno</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="HeuristicaNuno">
+      <UniqueIdentifier>{80c95249-943e-4227-8bd7-5ebcc176e537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Domínio">
+      <UniqueIdentifier>{38cebab3-f63e-4717-82ed-0f1fc24df6e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Output">
+      <UniqueIdentifier>{105c3809-4725-4d54-b788-666535432136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Heuristica-MarcioMine">
+      <UniqueIdentifier>{4579ffee-5436-4ae2-be80-c0b7f259e819}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{da91fb5c-ddcc-4478-b6ee-4f2b7bc535a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OPT_LP">
+      <UniqueIdentifier>{d7d34e92-bb09-4f03-9dd6-5bf81576f3fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeuristicaNuno\Estruturas">
+      <UniqueIdentifier>{6a2ed078-0862-4db3-a751-39e05c658ed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeuristicaNuno\Melhoradores da solução">
+      <UniqueIdentifier>{4b6b6f1a-9ec3-45e7-8040-5739e0c4b822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeuristicaNuno\Útil">
+      <UniqueIdentifier>{f8e85dd4-9404-4d37-b228-99422a6016f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Puro MIP">
+      <UniqueIdentifier>{6e57dddc-c394-4ad0-8723-de02b9663ad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Puro MIP\MIP-Unico">
+      <UniqueIdentifier>{b5560ea1-acd3-4923-867e-d0c347e8f7ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Puro MIP\MIPs antigos">
+      <UniqueIdentifier>{28889c34-6cc6-444a-ab23-a4e02a6fbf6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Puro MIP\MIP-Operacional">
+      <UniqueIdentifier>{db73764b-0c90-4ca6-bdd5-94c3942e0a5d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
 </Project>
