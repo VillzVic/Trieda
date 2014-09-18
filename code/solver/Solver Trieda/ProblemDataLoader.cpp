@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <iterator>
 
 #include "CentroDados.h"
 #include "Indicadores.h"
@@ -1646,14 +1647,13 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 
 void ProblemDataLoader::combinacaoDivCreditos()
 {
-	//if ( ! problemData->parametros->regrasEspecificasDivisaoCredito &&
-	//	 ! problemData->parametros->regrasGenericasDivisaoCredito )
-	//	 return;
+	bool espelhar = false;
 
    ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
    {
 	   Disciplina *disciplina = *itDisc;
-
+	   
+	   // --------------------------------------------------------------------------------
 	   // Elimina regra específica de divisão de créditos, caso o parâmetro esteja desabilitado.
 	   if ( ! problemData->parametros->regrasEspecificasDivisaoCredito )
 	   {
@@ -1663,7 +1663,8 @@ void ProblemDataLoader::combinacaoDivCreditos()
 			   disciplina->divisao_creditos.clear();
 		   }
 	   }
-
+	   
+	   // --------------------------------------------------------------------------------
 	   // Se a disciplina não tem regra de divisão de créditos especificada, procura regras
 	   // gerais com o mesmo número total de créditos
 	   if ( disciplina->divisao_creditos.size() == 0 )
@@ -1678,7 +1679,8 @@ void ProblemDataLoader::combinacaoDivCreditos()
 				}
 		   }
 	   }
-
+	   
+	   // --------------------------------------------------------------------------------
 	   if ( disciplina->divisao_creditos.size() == 0 )
 	   {
 		   if ( disciplina->getTotalCreditos() == 1 )
@@ -1696,102 +1698,144 @@ void ProblemDataLoader::combinacaoDivCreditos()
 			   continue;
 		   }
 	   }
+	   
+	   // --------------------------------------------------------------------------------
+	   // Calcula as combinações
 
-		//if ( disciplina->getId() == 31304 )
-		//	std::cout<<"\n\nDisciplina 31304";
+	   std::set< std::map< int/*dia*/, int/*ncred*/ > > combinacoes;
 
 	   ITERA_GGROUP_LESSPTR( itDiv, disciplina->divisao_creditos, DivisaoCreditos )
 	   {
 		    DivisaoCreditos *divisao = *itDiv;
-
-		    std::pair< int /*dia*/, int/*numCreditos*/ > p;
-			std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vAux; 
+						
+			std::map< int/*dia*/, int/*ncred*/ > mapDiaNCred;
 
 			for ( int i = 0; i < 7; i++ )
 			{
-				p = std::make_pair( i+2, divisao->dia[i] );
-				vAux.push_back( p );
+				mapDiaNCred[i+2] = divisao->dia[i];
 			}
 			
-			bool atualiza = true;
-
-			// Verifica se a regra de divisão de créditos possui dias válidos
-			for ( int a = 0; a < 7; a++ )
+			// Para cada regra de divisão de creditos podem existir a original e mais 6
+			for ( int k = 0; k <= 6; k++ )
 			{
-				if ( vAux[a].second != 0 )
+				std::map< int/*dia*/, int/*ncred*/ > mapDiaNCredShift;
+
+				for ( auto it = mapDiaNCred.begin(); it != mapDiaNCred.end(); it++ )
 				{
-					if ( disciplina->diasLetivos.find( vAux[ a ].first ) ==
+					std::map< int/*dia*/, int/*ncred*/ >::iterator itMinus1;
+					if ( it == mapDiaNCred.begin() )
+						itMinus1 = std::prev(mapDiaNCred.end());
+					else
+						itMinus1 = std::prev(it);
+
+					mapDiaNCredShift[it->first] = itMinus1->second;
+				}
+
+				mapDiaNCred.clear();
+				mapDiaNCred = mapDiaNCredShift;
+
+				bool adicionar = true;
+
+				// Verifica se as regras de divisão de créditos criadas possui dias válidos
+				for ( auto itDia = mapDiaNCred.begin(); itDia != mapDiaNCred.end(); itDia++ )
+				{
+					if ( itDia->second > 0 )
+					if ( disciplina->diasLetivos.find( itDia->first ) ==
 						 disciplina->diasLetivos.end() )
 					{
-						 atualiza = false;
-						 break;
+						adicionar = false;
+						break;
 					}
+				}
+
+				if ( adicionar )
+				{
+					combinacoes.insert(mapDiaNCred);
 				}
 			}
+	   }
+	   
+	   // --------------------------------------------------------------------------------
+	   // Espelha as combinações calculadas anteriormente
 
-			if ( atualiza )
-			{
-				disciplina->combinacao_divisao_creditos.push_back( vAux );
-			}
-					
-			// Para cada regra de divisão de creditos podem existir mais 6
-			for ( int k = 0; k < 6; k++ )
-			{
-				std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vec; 
+	   if ( espelhar )
+	   {
+		   std::set< std::map< int, int > > espelhados;
 
-				for ( int j = 0; j < 7; j++ )
-				{
-					if ( j == 0 )
-					{
-						p = std::make_pair( vAux[0].first, vAux[6].second );
-					}
-					else
-					{
-						p = std::make_pair( vAux[j].first, vAux[j-1].second );
-					}
+		   // Constroi as combinações espelhadas
+		   auto itK = combinacoes.begin();
+		   for ( ; itK != combinacoes.end(); itK++ )
+		   {
+			   std::map< int, int > original = (*itK);
+			   		   
+			   std::map< int, int > espelho; 
+			   
+			   bool adicionar=true;
 
-					vec.push_back( p );
-				}
+			   // Espelha
+			   auto itDir = original.end();
+			   auto itEsq = original.begin();
+			   for ( ; (itEsq != itDir) && adicionar; itEsq++, itDir-- )			   
+			   {
+				   int diaEsq = itEsq->first;
+				   int ncredEsq = itEsq->second;				   
+				   int diaDir = itDir->first;
+				   int ncredDir = itDir->second;
+				   
+				   if ( ncredDir > 0 )	// Se ncred > 0
+				   {
+					   if ( disciplina->diasLetivos.find( diaEsq ) !=
+							disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
+					   {
+						   espelho[diaEsq] = ncredDir;
+					   }
+					   else
+					   {
+						   adicionar=false;
+					   }
+				   }
+				   if ( ncredEsq > 0 )	// Se ncred > 0
+				   {
+					   if ( disciplina->diasLetivos.find( diaDir ) !=
+							disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
+					   {
+						   espelho[diaDir] = ncredEsq;
+					   }
+					   else
+					   {
+						   adicionar=false;
+					   }
+				   }
+			   }
+			   
+			   // Salva o espelho
+			   if ( adicionar )
+			   {
+				   if ( espelhados.find( espelho) == espelhados.end() )
+					   espelhados.insert( espelho );
+			   }
+		   }
 
-				//if ( disciplina->getId() == 31304 )
-				//{
-				//	std::cout<<"\nk = " << k << ": ";
+		   // Adiciona os espelhos
+		   for ( auto itEspelho = espelhados.begin(); itEspelho != espelhados.end(); itEspelho++ )
+		   {
+			   if ( combinacoes.find( *itEspelho ) == combinacoes.end() )
+				   combinacoes.insert(*itEspelho);
+		   }
+	   }
 
-				//	for ( int j = 0; j < 7; j++ )
-				//		std::cout<<"  " << vec[j].second;
-				//}
+	   // --------------------------------------------------------------------------------
+	   // Adiciona as combinações na disciplina
+	   for ( auto itK = combinacoes.begin(); itK != combinacoes.end(); itK++ )
+	   {
+		   std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > combK;
 
-				vAux.clear();
-				vAux = vec;
-				
-				atualiza = true;
+		   for ( auto itMapDiaCred = (*itK).begin(); itMapDiaCred != (*itK).end(); itMapDiaCred++ )
+		   {			   
+			   combK.push_back( std::make_pair(itMapDiaCred->first, itMapDiaCred->second) );
+		   }
 
-				// Verifica se as regras de divisão de créditos criadas são válidas
-				for ( int b = 0; b < 7; b++ )
-				{
-					if ( vAux[ b ].second != 0 )
-					{
-						if ( disciplina->diasLetivos.find( vAux[ b ].first ) ==
-							 disciplina->diasLetivos.end() )
-						{
-							 atualiza = false;
-							 break;
-						}
-					}
-				}
-
-				//if ( disciplina->getId() == 31304 ){
-				//	if ( atualiza )
-				//	std::cout<<"  OK";
-				//	else
-				//	std::cout<<"  NOT OK";
-				//}
-
-				if ( atualiza )
-				{
-					disciplina->combinacao_divisao_creditos.push_back( vAux );
-				}
-			}
+		   disciplina->combinacao_divisao_creditos.push_back( combK );
 	   }
    }
 

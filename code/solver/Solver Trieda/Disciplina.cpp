@@ -839,7 +839,7 @@ int Disciplina::getNroTurmasAssociadas( int turma )
 int Disciplina::getNroCredsRegraDiv( int k, int dia )
 {
 	int num = 0;
-
+	
 	if ( this->combinacao_divisao_creditos.size() > k )
 	{
 		std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > >::iterator

@@ -25,8 +25,6 @@ public:
       V_SLACK_DEMANDA_ALUNO = 6,				// fd_{d,a}
 	  V_TURMA_ATEND_CURSO = 7,					// b_{i,d,c}
       V_SLACK_ABERT_SEQ_TURMA = 10,				// ft_{i,d,cp}
-	  V_SLACK_DIST_CRED_DIA_SUPERIOR = 11,		// fcp_{i,d,s,t}
-      V_SLACK_DIST_CRED_DIA_INFERIOR = 12,		// fcm_{i,d,s,t}
       
       V_COMBINACAO_DIVISAO_CREDITO = 13,		// m{i,d,k,cp}
       V_SLACK_COMBINACAO_DIVISAO_CREDITO_M = 14,// fkm{i,d,t,cp}
@@ -53,7 +51,9 @@ public:
 	  V_HI_ALUNOS = 37,							// hia_{a,t}
 	  V_HF_ALUNOS = 38,							// hfa_{a,t}
 	  V_FOLGA_GAP_ALUNOS = 39,					// fagap_{a,t}
-	  V_FOLGA_GAP_PROF = 40						// fpgap_{p,t}
+	  V_FOLGA_GAP_PROF = 40,					// fpgap_{p,t}
+
+	  V_FOLGA_MIN_CRED_DIA_ALUNO = 41			// fcad_{a,t}
 	  
    };
 

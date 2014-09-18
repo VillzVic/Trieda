@@ -12008,7 +12008,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito_hash( int campusId )
 		   turma = v.getTurma();
 		   ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
 		   {  			   
-			   int numCreditos = disciplina->getNroCredsRegraDiv( k, *itDia - 2 );  // N{d,k,t}
+			   int numCreditos = disciplina->getNroCredsRegraDiv( k, *itDia );  // N{d,k,t}
 			   coefs.push_back( -numCreditos );
 			   dias.add( *itDia );
 		   }

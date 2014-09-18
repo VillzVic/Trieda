@@ -9,6 +9,8 @@ Global
 		Debug|x64 = Debug|x64
 		DebugCplex64|Win32 = DebugCplex64|Win32
 		DebugCplex64|x64 = DebugCplex64|x64
+		DebugGurobi64|Win32 = DebugGurobi64|Win32
+		DebugGurobi64|x64 = DebugGurobi64|x64
 		DebugHeuristica64|Win32 = DebugHeuristica64|Win32
 		DebugHeuristica64|x64 = DebugHeuristica64|x64
 		Release|Win32 = Release|Win32
@@ -29,6 +31,10 @@ Global
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugCplex64|Win32.Build.0 = DebugCplex64|Win32
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugCplex64|x64.ActiveCfg = DebugCplex64|x64
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugCplex64|x64.Build.0 = DebugCplex64|x64
+		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugGurobi64|Win32.ActiveCfg = DebugGurobi64|Win32
+		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugGurobi64|Win32.Build.0 = DebugGurobi64|Win32
+		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugGurobi64|x64.ActiveCfg = DebugGurobi64|x64
+		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugGurobi64|x64.Build.0 = DebugGurobi64|x64
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugHeuristica64|Win32.ActiveCfg = Debug|x64
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugHeuristica64|x64.ActiveCfg = Debug|x64
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.DebugHeuristica64|x64.Build.0 = Debug|x64
@@ -44,8 +50,8 @@ Global
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseGurobi64|Win32.Build.0 = ReleaseGurobi64|Win32
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseGurobi64|x64.ActiveCfg = ReleaseGurobi64|x64
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseGurobi64|x64.Build.0 = ReleaseGurobi64|x64
-		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseHeuristica64|Win32.ActiveCfg = ReleaseHeuristica64|x64
-		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseHeuristica64|Win32.Build.0 = ReleaseHeuristica64|x64
+		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseHeuristica64|Win32.ActiveCfg = ReleaseHeuristica64|Win32
+		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseHeuristica64|Win32.Build.0 = ReleaseHeuristica64|Win32
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseHeuristica64|x64.ActiveCfg = ReleaseGurobi64|x64
 		{F1BE51D8-F246-4132-8DDC-04958EEACDBF}.ReleaseHeuristica64|x64.Build.0 = ReleaseGurobi64|x64
 	EndGlobalSection

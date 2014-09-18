@@ -15,6 +15,9 @@ int MIPUnico::idCounter = 0;
 // -----------------------------------------------------------------------------------------------
 // Parâmetros
 
+// Disciplinas
+const bool MIPUnico::divCredForte = false;
+
 // Professores
 const bool MIPUnico::permiteCriarPV = false;
 const bool MIPUnico::minimizarCustoProf = false;
@@ -22,6 +25,10 @@ const int MIPUnico::pesoGapProf = 1;
 
 // Alunos
 const int MIPUnico::pesoGapAluno = 3;
+const int MIPUnico::pesoMinCredDiaAluno = 500;
+const int MIPUnico::minCredDiaAluno = 4;
+const bool MIPUnico::considerarMinCredDiaAluno = true;
+
 
 // -----------------------------------------------------------------------------------------------
 
@@ -890,44 +897,6 @@ void MIPUnico::addVariaveisTatico()
 				x->setDisciplina( v->getDisciplina() );
 				x->setDia( v->getDia() );
 				x->setCampus( v->getCampus() );
-				x->setValue( v->getValue() );
-
-				if ( solVarsTatico->find( x ) == solVarsTatico->end() )
-				{
-					this->solVarsTatico->add( x );
-				}
-				else
-					delete x;
-				break;
-			 }
-			 case VariableMIPUnico::V_SLACK_DIST_CRED_DIA_SUPERIOR: // fcp_{i,d,s,t}
-			 {
-				VariableTatico * x = new VariableTatico();
-				x->setType( VariableTatico::V_SLACK_DIST_CRED_DIA_SUPERIOR );
-				x->setTurma( v->getTurma() );
-				x->setDisciplina( v->getDisciplina() );
-				x->setUnidade( v->getUnidade() );
-				x->setSubCjtSala( v->getSubCjtSala() );
-				x->setDia( v->getDia() );
-				x->setValue( v->getValue() );
-
-				if ( solVarsTatico->find( x ) == solVarsTatico->end() )
-				{
-					this->solVarsTatico->add( x );
-				}
-				else
-					delete x;
-				break;
-			 }
-			 case VariableMIPUnico::V_SLACK_DIST_CRED_DIA_INFERIOR: // fcm_{i,d,s,t}
-			 {
-				VariableTatico * x = new VariableTatico();
-				x->setType( VariableTatico::V_SLACK_DIST_CRED_DIA_INFERIOR );	// fcm_{i,d,s,t}
-				x->setTurma( v->getTurma() );
-				x->setDisciplina( v->getDisciplina() );
-				x->setUnidade( v->getUnidade() );
-				x->setSubCjtSala( v->getSubCjtSala() );
-				x->setDia( v->getDia() );
 				x->setValue( v->getValue() );
 
 				if ( solVarsTatico->find( x ) == solVarsTatico->end() )
@@ -2472,9 +2441,8 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 		lp->setMIPScreenLog( 4 );
 		lp->setMIPEmphasis(1);
 		lp->setPolishAfterTime( this->getTimeLimit(Solver::TAT_INT2) / 2 );
-		lp->setSymetry(2);
-		lp->setCuts(-1);
-		lp->setRins(10);
+		lp->setSymetry(-1);
+		lp->setCuts(2);
 		lp->setHeurFrequency(0.5);
 
 		#if defined SOLVER_GUROBI && defined USAR_CALLBACK
@@ -3465,72 +3433,6 @@ bool MIPUnico::criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prio
 			 }
 			 break;
 		 }
-		 case VariableMIPUnico::V_SLACK_DIST_CRED_DIA_SUPERIOR: // fcp_{i,d,s,t}
-		 {
-			 vSol.reset();
-			 vSol.setType( VariableTatico::V_SLACK_DIST_CRED_DIA_SUPERIOR );	// fcp_{i,d,s,t}
-			 vSol.setTurma( v->getTurma() );
-			 vSol.setDisciplina( v->getDisciplina() );
-			 vSol.setUnidade( v->getUnidade() );
-			 vSol.setSubCjtSala( v->getSubCjtSala() );
-			 vSol.setDia( v->getDia() );
-
-			 if ( SolVarsFound(vSol) )
-			 {
-				fixar=true;
-				return (true && CRIAR_VARS_FIXADAS);
-			 }
-			 else // se não existe 'fcp', só cria se for pra turmas novas
-			 {
-				if ( problemData->existeTurmaDiscCampus( v->getTurma(), v->getDisciplina()->getId(), v->getUnidade()->getIdCampus() ) )
-				{
-					return false;
-				}
-				else // turma nova
-				{
-					if ( permitirAbertura( v->getTurma(), v->getDisciplina(), v->getUnidade()->getIdCampus() ) )
-					{
-						fixar=false;
-						return true;							
-					}
-					else return false;				 
-				}
-			 }
-			 break;
-		 }
-		 case VariableMIPUnico::V_SLACK_DIST_CRED_DIA_INFERIOR: // fcm_{i,d,s,t}
-		 {
-			 vSol.reset();
-			 vSol.setType( VariableTatico::V_SLACK_DIST_CRED_DIA_INFERIOR );	// fcm_{i,d,s,t}
-			 vSol.setTurma( v->getTurma() );
-			 vSol.setDisciplina( v->getDisciplina() );
-			 vSol.setUnidade( v->getUnidade() );
-			 vSol.setSubCjtSala( v->getSubCjtSala() );
-			 vSol.setDia( v->getDia() );
-
-			 if ( SolVarsFound(vSol) )
-			 {
-				fixar=true;
-				return (true && CRIAR_VARS_FIXADAS);
-			 }
-			 else // se não existe 'fcp', só cria se for pra turmas novas
-			 {
-				if ( problemData->existeTurmaDiscCampus( v->getTurma(), v->getDisciplina()->getId(), v->getUnidade()->getIdCampus() ) )
-				{
-					return false;
-				}
-				else // turma nova
-				{
-					if ( permitirAbertura( v->getTurma(), v->getDisciplina(), v->getUnidade()->getIdCampus() ) )
-					{
-						fixar=false;
-						return true;							
-					}
-					else return false;				 
-				}
-			 }
-			 break;
-		 }
 		 case VariableMIPUnico::V_SLACK_DEMANDA_ALUNO: // fd_{d,a}
 		 {
 			 // não permite desalocar o que já está fixo.
@@ -4000,30 +3902,7 @@ int MIPUnico::criaVariaveisTatico( int campusId, int P, int r )
 	std::cout << "numVars \"fkp e fkm\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
 	numVarsAnterior = num_vars;
 #endif
-
-/*
-	timer.start();
-	num_vars += criaVariavelTaticoFolgaDistCredDiaSuperior( campusId, P ); // fcp_{d,t}
-	timer.stop();
-	dif = timer.getCronoCurrSecs();
-
-#ifdef PRINT_cria_variaveis
-	std::cout << "numVars \"fcp\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl; fflush(NULL);
-	numVarsAnterior = num_vars;
-#endif
-   		
-
-	timer.start();
-	num_vars += criaVariavelTaticoFolgaDistCredDiaInferior( campusId, P ); // fcm_{d,t}
-	timer.stop();
-	dif = timer.getCronoCurrSecs();
-
-#ifdef PRINT_cria_variaveis
-	std::cout << "numVars \"fcm\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl; fflush(NULL);
-	numVarsAnterior = num_vars;
-#endif
-*/
-
+	
 	timer.start();
 	std::cout << "Criando \"zc\": ";fflush(NULL);
 	num_vars += this->criaVariavelTaticoAberturaCompativelAPartirDeX( campusId, P ); // zc
@@ -4184,6 +4063,16 @@ int MIPUnico::criaVariaveisTatico( int campusId, int P, int r )
 	std::cout << "numVars \"fagap\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
 	numVarsAnterior = num_vars;
 		
+	
+   timer.start();
+	std::cout << "Criando \"fcad\": ";fflush(NULL);				// fcad_{a,t}
+   num_vars += this->criarVariavelFolgaMinCredsDiaAluno();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	std::cout << "numVars \"fcad\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
+	numVarsAnterior = num_vars;
+		
+	
 	
 	lp->updateLP();
 
@@ -6190,7 +6079,10 @@ int MIPUnico::criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P )
 int MIPUnico::criaVariavelTaticoFolgaCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P )
 {
 	int numVars = 0;
-	   
+
+	if ( MIPUnico::divCredForte )
+	   return numVars;
+
 	Campus *campus = problemData->refCampus[campusId];
 
 	std::map< VariableMIPUnico, Trio<double, double, double> > var_Bounds;
@@ -6312,6 +6204,9 @@ peso associado a função objetivo.
 int MIPUnico::criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int P )
 {
    int numVars = 0;
+   
+	if ( MIPUnico::divCredForte )
+	   return numVars;
 
    Campus * cp = problemData->refCampus[campusId];
 
@@ -6429,269 +6324,6 @@ int MIPUnico::criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int
 				}
 			}
 		}
-   }
-
-   return numVars;
-}
-
-/*====================================================================/
-%DocBegin TRIEDA_LOAD_MODEL
-
-%Var fcp_{d,t}
-
-%Desc 
-variável de folga superior para a restrição de fixação da distribuição de créditos por dia.
-%ObjCoef
-\xi \cdot \sum\limits_{d \in D} \sum\limits_{t \in T} fcp_{d,t}
-
-%Data \xi
-%Desc
-peso associado a função objetivo.
-
-%DocEnd
-/====================================================================*/
-
-int MIPUnico::criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId, int P )
-{
-   int numVars = 0;
-
-   Disciplina * disciplina = NULL;
-
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-	  if ( itCampus->getId() != campusId )
-	  {
-		  continue;
-	  }
-
-      ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
-      {
-         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
-         {
-            ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
-            {
-                disciplina = ( *it_disciplina );
-
-				// A disciplina deve ser ofertada no campus especificado
-				if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
-					 problemData->cp_discs[campusId].end() )
-				{
-					continue;
-				}
-
-			   #pragma region Equivalencias
-			   if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-				 	  problemData->mapDiscSubstituidaPor.end() ) &&
-					!problemData->ehSubstituta( disciplina ) )
-			   {
-				   continue;
-			   }
-			   #pragma endregion
-
-				if ( problemData->parametros->considerar_equivalencia_por_aluno && USAR_EQUIVALENCIA )
-				{
-					if ( !problemData->haDemandasDiscNoCampus_Equiv( disciplina->getId(), campusId, P ) )
-						continue;
-				}
-				else
-				{
-					if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
-						continue;
-				}
-
-               for ( int turma = 1; turma <= disciplina->getNumTurmas(); turma++ )
-               {
-                  // Dada uma disciplina, recupera os seus dias letivos, observando as fixações
-                  GGroup< int > dias_letivos
-                     = itCjtSala->dias_letivos_disciplinas[ ( disciplina ) ];
-
-                  GGroup< int >::iterator itDiasLetDisc = dias_letivos.begin();
-
-                  for (; itDiasLetDisc != dias_letivos.end(); itDiasLetDisc++ )
-                  {
-                     ITERA_GGROUP_LESSPTR( it_fix, problemData->fixacoes, Fixacao )
-                     {
-                        if ( it_fix->getDisciplinaId() == disciplina->getId() 
-                           && it_fix->getDiaSemana() == ( *itDiasLetDisc ) )
-                        {
-                           VariableMIPUnico v;
-                           v.reset();
-                           v.setType( VariableMIPUnico::V_SLACK_DIST_CRED_DIA_SUPERIOR );
-
-                           v.setTurma( turma );
-                           v.setDisciplina( disciplina );
-                           v.setDia( *itDiasLetDisc );
-                           v.setSubCjtSala( *itCjtSala );
-
-                           if ( vHashTatico.find( v ) == vHashTatico.end() )
-                           {
-								bool fixar=false;
-
-								if ( !criaVariavelTaticoInt( &v, fixar, P ) )
-									continue;
-
-								vHashTatico[ v ] = lp->getNumCols();
-								
-                                int cred_disc_dia = it_fix->disciplina->getMaxCreds();
-
-								double lowerBound = 0.0;
-								double upperBound = cred_disc_dia;
-								
-								double coef = 0.0;
-
-								if ( problemData->parametros->funcao_objetivo == 0 )
-								{
-									coef = -itCampus->getCusto()/2;
-								}
-								else if ( problemData->parametros->funcao_objetivo == 1 )
-								{
-									coef = itCampus->getCusto()/2;
-								}
-               
-								OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound,
-										( char * )v.toString().c_str() );
-			                 
-								lp->newCol( col );
-
-                                numVars++;
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   return numVars;
-}
-
-/*====================================================================/
-%DocBegin TRIEDA_LOAD_MODEL
-
-%Var fcm_{d,t}  
-
-%Desc 
-variável de folga inferior para a restrição de fixação da distribuição de créditos por dia.
-
-%ObjCoef
-\xi \cdot \sum\limits_{d \in D} \sum\limits_{t \in T} fcm_{d,t}
-
-%DocEnd
-/====================================================================*/
-
-int MIPUnico::criaVariavelTaticoFolgaDistCredDiaInferior( int campusId, int P )
-{
-   int numVars = 0;
-
-   Disciplina * disciplina = NULL;
-
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-	   if ( itCampus->getId() != campusId )
-	   {
-		   continue;
-	   }
-
-      ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
-      {
-         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
-         {
-            ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
-            {
-               disciplina = ( *it_disciplina );
-
-				// A disciplina deve ser ofertada no campus especificado
-				if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
-					 problemData->cp_discs[campusId].end() )
-				{
-					continue;
-				}
-
-			   #pragma region Equivalencias
-				if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-						problemData->mapDiscSubstituidaPor.end() ) &&
-						!problemData->ehSubstituta( disciplina ) )
-			   {
-				  continue;
-			   }
-			   #pragma endregion
-
-				if ( problemData->parametros->considerar_equivalencia_por_aluno && USAR_EQUIVALENCIA )
-				{
-					if ( !problemData->haDemandasDiscNoCampus_Equiv( disciplina->getId(), campusId, P ) )
-						continue;
-				}
-				else
-				{
-					if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
-						continue;
-				}
-
-               for ( int turma = 1; turma <= disciplina->getNumTurmas(); turma++ )
-               {
-                  // Dada uma disciplina, recupera os seus dias letivos, observando as fixações
-                  GGroup< int > dias_letivos =
-                     itCjtSala->dias_letivos_disciplinas[ ( disciplina ) ];
-
-                  GGroup< int >::iterator itDiasLetDisc = dias_letivos.begin();
-
-                  for (; itDiasLetDisc != dias_letivos.end(); itDiasLetDisc++ )
-                  {
-                     ITERA_GGROUP_LESSPTR( it_fix, problemData->fixacoes, Fixacao )
-                     {
-                        if ( it_fix->getDisciplinaId() == disciplina->getId() 
-                           && it_fix->getDiaSemana() == ( *itDiasLetDisc ) )
-                        {
-                           VariableMIPUnico v;
-                           v.reset();
-                           v.setType( VariableMIPUnico::V_SLACK_DIST_CRED_DIA_INFERIOR );
-
-                           v.setTurma( turma );
-                           v.setDisciplina( disciplina );
-                           v.setDia( *itDiasLetDisc );
-                           v.setSubCjtSala( *itCjtSala );
-
-                           if ( vHashTatico.find( v ) == vHashTatico.end() )
-                           {
-								bool fixar=false;
-
-								if ( !criaVariavelTaticoInt( &v, fixar, P ) )
-									continue;
-
-								vHashTatico[ v ] = lp->getNumCols();
-								
-								int cred_disc_dia = it_fix->disciplina->getMinCreds();
-								
-								double lowerBound = 0.0;
-								double upperBound = cred_disc_dia;								
-								
-							    double coef = 0.0;
-
-								if ( problemData->parametros->funcao_objetivo == 0 )
-								{
-									coef = -itCampus->getCusto()/2;
-								}
-								else if ( problemData->parametros->funcao_objetivo == 1 )
-								{
-									coef = itCampus->getCusto()/2;
-								}               
-
-								OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound,
-											( char* )v.toString().c_str() );
-
-								lp->newCol( col );
-
-                                numVars += 1;
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
    }
 
    return numVars;
@@ -9168,6 +8800,18 @@ int MIPUnico::criaRestricoesTatico( int campusId, int prioridade, int r )
 	std::cout << "numRest criarRestricaoAlunoHiHf_: " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
 	numRestAnterior = restricoes;
 #endif
+		
+
+	timer.start();
+	restricoes += criarRestricaoMinCredsDiaAluno();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest criarRestricaoMinCredsDiaAluno: " << (restricoes - numRestAnterior)  
+		<<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
 
 	lp->updateLP();
 
@@ -10544,12 +10188,11 @@ int MIPUnico::criaRestricaoTaticoDivisaoCredito_hash( int campusId )
    
    VariableMIPUnicoHash::iterator vit;
 
-   vit = vHashTatico.begin();
-   while(vit != vHashTatico.end())
+   for ( vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
    {
 	   VariableMIPUnico v = vit->first;
 
-	   Disciplina *disciplina=NULL;
+	   Disciplina *disciplina=nullptr;
 	   int turma;
 	   GGroup<int> dias;
 	   std::vector<double> coefs;
@@ -10584,14 +10227,13 @@ int MIPUnico::criaRestricaoTaticoDivisaoCredito_hash( int campusId )
 		   turma = v.getTurma();
 		   ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
 		   {  			   
-			   int numCreditos = disciplina->getNroCredsRegraDiv( k, *itDia - 2 );  // N{d,k,t}
+			   int numCreditos = disciplina->getNroCredsRegraDiv( k, *itDia );  // N{d,k,t}
 			   coefs.push_back( -numCreditos );
 			   dias.add( *itDia );
 		   }
        }
 	   else
 	   {
-		   vit++;
 		   continue;
 	   }
 
@@ -10641,8 +10283,6 @@ int MIPUnico::criaRestricaoTaticoDivisaoCredito_hash( int campusId )
 
 			at++;
 	   }
-
-       vit++;
    }
 
    chgCoeffList( coeffList, coeffListVal );
@@ -11543,6 +11183,7 @@ int MIPUnico::criaRestricaoTaticoAtendeAluno( int campusId, int prioridade )
 	sum[s] o_{i,d,s} <= z_{i,d,cp}
 */
 int MIPUnico::criaRestricaoTaticoSalaUnica( int campusId )
+
 {
    int restricoes = 0;
    int nnz;
@@ -11612,7 +11253,6 @@ int MIPUnico::criaRestricaoTaticoSalaUnica( int campusId )
 
    return restricoes;
 }
-
 
 /*
 	Para cada turma i, disciplina d, sala s:
@@ -16201,4 +15841,144 @@ int MIPUnico::criarRestricaoAlunoGap_( Aluno* const aluno, const int dia,
 	numRestr++;
 
 	return numRestr;
+}
+
+
+int MIPUnico::criarRestricaoMinCredsDiaAluno()
+{
+	int restricoes = 0;
+	
+	if ( ! MIPUnico::considerarMinCredDiaAluno )
+		return restricoes;
+
+	char name[ 1024 ];
+	
+	for(auto itAluno = vars_aluno_aula.begin(); itAluno != vars_aluno_aula.end(); ++itAluno)
+	{
+		Aluno* const aluno = itAluno->first;
+		
+		for(auto itDia = itAluno->second.begin(); itDia != itAluno->second.end(); ++itDia)
+		{
+			const int dia = itDia->first;
+			
+			// -------------------------------------
+			// Sets the constraint
+
+			ConstraintMIPUnico c;
+			c.reset();
+			c.setType( ConstraintMIPUnico::C_ALUNO_MIN_CREDS_DIA );
+			c.setAluno( aluno );
+			c.setDia( dia );
+					
+			auto cit = cHashTatico.find(c);
+			if(cit != cHashTatico.end())
+			{
+				continue;
+			}
+
+			int nnz = 50;
+
+			sprintf( name, "%s", c.toString( etapa ).c_str() );
+			OPT_ROW row( nnz, OPT_ROW::GREATER, MIPUnico::minCredDiaAluno, name );
+
+			// -------------------------------------
+			// Insere variaveis v_{a,i,d,s,t,hi,hf}
+
+			for(auto itDti = itDia->second.begin(); itDti != itDia->second.end(); ++itDti)
+			{				
+				for(auto itCp = itDti->second.begin(); itCp != itDti->second.end(); ++itCp)
+				{
+					for(auto itDisc = itCp->second.begin(); itDisc != itCp->second.end(); ++itDisc)
+					{
+						for(auto itTurma = itDisc->second.begin(); itTurma != itDisc->second.end(); ++itTurma)
+						{
+							for(auto itVars = itTurma->second.begin(); itVars != itTurma->second.end(); ++itVars)
+							{
+								const int colV = itVars->first;
+								const VariableMIPUnico var = itVars->second;			
+									
+								HorarioAula *hf = var.getHorarioAulaFinal();
+								HorarioAula *hi = var.getHorarioAulaInicial();
+								Calendario *calendario = hi->getCalendario();
+
+								int nCreds = calendario->retornaNroCreditosEntreHorarios(hi,hf);
+
+								row.insert( colV, nCreds );
+							}
+						}
+					}
+				}
+			}
+
+			// ------------------------------------
+			// Folga
+
+			VariableMIPUnico var;
+			var.reset();
+			var.setType( VariableMIPUnico::V_FOLGA_MIN_CRED_DIA_ALUNO );	// fcad_{a,t}
+			var.setAluno(aluno);
+			var.setDia(dia);
+			auto vit = vHashTatico.find(var);
+			if(vit != vHashTatico.end())
+			{
+				row.insert( vit->second, 1.0 );
+			}
+
+			// -------------------------------------
+			// Insere restrição
+
+			if ( row.getnnz() )
+			{
+				cHashTatico[ c ] = lp->getNumRows();
+				lp->addRow( row );
+				restricoes++;
+			}
+		}
+	}
+
+	return restricoes;
+}
+
+
+int MIPUnico::criarVariavelFolgaMinCredsDiaAluno()
+{
+	// Folga do mínimo de créditos do aluno no dia
+	// fcad_{a,t}
+
+	int numVars = 0;
+	
+	if ( ! MIPUnico::considerarMinCredDiaAluno )
+		return numVars;
+
+	for(auto itAluno = vars_aluno_aula.begin(); itAluno != vars_aluno_aula.end(); ++itAluno)
+	{
+		Aluno * const aluno = itAluno->first;
+
+		for(auto itDia = itAluno->second.begin(); itDia != itAluno->second.end(); ++itDia)
+		{
+			const int dia = itDia->first;
+
+			const double coef = MIPUnico::pesoMinCredDiaAluno;
+			const int lb = 0;
+			const int ub = MIPUnico::minCredDiaAluno;
+			
+			VariableMIPUnico var;
+			var.reset();
+			var.setType( VariableMIPUnico::V_FOLGA_MIN_CRED_DIA_ALUNO );	// fcad_{a,t}
+			var.setAluno(aluno);
+			var.setDia(dia);
+				
+			const int colNr = lp->getNumCols();
+
+			vHashTatico[ var ] = colNr;
+			
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lb, ub,
+				( char * ) var.toString().c_str() );
+
+			lp->newCol( col );
+			numVars++;			
+		}
+	}
+
+	return numVars;
 }

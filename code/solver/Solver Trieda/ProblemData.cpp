@@ -6087,7 +6087,7 @@ void ProblemData::imprimeCombinacaoCredsDisciplinas()
 				   int dia = *itDiasLetDisc;
 				   
 				   // N{d,k,t}
-				   int numCreditos = ( disciplina->combinacao_divisao_creditos[ k ] )[ dia - 2 ].second;
+				   int numCreditos = disciplina->getNroCredsRegraDiv(k,dia);  // N{d,k,t}
 				   divCredFile << dia << "->" << numCreditos << "  ";
 			   }
 		   }

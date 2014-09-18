@@ -89,8 +89,6 @@ private:
    int criaVariavelTaticoConsecutivos( int campusId, int P );								// c_{i,d,t}
    int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P );					// m_{i,d,k}   
    int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int P );				// fkp_{i,d,k} e fkm_{i,d,k}
-   int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId, int P );					// fcp_{d,t}   
-   int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId, int P );					// fcm_{d,t}
    int criaVariavelTaticoAberturaCompativel( int campusId, int P );							// zc_{d,t}
    int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId, int P  );						// fd_{d,a}
    int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
@@ -112,7 +110,8 @@ private:
    int criaVariaveisHiHfAlunoDiaAPartirDeV(void);											// hia_{a,t} e hfa_{a,t}
    int criaVariavelFolgaGapProfAPartirDeK(void);											// fpgap_{p,t,f}
    int criaVariavelFolgaGapAlunoAPartirDeV(void);											// fagap_{a,t}
-
+   
+   int criarVariavelFolgaMinCredsDiaAluno();												// fcad_{a,t}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -193,6 +192,9 @@ private:
 		const int colHf, map<DateTime, set< pair<int,double> >> const &mapDtfVars);
 	int criarRestricaoAlunoGap_(Aluno* const aluno, const int dia,
 		int rhs, const int colHi, const int colHf, set< pair<int,double> > const &varsColCoef);
+
+	int criarRestricaoMinCredsDiaAluno();
+
 
    /* 
 		****************************************************************************************************************
@@ -343,7 +345,8 @@ private:
 	
 	// Constantes e parâmetros
 	    
-	// Geral
+	// Disciplinas
+	static const bool divCredForte;
 
 	// Professores
 	static const bool minimizarCustoProf;
@@ -352,6 +355,9 @@ private:
 
 	// Alunos
 	static const int pesoGapAluno;
+	static const int pesoMinCredDiaAluno;
+	static const int minCredDiaAluno;
+	static const bool considerarMinCredDiaAluno;
 
 
 };

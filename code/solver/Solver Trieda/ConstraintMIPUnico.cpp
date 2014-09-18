@@ -347,6 +347,10 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_ALUNO_HOR_FIN_UB"; break;	
       case C_ALUNO_GAP:
         ss << "C_ALUNO_GAP"; break;	
+		
+      case C_ALUNO_MIN_CREDS_DIA:
+        ss << "C_ALUNO_MIN_CREDS_DIA"; break;	
+		
 
    default:
       ss << "!";

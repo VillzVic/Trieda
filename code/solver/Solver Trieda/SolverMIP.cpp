@@ -14032,7 +14032,7 @@ int SolverMIP::criaRestricaoTaticoDivisaoCredito_hash( int campusId, int priorid
 		   turma = v.getTurma();
 		   ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
 		   {  
-			   int numCreditos = ( disciplina->combinacao_divisao_creditos[ k ] )[ *itDia - 2 ].second;  // N{d,k,t}
+			   int numCreditos =  disciplina->getNroCredsRegraDiv( k, *itDia );  // N{d,k,t}
 			   coefs.push_back( -numCreditos );
 			   dias.add( *itDia );
 		   }
@@ -14213,7 +14213,7 @@ int SolverMIP::criaRestricaoTaticoDivisaoCredito( int campusId, int prioridade, 
 					v.setK( k );
 					
 					// N{d,k,t}
-					int numCreditos = ( disciplina->combinacao_divisao_creditos[ k ] )[ dia - 2 ].second;
+					int numCreditos = disciplina->getNroCredsRegraDiv( k, dia );
 
 					it_v = vHashTatico.find( v );
 					if ( it_v != vHashTatico.end() )

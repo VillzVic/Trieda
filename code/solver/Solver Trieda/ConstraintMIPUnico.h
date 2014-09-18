@@ -80,7 +80,10 @@ public:
 	  C_ALUNO_HOR_INIC_UB = 68,
       C_ALUNO_HOR_FIN_LB = 69,
 	  C_ALUNO_HOR_FIN_UB = 70,
-	  C_ALUNO_GAP = 71
+	  C_ALUNO_GAP = 71,
+
+	  C_ALUNO_MIN_CREDS_DIA = 72
+
    };
 
    /** Default constructor. */

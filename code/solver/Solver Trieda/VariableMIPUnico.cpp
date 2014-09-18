@@ -229,10 +229,6 @@ std::string VariableMIPUnico::toString() const
         str << "c"; break;
      case V_SLACK_DEMANDA_ALUNO:
         str << "fd"; break;
-     case V_SLACK_DIST_CRED_DIA_SUPERIOR:
-        str << "fcp"; break;
-     case V_SLACK_DIST_CRED_DIA_INFERIOR:
-        str << "fcm"; break;
 	 case V_COMBINACAO_DIVISAO_CREDITO:
         str << "m"; break;
      case V_SLACK_COMBINACAO_DIVISAO_CREDITO_M:
@@ -285,7 +281,10 @@ std::string VariableMIPUnico::toString() const
        str <<"fagap"; break;
     case V_FOLGA_GAP_PROF:
        str <<"fpgap"; break;
-	   	   
+	   
+    case V_FOLGA_MIN_CRED_DIA_ALUNO:
+       str <<"fcad"; break;
+	   
 	   
     default:
         str << "!";
