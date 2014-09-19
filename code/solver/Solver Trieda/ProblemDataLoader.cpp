@@ -1647,7 +1647,7 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 
 void ProblemDataLoader::combinacaoDivCreditos()
 {
-	bool espelhar = false;
+	bool espelhar = true;
 
    ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
    {
@@ -1702,7 +1702,7 @@ void ProblemDataLoader::combinacaoDivCreditos()
 	   // --------------------------------------------------------------------------------
 	   // Calcula as combinações
 
-	   std::set< std::map< int/*dia*/, int/*ncred*/ > > combinacoes;
+	   std::set< DivCredType > combinacoes;
 
 	   ITERA_GGROUP_LESSPTR( itDiv, disciplina->divisao_creditos, DivisaoCreditos )
 	   {
@@ -1750,7 +1750,8 @@ void ProblemDataLoader::combinacaoDivCreditos()
 
 				if ( adicionar )
 				{
-					combinacoes.insert(mapDiaNCred);
+					DivCredType div( mapDiaNCred );
+					combinacoes.insert(div);
 				}
 			}
 	   }
@@ -1760,22 +1761,27 @@ void ProblemDataLoader::combinacaoDivCreditos()
 
 	   if ( espelhar )
 	   {
-		   std::set< std::map< int, int > > espelhados;
+		   std::set< DivCredType > espelhados;
 
 		   // Constroi as combinações espelhadas
 		   auto itK = combinacoes.begin();
 		   for ( ; itK != combinacoes.end(); itK++ )
 		   {
-			   std::map< int, int > original = (*itK);
+			   DivCredType original = (*itK);
 			   		   
-			   std::map< int, int > espelho; 
+			   DivCredType espelho; 
 			   
 			   bool adicionar=true;
 
+			   bool impar = ((int)original.diaNCred.size()) % 2;
+
 			   // Espelha
-			   auto itDir = original.end();
-			   auto itEsq = original.begin();
-			   for ( ; (itEsq != itDir) && adicionar; itEsq++, itDir-- )			   
+			   auto itEsq = original.diaNCred.begin();
+			   auto itDir = original.diaNCred.end();
+			   bool cruzou = (itEsq == itDir);
+			   itDir--;
+
+			   while ( !cruzou && adicionar )			   
 			   {
 				   int diaEsq = itEsq->first;
 				   int ncredEsq = itEsq->second;				   
@@ -1787,25 +1793,34 @@ void ProblemDataLoader::combinacaoDivCreditos()
 					   if ( disciplina->diasLetivos.find( diaEsq ) !=
 							disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
 					   {
-						   espelho[diaEsq] = ncredDir;
+						   espelho.diaNCred[diaEsq] = ncredDir;
 					   }
 					   else
 					   {
 						   adicionar=false;
 					   }
 				   }
+				   else espelho.diaNCred[diaEsq] = ncredDir;
+
 				   if ( ncredEsq > 0 )	// Se ncred > 0
 				   {
 					   if ( disciplina->diasLetivos.find( diaDir ) !=
 							disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
 					   {
-						   espelho[diaDir] = ncredEsq;
+						   espelho.diaNCred[diaDir] = ncredEsq;
 					   }
 					   else
 					   {
 						   adicionar=false;
 					   }
 				   }
+				   else espelho.diaNCred[diaDir] = ncredEsq;
+				   
+				   itEsq++;
+				   itDir--;
+				   
+				   if (impar) cruzou = (std::prev(itEsq) == std::next(itDir));
+				   else cruzou = (std::prev(itEsq) == itDir);
 			   }
 			   
 			   // Salva o espelho
@@ -1828,9 +1843,11 @@ void ProblemDataLoader::combinacaoDivCreditos()
 	   // Adiciona as combinações na disciplina
 	   for ( auto itK = combinacoes.begin(); itK != combinacoes.end(); itK++ )
 	   {
+		   DivCredType div = (*itK);
+
 		   std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > combK;
 
-		   for ( auto itMapDiaCred = (*itK).begin(); itMapDiaCred != (*itK).end(); itMapDiaCred++ )
+		   for ( auto itMapDiaCred = div.diaNCred.begin(); itMapDiaCred != div.diaNCred.end(); itMapDiaCred++ )
 		   {			   
 			   combK.push_back( std::make_pair(itMapDiaCred->first, itMapDiaCred->second) );
 		   }
@@ -4870,9 +4887,10 @@ void ProblemDataLoader::criaAulas()
 							 {
 								std::cout<<"\nAtencao: erro em criaAulas()!\n";
 							 }
-							 							 
+#ifdef BUILD_COM_SOL_INICIAL							 							 
 							 problemData->getSolTaticoInicial()->addAlunoDem(campus, disciplina, turma, alunoDemanda, fixar );
 							 problemData->getSolTaticoInicial()->addAlunoTurma(campusId, disciplina, turma, aluno, fixar );
+#endif
 						 }
 					 }
 
@@ -4903,6 +4921,7 @@ void ProblemDataLoader::criaAulas()
 					 }
 					 else if ( problemData->parametros->modo_otimizacao == "TATICO" )
 					 {
+#ifdef BUILD_COM_SOL_INICIAL	
 					 	 Aula * a = problemData->getSolTaticoInicial()->getAula( campusId, disciplina, turma, diaSemana, sala );
 						 if ( a!=NULL )
 						 {
@@ -4910,6 +4929,7 @@ void ProblemDataLoader::criaAulas()
 							 novaAula = false;
 							 problemData->getSolTaticoInicial()->removeAula( campusId, disciplina, turma, aulaAntiga );							 
 						 }
+#endif
 					 }
 
 
@@ -5035,8 +5055,9 @@ void ProblemDataLoader::criaAulas()
 												
 						if ( problemData->parametros->modo_otimizacao == "TATICO" )
 						{
+							#ifdef BUILD_COM_SOL_INICIAL
 							problemData->getSolTaticoInicial()->addAula(campusId, disciplina, turma, aula );
-					//		problemData->aulas.add( aula );
+							#endif
 						}
                      }
                      else
@@ -5053,8 +5074,9 @@ void ProblemDataLoader::criaAulas()
 						}
 						else if ( problemData->parametros->modo_otimizacao == "TATICO" )
 						{
+							#ifdef BUILD_COM_SOL_INICIAL
 							problemData->getSolTaticoInicial()->addAula(campusId, disciplina, turma, aulaAntiga );
-						//	problemData->aulas.add( aulaAntiga );
+							#endif
 						}
 					 }
                   }
@@ -5064,6 +5086,7 @@ void ProblemDataLoader::criaAulas()
       }
    }
 
+   #ifdef BUILD_COM_SOL_INICIAL
    // Confere solução inicial tática
    if ( problemData->parametros->modo_otimizacao == "TATICO" )
    {
@@ -5077,6 +5100,7 @@ void ProblemDataLoader::criaAulas()
 
 	   problemData->getSolTaticoInicial()->imprimeAulas( fileName );
    }
+	#endif
 
    std::cout<<" done!\n";
 }

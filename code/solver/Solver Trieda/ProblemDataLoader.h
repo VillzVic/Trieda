@@ -261,4 +261,76 @@ private:
 
 };
 
+
+
+struct DivCredType
+{
+	std::map< int, int > diaNCred;
+
+	DivCredType(){}
+
+	DivCredType( std::map< int, int > &otherMap )
+	{
+		for ( auto itOther = otherMap.begin();
+			  itOther != otherMap.end();
+			  itOther++ )
+		{
+			diaNCred[itOther->first] = itOther->second;
+		}
+	}
+
+	bool operator<( const DivCredType& other ) const
+    {
+		if ( this->diaNCred.size() < other.diaNCred.size() )
+			return true;
+		if ( this->diaNCred.size() > other.diaNCred.size() )
+			return false;
+				
+		for ( auto itThis = diaNCred.begin(), itOther = other.diaNCred.begin();
+			  itThis != diaNCred.end();
+			  itThis++, itOther++ )
+		{
+			if ( itThis->first < itOther->first )
+				return true;
+			if ( itThis->first > itOther->first )
+				return false;
+			if ( itThis->second < itOther->second )
+				return true;
+			if ( itThis->second > itOther->second )
+				return false;
+		}
+
+		return false;
+    }
+
+	DivCredType& operator=( const DivCredType& other )
+    {
+		diaNCred.clear();
+
+		for ( auto itOther = other.diaNCred.begin();
+			  itOther != other.diaNCred.end();
+			  itOther++ )
+		{
+			diaNCred[itOther->first] = itOther->second;
+		}
+
+		return *this;
+	}
+
+};
+
+// Override templates
+namespace std
+{
+	template<>
+	struct less<DivCredType>
+	{
+		bool operator() (DivCredType const first, DivCredType const second) const
+		{
+			return first < second;
+		}
+	};
+};
+
+
 #endif

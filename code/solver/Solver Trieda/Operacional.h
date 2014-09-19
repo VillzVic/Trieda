@@ -7,14 +7,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ValidateSolution.h"
+//#include "ValidateSolution.h"
 #include "Solver.h"
 #include "VariableoP.h"
 #include "ConstraintOp.h"
 #include "opt_lp.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
-#include "SolutionLoader.h"
+//#include "SolutionLoader.h"
 #include "ErrorHandler.h"
 #include "ProblemDataLoader.h"
 
@@ -29,14 +29,6 @@
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
-#endif
-
-#ifdef SOLVER_CPLEX
-#include "opt_cplex.h"
-#endif
-
-#ifdef SOLVER_GUROBI
-#include "opt_gurobi.h"
 #endif
 
 
@@ -69,7 +61,7 @@ public:
    
    void preencheOutputOperacionalMIP_antigo(); // apagar se o novo corrigido funcionar
 
-   int calculaDeslocamentoUnidades( const int, const int );
+//   int calculaDeslocamentoUnidades( const int, const int );
    
     #ifdef HEURISTICA_MARCIO
    int solveOperacional();
@@ -201,9 +193,9 @@ private:
    **						        OUTROS																			  **
    /********************************************************************************************************************/
 
-   void buscaLocalTempoDeslocamentoSolucao();
+ //  void buscaLocalTempoDeslocamentoSolucao();
    
-   int alteraHorarioAulaAtendimento( const int, const int );
+ //  int alteraHorarioAulaAtendimento( const int, const int );
 
    void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 
@@ -279,7 +271,7 @@ private:
    
    ProblemSolution * problemSolutionTemp;
    
-   ValidateSolutionOp * validateSolution;
+   //ValidateSolutionOp * validateSolution;
 
    int rodadaOp;
 

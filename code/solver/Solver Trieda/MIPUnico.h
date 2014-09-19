@@ -8,21 +8,13 @@
 #include <stdlib.h>
 
 #include "Solver.h"
-#include "opt_lp.h"
-#include "ProblemData.h"
-#include "ProblemSolution.h"
-#include "ProblemDataLoader.h"
 #include "VariableMIPUnico.h"
 #include "ConstraintMIPUnico.h"
-#include "VariableTatico.h"
 
-#ifdef SOLVER_CPLEX
-#include "opt_cplex.h"
-#endif
+class ProblemData;
+class ProblemSolution;
+class VariableTatico;
 
-#ifdef SOLVER_GUROBI
-#include "opt_gurobi.h"
-#endif
 
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
@@ -346,7 +338,7 @@ private:
 	// Constantes e parâmetros
 	    
 	// Disciplinas
-	static const bool divCredForte;
+	static const int consideraDivCredDisc;
 
 	// Professores
 	static const bool minimizarCustoProf;

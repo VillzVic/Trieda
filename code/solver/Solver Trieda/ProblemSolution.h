@@ -4,7 +4,11 @@
 #include <iostream>
 #include "GGroup.h"
 #include "ProblemData.h"
-#include "SolucaoOperacional.h"
+
+#ifdef HEURISTICA
+//#include "SolucaoOperacional.h"
+#endif
+
 #include "AtendimentoCampus.h"
 #include "RestricaoViolada.h"
 #include "ProfessorVirtualOutput.h"
@@ -27,7 +31,9 @@ public:
 
    RestricaoVioladaGroup * getFolgas() const { return this->folgas; }
    GGroup< AtendimentoCampus * > * atendimento_campus;
+#ifdef HEURISTICA
    SolucaoOperacional * solucao_operacional;
+#endif
    GGroup< ProfessorVirtualOutput * > * professores_virtuais;
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > * alunosDemanda;
    GGroup< NaoAtendimento *, LessPtr< NaoAtendimento > > * nao_atendimentos;

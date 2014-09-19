@@ -1,9 +1,6 @@
 #ifndef _SOLVER_H
 #define _SOLVER_H
 
-class ProblemData;
-class ProblemSolution;
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -17,6 +14,9 @@ class ProblemSolution;
 #include "opt_gurobi.h"
 #endif
 
+
+class ProblemData;
+class ProblemSolution;
 
 
 #if defined SOLVER_GUROBI

@@ -1,9 +1,13 @@
 #include <cstdio>
+#include <iostream>
 
 #include "MainMIPPuro.h"
 #include "SolverMIPUnico.h"
-#include "SolverMIP.h"
 #include "CmdLine.h"
+#include "ProblemSolution.h"
+#include "ProblemData.h"
+
+#include "ErrorHandler.h"
 
 // ----------------------------------------------------------------------------------------------
 // MAIN HEURÍSTICA

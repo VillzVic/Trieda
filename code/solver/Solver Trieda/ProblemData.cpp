@@ -48,9 +48,9 @@ ProblemData::ProblemData( char inputName[1024], int inputId )
 
    this->atendimentosTatico = NULL;
 
-#ifndef HEURISTICA
-   this->solTaticoInicial = new SolucaoTaticoInicial();
-#endif
+//#ifndef HEURISTICA
+//   this->solTaticoInicial = new SolucaoTaticoInicial();
+//#endif
 	  
    // TODO: isso não deveria ser fixo aqui. Tem que ser geral, só para o problemData.
    // Quando passar a vir definido pelo cliente, mudar isso!!! Na Sala também tem getTurno()!!
@@ -108,9 +108,9 @@ ProblemData::~ProblemData()
     equivalencias.deleteElements(); // só contém as teoricas
 	*/
 	
-#ifndef HEURISTICA
-	delete this->solTaticoInicial;
-#endif
+//#ifndef HEURISTICA
+//	delete this->solTaticoInicial;
+//#endif
 }
 
 std::string ProblemData::inputIdToString()
@@ -2433,7 +2433,7 @@ std::string ProblemData::getEquivFileName( int campusId, int prioridade )
    return solName;
 }
 
-#ifndef HEURISTICA
+#ifdef BUILD_COM_SOL_INICIAL
 AlunoDemanda* ProblemData::atualizaAlunoDemandaEquivSolInicial( int turma, Disciplina* disciplina, int campusId, Aluno *aluno, int prioridade )
 {
 	int idAlDemanda = this->retornaMaiorIdAlunoDemandas();
@@ -7905,7 +7905,7 @@ GGroup<Aula*, LessPtr<Aula>> ProblemData::getMapAulas( int campusId, int turma, 
 	return this->mapAulas[campusId][turma][disciplina];
 }
 
-#ifndef HEURISTICA
+#ifdef BUILD_COM_SOL_INICIAL
 
 int ProblemData::getPercAtendAlunosInicialFixado( int cpId )
 { 
@@ -8205,8 +8205,10 @@ void ProblemData::confereCorretudeAlocacoes()
 
 void ProblemData::confereDadosDeEquivalenciaForcada()
 {
-	std::map< Disciplina*, std::map< bool, GGroup<AlunoDemanda*> >, LessPtr<Disciplina> > mapDiscExigeEquivForcada;
+	std::map< Disciplina*, std::map< bool, GGroup<AlunoDemanda*, 
+		LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > mapDiscExigeEquivForcada;
 	
+	int i=1;
 	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemandaTotal, AlunoDemanda )
 	{
 		bool exigeEquivForcada = itAlDem->getExigeEquivalenciaForcada();
@@ -8216,15 +8218,17 @@ void ProblemData::confereDadosDeEquivalenciaForcada()
 			std::cout << "\nErro, aluno-demanda " << itAlDem->getId() << " sem referencia para demanda " << itAlDem->getDemandaId();
 			fflush(0);
 			continue;
-		}
+		}		
 		if ( itAlDem->demanda->disciplina==nullptr )
 		{
 			std::cout << "\nErro, demanda " << itAlDem->demanda->getId() << " sem referencia para disciplina " << itAlDem->demanda->getDisciplinaId();
 			fflush(0);
 			continue;
 		}
-
+		
 		mapDiscExigeEquivForcada[ itAlDem->demanda->disciplina ][ exigeEquivForcada ].add( *itAlDem );
+		
+		i++;
 	}
 	
 	auto itMapDisc = mapDiscExigeEquivForcada.begin();

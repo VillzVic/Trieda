@@ -15,20 +15,20 @@
 #define PRINT_cria_restricoes
 
 
-bool ordenaAtendimentosBaseHorarioAula(
-   AtendimentoBase at1 , AtendimentoBase at2 )
-{
-   if ( at1.horario_aula == NULL
-      || at2.horario_aula == NULL )
-   {
-      return false;
-   }
-
-   if ( at1.horario_aula->getInicio() < at2.horario_aula->getInicio() ) return true;
-   if ( at1.horario_aula->getInicio() > at2.horario_aula->getInicio() ) return false;
-
-   return false;
-}
+//bool ordenaAtendimentosBaseHorarioAula(
+//   AtendimentoBase at1 , AtendimentoBase at2 )
+//{
+//   if ( at1.horario_aula == NULL
+//      || at2.horario_aula == NULL )
+//   {
+//      return false;
+//   }
+//
+//   if ( at1.horario_aula->getInicio() < at2.horario_aula->getInicio() ) return true;
+//   if ( at1.horario_aula->getInicio() > at2.horario_aula->getInicio() ) return false;
+//
+//   return false;
+//}
 
 
 
@@ -4047,325 +4047,325 @@ void Operacional::geraMinimoDeProfessoresVirtuaisMIP()
 
 }
 
-int Operacional::alteraHorarioAulaAtendimento(
-   const int id_novo_horario_aula, const int id_at_horario )
-{
-   return 1; // ?? TODO
-
-   ITERA_GGROUP( it_at_campi,
-      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
-   {
-      Campus * campus = it_at_campi->campus;
-
-      ITERA_GGROUP_LESSPTR( it_at_unidade,
-         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
-      {
-         Unidade * unidade = it_at_unidade->unidade;
-
-         ITERA_GGROUP_LESSPTR( it_at_sala,
-            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
-         {
-            Sala * sala = it_at_sala->sala;
-
-            ITERA_GGROUP_LESSPTR( it_at_dia,
-               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
-            {
-               int dia_semana = it_at_dia->getDiaSemana();
-
-               ITERA_GGROUP_LESSPTR( it_at_turno,
-                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
-               {
-                  TurnoIES * turno = it_at_turno->turno;
-
-                  ITERA_GGROUP_LESSPTR( it_at_horario,
-                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
-                  {
-                     AtendimentoHorarioAula * at_h = ( *it_at_horario );
-
-                     if ( at_h->getId() == id_novo_horario_aula )
-                     {
-                        int id_horario_aula = at_h->getHorarioAulaId();
-
-                        HorarioAula * novo_horario_aula
-                           = problemData->refHorarioAula.find( id_novo_horario_aula )->second;
-
-                        at_h->horario_aula = novo_horario_aula;
-                        at_h->setHorarioAulaId( id_novo_horario_aula );
-
-                        return id_horario_aula;
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   return -1;
-}
-
-
-int Operacional::calculaDeslocamentoUnidades(
-   const int id_prof, const int dia )
-{
-   std::vector< AtendimentoBase > atendimentos;
-
-   ITERA_GGROUP( it_at_campi,
-      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
-   {
-      Campus * campus = it_at_campi->campus;
-
-      ITERA_GGROUP_LESSPTR( it_at_unidade,
-         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
-      {
-         Unidade * unidade = it_at_unidade->unidade;
-
-         ITERA_GGROUP_LESSPTR( it_at_sala,
-            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
-         {
-            Sala * sala = it_at_sala->sala;
-
-            ITERA_GGROUP_LESSPTR( it_at_dia,
-               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
-            {
-               int dia_semana = it_at_dia->getDiaSemana();
-
-               ITERA_GGROUP_LESSPTR( it_at_turno,
-                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
-               {
-                  TurnoIES * turno = it_at_turno->turno;
-
-                  ITERA_GGROUP_LESSPTR( it_at_horario,
-                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
-                  {
-                     AtendimentoHorarioAula * at_h = ( *it_at_horario );
-
-                     HorarioAula * horario_aula = it_at_horario->horario_aula;
-                     Professor * professor = it_at_horario->professor;
-
-                     if ( dia_semana == dia
-                        && at_h->getProfessorId() == id_prof )
-                     {
-                        AtendimentoBase atendimento;
-
-                        atendimento.unidade = unidade;
-                        atendimento.horario_aula = horario_aula;
-                        atendimento.horario_aula = horario_aula;
-
-                        atendimentos.push_back( atendimento );
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   int contDeslocamentos = 0;
-
-   std::sort( atendimentos.begin(), atendimentos.end(),
-      ordenaAtendimentosBaseHorarioAula );
-
-   for ( int i = 0; i < (int)atendimentos.size() - 1; i++ )
-   {
-      Unidade * unidade1 = atendimentos.at( i ).unidade;
-      Unidade * unidade2 = atendimentos.at( i + 1 ).unidade;
-
-      if ( unidade1->getId()  != unidade2->getId() )
-      {
-         contDeslocamentos++;
-      }
-   }
-
-   return contDeslocamentos;
-}
-
-void Operacional::buscaLocalTempoDeslocamentoSolucao()
-{
-   if ( this->problemData->parametros->modo_otimizacao != "OPERACIONAL" )
-   {
-      return;
-   }
-
-   // Dado um turno e um dia da semana, temos
-   // a lista de atendimentos de cada professor
-   std::map< Professor *, std::map< int, GGroup< AtendimentoBase *,
-      LessPtr< AtendimentoBase > > >, LessPtr< Professor > > mapProfessorDiaAtendimentos;
-
-   ITERA_GGROUP( it_at_campi,
-      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
-   {
-      Campus * campus = this->problemData->refCampus[ it_at_campi->getId() ];
-
-      ITERA_GGROUP_LESSPTR( it_at_unidade,
-         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
-      {
-         Unidade * unidade = this->problemData->refUnidade[ it_at_unidade->getId() ];
-
-         ITERA_GGROUP_LESSPTR( it_at_sala,
-            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
-         {
-            Sala * sala = this->problemData->refSala[ it_at_sala->getId() ];
-
-            ITERA_GGROUP_LESSPTR( it_at_dia,
-               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
-            {
-               int dia_semana = it_at_dia->getDiaSemana();
-
-               ITERA_GGROUP_LESSPTR( it_at_turno,
-                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
-               {
-                 // TurnoIES * turno = this->problemData->findTurno( it_at_turno->getTurnoId() );
-
-                  ITERA_GGROUP_LESSPTR( it_at_horario,
-                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
-                  {
-                     HorarioAula * horario_aula = this->problemData->findHorarioAula(
-                        it_at_horario->getHorarioAulaId() );
-
-                     Professor * professor = this->problemData->findProfessor(
-                        it_at_horario->getProfessorId() );
-
-                     AtendimentoBase * atendimento = new AtendimentoBase();
-
-                     atendimento->campus = campus;
-                     atendimento->unidade = unidade;
-                     atendimento->sala = sala;
-                     atendimento->dia_semana = dia_semana;
-                   //  atendimento->turno = turno;
-                     atendimento->horario_aula = horario_aula;
-                     atendimento->professor = professor;
-                     atendimento->idAtHorario = it_at_horario->getId();
-
-                     mapProfessorDiaAtendimentos[ professor ][ dia_semana ].add( atendimento );
-                  } // Horário da Aula
-               } // TurnoIES
-            } // Dia da semana
-         } // Sala
-      } // Unidade
-   } // Campus
-
-   std::map< Professor *, std::map< int, GGroup< AtendimentoBase *,
-      LessPtr< AtendimentoBase > > >, LessPtr< Professor > >::iterator
-      it_map = mapProfessorDiaAtendimentos.begin();
-
-   for (; it_map != mapProfessorDiaAtendimentos.end();
-          it_map++ )
-   {
-      Professor * professor = it_map->first;
-
-      std::map< int, GGroup< AtendimentoBase *,
-         LessPtr< AtendimentoBase > > > professorDia = it_map->second;
-
-      std::map< int, GGroup< AtendimentoBase *,
-         LessPtr< AtendimentoBase > > >::iterator
-         it_prof_dia = professorDia.begin();
-
-      for (; it_prof_dia != professorDia.end();
-             it_prof_dia++ )
-      {
-         int dia_semana = it_prof_dia->first;
-
-         // Para haver possibilidade de alterarmos o deslocamento
-         // entre unidades, deve existir pelo menos três atendimentos
-         // para o professor no mesmo dia, e em no mínimo duas unidades distintas
-
-         // Verifica se há pelo menos 3 atendimentos
-         GGroup< AtendimentoBase *,
-            LessPtr< AtendimentoBase > > atendimentos = it_prof_dia->second;
-
-         if ( atendimentos.size() <= 2 )
-         {
-            continue;
-         }
-
-         // Verifica se há pelo menos 2 unidades
-         GGroup< Unidade *, LessPtr< Unidade > > unidadesDistintas;
-
-         GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > >::iterator
-            it_at = atendimentos.begin();
-
-         for (; it_at != atendimentos.end();
-                it_at++ )
-         {
-            unidadesDistintas.add( it_at->unidade );
-         }
-
-         if ( unidadesDistintas.size() <= 1 )
-         {
-            continue;
-         }
-
-         std::vector< AtendimentoBase > vectorAtendimentos;
-         ITERA_GGROUP_LESSPTR( it_at, atendimentos, AtendimentoBase )
-         {
-            vectorAtendimentos.push_back( **it_at );
-         }
-
-         // Armazena todas as combinações possíveis dos
-         // atendimentos nos horários de aula do turno atual
-         std::vector< std::vector< HorarioAula > > arranjosHorariosDia;
-
-         std::vector< HorarioAula > horarios;
-         for ( int i = 0; i < (int)problemData->horarios_aula_ordenados.size(); i++ )
-         {
-            horarios.push_back( ( *problemData->horarios_aula_ordenados.at( i ) ) );
-         }
-
-         Combinatoria< HorarioAula >::arranjos(
-            horarios, (int)atendimentos.size(),  arranjosHorariosDia );
-
-         std::vector< std::vector< HorarioAula > >::iterator
-            it_arranjosHorariosDia = arranjosHorariosDia.begin();
-
-         for (; it_arranjosHorariosDia != arranjosHorariosDia.end();
-                it_arranjosHorariosDia++ )
-         {
-            std::vector< HorarioAula > horarios = ( *it_arranjosHorariosDia );
-            std::list< int > ids_horarios_antigos;
-            ids_horarios_antigos.clear();
-
-            int deslocamentoAnterior = calculaDeslocamentoUnidades(
-               professor->getId(), dia_semana );
-
-            // Realiza a troca de horários
-            for ( int i = 0; i < (int)horarios.size(); i++ )
-            {
-               AtendimentoBase atendimento_base = vectorAtendimentos.at( i );
-               HorarioAula horario_aula = horarios.at( i );
-
-               int horario_antigo = alteraHorarioAulaAtendimento(
-                  horario_aula.getId(), atendimento_base.idAtHorario );
-
-               ids_horarios_antigos.push_back( horario_antigo );
-            }
-
-            int deslocamentoPosterior = calculaDeslocamentoUnidades(
-               professor->getId(), dia_semana );
-
-            bool solucaoValida = validateSolution->checkSolution(
-               this->problemData, this->problemSolution );
-
-            bool melhorouSolucao = ( deslocamentoPosterior < deslocamentoAnterior );
-
-            // Desfaz a troca, caso seja inviável ou
-            // caso não tenha diminuido o deslocamento
-            if ( !solucaoValida || !melhorouSolucao )
-            {
-               for ( int i = 0; i < (int)horarios.size(); i++ )
-               {
-                  AtendimentoBase atendimento_base = vectorAtendimentos.at( i );
-                  int horario_antigo = ids_horarios_antigos.front();
-                  ids_horarios_antigos.pop_front();
-
-                  int horario_antigo_alterado = alteraHorarioAulaAtendimento(
-                     horario_antigo, atendimento_base.idAtHorario );
-               }
-            }
-         }
-      }
-   }
-}
+//int Operacional::alteraHorarioAulaAtendimento(
+//   const int id_novo_horario_aula, const int id_at_horario )
+//{
+//   return 1; // ?? TODO
+//
+//   ITERA_GGROUP( it_at_campi,
+//      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
+//   {
+//      Campus * campus = it_at_campi->campus;
+//
+//      ITERA_GGROUP_LESSPTR( it_at_unidade,
+//         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+//      {
+//         Unidade * unidade = it_at_unidade->unidade;
+//
+//         ITERA_GGROUP_LESSPTR( it_at_sala,
+//            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+//         {
+//            Sala * sala = it_at_sala->sala;
+//
+//            ITERA_GGROUP_LESSPTR( it_at_dia,
+//               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+//            {
+//               int dia_semana = it_at_dia->getDiaSemana();
+//
+//               ITERA_GGROUP_LESSPTR( it_at_turno,
+//                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+//               {
+//                  TurnoIES * turno = it_at_turno->turno;
+//
+//                  ITERA_GGROUP_LESSPTR( it_at_horario,
+//                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+//                  {
+//                     AtendimentoHorarioAula * at_h = ( *it_at_horario );
+//
+//                     if ( at_h->getId() == id_novo_horario_aula )
+//                     {
+//                        int id_horario_aula = at_h->getHorarioAulaId();
+//
+//                        HorarioAula * novo_horario_aula
+//                           = problemData->refHorarioAula.find( id_novo_horario_aula )->second;
+//
+//                        at_h->horario_aula = novo_horario_aula;
+//                        at_h->setHorarioAulaId( id_novo_horario_aula );
+//
+//                        return id_horario_aula;
+//                     }
+//                  }
+//               }
+//            }
+//         }
+//      }
+//   }
+//
+//   return -1;
+//}
+//
+//
+//int Operacional::calculaDeslocamentoUnidades(
+//   const int id_prof, const int dia )
+//{
+//   std::vector< AtendimentoBase > atendimentos;
+//
+//   ITERA_GGROUP( it_at_campi,
+//      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
+//   {
+//      Campus * campus = it_at_campi->campus;
+//
+//      ITERA_GGROUP_LESSPTR( it_at_unidade,
+//         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+//      {
+//         Unidade * unidade = it_at_unidade->unidade;
+//
+//         ITERA_GGROUP_LESSPTR( it_at_sala,
+//            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+//         {
+//            Sala * sala = it_at_sala->sala;
+//
+//            ITERA_GGROUP_LESSPTR( it_at_dia,
+//               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+//            {
+//               int dia_semana = it_at_dia->getDiaSemana();
+//
+//               ITERA_GGROUP_LESSPTR( it_at_turno,
+//                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+//               {
+//                  TurnoIES * turno = it_at_turno->turno;
+//
+//                  ITERA_GGROUP_LESSPTR( it_at_horario,
+//                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+//                  {
+//                     AtendimentoHorarioAula * at_h = ( *it_at_horario );
+//
+//                     HorarioAula * horario_aula = it_at_horario->horario_aula;
+//                     Professor * professor = it_at_horario->professor;
+//
+//                     if ( dia_semana == dia
+//                        && at_h->getProfessorId() == id_prof )
+//                     {
+//                        AtendimentoBase atendimento;
+//
+//                        atendimento.unidade = unidade;
+//                        atendimento.horario_aula = horario_aula;
+//                        atendimento.horario_aula = horario_aula;
+//
+//                        atendimentos.push_back( atendimento );
+//                     }
+//                  }
+//               }
+//            }
+//         }
+//      }
+//   }
+//
+//   int contDeslocamentos = 0;
+//
+//   std::sort( atendimentos.begin(), atendimentos.end(),
+//      ordenaAtendimentosBaseHorarioAula );
+//
+//   for ( int i = 0; i < (int)atendimentos.size() - 1; i++ )
+//   {
+//      Unidade * unidade1 = atendimentos.at( i ).unidade;
+//      Unidade * unidade2 = atendimentos.at( i + 1 ).unidade;
+//
+//      if ( unidade1->getId()  != unidade2->getId() )
+//      {
+//         contDeslocamentos++;
+//      }
+//   }
+//
+//   return contDeslocamentos;
+//}
+//
+//void Operacional::buscaLocalTempoDeslocamentoSolucao()
+//{
+//   if ( this->problemData->parametros->modo_otimizacao != "OPERACIONAL" )
+//   {
+//      return;
+//   }
+//
+//   // Dado um turno e um dia da semana, temos
+//   // a lista de atendimentos de cada professor
+//   std::map< Professor *, std::map< int, GGroup< AtendimentoBase *,
+//      LessPtr< AtendimentoBase > > >, LessPtr< Professor > > mapProfessorDiaAtendimentos;
+//
+//   ITERA_GGROUP( it_at_campi,
+//      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
+//   {
+//      Campus * campus = this->problemData->refCampus[ it_at_campi->getId() ];
+//
+//      ITERA_GGROUP_LESSPTR( it_at_unidade,
+//         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+//      {
+//         Unidade * unidade = this->problemData->refUnidade[ it_at_unidade->getId() ];
+//
+//         ITERA_GGROUP_LESSPTR( it_at_sala,
+//            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+//         {
+//            Sala * sala = this->problemData->refSala[ it_at_sala->getId() ];
+//
+//            ITERA_GGROUP_LESSPTR( it_at_dia,
+//               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+//            {
+//               int dia_semana = it_at_dia->getDiaSemana();
+//
+//               ITERA_GGROUP_LESSPTR( it_at_turno,
+//                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+//               {
+//                 // TurnoIES * turno = this->problemData->findTurno( it_at_turno->getTurnoId() );
+//
+//                  ITERA_GGROUP_LESSPTR( it_at_horario,
+//                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+//                  {
+//                     HorarioAula * horario_aula = this->problemData->findHorarioAula(
+//                        it_at_horario->getHorarioAulaId() );
+//
+//                     Professor * professor = this->problemData->findProfessor(
+//                        it_at_horario->getProfessorId() );
+//
+//                     AtendimentoBase * atendimento = new AtendimentoBase();
+//
+//                     atendimento->campus = campus;
+//                     atendimento->unidade = unidade;
+//                     atendimento->sala = sala;
+//                     atendimento->dia_semana = dia_semana;
+//                   //  atendimento->turno = turno;
+//                     atendimento->horario_aula = horario_aula;
+//                     atendimento->professor = professor;
+//                     atendimento->idAtHorario = it_at_horario->getId();
+//
+//                     mapProfessorDiaAtendimentos[ professor ][ dia_semana ].add( atendimento );
+//                  } // Horário da Aula
+//               } // TurnoIES
+//            } // Dia da semana
+//         } // Sala
+//      } // Unidade
+//   } // Campus
+//
+//   std::map< Professor *, std::map< int, GGroup< AtendimentoBase *,
+//      LessPtr< AtendimentoBase > > >, LessPtr< Professor > >::iterator
+//      it_map = mapProfessorDiaAtendimentos.begin();
+//
+//   for (; it_map != mapProfessorDiaAtendimentos.end();
+//          it_map++ )
+//   {
+//      Professor * professor = it_map->first;
+//
+//      std::map< int, GGroup< AtendimentoBase *,
+//         LessPtr< AtendimentoBase > > > professorDia = it_map->second;
+//
+//      std::map< int, GGroup< AtendimentoBase *,
+//         LessPtr< AtendimentoBase > > >::iterator
+//         it_prof_dia = professorDia.begin();
+//
+//      for (; it_prof_dia != professorDia.end();
+//             it_prof_dia++ )
+//      {
+//         int dia_semana = it_prof_dia->first;
+//
+//         // Para haver possibilidade de alterarmos o deslocamento
+//         // entre unidades, deve existir pelo menos três atendimentos
+//         // para o professor no mesmo dia, e em no mínimo duas unidades distintas
+//
+//         // Verifica se há pelo menos 3 atendimentos
+//         GGroup< AtendimentoBase *,
+//            LessPtr< AtendimentoBase > > atendimentos = it_prof_dia->second;
+//
+//         if ( atendimentos.size() <= 2 )
+//         {
+//            continue;
+//         }
+//
+//         // Verifica se há pelo menos 2 unidades
+//         GGroup< Unidade *, LessPtr< Unidade > > unidadesDistintas;
+//
+//         GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > >::iterator
+//            it_at = atendimentos.begin();
+//
+//         for (; it_at != atendimentos.end();
+//                it_at++ )
+//         {
+//            unidadesDistintas.add( it_at->unidade );
+//         }
+//
+//         if ( unidadesDistintas.size() <= 1 )
+//         {
+//            continue;
+//         }
+//
+//         std::vector< AtendimentoBase > vectorAtendimentos;
+//         ITERA_GGROUP_LESSPTR( it_at, atendimentos, AtendimentoBase )
+//         {
+//            vectorAtendimentos.push_back( **it_at );
+//         }
+//
+//         // Armazena todas as combinações possíveis dos
+//         // atendimentos nos horários de aula do turno atual
+//         std::vector< std::vector< HorarioAula > > arranjosHorariosDia;
+//
+//         std::vector< HorarioAula > horarios;
+//         for ( int i = 0; i < (int)problemData->horarios_aula_ordenados.size(); i++ )
+//         {
+//            horarios.push_back( ( *problemData->horarios_aula_ordenados.at( i ) ) );
+//         }
+//
+//         Combinatoria< HorarioAula >::arranjos(
+//            horarios, (int)atendimentos.size(),  arranjosHorariosDia );
+//
+//         std::vector< std::vector< HorarioAula > >::iterator
+//            it_arranjosHorariosDia = arranjosHorariosDia.begin();
+//
+//         for (; it_arranjosHorariosDia != arranjosHorariosDia.end();
+//                it_arranjosHorariosDia++ )
+//         {
+//            std::vector< HorarioAula > horarios = ( *it_arranjosHorariosDia );
+//            std::list< int > ids_horarios_antigos;
+//            ids_horarios_antigos.clear();
+//
+//            int deslocamentoAnterior = calculaDeslocamentoUnidades(
+//               professor->getId(), dia_semana );
+//
+//            // Realiza a troca de horários
+//            for ( int i = 0; i < (int)horarios.size(); i++ )
+//            {
+//               AtendimentoBase atendimento_base = vectorAtendimentos.at( i );
+//               HorarioAula horario_aula = horarios.at( i );
+//
+//               int horario_antigo = alteraHorarioAulaAtendimento(
+//                  horario_aula.getId(), atendimento_base.idAtHorario );
+//
+//               ids_horarios_antigos.push_back( horario_antigo );
+//            }
+//
+//            int deslocamentoPosterior = calculaDeslocamentoUnidades(
+//               professor->getId(), dia_semana );
+//
+//            bool solucaoValida = validateSolution->checkSolution(
+//               this->problemData, this->problemSolution );
+//
+//            bool melhorouSolucao = ( deslocamentoPosterior < deslocamentoAnterior );
+//
+//            // Desfaz a troca, caso seja inviável ou
+//            // caso não tenha diminuido o deslocamento
+//            if ( !solucaoValida || !melhorouSolucao )
+//            {
+//               for ( int i = 0; i < (int)horarios.size(); i++ )
+//               {
+//                  AtendimentoBase atendimento_base = vectorAtendimentos.at( i );
+//                  int horario_antigo = ids_horarios_antigos.front();
+//                  ids_horarios_antigos.pop_front();
+//
+//                  int horario_antigo_alterado = alteraHorarioAulaAtendimento(
+//                     horario_antigo, atendimento_base.idAtHorario );
+//               }
+//            }
+//         }
+//      }
+//   }
+//}
 
 
 void Operacional::retornaHorariosPossiveis( Professor * prof,

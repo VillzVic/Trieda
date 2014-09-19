@@ -1,5 +1,5 @@
 #include "MIPAloc.h"
-#include "opt_lp.h"
+//#include "opt_lp.h"
 #include "opt_row.h"
 #include "ParametrosHeuristica.h"
 #include "DadosHeuristica.h"
@@ -10,17 +10,17 @@
 #include "SolucaoHeur.h"
 #include "TurmasIncHorarioDia.h"
 
-#ifdef HEURISTICA
-
-#ifdef SOLVER_CPLEX
-#include "opt_cplex.cpp"
-#endif
-
-#ifdef SOLVER_GUROBI
-#include "opt_gurobi.cpp"
-#endif
-
-#endif
+//#ifdef HEURISTICA
+//
+//#ifdef SOLVER_CPLEX
+//#include "opt_cplex.cpp"
+//#endif
+//
+//#ifdef SOLVER_GUROBI
+//#include "opt_gurobi.cpp"
+//#endif
+//
+//#endif
 
 MIPAloc::MIPAloc(int tipoMip, std::string nome, SolucaoHeur* const solucao)
 	:  tipoMIP_(tipoMip), nome_(nome), solucao_(solucao), lp_(nullptr), solFinal_(nullptr), nrVars_(0)

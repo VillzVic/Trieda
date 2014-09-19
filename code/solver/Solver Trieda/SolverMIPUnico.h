@@ -1,22 +1,15 @@
 #ifndef _SOLVER_MIP_UNICO_H_
 #define _SOLVER_MIP_UNICO_H_
 
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "Operacional.h"
 #include "Solver.h"
-#include "VariableTatico.h"
+
 #include "VariableOp.h"
-#include "ConstraintOp.h"
-#include "ProblemData.h"
-#include "ProblemSolution.h"
-#include "SolutionLoader.h"
-#include "ErrorHandler.h"
-#include "ProblemDataLoader.h"
+#include "VariableTatico.h"
+
+class ProblemDataLoader;
+class ProblemSolution;
+class ProblemData;
+
 
 class SolverMIPUnico : public Solver
 {

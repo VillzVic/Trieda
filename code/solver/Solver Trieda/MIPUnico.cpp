@@ -3,6 +3,10 @@
 
 #include "CentroDados.h"
 
+#include "ProblemData.h"
+#include "ProblemSolution.h"
+#include "VariableTatico.h"
+
 using namespace std;
 
 #define MIP_ESCOLA
@@ -16,7 +20,7 @@ int MIPUnico::idCounter = 0;
 // Parâmetros
 
 // Disciplinas
-const bool MIPUnico::divCredForte = false;
+const int MIPUnico::consideraDivCredDisc = 0;
 
 // Professores
 const bool MIPUnico::permiteCriarPV = false;
@@ -2097,7 +2101,7 @@ int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
 		lp->setHeurFrequency(0.5);
 		lp->setPolishAfterTime( this->getTimeLimit(Solver::TAT_INT) / 3 );
 		lp->setMIPEmphasis(1);
-		//lp->setSymetry(2);
+		lp->setSymetry(2);
 		lp->setCuts(2);
       //lp->setTimeLimit(1800);
 			
@@ -3363,6 +3367,7 @@ bool MIPUnico::criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prio
 			 bool alocadoNaTurma = (turma==v->getTurma() && turma!=-1);
 			 bool alocadoNaoAlocado = (turma==-1);
 
+			 #ifdef BUILD_COM_SOL_INICIAL
 			 if ( problemData->existeSolTaticoInicial() )
 			 {
 				fixar=false;
@@ -3374,6 +3379,7 @@ bool MIPUnico::criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prio
 				if ( v->getTurma() != turmaInicialAluno && fixoSolIni )
 					return false;
 			 }
+			#endif
 
 			 if ( alocadoEmOutraTurma && !PERMITIR_REALOCAR_ALUNO )
 			 {
@@ -4142,11 +4148,15 @@ int MIPUnico::criaVariavelTaticoAlunoCreditosAPartirDeX_MaisFiltroAluno( int cam
 			{
 				Aluno *aluno = problemData->retornaAluno( itAlDem->getAlunoId() );
 
+				#ifdef BUILD_COM_SOL_INICIAL
+
 				bool fixoInit=false;
 				int t = problemData->getSolTaticoInicial()->getTurma( aluno, campusId, disciplina, fixoInit );
 
 				if ( t != turma && fixoInit )
 					continue;
+
+				#endif
 
 				for ( itCjtSala = (*mapCjtSala).begin(); itCjtSala != (*mapCjtSala).end(); itCjtSala++ )
 				{
@@ -5119,6 +5129,7 @@ int MIPUnico::criaVariavelTaticoCreditosComSolInicial( int campusId, int P )
 					bool fixaDias = false;
 					bool fixaHorarios = false;
 
+					#ifdef BUILD_COM_SOL_INICIAL
 					GGroup<Aula*, LessPtr<Aula>> aulasSolInicial = 
 						problemData->getSolTaticoInicial()->getAulas( campusId, disciplina, turma );
 					
@@ -5150,6 +5161,7 @@ int MIPUnico::criaVariavelTaticoCreditosComSolInicial( int campusId, int P )
 							}
 						}
 					}
+					#endif
 					
 					if ( !fixaSala )
 					{
@@ -5923,6 +5935,8 @@ int MIPUnico::criaVariavelTaticoConsecutivos( int campusId, int P )
 int MIPUnico::criaVariavelTaticoCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P )
 {
 	int numVars = 0;
+	if ( MIPUnico::consideraDivCredDisc == 0 )
+		return numVars;
 
 	Campus *campus = problemData->refCampus[campusId];
 
@@ -6007,6 +6021,8 @@ $k$ foi escolhida para a turma $i$ da disciplina $d$.
 int MIPUnico::criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P )
 {
    int numVars = 0;
+   if ( MIPUnico::consideraDivCredDisc == 0 )
+		return numVars;
 
    Disciplina * disciplina = NULL;
   
@@ -6079,8 +6095,8 @@ int MIPUnico::criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P )
 int MIPUnico::criaVariavelTaticoFolgaCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P )
 {
 	int numVars = 0;
-
-	if ( MIPUnico::divCredForte )
+		
+	if ( MIPUnico::consideraDivCredDisc != 1 )
 	   return numVars;
 
 	Campus *campus = problemData->refCampus[campusId];
@@ -6204,8 +6220,8 @@ peso associado a função objetivo.
 int MIPUnico::criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int P )
 {
    int numVars = 0;
-   
-	if ( MIPUnico::divCredForte )
+   		
+	if ( MIPUnico::consideraDivCredDisc != 1 )
 	   return numVars;
 
    Campus * cp = problemData->refCampus[campusId];
@@ -7410,6 +7426,7 @@ int MIPUnico::criaVariavelTaticoAlocaAlunoTurmaDiscEquivTotal( int campusId, int
 						double upperBound = 1.0;
 						double coef = 0.0;		
 
+						#ifdef BUILD_COM_SOL_INICIAL
 						if ( problemData->existeSolTaticoInicial() )
 						{
 							if ( ! problemData->passarPorPreModeloETatico(campusId) )
@@ -7430,6 +7447,7 @@ int MIPUnico::criaVariavelTaticoAlocaAlunoTurmaDiscEquivTotal( int campusId, int
 									lowerBound = 1.0;
 							}
 						}
+						#endif
 
 						vHashTatico[ v ] = lp->getNumCols();
 										
@@ -10150,8 +10168,6 @@ int MIPUnico::criaRestricaoTaticoAlunoDiscPraticaTeorica_1xN( int campusId )
 	return restricoes;
 }
 
-
-
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
@@ -10179,6 +10195,10 @@ número de créditos determinados para a disciplina $d$ no dia $t$ na combinação d
 int MIPUnico::criaRestricaoTaticoDivisaoCredito_hash( int campusId )
 {
    int restricoes = 0;
+
+   if ( MIPUnico::consideraDivCredDisc == 0 )
+	   return restricoes;
+
    char name[ 1024 ];
    int nnz;
 
@@ -10296,15 +10316,17 @@ int MIPUnico::criaRestricaoTaticoDivisaoCredito_hash( int campusId )
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Constraint 
-Somente uma combinação de regra de divisão de créditos pode ser escolhida
+Exatamente uma combinação de regra de divisão de créditos deve ser escolhida
+para cada turma aberta.
 %Desc 
 
 %MatExp
 
 \begin{eqnarray}
-\sum\limits_{k \in K_{d}} m_{d,i,k} \leq 1 \nonumber \qquad 
+\sum\limits_{k \in K_{d}} m_{d,i,cp,k} = z_{i,d,cp} \nonumber \qquad 
 \forall d \in D \quad
-\forall i \in I_{d}
+\forall i \in I_{d} \quad
+\forall cp \in Cp
 \end{eqnarray}
 
 %DocEnd
@@ -10312,6 +10334,10 @@ Somente uma combinação de regra de divisão de créditos pode ser escolhida
 int MIPUnico::criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId )
 {
    int restricoes = 0;
+
+   if ( MIPUnico::consideraDivCredDisc == 0 )
+	   return restricoes;
+
    char name[ 1024 ];
    int nnz;
 
@@ -10329,24 +10355,32 @@ int MIPUnico::criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId )
 	{		
 		VariableMIPUnico v = vit->first;
 
-		if( v.getType() != VariableMIPUnico::V_COMBINACAO_DIVISAO_CREDITO )
+		double coef;
+
+		if( v.getType() == VariableMIPUnico::V_COMBINACAO_DIVISAO_CREDITO )
 		{
-			continue;
+			coef = 1.0;			
+		}         
+		else if( v.getType() == VariableMIPUnico::V_ABERTURA )
+		{
+			coef = -1.0;
 		}
-         
+		else continue;
+
 		c.reset();
         c.setType( ConstraintMIPUnico::C_COMBINACAO_DIVISAO_CREDITO );
         c.setDisciplina( v.getDisciplina() );
 		c.setTurma( v.getTurma() );
+		c.setCampus( v.getCampus() );
 
 		cit = cHashTatico.find(c);
 
 		if(cit == cHashTatico.end())
 		{
 			sprintf( name, "%s", c.toString( etapa ).c_str() );
-			OPT_ROW row( 10, OPT_ROW::LESS , 1.0 , name );
+			OPT_ROW row( 10, OPT_ROW::EQUAL , 0.0 , name );
 
-			row.insert( vit->second, 1.0);
+			row.insert( vit->second, coef);
 
 			cHashTatico[ c ] = lp->getNumRows();
 			lp->addRow( row );
@@ -10356,7 +10390,7 @@ int MIPUnico::criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId )
 		{
 			idxC.push_back(vit->second);
 			idxR.push_back(cit->second);
-			valC.push_back(1.0);
+			valC.push_back(coef);
 		}
 	}
 

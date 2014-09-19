@@ -2,14 +2,25 @@
 
 #include <math.h>
 #include <hash_set>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "opt_lp.h"
 #include "NaoAtendimento.h"
 #include "AtendimentoHorarioAula.h"
 #include "AtendimentoTurno.h"
 #include "MIPUnico.h"
 #include "CentroDados.h"
-#include "opt_lp.h"
+#include "Operacional.h"
 
+#include "ErrorHandler.h"
+#include "ProblemDataLoader.h"
+#include "ProblemData.h"
+#include "ProblemSolution.h"
+#include "ConstraintOp.h"
 
 
 using namespace std;

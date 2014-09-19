@@ -36,7 +36,8 @@
 #include "Aula.h"
 #include "HorarioDia.h"
 #include "Equivalencia.h"
-#ifndef HEURISTICA
+
+#ifdef BUILD_COM_SOL_INICIAL
 #include "SolucaoTaticoInicial.h"
 #endif
 
@@ -754,7 +755,7 @@ public:
    void addMapAula( int campusId, int turma, Disciplina* disciplina, Aula* aula );
    GGroup<Aula*, LessPtr<Aula>> getMapAulas( int campusId, int turma, Disciplina* disciplina );
    
-#ifndef HEURISTICA
+#ifdef BUILD_COM_SOL_INICIAL
    SolucaoTaticoInicial *getSolTaticoInicial() const { return solTaticoInicial; }
    bool existeSolTaticoInicial() const { return solTaticoInicial->existeSolInicial(); }
    AlunoDemanda* atualizaAlunoDemandaEquivSolInicial( int turma, Disciplina* disciplina, int campusId, Aluno *aluno, int prioridade );
@@ -765,7 +766,7 @@ public:
    int getTotalOrigAlunoDemanda( int cpId ) { return totalOrigAlunoDemanda[cpId]; }
    void setTotalOrigAlunoDemanda( int cpId, int v ) { totalOrigAlunoDemanda[cpId] = v; }
  
-#ifndef HEURISTICA
+#ifdef BUILD_COM_SOL_INICIAL
    int getPercAtendInicialFixado( int cpId );
    int getPercAtendAlunosInicialFixado( int cpId );
    int getPercAtendTurmasInicialFixado( int cpId );
@@ -821,7 +822,7 @@ public:
 
 	   std::map< std::pair< Demanda*, Disciplina* >, bool > mapEquivViavelDemandaDisc;
 
-#ifndef HEURISTICA
+#ifdef BUILD_COM_SOL_INICIAL
 	   SolucaoTaticoInicial * solTaticoInicial;
 #endif
 
