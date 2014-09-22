@@ -27,6 +27,6 @@ public interface ISolver {
 	public boolean cancelAll();
 
 	public String[] getQueue();
-
-
+	
+	public String getPositionQueue(long round);
 }

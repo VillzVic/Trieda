@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -65,6 +66,10 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressReportListWriter;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.util.solverclient.SolverClient;
+import com.gapso.web.trieda.server.xml.input.ItemAlunoDemanda;
+import com.gapso.web.trieda.server.xml.input.ItemCampus;
+import com.gapso.web.trieda.server.xml.input.ItemProfessor;
+import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
@@ -79,10 +84,12 @@ import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
+import com.gapso.web.trieda.shared.dtos.EstatisticasInputSolverXMLDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO.StatusRequisicaoOtimizacao;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.services.OtimizarService;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dev.util.Pair;
@@ -98,13 +105,17 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	
 	public void initProgressReport(String chave) {
 		try {
-			List<String> feedbackList = new ArrayList<String>();
+			HttpServletRequest request = getThreadLocalRequest();
 			
-			setProgressReport(feedbackList);
+			List<String> feedbackList = new ArrayList<String>();
+			ProgressReportWriter progressReport = new ProgressReportListWriter(feedbackList);//setProgressReport(feedbackList);
+			ProgressReportServiceImpl.getProgressReportWriterSession(request).put(chave, progressReport);
+			
 			ProgressReportReader progressSource = new ProgressReportListReader(feedbackList);
-			progressSource.start();
-			ProgressReportServiceImpl.getProgressReportSession(getThreadLocalRequest()).put(chave, progressSource);
-			getProgressReport().start();
+			progressSource.start();			
+			ProgressReportServiceImpl.getProgressReportSession(request).put(chave, progressSource);
+			
+			ProgressReportServiceImpl.getProgressReportWriterSession(request).get(chave).start();//getProgressReport().start();
 		}
 		catch(Exception e){
 			System.out.println("Nao foi possivel realizar o acompanhamento da progressao.");
@@ -120,8 +131,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		
 		//Inicializa o relatorio de progresso
 		initProgressReport("chaveOtimizacao");
-		getProgressReport().setInitNewPartial("Iniciando checagem dos dados");
+		ProgressReportWriter prw = getProgressReport("chaveOtimizacao");		
 		
+		prw.setInitNewPartial("Iniciando checagem dos dados");
 		
 		if (parametroDTO.isValid()) {
 			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
@@ -129,110 +141,66 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			List<String> errors = new ArrayList<String>();
 			
 			// realiza verificações
-			System.out.print("Checando Alunos Cadastrados");long start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando Semanas Letivas");
-			checkAlunosCadastrados(parametro,warnings);
-			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			System.out.print("Checando Semanas Letivas");start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando Semanas Letivas");
-			checkSemanasLetivas(parametro,warnings);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			System.out.print("Checando disciplinas sem curriculos"); start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando disciplinas sem currículos");
-			checkDisciplinasSemCurriculo(parametro,warnings);
-			 time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
-			System.out.print("Checando disciplinas sem laboratorios");start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando disciplinas sem laboratórios");
-			checkDisciplinasSemLaboratorios(parametro,errors);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			// SEMANAS LETIVAS
+			prw.setInitSubPartial("Verificando consistência das semanas letivas...");
+				checkSemanasLetivas(parametro,warnings,errors);
+//				checkSemanasLetivasIncompativeis(parametro, errors);
+			prw.endSubPartial();
 			
-			System.out.print("Checando disciplinas que nao exigem laboratorio associadas somente a laboratorios");start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando disciplinas que não exigem laboratório associadas somente a laboratórios");
-			checkDisciplinasComSomenteLaboratorios(parametro,warnings);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			
-			System.out.print("Checando disciplinas com creditos zerados");start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando disciplinas com créditos zerados");
-			checkDisciplinasComCreditosZerados(parametro,warnings);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			
-			//getProgressReport().setInitNewPartial("Checando disciplinas com número máximo de alunos teóricos zerados");
-			checkDisciplinasComMaxAlunosTeoricosZerados(parametro,errors);
-			
-			//getProgressReport().setInitNewPartial("Checando disciplinas com número máximo de alunos práticos zerado");
-			checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
-			
-			//getProgressReport().setInitNewPartial("Checando disciplinas com número máximo de aluno teóricos e práticos diferentes");
-			checkDisciplinasComMaxAlunosDiferentes(parametro,errors);
-			
-			//getProgressReport().setInitNewPartial("Checando divisões de crédito");
-			checkDivisoesCreditos(parametro,errors);
-			
-			if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
-				System.out.print("Checando disciplinas repetidas por curriculo");start = System.currentTimeMillis(); // TODO: retirar
-				//getProgressReport().setInitNewPartial("Checando disciplinas repetidas por currículo");
-				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors,warnings);
-				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			} else {
-				System.out.print("Checando creditos semanais e disciplinas repetidas por aluno");start = System.currentTimeMillis(); // TODO: retirar
-				//getProgressReport().setInitNewPartial("Checando créditos semanais e disciplinas repetidas por aluno");
-				checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors,warnings);
-				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			}
-
-			System.out.print("Checando demandas com disciplinas sem curriculo");start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando demandas com disciplinas sem currículo");
-			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			
-			System.out.print("Checando professoress com Carga Horária Máxima zerada");start = System.currentTimeMillis(); // TODO: retirar
-			//getProgressReport().setInitNewPartial("Checando professoress com Carga Horária Máxima zerada");
-			checkProfessorComCargaHorariaMaximaZerada(parametro,errors, warnings);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-
-			//getProgressReport().setInitNewPartial("Checando oferta com receita de crédito zerada");
-			checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
-			
-			//getProgressReport().setInitNewPartial("Checando exige equivalência forçada em Demandas de alunos");
-			checkExigeEquivalenciaForcadaAlunosDemanda(parametro,getInstituicaoEnsinoUser(),errors);
-			System.out.println("Checou equivalencias forçadas");
-			
-//			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
-//			checkSemanasLetivasIncompativeis(parametro, errors);
-//			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			
-			if (parametro.getConsiderarEquivalencia()) {
-				if (parametro.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia()) {
-					System.out.print("Checando equivalencias que levam para disciplinas online ou sem creditos");start = System.currentTimeMillis(); // TODO: retirar
-					//getProgressReport().setInitNewPartial("Checando equivalências que levam para disciplinas on-line ou sem créditos");
-					checkEquivalenciasQueLevamParaDisciplinasOnlineOuSemCreditos(parametro.getCenario(),errors);
-					time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			// CAMPUS
+			prw.setInitSubPartial("Verificando consistência dos campi...");
+				if (parametro.getProfessorEmMuitosCampi()) {
+					checkCampiSemDeslocamentos(parametro,errors);
 				}
-				
-				System.out.print("Checando ciclo de disciplinas equivalentes");start = System.currentTimeMillis(); // TODO: retirar
-				boolean detectouCiclo = checkCicloDisciplinasEquivalentes(parametro.getCenario(),(parametro.getProibirCiclosEmEquivalencia() ? errors : warnings));
-				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-				
-				if (!detectouCiclo || !parametro.getConsiderarTransitividadeEmEquivalencia()) {
-					if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
-						System.out.print("Checando equivalencias que geram disciplinas repetidas em um mesmo curriculo");start = System.currentTimeMillis(); // TODO: retirar
-						//getProgressReport().setInitNewPartial("Checando equivalências que geram disciplinas repetidas em um mesmo currículo");
-						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,warnings);
-						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-					} else {
-						System.out.print("Checando equivalencias que geram disciplinas repetidas em um aluno");start = System.currentTimeMillis(); // TODO: retirar
-						//getProgressReport().setInitNewPartial("Checando equivalências que geram disciplinas repetidas em um aluno");
-						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,warnings);
-						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			prw.endSubPartial();
+			
+			// DISCIPLINAS
+			prw.setInitSubPartial("Verificando consistência das disciplinas...");
+				checkDisciplinasSemCurriculo(parametro,warnings);
+				checkDisciplinasSemLaboratorios(parametro,errors);
+				checkDisciplinasComSomenteLaboratorios(parametro,warnings);
+				checkDisciplinasComCreditosZerados(parametro,warnings);
+				checkDisciplinasComMaxAlunosTeoricosZerados(parametro,errors);
+				checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
+				checkDisciplinasComMaxAlunosDiferentes(parametro,errors);
+				checkDivisoesCreditos(parametro,errors);
+			prw.endSubPartial();
+			
+			// EQUIVALÊNCIAS
+			prw.setInitSubPartial("Verificando consistência das regras de equivalências entre disciplinas...");
+				if (parametro.getConsiderarEquivalencia()) {
+					if (parametro.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia()) {
+						checkEquivalenciasQueLevamParaDisciplinasOnlineOuSemCreditos(parametro.getCenario(),errors);
+					}
+					boolean detectouCiclo = checkCicloDisciplinasEquivalentes(parametro.getCenario(),(parametro.getProibirCiclosEmEquivalencia() ? errors : warnings));				
+					if (!detectouCiclo || !parametro.getConsiderarTransitividadeEmEquivalencia()) {
+						if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
+							checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,warnings);
+						} else {
+							checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,warnings);
+						}
 					}
 				}
-			}
+			prw.endSubPartial();
 			
-			if (parametro.getProfessorEmMuitosCampi()) {
-				//getProgressReport().setInitNewPartial("Chegando campi sem deslocamentos");
-				checkCampiSemDeslocamentos(parametro,errors);
-			}
+			// ALUNOS e DEMANDAS
+			prw.setInitSubPartial("Verificando consistência dos alunos e demandas...");
+				checkAlunosCadastrados(parametro,warnings);
+				if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
+					checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors,warnings);
+				} else {
+					checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors,warnings);
+				}
+				checkDemandasComDisciplinasSemCurriculo(parametro,errors);
+				checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
+				checkExigeEquivalenciaForcadaAlunosDemanda(parametro,getInstituicaoEnsinoUser(),errors);
+			prw.endSubPartial();
+			
+			// PROFESSORES
+			prw.setInitSubPartial("Verificando consistência dos professores...");
+				checkProfessorComCargaHorariaMaximaZerada(parametro,errors, warnings);
+			prw.endSubPartial();
 			
 			response.setErrors(errors);
 			response.setWarnings(warnings);
@@ -254,9 +222,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			response.setErrors(errors);
 		}
 		
-		getProgressReport().setPartial("Etapa concluída");
+		prw.setPartial("Etapa concluída");
 		if (response.getTotalErrorsWarnings() > 0) {
-			getProgressReport().finish();
+			prw.finish();
 		}
 		return response;
 	}
@@ -343,7 +311,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#registraRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
 	 */
 	@Override
-	public RequisicaoOtimizacaoDTO registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException {
+	public RequisicaoOtimizacaoDTO registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round, EstatisticasInputSolverXMLDTO estatisticasDTO) throws TriedaException {
 		try {
 			Usuario usuarioAtual = getUsuario();
 			
@@ -369,6 +337,16 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			reqOtm.setRound(round);
 			reqOtm.setUsuario(usuarioAtual);
 			reqOtm.setParametro(parametro);
+			// TODO: [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
+//			reqOtm.setTotalCampi(estatisticasDTO.getTotalCampi());
+//			reqOtm.setCampiSelecionados(estatisticasDTO.getCampiSelecionados());
+//			reqOtm.setTotalTurnos(estatisticasDTO.getTotalTurnos());
+//			reqOtm.setTurnosSelecionados(estatisticasDTO.getTurnosSelecionados());
+//			reqOtm.setTotalAlunos(estatisticasDTO.getTotalAlunos());
+//			reqOtm.setTotalAlunosDemandasP1(estatisticasDTO.getTotalAlunosDemandasP1());
+//			reqOtm.setTotalAlunosDemandasP2(estatisticasDTO.getTotalAlunosDemandasP2());
+//			reqOtm.setTotalAmbientes(estatisticasDTO.getTotalAmbientes());
+//			reqOtm.setTotalProfessores(estatisticasDTO.getTotalProfessores());
 			
 			reqOtm.persist();
 			
@@ -430,7 +408,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	
 	@Override
 	@Transactional
-	public ParDTO<Long,ParametroDTO> enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException {
+	public TrioDTO<Long,ParametroDTO,EstatisticasInputSolverXMLDTO> enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException {
 		TriedaException exception = null;
 		
 		try {
@@ -450,10 +428,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				boolean haConflito = parDTOConflito.getPrimeiro();
 				if (!haConflito) {
 					
-					if (getProgressReport().getStatus() == 0) {
-						initProgressReport("chaveOtimizacaoReq");
+					if (getProgressReport("chaveOtimizacao").getStatus() == 0) {
+						initProgressReport("chaveOtimizacao");
 					}
-					getProgressReport().setInitNewPartial("Enviando requisição de otimização");
+					ProgressReportWriter prw = getProgressReport("chaveOtimizacao");
+					prw.setInitNewPartial("Enviando requisição de otimização");
 					Parametro parametro = ConvertBeans.toParametro(parametroDTO);
 					parametro.setId(null);
 					parametro.flush();
@@ -465,9 +444,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					SolverInput solverInput = new SolverInput(getInstituicaoEnsinoUser(),cenario,parametro,campi);
 					TriedaInput triedaInput = null;
 					if (parametro.isTatico()) {
-						triedaInput = solverInput.generateTaticoTriedaInput();
+						triedaInput = solverInput.generateTaticoTriedaInput(prw);
 					} else {
-						triedaInput = solverInput.generateOperacionalTriedaInput();
+						triedaInput = solverInput.generateOperacionalTriedaInput(prw);
 					}
 					final ByteArrayOutputStream temp = new ByteArrayOutputStream();
 					JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
@@ -479,7 +458,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 					SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 					Long round = solverClient.requestOptimization(fileBytes);
-					return ParDTO.<Long,ParametroDTO>create(round,ConvertBeans.toParametroDTO(parametro));
+					
+					EstatisticasInputSolverXMLDTO estatisticasDTO = getEstatisticasInputSolverXML(round,triedaInput, parametro);
+					
+					return TrioDTO.<Long,ParametroDTO,EstatisticasInputSolverXMLDTO>create(round,ConvertBeans.toParametroDTO(parametro),estatisticasDTO);
 				} else {
 					String msgConflito = parDTOConflito.getSegundo();
 					exception = new TriedaException(HtmlUtils.htmlUnescape(msgConflito));
@@ -490,10 +472,63 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			exception = new TriedaException(e);
 		}
 		
-		getProgressReport().setPartial("Etapa concluída");
-		getProgressReport().finish();
+		getProgressReport("chaveOtimizacao").setPartial("Etapa concluída");
+		getProgressReport("chaveOtimizacao").finish();
 		
 		throw exception;
+	}
+	
+	private EstatisticasInputSolverXMLDTO getEstatisticasInputSolverXML(Long reqOtmRound, TriedaInput triedaInput, Parametro parametro) {
+		// contabiliza entidades do XML de input para salvar estas informações na requisição de otimização
+		
+		int totalAlunos = triedaInput.getAlunos().getAluno().size();
+		int totalCampi = triedaInput.getCampi().getCampus().size();
+		int totalTurnos = parametro.getTurnos().size();
+		
+		String turnosSelecionados = "";
+		for (Turno turno : parametro.getTurnos()) {
+			turnosSelecionados += turno.getNome() + ", ";
+		}
+		turnosSelecionados = turnosSelecionados.substring(0, turnosSelecionados.length()-2);
+		
+		int totalAmbientes = 0;
+		String campiSelecionados = "";
+		Set<Integer> professoresIds = new HashSet<Integer>();
+		for (ItemCampus itemCampus : triedaInput.getCampi().getCampus()) {
+			campiSelecionados += itemCampus.getCodigo() + ", ";
+			for (ItemUnidade itemUnidade : itemCampus.getUnidades().getUnidade()) {
+				totalAmbientes += itemUnidade.getSalas().getSala().size();
+			}
+			for (ItemProfessor itemProfessor : itemCampus.getProfessores().getProfessor()) {
+				professoresIds.add(itemProfessor.getId());
+			}
+		}
+		campiSelecionados = campiSelecionados.substring(0,campiSelecionados.length()-2);
+		
+		int totalProfessores = professoresIds.size();
+		
+		int totalAlunosDemandasP1 = 0, totalAlunosDemandasP2 = 0;
+		for (ItemAlunoDemanda itemAlunoDemanda : triedaInput.getAlunosDemanda().getAlunoDemanda()) {
+			if (itemAlunoDemanda.getPrioridade() == 1) {
+				totalAlunosDemandasP1++;
+			} else {
+				totalAlunosDemandasP2++;
+			}
+		}
+		
+		EstatisticasInputSolverXMLDTO estatisticaDTO = new EstatisticasInputSolverXMLDTO();
+		estatisticaDTO.setReqOtmRound(reqOtmRound);
+		estatisticaDTO.setTotalCampi(totalCampi);
+		estatisticaDTO.setCampiSelecionados(campiSelecionados);
+		estatisticaDTO.setTotalTurnos(totalTurnos);
+		estatisticaDTO.setTurnosSelecionados(turnosSelecionados);
+		estatisticaDTO.setTotalAlunos(totalAlunos);
+		estatisticaDTO.setTotalAlunosDemandasP1(totalAlunosDemandasP1);
+		estatisticaDTO.setTotalAlunosDemandasP2(totalAlunosDemandasP2);
+		estatisticaDTO.setTotalAmbientes(totalAmbientes);
+		estatisticaDTO.setTotalProfessores(totalProfessores);
+		
+		return estatisticaDTO;
 	}
 
 	private ParDTO<Boolean,String> checkExistenciaRequisicaoOtimizacaoConflitanteEmAndamento(ParametroDTO parametroDTO) throws TriedaException {
@@ -509,7 +544,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		RequisicaoOtimizacaoDTO requisicaoConflitanteEmAndamento = null;
 		for (RequisicaoOtimizacaoDTO reqOtmDTO : requisicoesOtimizacaoDTO) {
 			StatusRequisicaoOtimizacao status = StatusRequisicaoOtimizacao.values()[reqOtmDTO.getStatusIndex()];
-			if (StatusRequisicaoOtimizacao.EM_ANDAMENTO.equals(status)) {
+			if (StatusRequisicaoOtimizacao.AGUARDANDO.equals(status) || StatusRequisicaoOtimizacao.EXECUTANDO.equals(status)) {
 				// VERIFICAÇÃO 1
 				// verifica se há interseção de campi selecionados
 				String campiSelecionados = reqOtmDTO.getCampiSelecionados();
@@ -617,21 +652,72 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 		for (RequisicaoOtimizacao requisicaoOtimizacao : requisicoesOtimizacao) {
 			RequisicaoOtimizacaoDTO dto = ConvertBeans.toRequisicaoOtimizacaoDTO(requisicaoOtimizacao);
-			
-			if (solverClient.isFinished(requisicaoOtimizacao.getRound())) {
-				if (solverClient.containsResult(requisicaoOtimizacao.getRound())) {
-					dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_COM_OUTPUT.ordinal());
-				} else {
-					dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT.ordinal());
-				}
-			} else {
-				dto.setStatusIndex(StatusRequisicaoOtimizacao.EM_ANDAMENTO.ordinal());
-			}
-			
+			dto.setStatusIndex(getStatusRequisicaoDeOtimizacao(requisicaoOtimizacao, solverClient));
+			dto.setPosicaoFila(solverClient.getPositionQueue(requisicaoOtimizacao.getRound()));
 			requisicoesOtimizacaoDTOs.add(dto);
 		}
 		
 		return requisicoesOtimizacaoDTOs;
+	}
+	
+	@Override
+	public Integer getStatusRequisicaoDeOtimizacao(Long round) {		
+		RequisicaoOtimizacao reqOtm = RequisicaoOtimizacao.findBy(round);
+		if (reqOtm != null) {
+			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
+			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
+			
+			return getStatusRequisicaoDeOtimizacao(reqOtm, solverClient);
+		}
+		else {
+			return StatusRequisicaoOtimizacao.INVALIDO.ordinal();
+		}
+	}
+	
+	public Integer getStatusRequisicaoDeOtimizacao(RequisicaoOtimizacao reqOtm, SolverClient solverClient) {
+		long round = reqOtm.getRound();
+		// TODO: [REQ-OTM] substituir o if-else abaixo por algo do tipo:
+//		Integer status = null;
+//		if (!reqOtm.estaFinalizada()) { // ou seja, (status == EXECUTANDO) || (status == AGUARDANDO)
+//			if (solverClient.isFinished(round)) {
+//				if (solverClient.containsResult(round)) {
+//					status = StatusRequisicaoOtimizacao.FINALIZADA_COM_OUTPUT.ordinal();
+//				} else {
+//					status = StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT.ordinal();
+//				}
+//			} else {
+//				String statusQueue = solverClient.getPositionQueue(round);
+//				if (statusQueue.equalsIgnoreCase("Executando")) {
+//					status = StatusRequisicaoOtimizacao.EXECUTANDO.ordinal();
+//				} else {
+//					status = StatusRequisicaoOtimizacao.AGUARDANDO.ordinal();
+//				}
+//			}
+//		} else {
+//			status = reqOtm.getStatus();
+//		}
+//		
+//		if (reqOtm.getStatus() != status) {
+//			reqOtm.setStatus(status);
+//			reqOtm.merge();
+//		}
+//		
+//		return status;
+		
+		if (solverClient.isFinished(round)) {
+			if (solverClient.containsResult(round)) {
+				return StatusRequisicaoOtimizacao.FINALIZADA_COM_RESULTADO.ordinal();
+			} else {
+				return StatusRequisicaoOtimizacao.FINALIZADA_SEM_RESULTADO.ordinal();
+			}
+		} else {
+			String statusQueue = solverClient.getPositionQueue(round);
+			if (statusQueue.equalsIgnoreCase("Executando")) {
+				return StatusRequisicaoOtimizacao.EXECUTANDO.ordinal();
+			} else {
+				return StatusRequisicaoOtimizacao.AGUARDANDO.ordinal();
+			}
+		}
 	}
 	
 	/**
@@ -642,11 +728,15 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		try {
 			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
-			return solverClient.cancelOptimization(round);
+			if (solverClient.cancelOptimization(round)) {
+				// TODO: [REQ-OTM] atualizar status da Requisição de Otimização para Cancelada e salvar no BD
+				return true;
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			throw new TriedaException(e);
 		}
+		return false;
 	}
 
 	private void checksCleiton() {
@@ -722,55 +812,61 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			errors.add(HtmlUtils.htmlUnescape("Não é possível continuar a otimização sem alunos cadastrados"));
 	}
 	
-	private void checkSemanasLetivas(Parametro parametro, List<String> warnings){
+	private void checkSemanasLetivas(Parametro parametro, List<String> warnings, List<String> errors){
 		Cenario cenario = parametro.getCenario();
 		Set<SemanaLetiva> semanasLetivas = cenario.getSemanasLetivas();
 		List<HorarioDisponivelCenario> horariosAulasAux = new ArrayList<HorarioDisponivelCenario>();
-		
-		if(horariosAulasAux != null){ 
-		if(!semanasLetivas.isEmpty()){
-			for(SemanaLetiva semanaLetiva : semanasLetivas){
-				if(!semanaLetiva.getHorariosAula().isEmpty()){
-					for(HorarioAula horarioAula : semanaLetiva.getHorariosAula()){
-						if(!horarioAula.getHorariosDisponiveisCenario().isEmpty()){
-							for(HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()){
-								horariosAulasAux.add(hdc);
+		Map<Long, List<HorarioDisponivelCenario>> horariosDisponiveisMap = new HashMap<Long, List<HorarioDisponivelCenario>>();
+		 
+		if (!semanasLetivas.isEmpty()) { // verifica se existem semanas letivas cadastradas
+			boolean haAlgumaSemanaLetivaComHorarios = false;
+			for (SemanaLetiva semanaLetiva : semanasLetivas) { // para cada semana letiva do cenário
+				if (!semanaLetiva.getHorariosAula().isEmpty()) { // verifica se a semana letiva tem algum horário de aula cadastrado
+					haAlgumaSemanaLetivaComHorarios = true;
+					for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+						for(HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()){
+							horariosAulasAux.add(hdc);
+							for(Disciplina disciplina : hdc.getDisciplinas()){
+								if(horariosDisponiveisMap.get(disciplina.getId()) == null){
+									List<HorarioDisponivelCenario> horariosDisponiveisNew = new ArrayList<HorarioDisponivelCenario>();
+									horariosDisponiveisNew.add(hdc);
+									horariosDisponiveisMap.put(disciplina.getId(), horariosDisponiveisNew);
+								} else {
+									horariosDisponiveisMap.get(disciplina.getId()).add(hdc);
+								}
 							}
-							
-						}
-						else{
-							warnings.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, nas semanas letivas do cenário " + cenario.getNome()  + " não foram cadastros os possíveis dias e horários de aula."));
 						}
 					}
 				} else {
-					warnings.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, nas semanas letivas do cenário " + cenario.getNome()  + " não foram cadastros os possíveis dias e horários de aula."));
+					warnings.add(HtmlUtils.htmlUnescape("Não foram cadastros os possíveis dias e horários de aula na semana letiva [" + semanaLetiva.getCodigo() + "] do cenário [" + cenario.getNome()  + "]."));
 				}
+			}
+			// verifica se todas as semanas letivas cadastradas estão sem horários
+			if (!haAlgumaSemanaLetivaComHorarios) {
+				errors.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, nas semanas letivas do cenário " + cenario.getNome()  + " não foram cadastros os possíveis dias e horários de aula."));
 			}
 		} else {
-			warnings.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, não há nenhuma semana letiva cadastrada no cenário [" + cenario.getNome() + " ]."));
+			errors.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, não há nenhuma semana letiva cadastrada no cenário [" + cenario.getNome() + " ]."));
 		}
 		
-		List<HorarioDisponivelCenario> horariosDisponiveisAll = HorarioDisponivelCenario.findAll(getInstituicaoEnsinoUser(), cenario);
-		Map<Long, List<HorarioDisponivelCenario>> horariosDisponiveisMap = new HashMap<Long, List<HorarioDisponivelCenario>>();
-		
-		for(HorarioDisponivelCenario hdc : horariosDisponiveisAll){
-			for(Disciplina disciplina : hdc.getDisciplinas()){
-				if(horariosDisponiveisMap.get(disciplina.getId()) == null){
-					List<HorarioDisponivelCenario> horariosDisponiveisNew = new ArrayList<HorarioDisponivelCenario>();
-					horariosDisponiveisNew.add(hdc);
-					horariosDisponiveisMap.put(disciplina.getId(), horariosDisponiveisNew);
-				} else {
-					horariosDisponiveisMap.get(disciplina.getId()).add(hdc);
-				}
-					
-			}
-		}
+//		List<HorarioDisponivelCenario> horariosDisponiveisAll = HorarioDisponivelCenario.findAll(getInstituicaoEnsinoUser(), cenario);
+//		for(HorarioDisponivelCenario hdc : horariosDisponiveisAll){
+//			for(Disciplina disciplina : hdc.getDisciplinas()){
+//				if(horariosDisponiveisMap.get(disciplina.getId()) == null){
+//					List<HorarioDisponivelCenario> horariosDisponiveisNew = new ArrayList<HorarioDisponivelCenario>();
+//					horariosDisponiveisNew.add(hdc);
+//					horariosDisponiveisMap.put(disciplina.getId(), horariosDisponiveisNew);
+//				} else {
+//					horariosDisponiveisMap.get(disciplina.getId()).add(hdc);
+//				}
+//			}
+//		}
 		
 		for (Disciplina disciplina : cenario.getDisciplinas()) {
 			List<HorarioDisponivelCenario> horariosDisponiveisBD = horariosDisponiveisMap.get(disciplina.getId());
 			
 			if(horariosDisponiveisBD != null){
-			// obtém as semanas letivas associadas com a disciplina em questão
+				// obtém as semanas letivas associadas com a disciplina em questão
 				Set<SemanaLetiva> semanasLetivasDis = disciplina.getSemanasLetivas();
 				// se necessário, filtra os horários discponíveis
 				if (!semanasLetivasDis.isEmpty()) {
@@ -785,42 +881,47 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					horariosDisponiveisBD.clear();
 					horariosDisponiveisBD.addAll(horariosDisponiveisBDFiltrados);
 				}
-			if(!disciplina.getUsaSabado()){
-				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-					if(Semanas.SAB.equals(hdc.getDiaSemana())){
-						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Não, está com disponibilidade no Sábado"));
+				
+				if(!disciplina.getUsaSabado()){
+					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+						if(Semanas.SAB.equals(hdc.getDiaSemana())){
+							warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Não, está com disponibilidade no Sábado"));
+							break;
+						}
+					}
+				} else {
+					boolean hasSat = false;
+					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+						if(Semanas.SAB.equals(hdc.getDiaSemana())){
+							hasSat = true;
+							break;
+						}
+					}
+					if(!hasSat){
+						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Sim, não está com disponibilidade no Sábado"));
 					}
 				}
-			} else {
-				boolean hasSat = false;
-				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-					if(Semanas.SAB.equals(hdc.getDiaSemana())){
-						hasSat = true;
+				
+				if(!disciplina.getUsaDomingo()){
+					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+						if(Semanas.DOM.equals(hdc.getDiaSemana())){
+							warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Não, está com disponibilidade no Sábado"));
+							break;
+						}
 					}
-				}
-				if(hasSat){
-					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Sim, não está com disponibilidade no Sábado"));
+				} else {
+					boolean hasSat = false;
+					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+						if(Semanas.DOM.equals(hdc.getDiaSemana())){
+							hasSat = true;
+							break;
+						}
+					}
+					if(!hasSat){
+						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Sim, não está com disponibilidade no Sábado"));
+					}
 				}
 			}
-			if(!disciplina.getUsaDomingo()){
-				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-					if(Semanas.DOM.equals(hdc.getDiaSemana())){
-						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Não, está com disponibilidade no Sábado"));
-					}
-				}
-			} else {
-				boolean hasSat = false;
-				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-					if(Semanas.DOM.equals(hdc.getDiaSemana())){
-						hasSat = true;
-					}
-				}
-				if(hasSat){
-					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Sim, não está com disponibilidade no Sábado"));
-				}
-			}
-		}
-		}
 		}
 	}
 
@@ -1959,10 +2060,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	public Map<String, List<String>> saveContent(CenarioDTO cenarioDTO,Long round) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
 		
-		if (getProgressReport() == null || getProgressReport().getStatus() == 0) {
+		if (getProgressReport("chaveOtimizacao") == null || getProgressReport("chaveOtimizacao").getStatus() == 0) {
 			initProgressReport("chaveOtimizacao");
 		}
-		getProgressReport().setInitNewPartial("Carregando output");
+		ProgressReportWriter prw = getProgressReport("chaveOtimizacao");
+		prw.setInitNewPartial("Carregando o resultado da requisição de otimização...");
 		
 		
 		Map<String, List<String>> ret = new HashMap<String, List<String>>(2);
@@ -1973,7 +2075,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 
-			getProgressReport().setInitSubPartial("Carregando xml( round )");// TODO:
+			prw.setInitSubPartial("Processando o arquivo XML com a solução...");
 			
 			byte[] xmlBytes = solverClient.getContent(round);
 
@@ -1987,7 +2089,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			XMLStreamReader xsr = xif.createXMLStreamReader(new ByteArrayInputStream(xmlBytes));
 			
 			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(xsr);
-			getProgressReport().endSubPartial();
+			getProgressReport("chaveOtimizacao").endSubPartial();
 			for (ItemError erro : triedaOutput.getErrors().getError()) {
 				ret.get("error").add(erro.getMessage());
 			}
@@ -1999,7 +2101,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				return ret;
 			}
 
-			getProgressReport().setInitSubPartial("Processando campi e turnos utilizados");// TODO:
+			prw.setInitSubPartial("Construindo os objetos que representam a solução...");// TODO:
 			Set<Campus> campi = new HashSet<Campus>();
 			Set<Turno> turnos = new HashSet<Turno>();
 			boolean ehTatico = false;
@@ -2070,33 +2172,33 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			{
 				System.out.println("campus:" + campus.getNome());
 			}
-			getProgressReport().endSubPartial();
+			prw.endSubPartial();
 
 			SolverOutput solverOutput = new SolverOutput(getInstituicaoEnsinoUser(), cenario, triedaOutput);
-			getProgressReport().setInitSubPartial("Atualizando demandas de alunos.");// TODO:
+			prw.setInitSubPartial("Atualizando demandas de alunos...");
 			solverOutput.atualizarAlunosDemanda(campi,turnos);
-			getProgressReport().endSubPartial();
+			prw.endSubPartial();
 
 			if (ehTatico) {
-				getProgressReport().setInitSubPartial("Gerando atendimentos tático.");// TODO:
+				prw.setInitSubPartial("Gerando os atendimentos....");
 				solverOutput.generateAtendimentosTatico(turnos);
-				getProgressReport().endSubPartial();
+				prw.endSubPartial();
 
-				getProgressReport().setInitSubPartial("Salvando atendimentos tático.");// TODO:
+				prw.setInitSubPartial("Registrando os atendimentos na base de dados...");
 				solverOutput.salvarAtendimentosTatico(campi,turnos);
-				getProgressReport().endSubPartial();
+				prw.endSubPartial();
 			} else {
-				getProgressReport().setInitSubPartial("Gerando atendimentos operacional.");// TODO:
+				prw.setInitSubPartial("Gerando os atendimentos....");
 				solverOutput.generateAtendimentosOperacional(turnos);
-				getProgressReport().endSubPartial();
+				prw.endSubPartial();
 
-				getProgressReport().setInitSubPartial("Salvando atendimentos operacional.");// TODO:
+				prw.setInitSubPartial("Registrando os atendimentos na base de dados...");
 				solverOutput.salvarAtendimentosOperacional(campi, turnos);
-				getProgressReport().endSubPartial();
+				prw.endSubPartial();
 			}
-			getProgressReport().setInitSubPartial("Atualizando motivos de não atendimento.");// TODO:
+			prw.setInitSubPartial("Atualizando motivos de não atendimentos...");
 			solverOutput.generateMotivosNaoAtendimento();
-			getProgressReport().endSubPartial();
+			prw.endSubPartial();
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			ret.get("error").add("Erro ao salvar o resultado na base de dados");
@@ -2108,7 +2210,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 
 		
-		getProgressReport().finish();
+		prw.finish();
 		
 		return ret;
 	}
@@ -2121,7 +2223,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		progressReport = new ProgressReportFileWriter(f);
 	}
 	
-	public ProgressReportWriter getProgressReport(){
-		return progressReport;
+	public ProgressReportWriter getProgressReport(String chave) {
+		HttpServletRequest request = getThreadLocalRequest();
+		return ProgressReportServiceImpl.getProgressReportWriterSession(request).get(chave);
 	}
+	
+	//public ProgressReportWriter getProgressReport() {
+	//	return progressReport;
+	//}
 }

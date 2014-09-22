@@ -3855,6 +3855,7 @@ public class ConvertBeans {
 		
 		dto.setId(domain.getId());
 		dto.setCenarioId(domain.getCenario().getId());
+		dto.setCenarioNome("["+domain.getCenario().getId()+"] "+domain.getCenario().getNome());
 		dto.setParametroId(domain.getParametro().getId());
 		dto.setRound(domain.getRound());
 		dto.setUserName(domain.getUsuario().getUsername());
@@ -3863,24 +3864,37 @@ public class ConvertBeans {
 		dto.setModoOtimizacao(parametro.getModoOtimizacao());
 		dto.setOtimizarPor(parametro.getOtimizarPor());
 		dto.setFuncaoObjetivo(FuncaoObjetivoComboBox.CargaHoraria.values()[parametro.getFuncaoObjetivo()].getText());
-		String campiSelecionados = "";
+		
+		// TODO: [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
+//		dto.setTotalCampi(domain.getTotalCampi());
+//		dto.setCampiSelecionados(domain.getCampiSelecionados());
+//		dto.setTotalTurnos(domain.getTotalTurnos());
+//		dto.setTurnosSelecionados(domain.getTurnosSelecionados());
+//		dto.setTotalAlunos(domain.getTotalAlunos());
+//		dto.setTotalAlunosDemandasP1(domain.getTotalAlunosDemandasP1());
+//		dto.setTotalAlunosDemandasP2(domain.getTotalAlunosDemandasP2());
+//		dto.setTotalAmbientes(domain.getTotalAmbientes());
+//		dto.setTotalProfessores(domain.getTotalProfessores());
+		
+		String campiSelecionados = "";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
 		Set<Long> professoresRelacionadosIDs = new HashSet<Long>();
 		for (Campus campus : parametro.getCampi()) {
-			campiSelecionados += campus.getCodigo() + ", ";
+			campiSelecionados += campus.getCodigo() + ", ";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
+			
 			for (Professor professor : campus.getProfessores()) {
 				professoresRelacionadosIDs.add(professor.getId());
 			}
 		}
-		campiSelecionados = campiSelecionados.substring(0,campiSelecionados.length()-2);
-		dto.setCampiSelecionados(campiSelecionados);
+		campiSelecionados = campiSelecionados.substring(0,campiSelecionados.length()-2);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
+		dto.setCampiSelecionados(campiSelecionados);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
 		dto.setProfessoresRelacionadosIDs(professoresRelacionadosIDs);
 		
-		String turnosSelecionados = "";
-		for (Turno turno : parametro.getTurnos()) {
-			turnosSelecionados += turno.getNome() + ", ";
-		}
-		turnosSelecionados = turnosSelecionados.substring(0, turnosSelecionados.length()-2);
-		dto.setTurnosSelecionados(turnosSelecionados);
+		String turnosSelecionados = "";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
+		for (Turno turno : parametro.getTurnos()) {// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
+			turnosSelecionados += turno.getNome() + ", ";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
+		}// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
+		turnosSelecionados = turnosSelecionados.substring(0, turnosSelecionados.length()-2);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
+		dto.setTurnosSelecionados(turnosSelecionados);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
 		
 		InstituicaoEnsino instituicaoEnsino = domain.getCenario().getInstituicaoEnsino();
 		dto.setInstituicaoEnsinoId(instituicaoEnsino.getId());

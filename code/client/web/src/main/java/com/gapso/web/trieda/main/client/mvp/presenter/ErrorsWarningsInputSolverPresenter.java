@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
+import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -71,9 +72,13 @@ public class ErrorsWarningsInputSolverPresenter extends AbstractRequisicaoOtimiz
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				desabilitaBotaoParametros();
-				Presenter presenter = new AcompanhamentoPanelPresenter("chaveOtimizacaoReq", new AcompanhamentoPanelView());
+				
+				AcompanhamentoPanelView av = new AcompanhamentoPanelView();
+				Presenter presenter = new AcompanhamentoPanelPresenter("chaveOtimizacao", av);
 				presenter.go(null);
-				enviaRequisicaoDeOtimizacao(parametroDTO,cenarioDTO);
+				final AcompanhamentoPanelView avf = av;
+				enviaRequisicaoDeOtimizacao(parametroDTO,cenarioDTO,avf);
+				display.getSimpleModal().hide();
 			}
 		});
 

@@ -5,9 +5,11 @@ import java.util.Map;
 
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
+import com.gapso.web.trieda.shared.dtos.EstatisticasInputSolverXMLDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface OtimizarServiceAsync {
@@ -20,7 +22,7 @@ public interface OtimizarServiceAsync {
 	/** 
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#registraRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
 	 */
-	void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round, AsyncCallback<RequisicaoOtimizacaoDTO> callback);
+	void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round, EstatisticasInputSolverXMLDTO estatisticasDTO, AsyncCallback<RequisicaoOtimizacaoDTO> callback);
 	
 	/**
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO)
@@ -37,7 +39,7 @@ public interface OtimizarServiceAsync {
 	 */
 	void getParametrosDaRequisicaoDeOtimizacao(CenarioDTO cenarioDTO, AsyncCallback<ParametroDTO> callback);
 	
-	void enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO, AsyncCallback<ParDTO<Long,ParametroDTO>> callback);
+	void enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO, AsyncCallback<TrioDTO<Long,ParametroDTO,EstatisticasInputSolverXMLDTO>> callback);
 	
 	/** 
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#consultaRequisicoesDeOtimizacao()
@@ -50,6 +52,9 @@ public interface OtimizarServiceAsync {
 	void cancelaRequisicaoDeOtimizacao(Long round, AsyncCallback<Boolean> callback);
 	
 	void isOptimizing( Long round, AsyncCallback< Boolean > callback );
+	
+	void getStatusRequisicaoDeOtimizacao( Long round, AsyncCallback< Integer > callback );
+	
 	void saveContent( CenarioDTO cenarioDTO, Long round,
 		AsyncCallback< Map< String, List< String > > > callback );
 }

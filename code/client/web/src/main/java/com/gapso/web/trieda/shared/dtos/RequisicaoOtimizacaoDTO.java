@@ -11,6 +11,8 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_USER_NAME = "userName";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
+	public static final String PROPERTY_CENARIO_NOME = "cenarioNome";
+	public static final String PROPERTY_POSICAO_FILA = "posicaoFila";
 	public static final String PROPERTY_ROUND = "round";
 	public static final String PROPERTY_PARAMETRO_ID = "parametroId";
 	public static final String PROPERTY_STATUS_INDEX = "statusIndex";
@@ -19,8 +21,15 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	public static final String PROPERTY_FUNCAO_OBJETIVO = "funcaoObjetivo";
 	public static final String PROPERTY_CAMPI_SELECIONADOS = "campiSelecionados";
 	public static final String PROPERTY_TURNOS_SELECIONADOS = "turnosSelecionados";
+	public static final String PROPERTY_TOTAL_CAMPI = "totalCampi";
+	public static final String PROPERTY_TOTAL_TURNOS = "totalTurnos";
+	public static final String PROPERTY_TOTAL_ALUNOS = "totalAlunos";
+	public static final String PROPERTY_TOTAL_ALUNODEMANDA_P1 = "totalAlunosDemandasP1";
+	public static final String PROPERTY_TOTAL_ALUNODEMANDA_P2 = "totalAlunosDemandasP2";
+	public static final String PROPERTY_TOTAL_AMBIENTES = "totalAmbientes";
+	public static final String PROPERTY_TOTAL_PROFESSORES = "totalProfessores";
 	
-	static public enum StatusRequisicaoOtimizacao implements Serializable {EM_ANDAMENTO,FINALIZADA_COM_OUTPUT,FINALIZADA_SEM_OUTPUT}
+	static public enum StatusRequisicaoOtimizacao implements Serializable {AGUARDANDO,EXECUTANDO,FINALIZADA_COM_RESULTADO,FINALIZADA_SEM_RESULTADO,CANCELADA,INVALIDO}
 	
 	transient private Set<Long> professoresRelacionadosIDs;
 	public void setProfessoresRelacionadosIDs(Set<Long> professoresRelacionadosIDs) {
@@ -52,6 +61,22 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	
 	public Long getCenarioId() {
 		return get(PROPERTY_CENARIO_ID);
+	}
+	
+	public void setCenarioNome(String value) {
+		set(PROPERTY_CENARIO_NOME,value);
+	}
+	
+	public Long getCenarioNome() {
+		return get(PROPERTY_CENARIO_NOME);
+	}
+	
+	public void setPosicaoFila(String value) {
+		set(PROPERTY_POSICAO_FILA,value);
+	}
+	
+	public Long getPosicaoFila() {
+		return get(PROPERTY_POSICAO_FILA);
 	}
 	
 	public void setRound(Long value) {
@@ -116,6 +141,55 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	
 	public String getTurnosSelecionados() {
 		return get(PROPERTY_TURNOS_SELECIONADOS);
+	}
+	
+	public void setTotalCampi(Integer value) {
+		set(PROPERTY_TOTAL_CAMPI, value);
+	}
+	public Integer getTotalCampi() {
+		return get(PROPERTY_TOTAL_CAMPI);
+	}
+	
+	public void setTotalTurnos(Integer value) {
+		set(PROPERTY_TOTAL_TURNOS, value);
+	}
+	public Integer getTotalTurnos() {
+		return get(PROPERTY_TOTAL_TURNOS);
+	}
+	
+	public void setTotalAlunos(Integer value) {
+		set(PROPERTY_TOTAL_ALUNOS, value);
+	}
+	public Integer getTotalAlunos() {
+		return get(PROPERTY_TOTAL_ALUNOS);
+	}
+	
+	public void setTotalAlunosDemandasP1(Integer value) {
+		set(PROPERTY_TOTAL_ALUNODEMANDA_P1, value);
+	}
+	public Integer getTotalAlunosDemandasP1() {
+		return get(PROPERTY_TOTAL_ALUNODEMANDA_P1);
+	}
+	
+	public void setTotalAlunosDemandasP2(Integer value) {
+		set(PROPERTY_TOTAL_ALUNODEMANDA_P2, value);
+	}
+	public Integer getTotalAlunosDemandasP2() {
+		return get(PROPERTY_TOTAL_ALUNODEMANDA_P2);
+	}
+	
+	public void setTotalAmbientes(Integer value) {
+		set(PROPERTY_TOTAL_AMBIENTES, value);
+	}
+	public Integer getTotalAmbientes() {
+		return get(PROPERTY_TOTAL_AMBIENTES);
+	}
+	
+	public void setTotalProfessores(Integer value) {
+		set(PROPERTY_TOTAL_PROFESSORES, value);
+	}
+	public Integer getTotalProfessores() {
+		return get(PROPERTY_TOTAL_PROFESSORES);
 	}
 
 	@Override

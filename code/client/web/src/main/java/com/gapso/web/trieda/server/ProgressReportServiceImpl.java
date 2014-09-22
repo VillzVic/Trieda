@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportCreate;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileReader;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.shared.services.ProgressReportService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -26,6 +27,18 @@ public class ProgressReportServiceImpl extends RemoteServiceServlet
 		if(progressReportSession == null){
 			progressReportSession = new HashMap<String, ProgressReportReader>();
 			session.setAttribute("progressReport", progressReportSession);
+		}
+		
+		return progressReportSession;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, ProgressReportWriter> getProgressReportWriterSession(HttpServletRequest request){
+		HttpSession session = request.getSession();
+		HashMap<String, ProgressReportWriter> progressReportSession = (HashMap<String, ProgressReportWriter>) session.getAttribute("progressReportWriter");
+		if(progressReportSession == null){
+			progressReportSession = new HashMap<String, ProgressReportWriter>();
+			session.setAttribute("progressReportWriter", progressReportSession);
 		}
 		
 		return progressReportSession;

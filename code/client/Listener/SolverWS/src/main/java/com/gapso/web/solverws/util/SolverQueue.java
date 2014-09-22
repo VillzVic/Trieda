@@ -131,6 +131,11 @@ public class SolverQueue {
 		}
 		return result.toArray(new String[] {});
 	}
+	
+	public String getPositionQueue(long round) {
+		String position = status.get(round);
+		return (position != null ? position : "Não está na fila de requisições de otimização.");
+	}
 
 	public String getSolverVersion(String problemName) {
 		StringBuffer sb = new StringBuffer();

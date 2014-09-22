@@ -5,9 +5,10 @@ import java.util.Map;
 
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
-import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.EstatisticasInputSolverXMLDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -33,7 +34,7 @@ public interface OtimizarService extends RemoteService {
 	 * @return requisição registrada
 	 * @throws TriedaException
 	 */
-	RequisicaoOtimizacaoDTO registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException;
+	RequisicaoOtimizacaoDTO registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round, EstatisticasInputSolverXMLDTO estatisticasDTO) throws TriedaException;
 	
 	/**
 	 * Remove do banco de dados o registro da requisição de otimização. Este método é utilizado em duas ocasiões:
@@ -63,7 +64,7 @@ public interface OtimizarService extends RemoteService {
 	 * @param parametroDTO
 	 * @return
 	 */
-	ParDTO<Long,ParametroDTO> enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException;
+	TrioDTO<Long,ParametroDTO,EstatisticasInputSolverXMLDTO> enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException;
 	
 	/**
 	 * 
@@ -79,6 +80,8 @@ public interface OtimizarService extends RemoteService {
 	 * @throws TriedaException
 	 */
 	boolean cancelaRequisicaoDeOtimizacao(Long round) throws TriedaException;
+	
+	Integer getStatusRequisicaoDeOtimizacao(Long round) throws TriedaException;
 	
 	Boolean isOptimizing( Long round );
 	Map< String, List< String > > saveContent( CenarioDTO cenarioDTO, Long round );

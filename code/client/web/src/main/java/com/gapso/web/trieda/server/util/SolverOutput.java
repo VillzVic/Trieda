@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.TransactionRequiredException;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.AlunoDemanda;
@@ -268,7 +270,6 @@ public class SolverOutput
 								// obtém o horário disponível cenário
 								String hdcKey = this.instituicaoEnsino.getId() + "-" + horarioAula.getId() + "-" + diaSemana.ordinal();
 								HorarioDisponivelCenario horarioDisponivelCenario = horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap.get(hdcKey);
-
 								// obtém professor
 								Professor professor = null;
 								ProfessorVirtual professorVirtual = null;
@@ -364,8 +365,6 @@ public class SolverOutput
 											}
 										}
 									}
-										
-										
 									
 									this.atendimentosOperacional.add(atendimentoOperacional);
 								}
@@ -416,7 +415,7 @@ public class SolverOutput
 	private Map<Long, AlunoDemanda> createAlunoDemandasMap(Set<Turno> turnosSelecionados) {
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = new HashMap<Long,AlunoDemanda>();
-		AlunoDemanda.entityManager().flush();
+		try { AlunoDemanda.entityManager().flush();} catch (TransactionRequiredException e) {} // TODO: consertar
 		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurno(this.instituicaoEnsino,this.cenario.getCampi(),turnosSelecionados);
 		for (AlunoDemanda alunoDemanda : alunosDemanda) {
 			alunoDemandaIdToAlunoDemandaMap.put(alunoDemanda.getId(),alunoDemanda);
@@ -492,11 +491,13 @@ public class SolverOutput
 			atualizouEntidade = true;
 		}
 		if (atualizouEntidade) {
-			AtendimentoOperacional.entityManager().flush();
+			try {AtendimentoOperacional.entityManager().flush();} catch (TransactionRequiredException e) {} // TODO: consertar
 		}
 		
 		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurnoFetchAtendimentoOperacional(instituicaoEnsino, campi,turnos);
 		
+		//int countAtendidos = 0;
+		//int countTotal = 0;
 		for(AlunoDemanda alunoDemanda : alunosDemanda){
 			if(alunosDemandaOperacional.containsKey(alunoDemanda)){
 				int creditosAtendidos = 0;
@@ -506,8 +507,19 @@ public class SolverOutput
 					disciplinaSubstituta = operacional.getDisciplinaSubstituta();
 					creditosAtendidos += 1;
 				}
-				int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
-				alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);
+				Disciplina disciplinaASerConsiderada = (disciplinaSubstituta != null) ? disciplinaSubstituta : alunoDemanda.getDemanda().getDisciplina();
+				int totalCreditosDemanda = disciplinaASerConsiderada.getCreditosTotal();
+				alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);				
+//				if (creditosAtendidos > 0 && !alunoDemanda.getAtendido()) {
+//					System.out.println("***Lixo no output = (cred_atend," + creditosAtendidos + ") (ald_id," + alunoDemanda.getId() + ") (aln_matricula," + alunoDemanda.getAluno().getMatricula() + ") (dis_atend," + disciplinaASerConsiderada.getCodigo() + ") (dis_dem," + alunoDemanda.getDemanda().getDisciplina().getCodigo() + ")");
+//				} else if (!alunoDemanda.getAtendido()) {
+//					System.out.println("***Lixo no output = (cred_atend," + creditosAtendidos + ") (ald_id," + alunoDemanda.getId() + ") (aln_matricula," + alunoDemanda.getAluno().getMatricula() + ") (dis_atend," + disciplinaASerConsiderada.getCodigo() + ") (dis_dem," + alunoDemanda.getDemanda().getDisciplina().getCodigo() + ")");
+//				} else if (alunoDemanda.getAtendido()) {
+//					System.out.println("OK = (cred_atend," + creditosAtendidos + ") (ald_id," + alunoDemanda.getId() + ") (aln_matricula," + alunoDemanda.getAluno().getMatricula() + ") (dis_atend," + disciplinaASerConsiderada.getCodigo() + ") (dis_dem," + alunoDemanda.getDemanda().getDisciplina().getCodigo() + ")");
+//					countAtendidos++;
+//				}
+//				countTotal++;
+//				System.out.println("Demanda Atendida=" + countAtendidos + " Total=" + countTotal);
 			}
 		}
 	}

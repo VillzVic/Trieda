@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.command;
 import com.gapso.web.trieda.main.client.mvp.view.gateways.IGenericViewGateway;
 import com.gapso.web.trieda.main.client.mvp.view.gateways.IRequisicoesOtimizacaoViewGateway;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
+import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO.StatusRequisicaoOtimizacao;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
@@ -27,13 +28,15 @@ public class CancelarRequisicaoOtimizacaoCommand implements ICommand {
 		service.cancelaRequisicaoDeOtimizacao(requisicaoDTO.getRound(),new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(i18nGateway) {
 			@Override
 			public void onSuccess(Boolean result) {
-				service.removeRequisicaoDeOtimizacao(requisicaoDTO,new AbstractAsyncCallbackWithDefaultOnFailure<Void>(i18nGateway) {
+				requisicaoDTO.setStatusIndex(StatusRequisicaoOtimizacao.CANCELADA.ordinal());
+				reqOtmViewGateway.updateRequisicaoOtimizacaoGrid();
+				/*service.removeRequisicaoDeOtimizacao(requisicaoDTO,new AbstractAsyncCallbackWithDefaultOnFailure<Void>(i18nGateway) {
 					@Override
 					public void onSuccess(Void result) {
 						reqOtmViewGateway.removeRequisicaoOtimizacaoFromGrid(requisicaoDTO);
 						genericViewGateway.showMessageBoxInfo(i18nGateway.getI18nConstants().informacao(),"Requisição de otimização cancelada com sucesso!",null);
 					}
-				});
+				});*/
 			}
 		});
 	}

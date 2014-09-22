@@ -104,6 +104,9 @@ public final class SolverStandAloneImpl implements ISolver {
 		return solverQueue.getQueue();
 	}
 
+	public String getPositionQueue(long round) {
+		return solverQueue.getPositionQueue(round);
+	}
 	
 	public String getSolverVersion() {
 		return solverQueue.getSolverVersion(problemName);

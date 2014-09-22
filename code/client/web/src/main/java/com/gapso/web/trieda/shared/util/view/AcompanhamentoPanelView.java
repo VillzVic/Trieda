@@ -55,6 +55,10 @@ public class AcompanhamentoPanelView extends MyComposite
 	public void show(){
 		this.simpleModal.show();
 	}
+	
+	public void hide(){
+		this.simpleModal.hide();
+	}
 
 	@Override
 	public SimpleModal getSimpleModal(){

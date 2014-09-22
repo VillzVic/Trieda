@@ -363,16 +363,16 @@ public class SolverInput
 	}
 
 	@Transactional
-	public TriedaInput generateTaticoTriedaInput()
+	public TriedaInput generateTaticoTriedaInput(ProgressReportWriter prw)
 	{
-		generate( true );
+		generate( true, prw );
 		return this.triedaInput;
 	}
 
 	@Transactional
-	public TriedaInput generateOperacionalTriedaInput()
+	public TriedaInput generateOperacionalTriedaInput(ProgressReportWriter prw)
 	{
-		generate( false );
+		generate( false, prw );
 		return this.triedaInput;
 	}
 
@@ -491,73 +491,72 @@ public class SolverInput
 	}
 
 	@Transactional
-	private void generate( boolean tatico )
+	private void generate( boolean tatico, ProgressReportWriter prw )
 	{
-		System.out.print("Gerando Calendario");long start = System.currentTimeMillis(); // TODO: retirar
-		generateCalendario();
-		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando tiposSala");start = System.currentTimeMillis(); // TODO: retirar
-		generateTiposSala();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando tiposContrato");start = System.currentTimeMillis(); // TODO: retirar
-		generateTiposContrato();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando tiposTitulacao");start = System.currentTimeMillis(); // TODO: retirar
-		generateTiposTitulacao();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando AreasTitulacao");start = System.currentTimeMillis(); // TODO: retirar
-		generateAreasTitulacao();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando tiposDisciplina");start = System.currentTimeMillis(); // TODO: retirar
-		generateTiposDisciplina();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando niveisDificuldade");start = System.currentTimeMillis(); // TODO: retirar
-		generateNiveisDificuldade();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando tiposCurso");start = System.currentTimeMillis(); // TODO: retirar
-		generateTiposCurso();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando divisoes de Credito");start = System.currentTimeMillis(); // TODO: retirar
-		generateDivisoesDeCredito();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando deslocamentoCampi");start = System.currentTimeMillis(); // TODO: retirar
-		generateDeslocamentoCampi();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando deslocamentoUnidades");start = System.currentTimeMillis(); // TODO: retirar
-		generateDeslocamentoUnidades();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando disciplinas");start = System.currentTimeMillis(); // TODO: retirar
-		generateDisciplinas();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando equivalencias");start = System.currentTimeMillis(); // TODO: retirar
-		generateEquivalencias();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando curso");start = System.currentTimeMillis(); // TODO: retirar
-		generateCurso();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando campi");start = System.currentTimeMillis(); // TODO: retirar
-		generateCampi(tatico);
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando ofertasCursoCampi");start = System.currentTimeMillis(); // TODO: retirar
-		generateOfertaCursoCampi();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando demandas");start = System.currentTimeMillis(); // TODO: retirar
-		generateDemandas();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando alunos e alunosDemanda");start = System.currentTimeMillis(); // TODO: retirar
-		generateAlunos_e_AlunosDemanda();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando parametros de planejamento");start = System.currentTimeMillis(); // TODO: retirar
-		generateParametrosPlanejamento( tatico );
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("Gerando Fixacoes");start = System.currentTimeMillis(); // TODO: retirar
-		generateFixacoes();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-
-		if ( !tatico )
-		{
-			generateTaticoInput();
-		}
+		prw.setInitSubPartial("Escrevendo Semanas Letivas...");
+			generateCalendario();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Tipos de Salas...");
+			generateTiposSala();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Tipos de Contratação...");
+			generateTiposContrato();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Tipos de Titulação...");
+			generateTiposTitulacao();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Áreas de Titulação...");
+			generateAreasTitulacao();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Tipos de Disciplinas...");
+			generateTiposDisciplina();
+			generateNiveisDificuldade();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Tipos de Curso...");		
+			generateTiposCurso();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Regras de Divisão de Créditos...");
+			generateDivisoesDeCredito();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Tempos de Deslocamento entre Campi...");
+			generateDeslocamentoCampi();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Tempos de Deslocamento entre Unidades...");
+			generateDeslocamentoUnidades();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Disciplinas...");
+			generateDisciplinas();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Regras de Equivalências...");
+			generateEquivalencias();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Cursos...");
+			generateCurso();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Campi...");
+			generateCampi(tatico);
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Ofertas de Cursos em Campi...");
+			generateOfertaCursoCampi();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Demandas...");
+			generateDemandas();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Demandas por Aluno...");
+			generateAlunos_e_AlunosDemanda();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Parâmetros de Planejamento...");
+			generateParametrosPlanejamento( tatico );
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Fixações...");
+			generateFixacoes();
+		prw.endSubPartial();
+		prw.setInitSubPartial("Escrevendo Atendimentos...");
+			if ( !tatico )
+			{
+				generateTaticoInput();
+			}
+		prw.endSubPartial();
 	}
 
 	@Transactional

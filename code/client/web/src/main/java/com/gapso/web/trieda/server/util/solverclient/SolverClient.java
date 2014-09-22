@@ -115,4 +115,12 @@ public class SolverClient
 	public void cancelAllOptimizations() {
 		this.webResource.path("/cancelAllOptimizations").get(String.class);
 	}
+	
+	@Override
+	public String getPositionQueue(Long round) {
+		MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
+		queryParams.add("round",round);
+		SolverResponse sr = this.webResource.path("/getpositionqueue/" + getProblemName() + "/").queryParams(queryParams).post(SolverResponse.class);
+		return (sr.getStatus() ? (String)sr.getObject() : "Não foi possível obter posição na fila.");
+	}
 }

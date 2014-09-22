@@ -18,4 +18,6 @@ public interface ISolverClient {
 	public boolean cancelOptimization(Long round);
 	
 	public void cancelAllOptimizations();
+	
+	public String getPositionQueue(Long round);
 }

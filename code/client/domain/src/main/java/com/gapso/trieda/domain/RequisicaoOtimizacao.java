@@ -190,6 +190,20 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 		}
 	}
 	
+	public static RequisicaoOtimizacao findBy(Long round) {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM RequisicaoOtimizacao o " +
+			" WHERE o.round = (:round) "
+		);
+
+		q.setParameter("round",round);
+		
+		if (!q.getResultList().isEmpty())
+			return (RequisicaoOtimizacao)q.getResultList().get(0);
+		else
+			return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static List<RequisicaoOtimizacao> findAll() {
 		Query q = entityManager().createQuery("SELECT o FROM RequisicaoOtimizacao o");

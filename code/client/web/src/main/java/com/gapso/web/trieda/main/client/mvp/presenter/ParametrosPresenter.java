@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.Radio;
+import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCampiPresenter.ParametrosViewGateway;
 import com.gapso.web.trieda.main.client.mvp.view.CompartilharCursosView;
 import com.gapso.web.trieda.main.client.mvp.view.ErrorsWarningsInputSolverView;
@@ -160,7 +161,10 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 						if (be.getButtonClicked().getHtml().equalsIgnoreCase("yes") ||
 								be.getButtonClicked().getHtml().equalsIgnoreCase("sim")) {
 							try {
-						    	new AcompanhamentoPanelPresenter("chaveOtimizacao", new AcompanhamentoPanelView());
+								AcompanhamentoPanelView av = new AcompanhamentoPanelView();
+								new AcompanhamentoPanelPresenter("chaveOtimizacao", av);
+								final AcompanhamentoPanelView avf = av;
+						    	//new AcompanhamentoPanelPresenter("chaveOtimizacao", new AcompanhamentoPanelView());
 								service.checkInputDataBeforeRequestOptimization(getDTO(),new AbstractAsyncCallbackWithDefaultOnFailure<ErrorsWarningsInputSolverDTO>("Não foi possível gerar a grade de horários.",display) {
 									@Override
 									public void onFailure(Throwable caught) {
@@ -171,8 +175,9 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 									@Override
 									public void onSuccess(final ErrorsWarningsInputSolverDTO dto) {
 										if (dto.getTotalErrorsWarnings() == 0) {
-											enviaRequisicaoDeOtimizacao(getDTO(),cenarioDTO);
+											enviaRequisicaoDeOtimizacao(getDTO(),cenarioDTO,avf);
 										} else {
+											avf.hide();
 											Presenter presenter = new ErrorsWarningsInputSolverPresenter(cenarioDTO,getDTO(),dto.getErrors(),dto.getWarnings(),new ErrorsWarningsInputSolverView(),display.getSubmitButton());
 											presenter.go(null);
 										}

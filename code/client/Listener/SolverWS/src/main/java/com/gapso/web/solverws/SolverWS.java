@@ -20,7 +20,7 @@ import com.sun.jersey.multipart.MultiPart;
 public class SolverWS{
 
 	private final String version = "0.1";
-	private final static int NUMBER_OF_QUEUE = 2;
+	private final static int NUMBER_OF_QUEUE = 1;
 	private final static SolverQueue solverQueue = new SolverQueue(NUMBER_OF_QUEUE);
 	private final FileManager fileManager = new FileManager(".");
 
@@ -106,5 +106,18 @@ public class SolverWS{
 	public SolverResponse cancelAllOptimizations() {
 		solverQueue.cancelAll();
 		return new SolverResponse(true,"");
+	}
+	
+	@GET
+	@Path("/getqueue")
+	public SolverResponse getQueue() {
+		return new SolverResponse(true,solverQueue.getQueue());
+	}
+	
+	@POST
+	@Path("/getpositionqueue/{problemName}")
+	public SolverResponse getPositionQueue(@PathParam("problemName") String problemName, @QueryParam("round") String roundString) {
+		Long round = new Long(roundString);
+		return new SolverResponse(true,solverQueue.getPositionQueue(round));
 	}
 }
