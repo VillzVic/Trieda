@@ -696,37 +696,7 @@
     <ClCompile Include="CmdLine.cpp" />
     <ClCompile Include="ConjUnidades.cpp" />
     <ClCompile Include="ConstraintMIPUnico.cpp" />
-    <ClCompile Include="ConstraintEstimaTurmas.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ConstraintPre.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ConstraintTatico.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ConstraintTatInt.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Equivalencia.cpp" />
-    <ClCompile Include="EstimaTurmas.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="HeurNuno\AbridorTurmas.cpp" />
     <ClCompile Include="HeurNuno\AlunoHeur.cpp" />
     <ClCompile Include="HeurNuno\AulaHeur.cpp" />
@@ -768,7 +738,6 @@
     <ClCompile Include="BlocoCurricular.cpp" />
     <ClCompile Include="Calendario.cpp" />
     <ClCompile Include="Campus.cpp" />
-    <ClCompile Include="ConverteHorariosCreditos.cpp" />
     <ClCompile Include="CreditoDisponivel.cpp" />
     <ClCompile Include="Curriculo.cpp" />
     <ClCompile Include="Curso.cpp" />
@@ -790,113 +759,13 @@
     <ClCompile Include="OFBase.cpp" />
     <ClCompile Include="Oferta.cpp" />
     <ClCompile Include="ParametrosPlanejamento.cpp" />
-    <ClCompile Include="PreModelo.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="ProblemData.cpp" />
     <ClCompile Include="ProblemDataLoader.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;SOLVER_CPLEX;UNIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="Professor.cpp" />
     <ClCompile Include="Sala.cpp" />
-    <ClCompile Include="SolucaoTaticoInicial.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolutionPool.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="SolverMIPUnico.cpp" />
-    <ClCompile Include="SolverTaticoHeur\DoubleShiftMove.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\DoubleSwapMove.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\TimeLogger.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\GUtil.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\Instance.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\ShiftMove.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\Solution.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SolutionBuilder.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SolverTatico.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SolverTaticoHeur.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\STConstraint.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\STVariable.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SwapDivisionMove.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SwapMove.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="TaticoIntAlunoHor.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="TipoContrato.cpp" />
     <ClCompile Include="TipoCurso.cpp" />
     <ClCompile Include="TipoDisciplina.cpp" />
@@ -908,19 +777,9 @@
     <ClCompile Include="$(CODELIB)\CPUTimerWin.cpp" />
     <ClCompile Include="$(CODELIB)\DateTime.cpp" />
     <ClCompile Include="$(CODELIB)\ErrorHandler.cpp" />
-    <ClCompile Include="HashUtil.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="$(OPT_LP)\source\opt_col.cpp" />
     <ClCompile Include="$(OPT_LP)\source\opt_lp.cpp" />
     <ClCompile Include="$(OPT_LP)\source\opt_row.cpp" />
-    <ClCompile Include="Constraint.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="ConstraintOp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
@@ -929,147 +788,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="SolverMIP.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='DebugCplex64|x64'">$(BOOST);$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;$(CPLEX122)\include\ilcplex;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ValidateSolution.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Variable.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="VariableMIPUnico.cpp" />
-    <ClCompile Include="VariableEstimaTurmas.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="VariableOp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Aula.cpp" />
-    <ClCompile Include="Avaliador.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="CustoAlocacao.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolucaoInicialOperacional.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SolucaoOperacional.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="NSSeqSwapEqBlocks.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="NSShift.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="NSSwapEqSchedulesBlocks.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="NSSwapEqTeachersBlocks.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="NSIteratorSwapEqBlocks.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="MoveShift.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="MoveSwap.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="MoveShiftValidator.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="MoveSwapEqBlocksValidator.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="MoveSwapEqSchedulesBlocksValidator.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="MoveSwapEqTeachersBlocksValidator.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="MoveValidator.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ILSLPerturbation.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="IteratedLocalSearchLevels.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="RandomDescentMethod.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="AtendimentoCampus.cpp" />
     <ClCompile Include="AtendimentoDiaSemana.cpp" />
     <ClCompile Include="AtendimentoHorarioAula.cpp" />
@@ -1085,28 +809,10 @@
     <ClCompile Include="ProblemSolution.cpp" />
     <ClCompile Include="ProfessorVirtualOutput.cpp" />
     <ClCompile Include="RestricaoViolada.cpp" />
-    <ClCompile Include="SolutionLoader.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="TRIEDA-OutputXSD.cpp" />
-    <ClCompile Include="VariablePre.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="VariableTatico.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="VariableTatInt.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1131,31 +837,6 @@
     <ClInclude Include="ConjUnidades.h" />
     <ClInclude Include="ConjuntoSala.h" />
     <ClInclude Include="ConstraintMIPUnico.h" />
-    <ClInclude Include="ConstraintEstimaTurmas.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="ConstraintPre.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="ConstraintTatico.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="ConstraintTatInt.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="ConverteHorariosCreditos.h" />
     <ClInclude Include="CreditoDisponivel.h" />
     <ClInclude Include="Curriculo.h" />
     <ClInclude Include="Curso.h" />
@@ -1164,12 +845,6 @@
     <ClInclude Include="Disciplina.h" />
     <ClInclude Include="DivisaoCreditos.h" />
     <ClInclude Include="Equivalencia.h" />
-    <ClInclude Include="EstimaTurmas.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Fixacao.h" />
     <ClInclude Include="HeurNuno\AbridorTurmas.h" />
     <ClInclude Include="HeurNuno\AlunoHeur.h" />
@@ -1214,117 +889,11 @@
     <ClInclude Include="OFBase.h" />
     <ClInclude Include="Oferta.h" />
     <ClInclude Include="ParametrosPlanejamento.h" />
-    <ClInclude Include="PreModelo.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="ProblemData.h" />
     <ClInclude Include="ProblemDataLoader.h" />
     <ClInclude Include="Professor.h" />
     <ClInclude Include="Sala.h" />
-    <ClInclude Include="SolucaoTaticoInicial.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolutionPool.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="SolverMIPUnico.h" />
-    <ClInclude Include="SolverTaticoHeur\DoubleShiftMove.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\DoubleSwapMove.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\TimeLogger.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\GUtil.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\Instance.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\Move.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\ShiftMove.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\Solution.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SolutionBuilder.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SolverTatico.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SolverTaticoHeur.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\STConstraint.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\STVariable.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SwapDivisionMove.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SwapMove.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="TaticoIntAlunoHor.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="TipoContrato.h" />
     <ClInclude Include="TipoCurso.h" />
     <ClInclude Include="TipoDisciplina.h" />
@@ -1349,22 +918,12 @@
     <ClInclude Include="ProblemSolution.h" />
     <ClInclude Include="ProfessorVirtualOutput.h" />
     <ClInclude Include="RestricaoViolada.h" />
-    <ClInclude Include="SolutionLoader.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="TRIEDA-OutputXSD.h" />
     <ClInclude Include="..\..\..\..\..\..\..\Bibliotecas\codelib\combinatoria.h" />
     <ClInclude Include="$(CODELIB)\CPUTimerWin.h" />
     <ClInclude Include="$(CODELIB)\DateTime.h" />
     <ClInclude Include="$(CODELIB)\codelib\ErrorHandler.h" />
     <ClInclude Include="$(CODELIB)\GGroup.h" />
-    <ClInclude Include="HashUtil.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="$(OPT_LP)\include\opt_col.h" />
     <ClInclude Include="$(OPT_LP)\include\opt_lp.h" />
     <ClInclude Include="$(OPT_LP)\include\opt_row.h" />
@@ -1376,203 +935,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="SolverMIP.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="ValidateSolution.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Variable.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="VariableMIPUnico.h" />
-    <ClInclude Include="VariableEstimaTurmas.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="VariableOp.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Aula.h" />
-    <ClInclude Include="Avaliador.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Constraint.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="CustoAlocacao.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolucaoInicialOperacional.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SolucaoOperacional.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NS.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NSSeq.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NSSeqSwapEqBlocks.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NSShift.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NSSwapEqSchedulesBlocks.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NSSwapEqTeachersBlocks.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NSIterator.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="NSIteratorSwapEqBlocks.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Move.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="MoveShift.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="MoveSwap.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="MoveShiftValidator.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="MoveSwapEqBlocksValidator.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="MoveSwapEqSchedulesBlocksValidator.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="MoveSwapEqTeachersBlocksValidator.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="MoveValidator.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Heuristic.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="ILSLPerturbation.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="IteratedLocalSearchLevels.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="RandomDescentMethod.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="RVND.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="VariablePre.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="VariableTatico.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="VariableTatInt.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugGurobi64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseGurobi64|x64'">true</ExcludedFromBuild>
     </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

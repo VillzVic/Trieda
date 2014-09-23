@@ -1,5 +1,5 @@
 #include "Sala.h"
-#include "ConverteHorariosCreditos.h"
+//#include "ConverteHorariosCreditos.h"
 
 Sala::Sala(void)
 {

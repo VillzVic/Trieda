@@ -77,18 +77,6 @@
     <ClCompile Include="Campus.cpp">
       <Filter>Domínio</Filter>
     </ClCompile>
-    <ClCompile Include="ConstraintPre.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstraintTatico.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstraintTatInt.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstraintEstimaTurmas.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
     <ClCompile Include="ConstraintMIPUnico.cpp">
       <Filter>Puro MIP\MIP-Unico</Filter>
     </ClCompile>
@@ -113,18 +101,6 @@
     <ClCompile Include="DivisaoCreditos.cpp">
       <Filter>Domínio</Filter>
     </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\DoubleShiftMove.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\DoubleSwapMove.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="EstimaTurmas.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\GUtil.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
     <ClCompile Include="HeurNuno\HeuristicaNuno.cpp">
       <Filter>HeuristicaNuno</Filter>
     </ClCompile>
@@ -136,9 +112,6 @@
     </ClCompile>
     <ClCompile Include="HorarioDia.cpp">
       <Filter>Domínio</Filter>
-    </ClCompile>
-    <ClCompile Include="ILSLPerturbation.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
     </ClCompile>
     <ClCompile Include="Equivalencia.cpp">
       <Filter>Domínio</Filter>
@@ -194,76 +167,10 @@
     <ClCompile Include="SolverMIPUnico.cpp">
       <Filter>Puro MIP\MIP-Unico</Filter>
     </ClCompile>
-    <ClCompile Include="MoveShift.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveShiftValidator.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveSwap.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveSwapEqBlocksValidator.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveSwapEqSchedulesBlocksValidator.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveSwapEqTeachersBlocksValidator.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveValidator.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="Constraint.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="IteratedLocalSearchLevels.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="NSIteratorSwapEqBlocks.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="NSSeqSwapEqBlocks.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="NSShift.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="NSSwapEqSchedulesBlocks.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="NSSwapEqTeachersBlocks.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
     <ClCompile Include="HeurNuno\ParametrosHeuristica.cpp">
       <Filter>HeuristicaNuno</Filter>
     </ClCompile>
-    <ClCompile Include="VariableTatInt.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
     <ClCompile Include="VariableTatico.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="VariablePre.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="VariableEstimaTurmas.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="Variable.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="TaticoIntAlunoHor.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverMIP.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="SolucaoTaticoInicial.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="PreModelo.cpp">
       <Filter>Puro MIP\MIPs antigos</Filter>
     </ClCompile>
     <ClCompile Include="Operacional.cpp">
@@ -275,47 +182,11 @@
     <ClCompile Include="Unidade.cpp">
       <Filter>Domínio</Filter>
     </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SwapMove.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SwapDivisionMove.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\STVariable.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\STConstraint.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
     <ClCompile Include="HeurNuno\Node.cpp">
       <Filter>HeuristicaNuno</Filter>
     </ClCompile>
     <ClCompile Include="HeurNuno\SaveSolucao.cpp">
       <Filter>HeuristicaNuno</Filter>
-    </ClCompile>
-    <ClCompile Include="SolutionPool.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SolutionBuilder.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\ShiftMove.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="RandomDescentMethod.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SolverTaticoHeur.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="HashUtil.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\Instance.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="ConverteHorariosCreditos.cpp">
-      <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="$(CODELIB)\CPUTimerWin.cpp">
       <Filter>Util</Filter>
@@ -340,15 +211,6 @@
     </ClCompile>
     <ClCompile Include="$(OPT_LP)\source\opt_row.cpp">
       <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="SolucaoInicialOperacional.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolucaoOperacional.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\Solution.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
     </ClCompile>
     <ClCompile Include="HeurNuno\AlunoHeur.cpp">
       <Filter>HeuristicaNuno\Estruturas</Filter>
@@ -437,20 +299,8 @@
     <ClCompile Include="CreditoDisponivel.cpp">
       <Filter>Domínio</Filter>
     </ClCompile>
-    <ClCompile Include="Avaliador.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="CustoAlocacao.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
     <ClCompile Include="NaoAtendimento.cpp">
       <Filter>Output</Filter>
-    </ClCompile>
-    <ClCompile Include="SolutionLoader.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
-    <ClCompile Include="ValidateSolution.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
     </ClCompile>
     <ClCompile Include="Aula.cpp">
       <Filter>Puro MIP</Filter>
@@ -464,12 +314,6 @@
     </ClCompile>
     <ClCompile Include="MainHeuristicaIES.cpp">
       <Filter>HeuristicaNuno</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\SolverTatico.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClCompile>
-    <ClCompile Include="SolverTaticoHeur\TimeLogger.cpp">
-      <Filter>Heuristica-MarcioMine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\source\opt_gurobi.cpp">
       <Filter>OPT_LP</Filter>
@@ -551,18 +395,6 @@
     <ClInclude Include="Campus.h">
       <Filter>Domínio</Filter>
     </ClInclude>
-    <ClInclude Include="ConstraintPre.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstraintTatico.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstraintTatInt.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstraintEstimaTurmas.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
     <ClInclude Include="ConstraintMIPUnico.h">
       <Filter>Puro MIP\MIP-Unico</Filter>
     </ClInclude>
@@ -590,18 +422,6 @@
     <ClInclude Include="DivisaoCreditos.h">
       <Filter>Domínio</Filter>
     </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\DoubleShiftMove.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\DoubleSwapMove.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="EstimaTurmas.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\GUtil.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
     <ClInclude Include="HeurNuno\HeuristicaNuno.h">
       <Filter>HeuristicaNuno</Filter>
     </ClInclude>
@@ -613,9 +433,6 @@
     </ClInclude>
     <ClInclude Include="HorarioDia.h">
       <Filter>Domínio</Filter>
-    </ClInclude>
-    <ClInclude Include="ILSLPerturbation.h">
-      <Filter>Heuristica-MarcioMine</Filter>
     </ClInclude>
     <ClInclude Include="Equivalencia.h">
       <Filter>Domínio</Filter>
@@ -671,91 +488,10 @@
     <ClInclude Include="SolverMIPUnico.h">
       <Filter>Puro MIP\MIP-Unico</Filter>
     </ClInclude>
-    <ClInclude Include="MoveShift.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveShiftValidator.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveSwap.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveSwapEqBlocksValidator.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveSwapEqSchedulesBlocksValidator.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveSwapEqTeachersBlocksValidator.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveValidator.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\Move.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="Move.hpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="Constraint.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="IteratedLocalSearchLevels.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NSIteratorSwapEqBlocks.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NSIterator.hpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NSSeq.hpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NSSeqSwapEqBlocks.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NSShift.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NSSwapEqSchedulesBlocks.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NSSwapEqTeachersBlocks.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="NS.hpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
     <ClInclude Include="HeurNuno\ParametrosHeuristica.h">
       <Filter>HeuristicaNuno</Filter>
     </ClInclude>
-    <ClInclude Include="VariableTatInt.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
     <ClInclude Include="VariableTatico.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="VariablePre.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="VariableEstimaTurmas.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="Variable.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="TaticoIntAlunoHor.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverMIP.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="SolucaoTaticoInicial.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="PreModelo.h">
       <Filter>Puro MIP\MIPs antigos</Filter>
     </ClInclude>
     <ClInclude Include="Operacional.h">
@@ -767,52 +503,10 @@
     <ClInclude Include="Unidade.h">
       <Filter>Domínio</Filter>
     </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SwapMove.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SwapDivisionMove.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\STVariable.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\STConstraint.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
     <ClInclude Include="HeurNuno\SaveSolucao.h">
       <Filter>HeuristicaNuno</Filter>
     </ClInclude>
-    <ClInclude Include="SolutionPool.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SolutionBuilder.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\ShiftMove.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="RVND.hpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="RandomDescentMethod.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SolverTaticoHeur.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="HashUtil.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="Heuristic.hpp">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\Instance.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\Bibliotecas\codelib\combinatoria.h">
-      <Filter>Util</Filter>
-    </ClInclude>
-    <ClInclude Include="ConverteHorariosCreditos.h">
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="$(CODELIB)\CPUTimerWin.h">
@@ -844,15 +538,6 @@
     </ClInclude>
     <ClInclude Include="$(OPT_LP)\include\opt_row.h">
       <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="SolucaoInicialOperacional.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolucaoOperacional.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\Solution.h">
-      <Filter>Heuristica-MarcioMine</Filter>
     </ClInclude>
     <ClInclude Include="HeurNuno\AlunoHeur.h">
       <Filter>HeuristicaNuno\Estruturas</Filter>
@@ -941,20 +626,8 @@
     <ClInclude Include="CreditoDisponivel.h">
       <Filter>Domínio</Filter>
     </ClInclude>
-    <ClInclude Include="Avaliador.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
-    <ClInclude Include="CustoAlocacao.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
     <ClInclude Include="NaoAtendimento.h">
       <Filter>Output</Filter>
-    </ClInclude>
-    <ClInclude Include="SolutionLoader.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
-    <ClInclude Include="ValidateSolution.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
     </ClInclude>
     <ClInclude Include="Aula.h">
       <Filter>Puro MIP</Filter>
@@ -969,14 +642,8 @@
     <ClInclude Include="MainHeuristicaIES.h">
       <Filter>HeuristicaNuno</Filter>
     </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\SolverTatico.h">
-      <Filter>Heuristica-MarcioMine</Filter>
-    </ClInclude>
     <ClInclude Include="HeurNuno\Node.h">
       <Filter>HeuristicaNuno</Filter>
-    </ClInclude>
-    <ClInclude Include="SolverTaticoHeur\TimeLogger.h">
-      <Filter>Heuristica-MarcioMine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\include\opt_gurobi.h">
       <Filter>OPT_LP</Filter>
@@ -991,9 +658,6 @@
     </Filter>
     <Filter Include="Output">
       <UniqueIdentifier>{105c3809-4725-4d54-b788-666535432136}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Heuristica-MarcioMine">
-      <UniqueIdentifier>{4579ffee-5436-4ae2-be80-c0b7f259e819}</UniqueIdentifier>
     </Filter>
     <Filter Include="Util">
       <UniqueIdentifier>{da91fb5c-ddcc-4478-b6ee-4f2b7bc535a3}</UniqueIdentifier>
