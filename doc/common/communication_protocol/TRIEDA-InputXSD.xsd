@@ -786,14 +786,14 @@
           <xs:documentation>identificador (ItemDisciplina) da disciplina que é oferecida no período da matriz curricular em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
-	  <xs:element name="disciplinasCoRequisito" type="GrupoDisciplinaCoRequisito">
+      <xs:element name="disciplinasCoRequisito" type="GrupoDisciplinaCoRequisito">
         <xs:annotation>
           <xs:documentation>disciplinas co-requisito da matriz curricular</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-    <xs:complexType name="ItemDisciplinaCoRequisito">
+  <xs:complexType name="ItemDisciplinaCoRequisito">
     <xs:sequence>
       <xs:element name="disciplinaCoRequisitoId" type="xs:int">
         <xs:annotation>
@@ -933,7 +933,7 @@
           <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não minimizar gaps (buracos) nos horários dos professores num mesmo dia. Ver requisito RF-PP-1.</xs:documentation>
         </xs:annotation>
       </xs:element>
-	  <xs:element name="proibirHorariosVaziosProfessor" type="xs:boolean">
+      <xs:element name="proibirHorariosVaziosProfessor" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>parâmetro de planejamento que indica se o resolvedor matemático deverá ou não proibir gaps (buracos) nos horários dos professores num mesmo dia. Ver requisito RF-PP-1.</xs:documentation>
         </xs:annotation>
@@ -1055,9 +1055,9 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       </xs:element>
       <xs:element name="percentuaisMinimoParcialIntegral" type="xs:boolean" />
       <xs:element name="percentuaisMinimoIntegral" type="xs:boolean" />
+      <xs:element name="considerarCoRequisitos" type="xs:boolean" />
       <xs:element name="priorizarCalouros" type="xs:boolean" />
       <xs:element name="considerarPrioridadePorAlunos" type="xs:boolean" />
-      <xs:element name="considerarCoRequisitos" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemNivelDificuldadeHorario">
@@ -1516,8 +1516,8 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
         </xs:annotation>
       </xs:element>
       <xs:element name="nomeAluno" type="xs:string" />
-      <xs:element name="formando" type="xs:boolean" />
       <xs:element name="prioridade" type="xs:int" />
+      <xs:element name="formando" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemEquivalencia">
