@@ -304,21 +304,12 @@ void ProblemDataLoader::load()
    std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
      
 #ifndef HEURISTICA
-   std::cout << left << std::setw(70) << "\nEstabelecendo Dias Letivos Bloco Campus..." ;
-   estabeleceDiasLetivosBlocoCampus();
-   dif = CentroDados::getLastRunTime();
-   std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
      
    std::cout << left << std::setw(70) << "\nEstabelecendo Dias Letivos Disciplinas Salas...";
    estabeleceDiasLetivosDisciplinasSalas();
    dif = CentroDados::getLastRunTime();
    std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
-     
-   std::cout << left << std::setw(70) << "\nEstabelecendo Dias Letivos Disciplinas Cjt Salas..."; fflush(NULL);
-   estabeleceDiasLetivosDiscCjtSala();
-   dif = CentroDados::getLastRunTime();
-   std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
-     
+          
    std::cout << left << std::setw(70) << "\nCalculando creditos livres de salas...";
    calculaCredsLivresSalas();
    dif = CentroDados::getLastRunTime();
@@ -394,11 +385,6 @@ void ProblemDataLoader::load()
      
    std::cout << left << std::setw(70) << "\nCalculando maximo de tempo disponivel por sala e semana letiva..."; fflush(NULL);
    calculaMaxTempoDisponivelPorSalaPorSL();
-   dif = CentroDados::getLastRunTime();
-   std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
-     
-   std::cout << left << std::setw(70) << "\nCalculando compatibilidade de horarios..." ;fflush(NULL);
-   calculaCompatibilidadeDeHorarios();
    dif = CentroDados::getLastRunTime();
    std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
      
@@ -1431,30 +1417,6 @@ GGroup< int > ProblemDataLoader::retorna_foxacoes_dias_letivos( Disciplina * dis
    return dias_letivos;
 }
 
-void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
-{
-	if ( problemData->parametros->otimizarPor == "ALUNO" )
-	{
-		return;
-	}
-
-   // Analisar esse metodo e o de criacao de blocos curriculares.
-   // Um bloco pode pertencer a mais de um campus !?
-   ITERA_GGROUP_LESSPTR( it_Bloco_Curric, problemData->blocos, BlocoCurricular )
-   {
-      ITERA_GGROUP_N_PT( it_Dia_Letivo, it_Bloco_Curric->diasLetivos, int )
-      {
-         if ( it_Bloco_Curric->campus->diasLetivos.find
-            (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end() )
-         {
-            problemData->bloco_Campus_Dias[ 
-				std::make_pair( it_Bloco_Curric->getId(),
-								it_Bloco_Curric->campus->getId() ) ].add( *it_Dia_Letivo );
-         }
-      }
-   }
-}
-
 void ProblemDataLoader::estabeleceDiasLetivosDisciplinasSalas()
 {
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
@@ -1480,103 +1442,9 @@ void ProblemDataLoader::estabeleceDiasLetivosDisciplinasSalas()
 						{
 							problemData->disc_Salas_Dias_HorariosAula
 								[ ids_Disc_Sala ][ ( *itDiasSala ) ].add( h );
-
-							problemData->disc_Salas_Dias[ ids_Disc_Sala ].add( *itDiasSala );
 						}
 					}
 				}
-
-				/*
-               ITERA_GGROUP_N_PT( itDiasDisc, itDiscAssoc->diasLetivos, int )
-               {
-                  // Se o dia letivo da disciplina é também um
-                  // dia letivo da sala em questão, adiciona-se
-                  // ao map <disc_Salas_Dias> o dia em comum.
-                  if ( itSala->diasLetivos.find( *itDiasDisc )
-                     != itSala->diasLetivos.end() )
-                  {
-						std::pair< int, int > ids_Disc_Sala 
-						( itDiscAssoc->getId(), itSala->getId() );
-
-						problemData->disc_Salas_Dias[ ids_Disc_Sala ].add( *itDiasDisc );
-
-						// Adicionando informações referentes aos horários
-						// comuns entre uma sala e uma disciplina para um dado dia.
-						ITERA_GGROUP( itHorarioSala, itSala->horarios_disponiveis, Horario )
-						{ 
-							// Checando o dia em questão para a sala
-							if ( itHorarioSala->dias_semana.find( *itDiasDisc )
-								!= itHorarioSala->dias_semana.end() )
-							{
-								ITERA_GGROUP_LESSPTR( itHorarioDisc, itDiscAssoc->horarios, Horario )
-								{
-									// Checando o dia em questão para a disciplina
-									if ( itHorarioDisc->dias_semana.find( *itDiasDisc )
-										!= itHorarioDisc->dias_semana.end() )
-									{
-										// Checando se é um horário comum entre a disc e a sala.
-										if ( itHorarioSala->horario_aula == itHorarioDisc->horario_aula )
-										{
-											problemData->disc_Salas_Dias_HorariosAula
-												[ ids_Disc_Sala ][ ( *itDiasDisc ) ].add(
-												itHorarioSala->horario_aula );
-
-											break;
-										}
-									}
-								}
-							}
-						}
-                  }
-               }
-			   */
-            }
-         }
-      }
-   }
-}
-
-void ProblemDataLoader::estabeleceDiasLetivosDiscCjtSala()
-{
-   // Os dias letivos das disciplinas em relação aos
-   // conjuntos de salas são obtidos via união dos
-   // dias letivos das disciplinas em relação às salas
-   // pertencentes ao conjunto de salas em questão.
-
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-      ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
-      {
-         // p tds conjuntos de salas de um campus
-         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
-         {
-            // p tds as discAssoc de um conjunto
-            ITERA_GGROUP_LESSPTR( itDiscAssoc, itCjtSala->disciplinas_associadas, Disciplina )
-            {
-               std::map<int/*Id Sala*/,Sala*>::iterator itSala =
-                  itCjtSala->salas.begin();
-
-               for(; itSala != itCjtSala->salas.end();
-                  itSala++ )
-               {
-                  std::pair< int /*idDisc*/, int /*idSala*/> ids_Disc_Sala 
-                     ( itDiscAssoc->getId(), itSala->second->getId() );
-
-                  // Se a disciplina se relaciona com a sala em questao.
-                  // Como estamos  lidando com um conjunto de salas,
-                  // podemos ter o caso em que uma disciplina
-                  // é associada a uma sala do conjunto e a outra não.
-                  if ( problemData->disc_Salas_Dias.find(ids_Disc_Sala) !=
-                     problemData->disc_Salas_Dias.end() )
-                  {
-                     ITERA_GGROUP_N_PT( itDiasLetDisc,
-                        problemData->disc_Salas_Dias[ ids_Disc_Sala ], int )
-                     {
-                        problemData->disc_Conjutno_Salas__Dias[ std::make_pair< int, int >
-                           ( itDiscAssoc->getId(), itCjtSala->getId() ) ].add( *itDiasLetDisc );
-                     }
-                  }
-               }
             }
          }
       }
@@ -1607,9 +1475,6 @@ void ProblemDataLoader::calculaCredsLivresSalas()
 
 void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 {
-   problemData->disc_Dias_Prof_Tatico.clear();
-   problemData->usarProfDispDiscTatico = false;
-
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
 		ITERA_GGROUP_LESSPTR( it_prof, itCampus->professores, Professor )
@@ -1635,8 +1500,6 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 								( it_prof->getId(), discId );
 
 							problemData->prof_Disc_Dias[ ids_Prof_Disc ].add( *itDiasLetDisc );
-							problemData->disc_Dias_Prof_Tatico[ discId ].add( *itDiasLetDisc );
-							problemData->usarProfDispDiscTatico = true;
 						}					
 					}
 				}
@@ -3843,10 +3706,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
          auxTrio.first = curso;
          auxTrio.second = curriculo;
          auxTrio.third = disciplina;
-
-         problemData->mapCursoDisciplina_BlocoCurricular
-            [ auxTrio ] = bloco;
-
+		 
          ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Disc->diasLetivos, int )
          { 
             (*it_bc)->diasLetivos.add( *it_Dias_Letivos );
@@ -4742,9 +4602,7 @@ void ProblemDataLoader::relacionaDiscOfertas()
          // Utilizado em equivalências de disciplinas
          std::pair< Curso *, Curriculo * > curso_curriculo
             = std::make_pair( it_Oferta->curso, it_Oferta->curriculo );
-
-         problemData->map_Disc_CursoCurriculo[ disciplina ] = curso_curriculo;
-
+		 
 		 problemData->discOfertasEquiv[ disciplina->getId() ].add( *it_Oferta );
 		 ITERA_GGROUP_LESSPTR( itDiscEquiv, disciplina->discEquivSubstitutas, Disciplina )
 		 {
@@ -5477,44 +5335,6 @@ void ProblemDataLoader::calculaMaxTempoDisponivelPorSalaPorSL()
          }
       }
    }
-}
-
-/*
-	Preenche o map compatibilidadesDeHorarios, que relaciona para
-	cada horarioAula H existente, os horarioAula h tal que a semana letiva
-	de h é diferente da semana letiva de H, e h e H não possuem interseção
-	(não se sobrepõem).
-*/
-void ProblemDataLoader::calculaCompatibilidadeDeHorarios()
-{
-	// calendario 1
-	ITERA_GGROUP_LESSPTR( it_calendarios1, problemData->calendarios, Calendario )
-    {		
-		ITERA_GGROUP_LESSPTR( it_hor1, it_calendarios1->horarios_aula, HorarioAula )
-		{
-			HorarioAula *h1 = *it_hor1;
-
-			// calendario 2
-			ITERA_GGROUP_LESSPTR( it_calendarios2, problemData->calendarios, Calendario )
-			{
-				if ( (*it_calendarios2)->getId() == (*it_calendarios1)->getId() )
-					continue;
-
-				ITERA_GGROUP_LESSPTR( it_hor2, it_calendarios2->horarios_aula, HorarioAula )
-				{
-					HorarioAula *h2 = *it_hor2;
-							
-					if ( h1->getCalendario()->getId() == h2->getCalendario()->getId() )
-					{
-						std::cout<<"\nErro! acho que nao deveria entrar aqui, ja que os horarios sao criados por calendario.";
-						continue;
-					}
-					if ( !h1->sobrepoe( *h2 ) )
-						problemData->compatibilidadesDeHorarios[ h1 ].insert( h2 );
-				}
-			}
-		}		
-	}
 }
 
 void ProblemDataLoader::preencheHashHorarioAulaDateTime()

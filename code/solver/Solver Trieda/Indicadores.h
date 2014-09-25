@@ -20,6 +20,7 @@ public:
 	*	Seta o nome do arquivo de indicadores.
 	*/	
 	static void setIndicadorFileName (std::string fileName);
+	static void setIndicadorFileName( std::string inputName, int id );
 
 	/*
 	*	Inicializa o arquivo de saída com eventual cabeçalho/identificacao.

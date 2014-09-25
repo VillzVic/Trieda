@@ -52,16 +52,10 @@ public:
 
    // Cria os Conjuntos de Salas para cada Unidade.
    void criaConjuntoSalasUnidade();
-
-   // Establece os dias letivos comuns entre um bloco curricular e um campus.
-   void estabeleceDiasLetivosBlocoCampus();
-
+   
    // Establece os dias letivos comuns entre as salas e suas disciplinas associadas.
    void estabeleceDiasLetivosDisciplinasSalas();
-
-   // Establece os dias letivos comuns entre os conjuntos de salas e suas disciplinas associadas.
-   void estabeleceDiasLetivosDiscCjtSala();
-
+   
    // Establece os dias letivos comuns entre os professores e suas disciplinas.
    void estabeleceDiasLetivosProfessorDisciplina();
    
@@ -253,8 +247,6 @@ private:
    void calculaMaxTempoDisponivelPorSala();
    void calculaMaxTempoDisponivelPorSalaPorSL();
       
-   void calculaCompatibilidadeDeHorarios();
-
    void preencheHashHorarioAulaDateTime();
 
    void calculaCHOriginalPorAluno();

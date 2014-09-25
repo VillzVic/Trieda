@@ -118,6 +118,15 @@ namespace std
 	};
 
 	template<>
+	struct less<const TurmaPotencial*>
+	{
+		bool operator() (const TurmaPotencial* const first, const TurmaPotencial* const second) const
+		{
+			return (*first) < (*second);
+		}
+	};
+
+	template<>
 	struct less<const TurmaPotencial>
 	{
 		bool operator() (const TurmaPotencial &first, const TurmaPotencial &second) const

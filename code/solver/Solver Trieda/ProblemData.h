@@ -37,65 +37,23 @@
 #include "HorarioDia.h"
 #include "Equivalencia.h"
 
+
+
 #ifdef BUILD_COM_SOL_INICIAL
 #include "SolucaoTaticoInicial.h"
 #endif
 
 #define USAR_CALLBACK
 
-#ifndef PRE_TATICO
-#define PRE_TATICO
-#endif
-
 #define READ_SOLUTION
-
-// ----------------------------------
-// NOVA ABORDAGEM
-
-#define TATICO_CJT_ALUNOS
-
-#ifndef TATICO_CJT_ALUNOS
-#define SEM_CJT_ALUNOS
-#endif
-// ----------------------------------
-
-#define TATICO_COM_HORARIOS
-
-#ifdef UNIT
-//#define ALUNO_UNICO_CALENDARIO // Usado para ativar ou não a restrição v_{i,d,sl1} + v_{i,d,sl2} <= 1
-#endif
 
 #define ALUNO_TURNOS_DA_DEMANDA // Usado quando o aluno só pode ser alocado em turno existente no calendario da Oferta da Demanda que ele requisitou
 
-#define SALA_UNICA_POR_TURMA
-
 #define EQUIVALENCIA_DESDE_O_INICIO
-
-//#define PREMODELO_AGRUPA_ALUNO_POR_CURSO
-
-#ifndef PREMODELO_AGRUPA_ALUNO_POR_CURSO
-	//#define PARTICIONA_PREMODELO
-#endif
-
-#define USA_ESTIMA_TURMAS
-
 
 
 bool less_than( DateTime left, DateTime right );
 
-
-#ifndef POSSUI_HORARIO_DIA
-#define POSSUI_HORARIO_DIA( ggroup, hd ) \
-	for ( GGroup< HorarioDia *, LessPtr< HorarioDia > >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it ) \
-	{\
-		if ( it->igual(hd) ) return true;\
-	}\
-	return false;
-#endif
-
-
-
-class Variable;
 
 class ProblemData
 	: public OFBase
@@ -137,6 +95,8 @@ public:
    GGroup< Aluno *, LessPtr< Aluno > > alunos;
    GGroup< Professor *, LessPtr< Professor > > profsVirtuais; // 1 por tipo de titulação
    GGroup< Equivalencia*, LessPtr< Equivalencia > > equivalencias; // só contém as teoricas
+
+   GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > blocos;
 
    std::map< std::pair< int/*oldDisc*/, int/*newDisc*/ >, int /*equiv*/> mapParDisc_EquivId; // só contém as teoricas
 
@@ -187,17 +147,6 @@ public:
    std::map< Calendario *, std::vector< HorarioAula * >, LessPtr< Calendario > > mapCalendarioHorariosAulaOrdenados;
    std::vector< HorarioAula * > horarios_aula_ordenados;
 
-   // Método que verifica se uma dada disciplina
-   // pertence a uma matriz curricular compatível
-   // com o calendário de um determinado horário de aula
-   // OBS.: Uma condição pressuposta nesse método é a de que
-   // nenhuma disciplina aparecerá em dois ou mais curriculos
-   // distintos que possuam calendários letivos distintos.
-   // Ou seja, uma disciplina não será oferecida com horários
-   // de 40 minutos em uma matriz curricular e em horários de
-   // 50 minutos em outra matriz curricular.
-   bool verificaDisponibilidadeDisciplinaHorario( Disciplina *, HorarioAula * );
-
    GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > > * atendimentosTatico;
 
    // Para cada dia da semana, informa o
@@ -207,8 +156,6 @@ public:
    // Conjunto de professores virtuais alocados na solução operacional
    std::vector< Professor * > professores_virtuais;
    std::unordered_set<int> profs_virtuais_ids;
-
-   GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > > blocos;
 
    // Dado o id de uma disciplina e o id de um campus,
    // retorna o total de demandas desse par 'disciplina/campus'
@@ -230,9 +177,6 @@ public:
 
    // map de compatibilidade e incompatibilidade entre 2 cursos.
    std::map< std::pair< Curso *, Curso * >, bool > compat_cursos;
-
-   // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
-   std::map< Trio< Curso *, Curriculo*, Disciplina * > , BlocoCurricular * > mapCursoDisciplina_BlocoCurricular;
 
    std::map< int /*Id Campus*/, unsigned /*Tamanho médio das salas*/ > cp_medSalas;
 
@@ -306,56 +250,31 @@ public:
    AlunoDemanda* retornaAlunoDemanda( int /*alunoDemId*/ );
 
    // =============================================================================================
-   // Estruturas conflitantes !!!
-
-   // A segunda estrutura engloba a primeira. Portanto, basta
-   // substituir as ocorrências da primeira estrutura pela segunda.
-
-   // Lista os dias letivos de uma disciplina em relação a cada sala.
-   std::map< std::pair< int /*idDisc*/, int /*idSala*/ >, GGroup< int > /*Dias*/ > disc_Salas_Dias;
-
    // Lista todos os horários, para cada dia letivo, comuns entre uma disciplina e uma sala.
+
    std::map<std::pair< int /*idDisc*/, int /*idSala*/ >, 
 	   std::map< int /*Dias*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > > > disc_Salas_Dias_HorariosAula;
    // =============================================================================================
-
-   // Listando os dias letivos de uma disciplina em relação a um conjunto de salas de mesmo tipo.
-   std::map< std::pair< int /*idDisc*/, int /*idSubCjtSala*/>, GGroup< int > /*Dias*/ > disc_Conjutno_Salas__Dias;
-
-   // Listando os dias letivos comuns entre um bloco curricular
-   // e um campus. Obs.: Quando tiver mais de um campus, pode
-   // acontecer que uma associação entre um bloco curricular
-   // que não pertence a um determinado campus seja criada. "Arrumar isso depois".
-   std::map< std::pair< int /*idBloco*/, int /*idCampus*/ >, GGroup< int > /*Dias*/ > bloco_Campus_Dias;
-
+   
    // Listando as regras de créditos para cada possível valor de crédito.
    std::map< int /*Num. Creds*/, GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > > creds_Regras;
 
    // Dias letivos comuns de um professor e uma disciplina.
    std::map< std::pair< int /*idProf*/, int /*idDisc*/>, GGroup< int > /*Dias*/ > prof_Disc_Dias;
-
-   // Filtro de dias letivos para o tatico usando os professores.
-   std::map< int, GGroup< int > > disc_Dias_Prof_Tatico;
-   
+      
    // Mapeia para cada disciplina, os professor reais que possuem habilitação para ministra-la.
    std::map< Disciplina*, GGroup<Professor*, LessPtr<Professor>>, LessPtr<Disciplina> > mapDiscProfsHabilit;
 
    // Retorna o número de professores reais que possuem habilitação para ministrar a disciplina.
    int getNroProfPorDisc( Disciplina *disciplina );
 
-   bool usarProfDispDiscTatico;
-
    GGroup< Aula *, LessPtr< Aula > > aulas;
    
-   // Estrutura que agrupa as aulas por bloco curricular e dia.
-   std::map< BlocoCurricular *,
-             std::map< int /*dia*/, GGroup< Aula *, LessPtr< Aula > > >,
-             LessPtr< BlocoCurricular > > blocoCurricularDiaAulas;
-
    // Estrutura que informa a quais blocos curriculares uma aula pertence.
-   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > >,
-             LessPtr< Aula > > aulaBlocosCurriculares;
+   //std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > >,
+   //          LessPtr< Aula > > aulaBlocosCurriculares;
    
+#pragma region FIXAÇÕES - NÃO USADO
    //----------------------------------------------------------------
    // FIXAÇÕES
    // Fixações - Tático:
@@ -367,8 +286,7 @@ public:
 
    // Disciplina, Dia, Horário
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes_Disc_Dia_Horario;
-   //----------------------------------------------------------------
-
+   
    //----------------------------------------------------------------
    // Fixações - Operacional:
    // Professor, Disciplina, Sala, Dia, Horário
@@ -399,6 +317,8 @@ public:
    std::map< Disciplina *, Sala *, LessPtr< Disciplina > > map_Discicplina_Sala_Fixados;
 
    int creditosFixadosDisciplinaDia( Disciplina *, int, ConjuntoSala * );
+#pragma endregion
+
 
    void le_turnosIES( TriedaInput & );
    virtual void le_arvore( TriedaInput & );
@@ -421,9 +341,6 @@ public:
    std::map< std::pair< Curso *, Curriculo * >,
 	         std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > > mapGroupDisciplinasSubstituidas;
    
-   // Dada uma disciplina, informamos o seu curso e curriculo
-   std::map< Disciplina *, std::pair< Curso *, Curriculo * >, LessPtr< Disciplina > > map_Disc_CursoCurriculo;
-
    // Retorna para uma dada disciplina substituta e um par <curso, curriculo>,
    // a disciplina original que ela substituiu. Caso não tiver havido substituição,
    // returna NULL.
@@ -439,26 +356,12 @@ public:
 
    bool cursosCompativeis( Curso *, Curso * );
    
-   // Informa se uma disciplina substituída foi atendida
-   std::map< Disciplina *, bool, LessPtr< Disciplina > > disciplinasSubstituidasAtendidas;
-
-   // Busca a demanda da disciplina informada,
-   // em cursos compatíveis com o curso também informado
-   Demanda * buscaDemanda( Curso * , Disciplina * ); // ??
-
    // Busca a demandas da disciplina e curso informados
    GGroup< Demanda *, LessPtr< Demanda > > buscaTodasDemandas( Curso * , Disciplina *, Campus *cp );
-
-   // Retorna o conjunto de demandas da disciplina
-   // informada, que foi substituída por alguma outra
-   GGroup< Demanda *, LessPtr< Demanda > > retornaDemandaDisciplinasSubstituidas( Disciplina * );
-
+   
    // Retorna os pares curso/curriculo dos quais a disciplina informada possui demanda
    GGroup< std::pair< Curso *, Curriculo * > > retornaCursosCurriculosDisciplina( Disciplina * );
-
-	// Dada uma disciplina, e seu par curso/curriculo, retorna-se a oferta dessa disciplina
-	Oferta * retornaOfertaDiscilpina( Curso *, Curriculo *, Disciplina * );
-
+   
 	Disciplina* retornaDisciplina( int id );
 
    // Armazena os 'ids' das disciplinas em comum entre os pares de ofertas compatíveis
@@ -485,7 +388,6 @@ public:
    Demanda * buscaDemanda( int, int );
 
    Oferta * findOferta( int ) const;
-   HorarioAula * findHorarioAula( int );
 
    GGroup< Professor *, LessPtr< Professor > > getProfessores() const;
    Professor * findProfessor( int );
@@ -496,12 +398,7 @@ public:
 
    // Retorna todas as salas (de todos os campi) do input
    GGroup< Sala *, LessPtr< Sala > > getSalas() const;
-   Sala * findSala( int );
    
-   // Associa a cada horario de aula o conjunto de horarios pertencentes
-   // a outras semanas letivas que não se sobrepõem
-   std::map< HorarioAula*, std::set<HorarioAula*>, LessPtr<HorarioAula> > compatibilidadesDeHorarios;
-
    GGroup< HorarioAula *, LessPtr< HorarioAula > > retornaHorariosEmComum( int sala, int disc, int dia );
 
    // Dado o id de uma unidade, retorna referencia para o campus correspondente
@@ -524,24 +421,13 @@ public:
    // na turma pertencentes a ofertas de turnos diferentes. Substitui os maps acima, que eram para Calendario.
    std::map< Trio< int /*campusId*/, int /*turma*/, int /*discId*/ >, GGroup< TurnoIES*, LessPtr<TurnoIES> > > mapTurma_TurnosIES;
    std::map< Trio< int /*campusId*/, int /*turma*/, int /*discId*/ >, GGroup< HorarioDia*, LessPtr<HorarioDia> > > mapTurma_HorComunsAosTurnosIES;
-   std::map< Trio< int /*campusId*/, int /*turma*/, int /*discId*/ >, 
-	   std::map< int, std::map< DateTime, std::map< DateTime, GGroup< HorarioDia*, LessPtr<HorarioDia> > > > > > mapTurmaDiaDtiDtf_HorComuns;
-
+   
    void clearMaps( int cpId, int prioridade );
    void preencheMapsTurmasCalendarios();
    void preencheMapsTurmasTurnosIES();
-   GGroup< HorarioDia*, LessPtr<HorarioDia> > retornaHorariosDiaIntersecao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio );
-   GGroup< HorarioDia*, LessPtr<HorarioDia> > retornaHorariosDiaUniao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio );
 
-   GGroup< HorarioDia*, LessPtr<HorarioDia> > retornaHorariosDiaTurnoIESIntersecao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio );
-   GGroup< HorarioDia*, LessPtr<HorarioDia> > retornaHorariosDiaTurnoIESUniao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio );
-
-   void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
-   void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
-   
    void insereAlunoEmTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
-   void removeAlunoDeTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
-
+   
    void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, string MIP, int runtime );
    void imprimeAlocacoesGerais( int campusId, int prioridade, int rodada, string MIP, int totalAtendsSemDivPT_P1, int totalAtendsSemDivPT_P2,
 	   int totalCreditos, int totalCreditosPagos, int totalTurmas, int totalCusto, int totalReceita, int runtime );
@@ -568,9 +454,7 @@ public:
    void calculaDemandas();
    
    bool atendeCursoTurmaDisc( int turma, Disciplina* disc, int campusId, int cursoId );
-
-   int atendeTurmaDiscOferta( int turma, int discId, int ofertaId );
-
+   
    int getNroDiscsAtendidasNoCurso( Curso *curso );
 
    bool haDemandaDiscNoCampus( int disciplina, int campusId );
@@ -578,7 +462,6 @@ public:
    GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaDemandasDiscNoCampus( int disciplinaId, int campusId, int prioridade );
 
    int existeTurmaDiscCampus( int turma, int discId, int campusId );
-   int receitaMediaTurmaDiscCampus( int turma, int discId, int campusId );
 
    GGroup<Aluno*, LessPtr<Aluno>> alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
 
@@ -590,13 +473,9 @@ public:
 
    int retornaCjtAlunosId( int discId );
    int retornaCjtAlunosId( Aluno* aluno );
-   int haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId );
-   bool haDemandaDiscNoCjtAlunosPorOfertaComEquiv( Disciplina *disciplina, int oftId, int cjtAlunosId );
-   int maxDemandaDiscNoCjtAlunosPorOfertaComEquiv( Disciplina *disciplina, int oftId, int cjtAlunosId );
    int haDemandaDiscNoCurso( int discId, int cursoId );
    bool haDemandaDiscNoCursoEquiv( Disciplina *disciplina, int cursoId );
    int maxDemandaDiscNoCursoEquiv( Disciplina *disciplina, int cursoId );
-   int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
    int getQtdAlunoDemandaAtualPorCampus( int campusId );
 
    void imprimeCjtAlunos( int campusId );
@@ -610,37 +489,17 @@ public:
    double cargaHorariaAtualRequeridaPorPrioridade( int prior, Aluno* aluno );
    double cargaHorariaJaAtendida( Aluno* aluno );
 
-   int retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia );
-
-   bool possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplina* disciplina2, int campusId, int P_ATUAL );
-   bool possuiNaoAtend(Aluno* aluno);
-
-   bool haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
-   bool haDemandaPorFormandosEquiv( Disciplina *disciplina, Campus *cp, int P_ATUAL );
-   int getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
-   bool possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp );
-   int getNroFormandos( int turma, Disciplina *disciplina, Campus *cp );
-   bool haAlunoFormandoNaoAlocado( int cpId, int prioridadeAtual );
    bool haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, int prioridadeAtual );
    bool haAlunoFormandoNaoAlocadoEquiv( Disciplina *disciplina, int cpId, int prioridadeAtual );
    
-   bool temCalouro( int turma, Disciplina* disciplina, int cpId );
-   int getNroCalouros( int turma, Disciplina *disciplina, int campusId );
-
-   bool haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
    int getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
 
    Disciplina* getDisciplinaTeorPrat( Disciplina *disciplina );
-
-   void reduzNroTurmasPorDisciplina( int campusId, int prioridade, int iteracao );
-   void removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId );
-
-   GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaMaxDemandasDiscNoCampus_Equiv( Disciplina* disciplina, int campusId, int prioridade );
+   
    GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaMaxDemandasDiscNoCampus_EquivTotal( Disciplina* disciplina, int campusId, int prioridade, bool permiteRealocacao=false );
    bool haDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade );
 
    bool violaMinTurma( int campusId );
-   bool violaMinTurma( Trio< int, int, Disciplina* > trio );
    void imprimeFormandos();
    void imprimeCombinacaoCredsDisciplinas();
 
@@ -660,18 +519,13 @@ public:
 
    void preencheMapDisciplinaAlunosDemanda( bool EQUIVALENCIA );
 
-   void adicionaAlunoDemanda( AlunoDemanda *alunoDemanda );
    void removeAlunoDemanda( AlunoDemanda *alunoDemanda );
-   void reinsereAlunoDemanda( AlunoDemanda *alunoDemanda, Disciplina *discAntiga );
-
-   GGroup<HorarioDia*, LessPtr<HorarioDia>> retornaHorariosDiaEmComum( GGroup<Calendario*,LessPtr<Calendario>> &calendarios );
+   
    GGroup<HorarioDia*, LessPtr<HorarioDia>> retornaHorariosDiaTurnoComum( GGroup<Calendario*,LessPtr<Calendario>> &calends );
    GGroup<HorarioDia*, LessPtr<HorarioDia>> retornaHorariosDiaComuns( GGroup<TurnoIES*,LessPtr<TurnoIES>> &turnosIES );
 
    void preencheMapParCalendHorariosDiaComuns();
-   int horariosDiaEmComum( Calendario* sl1, Calendario* sl2 );
-   GGroup<HorarioDia*, LessPtr<HorarioDia>> getHorariosDiaEmComum( Calendario* sl1, Calendario* sl2 );
-
+   
    void imprimeAssociacaoDisciplinaSala();
    void constroiHistogramaDiscDemanda();
 
@@ -679,21 +533,9 @@ public:
 
    void preencheMapTurnoSemanasLetivas();
    void preencheMapTurnoDisciplinas();
-
-   int getNumDemandaPorDiscECalendario( int campusId, Disciplina *disciplina, Calendario *calendario );
-
-	// todo: substituir o mapDisciplinaAlunosDemanda
-	// map: [campusId][disciplina][prioridade][Calendario][GGroup<AlunoDemanda>]
-	std::map< int/*campusId*/, std::map< Disciplina*, std::map< int /*P*/, map<Calendario*, 
-		GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Calendario>> >, LessPtr<Disciplina> > > mapDisciplina_Calendarios_AlunosDemanda;
-	
-	std::map< int/*campusId*/, std::map< Disciplina*, std::map< int /*P*/, map<TurnoIES*, 
-		GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<TurnoIES>> >, LessPtr<Disciplina> > > mapDisciplina_TurnoIES_AlunosDemanda;
-
-
+   	
 	void setDateTimesSobrepostos();
 	GGroup< std::pair<DateTime,DateTime> >* getDateTimesSobrepostos( DateTime dt );
-
    std::map<DateTime, GGroup< std::pair<DateTime,DateTime> > > mapDtiSobrepoeDtiDtf;
 
    std::map<int, std::pair<DateTime*,int> > horarioAulaDateTime; 
@@ -718,34 +560,21 @@ public:
    int getFaseDoDia( DateTime dt );
    DateTime getFimDaFase( int fase ) const;
    int getNroTotalDeFasesDoDia() const { return nroTurnos; }
-   GGroup< HorarioDia*, LessPtr<HorarioDia> > getHorariosDiaPorTurno( Disciplina *disciplina, Calendario *calendario, int turno );
-   GGroup< HorarioDia*, LessPtr<HorarioDia> > getHorariosDiaPorTurno( Disciplina *disciplina, TurnoIES *turnoIES, int turno );
-   bool haTurnoComumViavel( Disciplina *disciplina, Calendario *calendario );
    bool haTurnoComumViavel( Disciplina *disciplina, TurnoIES *turnoIES );
-   GGroup<int> getTurnosComunsViaveis( Disciplina *disciplina, Calendario *calendario );
    GGroup<int> getTurnosComunsViaveis( Disciplina *disciplina, TurnoIES *turnoIES );
    bool alocacaoEquivViavel( Demanda *demanda, Disciplina *disciplina );
-   GGroup<int> alocacaoEquivViavelTurnos( Demanda *demanda, Disciplina *disciplinaEquiv );
    GGroup<int> alocacaoEquivViavelTurnosIES( Demanda *demanda, Disciplina *disciplinaEquiv );
-
-   int getNroCredsMaxComum( Disciplina* disciplina, GGroup<HorarioDia*, LessPtr<HorarioDia>> horariosDiaComuns );
-
+   
    // Guarda para cada disciplina o par <difTurmas, nroNaoAtend> aonde:
    // difTurmas = max turmas - nro turmas abertas
    // nroNaoAtend = o número de não atendimentos
    std::map<int /*discId*/, std::pair<int/*difTurmas*/, int/*nroNaoAtend*/> > mapDiscDif;
    
-   int getNroNaoAtend( Disciplina *disciplina );
-
    // Utilização das salas em minutos semanais
    map<ConjuntoSala *, int, LessPtr<ConjuntoSala>> mapCreditosSalas;
    void imprimeUtilizacaoSala( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, string MIP );
    void imprimeDiscNTurmas( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico );
 
-   Campus* getCampus(int campusId);
-   
-   Curso* retornaCursoAtendido( int turma, Disciplina* disciplina, int campusId );
-   GGroup< Curso*, LessPtr< Curso > > retornaCursosAtendidos( int turma, Disciplina* disciplina, int campusId );
    int getNumTurmasJaAbertas( Disciplina *disciplina, int campusId );
    
    void preencheDiscSubstitutaPossivelPorDemanda();
@@ -759,14 +588,10 @@ public:
    SolucaoTaticoInicial *getSolTaticoInicial() const { return solTaticoInicial; }
    bool existeSolTaticoInicial() const { return solTaticoInicial->existeSolInicial(); }
    AlunoDemanda* atualizaAlunoDemandaEquivSolInicial( int turma, Disciplina* disciplina, int campusId, Aluno *aluno, int prioridade );
-#endif
-
-   bool haSolXInitFileName();
 
    int getTotalOrigAlunoDemanda( int cpId ) { return totalOrigAlunoDemanda[cpId]; }
    void setTotalOrigAlunoDemanda( int cpId, int v ) { totalOrigAlunoDemanda[cpId] = v; }
- 
-#ifdef BUILD_COM_SOL_INICIAL
+
    int getPercAtendInicialFixado( int cpId );
    int getPercAtendAlunosInicialFixado( int cpId );
    int getPercAtendTurmasInicialFixado( int cpId );
@@ -779,8 +604,6 @@ public:
 #endif
    
    bool temAtendTatInicialFixado( int alDemId );
-   bool possibilidCompartDisc( Oferta *oferta, Disciplina *disciplina, int campusId, int prioridade );
-   bool possibilidCompartNoPeriodo( Oferta *oferta, int periodo, int campusId, int prioridade );
    
    void confereCorretudeAlocacoes();
    void confereDadosDeEquivalenciaForcada();
@@ -817,13 +640,12 @@ public:
 		std::string inputFileName;
 		int inputId;
 
-		std::map< int /*campusId*/, int > totalOrigAlunoDemanda;			// com divisão pratica/teorica
-		std::map< int /*campusId*/, int > numTurmasTotalEstimados;			// com divisão pratica/teorica
-
 	   std::map< std::pair< Demanda*, Disciplina* >, bool > mapEquivViavelDemandaDisc;
 
 #ifdef BUILD_COM_SOL_INICIAL
 	   SolucaoTaticoInicial * solTaticoInicial;
+ 	   std::map< int /*campusId*/, int > totalOrigAlunoDemanda;			// com divisão pratica/teorica
+	   std::map< int /*campusId*/, int > numTurmasTotalEstimados;			// com divisão pratica/teorica
 #endif
 
 	   int cenarioId_;

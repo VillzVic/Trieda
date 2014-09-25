@@ -39,6 +39,9 @@ struct _dtOutput
    char outputFile[ 1024 ];
 } dtOutput;
 
+bool openMainLogFile( ofstream &outTestFile );
+void startTimer( CPUTimer &timer, double &tempoSec );
+void stopTimer( CPUTimer &timer, double &tempoSec, int &hour, int &min, int &sec );
 void clearData( ProblemSolution * solution, ProblemData * data, ProblemDataLoader * dataLoader );
 void seed();
 void printIESDefine();
@@ -52,17 +55,12 @@ int main( int argc, char** argv )
     printIESDefine();
    	
 	CPUTimer timer;
-	double tempoSec = 0.0;
-	timer.start();
-	
+	double tempoSec;
+	startTimer(timer,tempoSec);
+
 	ofstream outTestFile;
-	char outputTestFilename[] = "outTest.txt";
-	outTestFile.open(outputTestFilename, ios::out);
-	if (!outTestFile) {
-		cerr << "Can't open output file " << outputTestFilename << endl;
-		exit(1);
-	}
-	outTestFile << "Started..." <<endl;
+	if ( !openMainLogFile(outTestFile) )
+		return (EXIT_FAILURE);
 	
 	seed();
 
@@ -91,18 +89,16 @@ int main( int argc, char** argv )
    cmd->getOutputName(outputFile);   
    
    // -----------------------------------------------------------
-   ProblemData* data = new ProblemData( argv[ 1 ], inputId );
+   ProblemData* data = new ProblemData( argv[1], inputId );
    CentroDados::setProblemData(data);
 
    // -----------------------------------------------------------
    CentroDados::openFilesWarnError();
    
    // -----------------------------------------------------------
-   std::stringstream indicaInputPlusId;
-   indicaInputPlusId << "indicadores_" << argv[ 1 ];
-   if ( inputId!=0 ) indicaInputPlusId << "_id" << inputId;
-   Indicadores::setIndicadorFileName( indicaInputPlusId.str() );
-   
+   Indicadores::setIndicadorFileName( argv[1], inputId );
+   Indicadores::printSeparator(4);
+
    // -----------------------------------------------------------
    outTestFile << "dataLoader constructor..." <<endl;
    ProblemDataLoader * dataLoader;
@@ -152,15 +148,14 @@ int main( int argc, char** argv )
    clearData( solution, data, dataLoader );
    
    // -----------------------------------------------------------
-   timer.stop();
-   tempoSec = timer.getCronoCurrSecs();				// total em seg
-   int hours = (int) (tempoSec / 3600);				// h
-   int min = (int) ( (int) tempoSec % 3600 ) / 60;	// min
-   int sec = tempoSec - (min*60 + hours*60*60);		// sec
-   
+   int hours, min, sec;
+   stopTimer( timer, tempoSec, hours, min, sec );
+
    outTestFile << "\nTotal elapsed time: " << hours << "h" << min << "'" << sec << "''" << endl << endl;
    std::cout << "\nTotal elapsed time: " << hours << "h" << min << "'" << sec << "''" << endl << endl;
    
+   // -----------------------------------------------------------
+
    	outTestFile << "Finished!" <<endl;
 	outTestFile.close();
 
@@ -177,6 +172,33 @@ int main( int argc, char** argv )
     std::cout << "\n\nTRIEDA executado com sucesso !!!\n";
    
     return (EXIT_SUCCESS);
+}
+
+bool openMainLogFile( ofstream &outTestFile )
+{
+	char outputTestFilename[] = "outTest.txt";
+	outTestFile.open(outputTestFilename, ios::out);
+	if (!outTestFile) {
+		cerr << "Can't open output file " << outputTestFilename << endl;
+		return false;
+	}
+	outTestFile << "Started..." <<endl;
+	return true;
+}
+
+void startTimer( CPUTimer &timer, double &tempoSec )
+{
+	tempoSec = 0.0;
+	timer.start();
+}
+
+void stopTimer( CPUTimer &timer, double &tempoSec, int &hour, int &min, int &sec )
+{
+   timer.stop();
+   tempoSec = timer.getCronoCurrSecs();				// total em seg
+   hour = (int) (tempoSec / 3600);					// h
+   min = (int) ( (int) tempoSec % 3600 ) / 60;		// min
+   sec = tempoSec - (min*60 + hour*60*60);			// sec
 }
 
 void clearData( ProblemSolution * solution, ProblemData * data, ProblemDataLoader * dataLoader )

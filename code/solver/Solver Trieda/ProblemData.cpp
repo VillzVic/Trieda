@@ -7,6 +7,7 @@
 #include "Indicadores.h"
 #include "CentroDados.h"
 
+
 bool DEBUGANDO = false;
 
 
@@ -1300,30 +1301,6 @@ bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 	return false;
 }
 
-// Dada uma disciplina, e seu par curso/curriculo,
-// esse método retorna-se a oferta dessa disciplina
-Oferta * ProblemData::retornaOfertaDiscilpina(
-	Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
-{
-	Oferta * oferta = NULL;
-	Demanda * demanda = NULL;
-
-	ITERA_GGROUP_LESSPTR( it_demanda, this->demandas, Demanda )
-	{
-		demanda = ( *it_demanda );
-
-		if ( demanda->oferta->curso->getId() == curso->getId()
-			&& demanda->oferta->curriculo->getId() == curriculo->getId()
-			&& demanda->disciplina->getId() == disciplina->getId() )
-		{
-			oferta = demanda->oferta;
-			break;
-		}
-	}
-
-	return oferta;
-}
-
 // Dado o id de uma disciplina, retorna a referencia para a disciplina.
 // Se nao existir a disciplina de id procurado, retorna null.
 Disciplina* ProblemData::retornaDisciplina( int id )
@@ -1432,40 +1409,6 @@ GGroup< std::pair< Curso *, Curriculo * > >
 	}
 
    return cursos_curriculos;
-}
-
-GGroup< Demanda *, LessPtr< Demanda > >
-   ProblemData::retornaDemandaDisciplinasSubstituidas( Disciplina * disciplina )
-{
-	GGroup< Demanda *, LessPtr< Demanda > > demandas_disciplina;
-
-	ITERA_GGROUP_LESSPTR( it_demanda, this->demandas, Demanda )
-	{
-		if ( it_demanda->disciplina->getId() == disciplina->getId() )
-		{
-			demandas_disciplina.add( *it_demanda );
-		}
-	}
-
-	return demandas_disciplina;
-}
-
-Demanda * ProblemData::buscaDemanda(
-  Curso * curso, Disciplina * disciplina )
-{
-   Demanda * demanda = NULL;
-
-   ITERA_GGROUP_LESSPTR( it_demanda, this->demandas, Demanda )
-   {
-      if ( it_demanda->disciplina->getId() == disciplina->getId()
-         && cursosCompativeis( curso, it_demanda->oferta->curso ) )
-      {
-         demanda = ( *it_demanda );
-         break;
-      }
-   }
-
-	return demanda;
 }
 
 GGroup< Demanda*, LessPtr< Demanda > > ProblemData::buscaTodasDemandas( Curso *c , Disciplina *d, Campus *cp )
@@ -1715,65 +1658,6 @@ int ProblemData::minutosIntervalo( DateTime dt1, DateTime dt2 )
    return minutes;
 }
 
-// Método relacionado com a issue TRIEDA-1054
-bool ProblemData::verificaDisponibilidadeDisciplinaHorario(
-   Disciplina * disciplina, HorarioAula * horario_aula )
-{
-   int idCalendarioDisc = -1;
-
-   ITERA_GGROUP_LESSPTR( it_curso, this->cursos, Curso )
-   {
-      Curso * curso = ( *it_curso );
-
-      if ( idCalendarioDisc >= 0 )
-      {
-         break;
-      }
-
-      ITERA_GGROUP_LESSPTR( it_curriculo, curso->curriculos, Curriculo )
-      {
-         Curriculo * curriculo = ( *it_curriculo );
-		 Calendario *calendario = curriculo->calendario;
-
-         if ( idCalendarioDisc >= 0 )
-         {
-            break;
-         }
-
-         map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc_periodo
-			 = curriculo->disciplinas_periodo.find(disciplina);
-
-         if (it_disc_periodo != curriculo->disciplinas_periodo.end())
-         {
-			 ITERA_GGROUP_LESSPTR( it_hor, disciplina->horarios, Horario )
-			 {
-				 if ( it_hor->getHorarioAulaId() == horario_aula->getId() &&
-					  it_hor->horario_aula->getCalendario()->getId() == calendario->getId() )
-				 {
-					 idCalendarioDisc = calendario->getId(); break;
-				 }
-			 }
-         }
-      }
-   }
-
-   if ( idCalendarioDisc < 0 )
-   {
-      /*
-      std::cerr << "A disciplina " << disciplina->getCodigo()
-                << " nao esta associada a nenhums matriz curricular. "
-                << std::endl;
-
-      exit( 1 );
-      */
-   }
-
-   bool result = ( idCalendarioDisc >= 0 && horario_aula != NULL
-      && horario_aula->getCalendario() != NULL
-      && horario_aula->getCalendario()->getId() == idCalendarioDisc );
-
-   return result;
-}
 
 bool ProblemData::verificaUltimaPrimeiraAulas(
    HorarioDia * h1, HorarioDia * h2 )
@@ -1937,22 +1821,6 @@ Demanda * ProblemData::buscaDemanda( int id_oferta, int id_disciplina )
    return demanda;
 }
 
-HorarioAula * ProblemData::findHorarioAula( int id_horario_aula )
-{
-   ITERA_GGROUP_LESSPTR( it_horario_dia, this->horariosDia, HorarioDia )
-   {
-      HorarioAula * horario_aula = it_horario_dia->getHorarioAula();
-
-      if ( horario_aula != NULL
-         && horario_aula->getId() == id_horario_aula )
-      {
-         return horario_aula;
-      }
-   }
-
-   return NULL;
-}
-
 GGroup< Professor *, LessPtr< Professor > > ProblemData::getProfessores() const
 {
    // Armazenando todos os professores
@@ -2047,23 +1915,6 @@ GGroup< Sala *, LessPtr< Sala > > ProblemData::getSalas() const
    }
 
    return salas;
-}
-
-Sala * ProblemData::findSala( int id )
-{
-   GGroup< Sala *, LessPtr< Sala > > salas = this->getSalas();
-
-   ITERA_GGROUP_LESSPTR( it_sala, salas, Sala )
-   {
-      Sala * sala = ( *it_sala );
-
-      if ( sala->getId() == id )
-      {
-         return sala;
-      }
-   }
-
-   return NULL;
 }
 
 Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Curso *, Curriculo * > parCursoCurr)
@@ -3101,41 +2952,6 @@ bool ProblemData::atendeCursoTurmaDisc( int turma, Disciplina* disc, int campusI
 	return false;
 }
 
-
-/*
-	Retorna o numero de alunos da ofertaId alocados na turma e discId.
-*/
-int ProblemData::atendeTurmaDiscOferta( int turma, int discId, int ofertaId )
-{
-	int campusId = this->refOfertas[ofertaId]->getCampusId();
-	Disciplina* disciplina = this->refDisciplinas[discId];
-
-	Trio< int, int, Disciplina* > trio;
-	trio.set( campusId, turma, disciplina);
-
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator itMap = 
-		this->mapCampusTurmaDisc_AlunosDemanda.find( trio );
-	
-	if ( itMap == this->mapCampusTurmaDisc_AlunosDemanda.end() )
-	{
-		return 0;
-	}
-
-	int n = 0;
-
-	GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > *at_alunosDemanda = &itMap->second;
-
-	ITERA_GGROUP_LESSPTR( itAlDem, *at_alunosDemanda, AlunoDemanda )
-	{
-		if ( itAlDem->demanda->getOfertaId() == ofertaId )
-		{
-			n++;
-		}
-	}
-
-	return n;
-}
-
 /*
 	Pesquisa em demanda, ou seja, considerando no maximo a prioridade atual.
 */
@@ -3269,62 +3085,6 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaMaxDemandasDisc
 	return alunosDemanda;
 }
 
-/*
-	Pesquisa em demanda de cada aluno, ou seja, considerando no maximo a prioridade atual, olhando também pelas
-	disciplinas equivalentes caso o aluno não esteja alocado na disciplina original da demanda corrente.
-	Só retorna AlunoDemanda com disciplinaId sendo a original se este aluno já estiver alocado na disciplina. Se
-	não estiver, não permite novas tentativas de inserção, e sim tenta as equivalentes da original.
-
-*/
-GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaMaxDemandasDiscNoCampus_Equiv( Disciplina* disciplina, int campusId, int prioridade )
-{	
-	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alunosDemanda;
-
-	ITERA_GGROUP_LESSPTR ( itAl, this->alunos, Aluno )
-	{
-		Aluno *aluno = *itAl;
-		
-		ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda )
-		{
-			AlunoDemanda *alunoDemanda = (*itAlDem);
-			if ( alunoDemanda->getPrioridade() > prioridade )
-				continue;
-			if ( alunoDemanda->getCampus()->getId() != campusId )
-				continue;
-
-			Disciplina *d = alunoDemanda->demanda->disciplina;
-			int turmaAluno = this->retornaTurmaDiscAluno( aluno, d );		
-			bool alocado=false;
-			if ( turmaAluno != -1 ) alocado=true;
-
-			if ( !alocado ) // aluno não alocado, procura disciplinaId nas equivalencias
-			{
-				bool jaTrocou = ( alunoDemanda->demandaOriginal != nullptr );
-
-				if ( aluno->getCargaHorariaOrigRequeridaP1() - this->cargaHorariaJaAtendida( aluno ) <= 0 )
-					continue;
-
-				if ( d != disciplina )
-				{				
-					if ( this->alocacaoEquivViavel( (*itAlDem)->demanda, disciplina ) )
-						alunosDemanda.add( *itAlDem );
-				}
-				else
-				{
-					if ( !alunoDemanda->getExigeEquivalenciaForcada() || jaTrocou )
-						alunosDemanda.add( *itAlDem );
-				}
-			}
-			else if ( alocado && d == disciplina )
-			{
-				alunosDemanda.add( *itAlDem );
-			}
-		}
-	}
-
-	return alunosDemanda;
-}
-
 bool ProblemData::haDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade )
 {		
 	ITERA_GGROUP_LESSPTR ( itAl, this->alunos, Aluno )
@@ -3425,30 +3185,6 @@ int ProblemData::existeTurmaDiscCampus( int turma, int discId, int campusId )
 	}
 
 	return 0;
-}
-
-int ProblemData::receitaMediaTurmaDiscCampus( int turma, int discId, int campusId )
-{
-	Disciplina *disciplina = this->refDisciplinas[ discId ];
-
-	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-	trio.set( campusId, turma, disciplina );
-
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
-		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
-
-	int media = 0;
-	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
-	{
-		ITERA_GGROUP_LESSPTR( itAlDem, itMap->second, AlunoDemanda )
-		{
-			media += itAlDem->demanda->oferta->getReceita();
-		}
-		if ( media > 0 )
-			media /= itMap->second.size();
-	}
-	
-	return media;
 }
 
 GGroup<Aluno*, LessPtr<Aluno>> ProblemData::alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus )
@@ -3898,158 +3634,6 @@ int ProblemData::retornaCjtAlunosId( Aluno* aluno )
 	return 0;
 }
 
-// Possivel demanda da disciplina para a oferta.
-// Considera todas as equivalências e NÃO olha para o atendimento.
-bool ProblemData::haDemandaDiscNoCjtAlunosPorOfertaComEquiv( Disciplina *disciplina, int oftId, int cjtAlunosId )
-{	
-	GGroup< Demanda*, LessPtr< Demanda > > demandasCjtAlunos;
-
-	map< int, GGroup< Demanda *, LessPtr< Demanda > > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
-	
-	if ( itMap == this->cjtDemandas.end() )
-	{
-		std::cout << "\nConjunto de alunos " << cjtAlunosId << " nao encontrado.\n";
-		return false;
-	}
-	else
-	{
-		demandasCjtAlunos = itMap->second;
-	}
-	
-	ITERA_GGROUP_LESSPTR( itDem, demandasCjtAlunos, Demanda )
-	{
-		Oferta* oft = itDem->oferta;
-
-		if ( itDem->getOfertaId() == oftId )
-		{
-			if ( itDem->disciplina == disciplina )
-			{
-				if ( itDem->getQuantidade() > 0 )
-					return true;
-			}
-			else
-			{
-				if ( itDem->disciplina->discEquivSubstitutas.find( disciplina ) !=
-					 itDem->disciplina->discEquivSubstitutas.end() )
-				{
-					if ( this->alocacaoEquivViavel( *itDem, disciplina ) )					
-					if ( itDem->getQuantidade() > 0 )
-						return true;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-// Possivel demanda da disciplina para a oferta.
-// Considera todas as equivalências e NÃO olha para o atendimento.
-// Portanto, a quantidade retornada NÃO é a quantidade de alunoDemanda, deve ser maior.
-int ProblemData::maxDemandaDiscNoCjtAlunosPorOfertaComEquiv( Disciplina *disciplina, int oftId, int cjtAlunosId )
-{	
-	GGroup< Demanda*, LessPtr< Demanda > > demandasCjtAlunos;
-
-	map< int, GGroup< Demanda *, LessPtr< Demanda > > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
-	
-	if ( itMap == this->cjtDemandas.end() )
-	{
-		std::cout << "\nConjunto de alunos " << cjtAlunosId << " nao encontrado.\n";
-		return 0;
-	}
-	else
-	{
-		demandasCjtAlunos = itMap->second;
-	}
-
-	// Calculando P_{d,o}
-	int qtdDem = 0;
-
-	ITERA_GGROUP_LESSPTR( itDem, demandasCjtAlunos, Demanda )
-	{
-		if ( itDem->getOfertaId() == oftId )
-		{
-			if ( itDem->disciplina == disciplina )
-			{
-				qtdDem += itDem->getQuantidade();
-			}
-			else
-			{
-				if ( itDem->disciplina->discEquivSubstitutas.find( disciplina ) !=
-					 itDem->disciplina->discEquivSubstitutas.end() )
-				{
-					if ( this->alocacaoEquivViavel( *itDem, disciplina ) )
-						qtdDem += itDem->getQuantidade();
-				}
-			}
-		}
-	}
-
-	return qtdDem;
-}
-
-int ProblemData::haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId )
-{	
-	GGroup< Demanda*, LessPtr< Demanda > > *demandasCjtAlunos;
-
-	map< int, GGroup< Demanda *, LessPtr< Demanda > > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
-	
-	if ( itMap == this->cjtDemandas.end() )
-	{
-		std::cout << "\nConjunto de alunos " << cjtAlunosId << " nao encontrado.\n";
-		return false;
-	}
-	else
-	{
-		demandasCjtAlunos = & itMap->second;
-	}
-
-	// Calculando P_{d,o}
-	int qtdDem = 0;
-
-	ITERA_GGROUP_LESSPTR( itDem, *demandasCjtAlunos, Demanda )
-	{
-		if ( itDem->getDisciplinaId() == discId && 
-			 itDem->getOfertaId() == oftId )
-		{
-			qtdDem += itDem->getQuantidade();
-		}
-	}
-
-	return qtdDem;
-}
-
-int ProblemData::haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId )
-{	
-	GGroup< Demanda*, LessPtr< Demanda > > *demandasCjtAlunos;
-
-	map< int, GGroup< Demanda *, LessPtr< Demanda > > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
-	
-	if ( itMap == this->cjtDemandas.end() )
-	{
-		std::cout << "\nConjunto de alunos " << cjtAlunosId << " nao encontrado.\n";
-		return false;
-	}
-	else
-	{
-		demandasCjtAlunos = & itMap->second;
-	}
-
-	// Calculando P_{d,o}
-	int qtdDem = 0;
-
-	ITERA_GGROUP_LESSPTR( itDem, *demandasCjtAlunos, Demanda )
-	{
-		if ( itDem->getDisciplinaId() == discId && 
-			itDem->oferta->getCursoId() == cursoId )
-		{
-			qtdDem += itDem->getQuantidade();
-		}
-	}
-
-	return qtdDem;
-}
-
 int ProblemData::haDemandaDiscNoCurso( int discId, int cursoId )
 {	
 	// Calculando P_{d,o}
@@ -4257,7 +3841,9 @@ void ProblemData::imprimeCjtAlunos( int campusId )
 		totalAlunos += nroAlunos;
 	}
 	
+#ifdef BUILD_COM_SOL_INICIAL
 	setTotalOrigAlunoDemanda( campusId, totalAlunoDemanda );
+#endif
 
 	std::cout << "\nTotal de alunos: " << totalAlunos;
 	std::cout << "\nTotal de demandas: " << totalDemandas;
@@ -4342,60 +3928,6 @@ bool ProblemData::verificaDisponibilidadeHorario( HorarioAula *horarioAula, int 
 
 }
 
-
-void ProblemData::insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int/*dia*/, double> diasNCreds )
-{
-	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
-	if ( alDem != NULL )
-	{
-		this->mapAluno_CampusTurmaDisc[aluno].add( trio );
-		this->mapCampusTurmaDisc_AlunosDemanda[trio].add( alDem );
-	}
-		
-	Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > triot;
-	triot.set( trio.first, trio.second, trio.third->getId() );
-	if ( this->mapTurma_Calendarios[triot].size() > 1 ) std::cout<<"\nPode dar erro! qual calendario escolher na insercao??\n";
-	
-	Calendario *sl = *( this->mapTurma_Calendarios[triot].begin() );
-		
-	std::map<int, double>::iterator itMap = diasNCreds.begin();
-	for( ; itMap != diasNCreds.end(); itMap++ )
-	{
-		int dia = (*itMap).first;
-		double value = (*itMap).second;
-		aluno->addNCredsAlocados( sl, dia, value );
-	}
-}
-
-void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds )
-{
-	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
-	if ( alDem != NULL )
-	{	
-		this->mapAluno_CampusTurmaDisc[aluno].remove( trio );
-		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDem );
-	}
-	else
-	{
-		std::cout<<"\nError: AlDem nao encontrado! Aluno "<<aluno->getAlunoId()<<" Disc"<<trio.third->getId()<<endl;
-	}
-		
-	Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > triot;
-	triot.set( trio.first, trio.second, trio.third->getId() );
-	if ( this->mapTurma_Calendarios[triot].size() > 1 ) std::cout<<"\nPode dar erro! qual calendario escolher na remocao??\n";
-	
-	Calendario *sl = *( this->mapTurma_Calendarios[triot].begin() );
-	
-	std::map<int, double>::iterator itMap = diasNCreds.begin();
-	for( ; itMap != diasNCreds.end(); itMap++ )
-	{
-		int dia = (*itMap).first;
-		double value = - (*itMap).second;
-		aluno->addNCredsAlocados( sl, dia, value );
-	}
-}
-
-
 /*
 	Usado para a heuristica do modelo Tatico Com Horarios
 */
@@ -4414,22 +3946,6 @@ void ProblemData::insereAlunoEmTurma( AlunoDemanda* alunoDemanda, Trio< int /*ca
 		}
 	}	
 	else std::cout<<"\nAtencao, erro em insereAlunoEmTurma: alunoDemanda NULL\n";
-}
-
-void ProblemData::removeAlunoDeTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias )
-{
-	if ( alunoDemanda != NULL )
-	{	
-		Aluno *aluno = this->retornaAluno( alunoDemanda->getAlunoId() );
-		this->mapAluno_CampusTurmaDisc[aluno].remove( trio );
-		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alunoDemanda );
-	
-		ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
-		{
-			aluno->removeHorarioDiaOcupado( *itHorDia );
-		}
-	}
-	else std::cout<<"\nAtencao, erro em removeAlunoDeTurma: alunoDemanda NULL\n";
 }
 
 double ProblemData::cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId )
@@ -5149,379 +4665,7 @@ void ProblemData::imprimeDiscNTurmas( int campusId, int prioridade, int cjtAluno
 	discTurmasFile.close();
 
 }
-
-int ProblemData::retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia )
-{
-	if ( hf->getCalendario()->getId() != hi->getCalendario()->getId() )
-		 return 0;
-	 
-	Calendario *sl = hi->getCalendario();
-
-	GGroup< Calendario*, LessPtr<Calendario> > calendsDisc = d->getCalendarios();
-	if (calendsDisc.find( sl ) == calendsDisc.end() )
-		return 0;	
-
-	std::pair< int, int > parDiscSala = std::make_pair( d->getId(), s->getId() );
-
-	std::map< std::pair< int /*idDisc*/, int /*idSala*/ >, 
-				std::map< int /*Dia*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > > >::iterator
-
-	it_Disc_Sala_Dias_HorariosAula = this->disc_Salas_Dias_HorariosAula.find( parDiscSala );
-
-	if ( it_Disc_Sala_Dias_HorariosAula == this->disc_Salas_Dias_HorariosAula.end() )
-		return 0;
-
-	GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios = (*it_Disc_Sala_Dias_HorariosAula).second[dia];
-
-	if ( horarios.find(hi) == horarios.end() || horarios.find(hf) == horarios.end() )
-		return 0;
-
-	// Verifica se os horarios entre hi e hf estão disponiveis na sala
-	int n = 0;
-	HorarioAula *h=hi;
-	
-	while( h!=NULL && ( h->getInicio() <= hf->getInicio() ) )
-	{
-		if ( horarios.find( h ) != horarios.end() ) 
-			n++;
-
-		h = sl->getProximoHorario(h);				
-	}
-
-	return n;
-}
-
-bool ProblemData::possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplina* disciplina2, int campusId, int P_ATUAL )
-{
-	std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > 
-		*map11 = &this->mapDisciplinaAlunosDemanda[campusId];
-
-	std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> >::iterator 
-		it11 = map11->find( disciplina1 );
-	if ( it11 != map11->end() )
-	{
-		for ( int p1 = 1; p1 <= P_ATUAL; p1++ ) 
-		{
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > *map21 = & it11->second;
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >::iterator it21 = map21->find( p1 );
-			if ( it21 != map21->end() )
-			{
-				GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> *groupAlDem = & it21->second;
-				ITERA_GGROUP_LESSPTR( it31, *groupAlDem, AlunoDemanda )
-				{
-					int aluno1Id = it31->getAlunoId();
-
-					std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> >::iterator 
-						it12 = map11->find( disciplina2 );
-					if ( it12 != map11->end() )
-					{
-						for ( int p2 = 1; p2 <= P_ATUAL; p2++ ) 
-						{
-							std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > *map22 = &it12->second;
-							std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >::iterator it22 = map22->find( p2 );
-							if ( it22 != map22->end() )
-							{
-								GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> *groupAlDem = &it22->second;
-								ITERA_GGROUP_LESSPTR( it32, *groupAlDem, AlunoDemanda )
-								{
-									int aluno2Id = it32->getAlunoId();
-							
-									if ( aluno1Id == aluno2Id )
-										return true;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return false;
-
-	/*
-	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
-	{
-		Aluno *aluno = *itAluno;
-
-		if ( aluno->getOferta()->getCampusId() != campusId )
-		{
-			continue;
-		}
-		
-		bool possuiD1=false;
-		bool possuiD2=false;
-
-		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
-		{
-			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
-				continue;
-
-			Disciplina *disciplina = (*it1AlDemanda)->demanda->disciplina;
-			
-			if ( disciplina->getId() == disciplina1->getId() )
-				possuiD1 = true;
-			else if ( disciplina->getId() == disciplina2->getId() )
-				possuiD2 = true;
-
-			if ( possuiD1 & possuiD2 )
-			{
-				return true;
-			}
-		}
-	}
-	*/
-
-	return false;
-}
-
-bool ProblemData::possuiNaoAtend(Aluno* aluno)
-{
-	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
-		it = mapSlackAluno_CampusTurmaDisc.find( aluno );
-
-	if ( it != mapSlackAluno_CampusTurmaDisc.end() )
-	{
-		if ( (*it).second.size() != 0 )
-			return true;
-		else
-			return false;
-	}
-
-	return false;
-}
-
-bool ProblemData::haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL )
-{
-
-	std::map< int, std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > >::iterator
-		it1 = mapDisciplinaAlunosDemanda.find( cp->getId() );
-	if ( it1 != mapDisciplinaAlunosDemanda.end() )
-	{
-		std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > *map2 = &it1->second;
-		std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> >::iterator
-			it2 = map2->find( disciplina );
-		if ( it2 != map2->end() )
-		{
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > *map3 = & it2->second;
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >::iterator it3 = map3->begin();
-			for( ; it3 != map3->end(); it3++ )
-			{
-				if ( it3->first > P_ATUAL ) continue;
-
-				GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> *alunosdemanda = & it3->second;
-				ITERA_GGROUP_LESSPTR( it1AlDemanda, *alunosdemanda, AlunoDemanda )
-				{		
-					Aluno *aluno = this->retornaAluno( it1AlDemanda->getAlunoId() );
-					if ( aluno->ehFormando() )
-						return true;
-				}
-			}
-		}
-	}
-
-	// Substituí pela forma acima que usa o map, logo deve ser mais rápida.
-	/*
-	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
-	{
-		Aluno *aluno = *itAluno;
-
-		if ( aluno->getOferta()->getCampusId() != cp->getId() )
-		{
-			continue;
-		}
-
-		if ( ! aluno->ehFormando() )
-			continue;
-
-		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
-		{
-			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
-				continue;
-
-			Disciplina *disc = it1AlDemanda->demanda->disciplina;			
-			if ( *disc == *disciplina )
-				return true;
-		}
-	}
-	*/
-	return false;
-}
-
-bool ProblemData::haDemandaPorFormandosEquiv( Disciplina *disciplina, Campus *cp, int P_ATUAL )
-{
-	if ( ! this->parametros->considerar_equivalencia_por_aluno )
-		std::cout<<"\nAtencao: ProblemData::haDemandaPorFormandosEquiv sendo chamada sendo que nao ha equiv. Estranho.\n";
-
-	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
-	{
-		Aluno *aluno = *itAluno;
-
-		if ( ! aluno->ehFormando() )
-			continue;
-
-		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
-		{
-			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
-				continue;
-
-			if ( it1AlDemanda->getCampus() != cp )
-				continue;
-
-			Disciplina *disc = it1AlDemanda->demanda->disciplina;			
-			if ( *disc == *disciplina )
-				return true;
-			else
-			{
-				int turma = this->retornaTurmaDiscAluno( aluno, disc );
-				if ( turma == -1 )
-				{
-					if ( disc->discEquivSubstitutas.find( disciplina ) !=
-						 disc->discEquivSubstitutas.end() )
-					{
-						if ( this->alocacaoEquivViavel( it1AlDemanda->demanda, disciplina ) )
-							return true;
-					}
-				}
-			}
-
-		}
-	}
-
-	return false;
-}
-
-
-int ProblemData::getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL )
-{
-	int n = 0;
-	
-	std::map< int, std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > >::iterator
-		it1 = mapDisciplinaAlunosDemanda.find( cp->getId() );
-	if ( it1 != mapDisciplinaAlunosDemanda.end() )
-	{
-		std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > *map2 = & it1->second;
-		std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> >::iterator
-			it2 = map2->find( disciplina );
-		if ( it2 != map2->end() )
-		{
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > *map3 = & it2->second;
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >::iterator it3 = map3->begin();
-			for( ; it3 != map3->end(); it3++ )
-			{
-				if ( it3->first > P_ATUAL ) continue;
-
-				GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> *alunosdemanda = & it3->second;
-				ITERA_GGROUP_LESSPTR( it1AlDemanda, *alunosdemanda, AlunoDemanda )
-				{		
-					Aluno *aluno = this->retornaAluno( it1AlDemanda->getAlunoId() );
-					if ( aluno->ehFormando() )
-						n++;
-				}
-			}
-		}
-	}
-
-	// Substituí pela forma acima que usa o map, logo deve ser mais rápida.
-	/*
-	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
-	{
-		Aluno *aluno = *itAluno;
-
-		if ( aluno->getOferta()->getCampusId() != cp->getId() )
-		{
-			continue;
-		}
-
-		if ( ! aluno->ehFormando() )
-			continue;
-
-		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
-		{
-			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
-				continue;
-
-			Disciplina *disc = it1AlDemanda->demanda->disciplina;			
-			if ( disc == disciplina )
-				n++;
-		}
-	}
-	*/
-
-	return n;
-}
-
-bool ProblemData::possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp )
-{
-	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-	trio.set( cp->getId(), turma, disciplina );
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, 
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
-		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
-
-	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
-	{
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > *alunosDemanda = & itMap->second;
-
-		ITERA_GGROUP_LESSPTR( itAlDem, *alunosDemanda, AlunoDemanda )
-		{
-			Aluno *aluno = this->retornaAluno( (*itAlDem)->getAlunoId() );
-			if ( aluno->ehFormando() )
-				return true;
-		}
-	}
-	return false;
-}
    
-int ProblemData::getNroFormandos( int turma, Disciplina *disciplina, Campus *cp )
-{
-	int n = 0;
-
-	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-	trio.set( cp->getId(), turma, disciplina );
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, 
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
-		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
-
-	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
-	{
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > *alunosDemanda = &itMap->second;
-
-		ITERA_GGROUP_LESSPTR( itAlDem, *alunosDemanda, AlunoDemanda )
-		{
-			Aluno *aluno = this->retornaAluno( (*itAlDem)->getAlunoId() );
-			if ( aluno->ehFormando() )
-				n++;
-		}
-	}
-	return n;
-}
-
-bool ProblemData::haAlunoFormandoNaoAlocado( int cpId, int prioridadeAtual )
-{
-	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
-	{
-		Aluno *aluno = *itAluno;
-
-		if ( ! aluno->ehFormando() )
-			continue;
-
-		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
-		{	
-			if ( it1AlDemanda->getCampus()->getId() != cpId )
-				continue;
-
-			if ( it1AlDemanda->getPrioridade() <= prioridadeAtual )
-		
-				if ( this->retornaTurmaDiscAluno( aluno, it1AlDemanda->demanda->disciplina ) == -1 )
-				return true;
-		}
-	}
-
-	return false;
-}
-
 bool ProblemData::haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, int prioridadeAtual )
 {
 	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
@@ -5588,66 +4732,6 @@ bool ProblemData::haAlunoFormandoNaoAlocadoEquiv( Disciplina *disciplina, int cp
 	return false;
 }
 
-bool ProblemData::temCalouro( int turma, Disciplina *disciplina, int campusId )
-{
-	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio(campusId, turma, disciplina);
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
-		itTurma = this->mapCampusTurmaDisc_AlunosDemanda.find( trio );
-
-	if ( itTurma != this->mapCampusTurmaDisc_AlunosDemanda.end() )
-	{
-		ITERA_GGROUP_LESSPTR( itAlDem, itTurma->second, AlunoDemanda )
-		{
-			if ( (*itAlDem)->getAluno()->ehCalouro() )
-			{
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-int ProblemData::getNroCalouros( int turma, Disciplina *disciplina, int campusId )
-{
-	int n = 0;
-	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio(campusId, turma, disciplina);
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
-		itTurma = this->mapCampusTurmaDisc_AlunosDemanda.find( trio );
-
-	if ( itTurma != this->mapCampusTurmaDisc_AlunosDemanda.end() )
-	{
-		ITERA_GGROUP_LESSPTR( itAlDem, itTurma->second, AlunoDemanda )
-		{
-			if ( (*itAlDem)->getAluno()->ehCalouro() )
-			{
-				n++;
-			}
-		}
-	}
-	
-	return n;
-}
-
-
-bool ProblemData::haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId )
-{
-	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDem = this->retornaDemandasDiscNoCampus( disciplina->getId(), campusId, prioridade );
-
-	ITERA_GGROUP_LESSPTR( itAlDem, alDem, AlunoDemanda )
-	{
-		int id = (*itAlDem)->getAlunoId();
-		Aluno *aluno = this->retornaAluno( id );
-
-		if ( this->retornaTurmaDiscAluno( aluno, disciplina ) == -1 )
-			return true;
-	}
-
-	return false;
-}
-
 int ProblemData::getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId )
 {
 	int n = 0;
@@ -5675,247 +4759,6 @@ Disciplina* ProblemData::getDisciplinaTeorPrat( Disciplina *disciplina )
 		return itMapDisc->second;
 	}
 	return NULL;
-}
-
-
-void ProblemData::reduzNroTurmasPorDisciplina( int campusId, int prioridade, int iteracao )
-{
-	stringstream ssCp;
-	stringstream ssP;
-	stringstream ssIt;
-
-	ssCp << campusId;
-	ssP << prioridade;	
-	ssIt << iteracao;
-	
-	
-	// Alunos ------------------------------------------------------------
-
-	ofstream reducaoFile;
-	std::string reducaoFilename( "ReduzNroTurmasDisc_Cp" );    
-	reducaoFilename += ssCp.str();
-	reducaoFilename += "_P";
-	reducaoFilename += ssP.str();
-	reducaoFilename += "_It";
-	reducaoFilename += ssIt.str();
-	reducaoFilename += ".txt";
-		
-	reducaoFile.open(reducaoFilename, ios::out);
-	if (!reducaoFile)
-	{
-		cerr << "Error: Can't open output file " << reducaoFilename << endl;
-		return;
-	}
-
-	int countReducao=0;
-
-	ITERA_GGROUP_LESSPTR( itDisc, disciplinas, Disciplina )
-	{
-		Disciplina *disciplina = (*itDisc);
-
-		GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>>
-			alDemGroup = retornaDemandasDiscNoCampus( disciplina->getId(), campusId, prioridade );
-
-		int sizeTotal = alDemGroup.size();
-		int nroTurmasAbertas = 0;
-		int sizeAlocados = 0;
-		std::vector< int > turma_size( disciplina->getNumTurmas() );
-
-		for ( int turma=1; turma <= disciplina->getNumTurmas(); turma++ )
-		{
-			Trio< int, int, Disciplina* > trio;
-			trio.set(campusId, turma, disciplina);
-			
-			int nAlunos=0;
-
-			std::map< Trio< int, int, Disciplina* >, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> >::iterator
-				it = mapCampusTurmaDisc_AlunosDemanda.find(trio);
-			if ( it != mapCampusTurmaDisc_AlunosDemanda.end() )
-			{
-				nAlunos = (*it).second.size();
-			}
-			
-			sizeAlocados += nAlunos;
-			turma_size[turma] = nAlunos;
-			if ( nAlunos>0 ) nroTurmasAbertas++;
-		}
-
-		int sizeAindaNaoAlocados = sizeTotal - sizeAlocados;
-
-		int capacMediaSala = disciplina->getCapacMediaSala( campusId );
-
-		int nroTurmasAMais=0;
-
-		// NÃO ESTOU CONSIDERANDO AQUI O NÃO-COMPARTILHAMENTO DE TURMAS POR CURSOS DIFERENTES.
-		if ( capacMediaSala > 0 )
-			nroTurmasAMais = int( std::floor( double(sizeAindaNaoAlocados+capacMediaSala-1)/capacMediaSala ) );
-			
-		
-		if ( this->parametros->min_alunos_abertura_turmas && !disciplina->eLab() )				// teorica
-		{
-			if ( !this->parametros->violar_min_alunos_turmas_formandos )
-			if ( this->parametros->min_alunos_abertura_turmas_value > sizeAindaNaoAlocados )
-				nroTurmasAMais = 0;
-		}
-		else if ( this->parametros->min_alunos_abertura_turmas_praticas && disciplina->eLab() )	// pratica
-		{
-			if ( !this->parametros->violar_min_alunos_turmas_formandos )
-			if ( this->parametros->min_alunos_abertura_turmas_praticas_value > sizeAindaNaoAlocados )
-				nroTurmasAMais = 0;
-		}
-
-
-		int novoNroTurmas = nroTurmasAbertas + nroTurmasAMais;
-		if ( novoNroTurmas > 0 )
-		{
-			// Devido a não-atendimento de turmas no tático, é possível que haja "buracos" na sequencia
-			// das turmas. Isto é, as turmas 0 e 2 foram abertas, mas a turma 1 não. Nesses casos,
-			// o novo numero de turmas será no mínimo igual ao maior indice de turma aberta.
-			for ( int turma=novoNroTurmas+1; turma <= disciplina->getNumTurmas(); turma++ )
-			{
-				if ( turma_size[turma] > 0 )
-					novoNroTurmas = turma+1;
-			}
-		}
-
-		reducaoFile << "\nDisciplina "<<disciplina->getId() << ": reducao de "<<disciplina->getNumTurmas()
-			<<" turmas para "<< novoNroTurmas << " turmas";
-		
-		countReducao += disciplina->getNumTurmas() - novoNroTurmas;
-
-		disciplina->setNumTurmas( novoNroTurmas );
-	}
-
-	reducaoFile << "\n\nNumero total de turmas eliminadas: "<< countReducao;
-
-	reducaoFile.close();
-
-}
-
-
-void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId )
-{
-	std::cout<<"\nREMOVENDO DEMANDAS EM EXCESSO\n";	fflush(NULL);
-
-	stringstream ssCp;
-	stringstream ssP;
-
-	ssCp << campusId;
-	ssP << prioridade;	
-
-	// Alunos ------------------------------------------------------------
-
-	ofstream removeFile;
-	std::string removeFilename( "RemoveDemExcesso_Cp" );    
-	removeFilename += ssCp.str();
-	removeFilename += "_P";
-	removeFilename += ssP.str();
-	removeFilename += ".txt";
-		
-	removeFile.open(removeFilename, ios::out);
-	if (!removeFile)
-	{
-		cerr << "Error: Can't open output file " << removeFilename << endl;
-		return;
-	}
-
-	Campus *cp = refCampus[campusId];
-
-	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
-		itMapCjtAlunos = this->cjtAlunos.begin();
-	
-	// Para o conjunto de alunos com id igual ao atual
-	for ( ; itMapCjtAlunos != this->cjtAlunos.end(); itMapCjtAlunos++ )
-	{
-		int grupoAlunosId = itMapCjtAlunos->first;
-		if ( grupoAlunosId != grupoAlunosAtualId )
-		{
-			break;
-		}
-
-		removeFile << "\n\nRemovendo alunosDemanda...\n";
-
-		// Para cada aluno do conjunto
-		GGroup< Aluno *, LessPtr< Aluno > > cjtAlunos = this->cjtAlunos[ grupoAlunosId ];	
-		ITERA_GGROUP_LESSPTR( itAluno, cjtAlunos, Aluno )
-		{
-			Aluno *aluno = *itAluno;
-
-			if ( !aluno->hasCampusId( campusId ) )
-			{
-				continue;
-			}
-
-			removeFile << "\nAluno "<<aluno->getAlunoId();	fflush(NULL);
-			
-			// Calcula a carga horária máxima que deve ser atendida de P2
-			double tempoAtendido = this->cargaHorariaJaAtendida( aluno );		
-			double tempoP1 = aluno->getCargaHorariaOrigRequeridaP1();
-			if ( tempoAtendido < tempoP1 )
-				continue;
-
-			// Aluno já atendido por completo. Retirar demandas de p2 em aberto.
-
-			removeFile << "\nItera alunoDemandas";	fflush(NULL);
-
-			GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDemRemover;
-
-			ITERA_GGROUP_LESSPTR( itAlDem, aluno->demandas, AlunoDemanda )
-			{
-				AlunoDemanda *alDem = (*itAlDem);
-				Disciplina *disciplina = alDem->demanda->disciplina;
-				
-				if ( retornaTurmaDiscAluno( aluno, disciplina ) == -1 )			
-				{
-					// aluno nao alocado. Remove demanda.
-					alDemRemover.add( alDem );
-				}
-			}
-
-			// Remove
-			ITERA_GGROUP_LESSPTR( itAlDem, alDemRemover, AlunoDemanda )
-			{
-				//aluno->demandas.remove( *itAlDem );
-				//this->alunosDemanda.remove( *itAlDem );
-				this->removeAlunoDemanda( *itAlDem );
-				removeFile << "\nRemoveu demanda da disc "<<itAlDem->demanda->getDisciplinaId();	fflush(NULL);
-			}
-			removeFile << "\nFIM Aluno";	fflush(NULL);
-
-		}
-		
-		removeFile << "\n\nRemovendo demandas...\n";
-
-	   // recalcular demanda: referência somente para as que possuirem alunoDemanda associado
-	   // e ajustando a quantidade associada à demanda.	
-	   GGroup< Demanda*, LessPtr<Demanda> > demRemover;
-	   ITERA_GGROUP_LESSPTR( itDem, this->demandas, Demanda )
-	   {
-		   int id = itDem->getId();
-		   int n = 0;
-
-		   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
-		   {
-			   if ( itAlDem->getDemandaId() == id )
-			   {
-					n++;
-			   }
-		   }
-		   if ( n > 0 )
-		   {
-			   if ( n==0 ) demRemover.add( *itDem );
-			   else itDem->setQuantidade( n );
-		   }
-	   }
-	   ITERA_GGROUP_LESSPTR( itDem, demRemover, Demanda )
-	   {
-			this->demandas.remove( *itDem );
-			removeFile << "\nRemoveu demanda "<<itDem->getId();	fflush(NULL);
-	   }
-	   removeFile << "\nFim da remocao"; fflush(NULL);
-	}
-
-	removeFile.close();
 }
 
 bool ProblemData::violaMinTurma( int campusId )
@@ -5972,48 +4815,6 @@ bool ProblemData::violaMinTurma( int campusId )
 
 	return viola;
 }
-
-bool ProblemData::violaMinTurma( Trio< int, int, Disciplina* > trio )
-{
-	if ( !this->parametros->min_alunos_abertura_turmas )
-		return false;
-
-	int cp = trio.first;
-	int turma = trio.second;
-	Disciplina *disc = trio.third;
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
-		itMapTurmas = this->mapCampusTurmaDisc_AlunosDemanda.find( trio );
-
-	if ( itMapTurmas != this->mapCampusTurmaDisc_AlunosDemanda.end() )
-	{				
-		int size = itMapTurmas->second.size();
-		if ( size >= this->parametros->min_alunos_abertura_turmas_value )
-			return false;
-
-		if ( !this->parametros->violar_min_alunos_turmas_formandos )
-		{
-			return true;
-		}
-
-		bool possuiFormando=false;
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > *alunosDemanda = &itMapTurmas->second;
-		ITERA_GGROUP_LESSPTR( itAlDem, *alunosDemanda, AlunoDemanda )
-		{
-			Aluno *aluno = this->retornaAluno( (*itAlDem)->getAlunoId() );
-			if ( aluno->ehFormando() )
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	std::cout<<"\nAtencao em  ProblemData::violaMinTurma( Trio< int, int, Disciplina* > trio ): trio nao encontrado!!\n";
-	return false;
-}
-
    
 void ProblemData::imprimeFormandos()
 {
@@ -6350,8 +5151,6 @@ void ProblemData::imprimeResumoDemandasPorAlunoPosEquiv()
 void ProblemData::preencheMapDisciplinaAlunosDemanda( bool EQUIVALENCIA )
 {
 	this->mapDisciplinaAlunosDemanda.clear();
-	this->mapDisciplina_Calendarios_AlunosDemanda.clear();
-	this->mapDisciplina_TurnoIES_AlunosDemanda.clear();
 
 #ifdef EQUIVALENCIA_DESDE_O_INICIO
 	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
@@ -6385,8 +5184,6 @@ void ProblemData::preencheMapDisciplinaAlunosDemanda( bool EQUIVALENCIA )
 		ITERA_GGROUP_LESSPTR( itDisc, disciplinasPorAlDem, Disciplina )
 		{
 			this->mapDisciplinaAlunosDemanda[campusId][*itDisc][p].add( alunoDemanda );
-			this->mapDisciplina_Calendarios_AlunosDemanda[campusId][*itDisc][p][calendario].add( alunoDemanda );
-			this->mapDisciplina_TurnoIES_AlunosDemanda[campusId][*itDisc][p][turnoIES].add( alunoDemanda );
 		}
 	}
 
@@ -6404,33 +5201,11 @@ void ProblemData::preencheMapDisciplinaAlunosDemanda( bool EQUIVALENCIA )
 		TurnoIES* turnoIES = alunoDemanda->demanda->getTurnoIES();
 
 		this->mapDisciplinaAlunosDemanda[campusId][disciplina][p].add( alunoDemanda );
-		this->mapDisciplina_Calendarios_AlunosDemanda[campusId][disciplina][p][calendario].add( alunoDemanda );
-		this->mapDisciplina_TurnoIES_AlunosDemanda[campusId][*itDisc][p][turnoIES].add( alunoDemanda );
 	}
 #endif
 
 }
 
-// Se criar AlunoDemanda no meio do processamento,
-// adiciona referencia para o novo objeto em todos os maps necessarios
-void ProblemData::adicionaAlunoDemanda( AlunoDemanda *alunoDemanda )
-{
-	int campusId = alunoDemanda->demanda->oferta->getCampusId();
-	Disciplina *disciplina = alunoDemanda->demanda->disciplina;		
-	int p = alunoDemanda->getPrioridade();
-	Demanda *demanda = alunoDemanda->demanda;
-	Aluno *aluno = this->retornaAluno( alunoDemanda->getAlunoId() );
-	int cjtAlunoId = this->retornaCjtAlunosId( aluno );
-	if ( cjtAlunoId==0 ) std::cout<<"\nERRO1: nao achei cjtAlunoId, muito estranho!\n";
-	
-
-	this->mapDisciplinaAlunosDemanda[campusId][disciplina][p].add( alunoDemanda );
-	this->mapDemandaAlunos[ demanda ].add( alunoDemanda );
-	this->cjtAlunoDemanda[cjtAlunoId].add( alunoDemanda );				
-	aluno->demandas.add( alunoDemanda );
-	this->alunosDemandaTotal.add( alunoDemanda );
-	this->alunosDemanda.add( alunoDemanda );
-}
 
 // Se remover AlunoDemanda no meio do processamento,
 // remove referencia para o objeto em todos os maps necessarios
@@ -6457,67 +5232,6 @@ void ProblemData::removeAlunoDemanda( AlunoDemanda *alunoDemanda )
 	this->cjtAlunoDemanda[cjtAlunoId].remove( alunoDemanda );				
 	aluno->demandas.remove( alunoDemanda );
 	this->alunosDemanda.remove( alunoDemanda );
-}
-
-// Se modificar AlunoDemanda e Demanda no meio do processamento,
-// remove e insere novamente o objeto em todos os maps necessarios
-void ProblemData::reinsereAlunoDemanda( AlunoDemanda *alunoDemanda, Disciplina *discAntiga )
-{	
-	int campusId = alunoDemanda->demanda->oferta->getCampusId();
-	Disciplina *disciplina = alunoDemanda->demanda->disciplina;
-	int p = alunoDemanda->getPrioridade();
-
-	this->mapDisciplinaAlunosDemanda[campusId][discAntiga][p].remove( alunoDemanda );
-	this->mapDisciplinaAlunosDemanda[campusId][disciplina][p].add( alunoDemanda );
-}
-
-GGroup<HorarioDia*, LessPtr<HorarioDia>> ProblemData::retornaHorariosDiaEmComum( GGroup<Calendario*,LessPtr<Calendario>> &calends )
-{
-	GGroup<HorarioDia*, LessPtr<HorarioDia>> horariosDiaComuns;
-
-	if ( calends.size() == 0 ) return horariosDiaComuns;
-
-	// Copia horariosDia do primeiro calendario da lista
-	ITERA_GGROUP_LESSPTR( itHorAula, calends.begin()->horarios_aula, HorarioAula )
-	{	
-		ITERA_GGROUP_N_PT( itDia, itHorAula->dias_semana, int )
-		{
-			HorarioDia *hd = this->getHorarioDiaCorrespondente( *itHorAula, *itDia );
-			horariosDiaComuns.add(hd);
-		}
-	}
-
-	// Remove os horariosDia que não são comuns
-	ITERA_GGROUP_LESSPTR( itCalend, calends, Calendario )
-	{
-		if ( itCalend == calends.begin() ) continue;
-		
-		GGroup<HorarioDia*, LessPtr<HorarioDia>> remover;
-		GGroup<HorarioDia*, LessPtr<HorarioDia>> adicionar;
-
-		ITERA_GGROUP_LESSPTR( itHorDia, horariosDiaComuns, HorarioDia )
-		{		
-			HorarioAula *ha = (*itCalend)->possuiHorarioDiaOuCorrespondente( (*itHorDia)->getHorarioAula(), (*itHorDia)->getDia() );
-			if ( ha == NULL )
-			{
-				remover.add(*itHorDia);
-			}
-			else
-			{
-				adicionar.add( this->getHorarioDiaCorrespondente(ha,(*itHorDia)->getDia()) );
-			}
-		}
-
-		ITERA_GGROUP_LESSPTR( itHorDia, remover, HorarioDia )
-			horariosDiaComuns.remove( *itHorDia );
-
-		ITERA_GGROUP_LESSPTR( itHorDia, adicionar, HorarioDia )
-			horariosDiaComuns.add( *itHorDia );
-
-		if ( horariosDiaComuns.size()==0 ) break;
-	}
-
-	return horariosDiaComuns;
 }
 
 GGroup<HorarioDia*, LessPtr<HorarioDia>> ProblemData::retornaHorariosDiaTurnoComum( GGroup<Calendario*,LessPtr<Calendario>> &calends )
@@ -6754,9 +5468,7 @@ void ProblemData::preencheMapsTurmasCalendarios()
 					<< itAlDem->demanda->getCalendario()->getId();
 			}
 		}
-
-		//GGroup<HorarioDia*, LessPtr<HorarioDia>> horariosDiaComuns = this->retornaHorariosDiaEmComum( calendsTrio );
-		
+				
 		GGroup<HorarioDia*, LessPtr<HorarioDia>> horariosDiaComuns = this->retornaHorariosDiaTurnoComum( calendsTrio );
 				
 		// Adiciona horários dos calendarios da Disciplina que estejam em mesmo turno/dia que os comuns aos alunos.
@@ -6837,9 +5549,7 @@ void ProblemData::preencheMapsTurmasTurnosIES()
 
 	mapTurma_TurnosIES.clear();
 	mapTurma_HorComunsAosTurnosIES.clear();
-
-	mapTurmaDiaDtiDtf_HorComuns.clear();
-
+	
 	// Associa quais os turnosIES podem ser usados na alocação da turma. Necessário caso haja alunos
     // na turma pertencentes a ofertas de turnos diferentes
 	
@@ -6939,131 +5649,6 @@ void ProblemData::preencheMapsTurmasTurnosIES()
 	}
 }
 
-
-GGroup< HorarioDia*, LessPtr<HorarioDia> > ProblemData::retornaHorariosDiaTurnoIESIntersecao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio )
-{
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDia;
-
-	if ( this->mapTurma_HorComunsAosTurnosIES.find( trio ) != this->mapTurma_HorComunsAosTurnosIES.end() )
-	{
-		horariosDia = this->mapTurma_HorComunsAosTurnosIES[trio];
-	}
-	
-	return horariosDia;	
-}
-
-GGroup< HorarioDia*, LessPtr<HorarioDia> > ProblemData::retornaHorariosDiaTurnoIESUniao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio )
-{
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDia;
-
-	if ( this->mapTurma_TurnosIES.find( trio ) != this->mapTurma_TurnosIES.end() )
-	{
-		GGroup< TurnoIES*, LessPtr<TurnoIES> > groupTurnoIES = this->mapTurma_TurnosIES[trio];
-		ITERA_GGROUP_LESSPTR( itTurnoIES, groupTurnoIES, TurnoIES )
-		{
-			ITERA_GGROUP_LESSPTR( itHorAula, itTurnoIES->horarios_aula, HorarioAula )
-			{
-				int haId = itHorAula->getId();
-
-				ITERA_GGROUP_N_PT( itDia, itHorAula->dias_semana, int )
-				{
-					int dia = *itDia;
-
-					HorarioDia *hd = this->getHorarioDiaCorrespondente(haId,dia);
-					horariosDia.add( hd );
-				}
-			}
-		}
-	}
-
-	return horariosDia;	
-}
-
-GGroup< HorarioDia*, LessPtr<HorarioDia> > ProblemData::retornaHorariosDiaIntersecao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio )
-{
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDia;
-
-	if ( this->mapTurma_HorComunsAosCalendarios.find( trio ) != this->mapTurma_HorComunsAosCalendarios.end() )
-	{
-		horariosDia = this->mapTurma_HorComunsAosCalendarios[trio];
-	}
-	
-	return horariosDia;	
-}
-
-GGroup< HorarioDia*, LessPtr<HorarioDia> > ProblemData::retornaHorariosDiaUniao( Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio )
-{
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDia;
-
-	if ( this->mapTurma_Calendarios.find( trio ) != this->mapTurma_Calendarios.end() )
-	{
-		GGroup< Calendario*, LessPtr<Calendario> > groupCalendarios = this->mapTurma_Calendarios[trio];
-		ITERA_GGROUP_LESSPTR( itCalend, groupCalendarios, Calendario )
-		{
-			ITERA_GGROUP_LESSPTR( itHorAula, itCalend->horarios_aula, HorarioAula )
-			{
-				int haId = itHorAula->getId();
-
-				ITERA_GGROUP_N_PT( itDia, itHorAula->dias_semana, int )
-				{
-					int dia = *itDia;
-
-					HorarioDia *hd = this->getHorarioDiaCorrespondente(haId,dia);
-					horariosDia.add( hd );
-				}
-			}
-		}
-	}
-
-	// Considera agora os horários da disciplina (POR EX EM EQUIVALENCIA, 
-	// PODE SER QUE O CALENDARIO DA DISCIPLINA SEJA DIFERENTE DE O DOS ALUNOS).
-	// No Tatico 2, se um horário-dia não respeitar o turno possível de alocação do aluno,
-	// a turma é alocada nesse horário-dia somente se esse aluno for desalocado dessa turma nesse horário-dia.
-	// Ou seja, x_{i,d,s,hi,hf,t} = fad_{a,i,d,s,hi,hf,t}.
-
-	Disciplina *disciplina = this->refDisciplinas[ trio.third ];
-
-	// Adiciona horários dos calendarios da Disciplina que estejam em mesmo turno/dia que os comuns aos alunos.
-	GGroup<Calendario*, LessPtr<Calendario>> discCalends = disciplina->getCalendarios();
-	ITERA_GGROUP_LESSPTR( itCalend, discCalends, Calendario )
-	{
-		Calendario * calendario = *itCalend;
-
-		std::map< int, std::map< DateTime, HorarioAula* > > map1 = calendario->mapDiaDateTime;
-		std::map< int, std::map< DateTime, HorarioAula* > >::iterator itMap1 = map1.begin();
-		for ( ; itMap1 != map1.end(); itMap1++ )
-		{
-			// Dia do calendario da disciplina
-			int dia = itMap1->first;
-			std::map< DateTime, HorarioAula* > map2 = itMap1->second;
-			std::map< DateTime, HorarioAula* >::iterator itMap2 = map2.begin();
-			for ( ; itMap2 != map2.end(); itMap2++ )
-			{
-				// Horario da disciplina
-				HorarioAula *ha = itMap2->second;
-				HorarioDia *hd = this->getHorarioDiaCorrespondente( ha, dia );					
-				if ( horariosDia.find( hd ) == horariosDia.end() )
-				{
-					ITERA_GGROUP_LESSPTR( ithd, horariosDia, HorarioDia )
-					{
-						if ( ithd->getDia() == dia )
-						{
-							int turnoDisc = getFaseDoDia( itMap2->first );
-							int turnoAlunos = getFaseDoDia( ithd->getHorarioAula()->getInicio() );
-							if ( turnoDisc == turnoAlunos )
-							{
-								horariosDia.add( hd ); break;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return horariosDia;	
-}
-
 void ProblemData::preencheMapParCalendHorariosDiaComuns()
 {
 	ITERA_GGROUP_LESSPTR( itCalend1, this->calendarios, Calendario )
@@ -7091,85 +5676,6 @@ void ProblemData::preencheMapParCalendHorariosDiaComuns()
 			}
 		}
 	}
-}
-   
-int ProblemData::horariosDiaEmComum( Calendario* sl1, Calendario* sl2 )
-{
-	std::pair<Calendario*,Calendario*> par_calend( sl1,sl2 );
-
-	if ( map_ParCalend_HorariosDiaComuns.find( par_calend ) != 
-		 map_ParCalend_HorariosDiaComuns.end() )
-	{
-		 return map_ParCalend_HorariosDiaComuns[par_calend].size();
-	}
-	else
-	{
-		par_calend.first = sl2;
-		par_calend.second = sl1;
-		if ( map_ParCalend_HorariosDiaComuns.find( par_calend ) != 
-			 map_ParCalend_HorariosDiaComuns.end() )
-		{		
-			return map_ParCalend_HorariosDiaComuns[par_calend].size();
-		}
-		else
-			return 0;
-	}
-}
-
-GGroup<HorarioDia*, LessPtr<HorarioDia>> ProblemData::getHorariosDiaEmComum( Calendario* sl1, Calendario* sl2 )
-{
-	GGroup<HorarioDia*, LessPtr<HorarioDia>> horariosDiaComuns;
-
-	std::pair<Calendario*,Calendario*> par_calend( sl1,sl2 );
-
-	if ( map_ParCalend_HorariosDiaComuns.find( par_calend ) != 
-		 map_ParCalend_HorariosDiaComuns.end() )
-	{
-		 horariosDiaComuns = map_ParCalend_HorariosDiaComuns[par_calend];
-	}
-	else
-	{
-		par_calend.first = sl2;
-		par_calend.second = sl1;
-		if ( map_ParCalend_HorariosDiaComuns.find( par_calend ) != 
-			 map_ParCalend_HorariosDiaComuns.end() )
-		{		
-			horariosDiaComuns = map_ParCalend_HorariosDiaComuns[par_calend];
-		}
-	}
-
-	return horariosDiaComuns;
-}
-
-int ProblemData::getNroCredsMaxComum( Disciplina* disciplina, GGroup<HorarioDia*, LessPtr<HorarioDia>> horariosDiaComuns )
-{
-	int maxCredsDisponiveis=0;
-
-	int credsDia[10];
-	for ( int t=0; t<=9; t++ ) credsDia[t]=0;
-
-	map< int, GGroup<DateTime> > dt; // map: dia -> List{DateTime}
-
-	ITERA_GGROUP_LESSPTR( it, horariosDiaComuns, HorarioDia )
-	{
-		HorarioAula *ha = it->getHorarioAula();
-		int dia = it->getDia();
-		DateTime inicio = ha->getInicio();
-
-		if ( disciplina->possuiHorarioDia( dia, ha ) )
-		{
-			if ( dt[dia].find( inicio ) == dt[dia].end() )
-			{
-				dt[dia].add( inicio );
-
-				credsDia[dia]++;
-			}
-		}
-	}
-
-	for ( int t=0; t<=9; t++ ) maxCredsDisponiveis += credsDia[t];
-
-	return maxCredsDisponiveis;
 }
 
 void ProblemData::imprimeAssociacaoDisciplinaSala()
@@ -7364,42 +5870,6 @@ void ProblemData::preencheMapTurnoDisciplinas()
 	}
 }
 
-
-int ProblemData::getNumDemandaPorDiscECalendario( int campusId, Disciplina *disciplina, Calendario *calendario )
-{
-	int n = 0;
-
-	// map: [campusId][disciplina][prioridade][Calendario][GGroup<AlunoDemanda>]
-
-		std::map< Disciplina*, 
-		std::map< int /*P*/, 
-		map<Calendario*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Calendario>> >, LessPtr<Disciplina> > 
-			mapDemandas = mapDisciplina_Calendarios_AlunosDemanda[campusId];
-		
-	std::map< Disciplina*, 
-		std::map< int /*P*/, 
-		map<Calendario*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Calendario>> >, LessPtr<Disciplina> >::iterator
-		itMapDisc = mapDemandas.find(disciplina);
-	
-	// Procura disciplina
-	if ( itMapDisc != mapDemandas.end() )
-	{
-		map< Calendario*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Calendario> > mapCalend = itMapDisc->second[1]; // P=1
-
-		map< Calendario*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Calendario> >::iterator
-			itMapCalend = mapCalend.find( calendario );
-		
-		// Procura Calendario
-		if ( itMapCalend != mapCalend.end() )
-		{
-			n = itMapCalend->second.size();
-		}
-	}
-
-	return n;
-}
-
-
 int ProblemData::getFaseDoDia( DateTime dt )
 { 
 	if ( dt < inicio_tarde )
@@ -7428,112 +5898,6 @@ DateTime ProblemData::getFimDaFase( int fase ) const
 	}
 	return dt;
 }
-
-GGroup< HorarioDia*, LessPtr<HorarioDia> > ProblemData::getHorariosDiaPorTurno( Disciplina *disciplina, Calendario *calendario, int turno )
-{
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDiaNoTurno;
-
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > 
-		horariosDiaCalendario = disciplina->getHorariosDia(calendario);
-	ITERA_GGROUP_LESSPTR( itHD, horariosDiaCalendario, HorarioDia )
-	{
-		DateTime dt = itHD->getHorarioAula()->getInicio();
-		int g = this->getFaseDoDia( dt );
-		if ( g == turno )
-			horariosDiaNoTurno.add( *itHD );
-	}
-
-	return horariosDiaNoTurno;
-}
-
-GGroup< HorarioDia*, LessPtr<HorarioDia> > ProblemData::getHorariosDiaPorTurno( Disciplina *disciplina, TurnoIES *turnoIES, int turno )
-{
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDiaNoTurno;
-
-	GGroup< Horario*, LessPtr<Horario> > 
-		horariosTurnoIES = disciplina->getHorariosOuCorrespondentes(turnoIES);
-	ITERA_GGROUP_LESSPTR( itH, horariosTurnoIES, Horario )
-	{
-		DateTime dt = itH->horario_aula->getInicio();
-		int g = this->getFaseDoDia( dt );
-		if ( g == turno )
-		{
-			ITERA_GGROUP_N_PT( itDia, itH->dias_semana, int )
-			{
-				HorarioDia *hd = this->getHorarioDiaCorrespondente( itH->getHorarioAulaId(), *itDia );				
-				horariosDiaNoTurno.add( hd );
-			}
-		}
-	}
-
-	return horariosDiaNoTurno;
-}
-
-bool ProblemData::haTurnoComumViavel( Disciplina *disciplina, Calendario *calendario )
-{
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > 
-		horariosDiaCalendario = disciplina->getHorariosDia(calendario);
-
-	int nCreds = disciplina->getTotalCreditos();
-	int nHors = 0;
-
-	// Para cada turno do calendario		
-   map<int, GGroup<int>> turnosDias = calendario->mapTurnos; // <turno, dias>
-   map<int, GGroup<int>>::iterator itTurnoDia = turnosDias.begin();
-   for ( ; itTurnoDia != turnosDias.end(); itTurnoDia++ )
-   {
-	   int turno = itTurnoDia->first;
-	   GGroup<int> dias = itTurnoDia->second;
-	
-	   // Para cada dia
-	   ITERA_GGROUP_N_PT( itD, dias, int )
-	   {
-		   // Verifica se a disciplina contém horário no par turno/dia
-		   int dia = *itD;
-		   nHors += disciplina->possuiHorarioNoTurnoDia( dia, turno );
-		   if (nHors >= nCreds)
-			   return true;
-	   }
-   }
-   
-	return false;
-}
-
-GGroup<int> ProblemData::getTurnosComunsViaveis( Disciplina *disciplina, Calendario *calendario )
-{
-	GGroup<int> turnos;
-	GGroup< HorarioDia*, LessPtr<HorarioDia> > 
-		horariosDiaCalendario = disciplina->getHorariosDia(calendario);
-
-	int nCreds = disciplina->getTotalCreditos();
-	int nHors = 0;
-
-	// Para cada turno do calendario		
-   map<int, GGroup<int>> turnosDias = calendario->mapTurnos; // <turno, dias>
-   map<int, GGroup<int>>::iterator itTurnoDia = turnosDias.begin();
-   for ( ; itTurnoDia != turnosDias.end(); itTurnoDia++ )
-   {
-	   int turno = itTurnoDia->first;
-	   GGroup<int> dias = itTurnoDia->second;
-	   nHors = 0;
-
-	   // Para cada dia
-	   ITERA_GGROUP_N_PT( itD, dias, int )
-	   {
-		   // Verifica se a disciplina contém horário no par turno/dia
-		   int dia = *itD;
-		   nHors += disciplina->possuiHorarioNoTurnoDia( dia, turno );
-		   if (nHors >= nCreds)
-		   {
-				turnos.add(turno);
-				break;
-		   }
-	   }
-   }
-   
-	return turnos;
-}
-
 
 bool ProblemData::haTurnoComumViavel( Disciplina *disciplina, TurnoIES *turnoIES )
 {
@@ -7642,18 +6006,6 @@ bool ProblemData::alocacaoEquivViavel( Demanda *demanda, Disciplina *disciplinaE
 	return false;
 }
 
-GGroup<int> ProblemData::alocacaoEquivViavelTurnos( Demanda *demanda, Disciplina *disciplinaEquiv )
-{
-	GGroup<int> turnosViaveis;
-
-	if ( this->ehSubstituivel( demanda->disciplina->getId(), disciplinaEquiv->getId(), demanda->oferta->curso ) )
-	{
-		turnosViaveis = this->getTurnosComunsViaveis( disciplinaEquiv, demanda->oferta->curriculo->calendario );
-	}
-
-	return turnosViaveis;
-}
-
 GGroup<int> ProblemData::alocacaoEquivViavelTurnosIES( Demanda *demanda, Disciplina *disciplinaEquiv )
 {
 	GGroup<int> turnosViaveis;
@@ -7716,73 +6068,6 @@ void ProblemData::imprimeUtilizacaoSala( int campusId, int prioridade, int cjtAl
 
 	   utilizaSalasFile.close();
    }
-}
-
-Campus* ProblemData::getCampus(int campusId)
-{
-   ITERA_GGROUP_LESSPTR(itCampus, this->campi, Campus)
-   {
-      if (itCampus->getId() == campusId)
-         return *itCampus;
-   }
-   return NULL;
-}
-
-Curso* ProblemData::retornaCursoAtendido( int turma, Disciplina* disciplina, int campusId )
-{
-	Curso* cursoMajor = NULL;
-
-	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-	trio.set( campusId, turma, disciplina );
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
-		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
-	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
-	{
-		std::map< Curso*, int > mapCursoAlunos;
-		int maxAlunos = 0;
-
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMap->second;
-		ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
-		{
-			Curso* curso = itAlDem->demanda->oferta->curso;
-
-			if ( mapCursoAlunos.find( curso ) != mapCursoAlunos.end() )
-				mapCursoAlunos[ curso ]++;
-			else
-				mapCursoAlunos[ curso ] = 1;
-
-			if ( maxAlunos < mapCursoAlunos[ curso ] )
-			{
-				maxAlunos = mapCursoAlunos[ curso ];
-				cursoMajor = curso;
-			}
-		}
-	}
-
-	return cursoMajor;
-}
-
-GGroup< Curso*, LessPtr< Curso > > ProblemData::retornaCursosAtendidos( int turma, Disciplina* disciplina, int campusId )
-{
-	GGroup< Curso*, LessPtr< Curso > > cursosAtendidos;
-
-	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-	trio.set( campusId, turma, disciplina );
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
-		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
-	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
-	{		
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMap->second;
-		ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
-		{
-			Curso* curso = itAlDem->demanda->oferta->curso;
-			cursosAtendidos.add( curso );			
-		}
-	}
-
-	return cursosAtendidos;
 }
 
 int ProblemData::getNumTurmasJaAbertas( Disciplina *disciplina, int campusId )
@@ -7993,150 +6278,6 @@ bool ProblemData::pularParaTaticoIntegrado( int campusId )
 }
 
 #endif
-
-bool ProblemData::possibilidCompartDisc( Oferta *oferta, Disciplina *disciplina, int campusId, int prioridade )
-{
-	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> 
-		alunosDemDisc = this->retornaDemandasDiscNoCampus( disciplina->getId(), campusId, prioridade );
-
-	bool debugging = false;
-	if ( oferta->getId() == 1439 )
-	{
-		std::cout << "\n\t\tOft 1439   Disc " << disciplina->getId();
-		debugging = true;
-	}
-
-	ITERA_GGROUP_LESSPTR( itAlDem, alunosDemDisc, AlunoDemanda )
-	{
-		AlunoDemanda* aldem = *itAlDem;
-
-		if ( aldem->getOferta() != oferta )
-		{			
-			if (debugging)
-				std::cout<<"\n\t\t\tOferta do AlunoDemanda " << aldem->getOferta()->getId();
-
-			TurnoIES* turnoAlDem = aldem->getOferta()->turno;
-			TurnoIES* turno = oferta->turno;
-
-			if ( turnoAlDem == turno )
-				return true;
-
-			if (debugging)
-				std::cout<<"\n\t\t\tTurno diferente = " << turnoAlDem->getId();
-
-			GGroup<TurnoIES*, LessPtr<TurnoIES>> parTurnosIES;
-			parTurnosIES.add( turnoAlDem );
-			parTurnosIES.add( turno );
-			GGroup<HorarioDia*, LessPtr<HorarioDia>> comunsNosTurnos = 
-				this->retornaHorariosDiaComuns( parTurnosIES );
-				
-			GGroup<HorarioDia*, LessPtr<HorarioDia>> comuns;
-
-			ITERA_GGROUP_LESSPTR( itHorDia, comunsNosTurnos, HorarioDia )
-			{
-				if ( disciplina->possuiHorarioDiaOuAnalogo( itHorDia->getDia(), itHorDia->getHorarioAula() ) )
-				{
-					bool found = false;
-					ITERA_GGROUP_LESSPTR( itComum, comuns, HorarioDia )
-					{
-						if ( (*itHorDia)->igual( **itComum ) ){
-							found = true; break;
-						}
-					}
-					if ( !found )
-						comuns.add( *itHorDia );
-				}
-			}
-
-			if ( comuns.size() >= disciplina->getTotalCreditos() )
-				return true;
-		}
-	}
-
-	return false;
-}
-
-bool ProblemData::possibilidCompartNoPeriodo( Oferta *oferta, int periodo, int campusId, int prioridade )
-{
-	bool debugging = false;
-	if ( oferta->getId() == 1439 && periodo == 4 )
-	{
-		std::cout << "\n\n\n============================= Comeco";
-		std::cout << "\n\nOft 1439   Period 4";
-		debugging = true;
-	}
-
-	map < Disciplina*, int, LessPtr< Disciplina > >::iterator
-		itDiscPer = oferta->curriculo->disciplinas_periodo.begin();
-	for ( ; itDiscPer != oferta->curriculo->disciplinas_periodo.end(); itDiscPer++ )
-	{
-		Disciplina *disciplina = itDiscPer->first;
-		int per = itDiscPer->second;
-
-		if ( per == periodo )		
-		{
-			if (debugging)
-				std::cout<<"\n\tDisciplina " << disciplina->getId();
-
-			if ( !possibilidCompartDisc( oferta, disciplina, campusId, prioridade ) )
-			{
-				if (debugging)
-					std::cout<<"\nNot ok!";
-			}
-			else
-			{
-				if (debugging)
-					std::cout<< "\n===== PODE COMPARTILHAR\n";
-				return true;
-			}			
-		}
-	}		
-	
-	if (debugging)
-		std::cout<<"\n===== NAO PODE COMPARTILHAR";
-
-	return false;
-}
-
-bool ProblemData::haSolXInitFileName()
-{
-	string fileName("solInicialX");  
-
-	int campusId = this->campi.begin()->getId(); // todo
-
-	if ( campusId != 0 )
-   {	   
-		 stringstream ss;
-		 ss << campusId;
-		 fileName += "_Cp"; 
-		 fileName += ss.str();
-   }
-   
-    fileName += "_";
-	fileName += this->inputIdToString();
-	fileName += "_";
-	fileName += this->getInputFileName();
-    fileName += ".txt";
-
-	ifstream fin( fileName, ios_base::in );
-	if ( fin )
-		return true;
-    return false;
-}
-
-int ProblemData::getNroNaoAtend( Disciplina *disciplina )
-{
-	int nroNaoAtend=0;
-
-	std::map<int /*discId*/, std::pair<int/*difTurmas*/, int/*nroNaoAtend*/> >::iterator
-		it = mapDiscDif.find(disciplina->getId());
-	if ( it != mapDiscDif.end() )
-	{
-		nroNaoAtend = it->second.second;
-	}
-
-	return nroNaoAtend;
-}
 
 void ProblemData::confereCorretudeAlocacoes()
 {

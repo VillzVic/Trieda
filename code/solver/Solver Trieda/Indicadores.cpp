@@ -25,8 +25,15 @@ Indicadores::~Indicadores()
 void Indicadores::setIndicadorFileName( std::string fileName )
 {
 	indicadorName_ = fileName;
+}
 
-	Indicadores::printSeparator(4);
+void Indicadores::setIndicadorFileName( std::string inputName, int id )
+{
+	std::stringstream fileName;   
+	fileName << "indicadores_" << inputName;
+	if ( id!=0 ) fileName << "_id" << id;
+
+	indicadorName_ = fileName.str();
 }
 
 std::string Indicadores::getFileName()

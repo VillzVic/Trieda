@@ -3084,12 +3084,7 @@ bool MIPUnico::criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prio
 						 << " e aluno " << aluno->getAlunoId();
 					 return false;
 				 }
-
-				 #ifdef ALUNO_UNICO_CALENDARIO
-				 if ( !( aluno->getCalendario( alDem->demanda )->possuiHorarioDiaOuCorrespondente( hi, hf, dia ) ) )
-					 return false;
-				 #endif
-				 
+				 				 
 					//	std::cout << "\n\t\tTestando " << v->toString();
 
 				 #ifdef ALUNO_TURNOS_DA_DEMANDA				 
@@ -3190,12 +3185,7 @@ bool MIPUnico::criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prio
 						 << " e aluno " << aluno->getAlunoId();
 					 return false;
 				 }
-
-				 #ifdef ALUNO_UNICO_CALENDARIO
-				 if ( !( aluno->getCalendario( alDem->demanda )->possuiHorarioDiaOuCorrespondente( hi, hf, dia ) ) )
-					 return false;
-				 #endif
-
+				 
 				 #ifdef ALUNO_TURNOS_DA_DEMANDA			 
 				 if ( ! alDem->getOferta()->turno->possuiHorarioDiaOuCorrespondente( hi, hf, dia ) )
 					 return false;

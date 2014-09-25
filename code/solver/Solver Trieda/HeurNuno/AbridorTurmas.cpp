@@ -80,7 +80,7 @@ void AbridorTurmas::abrirTurmas(set<OfertaDisciplina*, T> &setOrd)
 	currOferta = nullptr;
 }
 
-template void AbridorTurmas::abrirTurmas(set<OfertaDisciplina*, compOftDisc> &setOrd);
+template void AbridorTurmas::abrirTurmas<compOftDisc>(set<OfertaDisciplina*, compOftDisc> &setOrd);
 
 // abrir turmas [ordem randomica]
 void AbridorTurmas::abrirTurmasRandom(vector<OfertaDisciplina*> &setOfts)
@@ -1647,7 +1647,7 @@ void AbridorTurmas::limparTurmasPotenciais_(turmasPotOrd &turmas)
 	HeuristicaNuno::logMsg("in limpar turmas potenciais", 3);
 	for(auto itTipo = turmas.begin(); itTipo != turmas.end();)
 	{
-		for(auto it = itTipo->second.begin(); it != itTipo->second.end(); ++it)
+		for(auto it = itTipo->second.begin(); it != itTipo->second.end();)
 		{
 			const TurmaPotencial* turma = (*it);
 			it = itTipo->second.erase(it);

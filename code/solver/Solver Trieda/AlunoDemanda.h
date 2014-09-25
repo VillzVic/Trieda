@@ -41,20 +41,11 @@ public:
 
    bool operator < ( const AlunoDemanda & var ) const
    {
-      if ( (int) this->getId() < (int) var.getId() )
+      if ( (int) this->getPrioridade() < (int) var.getPrioridade() )
       {
          return true;
       }
-      else if ( (int) this->getId() > (int) var.getId() )
-      {
-         return false;
-      }
-
-      if ( (int) this->getAlunoId() < (int) var.getAlunoId() )
-      {
-         return true;
-      }
-      else if ( (int) this->getAlunoId() > (int) var.getAlunoId() )
+      else if ( (int) this->getPrioridade() > (int) var.getPrioridade() )
       {
          return false;
       }
@@ -68,11 +59,20 @@ public:
          return false;
       }
 
-      if ( (int) this->getPrioridade() < (int) var.getPrioridade() )
+      if ( (int) this->getAlunoId() < (int) var.getAlunoId() )
       {
          return true;
       }
-      else if ( (int) this->getPrioridade() > (int) var.getPrioridade() )
+      else if ( (int) this->getAlunoId() > (int) var.getAlunoId() )
+      {
+         return false;
+      }
+
+      if ( (int) this->getId() < (int) var.getId() )
+      {
+         return true;
+      }
+      else if ( (int) this->getId() > (int) var.getId() )
       {
          return false;
       }
@@ -107,7 +107,7 @@ namespace std
 	{
 		bool operator() (AlunoDemanda const *first, AlunoDemanda const *second) const 
 		{
-			return first->getPrioridade() <= second->getPrioridade();
+			return (*first) < (*second);
 		}
 	};
 }
