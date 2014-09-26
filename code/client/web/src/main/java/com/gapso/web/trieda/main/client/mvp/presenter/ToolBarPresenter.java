@@ -888,10 +888,24 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( MenuEvent ce )
 			{
-				Presenter presenter = new RelatorioVisaoSalaPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoSalaView(cenarioDTO) );
+				Services.cenarios().getCurrentCenario(new AsyncCallback< CenarioDTO >()
+				{
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Erro ao verificar situação do cenário", null );
+					}
 
-				presenter.go( gTab );
+					@Override
+					public void onSuccess(CenarioDTO cenario) {
+						cenarioDTO = cenario;
+						Presenter presenter = new RelatorioVisaoSalaPresenter(
+							instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoSalaView(cenarioDTO) );
+
+						presenter.go( gTab );
+					}
+				});
 			}
 		});
 

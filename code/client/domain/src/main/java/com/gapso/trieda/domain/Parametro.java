@@ -236,7 +236,7 @@ public class Parametro
 
     //Permitir compartilhamento de disciplinas entre cursos
     @Column(name = "PAR_COMPDISCCAMPI")
-    private Boolean compartilharDisciplinasCampi = false;
+    private Boolean compartilharDisciplinasCampi = true;
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy="parametro")
     private Set<CursoDescompartilha> cursosDescompartDiscCampi = new HashSet<CursoDescompartilha>();
 

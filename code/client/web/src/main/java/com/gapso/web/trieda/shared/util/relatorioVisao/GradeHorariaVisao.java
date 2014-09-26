@@ -254,7 +254,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					}
 				}
 
-				if (horarioInicioAula.isEmpty())
+				if (horarioInicioAula.isEmpty() || gradeHorariaAlocacaoManual)
 				{
 					horariosEscritos.addAll(labelsDasLinhasDaGradeHoraria);
 				}
@@ -264,7 +264,8 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					if (!labelsDasLinhasDaGradeHoraria.isEmpty())
 						horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0, 5);
 					for (int i = 1; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-						if (horarioInicioAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)) || horarioFimAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
+						if ((horarioInicioAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)) || horarioFimAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
+								&& !isHorarioIntervalo(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
 						{
 							horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
 							labelReduzidaTamanho.add(calculaTamanhoLabelReduzida(horarioASerEscrito));
@@ -469,13 +470,12 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		while (horarioFinalMinutos >= 60)
 		{
 			horarioFinalHoras++;
-			horarioFinalMinutos -= tempo;
+			horarioFinalMinutos -= 60;
 		}
 		
 		String[] horarioLinhaArray = horarioAula.split(":");
 		int horarioLinhaHoras = Integer.parseInt(horarioLinhaArray[0]);
 		int horarioLinhaMinutos = Integer.parseInt(horarioLinhaArray[1]);
-		
 		return ((horarioLinhaHoras > horarioInicialHoras
 				|| (horarioLinhaHoras == horarioInicialHoras && horarioLinhaMinutos >= horarioInicialMinutos))
 				&&

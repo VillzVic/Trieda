@@ -118,6 +118,7 @@ public class AtendimentosPesquisaPorDisciplinaView extends MyComposite
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 		
+		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_CURSO_STRING, getI18nConstants().codigoCurso(), 100 ) );
 		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_DISCIPLINA_CODIGO, getI18nConstants().codigoDisciplina(), 100 ) );
 		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_DISCIPLINA_NOME, getI18nConstants().nomeDisciplina(), 120 ) );
 		list.add( new ColumnConfig( PesquisaPorDisciplinaDTO.PROPERTY_TURMA_STRING, getI18nConstants().turma(), 120 ) );

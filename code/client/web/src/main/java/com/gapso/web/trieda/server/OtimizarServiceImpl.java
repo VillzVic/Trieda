@@ -38,6 +38,7 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Disponibilidade;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.HorarioAula;
@@ -83,6 +84,7 @@ import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.EstatisticasInputSolverXMLDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -337,16 +339,19 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			reqOtm.setRound(round);
 			reqOtm.setUsuario(usuarioAtual);
 			reqOtm.setParametro(parametro);
-			// TODO: [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
-//			reqOtm.setTotalCampi(estatisticasDTO.getTotalCampi());
-//			reqOtm.setCampiSelecionados(estatisticasDTO.getCampiSelecionados());
-//			reqOtm.setTotalTurnos(estatisticasDTO.getTotalTurnos());
-//			reqOtm.setTurnosSelecionados(estatisticasDTO.getTurnosSelecionados());
-//			reqOtm.setTotalAlunos(estatisticasDTO.getTotalAlunos());
-//			reqOtm.setTotalAlunosDemandasP1(estatisticasDTO.getTotalAlunosDemandasP1());
-//			reqOtm.setTotalAlunosDemandasP2(estatisticasDTO.getTotalAlunosDemandasP2());
-//			reqOtm.setTotalAmbientes(estatisticasDTO.getTotalAmbientes());
-//			reqOtm.setTotalProfessores(estatisticasDTO.getTotalProfessores());
+			// TODO: [DONE] [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
+			reqOtm.setStatusCodigo(StatusRequisicaoOtimizacao.AGUARDANDO.ordinal());
+			reqOtm.setStatusTexto(StatusRequisicaoOtimizacao.AGUARDANDO.name());
+			reqOtm.setTotalCampi(estatisticasDTO.getTotalCampi());
+			reqOtm.setCampiSelecionados(estatisticasDTO.getCampiSelecionados());
+			reqOtm.setTotalTurnos(estatisticasDTO.getTotalTurnos());
+			reqOtm.setTurnosSelecionados(estatisticasDTO.getTurnosSelecionados());
+			reqOtm.setTotalAlunos(estatisticasDTO.getTotalAlunos());
+			reqOtm.setTotalAlunosDemandasP1(estatisticasDTO.getTotalAlunosDemandasP1());
+			reqOtm.setTotalAlunosDemandasP2(estatisticasDTO.getTotalAlunosDemandasP2());
+			reqOtm.setTotalAmbientes(estatisticasDTO.getTotalAmbientes());
+			reqOtm.setTotalProfessores(estatisticasDTO.getTotalProfessores());
+			reqOtm.setInstanteInicioRequisicao(Calendar.getInstance().getTime());
 			
 			reqOtm.persist();
 			
@@ -458,9 +463,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 					SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 					Long round = solverClient.requestOptimization(fileBytes);
-					
 					EstatisticasInputSolverXMLDTO estatisticasDTO = getEstatisticasInputSolverXML(round,triedaInput, parametro);
-					
 					return TrioDTO.<Long,ParametroDTO,EstatisticasInputSolverXMLDTO>create(round,ConvertBeans.toParametroDTO(parametro),estatisticasDTO);
 				} else {
 					String msgConflito = parDTOConflito.getSegundo();
@@ -661,6 +664,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	}
 	
 	@Override
+	@Transactional
 	public Integer getStatusRequisicaoDeOtimizacao(Long round) {		
 		RequisicaoOtimizacao reqOtm = RequisicaoOtimizacao.findBy(round);
 		if (reqOtm != null) {
@@ -674,37 +678,48 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 	}
 	
+	@Transactional
 	public Integer getStatusRequisicaoDeOtimizacao(RequisicaoOtimizacao reqOtm, SolverClient solverClient) {
 		long round = reqOtm.getRound();
-		// TODO: [REQ-OTM] substituir o if-else abaixo por algo do tipo:
-//		Integer status = null;
-//		if (!reqOtm.estaFinalizada()) { // ou seja, (status == EXECUTANDO) || (status == AGUARDANDO)
-//			if (solverClient.isFinished(round)) {
-//				if (solverClient.containsResult(round)) {
-//					status = StatusRequisicaoOtimizacao.FINALIZADA_COM_OUTPUT.ordinal();
-//				} else {
-//					status = StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT.ordinal();
-//				}
-//			} else {
-//				String statusQueue = solverClient.getPositionQueue(round);
-//				if (statusQueue.equalsIgnoreCase("Executando")) {
-//					status = StatusRequisicaoOtimizacao.EXECUTANDO.ordinal();
-//				} else {
-//					status = StatusRequisicaoOtimizacao.AGUARDANDO.ordinal();
-//				}
-//			}
-//		} else {
-//			status = reqOtm.getStatus();
-//		}
-//		
-//		if (reqOtm.getStatus() != status) {
-//			reqOtm.setStatus(status);
-//			reqOtm.merge();
-//		}
-//		
-//		return status;
+		// TODO: [DONE] [REQ-OTM] substituir o if-else abaixo por algo do tipo:
+		Integer status = null;
+		if (reqOtm.getStatusCodigo() == StatusRequisicaoOtimizacao.EXECUTANDO.ordinal()
+				|| reqOtm.getStatusCodigo() == StatusRequisicaoOtimizacao.AGUARDANDO.ordinal()) { // ou seja, (status == EXECUTANDO) || (status == AGUARDANDO)
+			if (solverClient.isFinished(round)) {
+				if (solverClient.containsResult(round)) {
+					status = StatusRequisicaoOtimizacao.FINALIZADA_COM_RESULTADO.ordinal();
+				} else {
+					status = StatusRequisicaoOtimizacao.FINALIZADA_SEM_RESULTADO.ordinal();
+				}
+			} else {
+				String statusQueue = solverClient.getPositionQueue(round);
+				if (statusQueue.equalsIgnoreCase("Executando")) {
+					status = StatusRequisicaoOtimizacao.EXECUTANDO.ordinal();
+					if (reqOtm.getInstanteInicioOtimizacao() == null)
+					{
+						reqOtm.setInstanteInicioOtimizacao(Calendar.getInstance().getTime());
+					}
+				} else {
+					status = StatusRequisicaoOtimizacao.AGUARDANDO.ordinal();
+				}
+			}
+		} else {
+			status = reqOtm.getStatusCodigo();
+		}
 		
-		if (solverClient.isFinished(round)) {
+		if (reqOtm.getStatusCodigo() != status) {
+			reqOtm.setStatusCodigo(status);
+			reqOtm.setStatusTexto(StatusRequisicaoOtimizacao.values()[status].name());
+			if (status == StatusRequisicaoOtimizacao.EXECUTANDO.ordinal())
+				reqOtm.setInstanteInicioOtimizacao(Calendar.getInstance().getTime());
+			else if (status == StatusRequisicaoOtimizacao.FINALIZADA_COM_RESULTADO.ordinal()
+					|| status == StatusRequisicaoOtimizacao.FINALIZADA_SEM_RESULTADO.ordinal())
+				reqOtm.setInstanteTermino(Calendar.getInstance().getTime());
+		}
+		
+		return status;
+		
+/*		if (solverClient.isFinished(round)) {
 			if (solverClient.containsResult(round)) {
 				return StatusRequisicaoOtimizacao.FINALIZADA_COM_RESULTADO.ordinal();
 			} else {
@@ -717,19 +732,26 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			} else {
 				return StatusRequisicaoOtimizacao.AGUARDANDO.ordinal();
 			}
-		}
+		}*/
 	}
 	
 	/**
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#cancelaRequisicaoDeOtimizacao(java.lang.Long)
 	 */
 	@Override
+	@Transactional
 	public boolean cancelaRequisicaoDeOtimizacao(Long round) throws TriedaException {
 		try {
 			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 			if (solverClient.cancelOptimization(round)) {
-				// TODO: [REQ-OTM] atualizar status da Requisição de Otimização para Cancelada e salvar no BD
+				//TODO: [DONE] [REQ-OTM]
+				RequisicaoOtimizacao req = RequisicaoOtimizacao.findBy(round);
+				req.setUsuarioCancel(getUsuario());
+				req.setStatusCodigo(StatusRequisicaoOtimizacao.CANCELADA.ordinal());
+				req.setStatusTexto(StatusRequisicaoOtimizacao.CANCELADA.name());
+				Calendar cal = Calendar.getInstance();
+				req.setInstanteTermino(cal.getTime());
 				return true;
 			}
 		} catch(Exception e) {
@@ -823,20 +845,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			for (SemanaLetiva semanaLetiva : semanasLetivas) { // para cada semana letiva do cenário
 				if (!semanaLetiva.getHorariosAula().isEmpty()) { // verifica se a semana letiva tem algum horário de aula cadastrado
 					haAlgumaSemanaLetivaComHorarios = true;
-					for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-						for(HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()){
-							horariosAulasAux.add(hdc);
-							for(Disciplina disciplina : hdc.getDisciplinas()){
-								if(horariosDisponiveisMap.get(disciplina.getId()) == null){
-									List<HorarioDisponivelCenario> horariosDisponiveisNew = new ArrayList<HorarioDisponivelCenario>();
-									horariosDisponiveisNew.add(hdc);
-									horariosDisponiveisMap.put(disciplina.getId(), horariosDisponiveisNew);
-								} else {
-									horariosDisponiveisMap.get(disciplina.getId()).add(hdc);
-								}
-							}
-						}
-					}
 				} else {
 					warnings.add(HtmlUtils.htmlUnescape("Não foram cadastros os possíveis dias e horários de aula na semana letiva [" + semanaLetiva.getCodigo() + "] do cenário [" + cenario.getNome()  + "]."));
 				}
@@ -849,77 +857,21 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			errors.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, não há nenhuma semana letiva cadastrada no cenário [" + cenario.getNome() + " ]."));
 		}
 		
-//		List<HorarioDisponivelCenario> horariosDisponiveisAll = HorarioDisponivelCenario.findAll(getInstituicaoEnsinoUser(), cenario);
-//		for(HorarioDisponivelCenario hdc : horariosDisponiveisAll){
-//			for(Disciplina disciplina : hdc.getDisciplinas()){
-//				if(horariosDisponiveisMap.get(disciplina.getId()) == null){
-//					List<HorarioDisponivelCenario> horariosDisponiveisNew = new ArrayList<HorarioDisponivelCenario>();
-//					horariosDisponiveisNew.add(hdc);
-//					horariosDisponiveisMap.put(disciplina.getId(), horariosDisponiveisNew);
-//				} else {
-//					horariosDisponiveisMap.get(disciplina.getId()).add(hdc);
-//				}
-//			}
-//		}
-		
-		for (Disciplina disciplina : cenario.getDisciplinas()) {
-			List<HorarioDisponivelCenario> horariosDisponiveisBD = horariosDisponiveisMap.get(disciplina.getId());
-			
-			if(horariosDisponiveisBD != null){
-				// obtém as semanas letivas associadas com a disciplina em questão
-				Set<SemanaLetiva> semanasLetivasDis = disciplina.getSemanasLetivas();
-				// se necessário, filtra os horários discponíveis
-				if (!semanasLetivasDis.isEmpty()) {
-					// filtra os horários disponíveis da disciplina de acordo com as semanas letivas associadas com a disciplina
-					List<HorarioDisponivelCenario> horariosDisponiveisBDFiltrados = new ArrayList<HorarioDisponivelCenario>();
-					for (HorarioDisponivelCenario horario : horariosDisponiveisBD) {
-						if (semanasLetivasDis.contains(horario.getHorarioAula().getSemanaLetiva())) {
-							horariosDisponiveisBDFiltrados.add(horario);
-						}
-					}
-					
-					horariosDisponiveisBD.clear();
-					horariosDisponiveisBD.addAll(horariosDisponiveisBDFiltrados);
+		for (Disciplina disciplina : cenario.getDisciplinas())
+		{
+			for (Disponibilidade disp : Disponibilidade.findBy(cenario, disciplina.getId(), DisponibilidadeDTO.DISCIPLINA))
+			{
+				if(!disciplina.getUsaSabado() && disp.getSabado()){
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Não, está com disponibilidade no Sábado"));
 				}
-				
-				if(!disciplina.getUsaSabado()){
-					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-						if(Semanas.SAB.equals(hdc.getDiaSemana())){
-							warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Não, está com disponibilidade no Sábado"));
-							break;
-						}
-					}
-				} else {
-					boolean hasSat = false;
-					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-						if(Semanas.SAB.equals(hdc.getDiaSemana())){
-							hasSat = true;
-							break;
-						}
-					}
-					if(!hasSat){
-						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Sim, não está com disponibilidade no Sábado"));
-					}
+				else if(disciplina.getUsaSabado() && !disp.getSabado()) {
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Sim, não está com disponibilidade no Sábado"));
 				}
-				
-				if(!disciplina.getUsaDomingo()){
-					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-						if(Semanas.DOM.equals(hdc.getDiaSemana())){
-							warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Não, está com disponibilidade no Sábado"));
-							break;
-						}
-					}
-				} else {
-					boolean hasSat = false;
-					for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
-						if(Semanas.DOM.equals(hdc.getDiaSemana())){
-							hasSat = true;
-							break;
-						}
-					}
-					if(!hasSat){
-						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Sim, não está com disponibilidade no Sábado"));
-					}
+				if(!disciplina.getUsaDomingo() && disp.getDomingo()){
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Não, está com disponibilidade no Sábado"));
+				}
+				else if(disciplina.getUsaDomingo() && !disp.getDomingo()){
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Sim, não está com disponibilidade no Sábado"));
 				}
 			}
 		}

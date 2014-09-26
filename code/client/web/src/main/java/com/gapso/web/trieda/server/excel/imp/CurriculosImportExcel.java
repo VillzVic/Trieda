@@ -42,14 +42,16 @@ public class CurriculosImportExcel
 	static public String SEMANA_LETIVA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
+	private boolean updateDisciplinaHorario;
 
 	public CurriculosImportExcel(
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+			Cenario cenario, TriedaI18nConstants i18nConstants,
+			TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino, boolean updateDisciplinaHorario )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
+		this.updateDisciplinaHorario = updateDisciplinaHorario;
 		this.headerColumnsNames = new ArrayList< String >();
 		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
 		this.headerColumnsNames.add( CODIGO_COLUMN_NAME );
@@ -57,6 +59,13 @@ public class CurriculosImportExcel
 		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
 		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
 		this.headerColumnsNames.add( SEMANA_LETIVA_COLUMN_NAME );
+	}
+	
+	public CurriculosImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		this( cenario, i18nConstants, i18nMessages, instituicaoEnsino, false );
 	}
 
 	@Override
@@ -623,7 +632,9 @@ public class CurriculosImportExcel
 		// [ CodCurriculo -> CurriculosImportExcelBean ]
 		Map< String, CurriculosImportExcelBean > curriculosExcelMap
 			= CurriculosImportExcelBean.buildCurriculoCodigoToImportExcelBeanMap( sheetContent ); 
-
+		
+		Map<Disciplina, Set<SemanaLetiva>> disciplinaMapSemanasLetivas = new HashMap<Disciplina, Set<SemanaLetiva>>();
+		
 		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( String codigoCurriculo : curriculosExcelMap.keySet() )
 		{
@@ -691,10 +702,24 @@ public class CurriculosImportExcel
 
 					curriculosDisciplinasBDMap.put(
 						curriculoExcel.getNaturalKeyString(), newCurriculoDisciplina );
+					if (disciplinaMapSemanasLetivas.get(newCurriculoDisciplina.getDisciplina()) == null)
+					{
+						Set<SemanaLetiva> semanasLetivas = new HashSet<SemanaLetiva>();
+						semanasLetivas.add(newCurriculoDisciplina.getCurriculo().getSemanaLetiva());
+						disciplinaMapSemanasLetivas.put(newCurriculoDisciplina.getDisciplina(), semanasLetivas);
+					}
+					else
+					{
+						disciplinaMapSemanasLetivas.get(newCurriculoDisciplina.getDisciplina()).add(newCurriculoDisciplina.getCurriculo().getSemanaLetiva());
+					}
 				}
 			}
 			
 			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" CurriculosDisciplina"); count = 0;}
+		}
+		if (!curriculosDisciplinasBDMap.isEmpty() && updateDisciplinaHorario)
+		{
+			Disciplina.atualizaDisponibilidadesDisciplinas(disciplinaMapSemanasLetivas, getCenario());
 		}
 	}
 

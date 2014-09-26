@@ -199,7 +199,7 @@ public class AulaDTO
 
 	@Override
 	public String getNaturalKey() {
-		return this.getHorarioAulaId() + "-" + this.getSalaId();
+		return this.getHorarioAulaId() + "-" + this.getSalaId() + "-" + this.getSemana();
 	}
 	
 	public String getIdKey() {

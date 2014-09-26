@@ -139,7 +139,7 @@ public class ProfessoresAreasConhecimentoView extends MyComposite
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 	
-		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Quantidade de Disciplinas Habilitadas", 240 ) );
+		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Área de Conhecimento", 200 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Professores (Qtde. Professores)", 170 ) );
 		
 		return list;

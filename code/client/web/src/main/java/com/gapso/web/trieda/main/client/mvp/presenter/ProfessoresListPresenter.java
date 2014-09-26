@@ -79,27 +79,13 @@ public abstract class ProfessoresListPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				final ProfessorDTO professorDTO
-					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-				Services.professores().getHorariosDisponiveis( professorDTO,
-					new AsyncCallback< List< HorarioDisponivelCenarioDTO > >()
-				{
-					@Override
-					public void onFailure( Throwable caught )
-					{
-						MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
-					}
 
-					@Override
-					public void onSuccess(
-						List< HorarioDisponivelCenarioDTO > result )
-					{
-						Presenter presenter = new GradeHorariaProfessorFormPresenter(
-							new GradeHorariaProfessorView( cenario, professorDTO ) );
+					Presenter presenter = new GradeHorariaProfessorFormPresenter(
+						new GradeHorariaProfessorView( cenario, professorDTO ) );
 
-						presenter.go( null );
-					}
-				});
+					presenter.go( null );
 			}
 		});
 

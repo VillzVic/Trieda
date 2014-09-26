@@ -1,6 +1,9 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -10,10 +13,12 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
+import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
@@ -75,21 +80,61 @@ public class CampusFormPresenter
 				if ( isValid() )
 				{
 					final CampiServiceAsync service = Services.campi();
-
-					service.save( getDTO(),
-						new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+					final SemanasLetivaServiceAsync serviceSL = Services.semanasLetiva();
+					
+					serviceSL.getAllHorariosDisponiveisCenario(cenario, 
+							new AbstractAsyncCallbackWithDefaultOnFailure<PagingLoadResult<HorarioDisponivelCenarioDTO>>( display )
 					{
 						@Override
-						public void onSuccess( Void result )
+						public void onSuccess( PagingLoadResult<HorarioDisponivelCenarioDTO> result )
 						{
-							display.getSimpleModal().hide();
-
-							if ( gridPanel != null )
+							if (result.getData().isEmpty())
 							{
-								gridPanel.updateList();
+								MessageBox.confirm("Aviso!", "Não existem horarios cadastrados nas semanas letivas," +
+										" deseja criar o campus sem disponibilidades?", new Listener<MessageBoxEvent>() {
+									@Override
+									public void handleEvent(MessageBoxEvent be) {
+										if(be.getButtonClicked().getHtml().equalsIgnoreCase("yes") ||
+												be.getButtonClicked().getHtml().equalsIgnoreCase("sim")) {
+											service.save( getDTO(),
+												new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+											{
+												@Override
+												public void onSuccess( Void result )
+												{
+													display.getSimpleModal().hide();
+	
+													if ( gridPanel != null )
+													{
+														gridPanel.updateList();
+													}
+	
+													Info.display( "Salvo", "Campus salvo com sucesso!" );
+												}
+											});
+										}
+									}
+								});
 							}
+							else
+							{
+							service.save( getDTO(),
+									new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+								{
+									@Override
+									public void onSuccess( Void result )
+									{
+										display.getSimpleModal().hide();
 
-							Info.display( "Salvo", "Campus salvo com sucesso!" );
+										if ( gridPanel != null )
+										{
+											gridPanel.updateList();
+										}
+
+										Info.display( "Salvo", "Campus salvo com sucesso!" );
+									}
+								});
+							}
 						}
 					});
 				}

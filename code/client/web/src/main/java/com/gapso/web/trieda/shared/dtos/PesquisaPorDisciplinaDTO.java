@@ -17,6 +17,7 @@ public class PesquisaPorDisciplinaDTO extends AbstractTreeDTO< String >
 	public static final String PROPERTY_SALA_STRING = "salaString";
 	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
 	public static final String PROPERTY_CURSO_ID = "CursoId";
+	public static final String PROPERTY_CURSO_STRING = "CursoString";
 	public static final String PROPERTY_DISCIPLINA_CODIGO = "disciplinaCodigo";
 	public static final String PROPERTY_DISCIPLINA_NOME = "disciplinaString";
 
@@ -114,6 +115,16 @@ public class PesquisaPorDisciplinaDTO extends AbstractTreeDTO< String >
 	public void setCursoId( Long value )
 	{
 		set(PROPERTY_CURSO_ID, value);
+	}
+	
+	public String getCursoString()
+	{
+		return get( PROPERTY_CURSO_STRING );
+	}
+	
+	public void setCursoString( String value )
+	{
+		set(PROPERTY_CURSO_STRING, value);
 	}
 	
 	public void setDisciplinaCodigo(String value) {
