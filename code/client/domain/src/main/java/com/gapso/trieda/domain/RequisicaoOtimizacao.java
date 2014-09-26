@@ -2,6 +2,7 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -16,11 +17,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -32,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "ROP_ID")
 @Table(name = "REQUISICAO_OTIMIZACAO", uniqueConstraints =
-@UniqueConstraint(columnNames = {"USERNAME","ROP_ROUND","PAR_ID","CEN_ID"}))
+@UniqueConstraint(columnNames = {"USERNAME_CRIACAO","ROP_ROUND","PAR_ID","CEN_ID"}))
 public class RequisicaoOtimizacao implements Serializable, Comparable<RequisicaoOtimizacao> {
 
 	private static final long serialVersionUID = 1L;
@@ -48,8 +52,12 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 	
 	@NotNull
     @ManyToOne(targetEntity = Usuario.class)
-    @JoinColumn(name = "USERNAME")
+    @JoinColumn(name = "USERNAME_CRIACAO")
     private Usuario usuario;
+	
+    @ManyToOne(targetEntity = Usuario.class)
+    @JoinColumn(name = "USERNAME_CANCELAMENTO")
+    private Usuario usuarioCancel;
 	
 	@NotNull
 	@ManyToOne(targetEntity = Cenario.class)
@@ -64,6 +72,54 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 	@OneToOne(targetEntity = Parametro.class)
 	@JoinColumn(name = "PAR_ID")
 	private Parametro parametro;
+	
+    @Column( name = "ROP_INSTANTE_INICIO_REQUISICAO" )
+    @Temporal( TemporalType.TIMESTAMP )
+    @DateTimeFormat( style = "--" )
+    private Date instanteInicioRequisicao;
+    
+    @Column( name = "ROP_INSTANTE_INICIO_OTIMIZACAO" )
+    @Temporal( TemporalType.TIMESTAMP )
+    @DateTimeFormat( style = "--" )
+    private Date instanteInicioOtimizacao;
+    
+    @Column( name = "ROP_INSTANTE_TERMINO" )
+    @Temporal( TemporalType.TIMESTAMP )
+    @DateTimeFormat( style = "--" )
+    private Date instanteTermino;
+    
+	@Column(name = "ROP_STATUS_COD")
+	private Integer statusCodigo;
+	
+	@Column(name = "ROP_STATUS_TEXTO")
+	private String statusTexto;
+	
+	@Column(name = "ROP_TOTAL_CAMPI")
+	private Integer totalCampi;
+	
+	@Column(name = "ROP_CAMPI_SELECIONADOS")
+	private String campiSelecionados;
+	
+	@Column(name = "ROP_TOTAL_TURNOS")
+	private Integer totalTurnos;
+	
+	@Column(name = "ROP_TURNOS_SELECIONADOS")
+	private String turnosSelecionados;
+	
+	@Column(name = "ROP_TOTAL_ALUNOS")
+	private Integer totalAlunos;
+	
+	@Column(name = "ROP_TOTAL_ALUNOS_DEMANDAS_P1")
+	private Integer totalAlunosDemandasP1;
+	
+	@Column(name = "ROP_TOTAL_ALUNOS_DEMANDAS_P2")
+	private Integer totalAlunosDemandasP2;
+	
+	@Column(name = "ROP_TOTAL_AMBIENTES")
+	private Integer totalAmbientes;
+	
+	@Column(name = "ROP_TOTAL_PROFESSORES")
+	private Integer totalProfessores;
 	
 	@PersistenceContext
 	transient EntityManager entityManager;
@@ -216,5 +272,125 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 			throw new IllegalStateException(" Entity manager has not been injected (is the Spring " + " Aspects JAR configured as an AJC/AJDT aspects library?) " );
 		}
 		return em;
+	}
+
+	public Usuario getUsuarioCancel() {
+		return usuarioCancel;
+	}
+
+	public void setUsuarioCancel(Usuario usuarioCancel) {
+		this.usuarioCancel = usuarioCancel;
+	}
+
+	public Date getInstanteInicioRequisicao() {
+		return instanteInicioRequisicao;
+	}
+
+	public void setInstanteInicioRequisicao(Date instanteInicioRequisicao) {
+		this.instanteInicioRequisicao = instanteInicioRequisicao;
+	}
+	
+	public Date getInstanteInicioOtimizacao() {
+		return instanteInicioOtimizacao;
+	}
+
+	public void setInstanteInicioOtimizacao(Date instanteInicioOtimizacao) {
+		this.instanteInicioOtimizacao = instanteInicioOtimizacao;
+	}
+
+	public Date getInstanteTermino() {
+		return instanteTermino;
+	}
+
+	public void setInstanteTermino(Date instanteTermino) {
+		this.instanteTermino = instanteTermino;
+	}
+
+	public Integer getStatusCodigo() {
+		return statusCodigo;
+	}
+
+	public void setStatusCodigo(Integer statusCodigo) {
+		this.statusCodigo = statusCodigo;
+	}
+
+	public String getStatusTexto() {
+		return statusTexto;
+	}
+
+	public void setStatusTexto(String statusTexto) {
+		this.statusTexto = statusTexto;
+	}
+
+	public Integer getTotalCampi() {
+		return totalCampi;
+	}
+
+	public void setTotalCampi(Integer totalCampi) {
+		this.totalCampi = totalCampi;
+	}
+
+	public String getCampiSelecionados() {
+		return campiSelecionados;
+	}
+
+	public void setCampiSelecionados(String campiSelecionados) {
+		this.campiSelecionados = campiSelecionados;
+	}
+
+	public Integer getTotalTurnos() {
+		return totalTurnos;
+	}
+
+	public void setTotalTurnos(Integer totalTurnos) {
+		this.totalTurnos = totalTurnos;
+	}
+
+	public String getTurnosSelecionados() {
+		return turnosSelecionados;
+	}
+
+	public void setTurnosSelecionados(String turnosSelecionados) {
+		this.turnosSelecionados = turnosSelecionados;
+	}
+
+	public Integer getTotalAlunos() {
+		return totalAlunos;
+	}
+
+	public void setTotalAlunos(Integer totalAlunos) {
+		this.totalAlunos = totalAlunos;
+	}
+
+	public Integer getTotalAlunosDemandasP1() {
+		return totalAlunosDemandasP1;
+	}
+
+	public void setTotalAlunosDemandasP1(Integer totalAlunosDemandasP1) {
+		this.totalAlunosDemandasP1 = totalAlunosDemandasP1;
+	}
+
+	public Integer getTotalAlunosDemandasP2() {
+		return totalAlunosDemandasP2;
+	}
+
+	public void setTotalAlunosDemandasP2(Integer totalAlunosDemandasP2) {
+		this.totalAlunosDemandasP2 = totalAlunosDemandasP2;
+	}
+
+	public Integer getTotalAmbientes() {
+		return totalAmbientes;
+	}
+
+	public void setTotalAmbientes(Integer totalAmbientes) {
+		this.totalAmbientes = totalAmbientes;
+	}
+
+	public Integer getTotalProfessores() {
+		return totalProfessores;
+	}
+
+	public void setTotalProfessores(Integer totalProfessores) {
+		this.totalProfessores = totalProfessores;
 	}
 }

@@ -68,7 +68,7 @@ public class UnidadesServiceImpl
 	public void saveHorariosDisponiveis(
 		UnidadeDTO unidadeDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		List< HorarioDisponivelCenario > listSelecionados
+/*		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
 		Unidade unidade = Unidade.find(
@@ -101,7 +101,7 @@ public class UnidadesServiceImpl
 			o.getUnidades().add( unidade );
 			o.getSalas().addAll( salas );
 			o.merge();
-		}
+		}*/
 	}
 
 	@Override

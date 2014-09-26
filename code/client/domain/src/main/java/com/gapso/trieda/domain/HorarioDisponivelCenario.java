@@ -50,20 +50,20 @@ public class HorarioDisponivelCenario
     @Enumerated
     private Semanas diaSemana;
 
-    @ManyToMany
+/*    @ManyToMany
     private Set< Campus > campi = new HashSet< Campus >();
 
     @ManyToMany
     private Set< Unidade > unidades = new HashSet< Unidade >();
 
     @ManyToMany
-    private Set< Sala > salas = new HashSet< Sala >();
+    private Set< Sala > salas = new HashSet< Sala >();*/
 
-    @ManyToMany
+/*    @ManyToMany
     private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
-
-    @ManyToMany
-    private Set< Professor > professores = new HashSet< Professor >();
+*/
+/*    @ManyToMany
+    private Set< Professor > professores = new HashSet< Professor >();*/
     
     @ManyToMany
     private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
@@ -287,28 +287,24 @@ public class HorarioDisponivelCenario
     
     @SuppressWarnings("unchecked")
 	public static List<HorarioDisponivelCenario> findBy(
-        	InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-        	Sala sala, Disciplina disciplina, SemanaLetiva semanaLetiva, Semanas semana )
-        {
-    		Query q = entityManager().createQuery(
-    			" SELECT o FROM HorarioDisponivelCenario o, IN (o.disciplinas) disciplinas, IN (o.salas) salas " +
-    			" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
-    			" AND o.horarioAula.semanaLetiva.cenario = :cenario " +
-    			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
-    			" AND disciplinas = :disciplina " +
-    			" AND salas = :sala " +
-    			" AND o.diaSemana = :semana " +
-    			" ORDER BY o.horarioAula.horario ASC" );
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+    	SemanaLetiva semanaLetiva, Semanas semana )
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM HorarioDisponivelCenario o " +
+			" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.horarioAula.semanaLetiva.cenario = :cenario " +
+			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+			" AND o.diaSemana = :semana " +
+			" ORDER BY o.horarioAula.horario ASC" );
 
-    		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-    		q.setParameter( "cenario", cenario );
-    		q.setParameter( "sala", sala );
-    		q.setParameter( "disciplina", disciplina );
-    		q.setParameter( "semanaLetiva", semanaLetiva );
-    		q.setParameter( "semana", semana );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "semanaLetiva", semanaLetiva );
+		q.setParameter( "semana", semana );
 
-    		return q.getResultList();
-    	}
+		return q.getResultList();
+	}
 
 	public Semanas getDiaSemana()
 	{
@@ -332,7 +328,7 @@ public class HorarioDisponivelCenario
         this.horarioAula = horarioAula;
     }
 
-	public Set< Campus > getCampi()
+	/*public Set< Campus > getCampi()
 	{
         return this.campi;
     }
@@ -362,9 +358,9 @@ public class HorarioDisponivelCenario
 	public void setSalas( Set< Sala > salas )
 	{
         this.salas = salas;
-    }
+    }*/
 
-	public Set< Disciplina > getDisciplinas()
+/*	public Set< Disciplina > getDisciplinas()
 	{
         return this.disciplinas;
     }
@@ -373,9 +369,9 @@ public class HorarioDisponivelCenario
 		Set< Disciplina > disciplinas )
 	{
         this.disciplinas = disciplinas;
-    }
+    }*/
 
-	public Set< Professor > getProfessores()
+/*	public Set< Professor > getProfessores()
 	{
         return this.professores;
     }
@@ -384,7 +380,7 @@ public class HorarioDisponivelCenario
 		Set< Professor > professores )
 	{
         this.professores = professores;
-    }
+    }*/
 
 	public Set< Fixacao > getFixacoes()
 	{
@@ -416,11 +412,6 @@ public class HorarioDisponivelCenario
         sb.append( "Version: ").append( getVersion() ).append( ", " );
         sb.append( "HorarioAula: " ).append( getHorarioAula() ).append( ", " );
         sb.append( "Dia da Semana: " ).append( getDiaSemana() ).append( ", " );
-        sb.append( "Campi: " ).append( getCampi() == null ? "null" : getCampi().size() ).append( ", " );
-        sb.append( "Unidades: " ).append( getUnidades() == null ? "null" : getUnidades().size() ).append( ", " );
-        sb.append( "Salas: " ).append( getSalas() == null ? "null" : getSalas().size() ).append( ", " );
-        sb.append( "Disciplinas: " ).append( getDisciplinas() == null ? "null" : getDisciplinas().size() ).append( ", " );
-        sb.append( "Professores: " ).append( getProfessores() == null ? "null" : getProfessores().size() );
         sb.append( "Fixacoes: " ).append( getFixacoes() == null ? "null" : getFixacoes().size() );
         sb.append( "Atendimentos Operacionais: " ).append(
         	getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size() );

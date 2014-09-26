@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.format.number.CurrencyFormatter;
 import org.springframework.format.number.NumberFormatter;
@@ -33,6 +34,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.DisponibilidadeProfessor;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
@@ -98,7 +100,7 @@ public class ProfessoresServiceImpl
 	public void saveHorariosDisponiveis(
 		ProfessorDTO professorDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		List< HorarioDisponivelCenario > listSelecionados
+/*		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
 		Professor professor = Professor.find(
@@ -126,7 +128,7 @@ public class ProfessoresServiceImpl
 		{
 			o.getProfessores().add( professor );
 			o.merge();
-		}
+		}*/
 	}
 
 	@Override
@@ -1042,7 +1044,7 @@ public class ProfessoresServiceImpl
 		Set<Professor> professoresComJanelas = new HashSet<Professor>();
 		for (Entry<Professor, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
 		{
-			if (professor.getKey().getHorarios().size() == professor.getValue().size())
+			if (professorComGradeCheia(professor.getKey(),  professor.getValue()))
 			{
 				professoresGradeCheia.add(professor.getKey());
 			}
@@ -1252,6 +1254,59 @@ public class ProfessoresServiceImpl
 		currentNode.add(professoresInstituicao);
 		currentNode.add(professoresVirtuais);
 		currentNode.add(histogramas);
+	}
+
+	private boolean professorComGradeCheia(Professor professor, Set<HorarioDisponivelCenario> horariosDeAula) {
+		
+		if (horariosDeAula.isEmpty()) return false;
+		
+		int menorSemanaLetiva = 999;
+		Map<Semanas, Integer> semanaMapTempoDeAula = new HashMap<Semanas, Integer>();
+		for (HorarioDisponivelCenario horario : horariosDeAula)
+		{
+			if (horario.getHorarioAula().getSemanaLetiva().getTempo() < menorSemanaLetiva)
+			{
+				menorSemanaLetiva = horario.getHorarioAula().getSemanaLetiva().getTempo();
+			}
+			
+			if (semanaMapTempoDeAula.get(horario.getDiaSemana()) == null)
+			{
+				semanaMapTempoDeAula.put(horario.getDiaSemana(), horario.getHorarioAula().getSemanaLetiva().getTempo());
+			}
+			else
+			{
+				semanaMapTempoDeAula.put(horario.getDiaSemana(), semanaMapTempoDeAula.get(horario.getDiaSemana()) + horario.getHorarioAula().getSemanaLetiva().getTempo());
+			}
+			
+		}
+		
+		Map<Semanas, Integer> semanaMapTempoDisponivel = new HashMap<Semanas, Integer>();
+		for (DisponibilidadeProfessor disp : professor.getDisponibilidades())
+		{
+			Long tempoAula = TimeUnit.MILLISECONDS.toMinutes(disp.getHorarioFim().getTime() - disp.getHorarioInicio().getTime());
+			for (Semanas diaSemana : disp.getDiasSemana())
+			{
+				if (semanaMapTempoDisponivel.get(diaSemana) == null)
+				{
+					semanaMapTempoDisponivel.put(diaSemana, tempoAula.intValue());
+				}
+				else
+				{
+					semanaMapTempoDisponivel.put(diaSemana, semanaMapTempoDisponivel.get(diaSemana) + tempoAula.intValue());
+				}
+			}
+		}
+		
+		boolean gradeCheia = true;
+		for (Entry<Semanas, Integer> diaSemana : semanaMapTempoDisponivel.entrySet())
+		{
+			int tempoDeAula = semanaMapTempoDeAula.get(diaSemana.getKey()) == null ? 0 : semanaMapTempoDeAula.get(diaSemana.getKey());
+			if (diaSemana.getValue() - tempoDeAula > menorSemanaLetiva)
+			{
+				gradeCheia = false;
+			}
+		}
+		return gradeCheia;
 	}
 
 	private boolean existeHorarioDeInicioEntre(Calendar h1, Calendar h2,
@@ -1493,7 +1548,7 @@ public class ProfessoresServiceImpl
 		List<Professor> professoresGradeCheia = new ArrayList<Professor>();
 		for (Entry<Professor, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
 		{
-			if (professor.getKey().getHorarios().size() <= professor.getValue().size())
+			if (professorComGradeCheia(professor.getKey(),  professor.getValue()))
 			{
 				professoresGradeCheia.add(professor.getKey());
 			}
@@ -1586,7 +1641,7 @@ public class ProfessoresServiceImpl
 		List<Professor> professoresGradeCheia = new ArrayList<Professor>();
 		for (Entry<Professor, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
 		{
-			if (professor.getKey().getHorarios().size() <= professor.getValue().size())
+			if (professorComGradeCheia(professor.getKey(),  professor.getValue()))
 			{
 				professoresGradeCheia.add(professor.getKey());
 			}

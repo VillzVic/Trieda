@@ -394,7 +394,7 @@ public class SalasImportExcel
 				newSala.setUnidade( salaExcel.getUnidade() );
 				newSala.setExterna( salaExcel.getExterna() );
 
-				newSala.persist();
+				newSala.persistAndPreencheHorarios();
 				persistedSalas.add(newSala);
 			}
 		}

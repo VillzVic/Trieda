@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,7 +17,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.internal.compiler.ast.DoStatement;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.format.number.NumberFormatter;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,9 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Disponibilidade;
+import com.gapso.trieda.domain.DisponibilidadeDisciplina;
+import com.gapso.trieda.domain.DisponibilidadeSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -226,10 +230,22 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				aulas.addAll(getAulasParciais(cenario, filtro.getSalaCodigo()));
 			}
 			
-			for (HorarioDisponivelCenario horario : sala.getHorarios())
+			for (Disponibilidade horario : sala.getDisponibilidades())
 			{
-				String inicio = df.format( horario.getHorarioAula().getHorario() );
-				horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(horario.getDiaSemana()), horario.getHorarioAula().getSemanaLetiva().getTempo()));
+				for (Semanas semana : horario.getDiasSemana())
+				{
+					String inicio = df.format( horario.getHorarioInicio() );
+					Calendar horInicio = Calendar.getInstance();
+					horInicio.setTime(horario.getHorarioInicio());
+					horInicio.set(1979,Calendar.NOVEMBER,6);
+					
+					Calendar horFim = Calendar.getInstance();
+					horFim.setTime(horario.getHorarioFim());
+					horFim.set(1979,Calendar.NOVEMBER,6);
+					
+					horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(semana),
+							(int) TimeUnit.MILLISECONDS.toMinutes(horFim.getTimeInMillis() - horInicio.getTimeInMillis())));
+				}
 			}
 			
 			if (!aulas.isEmpty()) {
@@ -700,10 +716,14 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				if (professor != null)
 				{
 					horariosDisponiveis = new ArrayList<TrioDTO<String, Integer, Integer>>();
-					for (HorarioDisponivelCenario horario : professor.getHorarios())
+					for (Disponibilidade horario : professor.getDisponibilidades())
 					{
-						String inicio = df.format( horario.getHorarioAula().getHorario() );
-						horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(horario.getDiaSemana()), horario.getHorarioAula().getSemanaLetiva().getTempo()));
+						for (Semanas semana : horario.getDiasSemana())
+						{
+							String inicio = df.format( horario.getHorarioInicio() );
+							horariosDisponiveis.add(TrioDTO.create(inicio, Semanas.toInt(semana),
+									(int) TimeUnit.MILLISECONDS.toMinutes(horario.getHorarioFim().getTime() - horario.getHorarioInicio().getTime())));
+						}
 					}
 				}
 				q = QuintetoDTO.create(atendimentosParaEscrita,mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
@@ -3545,6 +3565,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 								atendimento.getDisciplina().getNome() : atendimento.getDisciplinaSubstituta().getNome()))
 						{
 							PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
+							newRelatorio.setCursoString( atendimento.getOferta().getCurso().getCodigo());
 							newRelatorio.setTurma( atendimento.getTurma() );
 							newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
 							newRelatorio.setSalaId(atendimento.getSala().getId());
@@ -3604,6 +3625,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 								atendimento.getDisciplina().getNome() : atendimento.getDisciplinaSubstituta().getNome()))
 						{
 							PesquisaPorDisciplinaDTO newRelatorio = new PesquisaPorDisciplinaDTO();
+							newRelatorio.setCursoString( atendimento.getOferta().getCurso().getCodigo());
 							newRelatorio.setTurma( atendimento.getTurma() );
 							newRelatorio.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
 							newRelatorio.setSalaId(atendimento.getSala().getId());
@@ -4971,7 +4993,8 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				{
 						status = "Alocado";
 				}
-				else if (!sala.getHorarios().contains(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), horarioAula, Semanas.get(aulaDTO.getSemana()))))
+				
+				else if (!sala.estaDisponivelNoHorario(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), horarioAula, Semanas.get(aulaDTO.getSemana()))))
 				{
 					status = "Indisponível";
 				}
@@ -5062,7 +5085,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					status = "Alocado";
 					professorStatusDTO.setMarcado(true);
 			}
-			else if (!professorDisciplina.getProfessor().getHorarios().contains(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), horarioAula, Semanas.get(aulaDTO.getSemana()))))
+			else if (!professorDisciplina.getProfessor().estaDisponivelNoHorario(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), horarioAula, Semanas.get(aulaDTO.getSemana()))))
 			{
 				status = "Indisponível";
 			}
@@ -5158,7 +5181,9 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId(), getInstituicaoEnsinoUser());
 		Semanas diaSemana = Semanas.get(semana);
 		
-		List<HorarioDisponivelCenario> hdc = HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), cenario, sala, disciplina, semanaLetiva, diaSemana);
+		List<HorarioDisponivelCenario> hdc = getHorariosDisponiveis(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), cenario, semanaLetiva, diaSemana),
+				disciplina.getDisponibilidades(), sala.getDisponibilidades());
+		
 		List<HorarioDisponivelCenarioDTO> result = ConvertBeans.toHorarioDisponivelCenarioDTO(hdc);
 		Collections.sort(result,  new Comparator<HorarioDisponivelCenarioDTO>() {
 			@Override
@@ -5169,6 +5194,54 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return new BaseListLoadResult<HorarioDisponivelCenarioDTO>(result);
 	}
 	
+	private List<HorarioDisponivelCenario> getHorariosDisponiveis( List<HorarioDisponivelCenario> hdc,
+			Set<DisponibilidadeDisciplina> disponibilidadesDisc,
+			Set<DisponibilidadeSala> disponibilidadesSala) {
+		List<HorarioDisponivelCenario> horariosDisponiveis = new ArrayList<HorarioDisponivelCenario>();
+		for (HorarioDisponivelCenario horarioDisponivel : hdc)
+		{
+			boolean disponivelDisc = false;
+			boolean disponivelSala = false;
+			for (Disponibilidade dispDisc : disponibilidadesDisc)
+			{
+				if (checkHorarioDisponivelCenarioDisponvivel(horarioDisponivel, dispDisc))
+					disponivelDisc = true;
+			}
+			for (Disponibilidade dispSala : disponibilidadesSala)
+			{
+				if (checkHorarioDisponivelCenarioDisponvivel(horarioDisponivel, dispSala))
+					disponivelSala = true;
+			}
+			if (disponivelDisc && disponivelSala)
+				horariosDisponiveis.add(horarioDisponivel);
+		}
+		
+		return horariosDisponiveis;
+	}
+	
+	private boolean checkHorarioDisponivelCenarioDisponvivel(
+			HorarioDisponivelCenario hdc, Disponibilidade disponibilidade) {
+
+		Calendar horaInicio = Calendar.getInstance();
+		horaInicio.setTime(disponibilidade.getHorarioInicio());
+		horaInicio.set(1979,Calendar.NOVEMBER,6);
+		
+		Calendar horaFim = Calendar.getInstance();
+		horaFim.setTime(disponibilidade.getHorarioFim());
+		horaFim.set(1979,Calendar.NOVEMBER,6);
+		
+		Calendar oHoraInicio = Calendar.getInstance();
+		oHoraInicio.setTime(hdc.getHorarioAula().getHorario());
+		oHoraInicio.set(1979,Calendar.NOVEMBER,6);
+		
+		Calendar oHoraFim = Calendar.getInstance();
+		oHoraFim.setTime(hdc.getHorarioAula().getHorario());
+		oHoraFim.set(1979,Calendar.NOVEMBER,6);
+		oHoraFim.add(Calendar.MINUTE,hdc.getHorarioAula().getSemanaLetiva().getTempo());
+
+		return (horaInicio.compareTo(oHoraInicio) <= 0 && horaFim.compareTo(oHoraFim) >= 0 );
+	}
+
 	@Override
 	public TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO, List<AulaDTO> aulasTurma)
 	{

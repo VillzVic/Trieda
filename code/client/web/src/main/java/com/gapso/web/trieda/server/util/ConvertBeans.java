@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server.util;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.web.util.HtmlUtils;
 
@@ -36,6 +38,12 @@ import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Disponibilidade;
+import com.gapso.trieda.domain.DisponibilidadeCampus;
+import com.gapso.trieda.domain.DisponibilidadeDisciplina;
+import com.gapso.trieda.domain.DisponibilidadeProfessor;
+import com.gapso.trieda.domain.DisponibilidadeSala;
+import com.gapso.trieda.domain.DisponibilidadeUnidade;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.Fixacao;
@@ -86,6 +94,7 @@ import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -117,6 +126,7 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class ConvertBeans {
 	
@@ -3859,42 +3869,61 @@ public class ConvertBeans {
 		dto.setParametroId(domain.getParametro().getId());
 		dto.setRound(domain.getRound());
 		dto.setUserName(domain.getUsuario().getUsername());
+		dto.setUserNameCancel(domain.getUsuarioCancel() == null ? null : domain.getUsuarioCancel().getUsername() );
 		
 		Parametro parametro = domain.getParametro();
 		dto.setModoOtimizacao(parametro.getModoOtimizacao());
 		dto.setOtimizarPor(parametro.getOtimizarPor());
 		dto.setFuncaoObjetivo(FuncaoObjetivoComboBox.CargaHoraria.values()[parametro.getFuncaoObjetivo()].getText());
 		
-		// TODO: [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
-//		dto.setTotalCampi(domain.getTotalCampi());
-//		dto.setCampiSelecionados(domain.getCampiSelecionados());
-//		dto.setTotalTurnos(domain.getTotalTurnos());
-//		dto.setTurnosSelecionados(domain.getTurnosSelecionados());
-//		dto.setTotalAlunos(domain.getTotalAlunos());
-//		dto.setTotalAlunosDemandasP1(domain.getTotalAlunosDemandasP1());
-//		dto.setTotalAlunosDemandasP2(domain.getTotalAlunosDemandasP2());
-//		dto.setTotalAmbientes(domain.getTotalAmbientes());
-//		dto.setTotalProfessores(domain.getTotalProfessores());
+		// TODO: [DONE] [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
+		dto.setTotalCampi(domain.getTotalCampi());
+		dto.setCampiSelecionados(domain.getCampiSelecionados());
+		dto.setTotalTurnos(domain.getTotalTurnos());
+		dto.setTurnosSelecionados(domain.getTurnosSelecionados());
+		dto.setTotalAlunos(domain.getTotalAlunos());
+		dto.setTotalAlunosDemandasP1(domain.getTotalAlunosDemandasP1());
+		dto.setTotalAlunosDemandasP2(domain.getTotalAlunosDemandasP2());
+		dto.setTotalAmbientes(domain.getTotalAmbientes());
+		dto.setTotalProfessores(domain.getTotalProfessores());
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		dto.setInstanteInicioRequisicao(domain.getInstanteInicioRequisicao() == null ? null : df.format(domain.getInstanteInicioRequisicao()));
+		dto.setInstanteInicioOtimizacao(domain.getInstanteInicioOtimizacao() == null ? null : df.format(domain.getInstanteInicioOtimizacao()));
+		dto.setInstanteTermino(domain.getInstanteTermino() == null ? null : df.format(domain.getInstanteTermino()));
+		if (domain.getInstanteInicioRequisicao() != null && domain.getInstanteTermino() != null)
+		{
+			long duracao = domain.getInstanteTermino().getTime() - domain.getInstanteInicioRequisicao().getTime();
+	        long hours = TimeUnit.MILLISECONDS.toHours(duracao);
+	        duracao -= TimeUnit.HOURS.toMillis(hours);
+	        long minutes = TimeUnit.MILLISECONDS.toMinutes(duracao);
+	        duracao -= TimeUnit.MINUTES.toMillis(minutes);
+	        long seconds = TimeUnit.MILLISECONDS.toSeconds(duracao);
+			dto.setDuracaoRequisicao(String.format("%02d:%02d:%02d", 
+					hours,
+					minutes,
+					seconds	));
+		}
+		if (domain.getInstanteInicioOtimizacao() != null && domain.getInstanteTermino() != null)
+		{
+			long duracao = domain.getInstanteTermino().getTime() - domain.getInstanteInicioOtimizacao().getTime();
+	        long hours = TimeUnit.MILLISECONDS.toHours(duracao);
+	        duracao -= TimeUnit.HOURS.toMillis(hours);
+	        long minutes = TimeUnit.MILLISECONDS.toMinutes(duracao);
+	        duracao -= TimeUnit.MINUTES.toMillis(minutes);
+	        long seconds = TimeUnit.MILLISECONDS.toSeconds(duracao);
+			dto.setDuracaoOtimizacao(String.format("%02d:%02d:%02d", 
+					hours,
+					minutes,
+					seconds	));
+		}
 		
-		String campiSelecionados = "";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
 		Set<Long> professoresRelacionadosIDs = new HashSet<Long>();
 		for (Campus campus : parametro.getCampi()) {
-			campiSelecionados += campus.getCodigo() + ", ";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
-			
 			for (Professor professor : campus.getProfessores()) {
 				professoresRelacionadosIDs.add(professor.getId());
 			}
 		}
-		campiSelecionados = campiSelecionados.substring(0,campiSelecionados.length()-2);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
-		dto.setCampiSelecionados(campiSelecionados);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
 		dto.setProfessoresRelacionadosIDs(professoresRelacionadosIDs);
-		
-		String turnosSelecionados = "";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
-		for (Turno turno : parametro.getTurnos()) {// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
-			turnosSelecionados += turno.getNome() + ", ";// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
-		}// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
-		turnosSelecionados = turnosSelecionados.substring(0, turnosSelecionados.length()-2);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
-		dto.setTurnosSelecionados(turnosSelecionados);// TODO: [REQ-OTM] apagar (não é mais necessário devido ao novo código acima)
 		
 		InstituicaoEnsino instituicaoEnsino = domain.getCenario().getInstituicaoEnsino();
 		dto.setInstituicaoEnsinoId(instituicaoEnsino.getId());
@@ -4277,4 +4306,93 @@ public class ConvertBeans {
 
 			return listDTOs;
 		}
+
+	public static List<DisponibilidadeDTO> toDisponibilidadeDTO(
+			List<Disponibilidade> listDomains) {
+		if ( listDomains == null )
+		{
+			return Collections.< DisponibilidadeDTO > emptyList();
+		}
+
+		List< DisponibilidadeDTO > listDTOs
+			= new ArrayList< DisponibilidadeDTO >();
+
+		for ( Disponibilidade dto : listDomains )
+		{
+			listDTOs.add( ConvertBeans.toDisponibilidadeDTO( dto ) );
+		}
+
+		return listDTOs;
+	}
+
+	private static DisponibilidadeDTO toDisponibilidadeDTO(Disponibilidade domain)
+	{
+		DisponibilidadeDTO dto = new DisponibilidadeDTO();
+		
+		dto.setDisponibilidadeId(domain.getId());
+		dto.setEntidadeId(domain.getEntidadeId());
+		dto.setEntidadeTipo(domain.getEntidadeTipo());
+		DateFormat df = new SimpleDateFormat( "HH:mm" );
+		String inicio = df.format( domain.getHorarioInicio() );
+		String fim = df.format( domain.getHorarioFim() );
+		dto.setHorarioInicioString(inicio);
+		dto.setHorarioFimString(fim);
+		dto.setSegunda(domain.getSegunda());
+		dto.setTerca(domain.getTerca());
+		dto.setQuarta(domain.getQuarta());
+		dto.setQuinta(domain.getQuinta());
+		dto.setSexta(domain.getSexta());
+		dto.setSabado(domain.getSabado());
+		dto.setDomingo(domain.getDomingo());
+		
+		return dto;
+	}
+
+	public static Disponibilidade toDisponibilidade(DisponibilidadeDTO dto, String tipoEntidade)
+	{
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(dto.getInstituicaoEnsinoId());
+		Disponibilidade domain = null;
+		if (tipoEntidade.equals(DisponibilidadeDTO.DISCIPLINA))
+		{
+			domain = new DisponibilidadeDisciplina();
+			((DisponibilidadeDisciplina)domain).setDisciplina(Disciplina.find(dto.getEntidadeId(), instituicaoEnsino));
+		}
+		else if (tipoEntidade.equals(DisponibilidadeDTO.PROFESSOR))
+		{
+			domain = new DisponibilidadeProfessor();
+			((DisponibilidadeProfessor)domain).setProfessor(Professor.find(dto.getEntidadeId(), instituicaoEnsino));
+		}
+		else if (tipoEntidade.equals(DisponibilidadeDTO.CAMPUS))
+		{
+			domain = new DisponibilidadeCampus();
+			((DisponibilidadeCampus)domain).setCampus(Campus.find(dto.getEntidadeId(), instituicaoEnsino));
+		}
+		else if (tipoEntidade.equals(DisponibilidadeDTO.UNIDADE))
+		{
+			domain = new DisponibilidadeUnidade();
+			((DisponibilidadeUnidade)domain).setUnidade(Unidade.find(dto.getEntidadeId(), instituicaoEnsino));
+		}
+		else if (tipoEntidade.equals(DisponibilidadeDTO.SALA))
+		{
+			domain = new DisponibilidadeSala();
+			((DisponibilidadeSala)domain).setSala(Sala.find(dto.getEntidadeId(), instituicaoEnsino));
+		}
+		try {
+			domain.setHorarioInicio(new SimpleDateFormat("HH:mm").parse(dto.getHorarioInicioString()));
+			domain.setHorarioFim(new SimpleDateFormat("HH:mm").parse(dto.getHorarioFimString()));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		domain.setSegunda(true);
+		domain.setTerca(true);
+		domain.setQuarta(true);
+		domain.setQuinta(true);
+		domain.setSexta(true);
+		domain.setSabado(false);
+		domain.setDomingo(false);
+		
+		return domain;
+	}
 }

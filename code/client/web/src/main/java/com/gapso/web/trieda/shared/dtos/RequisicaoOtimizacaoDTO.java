@@ -10,6 +10,7 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_USER_NAME = "userName";
+	public static final String PROPERTY_USER_NAME_CANCEL = "userNameCanacel";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	public static final String PROPERTY_CENARIO_NOME = "cenarioNome";
 	public static final String PROPERTY_POSICAO_FILA = "posicaoFila";
@@ -28,6 +29,11 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	public static final String PROPERTY_TOTAL_ALUNODEMANDA_P2 = "totalAlunosDemandasP2";
 	public static final String PROPERTY_TOTAL_AMBIENTES = "totalAmbientes";
 	public static final String PROPERTY_TOTAL_PROFESSORES = "totalProfessores";
+	public static final String PROPERTY_INSTANTE_INICIO_REQUISICAO = "instanteInicioRequisicao";
+	public static final String PROPERTY_INSTANTE_INICIO_OTIMIZACAO = "instanteInicioOtimizacao";
+	public static final String PROPERTY_INSTANTE_TERMINO = "instanteTermino";
+	public static final String PROPERTY_DURACAO_REQUISICAO = "duracaoRequisicao";
+	public static final String PROPERTY_DURACAO_OTIMIZACAO = "duracaoOtimizacao";
 	
 	static public enum StatusRequisicaoOtimizacao implements Serializable {AGUARDANDO,EXECUTANDO,FINALIZADA_COM_RESULTADO,FINALIZADA_SEM_RESULTADO,CANCELADA,INVALIDO}
 	
@@ -53,6 +59,14 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	
 	public String getUserName() {
 		return get(PROPERTY_USER_NAME);
+	}
+	
+	public void setUserNameCancel(String value) {
+		set(PROPERTY_USER_NAME_CANCEL,value);
+	}
+	
+	public String getUserNameCancel() {
+		return get(PROPERTY_USER_NAME_CANCEL);
 	}
 	
 	public void setCenarioId(Long value) {
@@ -190,6 +204,46 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	}
 	public Integer getTotalProfessores() {
 		return get(PROPERTY_TOTAL_PROFESSORES);
+	}
+	
+	public String getInstanteInicioRequisicao() {
+		return get(PROPERTY_INSTANTE_INICIO_REQUISICAO);
+	}
+	
+	public void setInstanteInicioRequisicao(String value) {
+		set(PROPERTY_INSTANTE_INICIO_REQUISICAO,value);
+	}
+	
+	public String getInstanteInicioOtimizacao() {
+		return get(PROPERTY_INSTANTE_INICIO_OTIMIZACAO);
+	}
+	
+	public void setInstanteInicioOtimizacao(String value) {
+		set(PROPERTY_INSTANTE_INICIO_OTIMIZACAO,value);
+	}
+	
+	public String getInstanteTermino() {
+		return get(PROPERTY_INSTANTE_TERMINO);
+	}
+	
+	public void setInstanteTermino(String value) {
+		set(PROPERTY_INSTANTE_TERMINO,value);
+	}
+	
+	public String getDuracaoRequisicao() {
+		return get(PROPERTY_DURACAO_REQUISICAO);
+	}
+	
+	public void setDuracaoRequisicao(String value) {
+		set(PROPERTY_DURACAO_REQUISICAO,value);
+	}
+	
+	public String getDuracaoOtimizacao() {
+		return get(PROPERTY_DURACAO_OTIMIZACAO);
+	}
+	
+	public void setDuracaoOtimizacao(String value) {
+		set(PROPERTY_DURACAO_OTIMIZACAO,value);
 	}
 
 	@Override

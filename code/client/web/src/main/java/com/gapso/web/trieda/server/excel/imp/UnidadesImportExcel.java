@@ -280,7 +280,7 @@ public class UnidadesImportExcel
 				newUnidade.setNome( unidadeExcel.getNomeStr() );
 				newUnidade.setCampus( unidadeExcel.getCampus() );
 
-				newUnidade.persist();
+				newUnidade.persistAndPreencheHorarios();
 				persistedUnidades.add(newUnidade);
 			}
 		}

@@ -26,8 +26,8 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Disponibilidade;
 import com.gapso.trieda.domain.DivisaoCredito;
-import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Incompatibilidade;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -36,7 +36,6 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
-import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
@@ -47,6 +46,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaIncompativelDTO;
+import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -208,7 +208,7 @@ public class DisciplinasServiceImpl
 		DisciplinaDTO disciplinaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		List< HorarioDisponivelCenario > listSelecionados
+/*		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
 		Disciplina disciplina = Disciplina.find(
@@ -243,7 +243,7 @@ public class DisciplinasServiceImpl
 		{ 
 			o.getDisciplinas().add( disciplina );
 			o.merge();
-		}
+		}*/
 	}
 
 	@Override
@@ -497,40 +497,11 @@ public class DisciplinasServiceImpl
 		Cenario cenario = Cenario.find(disciplinaDTO.getCenarioId(), getInstituicaoEnsinoUser());
 		if ( disciplina.getId() != null && disciplina.getId() > 0 )
 		{
-			List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findByCenario( getInstituicaoEnsinoUser(), cenario );
-
-			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
-	
-			for ( SemanaLetiva semanaLetiva : semanasLetivas )
+			for (Disponibilidade disponibilidade : Disponibilidade.findBy(cenario, disciplina.getId(), DisponibilidadeDTO.DISCIPLINA))
 			{
-				horariosAula.addAll( semanaLetiva.getHorariosAula() );
-			}
-			for ( HorarioAula horarioAula : horariosAula )
-			{
-				for ( HorarioDisponivelCenario horarioDisponivel : horarioAula.getHorariosDisponiveisCenario() )
-				{
-					if (horarioDisponivel.getDiaSemana() == Semanas.SAB)
-					{
-						if (disciplina.getUsaSabado()) {
-							horarioDisponivel.getDisciplinas().add( disciplina );
-						}
-						else
-						{
-							horarioDisponivel.getDisciplinas().remove( disciplina );
-						}
-					}
-					else if (horarioDisponivel.getDiaSemana() == Semanas.DOM)
-					{
-						if (disciplina.getUsaDomingo()) {
-							horarioDisponivel.getDisciplinas().add( disciplina );
-						}
-						else
-						{
-							horarioDisponivel.getDisciplinas().remove( disciplina );
-						}
-					}
-				}
+				disponibilidade.setSabado(disciplina.getUsaSabado());
+				disponibilidade.setDomingo(disciplina.getUsaDomingo());
+				disponibilidade.merge();
 			}
 			disciplina.merge();
 		}

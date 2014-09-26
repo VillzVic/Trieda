@@ -272,7 +272,7 @@ public class CampiImportExcel
 				newCampus.setBairro( campusExcel.getBairroStr() );
 				newCampus.setValorCredito( campusExcel.getCustoMedioCredito() );
 
-				newCampus.persist();
+				newCampus.persistAndPreencheHorarios();
 				Campus.entityManager().refresh( newCampus );
 				persistedCampi.add(newCampus);
 			}

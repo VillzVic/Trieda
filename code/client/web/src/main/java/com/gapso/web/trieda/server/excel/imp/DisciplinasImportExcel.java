@@ -367,7 +367,7 @@ public class DisciplinasImportExcel
 				newDisciplina.setUsaSabado( disciplinaExcel.getUsaSabado() );
 				newDisciplina.setUsaDomingo( disciplinaExcel.getUsaDomingo() );
 
-				newDisciplina.persist();
+				newDisciplina.persistAndPreencheHorarios();
 				persistedDisciplinas.add(newDisciplina);
 			}
 			

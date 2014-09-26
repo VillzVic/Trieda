@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -737,6 +738,50 @@ public class SemanaLetiva
 		
 		return horariosAula.get(horariosAula.indexOf(ha)+1);
 		
+	}
+	
+	public Map<Date, Date> getDisponibilidadesSemanaLetiva()
+	{
+		if (this.getHorariosAula().isEmpty())
+		{
+			return new HashMap<Date, Date>();
+		}
+		Map<Date, Date> horarioInicioHorarioFimMap = new HashMap<Date, Date>();
+		
+		List<HorarioAula> horariosOrdenados = new ArrayList<HorarioAula>();
+		horariosOrdenados.addAll(this.getHorariosAula());
+		Collections.sort(horariosOrdenados);
+
+		Date primeiroHorario = horariosOrdenados.get(0).getHorario();
+		Calendar horaFim = Calendar.getInstance();
+		horaFim.setTime(horariosOrdenados.get(0).getHorario());
+		horaFim.set(1979,Calendar.NOVEMBER,6);
+		horaFim.add(Calendar.MINUTE,this.getTempo());
+		for (int i = 1; i < horariosOrdenados.size(); i++)
+		{
+			Calendar horaInicio = Calendar.getInstance();
+			horaInicio.setTime(horariosOrdenados.get(i).getHorario());
+			horaInicio.set(1979,Calendar.NOVEMBER,6);
+			
+			if (horaFim.compareTo(horaInicio) == 0)
+			{
+				horaFim.setTime(horariosOrdenados.get(i).getHorario());
+				horaFim.set(1979,Calendar.NOVEMBER,6);
+				horaFim.add(Calendar.MINUTE,this.getTempo());
+			}
+			else
+			{
+				horarioInicioHorarioFimMap.put(primeiroHorario, horaFim.getTime());
+				primeiroHorario = horariosOrdenados.get(i).getHorario();
+				horaFim = Calendar.getInstance();
+				horaFim.setTime(horariosOrdenados.get(i).getHorario());
+				horaFim.set(1979,Calendar.NOVEMBER,6);
+				horaFim.add(Calendar.MINUTE,this.getTempo());
+			}
+		}
+		horarioInicioHorarioFimMap.put(primeiroHorario, horaFim.getTime());
+		
+		return horarioInicioHorarioFimMap;
 	}
 	
 	//Clona semanaLetiva para a funcionalidade de clonar cenario

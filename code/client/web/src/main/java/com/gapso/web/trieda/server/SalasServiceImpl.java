@@ -88,7 +88,7 @@ public class SalasServiceImpl
 	public void saveHorariosDisponiveis(
 		SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
+/*		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -115,7 +115,7 @@ public class SalasServiceImpl
 		{
 			o.getSalas().add( sala );
 			o.merge();
-		}
+		}*/
 	}
 
 	@Override

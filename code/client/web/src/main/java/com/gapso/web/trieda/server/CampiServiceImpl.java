@@ -100,7 +100,7 @@ public class CampiServiceImpl extends RemoteService
 	public void saveHorariosDisponiveis(
 		CampusDTO campusDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		List< HorarioDisponivelCenario > listSelecionados
+		/*List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
 		Campus campus = Campus.find(
@@ -143,7 +143,7 @@ public class CampiServiceImpl extends RemoteService
 			o.getUnidades().addAll( unidades );
 			o.getSalas().addAll( salas );
 			o.merge();
-		}
+		}*/
 	}
 
 	@Override

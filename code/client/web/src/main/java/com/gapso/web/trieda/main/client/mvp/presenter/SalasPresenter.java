@@ -17,10 +17,12 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AssociarDisciplinasView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaAssociarSalasView;
+import com.gapso.web.trieda.main.client.mvp.view.DisponibilidadesFormView;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -294,7 +296,13 @@ public class SalasPresenter
 			{
 				final SalaDTO salaDTO
 					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				Presenter presenter = new DisponibilidadesFormPresenter(
+					instituicaoEnsinoDTO, cenario, salaDTO.getId(), 
+					new DisponibilidadesFormView( cenario, salaDTO.getId(), DisponibilidadeDTO.SALA, salaDTO.getCodigo() ) );
 
+				presenter.go( null );
+/*
 				final FutureResult< UnidadeDTO > futureUnidadeDTO = new FutureResult< UnidadeDTO >();
 				final FutureResult< List< HorarioDisponivelCenarioDTO > > futureHorarioDisponivelCenarioDTOList
 					= new FutureResult< List< HorarioDisponivelCenarioDTO > >();
@@ -326,7 +334,7 @@ public class SalasPresenter
 
 						presenter.go( null );
 					}
-				});
+				});*/
 			}
 		});
 		

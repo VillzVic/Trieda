@@ -236,7 +236,7 @@ public class SemanasLetivaServiceImpl
 
 		adicionarList.removeAll( todosQueJaTinhamList );
 
-		if ( adicionarList != null && adicionarList.size() > 0 )
+/*		if ( adicionarList != null && adicionarList.size() > 0 )
 		{
 			List< Campus > campi = Campus.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
 			List< Unidade > unidades = Unidade.findByCenario( getInstituicaoEnsinoUser(), cenario );
@@ -271,7 +271,7 @@ public class SemanasLetivaServiceImpl
 	
 				o.merge();
 			}
-		}
+		}*/
 	}
 
 	@Override

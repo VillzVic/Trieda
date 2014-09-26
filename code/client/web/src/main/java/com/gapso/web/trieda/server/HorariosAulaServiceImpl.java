@@ -121,11 +121,11 @@ public class HorariosAulaServiceImpl
 				hdc.setDiaSemana( semana );
 				hdc.setHorarioAula( horarioDeAula );
 
-				hdc.getCampi().addAll( campi );
+/*				hdc.getCampi().addAll( campi );
 				hdc.getUnidades().addAll( unidades );
 				hdc.getSalas().addAll( salas );
 				hdc.getDisciplinas().addAll( disciplinas );
-				hdc.getProfessores().addAll( professores );
+				hdc.getProfessores().addAll( professores );*/
 
 				hdc.persist();
 			}

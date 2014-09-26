@@ -17,12 +17,14 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
+import com.gapso.web.trieda.main.client.mvp.view.DisponibilidadesFormView;
 import com.gapso.web.trieda.main.client.mvp.view.DivisaoCreditoDisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.GruposSalasAssociarDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelDisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalasAssociarDisciplinaView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -286,8 +288,14 @@ implements Presenter
 			{
 				final DisciplinaDTO disciplinaDTO
 					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				Presenter presenter = new DisponibilidadesFormPresenter(
+					instituicaoEnsinoDTO, cenario, disciplinaDTO.getId(), 
+					new DisponibilidadesFormView( cenario, disciplinaDTO.getId(), DisponibilidadeDTO.DISCIPLINA, disciplinaDTO.getCodigo() ) );
 
-				Services.disciplinas().getHorariosDisponiveis( disciplinaDTO,
+				presenter.go( null );
+
+/*				Services.disciplinas().getHorariosDisponiveis( disciplinaDTO,
 					new AsyncCallback< List< HorarioDisponivelCenarioDTO > >()
 				{
 					@Override
@@ -305,7 +313,7 @@ implements Presenter
 
 						presenter.go( null );
 					}
-				});
+				});*/
 			}
 		});
 

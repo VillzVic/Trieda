@@ -8,15 +8,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.HorarioDisponivelCenario;
+import com.gapso.trieda.domain.DisponibilidadeProfessor;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
-import com.ibm.icu.util.Calendar;
 
 @ProgressDeclarationAnnotation
 public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel {
@@ -95,8 +95,11 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 			int nextRow = this.initialRow;
 
 			for (Professor professor : professores) {
-				for (HorarioDisponivelCenario hdc : professor.getHorarios()) {
-					nextRow = writeData(professor, hdc, nextRow);
+				for (DisponibilidadeProfessor disp : professor.getDisponibilidades()) {
+					for (Semanas diaSemana : disp.getDiasSemana())
+					{
+					nextRow = writeData(professor, disp, diaSemana, nextRow);
+					}
 				}
 			}
 
@@ -106,7 +109,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 		return false;
 	}
 
-	private int writeData(Professor professor, HorarioDisponivelCenario hdc, int row) {
+	private int writeData(Professor professor, DisponibilidadeProfessor disp, Semanas diaSemana, int row) {
 		
 		if (isXls()){
 			Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
@@ -119,16 +122,13 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 		// CPF
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],professor.getCpf());
 		// Dia
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],hdc.getDiaSemana().name());
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],diaSemana.name());
 
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		// Horário Inicial
-		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sdf.format(hdc.getHorarioAula().getHorario()));
+		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sdf.format(disp.getHorarioInicio()));
 		// Horário Final
-		Calendar horarioFinal = Calendar.getInstance();
-		horarioFinal.setTime(hdc.getHorarioAula().getHorario());
-		horarioFinal.add(Calendar.MINUTE,hdc.getHorarioAula().getSemanaLetiva().getTempo());
-		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sdf.format(horarioFinal.getTime()));
+		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sdf.format(disp.getHorarioFim()));
 
 		row++;
 		return row;

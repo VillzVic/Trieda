@@ -430,7 +430,7 @@ public class ProfessoresImportExcel
 				newProfessor.setMaxDiasSemana( professorExcel.getMaxDiasSemana() );
 				newProfessor.setMinCreditosDia( professorExcel.getMinCreditosDia() );
 
-				newProfessor.persist();
+				newProfessor.persistAndPreencheHorarios();
 				persistedProfessores.add(newProfessor);
 			}
 			

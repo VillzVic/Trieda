@@ -1,8 +1,7 @@
 package com.gapso.web.trieda.server.util;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,6 +28,7 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Disponibilidade;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.Fixacao;
@@ -51,8 +51,6 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Semanas;
-import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileWriter;
-import com.gapso.web.trieda.server.util.progressReport.ProgressReportListWriter;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunos;
@@ -129,6 +127,7 @@ import com.gapso.web.trieda.server.xml.input.ItemTurno;
 import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
+import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
 
@@ -166,7 +165,6 @@ public class SolverInput
 
 		// Está sendo enviado apenas um campus nessa lista
 		this.campi = new ArrayList< Campus >();
-
 		for ( Campus c : listCampi )
 		{
 			if ( c.getInstituicaoEnsino() == instituicaoEnsino )
@@ -174,12 +172,10 @@ public class SolverInput
 				this.campi.add( c );
 			}
 		}
-
 		this.of = new ObjectFactory();
 		this.triedaInput = of.createTriedaInput();
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
-
 		long start = System.currentTimeMillis(); // TODO: retirar
 		this.preencheMapHorarios();
 		long time = (System.currentTimeMillis() - start)/1000;System.out.println("preencheMapHorarios tempo = " + time + " segundos"); // TODO: retirar
@@ -243,15 +239,72 @@ public class SolverInput
 		this.horariosDisciplinas = new HashMap< Disciplina, Set< HorarioDisponivelCenario > >();
 		this.horariosProfessores = new HashMap< Professor, Set< HorarioDisponivelCenario > >();
 		this.horariosFixacoes = new HashMap< Fixacao, Set< HorarioDisponivelCenario > >();
+		
+		Map<Campus, List<Disponibilidade>> campusMapDisponibilidade = new HashMap<Campus, List<Disponibilidade>>();
+		Map<Unidade, List<Disponibilidade>> unidadeMapDisponibilidade = new HashMap<Unidade, List<Disponibilidade>>();
+		Map<Sala, List<Disponibilidade>> salaMapDisponibilidade = new HashMap<Sala, List<Disponibilidade>>();
+		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = new HashMap<Professor, List<Disponibilidade>>();
+		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisponibilidade = new HashMap<Disciplina, List<Disponibilidade>>();
+		
+		for ( Campus campus : Campus.findByCenario(instituicaoEnsino, cenario) )
+		{
+			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, campus.getId(), DisponibilidadeDTO.CAMPUS);
+			
+			campusMapDisponibilidade.put(campus, new ArrayList<Disponibilidade>());
+			for ( Disponibilidade disponibilidade : disponibilidades )
+			{
+				campusMapDisponibilidade.get(campus).add(disponibilidade);
+			}
+		}
+		
+		for ( Unidade unidade : Unidade.findByCenario(instituicaoEnsino, cenario) )
+		{
+			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, unidade.getId(), DisponibilidadeDTO.UNIDADE);
+			unidadeMapDisponibilidade.put(unidade, new ArrayList<Disponibilidade>());
+			for ( Disponibilidade disponibilidade : disponibilidades )
+			{
+				unidadeMapDisponibilidade.get(unidade).add(disponibilidade);
+			}
+		}
 
+		for ( Sala sala : Sala.findByCenario(instituicaoEnsino, cenario) )
+		{
+			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, sala.getId(), DisponibilidadeDTO.SALA);
+			salaMapDisponibilidade.put(sala, new ArrayList<Disponibilidade>());
+			for ( Disponibilidade disponibilidade : disponibilidades )
+			{
+				salaMapDisponibilidade.get(sala).add(disponibilidade);
+			}
+		}
+		
+		for ( Disciplina disciplina : Disciplina.findByCenario(instituicaoEnsino, cenario) )
+		{
+			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, disciplina.getId(), DisponibilidadeDTO.DISCIPLINA);
+			disciplinaMapDisponibilidade.put(disciplina, new ArrayList<Disponibilidade>());
+			for ( Disponibilidade disponibilidade : disponibilidades )
+			{
+				disciplinaMapDisponibilidade.get(disciplina).add(disponibilidade);
+			}
+		}
+		
+		for ( Professor professor : Professor.findByCenario(instituicaoEnsino, cenario) )
+		{
+			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, professor.getId(), DisponibilidadeDTO.PROFESSOR);
+			professorMapDisponibilidade.put(professor, new ArrayList<Disponibilidade>());
+			for ( Disponibilidade disponibilidade : disponibilidades )
+			{
+				professorMapDisponibilidade.get(professor).add(disponibilidade);
+			}
+		}
+		
+		
 		this.todosHorarioDisponivelCenario
 			= HorarioDisponivelCenario.findAll( this.instituicaoEnsino, cenario );
-
 		for (HorarioDisponivelCenario hdc : this.todosHorarioDisponivelCenario) {
 			// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
 			SemanaLetiva semanaLetivaDeHDC = hdc.getHorarioAula().getSemanaLetiva();
 			
-			for ( Campus campus : hdc.getCampi() )
+			for ( Campus campus : campusMapDisponibilidade.keySet() )
 			{
 				Set< HorarioDisponivelCenario > horarios
 					= this.horariosCampus.get( campus );
@@ -262,10 +315,15 @@ public class SolverInput
 					this.horariosCampus.put( campus, horarios );
 				}
 
-				horarios.add( hdc );
+				for ( Disponibilidade disponibilidade : campusMapDisponibilidade.get(campus) )
+				{
+					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					{
+						horarios.add( hdc );
+					}
+				}
 			}
-
-			for ( Unidade unidade : hdc.getUnidades() )
+			for ( Unidade unidade : unidadeMapDisponibilidade.keySet() )
 			{
 				Set< HorarioDisponivelCenario > horarios
 					= this.horariosUnidades.get( unidade );
@@ -276,10 +334,15 @@ public class SolverInput
 					this.horariosUnidades.put( unidade, horarios ); 
 				}
 
-				horarios.add( hdc );
+				for ( Disponibilidade disponibilidade : unidadeMapDisponibilidade.get(unidade) )
+				{
+					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					{
+						horarios.add( hdc );
+					}
+				}
 			}
-
-			for ( Sala sala : hdc.getSalas() )
+			for ( Sala sala : salaMapDisponibilidade.keySet() )
 			{
 				Set< HorarioDisponivelCenario > horarios
 					= this.horariosSalas.get( sala );
@@ -290,10 +353,15 @@ public class SolverInput
 					this.horariosSalas.put( sala, horarios ); 
 				}
 
-				horarios.add( hdc );
+				for ( Disponibilidade disponibilidade : salaMapDisponibilidade.get(sala) )
+				{
+					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					{
+						horarios.add( hdc );
+					}
+				}
 			}
-
-			for ( Disciplina disciplina : hdc.getDisciplinas() )
+			for ( Disciplina disciplina : disciplinaMapDisponibilidade.keySet() )
 			{
 				Set< HorarioDisponivelCenario > horarios
 					= this.horariosDisciplinas.get( disciplina );
@@ -303,14 +371,20 @@ public class SolverInput
 					horarios = new HashSet< HorarioDisponivelCenario >();
 					this.horariosDisciplinas.put( disciplina, horarios ); 
 				}
-				 
-				// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
-				if (disciplina.getSemanasLetivas().isEmpty() || disciplina.getSemanasLetivas().contains(semanaLetivaDeHDC)) {
-					horarios.add( hdc );
+				
+				for ( Disponibilidade disponibilidade : disciplinaMapDisponibilidade.get(disciplina) )
+				{
+					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					{
+						// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
+						if (disciplina.getSemanasLetivas().isEmpty() || disciplina.getSemanasLetivas().contains(semanaLetivaDeHDC)) {
+							horarios.add( hdc );
+						}
+					}
+						
 				}
 			}
-
-			for ( Professor professor : hdc.getProfessores() )
+			for ( Professor professor : professorMapDisponibilidade.keySet() )
 			{
 				Set< HorarioDisponivelCenario > horarios
 					= this.horariosProfessores.get( professor );
@@ -321,9 +395,14 @@ public class SolverInput
 					this.horariosProfessores.put( professor, horarios ); 
 				}
 
-				horarios.add( hdc );
+				for ( Disponibilidade disponibilidade : professorMapDisponibilidade.get(professor) )
+				{
+					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					{
+						horarios.add( hdc );
+					}
+				}
 			}
-
 			for ( Fixacao fixacao : hdc.getFixacoes() )
 			{
 				Set< HorarioDisponivelCenario > horarios
@@ -338,6 +417,29 @@ public class SolverInput
 				horarios.add( hdc );
 			}
 		}
+	}
+
+	private boolean checkHorarioDisponivelCenarioDisponvivel(
+			HorarioDisponivelCenario hdc, Disponibilidade disponibilidade) {
+
+		Calendar horaInicio = Calendar.getInstance();
+		horaInicio.setTime(disponibilidade.getHorarioInicio());
+		horaInicio.set(1979,Calendar.NOVEMBER,6);
+		
+		Calendar horaFim = Calendar.getInstance();
+		horaFim.setTime(disponibilidade.getHorarioFim());
+		horaFim.set(1979,Calendar.NOVEMBER,6);
+		
+		Calendar oHoraInicio = Calendar.getInstance();
+		oHoraInicio.setTime(hdc.getHorarioAula().getHorario());
+		oHoraInicio.set(1979,Calendar.NOVEMBER,6);
+		
+		Calendar oHoraFim = Calendar.getInstance();
+		oHoraFim.setTime(hdc.getHorarioAula().getHorario());
+		oHoraFim.set(1979,Calendar.NOVEMBER,6);
+		oHoraFim.add(Calendar.MINUTE,hdc.getHorarioAula().getSemanaLetiva().getTempo());
+
+		return (horaInicio.compareTo(oHoraInicio) <= 0 && horaFim.compareTo(oHoraFim) >= 0 );
 	}
 
 	public List< String > getErrors()

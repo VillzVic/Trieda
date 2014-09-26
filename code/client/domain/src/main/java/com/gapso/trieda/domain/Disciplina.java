@@ -2,10 +2,15 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -133,9 +138,9 @@ public class Disciplina
 	@Max( 999L )
 	private Integer cargaHoraria;
 
-	@ManyToMany( cascade = { CascadeType.PERSIST,
+/*	@ManyToMany( cascade = { CascadeType.PERSIST,
 		CascadeType.MERGE }, mappedBy = "disciplinas" )
-	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
+	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();*/
 
 	@NotNull
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
@@ -170,6 +175,9 @@ public class Disciplina
 	
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
 	private Set< Turma > turmas = new HashSet< Turma >();
+	
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "DisponibilidadeDisciplina" )
+	private Set< DisponibilidadeDisciplina > disponibilidades = new HashSet< DisponibilidadeDisciplina >();
 
 	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 		CascadeType.REFRESH }, mappedBy="disciplinas" )
@@ -223,8 +231,6 @@ public class Disciplina
 		sb.append( "UsaSabado: ").append( getUsaSabado() ).append( ", " );
 		sb.append( "UsaDomingo: ").append( getUsaDomingo() ).append( ", " );
 		sb.append( "CargaHoraria: ").append( getCargaHoraria() ).append( ", " );
-		sb.append( "Horarios: " ).append( getHorarios() == null ?
-			"null" : getHorarios().size() ).append( ", " );
 		sb.append( "Professores: " ).append( getProfessores() == null ?
 			"null" : getProfessores().size() ).append( ", "  );
 		sb.append( "Incompatibilidades: " ).append( getIncompatibilidades() == null ?
@@ -384,7 +390,7 @@ public class Disciplina
 			}
 		}
 		
-		for (SemanaLetiva semanaLetiva : semanasLetivas) {
+/*		for (SemanaLetiva semanaLetiva : semanasLetivas) {
 			for (HorarioAula horarioAula : mapSemanaLetivaHorarioAula.get(semanaLetiva)) {
 				for (HorarioDisponivelCenario hdc : mapHorarioAulaHorarioDisponivel.get(horarioAula)) {
 					//Remove as disciplinas para atualizar os horarios
@@ -413,45 +419,206 @@ public class Disciplina
 					count++;if (count == 100) {System.out.println("   100 horários de disciplinas processadas"); count = 0;}
 				}
 			}
-		}
+		}*/
+	}
+	
+	@Transactional
+	public void preencheHorarios()
+	{
+		preencheHorarios(new HashSet<SemanaLetiva>());
 	}
 
 	@Transactional
-	public void preencheHorarios()
+	public void preencheHorarios(Set<SemanaLetiva> semanas)
 	{
 		InstituicaoEnsino instituicaoEnsino
 			= this.getTipoDisciplina().getInstituicaoEnsino();
 
-		List< SemanaLetiva > listDomains
-			= SemanaLetiva.findByCenario( instituicaoEnsino, this.getCenario() );
+		Set< SemanaLetiva > listDomains = semanas;
+		if (semanas.isEmpty())
+		{
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario( instituicaoEnsino, this.getCenario() );
+			listDomains.addAll(semanasLetivas);
+		}
 
+		//Cria estrutura de dados inicial com mapeamento de horarios de todas as semanas letivas para cada dia da semana
+		Map<Semanas, Map<Date, Integer>> diaSemanaMapHorarioInicioMapHorarioFim = new HashMap<Semanas, Map<Date, Integer>>();
 		for ( SemanaLetiva semanaLetiva : listDomains )
 		{
-			for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
+			for ( HorarioAula ha : semanaLetiva.getHorariosAula() )
 			{
-				for ( HorarioDisponivelCenario hdc
-					: horarioAula.getHorariosDisponiveisCenario() )
+				for ( HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario() )
 				{
-					hdc.getDisciplinas().remove( this );
-					if ( hdc.getDiaSemana() == Semanas.SAB )
+					if (diaSemanaMapHorarioInicioMapHorarioFim.get(hdc.getDiaSemana()) == null)
 					{
-						if ( this.getUsaSabado() ) {
-							hdc.getDisciplinas().add( this );
-						}
-					}
-					else if ( hdc.getDiaSemana() == Semanas.DOM )
-					{
-						if ( this.getUsaDomingo() ) {
-							hdc.getDisciplinas().add( this );
-						}
+						Map<Date, Integer> horaInicioMapHoraFim = new HashMap<Date, Integer>();
+						horaInicioMapHoraFim.put(ha.getHorario(), semanaLetiva.getTempo());
+						diaSemanaMapHorarioInicioMapHorarioFim.put(hdc.getDiaSemana(), horaInicioMapHoraFim);
 					}
 					else
 					{
-						hdc.getDisciplinas().add( this );
+						if (diaSemanaMapHorarioInicioMapHorarioFim.get(hdc.getDiaSemana()).keySet().contains(ha.getHorario()))
+						{
+							if (diaSemanaMapHorarioInicioMapHorarioFim.get(hdc.getDiaSemana()).get(ha.getHorario()) < semanaLetiva.getTempo())
+								diaSemanaMapHorarioInicioMapHorarioFim.get(hdc.getDiaSemana()).put(ha.getHorario(), semanaLetiva.getTempo());
+						}
+						else
+						{
+							diaSemanaMapHorarioInicioMapHorarioFim.get(hdc.getDiaSemana()).put(ha.getHorario(), semanaLetiva.getTempo());
+						}
 					}
 				}
 			}
 		}
+		//Cria a segunda estrutura de dados com os horarios concatenados para cada dia da semana
+		Map<Semanas, Map<Date, Date>> diaSemanaMapHorarioInicioMapHorarioFimConcatenado = new HashMap<Semanas, Map<Date, Date>>();
+		Set<Date> todosHorarios = new HashSet<Date>();
+		for (Semanas diaSemana : diaSemanaMapHorarioInicioMapHorarioFim.keySet())
+		{
+			Map<Date, Date> horarioInicioHorarioFimMap = new HashMap<Date, Date>();
+			List<Date> horariosOrdenados = new ArrayList<Date>();
+			horariosOrdenados.addAll(diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).keySet());
+			Collections.sort(horariosOrdenados);
+			
+			Date primeiroHorario = horariosOrdenados.get(0);
+			Calendar horaFim = Calendar.getInstance();
+			horaFim.setTime(horariosOrdenados.get(0));
+			horaFim.set(1979,Calendar.NOVEMBER,6);
+			horaFim.add(Calendar.MINUTE,diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).get(horariosOrdenados.get(0)));
+			for (int i = 1; i < horariosOrdenados.size(); i++)
+			{
+				Calendar horaInicio = Calendar.getInstance();
+				horaInicio.setTime(horariosOrdenados.get(i));
+				horaInicio.set(1979,Calendar.NOVEMBER,6);
+				
+				if (horaFim.compareTo(horaInicio) >= 0)
+				{
+					horaFim.setTime(horariosOrdenados.get(i));
+					horaFim.set(1979,Calendar.NOVEMBER,6);
+					horaFim.add(Calendar.MINUTE,diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).get(horariosOrdenados.get(i)));
+				}
+				else
+				{
+					horarioInicioHorarioFimMap.put(primeiroHorario, horaFim.getTime());
+					primeiroHorario = horariosOrdenados.get(i);
+					horaFim = Calendar.getInstance();
+					horaFim.setTime(horariosOrdenados.get(i));
+					horaFim.set(1979,Calendar.NOVEMBER,6);
+					horaFim.add(Calendar.MINUTE,diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).get(horariosOrdenados.get(i)));
+				}
+			}
+			horarioInicioHorarioFimMap.put(primeiroHorario, horaFim.getTime());
+			todosHorarios.addAll(horarioInicioHorarioFimMap.values());
+			todosHorarios.addAll(horarioInicioHorarioFimMap.keySet());
+			diaSemanaMapHorarioInicioMapHorarioFimConcatenado.put(diaSemana, horarioInicioHorarioFimMap);
+		}
+		
+		//Cria a ultima estrutura de dados juntando os dias da semana. Para juntar os dias da semana os horarios concatenados
+		//deverao ser quebrados caso exista diferenca entre os dias da semana
+		List<Date> todosHorariosOrdenados = new ArrayList<Date>();
+		todosHorariosOrdenados.addAll(todosHorarios);
+		Collections.sort(todosHorariosOrdenados, new Comparator<Date>() {
+		    public int compare(Date o1, Date o2) {
+				Calendar horaInicio = Calendar.getInstance();
+				horaInicio.setTime(o1);
+				horaInicio.set(1979,Calendar.NOVEMBER,6);
+		    	
+				Calendar horaFim = Calendar.getInstance();
+				horaFim.setTime(o2);
+				horaFim.set(1979,Calendar.NOVEMBER,6);
+				
+				return horaInicio.compareTo(horaFim);
+		    }
+		});
+		for (int i = 1; i < todosHorariosOrdenados.size() ; i++)
+		{
+			DisponibilidadeDisciplina disponibilidade = new DisponibilidadeDisciplina();
+			disponibilidade.setHorarioInicio(todosHorariosOrdenados.get(i-1));
+			disponibilidade.setHorarioFim(todosHorariosOrdenados.get(i));
+			disponibilidade.setDisciplina(this);
+			disponibilidade.setDisciplina(this);
+			disponibilidade.setSegunda(false);
+			disponibilidade.setTerca(false);
+			disponibilidade.setQuarta(false);
+			disponibilidade.setQuinta(false);
+			disponibilidade.setSexta(false);
+			disponibilidade.setSabado(false);
+			disponibilidade.setDomingo(false);
+			boolean nenhumaDisponibilidade = true;
+			for (Semanas diaSemana : Semanas.values())
+			{
+				if (estaContidoEm(
+						todosHorariosOrdenados.get(i-1), todosHorariosOrdenados.get(i), diaSemanaMapHorarioInicioMapHorarioFimConcatenado.get(diaSemana)))
+				{
+					switch(diaSemana)
+					{
+					case SEG:
+						disponibilidade.setSegunda(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case TER:
+						disponibilidade.setTerca(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case QUA:
+						disponibilidade.setQuarta(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case QUI:
+						disponibilidade.setQuinta(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case SEX:
+						disponibilidade.setSexta(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case SAB:
+						disponibilidade.setSabado(this.getUsaSabado());
+						if (this.getUsaSabado())
+							nenhumaDisponibilidade = false;
+						break;
+					case DOM:
+						disponibilidade.setDomingo(this.getUsaDomingo());
+						if (this.getUsaDomingo())
+							nenhumaDisponibilidade = false;
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			if (!nenhumaDisponibilidade)
+				disponibilidade.persist();
+		}
+	}
+
+	private boolean estaContidoEm(Date inicio, Date fim,
+			Map<Date, Date> horarioInicioMapHorarioFim) {
+		
+		boolean estaContido = false;
+		Calendar horaInicio = Calendar.getInstance();
+		horaInicio.setTime(inicio);
+		horaInicio.set(1979,Calendar.NOVEMBER,6);
+    	
+		Calendar horaFim = Calendar.getInstance();
+		horaFim.setTime(fim);
+		horaFim.set(1979,Calendar.NOVEMBER,6);
+		if (horarioInicioMapHorarioFim == null) return false;
+		for (Entry<Date, Date> horarios : horarioInicioMapHorarioFim.entrySet())
+		{
+			Calendar dispInicio = Calendar.getInstance();
+			dispInicio.setTime(horarios.getKey());
+			dispInicio.set(1979,Calendar.NOVEMBER,6);
+	    	
+			Calendar dispFim = Calendar.getInstance();
+			dispFim.setTime(horarios.getValue());
+			dispFim.set(1979,Calendar.NOVEMBER,6);
+			if (dispInicio.compareTo(horaInicio) <= 0 && dispFim.compareTo(horaFim) >= 0)
+			{
+				estaContido = true;
+			}
+		}
+		return estaContido;
 	}
 
 	@Transactional
@@ -466,7 +633,6 @@ public class Disciplina
 		{
 			this.removeDisciplinasAssociadasProfessor( this );
 			this.removeProfessoresVirtuais();
-			this.removeHorariosDisponivelCenario();
 			this.removeEliminadasPor();
 
 			this.entityManager.remove( this );
@@ -480,7 +646,6 @@ public class Disciplina
 			{
 				this.removeDisciplinasAssociadasProfessor( attached );
 				attached.removeProfessoresVirtuais();
-				attached.removeHorariosDisponivelCenario();
 				attached.removeEliminadasPor();
 
 				this.entityManager.remove( attached );
@@ -524,18 +689,6 @@ public class Disciplina
 		Set< ProfessorVirtual > professoresVirtuais )
 	{
 		this.professoresVirtuais = professoresVirtuais;
-	}
-
-	@Transactional
-	public void removeHorariosDisponivelCenario()
-	{
-		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
-
-		for ( HorarioDisponivelCenario horario : horarios )
-		{
-			horario.getDisciplinas().remove( this );
-			horario.merge();
-		}
 	}
 
 	@Transactional
@@ -1403,7 +1556,7 @@ public class Disciplina
 		this.cargaHoraria = cargaHoraria;
 	}
 
-	private Set< HorarioDisponivelCenario > getHorarios()
+/*	private Set< HorarioDisponivelCenario > getHorarios()
 	{
 		return this.horarios;
 	}
@@ -1411,7 +1564,7 @@ public class Disciplina
 	public void setHorarios( Set< HorarioDisponivelCenario > horarios )
 	{
 		this.horarios = horarios;
-	}
+	}*/
 
 	public Set< ProfessorDisciplina > getProfessores()
 	{
@@ -1578,26 +1731,6 @@ public class Disciplina
 		int totalCreditos = this.getCreditosTeorico() + this.getCreditosPratico(); 
 		return this.getTipoDisciplina().ocupaGrade() && totalCreditos > 0;
 	}
-	
-	public boolean usaSabado(){
-		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
-		for ( HorarioDisponivelCenario horario : horarios ) {
-			if (horario.getDiaSemana() == Semanas.SAB) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean usaDomingo(){
-		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
-		for ( HorarioDisponivelCenario horario : horarios ) {
-			if (horario.getDiaSemana() == Semanas.DOM) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List<Disciplina> findByProfessor( InstituicaoEnsino instituicaoEnsino, Professor professor ) {
@@ -1649,11 +1782,6 @@ public class Disciplina
 		{
 			entidadeClone.setDivisaoCreditos(novoCenario.clone(this.getDivisaoCreditos()));
 		}
-		for (HorarioDisponivelCenario horarioDisponivel : this.getHorarios())
-		{
-			entidadeClone.getHorarios().add(novoCenario.getEntidadeClonada(horarioDisponivel));
-			novoCenario.getEntidadeClonada(horarioDisponivel).getDisciplinas().add(entidadeClone);
-		}
 		
 		for (GrupoSala grupoSala : this.getGruposSala())
 		{
@@ -1666,5 +1794,29 @@ public class Disciplina
 			entidadeClone.getSalas().add(novoCenario.getEntidadeClonada(sala));
 			novoCenario.getEntidadeClonada(sala).getDisciplinas().add(entidadeClone);
 		}
+	}
+
+	public Set< DisponibilidadeDisciplina > getDisponibilidades() {
+		return disponibilidades;
+	}
+
+	public void setDisponibilidades(Set< DisponibilidadeDisciplina > disponibilidades) {
+		this.disponibilidades = disponibilidades;
+	}
+
+	@Transactional
+	public static void atualizaDisponibilidadesDisciplinas(
+			Map<Disciplina, Set<SemanaLetiva>> disciplinaMapSemanasLetivas, Cenario cenario) {
+		
+		for (Entry<Disciplina, Set<SemanaLetiva>> disciplinas : disciplinaMapSemanasLetivas.entrySet())
+		{
+			for (Disponibilidade disponibilidade : Disponibilidade.findBy(cenario, disciplinas.getKey().getId(), "DisponibilidadeDisciplina"))
+			{
+				disponibilidade.remove();
+			}
+			disciplinas.getKey().getDisponibilidades().clear();
+			disciplinas.getKey().preencheHorarios(disciplinas.getValue());
+		}
+		
 	}
 }

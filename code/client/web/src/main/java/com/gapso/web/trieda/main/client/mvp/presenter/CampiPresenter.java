@@ -16,11 +16,13 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
+import com.gapso.web.trieda.main.client.mvp.view.DisponibilidadesFormView;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelCampusFormView;
 import com.gapso.web.trieda.main.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -272,8 +274,14 @@ public class CampiPresenter
 				{
 					final CampusDTO campusDTO
 						= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+					
+					Presenter presenter = new DisponibilidadesFormPresenter(
+						instituicaoEnsinoDTO, cenario, campusDTO.getId(), 
+						new DisponibilidadesFormView( cenario, campusDTO.getId(), DisponibilidadeDTO.CAMPUS, campusDTO.getCodigo() ) );
 
-					Services.campi().getHorariosDisponiveis( campusDTO,
+					presenter.go( null );
+
+			/*		Services.campi().getHorariosDisponiveis( campusDTO,
 						new AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
 						{
 							@Override
@@ -293,7 +301,7 @@ public class CampiPresenter
 
 								presenter.go( null );
 							}
-						});
+						});*/
 				}
 			});
 

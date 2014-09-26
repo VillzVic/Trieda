@@ -32,6 +32,7 @@ public class Services
 	private static final String INSTITUICAO_ENSINO = "instituicaoEnsino";
 	private static final String ALUNOS_DEMANDA = "alunosDemanda";
 	private static final String ALUNOS = "alunos";
+	private static final String DISPONIBILIDADES = "disponibilidades";
 	private static final String PROGRESSREPORT = "progressReport";
 
 	public static OtimizarServiceAsync otimizar()
@@ -357,6 +358,18 @@ public class Services
 		{
 			service = GWT.create( AlunosService.class );
 			Registry.register( ALUNOS, service );
+		}
+
+		return service;
+	}
+	
+	public static DisponibilidadesServiceAsync disponibilidades()
+	{
+		DisponibilidadesServiceAsync service = (DisponibilidadesServiceAsync) Registry.get( DISPONIBILIDADES );
+		if ( service == null )
+		{
+			service = GWT.create( DisponibilidadesService.class );
+			Registry.register( DISPONIBILIDADES, service );
 		}
 
 		return service;
