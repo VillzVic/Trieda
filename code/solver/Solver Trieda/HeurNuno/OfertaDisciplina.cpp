@@ -2031,17 +2031,17 @@ bool OfertaDisciplina::compOfDiscIII(OfertaDisciplina* const ofertaUm, OfertaDis
 // nr demandas não atendidas P1 orig >> nr creditos >> valor demandas nao atend
 bool OfertaDisciplina::compOfDiscIV(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade)
 {
-	// prioridade a oferta com mais demandas p1 (s/equiv)
+	// prioridade à oferta com mais demandas p1 (s/equiv)
 	int diff = ofertaUm->getNrDemandasNaoAtend(prioridade) - ofertaDois->getNrDemandasNaoAtend(prioridade);
 	if(diff != 0)
 		return diff > 0;
 
-	// prioridade a oferta com mais demandas p1 (c/equiv)
+	// prioridade à oferta com mais demandas p1 (c/equiv)
 	diff = ofertaUm->getNrDemandasNaoAtend(prioridade, true) - ofertaDois->getNrDemandasNaoAtend(prioridade, true);
 	if(diff != 0)
 		return diff > 0;
 
-	// dar prioridade a disciplinas com mais creditos
+	// dar prioridade às disciplinas com mais creditos
 	diff = ofertaUm->getNrCreds() - ofertaDois->getNrCreds();
 	if(diff != 0)
 		return diff > 0;

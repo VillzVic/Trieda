@@ -122,7 +122,7 @@ private:
 	void geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const ConjUnidades* const clusterUnid, Calendario * const calendario, 
 							bool teorico, unordered_map<int, AulaHeur*> const &aulas,  unordered_set<AlunoHeur*> const &alunosDisp,
 							unordered_set<SalaHeur*> const &salasDisp, unordered_set<ProfessorHeur*> const &profsDisp,
-							bool algumProfPotencial, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
+							bool &algumProfPotencial, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
 							const bool componenteSec, bool checkProfs = false);
 
 	// [ESCOLHA DE TURMA POTENCIAL]

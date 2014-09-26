@@ -554,7 +554,9 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 					int nrSimult = nrTurmasSimultaneasDisc_(disciplina, dia, aula) + 1;
 					int nrProfsAssoc = nrProfsAssociadosHorario(ofertaDisc, dia, aula);
 					if(nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
+					{
 						continue;
+					}
 				}
 
 				// set aula
@@ -777,7 +779,7 @@ void AbridorTurmas::geraTurmasDivisaoRecHeap_(OfertaDisciplina* const &ofertaDis
 void AbridorTurmas::geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const ConjUnidades* const clusterUnid, Calendario * const calendario, 
 							bool teorico, unordered_map<int, AulaHeur*> const &aulas,  unordered_set<AlunoHeur*> const &alunosDisp,
 							unordered_set<SalaHeur*> const &salasDisp, unordered_set<ProfessorHeur*> const &profsDisp,
-							bool algumProfPotencial, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
+							bool &algumProfPotencial, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
 							const bool componenteSec, bool checkProfs)
 {
 	AbridorTurmas::nrGeraUnids_++;

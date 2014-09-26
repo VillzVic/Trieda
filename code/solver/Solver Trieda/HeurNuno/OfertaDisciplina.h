@@ -311,7 +311,8 @@ public:
 		if(frstTipos != scdTipos)
 			return frstTipos > scdTipos;*/
 
-		return false;
+		return (globalId_ < outra.getGlobalId());
+		//return false;
 	}
 
 private:

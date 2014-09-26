@@ -20,6 +20,9 @@ using std::stringstream;
 #endif
 
 
+#define DEFAULT_MIP_UNICO
+
+
 CmdLine::CmdLine( int argc, char**& argv) : argc_ (argc), argv_ (argv)
 {}
 
@@ -209,9 +212,17 @@ bool CmdLine::findInputId(int &inputId)
 // verifica se a heuristica deve ser executada de raíz e se foi fornecido algum parametro para o limite minimo de receita credito
 bool CmdLine::checkExecHeuristica()
 {
-	int idx = findArg( "-notHeurn" );
+#ifdef DEFAULT_MIP_UNICO				// default mip único
+	int idx = findArg( "-heurn" );
+	bool found = (idx >= 0) && (idx < argc_);
+	bool execHeur = found;				// encontrada '-heurn' -> executa heurística
+#else									// default heuristica
+	int idx = findArg( "-mip" );
+	bool found = (idx >= 0) && (idx < argc_);
+	bool execHeur = !found;				// não encontrada '-notHeurn' -> executa heurística
+#endif	
 	
-	return (idx < 0) || (idx >= argc_);	// não encontrada 'notHeurn' -> executa heurística
+	return (execHeur);
 }
 
 // verifica os argumentos da heuristica

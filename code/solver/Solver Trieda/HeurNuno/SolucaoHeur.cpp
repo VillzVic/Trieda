@@ -444,7 +444,7 @@ void SolucaoHeur::desalocarAlunosRandom(int perc)
 	}
 }
 
-// eh melhor?
+// this eh melhor que a solucao comparada?
 bool SolucaoHeur::ehMelhor(SolucaoHeur* const solucao) const
 {
 	// recalcular stats
@@ -461,13 +461,13 @@ bool SolucaoHeur::ehMelhor(SolucaoHeur* const solucao) const
 	if(diff != 0)
 		return diff > 0;
 
-	// créditos professores
-	diff = stats_->nrCreditosProfessores_ - solucao->nrCreditosProf();
+	// créditos professores virtuais
+	diff = stats_->nrCreditosProfsVirtuais_ - solucao->nrCreditosProfVirtual();
 	if(diff != 0)
 		return diff < 0;
 
-	// créditos professores virtuais
-	diff = stats_->nrCreditosProfsVirtuais_ - solucao->nrCreditosProfVirtual();
+	// créditos professores
+	diff = stats_->nrCreditosProfessores_ - solucao->nrCreditosProf();
 	if(diff != 0)
 		return diff < 0;
 

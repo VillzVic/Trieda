@@ -54,10 +54,14 @@ int main( int argc, char** argv )
 {
     printIESDefine();
    	
+    // -----------------------------------------------------------
+	// Inicia a contagem de tempo
 	CPUTimer timer;
 	double tempoSec;
 	startTimer(timer,tempoSec);
-
+	
+    // -----------------------------------------------------------
+	// Abre arquivo de log
 	ofstream outTestFile;
 	if ( !openMainLogFile(outTestFile) )
 		return (EXIT_FAILURE);
@@ -76,6 +80,7 @@ int main( int argc, char** argv )
 	cmd->init();
 	
    // -----------------------------------------------------------
+   // Seta os argumentos lidos da linha de comando
    int inputId;
    char path[ 1024 ];
    char inputFile[ 1024 ];
@@ -89,6 +94,7 @@ int main( int argc, char** argv )
    cmd->getOutputName(outputFile);   
    
    // -----------------------------------------------------------
+   // Inicializa problem-data
    ProblemData* data = new ProblemData( argv[1], inputId );
    CentroDados::setProblemData(data);
 
@@ -96,10 +102,12 @@ int main( int argc, char** argv )
    CentroDados::openFilesWarnError();
    
    // -----------------------------------------------------------
+   // Inicializa arquivos de indicadores do solver
    Indicadores::setIndicadorFileName( argv[1], inputId );
    Indicadores::printSeparator(4);
 
    // -----------------------------------------------------------
+   // Inicializa e lê os dados do problema
    outTestFile << "dataLoader constructor..." <<endl;
    ProblemDataLoader * dataLoader;
    dataLoader = new ProblemDataLoader( inputFile, data );
@@ -107,13 +115,12 @@ int main( int argc, char** argv )
   
    // -----------------------------------------------------------
    ProblemSolution* solution=nullptr;
-
    dtOutput.solution = solution;
    strcpy( dtOutput.outputFile, outputFile );
    strcpy( dtOutput.tempOutput, tempOutput );
    
    // -----------------------------------------------------------
-   
+   // Chama o solver, heurística ou MIP Unico, de acordo com a linha de comando
    int statusOtimz = 0;
    int tipoSolver = cmd->getTipoSolver();
 
@@ -131,6 +138,7 @@ int main( int argc, char** argv )
    }
    
    // -----------------------------------------------------------
+   // Imprime o output
    bool error;
    if ( statusOtimz )
    {	   
@@ -144,10 +152,11 @@ int main( int argc, char** argv )
    else error = true;
 
    // -----------------------------------------------------------
-
+   // Limpa dados
    clearData( solution, data, dataLoader );
    
    // -----------------------------------------------------------
+   // Interrompe a contagem de tempo
    int hours, min, sec;
    stopTimer( timer, tempoSec, hours, min, sec );
 
@@ -155,7 +164,7 @@ int main( int argc, char** argv )
    std::cout << "\nTotal elapsed time: " << hours << "h" << min << "'" << sec << "''" << endl << endl;
    
    // -----------------------------------------------------------
-
+   // Fecha arquivo de teste
    	outTestFile << "Finished!" <<endl;
 	outTestFile.close();
 
@@ -238,6 +247,7 @@ void seed()
    }
 }
 
+// Configurações do solver antigo
 void printIESDefine()
 {
 #ifdef TESTE

@@ -410,7 +410,7 @@ void ImproveMethods::tryAlocNaoAtendSemRealoc(SolucaoHeur* const solucao, Oferta
 	if(alunosNA.size() == 0)
 		return;
 
-	// verificar a disponibilidade para turmas principais
+	// Recupera turmas principais
 	auto turmasPrincipais = ofertaDisc->getTurmasPrincipal();
 	unordered_set<TurmaHeur*> turmasPrinc;
 	for(auto it = turmasPrincipais.cbegin(); it != turmasPrincipais.cend(); ++it)
@@ -421,7 +421,7 @@ void ImproveMethods::tryAlocNaoAtendSemRealoc(SolucaoHeur* const solucao, Oferta
 		return;
 	}
 
-	// verificar disponibilidade
+	// verificar disponibilidade para turmas principais
 	unordered_map<TurmaHeur*, int> dispTurma;
 	unordered_map<AlunoHeur*, unordered_set<TurmaHeur*>> alunosTurmaNA;	
 	// try alocar na turma principal
