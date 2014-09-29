@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -51,7 +53,7 @@ public class DisponibilidadeCampus extends Disponibilidade implements Serializab
 		return "DisponibilidadeCampus";
 	}
 	
-	public DisponibilidadeDisciplina clone(CenarioClone novoCenario) {
+	public DisponibilidadeCampus clone(CenarioClone novoCenario) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -98,5 +100,17 @@ public class DisponibilidadeCampus extends Disponibilidade implements Serializab
 			Disponibilidade entidadeClone) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<DisponibilidadeCampus> findBy(Cenario cenario) {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM DisponibilidadeCampus o " +
+			" WHERE o.DisponibilidadeCampus.cenario.id = :cenarioId " +
+			" ORDER BY o.horarioInicio, o.horarioFim" );
+		
+		q.setParameter( "cenarioId", cenario.getId() );
+
+		return q.getResultList();
 	}
 }

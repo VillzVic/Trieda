@@ -39,6 +39,7 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Disponibilidade;
+import com.gapso.trieda.domain.DisponibilidadeDisciplina;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.HorarioAula;
@@ -339,7 +340,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			reqOtm.setRound(round);
 			reqOtm.setUsuario(usuarioAtual);
 			reqOtm.setParametro(parametro);
-			// TODO: [DONE] [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
 			reqOtm.setStatusCodigo(StatusRequisicaoOtimizacao.AGUARDANDO.ordinal());
 			reqOtm.setStatusTexto(StatusRequisicaoOtimizacao.AGUARDANDO.name());
 			reqOtm.setTotalCampi(estatisticasDTO.getTotalCampi());
@@ -645,10 +645,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	}
 	
 	private List<RequisicaoOtimizacaoDTO> consultaRequisicoesDeOtimizacao(boolean onlyCurrentUser) {
-		// obtém o usuário logado em questão
-		Usuario usuarioAtual = getUsuario();
 		// obtém as requisições de otimização relacionadas com o usuário atual
-		List<RequisicaoOtimizacao> requisicoesOtimizacao = onlyCurrentUser ? RequisicaoOtimizacao.findBy(usuarioAtual) : RequisicaoOtimizacao.findAll();
+		List<RequisicaoOtimizacao> requisicoesOtimizacao = onlyCurrentUser ? RequisicaoOtimizacao.findBy(getUsuario()) : RequisicaoOtimizacao.findAll();
 		// ...
 		List<RequisicaoOtimizacaoDTO> requisicoesOtimizacaoDTOs = new ArrayList<RequisicaoOtimizacaoDTO>();
 		ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
@@ -681,7 +679,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	@Transactional
 	public Integer getStatusRequisicaoDeOtimizacao(RequisicaoOtimizacao reqOtm, SolverClient solverClient) {
 		long round = reqOtm.getRound();
-		// TODO: [DONE] [REQ-OTM] substituir o if-else abaixo por algo do tipo:
 		Integer status = null;
 		if (reqOtm.getStatusCodigo() == StatusRequisicaoOtimizacao.EXECUTANDO.ordinal()
 				|| reqOtm.getStatusCodigo() == StatusRequisicaoOtimizacao.AGUARDANDO.ordinal()) { // ou seja, (status == EXECUTANDO) || (status == AGUARDANDO)
@@ -707,32 +704,24 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			status = reqOtm.getStatusCodigo();
 		}
 		
-		if (reqOtm.getStatusCodigo() != status) {
+		if (!reqOtm.getStatusCodigo().equals(status)) {
 			reqOtm.setStatusCodigo(status);
 			reqOtm.setStatusTexto(StatusRequisicaoOtimizacao.values()[status].name());
+			
 			if (status == StatusRequisicaoOtimizacao.EXECUTANDO.ordinal())
+			{
 				reqOtm.setInstanteInicioOtimizacao(Calendar.getInstance().getTime());
+			}
 			else if (status == StatusRequisicaoOtimizacao.FINALIZADA_COM_RESULTADO.ordinal()
 					|| status == StatusRequisicaoOtimizacao.FINALIZADA_SEM_RESULTADO.ordinal())
+			{
 				reqOtm.setInstanteTermino(Calendar.getInstance().getTime());
+			}
+			
+			reqOtm.merge();
 		}
 		
 		return status;
-		
-/*		if (solverClient.isFinished(round)) {
-			if (solverClient.containsResult(round)) {
-				return StatusRequisicaoOtimizacao.FINALIZADA_COM_RESULTADO.ordinal();
-			} else {
-				return StatusRequisicaoOtimizacao.FINALIZADA_SEM_RESULTADO.ordinal();
-			}
-		} else {
-			String statusQueue = solverClient.getPositionQueue(round);
-			if (statusQueue.equalsIgnoreCase("Executando")) {
-				return StatusRequisicaoOtimizacao.EXECUTANDO.ordinal();
-			} else {
-				return StatusRequisicaoOtimizacao.AGUARDANDO.ordinal();
-			}
-		}*/
 	}
 	
 	/**
@@ -745,13 +734,13 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
 			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 			if (solverClient.cancelOptimization(round)) {
-				//TODO: [DONE] [REQ-OTM]
 				RequisicaoOtimizacao req = RequisicaoOtimizacao.findBy(round);
 				req.setUsuarioCancel(getUsuario());
 				req.setStatusCodigo(StatusRequisicaoOtimizacao.CANCELADA.ordinal());
 				req.setStatusTexto(StatusRequisicaoOtimizacao.CANCELADA.name());
 				Calendar cal = Calendar.getInstance();
 				req.setInstanteTermino(cal.getTime());
+				req.merge();
 				return true;
 			}
 		} catch(Exception e) {
@@ -837,8 +826,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	private void checkSemanasLetivas(Parametro parametro, List<String> warnings, List<String> errors){
 		Cenario cenario = parametro.getCenario();
 		Set<SemanaLetiva> semanasLetivas = cenario.getSemanasLetivas();
-		List<HorarioDisponivelCenario> horariosAulasAux = new ArrayList<HorarioDisponivelCenario>();
-		Map<Long, List<HorarioDisponivelCenario>> horariosDisponiveisMap = new HashMap<Long, List<HorarioDisponivelCenario>>();
 		 
 		if (!semanasLetivas.isEmpty()) { // verifica se existem semanas letivas cadastradas
 			boolean haAlgumaSemanaLetivaComHorarios = false;
@@ -857,22 +844,53 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			errors.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, não há nenhuma semana letiva cadastrada no cenário [" + cenario.getNome() + " ]."));
 		}
 		
-		for (Disciplina disciplina : cenario.getDisciplinas())
-		{
-			for (Disponibilidade disp : Disponibilidade.findBy(cenario, disciplina.getId(), DisponibilidadeDTO.DISCIPLINA))
-			{
-				if(!disciplina.getUsaSabado() && disp.getSabado()){
-					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Não, está com disponibilidade no Sábado"));
+		// monta mapa de disponibilidades por disciplina
+		List<DisponibilidadeDisciplina> disponibilidadesDasDisciplinas = DisponibilidadeDisciplina.findBy(cenario);
+		Map<Long, List<Disponibilidade>> disciplinaIdToDisponibilidadesMap = new HashMap<Long, List<Disponibilidade>>();
+		for (DisponibilidadeDisciplina dispDisc : disponibilidadesDasDisciplinas) {
+			Long disId = dispDisc.getDisciplina().getId();
+			List<Disponibilidade> disponibilidades = disciplinaIdToDisponibilidadesMap.get(disId);
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				disciplinaIdToDisponibilidadesMap.put(disId, disponibilidades);
+			}
+			disponibilidades.add(dispDisc);
+		}
+		
+		for (Disciplina disciplina : cenario.getDisciplinas()) {
+			boolean disciplinaTemDispSabado = false;
+			boolean disciplinaTemDispDomingo = false;
+			
+			List<Disponibilidade> disponibilidadesDaDisciplina = disciplinaIdToDisponibilidadesMap.get(disciplina.getId());
+			if (disponibilidadesDaDisciplina != null) {
+				for (Disponibilidade disp : disponibilidadesDaDisciplina) {
+					if (disp.getSabado()) {
+						disciplinaTemDispSabado = true;
+						break;
+					}
 				}
-				else if(disciplina.getUsaSabado() && !disp.getSabado()) {
-					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Sim, não está com disponibilidade no Sábado"));
+				for (Disponibilidade disp : disponibilidadesDaDisciplina) {
+					if (disp.getDomingo()) {
+						disciplinaTemDispDomingo = true;
+						break;
+					}
 				}
-				if(!disciplina.getUsaDomingo() && disp.getDomingo()){
-					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Não, está com disponibilidade no Sábado"));
-				}
-				else if(disciplina.getUsaDomingo() && !disp.getDomingo()){
-					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Sim, não está com disponibilidade no Sábado"));
-				}
+			}
+			
+			if (disciplina.getUsaSabado()) {
+				if (!disciplinaTemDispSabado)
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Sim, não está com disponibilidade no Sábado."));
+			} else {
+				if (disciplinaTemDispSabado)
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Não, está com disponibilidade no Sábado."));
+			}
+			
+			if (disciplina.getUsaDomingo()) {
+				if (!disciplinaTemDispDomingo)
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Sim, não está com disponibilidade no Domingo."));
+			} else {
+				if (disciplinaTemDispDomingo)
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Não, está com disponibilidade no Domingo."));
 			}
 		}
 	}
@@ -2083,8 +2101,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						{
 							if (atendimentoDia.getAtendimentosTatico() != null )
 							{
-								System.out.println("AtendimentoTatico: " + atendimentoDia.getAtendimentosTatico());
-								System.out.println("AtendimentoTaticoSize: " + atendimentoDia.getAtendimentosTatico().getAtendimentoTatico().size());
 								ehTatico = true;
 								for (ItemAtendimentoTatico atendimentoTatico : atendimentoDia.getAtendimentosTatico().getAtendimentoTatico())
 								{
@@ -2119,10 +2135,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						}
 					}
 				}
-			}
-			for (Campus campus : campi)
-			{
-				System.out.println("campus:" + campus.getNome());
 			}
 			prw.endSubPartial();
 

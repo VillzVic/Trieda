@@ -86,7 +86,7 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 					public void onSuccess(Integer statusReqOtm) {
 						boolean requisicaoFinalizada = (statusReqOtm != StatusRequisicaoOtimizacao.AGUARDANDO.ordinal()) && (statusReqOtm != StatusRequisicaoOtimizacao.EXECUTANDO.ordinal());
 						if (!requisicaoFinalizada) {
-							if ((statusReqOtmAnterior != null) && (statusReqOtmAnterior != statusReqOtm)) {
+							if ((statusReqOtmAnterior == null) || (!statusReqOtmAnterior.equals(statusReqOtm))) {
 								reqOtmView.updateRequisicaoOtimizacaoGrid();
 							}
 							checkSolver(round,cenarioDTO,reqOtmView,statusReqOtm);

@@ -3871,12 +3871,13 @@ public class ConvertBeans {
 		dto.setUserName(domain.getUsuario().getUsername());
 		dto.setUserNameCancel(domain.getUsuarioCancel() == null ? null : domain.getUsuarioCancel().getUsername() );
 		
+		dto.setStatusIndex(domain.getStatusCodigo());
+		
 		Parametro parametro = domain.getParametro();
 		dto.setModoOtimizacao(parametro.getModoOtimizacao());
 		dto.setOtimizarPor(parametro.getOtimizarPor());
 		dto.setFuncaoObjetivo(FuncaoObjetivoComboBox.CargaHoraria.values()[parametro.getFuncaoObjetivo()].getText());
 		
-		// TODO: [DONE] [REQ-OTM] registrar as estatísticas que acompanham a requisição de otimização (descomentar o código abaixo)
 		dto.setTotalCampi(domain.getTotalCampi());
 		dto.setCampiSelecionados(domain.getCampiSelecionados());
 		dto.setTotalTurnos(domain.getTotalTurnos());

@@ -29,6 +29,11 @@ import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Disponibilidade;
+import com.gapso.trieda.domain.DisponibilidadeCampus;
+import com.gapso.trieda.domain.DisponibilidadeDisciplina;
+import com.gapso.trieda.domain.DisponibilidadeProfessor;
+import com.gapso.trieda.domain.DisponibilidadeSala;
+import com.gapso.trieda.domain.DisponibilidadeUnidade;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.Fixacao;
@@ -127,7 +132,6 @@ import com.gapso.web.trieda.server.xml.input.ItemTurno;
 import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
-import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
 
@@ -246,60 +250,57 @@ public class SolverInput
 		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = new HashMap<Professor, List<Disponibilidade>>();
 		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisponibilidade = new HashMap<Disciplina, List<Disponibilidade>>();
 		
-		for ( Campus campus : Campus.findByCenario(instituicaoEnsino, cenario) )
-		{
-			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, campus.getId(), DisponibilidadeDTO.CAMPUS);
-			
-			campusMapDisponibilidade.put(campus, new ArrayList<Disponibilidade>());
-			for ( Disponibilidade disponibilidade : disponibilidades )
-			{
-				campusMapDisponibilidade.get(campus).add(disponibilidade);
+		List<DisponibilidadeCampus> disponibilidadesCampi = DisponibilidadeCampus.findBy(cenario);
+		for (DisponibilidadeCampus dispCam : disponibilidadesCampi) {
+			List<Disponibilidade> disponibilidades = campusMapDisponibilidade.get(dispCam.getCampus());
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				campusMapDisponibilidade.put(dispCam.getCampus(), disponibilidades);
 			}
+			disponibilidades.add(dispCam);
 		}
 		
-		for ( Unidade unidade : Unidade.findByCenario(instituicaoEnsino, cenario) )
-		{
-			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, unidade.getId(), DisponibilidadeDTO.UNIDADE);
-			unidadeMapDisponibilidade.put(unidade, new ArrayList<Disponibilidade>());
-			for ( Disponibilidade disponibilidade : disponibilidades )
-			{
-				unidadeMapDisponibilidade.get(unidade).add(disponibilidade);
+		List<DisponibilidadeUnidade> disponibilidadesUnidades = DisponibilidadeUnidade.findBy(cenario);
+		for (DisponibilidadeUnidade dispUni : disponibilidadesUnidades) {
+			List<Disponibilidade> disponibilidades = unidadeMapDisponibilidade.get(dispUni.getUnidade());
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				unidadeMapDisponibilidade.put(dispUni.getUnidade(), disponibilidades);
 			}
+			disponibilidades.add(dispUni);
 		}
 
-		for ( Sala sala : Sala.findByCenario(instituicaoEnsino, cenario) )
-		{
-			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, sala.getId(), DisponibilidadeDTO.SALA);
-			salaMapDisponibilidade.put(sala, new ArrayList<Disponibilidade>());
-			for ( Disponibilidade disponibilidade : disponibilidades )
-			{
-				salaMapDisponibilidade.get(sala).add(disponibilidade);
+		List<DisponibilidadeSala> disponibilidadesSalas = DisponibilidadeSala.findBy(cenario);
+		for (DisponibilidadeSala dispSal : disponibilidadesSalas) {
+			List<Disponibilidade> disponibilidades = salaMapDisponibilidade.get(dispSal.getSala());
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				salaMapDisponibilidade.put(dispSal.getSala(), disponibilidades);
 			}
+			disponibilidades.add(dispSal);
 		}
 		
-		for ( Disciplina disciplina : Disciplina.findByCenario(instituicaoEnsino, cenario) )
-		{
-			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, disciplina.getId(), DisponibilidadeDTO.DISCIPLINA);
-			disciplinaMapDisponibilidade.put(disciplina, new ArrayList<Disponibilidade>());
-			for ( Disponibilidade disponibilidade : disponibilidades )
-			{
-				disciplinaMapDisponibilidade.get(disciplina).add(disponibilidade);
+		List<DisponibilidadeDisciplina> disponibilidadesDisciplinas = DisponibilidadeDisciplina.findBy(cenario);
+		for (DisponibilidadeDisciplina dispDisc : disponibilidadesDisciplinas) {
+			List<Disponibilidade> disponibilidades = disciplinaMapDisponibilidade.get(dispDisc.getDisciplina());
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				disciplinaMapDisponibilidade.put(dispDisc.getDisciplina(), disponibilidades);
 			}
+			disponibilidades.add(dispDisc);
 		}
 		
-		for ( Professor professor : Professor.findByCenario(instituicaoEnsino, cenario) )
-		{
-			List< Disponibilidade > disponibilidades = Disponibilidade.findBy(cenario, professor.getId(), DisponibilidadeDTO.PROFESSOR);
-			professorMapDisponibilidade.put(professor, new ArrayList<Disponibilidade>());
-			for ( Disponibilidade disponibilidade : disponibilidades )
-			{
-				professorMapDisponibilidade.get(professor).add(disponibilidade);
+		List<DisponibilidadeProfessor> disponibilidadesProfessores = DisponibilidadeProfessor.findBy(cenario);
+		for (DisponibilidadeProfessor dispProf : disponibilidadesProfessores) {
+			List<Disponibilidade> disponibilidades = professorMapDisponibilidade.get(dispProf.getProfessor());
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				professorMapDisponibilidade.put(dispProf.getProfessor(), disponibilidades);
 			}
+			disponibilidades.add(dispProf);
 		}
 		
-		
-		this.todosHorarioDisponivelCenario
-			= HorarioDisponivelCenario.findAll( this.instituicaoEnsino, cenario );
+		this.todosHorarioDisponivelCenario = HorarioDisponivelCenario.findAll( this.instituicaoEnsino, cenario );
 		for (HorarioDisponivelCenario hdc : this.todosHorarioDisponivelCenario) {
 			// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
 			SemanaLetiva semanaLetivaDeHDC = hdc.getHorarioAula().getSemanaLetiva();

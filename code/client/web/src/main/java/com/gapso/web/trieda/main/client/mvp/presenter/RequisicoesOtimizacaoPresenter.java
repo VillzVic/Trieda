@@ -9,6 +9,7 @@ import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RequisicoesOtimizacaoPresenter {
@@ -25,7 +26,7 @@ public class RequisicoesOtimizacaoPresenter {
 		this.i18nGateway = i18nGateway;
 	}
 
-	public void consultaRequisicoesDeOtimizacao(AsyncCallback<List<RequisicaoOtimizacaoDTO>> callback) {
+	public void consultaRequisicoesDeOtimizacao(AsyncCallback<List<RequisicaoOtimizacaoDTO>> callback) throws TriedaException {
 		service.consultaRequisicoesDeOtimizacao(callback);
 	}
 	

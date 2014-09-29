@@ -23,6 +23,7 @@ import com.extjs.gxt.ui.client.store.StoreListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.WidgetComponent;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -52,6 +53,7 @@ import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO.StatusRequisicaoOtimizacao;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.TriedaDetailMessageBox;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -118,7 +120,11 @@ public class RequisicoesOtimizacaoView extends MyComposite implements IRequisico
 		RpcProxy<List<RequisicaoOtimizacaoDTO>> requisicoesProxy = new RpcProxy<List<RequisicaoOtimizacaoDTO>>() {
 			@Override
 			protected void load(Object loadConfig,AsyncCallback<List<RequisicaoOtimizacaoDTO>> callback) {
-				presenter.consultaRequisicoesDeOtimizacao(callback);
+				try {
+					presenter.consultaRequisicoesDeOtimizacao(callback);
+				} catch(Exception e) {
+					TriedaDetailMessageBox.alert("Erro","Erro ao consultar requisições de otimização.",e);
+				}
 			}
 		};
 		ListLoader<ListLoadResult<RequisicaoOtimizacaoDTO>> requisicoesListLoader = new BaseListLoader<ListLoadResult<RequisicaoOtimizacaoDTO>>(requisicoesProxy);

@@ -186,6 +186,19 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 	}
 	
 	@Transactional
+	public RequisicaoOtimizacao merge()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		RequisicaoOtimizacao merged = this.entityManager.merge( this );
+		this.entityManager.flush();
+		return merged;
+	}
+	
+	@Transactional
 	public void remove() {
 		if (this.entityManager == null) {
 			this.entityManager = entityManager();
