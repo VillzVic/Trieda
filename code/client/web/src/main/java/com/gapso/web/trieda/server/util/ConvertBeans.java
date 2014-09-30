@@ -4238,8 +4238,8 @@ public class ConvertBeans {
 		aulaDTO.setSalaId(aula.getSala().getId());
 		aulaDTO.setSalaString(aula.getSala().getCodigo());
 		aulaDTO.setHorarioDisponivelCenarioId(HorarioDisponivelCenario.findBy(aula.getInstituicaoEnsino(), aula.getHorarioAula(), aula.getSemana()).getId());
-		aulaDTO.setHorarioAulaId(aula.getHorarioAula().getId());
-		aulaDTO.setSemana(aula.getSemana().ordinal());
+		aulaDTO.setHorarioAulaId(aula.getHorarioAula().getId());		
+		aulaDTO.setSemana(Semanas.toInt(aula.getSemana()));//aulaDTO.setSemana(aula.getSemana().ordinal());
 		aulaDTO.setSemanaString(aula.getSemana().name());
 		aulaDTO.setProfessorNome("");
 		

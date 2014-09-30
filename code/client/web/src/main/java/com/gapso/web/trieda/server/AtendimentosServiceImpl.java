@@ -5581,9 +5581,14 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		else
 		{
-			for (Long id : aulaDTO.getAtendimentosIds())
-			{
-				AtendimentoOperacional.find(id, getInstituicaoEnsinoUser()).remove();
+			if (aulaDTO.getProfessorId() != null) {
+				for (Long id : aulaDTO.getAtendimentosIds()) {
+					AtendimentoOperacional.find(id, getInstituicaoEnsinoUser()).remove();
+				}
+			} else {
+				for (Long id : aulaDTO.getAtendimentosIds()) {
+					AtendimentoTatico.find(id, getInstituicaoEnsinoUser()).remove();
+				}
 			}
 		}
 	}
