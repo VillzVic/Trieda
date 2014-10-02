@@ -264,13 +264,15 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					if (!labelsDasLinhasDaGradeHoraria.isEmpty())
 						horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0, 5);
 					for (int i = 1; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-						if ((horarioInicioAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)) || horarioFimAula.contains(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
-								&& !isHorarioIntervalo(labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5)))
+						String horarioEmProcessamento = labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+						if ((horarioInicioAula.contains(horarioEmProcessamento) || 
+							 horarioFimAula.contains(horarioEmProcessamento))
+							/*&& !isHorarioIntervalo(horarioEmProcessamento)*/)
 						{
-							horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+							horarioASerEscrito += " / " + horarioEmProcessamento;
 							labelReduzidaTamanho.add(calculaTamanhoLabelReduzida(horarioASerEscrito));
 							horariosEscritos.add(horarioASerEscrito);
-							horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(i).substring(0, 5);
+							horarioASerEscrito = horarioEmProcessamento;
 						}
 					}
 					if (!labelsDasLinhasDaGradeHoraria.isEmpty())
@@ -496,14 +498,20 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		return numeroIntervalos;
 	}
 	
-	protected boolean isHorarioIntervalo(String horario)
-	{
-		for (int i = 0; i<labelsDasLinhasDaGradeHoraria.size(); i++)
-		{
-			if (labelsDasLinhasDaGradeHoraria.get(i).contains(horario))
-				return horarioEhIntervalo.get(i);
+	protected boolean isHorarioIntervalo(String horario) {
+		if (horario.contains("/")) { // é um intervalo, isto é, hi / hf
+			for (int i = 0; i<labelsDasLinhasDaGradeHoraria.size(); i++)
+			{
+				if (labelsDasLinhasDaGradeHoraria.get(i).contains(horario))
+					return horarioEhIntervalo.get(i);
+			}
+		} else { // é apenas um horário
+			for (int i = 0; i<horariosDeInicioDeAula.size(); i++)
+			{
+				if (horariosDeInicioDeAula.get(i).contains(horario))
+					return horarioEhIntervalo.get(i);
+			}
 		}
-		
 		return false;
 	}
 
