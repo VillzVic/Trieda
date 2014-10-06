@@ -94,7 +94,7 @@ private:
 	static unordered_map<Campus *, unordered_map<Disciplina *, unordered_map<int, unordered_set<AlunoDemanda *>>>> demandasAgregadas_;
 	// NOVO -> por curso
 	static unordered_map<Campus *, unordered_map<Disciplina *, unordered_map<Curso*, unordered_map<int, unordered_set<AlunoDemanda *>>>>> demandasAgregadasPorCurso_;
-
+	
 	// guardar demandas P2
 	static void guardarDemandasP2_(void);
 

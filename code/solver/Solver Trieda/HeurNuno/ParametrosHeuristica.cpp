@@ -135,6 +135,11 @@ const bool ParametrosHeuristica::indicDemSalas = true;
 // máximo de iterações na abertura de turmas final
 const int ParametrosHeuristica::maxIterAbrirTurmasFinal = 5;
 
+// Controla uso de prof virtual na fase heurística de abrir turmas
+const bool ParametrosHeuristica::priorForteProfVirt = true;
+const bool ParametrosHeuristica::permitirProfVirt = true;
+
+
 // -------------------------------- MIP ALOC --------------------------------------------
 int ParametrosHeuristica::timeLimitMIP = 3600;
 const double ParametrosHeuristica::heurFreqMIP = -1;

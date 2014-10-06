@@ -1,7 +1,7 @@
 #include "Professor.h"
 
 Professor::Professor( bool eVirtual )
-	: is_virtual(eVirtual)
+	: is_virtual(eVirtual), nroCredsCadastroDisc_(0)
 {
     this->cpf = "";
 	this->nome = "";
@@ -87,6 +87,26 @@ void Professor::le_arvore( ItemProfessor & elem )
 	}
 }
 
+
+void Professor::addDisponibilidade( int dia, DateTime dti, DateTime dtf )
+{
+	std::map<DateTime,GGroup<DateTime>> empty1;
+	GGroup<DateTime> empty2;
+
+	auto itDia = mapDiaDtiDtf.find(dia);
+	if (itDia == mapDiaDtiDtf.end())
+		itDia = mapDiaDtiDtf.insert( pair<int, std::map<DateTime,GGroup<DateTime>>> (dia, empty1) ).first;
+
+	auto itDti = itDia->second.find(dti);
+	if (itDti == itDia->second.end())
+	{
+		itDti = itDia->second.insert( pair<DateTime,GGroup<DateTime>> (dti, empty2) ).first;
+		nroCredsCadastroDisc_++;
+	}
+
+	itDti->second.add(dtf);
+
+}
 
 HorarioAula* Professor::getPrimeiroHorarioDisponivelDia( int dia )
 {
@@ -243,7 +263,7 @@ GGroup< HorarioDia*,LessPtr<HorarioDia> > Professor::getHorariosPosterioresDispo
 	return horariosPosteriores;
 }
 
-bool Professor::possuiHorariosNoDia( HorarioAula *hi, HorarioAula *hf, int dia )
+bool Professor::possuiHorariosNoDia( HorarioAula *const hi, HorarioAula *const hf, int dia ) const
 {		
 	auto itDia = mapDiaDtiDtf.find( dia );
 

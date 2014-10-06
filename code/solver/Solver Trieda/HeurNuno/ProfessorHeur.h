@@ -28,8 +28,9 @@ public:
 	bool estaDisponivelHorarios(unordered_map<int, AulaHeur*> const &aulas) const;
 	bool estaDisponivel(int dia, AulaHeur* const aula) const;
 	bool estaDisponivel(unordered_map<int, AulaHeur*> const &aulas) const;
+	using EntidadeAlocavel::estaDisponivel;
 
-	int nrCreditosAlocado(void) const;
+	int nroCredsLivresEstimados(void) const;
 
 	// verificar links com as turmas
 	bool checkLinks(void) const;
@@ -61,12 +62,6 @@ private:
 	Professor* const professor_;
 	bool ehVirtualUnico_;
 
-	/*
-	unordered_map<int, GGroup< HorarioAula *, LessPtr<HorarioAula>>> horariosDisponivel_;
-	unordered_map<Calendario*, std::map<int, std::vector<HorarioAula*>>> horariosDisponivelCalendario_;
-
-	void addHorariosDisponivel();
-	unordered_map<int, std::vector<HorarioAula*>> getHorariosLivresCalendario (const Calendario &Calendario);*/
 };
 
 // Comparador de IDs
@@ -123,7 +118,7 @@ namespace std
 				return diff < 0;
 
 			// menos disponibilidade
-			int diffDisp = first->getProfessor()->horariosDia.size() - second->getProfessor()->horariosDia.size();
+			int diffDisp = first->getProfessor()->getNroCredsCadastroDisc() - second->getProfessor()->getNroCredsCadastroDisc();
 			if(diff != 0)
 				return diff < 0;
 

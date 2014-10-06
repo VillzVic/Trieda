@@ -40,6 +40,11 @@ public:
 	// indica se gerar de novo todas as combinações de créditos ou não
 	static const bool gerarAllCombsCreds;
 
+	// Prioriza mais o uso de prof real
+	static const bool priorForteProfVirt;
+	// Controla se pode ser aberta turma com prof virtual na fase heurística
+	static const bool permitirProfVirt;
+
 	// --------------------------------------- ABRIDOR TURMAS / GERAIS --------------------------------------------
 
 	// Max créditos para além dos P1 demandados que podem ser alocados.

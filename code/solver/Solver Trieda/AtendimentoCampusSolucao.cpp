@@ -23,7 +23,7 @@ AtendimentoCampusSolucao::~AtendimentoCampusSolucao( void )
 
 }
 
-void AtendimentoCampusSolucao::le_arvore( ItemAtendimentoCampusSolucao & elem )
+void AtendimentoCampusSolucao::le_arvore( const ItemAtendimentoCampusSolucao & elem )
 {
    this->setId( elem.campusId() );
    this->campusId = elem.campusId();

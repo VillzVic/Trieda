@@ -144,9 +144,9 @@ namespace std
 		{
 			switch(AlunoHeur::flagCompAlunos)
 			{
-				case AlunoHeur::flagComp::MENOS_CRED:
-					return AlunoHeur::compAlunosI(first, second);
 				case AlunoHeur::flagComp::MAIS_CRED:
+					return AlunoHeur::compAlunosI(first, second);
+				case AlunoHeur::flagComp::MENOS_CRED:
 					return AlunoHeur::compAlunosII(first, second);
 				default:
 					return AlunoHeur::compAlunosI(first, second);

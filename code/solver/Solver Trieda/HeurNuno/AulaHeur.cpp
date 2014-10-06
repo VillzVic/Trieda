@@ -60,6 +60,31 @@ bool AulaHeur::intersectaHorario(HorarioAula* const horario, bool deslocavel, in
 	return false;
 }
 
+bool AulaHeur::intersectaHorario(DateTime const &dti, DateTime const &dtf, bool deslocavel, int campId, int unidId) const 
+{
+	for(auto it = horarios.cbegin(); it != horarios.cend(); ++it)
+	{
+		if((*it)->sobrepoe(dti,dtf))
+			return true;
+	}
+
+	//if(deslocavel && campId > 0 && unidId > 0)
+	//{
+	//	// verificar se viola deslocacao
+	//	DateTime inicioAula;
+	//	getPrimeiroHor (inicioAula);
+	//	DateTime fimHor;
+	//	horario->getFinal(fimHor);
+
+	//	if(fimHor.earlierTime(inicioAula))
+	//		return EntidadeAlocavel::violaDeslocacao(horario, campId, unidId, (*horarios.begin()), this->campusId, this->unidadeId);
+	//	else
+	//		return EntidadeAlocavel::violaDeslocacao((*horarios.rbegin()), this->campusId, this->unidadeId, horario, campId, unidId);
+	//}
+
+	return false;
+}
+
 
 size_t AulaHeur::hashValue(void) const
 {

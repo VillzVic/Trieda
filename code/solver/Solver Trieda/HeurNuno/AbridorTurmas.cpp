@@ -1250,7 +1250,7 @@ bool AbridorTurmas::podeAbrirTurma_(int nrAlunos, int nrCreds, bool temFormando,
 		if(anySize_)
 			return true;
 		else
-			return limMinAlunos = ParametrosHeuristica::limMinAlunosTurma;
+			limMinAlunos = ParametrosHeuristica::limMinAlunosTurma;
 	}
 	// tem aluno com co-requisito
 	else if(HeuristicaNuno::probData->parametros->considerarCoRequisitos && temCoReq)

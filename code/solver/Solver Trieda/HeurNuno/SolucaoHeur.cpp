@@ -275,7 +275,8 @@ void SolucaoHeur::developSolucaoPrior(void)
 		HeuristicaNuno::logMsgInt(">> Prioridade ", priorAluno, 1);
 
 		// (1.1) Abrir turmas legais. só realocar alunos desta prioridade
-		abrirTurmas_(true, true, ParametrosHeuristica::heurRealocAlunos, false, priorAluno);
+		abrirTurmas_(true, (true && ParametrosHeuristica::permitirProfVirt), 
+						ParametrosHeuristica::heurRealocAlunos, false, priorAluno);
 		verificacao_();
 
 		if(!ParametrosHeuristica::versaoFast)
@@ -288,7 +289,8 @@ void SolucaoHeur::developSolucaoPrior(void)
 			// obs: sem realocar (deixar abrir com formandos, qualquer que seja o tamanho!)
 			if(ParametrosHeuristica::temMins())
 			{
-				abrirTurmas_(true, true, ParametrosHeuristica::heurRealocAlunos, true, priorAluno, ParametrosHeuristica::relaxMinAlunosTurma);
+				abrirTurmas_(true, (true && ParametrosHeuristica::permitirProfVirt),
+					ParametrosHeuristica::heurRealocAlunos, true, priorAluno, ParametrosHeuristica::relaxMinAlunosTurma);
 				verificacao_(false);
 			}
 
@@ -316,7 +318,7 @@ void SolucaoHeur::developSolucaoPrior(void)
 	// (2) Tentar abrir mais turmas! (deixar abrir com formandos, qualquer que seja o tamanho!) sem realoc
 	int nrTurmas = this->nrTurmas();
 	//abrirTurmas_(true, true, false, true, 0);
-	abrirTurmasFinal_(true, true, false);
+	abrirTurmasFinal_(true, (true && ParametrosHeuristica::permitirProfVirt), false);
 	verificacao_();
 	int nrTurmasNew = this->nrTurmas();
 
@@ -3192,6 +3194,34 @@ void SolucaoHeur::limparTurmasAssocAllOfertasPreMIP(void)
 	for(auto itOft = allOfertasDisc_.cbegin(); itOft != allOfertasDisc_.cend(); ++itOft)
 	{
 		(*itOft)->limparTurmasAssocPreMIP();
+	}
+}
+
+// imprime resumo de todas as oferta-disciplinas na ordem corrente
+template<typename T>
+void SolucaoHeur::imprimeOfertasDisc(set<OfertaDisciplina*, T> const & setOrd, int prior)
+{
+	std::stringstream ssTime;
+	ssTime << std::endl << "-----------------------------------------------------"
+	<< "-------------------------------------------------------------------------";
+	ssTime << std::endl << "[" << UtilHeur::currentDateTime() << "] - Prior " << prior << std::endl
+		<< "Status atual da solucao:" << std::endl
+		<< "\tTotal de atendimentos: " << nrDemandasAtendidas(0) << std::endl
+		<< "\tTotal de turmas: " << nrTurmas() << std::endl
+		<< "\tTotal de creds com profs virtuais: " << nrCreditosProfVirtual() << std::endl;
+
+	HeuristicaNuno::logOrdemOfertas( ssTime.str() );
+
+	for( auto itOft = setOrd.cbegin();
+		 itOft != setOrd.cend(); itOft++)
+	{
+		std::ostringstream out;
+		out << (**itOft);
+		
+		std::stringstream ssMsg;
+		ssMsg << out.str() << endl;
+		
+		HeuristicaNuno::logOrdemOfertas( ssMsg.str() );
 	}
 }
 

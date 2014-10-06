@@ -43,6 +43,10 @@ std::ofstream* HeuristicaNuno::logFecharTurmas_ = nullptr;
 std::ofstream* HeuristicaNuno::logMudancaAlunos_ = nullptr;
 std::ofstream* HeuristicaNuno::logNovaSala_ = nullptr;
 
+// log para analise da ordem de resolucao dos atendimentos
+std::ofstream* HeuristicaNuno::logOrdemOfertas_ = nullptr;
+
+
 HeuristicaNuno::HeuristicaNuno(void)
 {
 }
@@ -182,6 +186,8 @@ void HeuristicaNuno::clean(void)
 	closeLog_(logFecharTurmas_);
 	closeLog_(logMudancaAlunos_);
 	closeLog_(logNovaSala_);
+
+	closeLog_(logOrdemOfertas_);
 }
 
 // load solução
@@ -680,4 +686,16 @@ void HeuristicaNuno::loadIndispExtraSalas(char* const fullPath)
 
 		itDia->second.insert(turno);
 	}
+}
+
+// log de ordenação das ofertas-disciplinas
+void HeuristicaNuno::logOrdemOfertas( std::string msg )
+{
+	if(HeuristicaNuno::logOrdemOfertas_ == nullptr)
+	{
+		HeuristicaNuno::logOrdemOfertas_ = new ofstream("logOrdemOfertas_.log");
+	}	
+
+	(*logOrdemOfertas_) << msg;
+	logOrdemOfertas_->flush();
 }

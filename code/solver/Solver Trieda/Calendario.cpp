@@ -161,12 +161,11 @@ void Calendario::calculaProximosHorarioAula()
 /*
 	Dado um horarioAula h, retorna o proximo horarioAula do turno do calendario.
 */
-HorarioAula * Calendario::getProximoHorario( HorarioAula *h )
+HorarioAula * Calendario::getProximoHorario( HorarioAula *h ) const
 {	
 	HorarioAula * proximoHor = NULL;
 
-	std::map< int, HorarioAula* >::iterator
-		it = mapProximoHorarioAula.find( h->getId() );
+	auto it = mapProximoHorarioAula.find( h->getId() );
 	if ( it != mapProximoHorarioAula.end() )
 	{
 		proximoHor = it->second;

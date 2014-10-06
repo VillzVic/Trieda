@@ -142,7 +142,6 @@ private:
    int criaRestricaoPrioridadesDemanda( int campusId, int prior );
    int criaRestricaoPrioridadesDemanda_v2( int campusId, int prior );
    int criaRestricaoPrioridadesDemandaEquiv( int campusId, int prior );
-   int criaRestricaoTaticoAtendeAlunoEquiv( int campusId, int prioridade );
    int criaRestricaoTaticoAtendeAlunoEquivTotal( int campusId, int prioridade );
    int criaRestricaoTaticoAtivaZ( int campusId ); // não precisa, pode deletar. A restrição criaRestricaoTaticoSalaUnica engloba esta
    int criaRestricaoTaticoTurmaComOsMesmosAlunosPorAula( int campusId );
@@ -298,7 +297,7 @@ private:
 	int solveMaxAtendPorFasesDoDia( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
-	void polishTaticoHor(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
+	void polish(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
 	Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );

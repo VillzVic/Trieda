@@ -44,7 +44,7 @@ public:
    void setMaxDiasSemana( int value ) { max_dias_semana = value; }
    void setMinCredsDiarios( int value ) { min_creds_diarios = value; }
    void setCursoAssociado( Curso* c ){ curso = c; }
-   void addDisponibilidade( int dia, DateTime dti, DateTime dtf ) { mapDiaDtiDtf[dia][dti].add(dtf); }
+   void addDisponibilidade( int dia, DateTime dti, DateTime dtf );
 
    std::string getCpf() const { return cpf; }
    std::string getNome() const { return nome; }
@@ -68,12 +68,14 @@ public:
    HorarioAula* getPrimeiroHorarioDisponivelDia( int dia );
    HorarioAula* getUltimoHorarioDisponivelDia( int dia );
 
+   int getNroCredsCadastroDisc() const { return nroCredsCadastroDisc_; }
+
    bool possuiMagisterioEm( Disciplina* disciplina );
    
    GGroup< HorarioDia*,LessPtr<HorarioDia> > getHorariosAnterioresDisponivelDia( DateTime inicio, int dia );
    GGroup< HorarioDia*,LessPtr<HorarioDia> > getHorariosPosterioresDisponivelDia( DateTime inicio, int dia );
    
-   bool possuiHorariosNoDia( HorarioAula *hi, HorarioAula *hf, int dia );
+   bool possuiHorariosNoDia( HorarioAula *const hi, HorarioAula *const hf, int dia ) const;
 
 private:
    std::string cpf;
@@ -89,6 +91,8 @@ private:
    int max_dias_semana;
    int min_creds_diarios;
    Curso* curso;
+
+   int nroCredsCadastroDisc_;
 
    // Utilizado na função de
    // prioridade para o modelo operacional.

@@ -132,6 +132,17 @@ bool ProfessorHeur::estaDisponivel(unordered_map<int, AulaHeur*> const &aulas) c
 	return true;
 }
 
+int ProfessorHeur::nroCredsLivresEstimados() const
+{
+	int nr = professor_->getNroCredsCadastroDisc() - getNrCreditosAlocados();
+	if (nr<0)
+	{
+		HeuristicaNuno::warning("ProfessorHeur::nroCredsLivresEstimados()","Nro de creditos livres negativo!");
+		nr=0;
+	}
+	return nr;
+}
+
 // verifica se duas turmas violam a interjornada
 bool ProfessorHeur::violaInterjornada(TurmaHeur* const turma1, TurmaHeur* const turma2)
 {

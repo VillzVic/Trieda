@@ -691,6 +691,35 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    LE_SEQ( this->demandasTotal, raiz.demandas(), Demanda );
    LE_SEQ( this->equivalencias, raiz.equivalencias(), Equivalencia );
 
+   TriedaInput::fixacoes_type & list_fixacoes = raiz.fixacoes();
+   LE_SEQ( this->fixacoes, list_fixacoes, Fixacao );
+   
+   this->parametros = new ParametrosPlanejamento;
+   this->parametros->le_arvore( raiz.parametrosPlanejamento() );
+   
+   refDiscEquivalencias();
+   checkParamUsaEquivalencia();
+
+   this->addHorariosAnalogosDisciplina();
+
+   leOfertas(raiz);
+      
+   setModoOtimizacao();
+
+   leAtendimentoTatico(raiz);
+
+   leDemandas(raiz);
+
+   criaPerfilProfVirtual();
+
+   refTitContProfReal();
+
+   preencheHorSalas(raiz);
+
+}
+
+void ProblemData::refDiscEquivalencias()
+{
    ITERA_GGROUP_LESSPTR( itEquiv, this->equivalencias, Equivalencia )
    {
 	   int disc1 = itEquiv->getDisciplinaEliminaId();
@@ -730,21 +759,44 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		}
 	   // ---------------------------------------------------
    }
+}
 
-   this->parametros = new ParametrosPlanejamento;
-   this->parametros->le_arvore( raiz.parametrosPlanejamento() );
-   
-   this->addHorariosAnalogosDisciplina();
+void ProblemData::checkParamUsaEquivalencia()
+{
+	if (this->parametros->considerar_equivalencia_por_aluno ||
+		this->parametros->considerar_equivalencia)
+	{
+		if (this->equivalencias.size() == 0)
+		{
+			this->parametros->considerar_equivalencia_por_aluno = false;
+			this->parametros->considerar_equivalencia = false;
+		}
+	}
+}
 
+void ProblemData::leOfertas(TriedaInput & raiz)
+{
    ITERA_SEQ( it_oferta,
       raiz.ofertaCursosCampi(), OfertaCurso )
    {
       Oferta * oferta = new Oferta;
       oferta->le_arvore( *it_oferta );
       this->ofertas.add( oferta );
-   }
+   }	
+}
 
-   
+void ProblemData::setModoOtimizacao()
+{
+   if ( this->parametros->modo_otimizacao == "TATICO" )
+	   this->setModoOtimizacao( ProblemData::TATICO );
+   else if ( this->parametros->modo_otimizacao == "OPERACIONAL" && this->atendimentosTatico != NULL )
+	   this->setModoOtimizacao( ProblemData::OPERACIONAL_COM_TAT );
+   else if ( this->parametros->modo_otimizacao == "OPERACIONAL" && this->atendimentosTatico == NULL  )
+	   this->setModoOtimizacao( ProblemData::OPERACIONAL_SEM_TAT );	
+}
+
+void ProblemData::leAtendimentoTatico(TriedaInput & raiz)
+{   
    // Se a tag existir ( mesmo que esteja em branco ) no xml de entrada
    if ( raiz.atendimentosTatico().present() )
    {
@@ -753,24 +805,18 @@ void ProblemData::le_arvore( TriedaInput & raiz )
       for ( unsigned int i = 0;
 		    i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++ )
       {
-         ItemAtendimentoCampusSolucao * it_atendimento
-            = &( raiz.atendimentosTatico().get().AtendimentoCampus().at( i ) );
+         ItemAtendimentoCampusSolucao it_atendimento
+            = ( raiz.atendimentosTatico().get().AtendimentoCampus().at( i ) );
 
          AtendimentoCampusSolucao * item = new AtendimentoCampusSolucao();
-         item->le_arvore( ( *it_atendimento ) );
+         item->le_arvore( (it_atendimento) );
          this->atendimentosTatico->add( item );
       }
    }
+}
 
-   if ( this->parametros->modo_otimizacao == "TATICO" )
-	   this->setModoOtimizacao( ProblemData::TATICO );
-   else if ( this->parametros->modo_otimizacao == "OPERACIONAL" && this->atendimentosTatico != NULL )
-	   this->setModoOtimizacao( ProblemData::OPERACIONAL_COM_TAT );
-   else if ( this->parametros->modo_otimizacao == "OPERACIONAL" && this->atendimentosTatico == NULL  )
-	   this->setModoOtimizacao( ProblemData::OPERACIONAL_SEM_TAT );
-
-
-
+void ProblemData::leDemandas(TriedaInput &raiz)
+{
    if ( this->parametros->otimizarPor == "ALUNO" )
    {
 	   LE_SEQ( this->alunosDemandaTotal, raiz.alunosDemanda(), AlunoDemanda );
@@ -884,41 +930,22 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		   this->nPrioridadesDemanda[ it_campi->getId() ] = 1;
 	   }
    }
+}
 
-
-
-
-   TriedaInput::fixacoes_type & list_fixacoes = raiz.fixacoes();
-   LE_SEQ( this->fixacoes, list_fixacoes, Fixacao );
-
-   // Monta um 'map' para recuperar cada 'ItemSala'
-   // do campus a partir de seu respectivo id de sala
-   std::map< int, ItemSala * > mapItemSala;
-
-   ITERA_SEQ( it_campi, raiz.campi(), Campus )
-   {
-      ITERA_SEQ( it_unidade, it_campi->unidades(), Unidade )
-      {
-         ITERA_SEQ( it_sala, it_unidade->salas(), Sala )
-         {
-            mapItemSala[ it_sala->id() ] = &( ( *it_sala ) );
-         }
-      }
-   }
+void ProblemData::criaPerfilProfVirtual()
+{
 
    // Primeiro caso : executar o
-   // solver apenas com a entrada do tático
-   bool primeiroCaso = ( this->parametros->modo_otimizacao == "TATICO" );
+   // solver apenas com a entrada do táticob
+   bool primeiroCaso = ( this->getModoOtimizacao() == ProblemData::TATICO );
 
    // Segundo caso  : executar o solver com
    // a saída do tático e a entrada do operacional
-   bool segundoCaso  = ( this->parametros->modo_otimizacao == "OPERACIONAL"
-							&& raiz.atendimentosTatico().present() == true );
-
+   bool segundoCaso = ( this->getModoOtimizacao() == ProblemData::OPERACIONAL_COM_TAT );
+   
    // Terceiro caso : executar o solver apenas
    // com a entrada do operacional (sem saída do tático)
-   bool terceiroCaso = ( this->parametros->modo_otimizacao == "OPERACIONAL"
-							&& raiz.atendimentosTatico().present() == false );
+   bool terceiroCaso = ( this->getModoOtimizacao() == ProblemData::OPERACIONAL_SEM_TAT );
 
    // Informa o modo de otimização que será execuado
    if ( primeiroCaso )
@@ -1029,6 +1056,10 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		}
 	}
 
+}
+
+void ProblemData::refTitContProfReal()
+{
    // Referencia titulação e contrato dos professores reais
    ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )
    {
@@ -1044,6 +1075,24 @@ void ProblemData::le_arvore( TriedaInput & raiz )
       }
    }
 
+}
+
+void ProblemData::preencheHorSalas(TriedaInput &raiz)
+{
+   // Monta um 'map' para recuperar cada 'ItemSala'
+   // do campus a partir de seu respectivo id de sala
+   std::map< int, ItemSala * > mapItemSala;
+
+   ITERA_SEQ( it_campi, raiz.campi(), Campus )
+   {
+      ITERA_SEQ( it_unidade, it_campi->unidades(), Unidade )
+      {
+         ITERA_SEQ( it_sala, it_unidade->salas(), Sala )
+         {
+            mapItemSala[ it_sala->id() ] = &( ( *it_sala ) );
+         }
+      }
+   }
 
    // Prencher os horários e/ou créditos das salas
    ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )

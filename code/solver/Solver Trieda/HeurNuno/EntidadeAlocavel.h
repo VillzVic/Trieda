@@ -39,10 +39,11 @@ public:
 	// disponibilidade só olhando a conflitos de horário (e deslocamento se for o caso)
 	bool estaDisponivel(int dia, AulaHeur* const aula) const;
 	bool estaDisponivel(int dia, HorarioAula* const horario) const;
+	bool estaDisponivel(int dia, DateTime const &dti, DateTime const &dtf) const;
 	// verificar se está disponivel naquela aula, naquele dia, tendo em conta a turma já alocada
 	bool estaDisponivel(TurmaHeur* const turma, int dia, AulaHeur* const aula) const;
 	bool estaDisponivel(unordered_map<int, AulaHeur*> const &aulas) const;
-
+	
 	// diz se tem nr max de horários sequenciais disponiveis num dia para um conjunto de horarios. 
 	// OBS: não considerar sequencial intervalo grande! (PH: maxIntervalo!)
 	bool temHorsSeqDisponivel(int nrHors, int dia, GGroup<HorarioAula*, LessPtr<HorarioAula>> const &horarios) const;

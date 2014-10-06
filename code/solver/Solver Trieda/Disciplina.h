@@ -44,7 +44,7 @@ public:
    GGroup< Disciplina *, LessPtr< Disciplina > > discIncompativeis;
    
    std::map< int, ConjuntoSala* > cjtSalasAssociados; // map[cjtSalaId] = cjtSala
-
+      
    virtual void le_arvore( ItemDisciplina & );
 
    int adicionaDemandaTotal( int d ) { return ( demanda_total += d ); }

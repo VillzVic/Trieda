@@ -22,311 +22,31 @@ Solver::~Solver()
 void Solver::OptimizTimeLimitInit()
 {
 	int one_hour=3600;
-	   
-#ifdef SOLVER_CPLEX
-#ifdef TESTE		
-		OptimizTimeLimit[EST] = (int) one_hour * 0.05;
-		OptimizTimeLimit[EST_M] = (int) one_hour * 1.0;
-		OptimizTimeLimit[EST_T] = (int) one_hour * 1.0;
-		OptimizTimeLimit[EST_N] = (int) one_hour * 2.0;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 1.00;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_M] = (int) one_hour * 1.0;
-		OptimizTimeLimit[PRE_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[PRE_N] = (int) one_hour * 4.0;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_N] = (int) one_hour * 3.0;
-		OptimizTimeLimit[OP] = (int) one_hour * 0.05;
-		OptimizTimeLimit[OP1] = (int) one_hour * 0.05;
-		OptimizTimeLimit[OP2] = (int) one_hour * 0.05;
-		OptimizTimeLimit[OP3] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 0.05;		  
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
-#elif KROTON
-		OptimizTimeLimit[EST] = (int) one_hour * 3.5;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 4;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour * 1.2;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour;
-		OptimizTimeLimit[OP] = (int) one_hour * 2;
-		OptimizTimeLimit[OP1] = (int) one_hour * 2;
-		OptimizTimeLimit[OP2] = (int) one_hour * 3;
-		OptimizTimeLimit[OP3] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 5;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 4;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
-#elif UNIT
-		OptimizTimeLimit[EST] = (int) one_hour * 3.5;
-		OptimizTimeLimit[EST_M] = (int) one_hour * 1.0;
-		OptimizTimeLimit[EST_T] = (int) one_hour * 1.0;
-		OptimizTimeLimit[EST_N] = (int) one_hour * 2.0;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_M] = (int) one_hour * 1.0;
-		OptimizTimeLimit[PRE_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[PRE_N] = (int) one_hour * 4.0;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 5;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour * 1.0;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 5;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour * 1.5;
-		OptimizTimeLimit[TAT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_N] = (int) one_hour * 3.0;
-		OptimizTimeLimit[OP] = (int) one_hour * 2;
-		OptimizTimeLimit[OP1] = (int) one_hour * 2;
-		OptimizTimeLimit[OP2] = (int) one_hour * 3;
-		OptimizTimeLimit[OP3] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 4;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 5;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 4;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
-#elif UNIRITTER
-		OptimizTimeLimit[EST] = (int) one_hour * 2;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 4;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour;
-		OptimizTimeLimit[OP] = (int) one_hour;
-		OptimizTimeLimit[OP1] = (int) one_hour*2;
-		OptimizTimeLimit[OP2] = (int) one_hour*2;
-		OptimizTimeLimit[OP3] = (int) one_hour*2;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
-#else
-		OptimizTimeLimit[EST] = (int) one_hour * 2;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour*3;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour*3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour*3;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour;
-		OptimizTimeLimit[OP] = (int) one_hour;
-		OptimizTimeLimit[OP1] = (int) one_hour*2;
-		OptimizTimeLimit[OP2] = (int) one_hour*2;
-		OptimizTimeLimit[OP3] = (int) one_hour*2;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 5;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
+#ifdef TESTE
+	OptimizTimeLimit[OP] = (int) one_hour * 0.02;
+	OptimizTimeLimit[OP1] = (int) one_hour * 0.02;
+	OptimizTimeLimit[OP2] = (int) one_hour * 0.02;
+	OptimizTimeLimit[OP3] = (int) one_hour * 0.02;
+	OptimizTimeLimit[TAT_INT] = (int) one_hour * 0.02;
+	OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.02;
+	OptimizTimeLimit[TAT_INT2] = (int) one_hour * 0.02;
+	OptimizTimeLimit[TAT_INT3] = (int) one_hour * 0.02;
+	OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 0.02;
+	OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.02;
+	OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 0.02;
+#else	   
+	OptimizTimeLimit[OP] = (int) one_hour * 2;
+	OptimizTimeLimit[OP1] = (int) one_hour * 1;
+	OptimizTimeLimit[OP2] = (int) one_hour * 2;
+	OptimizTimeLimit[OP3] = (int) one_hour * 2;
+	OptimizTimeLimit[TAT_INT] = (int) one_hour * 2;
+	OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
+	OptimizTimeLimit[TAT_INT2] = (int) one_hour * 3;
+	OptimizTimeLimit[TAT_INT3] = (int) one_hour * 2;
+	OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
+	OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 1.0;
+	OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 4.0;
 #endif
-#else 
-// SOLVER_GUROBI
-#ifdef TESTE		
-		OptimizTimeLimit[EST] = (int) one_hour * 0.05;
-		OptimizTimeLimit[EST_M] = (int) one_hour * 1.0;
-		OptimizTimeLimit[EST_T] = (int) one_hour * 1.0;
-		OptimizTimeLimit[EST_N] = (int) one_hour * 2.0;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 1.00;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 0.05;
-		OptimizTimeLimit[PRE_M] = (int) one_hour * 1.0;
-		OptimizTimeLimit[PRE_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[PRE_N] = (int) one_hour * 4.0;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_N] = (int) one_hour * 3.0;
-		OptimizTimeLimit[OP] = (int) one_hour * 0.05;
-		OptimizTimeLimit[OP1] = (int) one_hour * 0.05;
-		OptimizTimeLimit[OP2] = (int) one_hour * 0.05;
-		OptimizTimeLimit[OP3] = (int) one_hour * 0.05;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 0.3;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.3;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 0.3;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 0.3;		  
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 0.2;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 0.3;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.3;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 0.3;
-#elif KROTON
-		OptimizTimeLimit[EST] = (int) one_hour * 3.5;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 4;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour * 1.2;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour;
-		OptimizTimeLimit[OP] = (int) one_hour * 2;
-		OptimizTimeLimit[OP1] = (int) one_hour * 2;
-		OptimizTimeLimit[OP2] = (int) one_hour * 3;
-		OptimizTimeLimit[OP3] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 5;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 4;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
-#elif UNIT
-		OptimizTimeLimit[EST] = (int) one_hour * 3.5;
-		OptimizTimeLimit[EST_M] = (int) one_hour * 1.0;
-		OptimizTimeLimit[EST_T] = (int) one_hour * 0.5;
-		OptimizTimeLimit[EST_N] = (int) one_hour * 2.0;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_M] = (int) one_hour * 4.0;
-		OptimizTimeLimit[PRE_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[PRE_N] = (int) one_hour * 4.0;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 5;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour * 1.0;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 4;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour * 1.5;
-		OptimizTimeLimit[TAT_M] = (int) one_hour * 3.0;
-		OptimizTimeLimit[TAT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_N] = (int) one_hour * 3.5;
-		OptimizTimeLimit[OP] = (int) one_hour * 2;
-		OptimizTimeLimit[OP1] = (int) one_hour * 1;
-		OptimizTimeLimit[OP2] = (int) one_hour * 2;
-		OptimizTimeLimit[OP3] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 1.0;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 4.0;
-#elif UNIRITTER
-		OptimizTimeLimit[EST] = (int) one_hour * 2;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour * 3;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour * 4;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour;
-		OptimizTimeLimit[OP] = (int) one_hour;
-		OptimizTimeLimit[OP1] = (int) one_hour*2;
-		OptimizTimeLimit[OP2] = (int) one_hour*2;
-		OptimizTimeLimit[OP3] = (int) one_hour*2;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 3;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
-#else
-		OptimizTimeLimit[EST] = (int) one_hour * 2;
-		OptimizTimeLimit[EST_FIXA_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT_SAB_ZERO] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT1] = (int) one_hour * 1;
-		OptimizTimeLimit[PRE_TAT2] = (int) one_hour * 2;
-		OptimizTimeLimit[PRE_TAT3] = (int) one_hour*3;
-		OptimizTimeLimit[PRE_TAT4] = (int) one_hour*3;
-		OptimizTimeLimit[TAT_HOR] = (int) one_hour;
-		OptimizTimeLimit[TAT_HOR1] = 1e10;
-		OptimizTimeLimit[TAT_HOR_CALOURO] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_HOR2] = (int) one_hour*3;
-		OptimizTimeLimit[TAT_HOR3] = (int) one_hour;
-		OptimizTimeLimit[OP] = (int) one_hour;
-		OptimizTimeLimit[OP1] = (int) one_hour*2;
-		OptimizTimeLimit[OP2] = (int) one_hour*2;
-		OptimizTimeLimit[OP3] = (int) one_hour*2;
-		OptimizTimeLimit[TAT_INT] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-		OptimizTimeLimit[TAT_INT2] = (int) one_hour * 5;
-		OptimizTimeLimit[TAT_INT3] = (int) one_hour * 2;
-		OptimizTimeLimit[TAT_INT_CALOURO] = (int) one_hour * 1;
-		OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-		OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.4;
-		OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 3.0;
-#endif
-
-#endif
-
 }
 
 
@@ -338,29 +58,7 @@ void Solver::OptimizMaxTimeNoImprovInit()
 	   
 #ifdef SOLVER_GUROBI
 
-#ifdef TESTE		
-	OptimizMaxTimeNoImprov[EST] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[EST_M] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[EST_T] = (int) one_hour * 0.01;
-	OptimizMaxTimeNoImprov[EST_N] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[EST_FIXA_SAB_ZERO] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[PRE_TAT] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[PRE_TAT_SAB_ZERO] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[PRE_TAT1] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[PRE_TAT2] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[PRE_TAT3] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[PRE_TAT4] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[PRE_M] = (int) one_hour * 0.1;
-	OptimizMaxTimeNoImprov[PRE_T] = (int) one_hour * 0.05;
-	OptimizMaxTimeNoImprov[PRE_N] = (int) one_hour * 0.2;
-	OptimizMaxTimeNoImprov[TAT_HOR] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_HOR1] = 1e10;
-	OptimizMaxTimeNoImprov[TAT_HOR_CALOURO] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_HOR2] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_HOR3] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_M] = (int) one_hour * 0.1;
-	OptimizMaxTimeNoImprov[TAT_T] = (int) one_hour * 0.05;
-	OptimizMaxTimeNoImprov[TAT_N] = (int) one_hour * 0.2;
+#ifdef TESTE
 	OptimizMaxTimeNoImprov[OP] = (int) one_hour * 0.02;
 	OptimizMaxTimeNoImprov[OP1] = (int) one_hour * 0.02;
 	OptimizMaxTimeNoImprov[OP2] = (int) one_hour * 0.02;
@@ -369,123 +67,21 @@ void Solver::OptimizMaxTimeNoImprovInit()
 	OptimizMaxTimeNoImprov[TAT_INT1] = (int) one_hour * 0.02;
 	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 0.02;
 	OptimizMaxTimeNoImprov[TAT_INT3] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT_CALOURO] = (int) one_hour * 0.02; 
 	OptimizMaxTimeNoImprov[TAT_INT_M] = (int) one_hour * 0.02;
 	OptimizMaxTimeNoImprov[TAT_INT_T] = (int) one_hour * 0.02;
 	OptimizMaxTimeNoImprov[TAT_INT_N] = (int) one_hour * 0.02;
-#elif defined KROTON
-	OptimizMaxTimeNoImprov[EST] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[EST_FIXA_SAB_ZERO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[PRE_TAT] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT_SAB_ZERO] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT1] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT2] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT3] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT4] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[TAT_HOR] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_HOR1] = 1e10;
-	OptimizMaxTimeNoImprov[TAT_HOR_CALOURO] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_HOR2] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_HOR3] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[OP] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[OP1] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[OP2] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[OP3] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 1.5;
-	OptimizMaxTimeNoImprov[TAT_INT3] = (int) one_hour * 1.0;	
-	OptimizMaxTimeNoImprov[TAT_INT_CALOURO] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_M] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_T] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_N] = (int) one_hour * 1.5;
-#elif defined UNIT
-	OptimizMaxTimeNoImprov[EST] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[EST_M] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[EST_T] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[EST_N] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[EST_FIXA_SAB_ZERO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[PRE_TAT] = (int) one_hour * 3.0;
-	OptimizMaxTimeNoImprov[PRE_TAT_SAB_ZERO] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT1] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT2] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT3] = (int) one_hour * 3.0;
-	OptimizMaxTimeNoImprov[PRE_TAT4] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_M] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_T] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_N] = (int) one_hour * 2.5;
-	OptimizMaxTimeNoImprov[TAT_HOR] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR1] = 1e10;
-	OptimizMaxTimeNoImprov[TAT_HOR_CALOURO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR2] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_HOR3] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_M] = (int) one_hour * 2.5;
-	OptimizMaxTimeNoImprov[TAT_T] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_N] = (int) one_hour * 3.0;
+#else
 	OptimizMaxTimeNoImprov[OP] = (int) one_hour * 0.5;
 	OptimizMaxTimeNoImprov[OP1] = (int) one_hour * 0.5;
 	OptimizMaxTimeNoImprov[OP2] = (int) one_hour * 0.6;
 	OptimizMaxTimeNoImprov[OP3] = (int) one_hour * 0.5;
 	OptimizMaxTimeNoImprov[TAT_INT] = (int) one_hour * 0.5;
 	OptimizMaxTimeNoImprov[TAT_INT1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 0.5;
+	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 1.0;
 	OptimizMaxTimeNoImprov[TAT_INT3] = (int) one_hour * 0.5;	
-	OptimizMaxTimeNoImprov[TAT_INT_CALOURO] = (int) one_hour * 0.5;
 	OptimizMaxTimeNoImprov[TAT_INT_M] = (int) one_hour * 1.0;
 	OptimizMaxTimeNoImprov[TAT_INT_T] = (int) one_hour * 0.5;
 	OptimizMaxTimeNoImprov[TAT_INT_N] = (int) one_hour * 1.0;
-#elif defined UNIRITTER
-	OptimizMaxTimeNoImprov[EST] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[EST_FIXA_SAB_ZERO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[PRE_TAT] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT_SAB_ZERO] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT1] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT2] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT3] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT4] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[TAT_HOR] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR1] = 1e10;
-	OptimizMaxTimeNoImprov[TAT_HOR_CALOURO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR2] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR3] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP2] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP3] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT3] = (int) one_hour * 0.5;	
-	OptimizMaxTimeNoImprov[TAT_INT_CALOURO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT_M] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_T] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_N] = (int) one_hour * 1.5;
-#else
-	OptimizMaxTimeNoImprov[EST] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[EST_FIXA_SAB_ZERO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[PRE_TAT] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT_SAB_ZERO] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT1] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[PRE_TAT2] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT3] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[PRE_TAT4] = (int) one_hour * 2.0;
-	OptimizMaxTimeNoImprov[TAT_HOR] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR1] = 1e10;
-	OptimizMaxTimeNoImprov[TAT_HOR_CALOURO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR2] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_HOR3] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP2] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP3] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT3] = (int) one_hour * 0.5;	
-	OptimizMaxTimeNoImprov[TAT_INT_CALOURO] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT_M] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_T] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_N] = (int) one_hour * 1.5;
 #endif
 
 #endif
@@ -499,32 +95,10 @@ std::string Solver::toString( int model )
 	{
 	case SOL_INIT:
 		return "SOL_INIT";
-	case EST:
-		return "EST";
-	case EST_FIXA_SAB_ZERO:
-		return "EST_FIXA_SAB_ZERO";	
-	case PRE_TAT:
-		return "PRE_TAT";
-	case PRE_TAT_SAB_ZERO:
-		return "PRE_TAT_SAB_ZERO";	
-	case TAT_HOR1:
-		return "TAT1";	
-	case TAT_HOR2:
-		return "TAT2";	
 	case TAT_INT:
 		return "TAT_INT";	
 	case OP:
 		return "OP";
-	case TAT_INT_EQUIV:
-		return "TAT_INT_EQUIV";
-	case TAT_INT_INS:
-		return "TAT_INT_INS";
-	case TATICO1:
-		return "TATICO1";
-	case TATICO2:
-		return "TATICO2";
-	case TAT_INT_BRANCH_SALA:
-		return "TAT_INT_BRANCH_SALA";
 	}
 
 	return "error-type-opt";

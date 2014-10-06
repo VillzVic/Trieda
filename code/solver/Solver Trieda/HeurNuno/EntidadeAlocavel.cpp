@@ -190,6 +190,22 @@ bool EntidadeAlocavel::estaDisponivel(int dia, HorarioAula* const horario) const
 
 	return true;
 }
+bool EntidadeAlocavel::estaDisponivel(int dia, DateTime const &dti, DateTime const &dtf) const
+{
+	// verificar se está disponivel tendo em conta as aulas já alocadas
+	auto itDia = diasAulas_.find(dia);
+	if(itDia == diasAulas_.end())
+		return true;
+
+	// Testar: começar por cima ou baixo?
+	for(auto itAula = itDia->second.cbegin(); itAula != itDia->second.cend(); ++itAula)
+	{
+		if((*itAula)->intersectaHorario(dti,dtf))
+			return false;
+	}
+
+	return true;
+}
 bool EntidadeAlocavel::estaDisponivel(TurmaHeur* const turma, int dia, AulaHeur* const aula) const
 {
 	HeuristicaNuno::logMsg("EntidadeAlocavel::estaDisponivel(const TurmaHeur* const turma, int dia, int aula)", 3);

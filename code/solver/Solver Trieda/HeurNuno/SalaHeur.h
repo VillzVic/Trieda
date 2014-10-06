@@ -34,6 +34,7 @@ public:
 	bool estaDisponivel(int dia, AulaHeur* const aula) const ;
 	bool estaDisponivel(unordered_map<int, AulaHeur*> const &aulas) const ;
 	bool estaDisponivel(TurmaHeur* const turma) const;
+	using EntidadeAlocavel::estaDisponivel;
 
 	// verifica indisponibilidades extra carregadas
 	bool indisponivelExtra(int dia, HorarioAula* const horario) const;

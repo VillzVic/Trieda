@@ -61,6 +61,14 @@ bool HorarioAula::sobrepoe( HorarioAula* const &h )
 
 	return true;
 }
+bool HorarioAula::sobrepoe( DateTime const &dti, DateTime const &dtf ) const
+{
+	// se o final de um horario for menor ou igual que o inicio de outro não há intersecção
+	if(dtf.earlierTime(inicio, true) || getFinal().earlierTime(dti, true))
+		return false;
+
+	return true;
+}
 
 bool HorarioAula::inicioFimIguais ( HorarioAula const & right ) const
 {

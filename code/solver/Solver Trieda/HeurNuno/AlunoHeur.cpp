@@ -391,12 +391,12 @@ bool AlunoHeur::checkLinks(void) const
 // da prioridade a calouros, depois formandos, depois alunos com MAIS creditos
 bool AlunoHeur::compAlunosI(AlunoHeur* const first, AlunoHeur* const second)
 {
-	// check prioritização por turnos
+	// check priorização por turnos
 	bool veredito = true;
 	if(checkTurnoDisc(first, second, veredito))
 		return veredito;
 
-	// check se há prioritização de formando/calouro
+	// check se há priorização de formando/calouro
 	bool check = checkFormCal(first, second, veredito);
 	if(check)
 		return veredito;
@@ -423,12 +423,12 @@ bool AlunoHeur::compAlunosI(AlunoHeur* const first, AlunoHeur* const second)
 // da prioridade a calouros, depois formandos, depois alunos com MENOS creditos
 bool AlunoHeur::compAlunosII(AlunoHeur* const first, AlunoHeur* const second)
 {
-	// check prioritização por turnos
+	// check priorização por turnos
 	bool veredito = true;
 	if(checkTurnoDisc(first, second, veredito))
 		return veredito;
 
-	// check se há prioritização de formando/calouro
+	// check se há priorização de formando/calouro
 	bool check = checkFormCal(first, second, veredito);
 	if(check)
 		return veredito;

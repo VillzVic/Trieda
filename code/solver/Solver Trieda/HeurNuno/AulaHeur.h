@@ -32,6 +32,7 @@ public:
 	void getLastHor (DateTime &time) const { (*horarios.rbegin())->getFinal(time); }
 
 	bool intersectaHorario(HorarioAula* const horario, bool deslocavel = false, int campId = -1, int unidId = -1) const;
+	bool intersectaHorario(DateTime const &dti, DateTime const &dtf, bool deslocavel = false, int campId = -1, int unidId = -1) const;
 	int nrCreditos() const { return horarios.size();  } 
 
 	virtual bool operator < (const AulaHeur &other) const

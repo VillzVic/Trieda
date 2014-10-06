@@ -61,6 +61,11 @@ OfertaDisciplina::OfertaDisciplina(SolucaoHeur* const solucao, Disciplina* const
 
 	// contabilizar numero de laboratorios associados a parte pratica
 	setLabsAssoc();
+
+	// preencher map com disponibilidades originais comuns entre os profs e a disciplina principal
+	preencheMapDisponibComumProf();
+	// preencher map com salas associadas
+	preencheSalasAssoc();
 }
 
 // com cursos associados!
@@ -168,17 +173,18 @@ void OfertaDisciplina::gerarDivs(void)
 // também actualiza os indicadores de demanda das salas (se activado)
 void OfertaDisciplina::setDemandasNaoAtend(unordered_map<int, unordered_set<AlunoDemanda *>> const &demandas, bool equiv) 
 {
-	// diminuir indice demanda das salas associadas
+	// diminuir indice demanda das salas associadas, removendo o valor antigo com o qual a OfertaDisciplina contribuía
 	if(ParametrosHeuristica::indicDemSalas && nrDemandasNaoAtend_.size() > 0)
 		decIncIndicDem_(false, equiv);
-
+	
+	// Atualiza o nro de nao atendimentos da OfertaDisciplina
 	nrDemandasNaoAtend_.clear();
 	for(auto itPrior = demandas.begin(); itPrior != demandas.end(); ++itPrior)
 	{
 		nrDemandasNaoAtend_[itPrior->first] = (int)itPrior->second.size();
 	}
 
-	// aumentar indice demanda das salas associadas
+	// aumentar indice demanda das salas associadas, acrescentando o valor atualizado com o qual a OfertaDisciplina contribui
 	if(ParametrosHeuristica::indicDemSalas)
 		decIncIndicDem_(true, equiv);
 }
@@ -914,6 +920,78 @@ bool OfertaDisciplina::temAlunoCurso(Curso* const curso, TurmaHeur* const turma)
 	return false;
 }
 
+void OfertaDisciplina::preencheSalasAssoc()
+{
+	preencheSalasAssoc(true);
+	preencheSalasAssoc(false);
+}
+void OfertaDisciplina::preencheSalasAssoc(bool teorico)
+{
+	Disciplina* const disciplina = teorico ? disciplinaTeorica_ : disciplinaPratica_;
+	if(disciplina == nullptr) return;
+		
+	// Limpa
+	if ( salasAssoc_.find(teorico) != salasAssoc_.end() )
+		salasAssoc_.erase(teorico);
+
+	unordered_set<SalaHeur*> empty;
+	auto itSalaAssoc = salasAssoc_.insert( pair<bool, unordered_set<SalaHeur*>> (teorico, empty) ); 
+	if ( !itSalaAssoc.second )
+	{
+		HeuristicaNuno::warning("OfertaDisciplina::preencheSalasAssoc(bool)", "Par <bool,empty> nao inserido!");
+		return;
+	}	
+	auto setSalasAssoc = &itSalaAssoc.first->second;
+	
+	// Preenche
+	int nrLabs = 0;
+	for(auto it = disciplina->cjtSalasAssociados.begin(); it!= disciplina->cjtSalasAssociados.end(); ++it)
+	{
+		for(auto itSalas = it->second->salas.begin(); itSalas != it->second->salas.end(); ++itSalas)
+		{
+			if(itSalas->second->getIdCampus() != campus_->getId())
+				continue;
+
+			auto salaHeur = solucao_->salasHeur.find(itSalas->second->getId());
+			if(salaHeur == solucao_->salasHeur.end())
+			{
+				HeuristicaNuno::warning("OfertaDisciplina::getSalasAssociadas", "SalaHeur nao encontrada!");
+				continue;
+			}
+			setSalasAssoc->insert(salaHeur->second);
+			if(salaHeur->second->ehLab())
+				nrLabs++;
+		}
+	}
+	
+	// Se não houve associação, associar a todas salas do campus desse tipo
+	if(setSalasAssoc->size() == 0)
+	{
+		stringstream ss;
+		ss << "Disciplina id: " << disciplina->getId() << " sem salas associadas. ";
+		if(disciplina->eLab())
+			ss << "Associar todos os labs, pois ela usa lab!" << endl;
+		else
+			ss << "Associar todas as salas (nao lab)!" << endl;
+		for(auto itUnid = campus_->unidades.begin(); itUnid != campus_->unidades.end(); ++itUnid)
+		{
+			for(auto itSala = (*itUnid)->salas.begin(); itSala != (*itUnid)->salas.end(); ++itSala)
+			{
+				if(disciplina->eLab() != (*itSala)->ehLab())
+					continue;
+
+				auto salaHeur = solucao_->salasHeur.find(itSala->getId());
+				if(salaHeur == solucao_->salasHeur.end())
+				{
+					HeuristicaNuno::warning("OfertaDisciplina::getSalasAssociadas", "SalaHeur nao encontrada!");
+					continue;
+				}
+				setSalasAssoc->insert(salaHeur->second);
+			}
+		}
+	}
+}
+
 void OfertaDisciplina::getSalasAssociadas(unordered_set<SalaHeur*> &set, bool teorico) const
 {
 	Disciplina* const disciplina = teorico ? disciplinaTeorica_ : disciplinaPratica_;
@@ -1046,6 +1124,247 @@ void OfertaDisciplina::getProfessoresAssociados (unordered_set<ProfessorHeur*> &
 			profsAssoc.insert(itHeur->second);
 		}
 	}
+}
+
+int OfertaDisciplina::getNroCredsLivresProfsEstimados() const
+{ 
+	int nr=0;
+	
+	int minCred = 0;
+	if (duasComp()) minCred = min<int>(getNrCreds(true),getNrCreds(false));
+	else minCred = getNrCreds();
+
+	auto itProf = mapProfDiaHorComum_.cbegin();
+	for(; itProf!= mapProfDiaHorComum_.cend(); itProf++)
+	{
+		int nCredProf = itProf->first->nroCredsLivresEstimados();
+		if (nCredProf >= minCred)
+			nr += nCredProf;
+	}
+	return nr;
+}
+
+void OfertaDisciplina::preencheMapDisponibComumProf()
+{
+	bool mesmoProfPratTeor = this->getDisciplina()->getProfUnicoDiscPT();
+	const int nroCredsT = this->getNrCreds(true);
+	const int nroCredsP = this->getNrCreds(false);
+
+	unordered_set<ProfessorHeur*> profsAssoc;
+	getProfessoresAssociados(profsAssoc);
+
+	auto itProf = profsAssoc.cbegin();
+	for(; itProf!= profsAssoc.cend(); itProf++)
+	{
+		ProfessorHeur* const prof = *itProf;
+
+		std::map< int/*dia*/, std::map<DateTime, std::set<DateTime>> > mapDiaHorComum;
+		const int nrHorComuns = getTempoComumProf(prof, mapDiaHorComum);
+
+		bool enoughP = (nrHorComuns >= nroCredsP);
+		bool enoughT = (nrHorComuns >= nroCredsT);
+		bool enough = (enoughP && enoughT) || (!mesmoProfPratTeor && (enoughP || enoughT));
+		if (enough)
+		{
+			mapProfDiaHorComum_[prof] = mapDiaHorComum;
+		}	
+	}
+}
+
+int OfertaDisciplina::getTempoComumProf( ProfessorHeur* const prof,
+	std::map< int/*dia*/, std::map<DateTime, std::set<DateTime>> > &mapDiaHorComum ) const
+{
+	Disciplina * const discTeor = this->getDisciplina();
+	GGroup<Horario*,LessPtr<Horario>> * const horsDisc = &discTeor->horarios;
+		
+	// Armazena os horarios comuns da disponib do prof e da disc
+	for( auto itHorDisc = horsDisc->begin();
+		 itHorDisc!= horsDisc->end(); itHorDisc++)
+	{
+		HorarioAula * const hi = (*itHorDisc)->horario_aula;
+		HorarioAula * const hf = hi;
+		DateTime const dti = hi->getInicio();
+		DateTime const dtf = hf->getFinal();
+
+		for ( auto itDia = itHorDisc->dias_semana.begin();
+			  itDia != itHorDisc->dias_semana.end(); itDia++ )
+		{
+			const int dia = *itDia;
+			if ( prof->getProfessor()->possuiHorariosNoDia(hi,hf,dia) )
+			{
+				std::map<DateTime, std::set<DateTime>> empty1;
+				auto itDayInser = mapDiaHorComum.insert(
+					pair<int/*dia*/,std::map<DateTime, std::set<DateTime>>> (dia,empty1) ).first;
+				
+				std:set<DateTime> empty2;
+				auto itDtiInser = itDayInser->second.insert(
+					pair<DateTime, std::set<DateTime>> (dti,empty2) ).first;
+
+				itDtiInser->second.insert(dtf);
+			}
+		}
+	}
+	
+	// Soma nro de creditos comuns e sem sobreposicao (supondo que a disc tem sempre cred de msm duração)
+	// na disponib do prof e da disc
+	int credsLivres=0;
+	for( auto it = mapDiaHorComum.cbegin(); it!= mapDiaHorComum.cend(); it++)
+	{
+		credsLivres += (int) it->second.size();
+	}
+
+	return credsLivres;
+}
+
+int OfertaDisciplina::getDisponibProfDisc() const
+{
+	int nr = 0;
+
+	Disciplina * const discTeor = this->getDisciplina();
+	const int nroCredsT = this->getNrCreds(true);
+	const int nroCredsP = this->getNrCreds(false);
+	bool mesmoProfPratTeor = discTeor->getProfUnicoDiscPT();
+	
+	auto itProf = mapProfDiaHorComum_.cbegin();
+	for(; itProf!= mapProfDiaHorComum_.cend(); itProf++)
+	{
+		ProfessorHeur* const prof = itProf->first;
+
+		std::map< int/*dia*/, map<DateTime, std::set<DateTime>> >
+			const * const mapDiaHorComum = & itProf->second;
+
+		const int nrHorComuns = getNroCredsLivresProf(prof, mapDiaHorComum);
+		bool enoughP = (nrHorComuns >= nroCredsP);
+		bool enoughT = (nrHorComuns >= nroCredsT);
+		bool enough = (enoughP && enoughT) || (!mesmoProfPratTeor && (enoughP || enoughT));
+		if (enough)
+			nr += nrHorComuns;
+	}
+
+	return nr;
+}
+
+int OfertaDisciplina::getNroCredsLivresProf( ProfessorHeur* const prof, 
+		std::map< int/*dia*/, std::map<DateTime, std::set<DateTime>> > const * const & mapDiaHorComum ) const
+{
+	int credsLivres=0;
+	
+	for( auto itDia = mapDiaHorComum->cbegin();
+		 itDia!= mapDiaHorComum->cend(); itDia++)
+	{
+		const int dia = itDia->first;
+		for( auto itDti = itDia->second.cbegin();
+			itDti!= itDia->second.cend(); itDti++)
+		{
+			const DateTime dti = itDti->first;
+			for( auto itDtf = itDti->second.cbegin();
+				itDtf!= itDti->second.cend(); itDtf++)
+			{			
+				const DateTime dtf = *itDtf;
+				if ( prof->estaDisponivel(dia,dti,dtf) )
+					credsLivres++;
+			}
+		}
+	}
+	
+	return credsLivres;
+}
+
+int OfertaDisciplina::getDisponibProfSalaDisc() const
+{
+	int nr = 0;
+
+	Disciplina * const discTeor = this->getDisciplina();
+	const int nroCredsT = this->getNrCreds(true);
+	const int nroCredsP = this->getNrCreds(false);
+	bool mesmoProfPratTeor = discTeor->getProfUnicoDiscPT();
+	
+	unordered_set<SalaHeur*> const * const salas = getSalasAssocRef(true);
+	unordered_set<SalaHeur*> const * const labs = getSalasAssocRef(false);
+
+	int nrHorComuns=9999999999;
+	int nrHorComunsTeor;
+	int nrHorComunsPrat;
+	if (salas)
+	{
+		nrHorComunsTeor = getDisponibProfSalaDisc(*salas,true);
+		nrHorComuns = min(nrHorComunsTeor,nrHorComuns);
+	}
+	if (labs)
+	{
+		nrHorComunsPrat = getDisponibProfSalaDisc(*labs,true);
+		nrHorComuns = min(nrHorComunsPrat,nrHorComuns);
+	}
+	if ( !salas && !labs ) nrHorComuns = 0;
+
+	return nrHorComuns;
+}
+
+// Retorna o nro de creditos livres em comum da disciplina e o cjt de salas,
+// considerando os horarios das turmas ja alocadas, e para os quais há professor real disponivel
+int OfertaDisciplina::getDisponibProfSalaDisc( unordered_set<SalaHeur*> const &salas, bool teorico ) const
+{
+	int nr = 0;
+	const int nroCreds = this->getNrCreds(teorico);
+	
+	auto itProf = mapProfDiaHorComum_.cbegin();
+	for(; itProf!= mapProfDiaHorComum_.cend(); itProf++)
+	{
+		ProfessorHeur* const prof = itProf->first;
+		
+		std::map< int/*dia*/, map<DateTime, std::set<DateTime>> >
+			const * const mapDiaHorComum = & itProf->second;
+	
+		auto itSala = salas.cbegin();
+		for(; itSala!= salas.cend(); itSala++)
+		{
+			const int nrHorComuns = getNroCredsLivresProfSala(prof, *itSala, mapDiaHorComum);
+			bool enough = (nrHorComuns >= nroCreds);
+			if (enough)
+				nr += nrHorComuns;
+		}
+	}
+
+	return nr;
+}
+
+// Retorna o nro de creditos livres em comum da disciplina, com o professor e a sala,
+// dentro do map de horarios especificado, considerando os horarios das turmas ja alocadas
+int OfertaDisciplina::getNroCredsLivresProfSala( ProfessorHeur* const prof, SalaHeur* const sala, 
+		std::map< int/*dia*/, std::map<DateTime, std::set<DateTime>> > const * const & mapDiaHorComum ) const
+{
+	int credsLivres=0;
+	
+	for( auto itDia = mapDiaHorComum->cbegin();
+		 itDia!= mapDiaHorComum->cend(); itDia++)
+	{
+		const int dia = itDia->first;
+		for( auto itDti = itDia->second.cbegin();
+			itDti!= itDia->second.cend(); itDti++)
+		{
+			const DateTime dti = itDti->first;
+			for( auto itDtf = itDti->second.cbegin();
+				itDtf!= itDti->second.cend(); itDtf++)
+			{			
+				const DateTime dtf = *itDtf;
+				if ( prof->estaDisponivel(dia,dti,dtf) )
+				if ( sala->estaDisponivel(dia,dti,dtf) )
+					credsLivres++;
+			}
+		}
+	}
+	
+	return credsLivres;
+}
+
+// Retorna pointer para o cjt de salas associadas da OfertaDisciplina.
+unordered_set<SalaHeur*> const * OfertaDisciplina::getSalasAssocRef(bool teorico) const
+{
+	unordered_set<SalaHeur*> const * salas = nullptr;
+	auto finder = salasAssoc_.find(teorico);
+	if (finder != salasAssoc_.end())
+		salas = &(finder->second);
+	return salas;
 }
 
 // set nrLabsAssoc_
@@ -2031,12 +2350,12 @@ bool OfertaDisciplina::compOfDiscIII(OfertaDisciplina* const ofertaUm, OfertaDis
 // nr demandas não atendidas P1 orig >> nr creditos >> valor demandas nao atend
 bool OfertaDisciplina::compOfDiscIV(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade)
 {
-	// prioridade à oferta com mais demandas p1 (s/equiv)
+	// prioridade à oferta com mais demandas p (s/equiv)
 	int diff = ofertaUm->getNrDemandasNaoAtend(prioridade) - ofertaDois->getNrDemandasNaoAtend(prioridade);
 	if(diff != 0)
 		return diff > 0;
 
-	// prioridade à oferta com mais demandas p1 (c/equiv)
+	// prioridade à oferta com mais demandas p (c/equiv)
 	diff = ofertaUm->getNrDemandasNaoAtend(prioridade, true) - ofertaDois->getNrDemandasNaoAtend(prioridade, true);
 	if(diff != 0)
 		return diff > 0;
@@ -2046,8 +2365,82 @@ bool OfertaDisciplina::compOfDiscIV(OfertaDisciplina* const ofertaUm, OfertaDisc
 	if(diff != 0)
 		return diff > 0;
 
+	// dar prioridade às disciplinas com menos profs disponiveis
+	diff = ofertaUm->getDisponibProfDisc() - ofertaDois->getDisponibProfDisc();
+	if(diff != 0)
+		return diff < 0;
+
 	return ofertaUm < ofertaDois;
 }
+
+// nr demandas não atendidas P1 orig >> nr creditos >> prof real disponiv >> valor demandas nao atend
+bool OfertaDisciplina::compOfDiscV(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade)
+{
+	// prioridade à oferta com mais demandas p (s/equiv)
+	int diff = ofertaUm->getNrDemandasNaoAtend(prioridade) - ofertaDois->getNrDemandasNaoAtend(prioridade);
+	if(diff != 0)
+		return diff > 0;
+
+	// prioridade à oferta com mais demandas p (c/equiv)
+	diff = ofertaUm->getNrDemandasNaoAtend(prioridade, true) - ofertaDois->getNrDemandasNaoAtend(prioridade, true);
+	if(diff != 0)
+		return diff > 0;
+
+	// dar prioridade às disciplinas com mais creditos
+	diff = ofertaUm->getNrCreds() - ofertaDois->getNrCreds();
+	if(diff != 0)
+		return diff > 0;
+
+	// dar prioridade às disciplinas com menos profs disponiveis
+	diff = ofertaUm->getNroCredsLivresProfsEstimados() - ofertaDois->getNroCredsLivresProfsEstimados();
+	if(diff != 0)
+		return diff < 0;
+
+	return ofertaUm < ofertaDois;
+}
+
+// nr demandas não atendidas P1 orig >> nr creditos >> dispProf >> dem/profSala
+bool OfertaDisciplina::compOfDiscVI(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade)
+{
+	// prioridade à oferta com mais demandas p (s/equiv)
+	int demUm = ofertaUm->getNrDemandasNaoAtend(prioridade);
+	int demDois = ofertaDois->getNrDemandasNaoAtend(prioridade);
+	int diff = demUm - demDois;
+	if(diff != 0)
+		return diff > 0;
+
+	// prioridade à oferta com mais demandas p (c/equiv)
+	diff = ofertaUm->getNrDemandasNaoAtend(prioridade, true) - ofertaDois->getNrDemandasNaoAtend(prioridade, true);
+	if(diff != 0)
+		return diff > 0;
+
+	// dar prioridade às disciplinas com mais creditos
+	diff = ofertaUm->getNrCreds() - ofertaDois->getNrCreds();
+	if(diff != 0)
+		return diff > 0;
+
+	// dar prioridade às disciplinas com menos profs disponiveis
+	int profUm = ofertaUm->getDisponibProfDisc();
+	int profDois = ofertaDois->getDisponibProfDisc();
+	diff = profUm - profDois;
+	if(diff != 0)
+		return diff < 0;
+	
+	// Prioridade à oferta com maior indice dem/prof
+	if (profUm || profDois)
+	{
+		int profSalaUm = ofertaUm->getDisponibProfSalaDisc();
+		int profSalaDois = ofertaDois->getDisponibProfSalaDisc();
+		double divUm = (profSalaUm? (double) demUm/profSalaUm : demUm);
+		double divDois = (profSalaDois? (double) demDois/profSalaDois : demDois);
+		double diff = divUm - divDois;
+		if(diff != 0)
+			return diff > 0;
+	}
+
+	return ofertaUm < ofertaDois;
+}
+
 
 // Comparadores singulares
 bool OfertaDisciplina::compDemNaoAtendV2(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade, bool &veredito)
@@ -2065,3 +2458,23 @@ bool OfertaDisciplina::compDemNaoAtendV2(OfertaDisciplina* const ofertaUm, Ofert
 	return false;
 }
 
+
+
+std::ostringstream& operator<< ( std::ostringstream &out, OfertaDisciplina const &ofDisc )
+{
+	out << "Id=" << ofDisc.getGlobalId()
+		<< " DiscId=" << ofDisc.getDisciplina()->getId()
+		<< " PT=" << (ofDisc.temCompTeorica() && ofDisc.temCompPratica())
+		<< " nAtendP1=" << ofDisc.getNrDemandasNaoAtend(1)
+		<< " nAtendP1+equiv=" << ofDisc.getNrDemandasNaoAtend(1,true)
+		<< " NrCreds=" << ofDisc.getNrCreds()
+		<< " DispProf=" << ofDisc.getNroCredsLivresProfsEstimados();
+		//<< " DispProf=" << ofDisc.getDisponibProfDisc();
+		
+	//int profSala = ofDisc.getDisponibProfSalaDisc();
+	//int dem = ofDisc.getNrDemandasNaoAtend(1);
+	//double div = (profSala? (double)dem/profSala : dem);
+	//out << " Dem/ProfSala=" << div;
+
+	return out;
+}

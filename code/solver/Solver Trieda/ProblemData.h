@@ -261,7 +261,7 @@ public:
 
    // Dias letivos comuns de um professor e uma disciplina.
    std::map< std::pair< int /*idProf*/, int /*idDisc*/>, GGroup< int > /*Dias*/ > prof_Disc_Dias;
-      
+       
    // Mapeia para cada disciplina, os professor reais que possuem habilitação para ministra-la.
    std::map< Disciplina*, GGroup<Professor*, LessPtr<Professor>>, LessPtr<Disciplina> > mapDiscProfsHabilit;
 
@@ -322,6 +322,16 @@ public:
 
    void le_turnosIES( TriedaInput & );
    virtual void le_arvore( TriedaInput & );
+   
+   void refDiscEquivalencias();
+   void checkParamUsaEquivalencia();
+   void leOfertas(TriedaInput & raiz);
+   void setModoOtimizacao();
+   void leAtendimentoTatico(TriedaInput & raiz);
+   void leDemandas(TriedaInput & raiz);
+   void refTitContProfReal();
+   void criaPerfilProfVirtual();
+   void preencheHorSalas(TriedaInput &raiz);
 
    // Armazena os 'ids' das disciplinas em comum entre os pares de cursos compatíveis
    std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;

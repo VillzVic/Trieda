@@ -39,6 +39,7 @@ public:
    bool horarioDisponivel( int dia );
    bool sobrepoe( HorarioAula const &h );
    bool sobrepoe( HorarioAula* const &h );
+   bool sobrepoe( DateTime const &dti, DateTime const &dtf ) const;
 
    // retorna nr minutos do inicio e fim
    int getInicioTimeMin(void) const { return inicio.timeMin(); }

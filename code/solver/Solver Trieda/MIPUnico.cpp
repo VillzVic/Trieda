@@ -2069,53 +2069,9 @@ int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
 		std::cout << "\n=========================================";
 	    std::cout << "\nGarantindo o resto dos parametros...\n"; fflush(NULL);
 		
-		lp->updateLP();
 		#ifdef PRINT_LOGS
 		lp->writeProbLP( lpName );
-		#endif
-				
-
-#ifdef SOLVER_CPLEX
-		lp->setNumIntSols(0);
-		if ( !PERMITIR_NOVAS_TURMAS )
-			lp->setTimeLimit(300);
-		else
-        	lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT) );
-		//lp->setMIPRelTol( 0.01 );
-		lp->setPreSolve(OPT_TRUE);
-		lp->setHeurFrequency(1.0);
-		lp->setMIPScreenLog( 4 );
-		lp->setPolishAfterTime(1800);
-		lp->setPolishAfterIntSol(100000000);
-		lp->setMIPEmphasis(0);
-		lp->setPolishAfterNode(1);
-		lp->setSymetry(0);
-      lp->setProbe(-1);
-		lp->setCuts(0);
-		lp->updateLP();
-#endif
-#ifdef SOLVER_GUROBI
-		lp->setNumIntSols(0);
-		lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT) );
-		lp->setPreSolveIntensity(OPT_LEVEL2);
-		lp->setHeurFrequency(0.5);
-		lp->setPolishAfterTime( this->getTimeLimit(Solver::TAT_INT) / 3 );
-		lp->setMIPEmphasis(1);
-		lp->setSymetry(2);
-		lp->setCuts(2);
-      //lp->setTimeLimit(1800);
-			
-		//lp->setRins(10);
-		//lp->setHeurFrequency(0.5);
-
-		#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-		cb_data.timeLimit = 3000;//this->getMaxTimeNoImprov(Solver::TAT_INT);
-		cb_data.gapMax = 80;
-		lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-		#endif
-
-		lp->updateLP();
-#endif
+		#endif				
 				
 		if ( CARREGA_SOL_PARCIAL )
 		{
@@ -2129,46 +2085,57 @@ int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
 		}
 		if ( !CARREGA_SOL_PARCIAL )
 		{
-			// GENERATES SOLUTION 		 
+			// GENERATES SOLUTION
 
-		// TRECHO IGUAL AO MAXATENDIMENTO!
-   //      double *oldObj = new double[lp->getNumCols()];
-   //      lp->getObj(0,lp->getNumCols()-1,oldObj);
+			if ( true )
+			{
+				#if !defined (DEBUG) && !defined (TESTE)	  
+				#ifdef SOLVER_CPLEX
+					polish(xS, 3600, 90, 10, 1000);
+					status = lp->optimize( METHOD_MIP );
+					lp->getX(xS);
+				#elif defined SOLVER_GUROBI
+					lp->setCallbackFunc( NULL, NULL );
+					polish(xS, 3600, 90, 10, 1000);
+					#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+					lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );			
+					#endif
+				#endif
+				#endif
+			}
 
-   //      VariableMIPUnicoHash::iterator vit = vHashTatico.begin();
-   //      for ( ; vit != vHashTatico.end(); vit++ )
-   //      {
-   //         VariableMIPUnico v = vit->first;
+		#ifdef SOLVER_CPLEX
+			lp->setNumIntSols(0);
+       		lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT) );
+			lp->setPreSolve(OPT_TRUE);
+			lp->setHeurFrequency(1.0);
+			lp->setMIPScreenLog( 4 );
+			lp->setPolishAfterTime(1800);
+			lp->setPolishAfterIntSol(100000000);
+			lp->setMIPEmphasis(0);
+			lp->setPolishAfterNode(1);
+			lp->setSymetry(0);
+			lp->setProbe(-1);
+			lp->setCuts(0);
+			lp->updateLP();
+		#endif
+		#ifdef SOLVER_GUROBI
+			lp->setNumIntSols(0);
+			lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT) );
+			lp->setPreSolveIntensity(OPT_LEVEL2);
+			lp->setHeurFrequency(0.8);
+			lp->setPolishAfterTime( this->getTimeLimit(Solver::TAT_INT) / 2 );
+			lp->setMIPEmphasis(1);
+			lp->setSymetry(2);
+			lp->setCuts(2);
 
-   //         if ( v.getType() != VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
-   //         {
-   //            lp->chgObj(vit->second,0.0);
-   //         }
-   //      }
-
-   //      lp->updateLP();
-
-			//status = lp->optimize( METHOD_MIP );
-			//std::cout<<"\nStatus TAT_INT_BIN = "<<status; fflush(NULL);
-			//lp->getX(xS);
-
-   //      for (vit = vHashTatico.begin() ; vit != vHashTatico.end(); vit++ )
-   //      {
-   //         VariableMIPUnico v = vit->first;
-
-   //         if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO && xS[vit->second] < 0.001 )
-   //         {
-   //            lp->chgUB(vit->second,0.0);
-   //         }
-
-   //         lp->chgObj(vit->second,oldObj[vit->second]);
-   //      }
-
-   //      lp->updateLP();
-
-   //      delete[] oldObj;
-
-		 //lp->copyMIPStartSol(xS);
+			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+			cb_data.timeLimit = this->getMaxTimeNoImprov(Solver::TAT_INT);
+			cb_data.gapMax = 30;
+			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+			#endif
+			lp->updateLP();
+		#endif
 
 			status = lp->optimize( METHOD_MIP );
 			std::cout<<"\nStatus TAT_INT_BIN = "<<status; fflush(NULL);
@@ -2406,59 +2373,24 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 	}
 	
     lp->chgObj(nBds,idxs,vals);
+    lp->updateLP();
 	#pragma endregion
 
 	
 	// ------------------------------------------------------------------------------------
 
-    lp->updateLP();
 		
 	std::string lpName2;
 	lpName2 += "2_";
 	lpName2 += string(lpName);
 
 	#ifdef PRINT_LOGS
-//	lp->writeProbLP( lpName2.c_str() );
+	lp->writeProbLP( lpName2.c_str() );
 	#endif
 	
-#ifdef SOLVER_CPLEX
-		lp->setNumIntSols(100000000);
-		lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT2) );
-		lp->setMemoryEmphasis(true);
-		lp->setPreSolve(OPT_TRUE);
-		lp->setHeurFrequency(1.0);
-		lp->setMIPScreenLog( 4 );
-		lp->setMIPEmphasis(4);
-		lp->setNodeLimit(100000000);
-	    //lp->setPolishAfterNode(1);
-		lp->setPolishAfterIntSol(100000);
-		lp->setPolishAfterTime(1200);
-		lp->setPolishAfterNode(1);
-		lp->setSymetry(0);
-		lp->setProbe(-1);
-		lp->setCuts(0);
-#endif
-#ifdef SOLVER_GUROBI
-		lp->setNumIntSols(100000000);
-		lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT2) );
-		lp->setPreSolveIntensity(OPT_LEVEL2);
-		lp->setMIPScreenLog( 4 );
-		lp->setMIPEmphasis(1);
-		lp->setPolishAfterTime( this->getTimeLimit(Solver::TAT_INT2) / 2 );
-		lp->setSymetry(-1);
-		lp->setCuts(2);
-		lp->setHeurFrequency(0.5);
-
-		#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-		cb_data.timeLimit = 3000;
-		cb_data.gapMax = 40;
-		lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-		#endif
-#endif
-
-	lp->updateLP();				
 	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
-						
+					
+	lp->updateLP();			
 
 	if ( CARREGA_SOL_PARCIAL )
 	{
@@ -2473,27 +2405,61 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 	if ( !CARREGA_SOL_PARCIAL )
 	{
 		// GENERATES SOLUTION 		 
-			
-		status = lp->optimize( METHOD_MIP );
-		std::cout<<"\nStatus TAT_INT_BIN2 = "<<status; fflush(NULL);
-		lp->getX(xS);
-
-		if ( false )
+		
+		if ( true )
 		{
 			#if !defined (DEBUG) && !defined (TESTE)	  
 			#ifdef SOLVER_CPLEX
-				polishTaticoHor(xS, 3600*2, 90, 15, 3600);
+				polish(xS, 3600, 90, 10, 1000);
 				status = lp->optimize( METHOD_MIP );
 				lp->getX(xS);
 			#elif defined SOLVER_GUROBI
 				lp->setCallbackFunc( NULL, NULL );
-				polishTaticoHor(xS, 3600*2, 90, 15, 2200);
+				polish(xS, 3600, 90, 10, 1000);
 				#if defined SOLVER_GUROBI && defined USAR_CALLBACK
 				lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );			
 				#endif
 			#endif
 			#endif
 		}
+
+		#ifdef SOLVER_CPLEX
+			lp->setNumIntSols(100000000);
+			lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT2) );
+			lp->setMemoryEmphasis(true);
+			lp->setPreSolve(OPT_TRUE);
+			lp->setHeurFrequency(1.0);
+			lp->setMIPScreenLog( 4 );
+			lp->setMIPEmphasis(4);
+			lp->setNodeLimit(100000000);
+			lp->setPolishAfterIntSol(100000);
+			lp->setPolishAfterTime(1200);
+			lp->setPolishAfterNode(1);
+			lp->setSymetry(0);
+			lp->setProbe(-1);
+			lp->setCuts(0);
+		#endif
+		#ifdef SOLVER_GUROBI
+			lp->setNumIntSols(100000000);
+			lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT2) );
+			lp->setPreSolveIntensity(OPT_LEVEL2);
+			lp->setMIPScreenLog( 4 );
+			lp->setMIPEmphasis(1);
+			lp->setSymetry(-1);
+			lp->setCuts(2);
+			lp->setHeurFrequency(0.8);
+			lp->setPolishAfterTime( this->getTimeLimit(Solver::TAT_INT2) / 3 );
+
+			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+			cb_data.timeLimit = this->getMaxTimeNoImprov(Solver::TAT_INT2);
+			cb_data.gapMax = 40;
+			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+			#endif
+		#endif
+			
+		status = lp->optimize( METHOD_MIP );
+		std::cout<<"\nStatus TAT_INT_BIN2 = "<<status; fflush(NULL);
+		lp->getX(xS);
 
 		writeSolBin( campusId, prioridade, r, OutPutFileType::TAT_INT_BIN2, xS );
 		writeSolTxt( campusId, prioridade, r, OutPutFileType::TAT_INT_BIN2, xS, 0 );
@@ -2548,7 +2514,7 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 	return status;
 }
 
-void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora)
+void MIPUnico::polish(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora)
 {
    // Adiciona restrição de local branching
    int status = 0;
@@ -2577,8 +2543,10 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
 
    lp->getUB(0,lp->getNumCols()-1,ubVars);
    lp->getLB(0,lp->getNumCols()-1,lbVars);
+   
+   int tempoIni = 100;
 
-   int tempoIter = 500;
+   int tempoIter = tempoIni;
    int perc = percIni;
    int *idxs = new int[lp->getNumCols()*2];
    double *vals = new double[lp->getNumCols()*2];
@@ -2588,50 +2556,36 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
    int fixType = 2;
 
 
-// ------------------------------------------------------------
-// Procura rapidamente a solução exata, caso já se esteja perto do ótimo
+	#pragma region VERIFICA SE HÁ NECESSIDADE DE POLISH 
+	// ------------------------------------------------------------
+	// Procura rapidamente a solução exata, caso já se esteja perto do ótimo
+	  lp->setNumIntSols(10000000);
+	  lp->setTimeLimit( 100 );
+      lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
+      lp->updateLP();
+	  
+      status = lp->optimize( METHOD_MIP );	  
+      lp->getX( xSol );
+	  
+	  if ( lp->getMIPGap() * 100 < 2.0 )
+	  {
+		  okIter = false;
+		  cout << "\n\nPolish desnecessario, gap =" << lp->getMIPGap() * 100 << std::endl;
+	  }
+	  else
+	  {
+		  cout << "\n\nPolishing..." << std::endl << std::endl;
+	  }
+	// ------------------------------------------------------------
+	#pragma endregion
 
-//#ifdef SOLVER_CPLEX
-//      lp->updateLP();
-//      lp->setNodeLimit( 100000000 );
-//      lp->setTimeLimit( 1800 );
-//      lp->setMIPRelTol( 0.01 );
-//      lp->setPolishAfterNode(1);
-//      lp->setPolishAfterTime(100000000);
-//      lp->setMIPEmphasis( 4 );
-//      lp->setNoCuts();
-//      lp->setVarSel(4);
-//      lp->setNodeLimit(200);
-//      lp->setHeurFrequency( 1.0 );
-//#endif
-//#ifdef SOLVER_GUROBI
-//      lp->updateLP();
-//      lp->setNodeLimit( 100000000 );
-//      lp->setTimeLimit( 1800 );
-//      lp->setMIPRelTol( 0.1 );
-//      lp->setMIPEmphasis( 0 );
-//      lp->setNoCuts();
-//      lp->setVarSel(4);
-//      lp->setNodeLimit(200);
-//      lp->setHeurFrequency( 1.0 );
-//      lp->updateLP();
-//#endif
-//
-//      lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
-//      lp->updateLP();
-//	  
-//      status = lp->optimize( METHOD_MIP );
-//	  
-//      lp->getX( xSol );
-//	  
-//	  if ( lp->getMIPGap() * 100 < 5.0 )
-//	  {
-//		  okIter = false;
-//		  cout << "\nPolish desnecessario, gap =" << lp->getMIPGap() * 100 << std::endl;
-//	  }
-
-// ------------------------------------------------------------
-
+	#pragma region PARAMETROS DE OTIMIZAÇÃO
+  	  lp->setNumIntSols(10000000);
+      lp->setTimeLimit( tempoIter );
+      lp->setMIPRelTol( 0.1 );
+      lp->setMIPEmphasis( 1 );
+      lp->setHeurFrequency( 0.8 );
+	#pragma endregion
 
    while (okIter)
    {
@@ -2642,6 +2596,7 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
       std::set<std::pair<int,Disciplina*> > paraFixarZero;
       std::map<Trio<int,Disciplina*,int>,int > paraFixarDia;
 
+	#pragma region DECIDE QUAIS TURMAS FIXAR EM ABERTA OU FECHADA
       if ( fixType == 1 )
       {
          nBds = 0;
@@ -2680,11 +2635,11 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
          lp->chgBds(nBds,idxs,bds,vals);
          lp->updateLP();
       }
+	#pragma endregion
 
-      vit = vHashTatico.begin();
-
+	#pragma region FIXA VARIAVEIS DE AULA
       nBds = 0;
-      while ( vit != vHashTatico.end() )
+      for ( vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
       {
          if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
          {
@@ -2695,8 +2650,6 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
                {
                   if ( xSol[vit->second] > 0.1 )
                   {
-                     //lp->chgLB(vit->second,(int)(xSol[vit->second]+0.5));
-                     //lp->chgUB(vit->second,(int)(xSol[vit->second]+0.5));
                      idxs[nBds] = vit->second;
                      vals[nBds] = (int)(xSol[vit->second]+0.5);
                      bds[nBds] = BOUNDTYPE::BOUND_UPPER;
@@ -2712,7 +2665,6 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
                      vals[nBds] = 0.0;
                      bds[nBds] = BOUNDTYPE::BOUND_UPPER;
                      nBds++;
-                     //lp->chgUB(vit->second,0.0);
                   }
                }
                else if ( paraFixarZero.find(auxPair) != paraFixarZero.end() )
@@ -2721,14 +2673,12 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
                   vals[nBds] = 0.0;
                   bds[nBds] = BOUNDTYPE::BOUND_UPPER;
                   nBds++;
-                  //lp->chgUB(vit->second,0.0);
                }
             }
             else
             {
                if ( rand() % 100 >= perc  )
                {
-                  vit++;
                   continue;
                }
 
@@ -2742,8 +2692,6 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
                   vals[nBds] = (int)(xSol[vit->second]+0.5);
                   bds[nBds] = BOUNDTYPE::BOUND_LOWER;
                   nBds++;
-                  //lp->chgLB(vit->second,(int)(xSol[vit->second]+0.5));
-                  //lp->chgUB(vit->second,(int)(xSol[vit->second]+0.5));
                }
                else
                {
@@ -2751,89 +2699,57 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
                   vals[nBds] = 0.0;
                   bds[nBds] = BOUNDTYPE::BOUND_UPPER;
                   nBds++;
-                  lp->chgUB(vit->second,0.0);
                }
             }
          }
-
-         vit++;
       }
 
       lp->chgBds(nBds,idxs,bds,vals);
       lp->updateLP();
+	#pragma endregion
 
-#ifdef SOLVER_CPLEX
-      lp->updateLP();
-      lp->setNodeLimit( 100000000 );
+      cout <<"POLISH COM PERC = " << perc << ", TEMPOITER = " << tempoIter << endl; fflush(0);
+
       lp->setTimeLimit( tempoIter );
-      lp->setMIPRelTol( 0.01 );
-      lp->setPolishAfterNode(1);
-      lp->setPolishAfterTime(100000000);
-      lp->setMIPEmphasis( 4 );
-      //lp->setCuts(1);
-      //if ( perc < percIni )
-      //   lp->setCuts(1);
-      //lp->setNoCuts();
-      lp->setNoCuts();
-      lp->setVarSel(4);
-      lp->setNodeLimit(200);
-      lp->setHeurFrequency( 1.0 );
-#endif
-#ifdef SOLVER_GUROBI
-      lp->updateLP();
-      lp->setNodeLimit( 100000000 );
-      lp->setTimeLimit( tempoIter );
-      lp->setMIPRelTol( 0.1 );
-      lp->setMIPEmphasis( 0 );
-      lp->setNoCuts();
-      lp->setVarSel(4);
-      lp->setNodeLimit(200);
-      lp->setHeurFrequency( 1.0 );
-      lp->updateLP();
-#endif
       lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
       lp->updateLP();
-
-      printf("POLISH COM PERC = %i, TEMPOITER = %i\n",perc,tempoIter);
-      fflush(0);
-
       status = lp->optimize( METHOD_MIP );
-
       lp->getX( xSol );
 	  
       double objN = lp->getObjVal();
+	  bool melhorou = ( fabs(objN-objAtual) >= 0.001 );
+	  double gap = lp->getMIPGap() * 100;
 
-      if ( fabs(objN-objAtual) < 0.0001 && perc < percMin )
-      {
-         if ( fixType == 2 )
-         {
-            perc = (percIni + percMin ) /2;
-            fixType = 2;
-            tempoIter = 500;
-         }
-         else
-         {
-            perc = (percIni + percMin ) /2;
-            fixType = 2;
-            tempoIter = 500;
-         }
-      }
-      else if ( fabs(objN-objAtual) < 0.0001 && perc >= percMin)
-      {
-         if ( fixType == 2 )
-         {
-            perc -= 5;
-            lp->setCuts(1);
-            tempoIter += 50;
-         }
-         else
-         {
-            perc -= 5;
-            lp->setCuts(1);
-            tempoIter += 50;
-         }
-      }
+	#pragma region SET NEW VALUES FOR PERC AND TEMPOITER
+	  if ( gap <= 1.0 )			// SMALL GAP
+	  {
+		  if ( perc<=10 )
+		  {
+			  if (perc <= 0) okIter = false;	// ótimo!
+			  else perc = 0;					// problema livre
+		  }
+		  else
+		  {
+			  perc -= 20;						// diminui mais rápido a parcela a deixar livre
+		  }
+	  }
+	  else						// BIG GAP
+	  {
+		  if ( !melhorou && perc < percMin )
+		  {
+			   perc = (percIni + percMin ) /2;
+			   tempoIter = tempoIni*3;
+		  }
+		  else if ( !melhorou && perc >= percMin)
+		  {
+			   perc += 10;
+			   //lp->setCuts(1);
+			   tempoIter += 50;
+		  }
+	  }
+	#pragma endregion
 
+	#pragma region CHECK TIME WITHOUT IMPROVEMENT
 	  if ( fabs(objN-objAtual) < 0.0001 )
 	  {
 		  /* no improvement */
@@ -2855,9 +2771,11 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
 		  tempoSemMelhora.reset();
 		  tempoSemMelhora.start();		
 	  }
+	#pragma endregion
 
-      objAtual = objN;
+	  objAtual = objN;
 	  
+	#pragma region CHECK TIME LIMIT
 	  if ( okIter )
       {
 		  tempoPol.stop();
@@ -2871,14 +2789,15 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
 			 cout << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime << endl;
 		  }
 	  }
+	#pragma endregion
 	  
+	#pragma region DESFIXA BOUNDS
       // Volta bounds
-      vit = vHashTatico.begin();
-
       nBds = 0;
-      while ( vit != vHashTatico.end() )
+      for ( vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
       {
-         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS || vit->first.getType() == VariableMIPUnico::V_ABERTURA )
+         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS || 
+			  vit->first.getType() == VariableMIPUnico::V_ABERTURA )
          {
             idxs[nBds] = vit->second;
             vals[nBds] = ubVars[vit->second];
@@ -2888,19 +2807,12 @@ void MIPUnico::polishTaticoHor(double *xSol, double maxTime, int percIni, int pe
             vals[nBds] = lbVars[vit->second];
             bds[nBds] = BOUNDTYPE::BOUND_LOWER;
             nBds++;
-            //lp->chgLB(vit->second,lbVars[vit->second]);
-            //lp->chgUB(vit->second,ubVars[vit->second]);
-         }
-         vit++;
-      }
-	  
+         }         
+      }	  
       lp->chgBds(nBds,idxs,bds,vals);
       lp->updateLP();
+	#pragma endregion
 
-#ifdef SOLVER_CPLEX
-      lp->setPolishAfterNode(1);
-      lp->setMIPRelTol( 0.0 );
-#endif
    }
 
       
@@ -8424,7 +8336,6 @@ int MIPUnico::criaRestricoesTatico( int campusId, int prioridade, int r )
 
 	timer.start();
 	restricoes += criaRestricaoTaticoAtendeAluno( campusId, prioridade );						// Restricao 1.2.5
-	restricoes += criaRestricaoTaticoAtendeAlunoEquiv( campusId, prioridade );					// Restricao 1.2.5
 	restricoes += criaRestricaoTaticoAtendeAlunoEquivTotal( campusId, prioridade );				// Restricao 1.2.5	
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
@@ -12041,124 +11952,6 @@ int MIPUnico::criaRestricaoPrioridadesDemandaEquiv( int campusId, int prior )
 }
 
 /*
-	Para cada aluno a, disciplina d não atendida em rodada anterior:
-
-	sum[deq]sum[i] s_{i,deq,a} + fd_{d,a} = 1
-
-	aonde deq é uma disciplina equivalente a d. Caso deq tenha creditos praticos e teoricos, 
-	só entram na restricao os teoricos.
-*/
-int MIPUnico::criaRestricaoTaticoAtendeAlunoEquiv( int campusId, int prioridade )
-{
-    int restricoes = 0;
-
-	if ( !USAR_EQUIVALENCIA || !PERMITIR_NOVAS_TURMAS )
-		return restricoes;
-			
-    char name[ 1024 ];
-    int nnz;
-
-    ConstraintMIPUnico c;
-    VariableMIPUnico v;
-    VariableMIPUnicoHash::iterator it_v;   
-
-    Campus *campus = problemData->refCampus[campusId];
-
-	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
-	{
-		Aluno *aluno = *itAluno;
-		
-		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
-		{
-			Disciplina *disciplina = itAlDemanda->demanda->disciplina;
-
-			if ( itAlDemanda->getPrioridade() != prioridade )
-				continue;
-			
-			if ( problemData->retornaTurmaDiscAluno( aluno, disciplina ) != -1 )
-				continue;
-
-			c.reset();
-			c.setType( ConstraintMIPUnico::C_DEMANDA_EQUIV_ALUNO );
-			c.setAluno( aluno );
-			c.setDisciplina( disciplina );
-			c.setCampus( campus );
-
-			sprintf( name, "%s", c.toString( etapa ).c_str() );
-
-			if ( cHashTatico.find( c ) != cHashTatico.end() )
-			{
-				continue;
-			}
-
-			nnz = 10;
-			OPT_ROW row( nnz, OPT_ROW::EQUAL, 1.0, name );
-
-			ITERA_GGROUP_LESSPTR( itDisc, disciplina->discEquivSubstitutas, Disciplina )
-			{
-				Disciplina *deq = *itDisc;
-				
-				// Pula disciplina pratica
-				if ( deq->getId() < 0 && deq!=disciplina )
-					continue;
-
-				if ( ! problemData->alocacaoEquivViavel( (*itAlDemanda)->demanda, *itDisc ) )
-					continue;	
-
-				if ( problemData->retornaTurmaDiscAluno( aluno, deq ) != -1 )
-				{
-					std::cout<<"\nEstranho, isso nao faz muito sentido. Significa que o aluno possui duas demandas"
-						" diferentes para disciplinas consideradas equivalentes. Aluno id = " << aluno->getAlunoId()
-						<< ", disciplina original id = "<< disciplina->getId() << " e disciplina substituta id=" 
-						<< deq->getId() << endl;
-					continue;
-				}
-
-				for ( int turma = 1; turma <= deq->getNumTurmas(); turma++ )
-				{
-					VariableMIPUnico v;
-					v.reset();
-					v.setType( VariableMIPUnico::V_ALOCA_ALUNO_TURMA_DISC );
-					v.setAluno( aluno );
-					v.setDisciplina( deq );
-					v.setTurma( turma );
-					v.setCampus( campus );
-					v.setAlunoDemanda( *itAlDemanda );
-
-					it_v = vHashTatico.find( v );
-					if( it_v != vHashTatico.end() )
-					{
-						row.insert( it_v->second, 1.0 );
-					}
-				}
-			}
-
-			VariableMIPUnico v;
-			v.reset();
-			v.setType( VariableMIPUnico::V_SLACK_DEMANDA_ALUNO );
-			v.setAluno( aluno );
-			v.setDisciplina( disciplina );
-			it_v = vHashTatico.find( v );
-			if( it_v != vHashTatico.end() )
-			{
-				row.insert( it_v->second, 1.0 );
-			}
-
-			if ( row.getnnz() >= 1 )
-			{
-				cHashTatico[ c ] = lp->getNumRows();
-				lp->addRow( row );
-				restricoes++;
-			}
-		}
-	}
-
-	return restricoes;
-
-}
-
-
-/*
 	Para cada AlunoDemanda a-d:
 
 	sum[deq]sum[i] s_{i,deq,a} + fd_{d,a} = 1
@@ -12170,7 +11963,7 @@ int MIPUnico::criaRestricaoTaticoAtendeAlunoEquivTotal( int campusId, int priori
 {
     int restricoes = 0;
 
-	if ( !USAR_EQUIVALENCIA || PERMITIR_NOVAS_TURMAS )
+	if ( !USAR_EQUIVALENCIA )
 		return restricoes;
 		
     char name[ 1024 ];
@@ -15011,7 +14804,7 @@ int MIPUnico::criarRestricaoProfHiUB_( Professor* const prof, const int dia, con
 	*/
 	int numRestr = 0;
 
-	CentroDados::printTest("criarRestricaoProfHiUB_", "criando rest ub hi");
+	//CentroDados::printTest("criarRestricaoProfHiUB_", "criando rest ub hi");
 
 	for(auto itDateTime = mapDtiVars.begin(); itDateTime != mapDtiVars.end(); ++itDateTime)
 	{					
@@ -15072,7 +14865,7 @@ int MIPUnico::criarRestricaoProfHiLB_( Professor* const prof, const int dia, con
 	*/
 	
 	int numRestr = 0;
-	CentroDados::printTest("criarRestProfHiLB_", "criando rest lb hf");
+//	CentroDados::printTest("criarRestProfHiLB_", "criando rest lb hf");
 
 	for(auto itDateTime = mapDtiVars.begin(); itDateTime != mapDtiVars.end(); ++itDateTime)
 	{					
@@ -15126,7 +14919,7 @@ int MIPUnico::criarRestricaoProfHfLB_( Professor* const prof, const int dia, con
 	*/
 	
 	int numRestr = 0;
-	CentroDados::printTest("criarRestProfHfLB_", "criando rest lb hf");
+//	CentroDados::printTest("criarRestProfHfLB_", "criando rest lb hf");
 
 	for(auto itDateTime = mapDtfVars.begin(); itDateTime != mapDtfVars.end(); ++itDateTime)
 	{					
@@ -15605,7 +15398,7 @@ int MIPUnico::criarRestricaoAlunoHiUB_( Aluno* const aluno, const int dia,
 	*/
 	int numRestr = 0;
 
-	CentroDados::printTest("criarRestAlunoHi_", "criando rest ub hi");
+//	CentroDados::printTest("criarRestAlunoHi_", "criando rest ub hi");
 
 	for(auto itDateTime = mapDtiVars.begin(); itDateTime != mapDtiVars.end(); ++itDateTime)
 	{					
@@ -15665,7 +15458,7 @@ int MIPUnico::criarRestricaoAlunoHiLB_( Aluno* const aluno, const int dia,
 	*/
 	
 	int numRestr = 0;
-	CentroDados::printTest("criarRestAlunoHiLB_", "criando rest lb hf");
+//	CentroDados::printTest("criarRestAlunoHiLB_", "criando rest lb hf");
 
 	for(auto itDateTime = mapDtiVars.begin(); itDateTime != mapDtiVars.end(); ++itDateTime)
 	{					
@@ -15718,7 +15511,7 @@ int MIPUnico::criarRestricaoAlunoHfLB_( Aluno* const aluno, const int dia,
 	*/
 	
 	int numRestr = 0;
-	CentroDados::printTest("criarRestAlunoHfLB_", "criando rest lb hf");
+//	CentroDados::printTest("criarRestAlunoHfLB_", "criando rest lb hf");
 
 	for(auto itDateTime = mapDtfVars.begin(); itDateTime != mapDtfVars.end(); ++itDateTime)
 	{					

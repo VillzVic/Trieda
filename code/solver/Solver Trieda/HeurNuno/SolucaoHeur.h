@@ -132,6 +132,9 @@ public:
 				setOrd.insert(oferta);
 			}
 		}
+		#ifdef PRINT_LOGS
+	//	imprimeOfertasDisc(setOrd,priorAluno);
+		#endif
 	}
 	// reordenar disciplinas
 	template<typename T>
@@ -152,6 +155,10 @@ public:
 	
 		if(setOrd.size() != size)
 			HeuristicaNuno::excepcao("SolucaoHeur::reordenarOfertasDisciplina_", "Erro na copia!");
+
+		#ifdef PRINT_LOGS
+		//imprimeOfertasDisc(setOrd,priorAluno);
+		#endif
 	}
 
 	#pragma region [MÉTODOS DE VERIFICAÇÃO]
@@ -191,8 +198,16 @@ public:
 	void limparTurmasAssocAllOfertasPreMIP(void);
 
 	#pragma endregion
+	
 
+	#pragma region [IMPRESSÕES]
 
+	// imprime resumo de todas as oferta-disciplinas na ordem corrente
+	template<typename T>
+	void imprimeOfertasDisc( set<OfertaDisciplina*, T> const&, int );
+
+	#pragma endregion
+	
 private:
 
 	//[campus -> [disciplina -> [oferta]]]

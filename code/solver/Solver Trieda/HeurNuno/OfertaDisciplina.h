@@ -39,7 +39,7 @@ public:
 	int getLastTurmaId(void) { return turmaId_; }
 	unsigned int getGlobalId(void) const { return (unsigned int)globalId_; }
 
-	// flag se indica se todas as componentes têm divisões registadas
+	// flag indica se todas as componentes têm divisões registradas
 	bool temDivs(void) const { return temDivs_; }
 	// gera divisoes caso seja necessário
 	void gerarDivs(void);
@@ -129,10 +129,35 @@ public:
 		return disciplinaPratica_->possuiHorarioDiaOuAnalogo(dia, horario); 
 	}
 
-	// get salas e profs associados
+	// get salas associadas
+	unordered_map<bool, unordered_set<SalaHeur*>> salasAssoc_;
+	void preencheSalasAssoc();
+	void preencheSalasAssoc(bool teorico);
 	void getSalasAssociadas (unordered_set<SalaHeur*> &set, bool teorico) const;	// retorna todas as salas em que uc pode ser dada, teoricas ou praticas
 	void getSalasAssociadas (set<SalaHeur*> &conj, bool teorico) const;
+
+	// get profs associados
 	void getProfessoresAssociados (unordered_set<ProfessorHeur*> &profsAssoc) const;
+		
+    // Horarios-Dias comuns com cada professor real habilitado na OfertaDisciplina.
+	int getNroCredsLivresProfsEstimados() const;
+	std::unordered_map< ProfessorHeur*,
+		std::map< int/*dia*/,	std::map<DateTime, std::set<DateTime>> > > mapProfDiaHorComum_;
+    void preencheMapDisponibComumProf();
+	int getTempoComumProf( ProfessorHeur* const prof,
+		std::map< int/*dia*/, std::map<DateTime, std::set<DateTime>> > &mapDiaHorComum ) const;
+
+	int getDisponibProfDisc() const;
+	int getNroCredsLivresProf( ProfessorHeur* const prof, 
+			std::map< int/*dia*/, std::map<DateTime, 
+				std::set<DateTime>> > const * const & mapDiaHorComum ) const;
+	// teste com sala
+	int getDisponibProfSalaDisc() const;
+	int getDisponibProfSalaDisc( unordered_set<SalaHeur*> const &salas, bool teorico ) const;
+	int getNroCredsLivresProfSala( ProfessorHeur* const prof, SalaHeur* const sala,
+			std::map< int/*dia*/, std::map<DateTime, 
+				std::set<DateTime>> > const * const & mapDiaHorComum ) const;
+	
 
 	// verifica se a unidade tem algum tipo de sala associada desse tipo no cluster de unidades
 	bool algumaSalaCluster(const ConjUnidades* const cluster, bool teorico) const;
@@ -148,7 +173,7 @@ public:
 	// retorna todos os alunos que estão alocados numa componente mas não noutra, e.g. tão numa turma teórica mas não numa prática
 	unordered_set<AlunoHeur*> getAlunosIncompleto(void) { return alunosIncompleto_; }
 	void getAlunosIncompleto(unordered_set<AlunoHeur*>& alunosInc) const;
-	// @fixados: define se queremos remover os aluno smesmo se forem fixados
+	// @fixados: define se queremos remover os alunos mesmo se forem fixados
 	void removerAlunosIncompleto(unordered_set<AlunoHeur*> &alunosRemovidos, bool fixados = false);
 	void removerAlunosIncompleto(bool fixados = false);
 	void removerTodosAlunos(unordered_set<AlunoHeur*> &alunosRemovidos, bool fixados = false);
@@ -259,6 +284,10 @@ public:
 	static bool compOfDiscIII(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade);
 	// TESTE: nr demandas não atendidas >> nr creditos
 	static bool compOfDiscIV(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade = 1);
+	// nr demandas nao atendidas p1 >> nr creds >> prof real disponiv >> operator<
+	static bool compOfDiscV(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade = 1);
+	// TESTE: nr demandas não atendidas / profs reais >> nr demandas nao atendidas
+	static bool compOfDiscVI(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade = 1);
 
 	virtual bool operator == ( const OfertaDisciplina &outra) const
 	{
@@ -311,6 +340,17 @@ public:
 		if(frstTipos != scdTipos)
 			return frstTipos > scdTipos;*/
 
+		// dar prioridade às disciplinas com menos profs disponiveis
+		//diff = this->getDisponibProfDisc() - outra.getDisponibProfDisc();
+		//if(diff != 0)
+		//	return diff < 0;		
+		
+		// Estimativa! cálculo mais rapido.
+		// dar prioridade às disciplinas com menos profs disponiveis
+		diff = this->getNroCredsLivresProfsEstimados() - outra.getNroCredsLivresProfsEstimados();
+		if(diff != 0)
+			return diff < 0;
+
 		return (globalId_ < outra.getGlobalId());
 		//return false;
 	}
@@ -341,7 +381,7 @@ private:
 	// Global ID
 	const size_t globalId_;
 	static size_t globalIdCount_;
-
+	
 	unordered_map<AlunoHeur*, unordered_map<bool, TurmaHeur*>> alunosTurma_;		// aluno.id -> tipoAula (true: teorico, false: pratico) -> turma
 	unordered_map<TurmaHeur*, unordered_set<AlunoHeur*>> turmasAlunos_;
 	unordered_set<AlunoHeur*> alunosIncompleto_;					// ex: alunos que tão alocados numa turma teórica mas não na prática
@@ -377,10 +417,14 @@ private:
 	// increase: true -> increase; false -> decrease
 	void decIncIndicDem_(bool increase, bool equiv) const;
 	void decIncIndicDemComp_(bool increase, bool teorico, bool equiv) const;
+		
+	unordered_set<SalaHeur*> const * getSalasAssocRef(bool teorico) const;
 
 	// Comparadores singulares
 	static bool compDemNaoAtendV2(OfertaDisciplina* const ofertaUm, OfertaDisciplina* const ofertaDois, int prioridade, bool &veredito);
 };
+
+std::ostringstream& operator<< ( std::ostringstream &out, OfertaDisciplina const &ofDisc );
 
 // compara ofertas disciplina com base na demandas demandas de prioridade 1 (equivalente e nao)
 struct compOftDisc
@@ -389,7 +433,9 @@ struct compOftDisc
     {   
 		//return OfertaDisciplina::compOfDiscII(ofertaUm, ofertaDois, 0);  
 
-		return OfertaDisciplina::compOfDiscIV(ofertaUm, ofertaDois);  
+		//return OfertaDisciplina::compOfDiscIV(ofertaUm, ofertaDois);  
+		return OfertaDisciplina::compOfDiscV(ofertaUm, ofertaDois); 
+		//return OfertaDisciplina::compOfDiscVI(ofertaUm, ofertaDois);   
     }   
 };
 
@@ -425,7 +471,9 @@ struct compOftDiscP2
     {   
 		//return OfertaDisciplina::compOfDiscII(ofertaUm, ofertaDois, 0);  
 
-		return OfertaDisciplina::compOfDiscIV(ofertaUm, ofertaDois, 2);  
+		//return OfertaDisciplina::compOfDiscIV(ofertaUm, ofertaDois, 2);  
+		return OfertaDisciplina::compOfDiscV(ofertaUm, ofertaDois,2);
+		//return OfertaDisciplina::compOfDiscVI(ofertaUm, ofertaDois, 2);   
     }   
 };
 
@@ -440,7 +488,9 @@ namespace std
 			//return OfertaDisciplina::compOfDisc(first, second, 1);
 			//return OfertaDisciplina::compOfDiscII(first, second, 1);
 			//return OfertaDisciplina::compOfDiscIII(first, second, 1);
-			return OfertaDisciplina::compOfDiscIV(first, second);
+			//return OfertaDisciplina::compOfDiscIV(first, second);
+			return OfertaDisciplina::compOfDiscV(first, second);
+			//return OfertaDisciplina::compOfDiscVI(first, second);   
 		}
 	};
 

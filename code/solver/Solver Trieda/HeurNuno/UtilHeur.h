@@ -169,7 +169,7 @@ public:
 	template<typename T, typename H>
 	static void intersectSets(unordered_set<T,H> const &setUm, unordered_set<T, H> const &setDois, unordered_set<T, H> &result)
 	{
-		// procurar usando o mais pequeno
+		// procurar usando o menor
 		if( setDois.size() < setUm.size() )	
 			return intersectSets<T, H>(setDois, setUm, result);
 
@@ -190,7 +190,7 @@ public:
 		intersectSets<T, std::less<T>>(setUm, setDois, result);
 	}
 
-	// intersecta sets
+	// une sets
 	template<typename T, typename H>
 	static void unionSets(unordered_set<T, H> const &setUm, unordered_set<T, H> const &setDois, unordered_set<T, H> &result)
 	{

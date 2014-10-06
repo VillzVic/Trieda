@@ -61,7 +61,7 @@ public:
    int getMaxInterv( int dia, int fase );
 
    void calculaProximosHorarioAula();
-   HorarioAula * getProximoHorario( HorarioAula *h );
+   HorarioAula * getProximoHorario( HorarioAula *h ) const;
    HorarioAula * getHorarioAnterior( HorarioAula *h );
    
    int retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf );

@@ -83,6 +83,9 @@ public:
 	static void logFecharTurmaLoad(const SolucaoHeur* const solucao, TurmaHeur* const turma);
 	static void logNovaSala(TurmaHeur* const turma, SalaHeur* const oldSala, SalaHeur* const newSala);
 
+	// relatorio para ordenação das ofertas-disciplinas -> ordem de atendimento
+	static void logOrdemOfertas( std::string msg );
+
 	#pragma endregion
 
 private:
@@ -123,6 +126,9 @@ private:
 	static std::ofstream* logFecharTurmas_;
 	static std::ofstream* logMudancaAlunos_;
 	static std::ofstream* logNovaSala_;
+	
+	// log para analise da ordem de resolucao dos atendimentos
+	static std::ofstream* logOrdemOfertas_;
 
 	// abrir logs sugestão
 	static void abrirLogsSugestao_(void);

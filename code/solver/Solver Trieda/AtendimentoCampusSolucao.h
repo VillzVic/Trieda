@@ -13,7 +13,7 @@ public:
    AtendimentoCampusSolucao( AtendimentoCampus & );
    virtual ~AtendimentoCampusSolucao( void );
 
-   virtual void le_arvore( ItemAtendimentoCampusSolucao & );
+   virtual void le_arvore( const ItemAtendimentoCampusSolucao & );
 
    GGroup< AtendimentoUnidadeSolucao * > atendimentosUnidades;
 
