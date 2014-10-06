@@ -34,6 +34,11 @@ import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.DisponibilidadeCampus;
+import com.gapso.trieda.domain.DisponibilidadeDisciplina;
+import com.gapso.trieda.domain.DisponibilidadeProfessor;
+import com.gapso.trieda.domain.DisponibilidadeSala;
+import com.gapso.trieda.domain.DisponibilidadeUnidade;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -293,11 +298,12 @@ public class CenariosServiceImpl
 				cenario.setDataCriacao(new Date());
 				cenario.setAtualizadoPor(getUsuario());
 				cenario.setDataAtualizacao(new Date());
+				cenario.persist(); // TODO: entender passou a dar erro na minh máquina
 				criarTiposContrato(cenario);
 				criarTiposDisciplina(cenario);
 				criarTiposSala(cenario);
 				criarTitulacoes(cenario);
-				cenario.persist();
+				//cenario.persist(); // TODO: entender passou a dar erro na minh máquina
 			}			
 		}
 		catch( Exception e )
@@ -440,7 +446,7 @@ public class CenariosServiceImpl
 		cenario.persist();
 		
 		int numPartes = 1;
-		int maxPartes = clonarSolucao ? 26 : 19;
+		int maxPartes = clonarSolucao ? 31 : 24;
 		
 		CenarioClone cenarioClone = new CenarioClone(cenario, clonarSolucao);
 		getProgressReport().setInitNewPartial("Clonando TipoSala - " + "Parte " + numPartes++ + " de " + maxPartes);
@@ -591,6 +597,41 @@ public class CenariosServiceImpl
 		{
 			Professor p = cenarioClone.clone(professor);
 			p.persist();
+		}
+		getProgressReport().setPartial("Finalizado");
+		
+		getProgressReport().setInitNewPartial("Clonando Disponibilidades de Campi - " + "Parte " + numPartes++ + " de " + maxPartes);
+		for (DisponibilidadeCampus dcOrig : DisponibilidadeCampus.findBy(cenarioOriginal)) {
+			DisponibilidadeCampus dcClone = cenarioClone.clone(dcOrig);
+			dcClone.persist();
+		}
+		getProgressReport().setPartial("Finalizado");
+		
+		getProgressReport().setInitNewPartial("Clonando Disponibilidades de Unidades - " + "Parte " + numPartes++ + " de " + maxPartes);
+		for (DisponibilidadeUnidade dcOrig : DisponibilidadeUnidade.findBy(cenarioOriginal)) {
+			DisponibilidadeUnidade dcClone = cenarioClone.clone(dcOrig);
+			dcClone.persist();
+		}
+		getProgressReport().setPartial("Finalizado");
+		
+		getProgressReport().setInitNewPartial("Clonando Disponibilidades de Ambientes - " + "Parte " + numPartes++ + " de " + maxPartes);
+		for (DisponibilidadeSala dcOrig : DisponibilidadeSala.findBy(cenarioOriginal)) {
+			DisponibilidadeSala dcClone = cenarioClone.clone(dcOrig);
+			dcClone.persist();
+		}
+		getProgressReport().setPartial("Finalizado");
+		
+		getProgressReport().setInitNewPartial("Clonando Disponibilidades de Disciplinas - " + "Parte " + numPartes++ + " de " + maxPartes);
+		for (DisponibilidadeDisciplina dcOrig : DisponibilidadeDisciplina.findBy(cenarioOriginal)) {
+			DisponibilidadeDisciplina dcClone = cenarioClone.clone(dcOrig);
+			dcClone.persist();
+		}
+		getProgressReport().setPartial("Finalizado");
+		
+		getProgressReport().setInitNewPartial("Clonando Disponibilidades de Professores - " + "Parte " + numPartes++ + " de " + maxPartes);
+		for (DisponibilidadeProfessor dcOrig : DisponibilidadeProfessor.findBy(cenarioOriginal)) {
+			DisponibilidadeProfessor dcClone = cenarioClone.clone(dcOrig);
+			dcClone.persist();
 		}
 		getProgressReport().setPartial("Finalizado");
 		

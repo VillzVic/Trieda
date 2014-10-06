@@ -776,7 +776,7 @@ public class CampiServiceImpl extends RemoteService
 		Double mediaTurmasPorDocente = TriedaUtil.round( qtdDocentes == 0 ? 0.0 : ((double)qtdTurmasAbertas)/qtdDocentes, 2 );
 		Double mediaTurmasPorProfessor = TriedaUtil.round( qtdProfessores == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresInstituicao)/qtdProfessores, 2 );
 		Double mediaTurmasPorProfessorVirtual = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresVirtuais)/qtdProfessoresVirtuais, 2 );
-		Double mediaDisciplinasPorAluno = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)demandaAtendidaQtdeAlunos)/qtdTotalAlunos, 2 );
+		Double mediaDisciplinasPorAluno = TriedaUtil.round( qtdTotalAlunos == 0 ? 0.0 : ((double)demandaAtendidaQtdeAlunos)/qtdTotalAlunos, 2 );
 		
 		Double demandasAtendidasPercent = TriedaUtil.round( demandaTotalP1QtdeAlunos == 0 ? 0.0 : (((double)demandaAtendidaQtdeAlunos)/demandaTotalP1QtdeAlunos)*100, 2 );
 		Double demandasAtendidasP1Percent = TriedaUtil.round( demandaAtendidaQtdeAlunos == 0 ? 0.0 : (((double)demandaAtendidaP1QtdeAlunos)/demandaAtendidaQtdeAlunos)*100, 2 );
@@ -829,11 +829,11 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"|--- Docentes virtuais: ", "<b>" + numberFormatter.print(qtdTurmasAbertasProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"Carga Horária paga aos docentes: ", "<b>" + numberFormatter.print(totalCargaHorariaSemanal/60,pt_BR) + "</b>") ,currentNode, true) );
+				"Carga Horária paga aos docentes: ", "<b>" + numberFormatter.print(((double)totalCargaHorariaSemanal)/60.0,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"|--- Carga Horária de professores da instituição: ", "<b>" + numberFormatter.print(totalCargaHorariaSemanalProfessores/60,pt_BR) + "</b>") ,currentNode, true) );
+				"|--- Carga Horária de professores da instituição: ", "<b>" + numberFormatter.print(((double)totalCargaHorariaSemanalProfessores)/60.0,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"|--- Carga Horária de professores virtuais: ", "<b>" + numberFormatter.print(totalCargaHorariaSemanalProfessoresVirtuais/60,pt_BR) + "</b>") ,currentNode, true) );
+				"|--- Carga Horária de professores virtuais: ", "<b>" + numberFormatter.print(((double)totalCargaHorariaSemanalProfessoresVirtuais)/60.0,pt_BR) + "</b>") ,currentNode, true) );
 
 		
 		//Eficiencia de alocacao

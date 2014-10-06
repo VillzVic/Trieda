@@ -20,13 +20,15 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.misc.TriedaDomainUtil;
+
 @Configurable
 @Entity
 @RooJavaBean
 @RooToString
 @RooEntity( identifierColumn = "DPP_ID" )
 @Table( name = "DISPONIBILIDADE_PROFESSORES" )
-public class DisponibilidadeProfessor extends Disponibilidade implements Serializable, Clonable<Disponibilidade>
+public class DisponibilidadeProfessor extends Disponibilidade implements Serializable, Clonable<DisponibilidadeProfessor>
 {
 	private static final long serialVersionUID = 2992132361625378649L;
 
@@ -54,9 +56,13 @@ public class DisponibilidadeProfessor extends Disponibilidade implements Seriali
 	}
 	
 	public DisponibilidadeProfessor clone(CenarioClone novoCenario) {
-		// TODO Auto-generated method stub
-		return null;
+		DisponibilidadeProfessor clone = new DisponibilidadeProfessor();
+		clone.setProfessor(novoCenario.getEntidadeClonada(this.getProfessor()));
+		this.clone(clone);
+		return clone;
 	}
+	
+	public void cloneChilds(CenarioClone novoCenario, DisponibilidadeProfessor entidadeClone) {}
 	
 	public Professor getProfessor() {
 		return DisponibilidadeProfessor;
@@ -96,12 +102,6 @@ public class DisponibilidadeProfessor extends Disponibilidade implements Seriali
 		return null;
 	}
 	
-	public void cloneChilds(CenarioClone novoCenario,
-			Disponibilidade entidadeClone) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	@SuppressWarnings("unchecked")
 	public static List<DisponibilidadeProfessor> findBy(Cenario cenario) {
 		Query q = entityManager().createQuery(
@@ -112,5 +112,22 @@ public class DisponibilidadeProfessor extends Disponibilidade implements Seriali
 		q.setParameter( "cenarioId", cenario.getId() );
 
 		return q.getResultList();
+	}
+
+	@Override
+	public String toString() {
+		return this.DisponibilidadeProfessor.getCpf() + 
+				" " + TriedaDomainUtil.shortTimeString(this.getHorarioInicio()) + ">" + TriedaDomainUtil.shortTimeString(this.getHorarioFim()) +
+				" Seg:" + diaSemanaStr(this.getSegunda()) +
+				" Ter:" + diaSemanaStr(this.getTerca()) +
+				" Qua:" + diaSemanaStr(this.getQuarta()) +
+				" Qui:" + diaSemanaStr(this.getQuinta()) +
+				" Sex:" + diaSemanaStr(this.getSexta()) +
+				" Sab:" + diaSemanaStr(this.getSabado()) +
+				" Dom:" + diaSemanaStr(this.getDomingo());
+	}
+	
+	private static String diaSemanaStr(boolean diaSem) {
+		return diaSem ? "X" : "_";
 	}
 }

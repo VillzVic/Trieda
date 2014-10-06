@@ -1,8 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -414,33 +412,53 @@ public class Professor
 	static public void atualizaHorariosDosProfessores(Map<Professor, List<TriedaTrio<Semanas,Calendar,Calendar>>> professoreToDisponibilidadesMap, List<SemanaLetiva> semanasLetivas) {
 		// coleta os professores disponíveis por dia da semana e tempo de aula
 		int count = 0;
-		Map<HorarioDisponivelCenario, Set<Professor>> hdcToProfessorMap = new HashMap<HorarioDisponivelCenario, Set<Professor>>();
+		Map<Professor, Map<Semanas, Map<Date, Integer>>> profToDiaSemToHiToDuracaoMap = new HashMap<Professor, Map<Semanas, Map<Date, Integer>>>();
 		for (Entry<Professor, List<TriedaTrio<Semanas,Calendar,Calendar>>> entry : professoreToDisponibilidadesMap.entrySet()) {
-			List<TriedaTrio<Semanas,Calendar,Calendar>> disponibilidades = entry.getValue();
 			Professor professor = entry.getKey();
+			List<TriedaTrio<Semanas,Calendar,Calendar>> disponibilidades = entry.getValue();
+			
+			// obtém mapa de disponibilidades do professor
+			Map<Semanas, Map<Date, Integer>> diaSemToHiToDuracaoMapDoProfessor = null;
+			if (profToDiaSemToHiToDuracaoMap.containsKey(professor)) {
+				diaSemToHiToDuracaoMapDoProfessor = profToDiaSemToHiToDuracaoMap.get(professor);
+			} else {
+				diaSemToHiToDuracaoMapDoProfessor = new HashMap<Semanas, Map<Date,Integer>>();
+				profToDiaSemToHiToDuracaoMap.put(professor, diaSemToHiToDuracaoMapDoProfessor);
+			}
+			
+			// para cada semana letiva
 			for (SemanaLetiva semanaLetiva : semanasLetivas) {
 				// para cada tempo de aula
 				for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+					// para cada disponibilidade do professor lida do excel
 					for (TriedaTrio<Semanas,Calendar,Calendar> trio : disponibilidades){
 						// verifica se o intervalo de horas é compatível
 						boolean horarioAulaEstahContidoEmDisponibilidade = horarioAula.estahContidoEm(trio.getSegundo(),trio.getTerceiro()); 
 						// para cada dia da semana
 						for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
-							Set<Professor> professoresDisponiveisNoDiaEHorario = hdcToProfessorMap.get(hdc);
-							if (professoresDisponiveisNoDiaEHorario == null) {
-								professoresDisponiveisNoDiaEHorario = new HashSet<Professor>();
-								hdcToProfessorMap.put(hdc,professoresDisponiveisNoDiaEHorario);
-							}
-							
-							// verifica se o dia da semana é compatível
-							if (horarioAulaEstahContidoEmDisponibilidade && hdc.getDiaSemana().equals(trio.getPrimeiro())) {
-								professoresDisponiveisNoDiaEHorario.add(professor);
+							Semanas diaSem = hdc.getDiaSemana();
+							// verifica se o dia da semana é compatível com as disponibilidades do professor
+							if (horarioAulaEstahContidoEmDisponibilidade && diaSem.equals(trio.getPrimeiro())) {
+								// armazena informação da semana letiva compatível com disponibilidade do professor
+								Map<Date, Integer> hiToDuracaoMapDoDiaSemDoProfessor = null;
+								if (diaSemToHiToDuracaoMapDoProfessor.containsKey(diaSem)) {
+									hiToDuracaoMapDoDiaSemDoProfessor = diaSemToHiToDuracaoMapDoProfessor.get(diaSem);
+								} else {
+									hiToDuracaoMapDoDiaSemDoProfessor = new HashMap<Date, Integer>();
+									diaSemToHiToDuracaoMapDoProfessor.put(diaSem, hiToDuracaoMapDoDiaSemDoProfessor);
+								}
+								hiToDuracaoMapDoDiaSemDoProfessor.put(horarioAula.getHorario(), semanaLetiva.getTempo());
 							}
 						}
 					}
 					count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
 				}
 			}
+		}
+		
+		for (Entry<Professor, Map<Semanas, Map<Date, Integer>>> entry : profToDiaSemToHiToDuracaoMap.entrySet()) {
+			Professor professor = entry.getKey();
+			professor.populaDisponibilidades(entry.getValue());
 		}
 		
 /*		// atualiza disponibilidades de professores
@@ -495,6 +513,10 @@ public class Professor
 				}
 			}
 		}
+		populaDisponibilidades(diaSemanaMapHorarioInicioMapHorarioFim);
+	}
+
+	private void populaDisponibilidades(Map<Semanas, Map<Date, Integer>> diaSemanaMapHorarioInicioMapHorarioFim) {
 		//Cria a segunda estrutura de dados com os horarios concatenados para cada dia da semana
 		Map<Semanas, Map<Date, Date>> diaSemanaMapHorarioInicioMapHorarioFimConcatenado = new HashMap<Semanas, Map<Date, Date>>();
 		Set<Date> todosHorarios = new HashSet<Date>();
@@ -538,6 +560,9 @@ public class Professor
 			diaSemanaMapHorarioInicioMapHorarioFimConcatenado.put(diaSemana, horarioInicioHorarioFimMap);
 		}
 		
+		// Remove disponibilidades do professor
+		removeTodasDisponibilidades();
+		
 		//Cria a ultima estrutura de dados juntando os dias da semana. Para juntar os dias da semana os horarios concatenados
 		//deverao ser quebrados caso exista diferenca entre os dias da semana
 		List<Date> todosHorariosOrdenados = new ArrayList<Date>();
@@ -555,7 +580,6 @@ public class Professor
 				return horaInicio.compareTo(horaFim);
 		    }
 		});
-		DateFormat df = new SimpleDateFormat("HH:mm");
 		for (int i = 1; i < todosHorariosOrdenados.size() ; i++)
 		{
 			DisponibilidadeProfessor disponibilidade = new DisponibilidadeProfessor();
@@ -611,12 +635,23 @@ public class Professor
 					}
 				}
 			}
-			if (!nenhumaDisponibilidade)
-				disponibilidade.persist();
+			if (!nenhumaDisponibilidade) {
+				this.disponibilidades.add(disponibilidade);//disponibilidade.persist();
+			}
 		}
+		
+		this.mergeWithoutFlush();
 	}
 
-	 private boolean estaContidoEm(Date inicio, Date fim,
+	private void removeTodasDisponibilidades() {
+		for (DisponibilidadeProfessor dispProf : this.disponibilidades) {
+			dispProf.remove();
+		}
+		this.disponibilidades.clear();
+		this.mergeWithoutFlush();
+	}
+
+	private boolean estaContidoEm(Date inicio, Date fim,
 			Map<Date, Date> horarioInicioMapHorarioFim) {
 		
 		boolean estaContido = false;

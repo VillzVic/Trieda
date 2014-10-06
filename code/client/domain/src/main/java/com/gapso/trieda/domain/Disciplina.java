@@ -1786,13 +1786,13 @@ public class Disciplina
 		for (GrupoSala grupoSala : this.getGruposSala())
 		{
 			entidadeClone.getGruposSala().add(novoCenario.getEntidadeClonada(grupoSala));
-			novoCenario.getEntidadeClonada(grupoSala).getDisciplinas().add(entidadeClone);
+			//novoCenario.getEntidadeClonada(grupoSala).getDisciplinas().add(entidadeClone);
 		}
 		
 		for (Sala sala : this.getSalas())
 		{
 			entidadeClone.getSalas().add(novoCenario.getEntidadeClonada(sala));
-			novoCenario.getEntidadeClonada(sala).getDisciplinas().add(entidadeClone);
+			//novoCenario.getEntidadeClonada(sala).getDisciplinas().add(entidadeClone);
 		}
 	}
 

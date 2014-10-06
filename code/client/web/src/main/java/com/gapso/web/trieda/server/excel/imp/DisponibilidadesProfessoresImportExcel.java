@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,6 +25,7 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 @ProgressDeclarationAnnotation
 public class DisponibilidadesProfessoresImportExcel extends AbstractImportExcel<DisponibilidadesProfessoresImportExcelBean> {
@@ -194,7 +196,7 @@ public class DisponibilidadesProfessoresImportExcel extends AbstractImportExcel<
 				count = 0;
 			}
 		}
-		
+				
 		if (!professoreToDisponibilidadesMap.isEmpty()) {
 			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Professor.atualizaHorariosDosProfessores(professoreToDisponibilidadesMap,semanasLetivas);

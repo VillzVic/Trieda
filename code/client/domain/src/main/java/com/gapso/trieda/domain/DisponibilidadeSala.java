@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity( identifierColumn = "DPS_ID" )
 @Table( name = "DISPONIBILIDADE_SALAS" )
-public class DisponibilidadeSala  extends Disponibilidade implements Serializable, Clonable<Disponibilidade>
+public class DisponibilidadeSala  extends Disponibilidade implements Serializable, Clonable<DisponibilidadeSala>
 {
 	private static final long serialVersionUID = 4534696857174619653L;
 
@@ -54,9 +54,13 @@ public class DisponibilidadeSala  extends Disponibilidade implements Serializabl
 	}
 	
 	public DisponibilidadeSala clone(CenarioClone novoCenario) {
-		// TODO Auto-generated method stub
-		return null;
+		DisponibilidadeSala clone = new DisponibilidadeSala();
+		clone.setSala(novoCenario.getEntidadeClonada(this.getSala()));
+		this.clone(clone);
+		return clone;
 	}
+	
+	public void cloneChilds(CenarioClone novoCenario, DisponibilidadeSala entidadeClone) {}
 	
 	public Sala getSala() {
 		return DisponibilidadeSala;
@@ -94,12 +98,6 @@ public class DisponibilidadeSala  extends Disponibilidade implements Serializabl
 		}
 	
 		return null;
-	}
-	
-	public void cloneChilds(CenarioClone novoCenario,
-			Disponibilidade entidadeClone) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@SuppressWarnings("unchecked")

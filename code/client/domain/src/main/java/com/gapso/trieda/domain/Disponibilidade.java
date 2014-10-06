@@ -145,6 +145,18 @@ public abstract class Disponibilidade
 		this.domingo = domingo;
 	}
 	
+	protected void clone(Disponibilidade clone) {
+		clone.setHorarioInicio(this.getHorarioInicio());
+		clone.setHorarioFim(this.getHorarioFim());
+		clone.setSegunda(this.getSegunda());
+		clone.setTerca(this.getTerca());
+		clone.setQuarta(this.getQuarta());
+		clone.setQuinta(this.getQuinta());
+		clone.setSexta(this.getSexta());
+		clone.setSabado(this.getSabado());
+		clone.setDomingo(this.getDomingo());
+	}
+	
 	public static final EntityManager entityManager()
 	{
         EntityManager em = new DisponibilidadeDisciplina().entityManager;
