@@ -20,9 +20,13 @@ public class TriedaException
 		this.completeMessage = message;
 	}
 
-	public TriedaException( Exception e )
-	{
+	public TriedaException( Exception e ) {
 		super( e.getCause() );
+		this.completeMessage = extractMessage(e);
+	}
+	
+	public TriedaException(String message, Exception e ) {
+		super(message);
 		this.completeMessage = extractMessage(e);
 	}
 	

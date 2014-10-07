@@ -1,8 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -12,8 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -548,6 +546,18 @@ public class Sala
         this.entityManager.flush();
         return merged;
     }
+	
+	@Transactional
+	public Sala mergeWithoutFlush()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		Sala merged = this.entityManager.merge( this );
+		return merged;
+	}
 
 	public static final EntityManager entityManager()
 	{
@@ -562,32 +572,182 @@ public class Sala
 
         return em;
     }
+	
+	private void removeTodasDisponibilidades() {
+		for (DisponibilidadeSala dispAmb : this.disponibilidades) {
+			dispAmb.remove();
+		}
+		this.disponibilidades.clear();
+		this.mergeWithoutFlush();
+	}
+	
+	private void populaDisponibilidades(Map<Semanas, Map<Date, Integer>> diaSemanaMapHorarioInicioMapHorarioFim) {
+		//Cria a segunda estrutura de dados com os horarios concatenados para cada dia da semana
+		Map<Semanas, Map<Date, Date>> diaSemanaMapHorarioInicioMapHorarioFimConcatenado = new HashMap<Semanas, Map<Date, Date>>();
+		Set<Date> todosHorarios = new HashSet<Date>();
+		for (Semanas diaSemana : diaSemanaMapHorarioInicioMapHorarioFim.keySet())
+		{
+			Map<Date, Date> horarioInicioHorarioFimMap = new HashMap<Date, Date>();
+			List<Date> horariosOrdenados = new ArrayList<Date>();
+			horariosOrdenados.addAll(diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).keySet());
+			Collections.sort(horariosOrdenados);
+			
+			Date primeiroHorario = horariosOrdenados.get(0);
+			Calendar horaFim = Calendar.getInstance();
+			horaFim.setTime(horariosOrdenados.get(0));
+			horaFim.set(1979,Calendar.NOVEMBER,6);
+			horaFim.add(Calendar.MINUTE,diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).get(horariosOrdenados.get(0)));
+			for (int i = 1; i < horariosOrdenados.size(); i++)
+			{
+				Calendar horaInicio = Calendar.getInstance();
+				horaInicio.setTime(horariosOrdenados.get(i));
+				horaInicio.set(1979,Calendar.NOVEMBER,6);
+				
+				if (horaFim.compareTo(horaInicio) >= 0)
+				{
+					horaFim.setTime(horariosOrdenados.get(i));
+					horaFim.set(1979,Calendar.NOVEMBER,6);
+					horaFim.add(Calendar.MINUTE,diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).get(horariosOrdenados.get(i)));
+				}
+				else
+				{
+					horarioInicioHorarioFimMap.put(primeiroHorario, horaFim.getTime());
+					primeiroHorario = horariosOrdenados.get(i);
+					horaFim = Calendar.getInstance();
+					horaFim.setTime(horariosOrdenados.get(i));
+					horaFim.set(1979,Calendar.NOVEMBER,6);
+					horaFim.add(Calendar.MINUTE,diaSemanaMapHorarioInicioMapHorarioFim.get(diaSemana).get(horariosOrdenados.get(i)));
+				}
+			}
+			horarioInicioHorarioFimMap.put(primeiroHorario, horaFim.getTime());
+			todosHorarios.addAll(horarioInicioHorarioFimMap.values());
+			todosHorarios.addAll(horarioInicioHorarioFimMap.keySet());
+			diaSemanaMapHorarioInicioMapHorarioFimConcatenado.put(diaSemana, horarioInicioHorarioFimMap);
+		}
+		
+		// Remove disponibilidades do professor
+		removeTodasDisponibilidades();
+		
+		//Cria a ultima estrutura de dados juntando os dias da semana. Para juntar os dias da semana os horarios concatenados
+		//deverao ser quebrados caso exista diferenca entre os dias da semana
+		List<Date> todosHorariosOrdenados = new ArrayList<Date>();
+		todosHorariosOrdenados.addAll(todosHorarios);
+		Collections.sort(todosHorariosOrdenados, new Comparator<Date>() {
+		    public int compare(Date o1, Date o2) {
+				Calendar horaInicio = Calendar.getInstance();
+				horaInicio.setTime(o1);
+				horaInicio.set(1979,Calendar.NOVEMBER,6);
+		    	
+				Calendar horaFim = Calendar.getInstance();
+				horaFim.setTime(o2);
+				horaFim.set(1979,Calendar.NOVEMBER,6);
+				
+				return horaInicio.compareTo(horaFim);
+		    }
+		});
+		for (int i = 1; i < todosHorariosOrdenados.size() ; i++)
+		{
+			DisponibilidadeSala disponibilidade = new DisponibilidadeSala();
+			disponibilidade.setHorarioInicio(todosHorariosOrdenados.get(i-1));
+			disponibilidade.setHorarioFim(todosHorariosOrdenados.get(i));
+			disponibilidade.setSala(this);
+			disponibilidade.setSegunda(false);
+			disponibilidade.setTerca(false);
+			disponibilidade.setQuarta(false);
+			disponibilidade.setQuinta(false);
+			disponibilidade.setSexta(false);
+			disponibilidade.setSabado(false);
+			disponibilidade.setDomingo(false);
+			boolean nenhumaDisponibilidade = true;
+			for (Semanas diaSemana : Semanas.values())
+			{
+				if (estaContidoEm(
+						todosHorariosOrdenados.get(i-1), todosHorariosOrdenados.get(i), diaSemanaMapHorarioInicioMapHorarioFimConcatenado.get(diaSemana)))
+				{
+					switch(diaSemana)
+					{
+					case SEG:
+						disponibilidade.setSegunda(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case TER:
+						disponibilidade.setTerca(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case QUA:
+						disponibilidade.setQuarta(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case QUI:
+						disponibilidade.setQuinta(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case SEX:
+						disponibilidade.setSexta(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case SAB:
+						disponibilidade.setSabado(true);
+						nenhumaDisponibilidade = false;
+						break;
+					case DOM:
+						disponibilidade.setDomingo(true);
+						nenhumaDisponibilidade = false;
+						break;
+					default:
+						break;
+					
+					}
+				}
+			}
+			if (!nenhumaDisponibilidade) {
+				this.disponibilidades.add(disponibilidade);//disponibilidade.persist();
+			}
+		}
+		
+		this.mergeWithoutFlush();
+	}
 
 	@Transactional
 	static public void atualizaHorariosDasSalas(Map<Sala, List<TriedaTrio<Semanas,Calendar,Calendar>>> SalaToDisponibilidadesMap, List<SemanaLetiva> semanasLetivas) {
 		// coleta as salas disponíveis por dia da semana e tempo de aula
 		int count = 0;
-		Map<HorarioDisponivelCenario, Set<Sala>> hdcToSalaMap = new HashMap<HorarioDisponivelCenario, Set<Sala>>();
+		Map<Sala, Map<Semanas, Map<Date, Integer>>> ambToDiaSemToHiToDuracaoMap = new HashMap<Sala, Map<Semanas, Map<Date, Integer>>>();
 		for (Entry<Sala, List<TriedaTrio<Semanas,Calendar,Calendar>>> entry : SalaToDisponibilidadesMap.entrySet()) {
+			Sala ambiente = entry.getKey();
 			List<TriedaTrio<Semanas,Calendar,Calendar>> disponibilidades = entry.getValue();
-			Sala sala = entry.getKey();
+			
+			// obtém mapa de disponibilidades do ambiente
+			Map<Semanas, Map<Date, Integer>> diaSemToHiToDuracaoMapDoAmbiente = null;
+			if (ambToDiaSemToHiToDuracaoMap.containsKey(ambiente)) {
+				diaSemToHiToDuracaoMapDoAmbiente = ambToDiaSemToHiToDuracaoMap.get(ambiente);
+			} else {
+				diaSemToHiToDuracaoMapDoAmbiente = new HashMap<Semanas, Map<Date,Integer>>();
+				ambToDiaSemToHiToDuracaoMap.put(ambiente, diaSemToHiToDuracaoMapDoAmbiente);
+			}
+			
+			// para cada semana letiva
 			for (SemanaLetiva semanaLetiva : semanasLetivas) {
 				// para cada tempo de aula
 				for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+					// para cada disponibilidade do ambiente lida do excel
 					for (TriedaTrio<Semanas,Calendar,Calendar> trio : disponibilidades){
 						// verifica se o intervalo de horas é compatível
 						boolean horarioAulaEstahContidoEmDisponibilidade = horarioAula.estahContidoEm(trio.getSegundo(),trio.getTerceiro()); 
 						// para cada dia da semana
 						for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
-							Set<Sala> salasDisponiveisNoDiaEHorario = hdcToSalaMap.get(hdc);
-							if (salasDisponiveisNoDiaEHorario == null) {
-								salasDisponiveisNoDiaEHorario = new HashSet<Sala>();
-								hdcToSalaMap.put(hdc,salasDisponiveisNoDiaEHorario);
-							}
-							
-							// verifica se o dia da semana é compatível
-							if (horarioAulaEstahContidoEmDisponibilidade && hdc.getDiaSemana().equals(trio.getPrimeiro())) {
-								salasDisponiveisNoDiaEHorario.add(sala);
+							Semanas diaSem = hdc.getDiaSemana();
+							// verifica se o dia da semana é compatível com as disponibilidades do ambiente
+							if (horarioAulaEstahContidoEmDisponibilidade && diaSem.equals(trio.getPrimeiro())) {
+								// armazena informação da semana letiva compatível com disponibilidade do ambiente
+								Map<Date, Integer> hiToDuracaoMapDoDiaSemDoAmbiente = null;
+								if (diaSemToHiToDuracaoMapDoAmbiente.containsKey(diaSem)) {
+									hiToDuracaoMapDoDiaSemDoAmbiente = diaSemToHiToDuracaoMapDoAmbiente.get(diaSem);
+								} else {
+									hiToDuracaoMapDoDiaSemDoAmbiente = new HashMap<Date, Integer>();
+									diaSemToHiToDuracaoMapDoAmbiente.put(diaSem, hiToDuracaoMapDoDiaSemDoAmbiente);
+								}
+								hiToDuracaoMapDoDiaSemDoAmbiente.put(horarioAula.getHorario(), semanaLetiva.getTempo());
 							}
 						}
 					}
@@ -596,18 +756,10 @@ public class Sala
 			}
 		}
 		
-/*		// atualiza disponibilidades das salas
-		count = 0;
-		for (Entry<HorarioDisponivelCenario, Set<Sala>> entry : hdcToSalaMap.entrySet()) {
-			HorarioDisponivelCenario hdc = entry.getKey();
-			Set<Sala> salasDisponiveisNoDiaEHorario = entry.getValue();
-			
-			hdc.getSalas().clear();
-			hdc.getSalas().addAll(salasDisponiveisNoDiaEHorario);
-			hdc.merge();
-			
-			count++;if (count == 100) {System.out.println("   100 horários das salas processados"); count = 0;}
-		}*/
+		for (Entry<Sala, Map<Semanas, Map<Date, Integer>>> entry : ambToDiaSemToHiToDuracaoMap.entrySet()) {
+			Sala ambiente = entry.getKey();
+			ambiente.populaDisponibilidades(entry.getValue());
+		}
 	}
 	
 	public static int count(

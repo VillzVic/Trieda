@@ -17,7 +17,7 @@ public interface UsuariosService
 {
 	UsuarioDTO getUsuario( String username );
 	void save( UsuarioDTO usuarioDTO );
-	void remove( List< UsuarioDTO > usuarioDTOList );
+	void remove( List< UsuarioDTO > usuarioDTOList ) throws TriedaException;
 	Boolean avoidSessionExpire();
 	PagingLoadResult< UsuarioDTO > getBuscaList( String nome, String username,
 		String email, PagingLoadConfig config );

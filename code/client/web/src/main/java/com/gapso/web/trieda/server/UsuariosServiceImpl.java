@@ -3,6 +3,9 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
+
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -165,18 +168,20 @@ public class UsuariosServiceImpl
 	}
 
 	@Override
-	public void remove(
-		List< UsuarioDTO > usuarioDTOList )
-	{
-		for ( UsuarioDTO usuarioDTO : usuarioDTOList )
-		{
-			Usuario usuario = Usuario.find(
-				usuarioDTO.getUsername() );
-
-			if ( usuario != null )
-			{
-				usuario.remove();
+	public void remove(List< UsuarioDTO > usuarioDTOList ) throws TriedaException {
+		try {
+			for ( UsuarioDTO usuarioDTO : usuarioDTOList ) {
+				Usuario usuario = Usuario.find(usuarioDTO.getUsername() );
+				if ( usuario != null ) {
+					usuario.remove();
+				}
 			}
+		} catch (ConstraintViolationException e) {
+			throw new TriedaException("Provavelmente há um usuário na lista de remoção que está associado a um cenário ou uma requisição de otimização existente e, portanto, não pôde ser deletado.", e);
+		} catch (JpaSystemException e) {
+			throw new TriedaException("Provavelmente há um usuário na lista de remoção que está associado a um cenário ou uma requisição de otimização existente e, portanto, não pôde ser deletado.", e);
+		} catch (Exception e) {
+			throw new TriedaException(e);
 		}
 	}
 

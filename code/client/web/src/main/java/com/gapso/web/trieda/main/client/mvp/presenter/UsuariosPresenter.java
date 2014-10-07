@@ -149,7 +149,7 @@ public class UsuariosPresenter
 				List< UsuarioDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final UsuariosServiceAsync service = Services.usuarios();
 
-				service.remove( list, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				service.remove( list, new AbstractAsyncCallbackWithDefaultOnFailure< Void >(true, display )
 				{
 					@Override
 					public void onSuccess( Void result )

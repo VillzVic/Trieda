@@ -303,12 +303,17 @@ public class Usuario
 	public static int count( String nome, String username,
 		String email, InstituicaoEnsino instituicaoEnsino )
 	{
+		String insQuery = "";
+		if (instituicaoEnsino != null) {
+			insQuery = " o.instituicaoEnsino = :instituicaoEnsino AND";
+		}
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Usuario o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" WHERE " + insQuery +
+			" LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND LOWER ( o.username ) LIKE LOWER ( :username ) " +
-			" AND LOWER ( o.email ) LIKE LOWER ( :email ) ");
+			" AND LOWER ( o.email ) LIKE LOWER ( :email ) " +
+			" AND (o.username != 'trieda.root')");
 
 		nome = "%" + nome.replace('*', '%') + "%";
 		username = "%" + username.replace('*', '%') + "%";
@@ -317,7 +322,9 @@ public class Usuario
 		q.setParameter( "nome", nome );
 		q.setParameter( "username", username );
 		q.setParameter( "email", email );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		if (instituicaoEnsino != null) {
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		}
 
         return ( (Number) q.getSingleResult() ).intValue();
     }

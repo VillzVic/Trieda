@@ -460,19 +460,6 @@ public class Professor
 			Professor professor = entry.getKey();
 			professor.populaDisponibilidades(entry.getValue());
 		}
-		
-/*		// atualiza disponibilidades de professores
-		count = 0;
-		for (Entry<HorarioDisponivelCenario, Set<Professor>> entry : hdcToProfessorMap.entrySet()) {
-			HorarioDisponivelCenario hdc = entry.getKey();
-			Set<Professor> professoresDisponiveisNoDiaEHorario = entry.getValue();
-			
-			hdc.getProfessores().clear();
-			hdc.getProfessores().addAll(professoresDisponiveisNoDiaEHorario);
-			hdc.merge();
-			
-			count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
-		}*/
 	}
 
 	 @Transactional
