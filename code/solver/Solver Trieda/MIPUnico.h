@@ -251,16 +251,12 @@ private:
    ConstraintMIPUnicoHash cHashTatico;
 
 
-   bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
-   bool FIXAR_P1;
-   bool FIXAR_TATICO_P1;
    bool *CARREGA_SOLUCAO;
    bool USAR_EQUIVALENCIA;
    bool PERMITIR_NOVAS_TURMAS;
    bool CRIAR_VARS_FIXADAS;
    bool CRIANDO_V_ATRAVES_DE_X;
    int ITERACAO;
-   bool BRANCH_SALA;
    bool PERMITIR_REALOCAR_ALUNO;
 
    int etapa;
@@ -291,13 +287,14 @@ private:
 	void sincronizaSolucao( int campusAtualId, int prioridade, int r );
 	void addVariaveisTatico();
 	void initCredsSala();
+	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
 	int solveMIPUnico( int campusId, int prioridade, int r );
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendPorFasesDoDia( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
-	void polish(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
+	bool polish(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
 	Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
@@ -350,7 +347,8 @@ private:
 	static const int minCredDiaAluno;
 	static const bool considerarMinCredDiaAluno;
 
-
+	//
+	string optLogFileName;
 };
 
 

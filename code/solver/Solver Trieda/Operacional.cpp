@@ -1770,6 +1770,20 @@ void Operacional::clearModel()
 	varsProfFolgaGap.clear();
 }
 
+void Operacional::setOptLogFile(std::ofstream &logMip, string name, bool clear)
+{
+   stringstream ss;
+   ss << name << ".log";
+   
+   if (!clear)
+	   logMip.open(ss.str(),ios::app);
+   else
+	   logMip.open(ss.str(),ios::out);
+   
+   if (lp)
+	   lp->setLogFile((char*)ss.str().c_str());
+}
+
 int Operacional::solveOperacionalMIP()
 {
    int varNum = 0;
@@ -1779,8 +1793,7 @@ int Operacional::solveOperacionalMIP()
    cout<<"\nthis->CARREGA_SOLUCAO = " << *this->CARREGA_SOLUCAO << "\n";
 
    bool CARREGA_SOL_PARCIAL = * this->CARREGA_SOLUCAO;
-
-
+   
    if ( * this->CARREGA_SOLUCAO )
    {
 	   char solName[1024];
@@ -1810,13 +1823,23 @@ int Operacional::solveOperacionalMIP()
 #endif
    }
 
+    #pragma region LOG FILE
+   // set log file
+   static int id=0;
+   id++;
+   stringstream ss;
+   ss << "mipOp" << id;
+   ofstream opFile;
+   setOptLogFile(opFile,ss.str());
+	#pragma endregion
+
    clearModel();
 
    lp->createLP( "SolverOperacional",
       OPTSENSE_MINIMIZE, PROB_MIP );
 
 #ifdef DEBUG
-   printf( "Creating LP...\n" );
+   cout << "Creating LP...\n";
 #endif
 
    relacionaProfessoresDisciplinas();
@@ -1824,9 +1847,9 @@ int Operacional::solveOperacionalMIP()
    // Variable creation
    varNum = criaVariaveisOperacional();
 
-#ifdef PRINT_cria_variaveis
-   printf( "Total of Variables: %i\n\n", varNum );
-#endif
+	#ifdef PRINT_cria_variaveis
+   cout << "Total of Variables: " << varNum << "\n\n";
+	#endif
     
     int status = 1;
 
@@ -1836,7 +1859,7 @@ int Operacional::solveOperacionalMIP()
 		constNum = criaRestricoesOperacional();
 
 		#ifdef PRINT_cria_restricoes
-		   printf( "Total of Constraints: %i\n\n", constNum );
+		cout << "Total of Constraints: " << constNum << "\n\n";
 		#endif
 
 		#ifdef DEBUG
@@ -1867,6 +1890,12 @@ int Operacional::solveOperacionalMIP()
 		 std::cout<<"\n------------------------------------";
 		 std::cout<<"\nGarantia de solucao\n\n"; fflush(NULL);
 
+		 if(opFile){
+			opFile.seekp(0, ios::end);
+			opFile<<"\n------------------------------------";
+			opFile<<"\nGarantia de solucao\n\n";
+			opFile.flush();
+		 }
 
          if ( SEM_FOLGA_DEMANDA )		// primeira rodada
          {
@@ -1911,7 +1940,12 @@ int Operacional::solveOperacionalMIP()
 				// Atendimento zerado
 			  
 				 #pragma region GARANTIA DE SOLUCAO: ATENDIMENTO ZERADO
-
+				 if(opFile){
+					 opFile.seekp(0, ios::end);
+					 opFile<<"\n------------------------------------";
+					 opFile<<"\nAtendimento minimon\n";
+					 opFile.flush();
+				 }
 				 std::cout<<"\nAtendimento minimo\n\n"; fflush(NULL);
 
 				double *origBounds = new double[lp->getNumCols()];
@@ -1983,6 +2017,12 @@ int Operacional::solveOperacionalMIP()
 
 				#pragma region ATENDIMENTO COM PROFS REAIS DA PRIMEIRA ETAPA
 
+				if(opFile){
+				 opFile.seekp(0, ios::end);
+				 opFile<<"\n------------------------------------";
+				 opFile<<"\nAtendimento com profs reais da etapa anterior\n";
+				 opFile.flush();
+				}
 				std::cout<<"\nAtendimento com profs reais da etapa anterior\n\n"; fflush(NULL);
 			
 				nChgs = 0;
@@ -2032,6 +2072,12 @@ int Operacional::solveOperacionalMIP()
 				   std::cout<<"\n------------------------------------";
 				   std::cout<<"\nMaximo atendimento\n\n"; fflush(NULL);
 		
+				   if(opFile){
+					opFile.flush();
+					opFile<<"\n------------------------------------";
+					opFile<<"\nMaximo atendimento\n";
+				   }
+
 				   // Função Objetivo somente com folga de demanda
 				   vit = vHashOp.begin();
 				   for (; vit != vHashOp.end(); vit++ )
@@ -2109,6 +2155,13 @@ int Operacional::solveOperacionalMIP()
 			std::cout<<"\n------------------------------------";
 			std::cout<<"\nUso mínimo de professores virtuais\n\n"; fflush(NULL);
 		
+			if(opFile){
+				opFile.seekp(0, ios::end);
+				opFile<<"\n------------------------------------";
+				opFile<<"\nUso mínimo de professores virtuais\n";
+				opFile.flush();
+			}
+
 			// Função Objetivo somente com variaveis de professor virtual
 			vit = vHashOp.begin();
 			for (; vit != vHashOp.end(); vit++ )
@@ -2220,6 +2273,17 @@ int Operacional::solveOperacionalMIP()
 			std::cout<<"\nFO original\n\n";
 		else						// RODADA 2
 			std::cout<<"\nMaximo atendimento e Minimo prof virtual fixados e FO original\n\n";
+		
+		if(opFile)
+		{
+			opFile.seekp(0, ios::end);
+			opFile<<"\n------------------------------------";
+			if ( SEM_FOLGA_DEMANDA )	// RODADA 1
+				opFile<<"\nFO original\n\n";
+			else
+				opFile<<"\nMaximo atendimento e Minimo prof virtual fixados e FO original\n\n";
+			opFile.flush();
+		}
 
 		fflush(NULL);
 		
@@ -15212,8 +15276,6 @@ int Operacional::criarRestricaoProfHiHf_()
 	
 	unordered_map<int, unordered_set<int>> mapDiasFases;
 
-	CentroDados::printTest("criarRestricaoProfHiHf_", "1");
-
 	// -------------------------------------------------------------------------------------------------
 	#pragma region Agrupa variáveis em mapProfDiaFaseHiHf e mapProfDiaFase
 	
@@ -15222,10 +15284,6 @@ int Operacional::criarRestricaoProfHiHf_()
 	{
 		Professor* const professor = itProf->first;
 		
-		stringstream ssteste;
-		ssteste << professor->getId();
-		CentroDados::printTest("criarRestricaoProfHiHf_", ssteste.str() );
-
 		if ( professor->eVirtual() && !problemData->parametros->proibirProfVirtualGapMTN )
 		{
 			continue;
@@ -15245,10 +15303,6 @@ int Operacional::criarRestricaoProfHiHf_()
 				const DateTime dti = itDti->first;
 				const int faseDoDia = CentroDados::getFaseDoDia(dti);	
 							
-				ssteste.clear();
-				ssteste << "dia" << dia << "_dti" << dti.hourMinToStr() << "_fase" << faseDoDia;
-				CentroDados::printTest("criarRestricaoProfHiHf_", ssteste.str() );
-
 				ParMapDtiDtf *mapProfDiaFase1 = &(*mapProfDia1)[faseDoDia];
 				auto *mapProfDiaFase2 = &(*mapProfDia2)[faseDoDia];
 				
@@ -15263,11 +15317,6 @@ int Operacional::criarRestricaoProfHiHf_()
 							const int col = itTurma->second.first;
 							const VariableOp var = itTurma->second.second;
 		
-							ssteste.clear();
-							ssteste << var.toString();
-							CentroDados::printTest("  interno", ssteste.str() );
-
-
 							// ----------- Recupera datetime final da aula
 
 							Calendario *calend = var.getHorarioAula()->getCalendario();
@@ -15287,10 +15336,7 @@ int Operacional::criarRestricaoProfHiHf_()
 							// ----------- mapProfDiaFase
 				
 							double duracaoAula = (dtf - dti).getDateMinutes();
-							(*mapProfDiaFase2).insert( make_pair(col,duracaoAula) );
-							
-							ssteste.clear();
-							CentroDados::printTest("  fim interno", ssteste.str() );
+							(*mapProfDiaFase2).insert( make_pair(col,duracaoAula) );							
 						}
 					}
 				}
@@ -15299,8 +15345,6 @@ int Operacional::criarRestricaoProfHiHf_()
 	}
 	#pragma endregion
 	
-	CentroDados::printTest("criarRestricaoProfHiHf_", "Fim de 1a parte");
-
 	// -------------------------------------------------------------------------------------------------
 	// Prof -> Dia -> Fase Do Dia -> Par-DateTime
 
@@ -15574,8 +15618,6 @@ int Operacional::criarRestricaoProfHiUB_( Professor* const prof, const int dia, 
 	*/
 	int numRestr = 0;
 
-	CentroDados::printTest("criarRestricaoProfHiUB_", "criando rest ub hi");
-
 	for(auto itDateTime = mapDtiVars.begin(); itDateTime != mapDtiVars.end(); ++itDateTime)
 	{					
 		DateTime dti = itDateTime->first;
@@ -15637,8 +15679,7 @@ int Operacional::criarRestricaoProfHiLB_( Professor* const prof, const int dia, 
 	*/
 	
 	int numRestr = 0;
-	CentroDados::printTest("criarRestricaoProfHiLB_", "criando rest lb hf");
-
+	
 	for(auto itDateTime = mapDtiVars.begin(); itDateTime != mapDtiVars.end(); ++itDateTime)
 	{					
 		DateTime dti= itDateTime->first;
@@ -15693,8 +15734,7 @@ int Operacional::criarRestricaoProfHfLB_( Professor* const prof, const int dia, 
 	*/
 	
 	int numRestr = 0;
-	CentroDados::printTest("criarRestricaoProfHfLB_", "criando rest lb hf");
-
+	
 	for(auto itDateTime = mapDtfVars.begin(); itDateTime != mapDtfVars.end(); ++itDateTime)
 	{					
 		DateTime dtf= itDateTime->first;
@@ -15747,8 +15787,6 @@ int Operacional::criarRestricaoProfHfUB_( Professor* const prof, const int dia, 
 	
 	int numRestr = 0;
 	
-	CentroDados::printTest("criarRestricaoProfHfUB_", "criando rest ub hf");
-
 	for(auto itDateTime = mapDtfVars.begin(); itDateTime != mapDtfVars.end(); ++itDateTime)
 	{					
 		DateTime dtf = itDateTime->first;
@@ -15809,8 +15847,6 @@ int Operacional::criarRestricaoProfGapMTN_( Professor* const prof, const int dia
 	
 	int numRestr = 0;
 	
-	CentroDados::printTest("criarRestricaoProfGapMTN_", "criando rest de gap para prof");
-
 	ConstraintOp cons;
 	cons.reset();
 	cons.setType(ConstraintOp::C_PROF_GAP);

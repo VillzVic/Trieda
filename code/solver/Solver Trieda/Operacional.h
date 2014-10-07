@@ -52,6 +52,7 @@ public:
    void polishOperacional(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
    int solveOperacionalMIP();
    void clearModel();
+   void setOptLogFile(std::ofstream &logMip, string name, bool clear=true);
    void carregaSolucaoOperacional();
    void getSolutionOperacionalMIP();
    void preencheOutputOperacionalMIP();
