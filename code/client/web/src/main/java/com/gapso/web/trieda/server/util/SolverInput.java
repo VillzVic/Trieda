@@ -1,7 +1,6 @@
 package com.gapso.web.trieda.server.util;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -318,7 +317,7 @@ public class SolverInput
 
 				for ( Disponibilidade disponibilidade : campusMapDisponibilidade.get(campus) )
 				{
-					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					if (disponibilidade.ehCompativelCom(hdc))
 					{
 						horarios.add( hdc );
 					}
@@ -337,7 +336,7 @@ public class SolverInput
 
 				for ( Disponibilidade disponibilidade : unidadeMapDisponibilidade.get(unidade) )
 				{
-					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					if (disponibilidade.ehCompativelCom(hdc))
 					{
 						horarios.add( hdc );
 					}
@@ -356,7 +355,7 @@ public class SolverInput
 
 				for ( Disponibilidade disponibilidade : salaMapDisponibilidade.get(sala) )
 				{
-					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					if (disponibilidade.ehCompativelCom(hdc))
 					{
 						horarios.add( hdc );
 					}
@@ -375,7 +374,7 @@ public class SolverInput
 				
 				for ( Disponibilidade disponibilidade : disciplinaMapDisponibilidade.get(disciplina) )
 				{
-					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					if (disponibilidade.ehCompativelCom(hdc))
 					{
 						// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
 						if (disciplina.getSemanasLetivas().isEmpty() || disciplina.getSemanasLetivas().contains(semanaLetivaDeHDC)) {
@@ -398,7 +397,7 @@ public class SolverInput
 
 				for ( Disponibilidade disponibilidade : professorMapDisponibilidade.get(professor) )
 				{
-					if (checkHorarioDisponivelCenarioDisponvivel(hdc, disponibilidade))
+					if (disponibilidade.ehCompativelCom(hdc))
 					{
 						horarios.add( hdc );
 					}
@@ -418,29 +417,6 @@ public class SolverInput
 				horarios.add( hdc );
 			}
 		}
-	}
-
-	private boolean checkHorarioDisponivelCenarioDisponvivel(
-			HorarioDisponivelCenario hdc, Disponibilidade disponibilidade) {
-
-		Calendar horaInicio = Calendar.getInstance();
-		horaInicio.setTime(disponibilidade.getHorarioInicio());
-		horaInicio.set(1979,Calendar.NOVEMBER,6);
-		
-		Calendar horaFim = Calendar.getInstance();
-		horaFim.setTime(disponibilidade.getHorarioFim());
-		horaFim.set(1979,Calendar.NOVEMBER,6);
-		
-		Calendar oHoraInicio = Calendar.getInstance();
-		oHoraInicio.setTime(hdc.getHorarioAula().getHorario());
-		oHoraInicio.set(1979,Calendar.NOVEMBER,6);
-		
-		Calendar oHoraFim = Calendar.getInstance();
-		oHoraFim.setTime(hdc.getHorarioAula().getHorario());
-		oHoraFim.set(1979,Calendar.NOVEMBER,6);
-		oHoraFim.add(Calendar.MINUTE,hdc.getHorarioAula().getSemanaLetiva().getTempo());
-
-		return (horaInicio.compareTo(oHoraInicio) <= 0 && horaFim.compareTo(oHoraFim) >= 0 );
 	}
 
 	public List< String > getErrors()
@@ -562,8 +538,7 @@ public class SolverInput
 			return Collections.emptySet();
 		}
 
-		Set< HorarioDisponivelCenario > result
-			= this.horariosProfessores.get( professor );
+		Set< HorarioDisponivelCenario > result = this.horariosProfessores.get( professor );
 
 		if ( result == null )
 		{
@@ -1158,14 +1133,9 @@ public class SolverInput
 				itemProfessor.setCredAnterior( professor.getCreditoAnterior() );
 				itemProfessor.setValorCred( professor.getValorCredito() );
 
-				Set< HorarioDisponivelCenario > setHorarios
-					= new HashSet< HorarioDisponivelCenario >();
-
+				Set< HorarioDisponivelCenario > setHorarios = new HashSet< HorarioDisponivelCenario >();
 				setHorarios.addAll( this.getHorarios( professor ) );
-
-				List< HorarioDisponivelCenario > listHorarios
-					= new ArrayList< HorarioDisponivelCenario >( setHorarios );
-
+				List< HorarioDisponivelCenario > listHorarios = new ArrayList< HorarioDisponivelCenario >( setHorarios );
 				itemProfessor.setHorariosDisponiveis( createGrupoHorario( listHorarios ) );
 
 				GrupoProfessorDisciplina grupoProfessorDisciplina	

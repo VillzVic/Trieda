@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -143,6 +144,43 @@ public abstract class Disponibilidade
 
 	public void setDomingo(Boolean domingo) {
 		this.domingo = domingo;
+	}
+	
+	public boolean ehCompativelCom(HorarioDisponivelCenario hdc) {
+		// Checa compatibilidade de dia da semana
+		boolean diaSemCompativel = false;
+		switch (hdc.getDiaSemana()) {
+			case SEG: diaSemCompativel = this.getSegunda(); break;
+			case TER: diaSemCompativel = this.getTerca(); break;
+			case QUA: diaSemCompativel = this.getQuarta(); break;
+			case QUI: diaSemCompativel = this.getQuinta(); break;
+			case SEX: diaSemCompativel = this.getSexta(); break;
+			case SAB: diaSemCompativel = this.getSabado(); break;
+			case DOM: diaSemCompativel = this.getDomingo(); break;
+		}
+		
+		if (diaSemCompativel) {
+			// Checa compatibilidade de horário
+			Calendar horaInicio = Calendar.getInstance();
+			horaInicio.setTime(this.getHorarioInicio());
+			horaInicio.set(1979,Calendar.NOVEMBER,6);
+			
+			Calendar horaFim = Calendar.getInstance();
+			horaFim.setTime(this.getHorarioFim());
+			horaFim.set(1979,Calendar.NOVEMBER,6);
+			
+			Calendar oHoraInicio = Calendar.getInstance();
+			oHoraInicio.setTime(hdc.getHorarioAula().getHorario());
+			oHoraInicio.set(1979,Calendar.NOVEMBER,6);
+			
+			Calendar oHoraFim = Calendar.getInstance();
+			oHoraFim.setTime(hdc.getHorarioAula().getHorario());
+			oHoraFim.set(1979,Calendar.NOVEMBER,6);
+			oHoraFim.add(Calendar.MINUTE,hdc.getHorarioAula().getSemanaLetiva().getTempo());
+	
+			return (horaInicio.compareTo(oHoraInicio) <= 0 && horaFim.compareTo(oHoraFim) >= 0 );
+		}
+		return false;
 	}
 	
 	protected void clone(Disponibilidade clone) {
