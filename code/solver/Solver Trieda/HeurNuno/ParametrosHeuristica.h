@@ -166,6 +166,17 @@ public:
 	static const bool proibirGapProfVirt;
 
 	// -------------------------------------------------------------------------------------------------
+	// Solução inicial
+
+	enum InitialSolLoadMode
+	{
+		LoadInitSolAndComplete,
+		LoadInitSolAndImprove
+	};
+
+	static const InitialSolLoadMode initSolLoadMode;
+	
+	// -------------------------------------------------------------------------------------------------
 
 	// Destruição da solução final para testar carregamento [deve tar estar FALSE no funcionamento normal]
 	static const bool finalDestroy;

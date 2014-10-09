@@ -33,6 +33,7 @@ public:
 	int getInputId() const { return inputId_; }
 	char* getPath( char* path ) const;
 	char* getInputName( char* inputFile ) const;
+	char* getInputWithPath( char* inputPlusPath ) const;
 	char* getTempOutputName( char* tempOutput ) const;
 	char* getOutputName( char* outputFile ) const;
 	int getTipoSolver() const { return tipoSolver_; }

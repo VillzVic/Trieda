@@ -32,6 +32,7 @@ class AtendimentoCampus;
 class AtendimentoSala;
 class AtendimentoHorarioAula;
 class AtendimentoOferta;
+class AtendimentoTatico;
 class Curso;
 class SaveSolucao;
 
@@ -59,7 +60,7 @@ class SolucaoHeur
 public:
 	SolucaoHeur(void);
 	~SolucaoHeur(void);
-
+	
 	// estruturas de alocação
 	unordered_map<int, AlunoHeur*> alunosHeur;
 	unordered_map<Curso*, unordered_set<AlunoHeur*>> alunosPorCurso;
@@ -72,6 +73,8 @@ public:
 
 	// gerar solução inicial
 	static SolucaoHeur* gerarSolucaoInicial(void);
+	// gera solução completa, fixando o atendimento da solução passada
+	static SolucaoHeur* gerarSolucaoInicial(ProblemSolution * const partialSol);
 	// melhorar solução carregada
 	static void improveSolucaoFixada(SolucaoHeur* const solucao);
 	// tentar só fazer trocas de sala (e fechar turmas caso necessario) de uma solução carregada
@@ -273,7 +276,7 @@ private:
 	#pragma region [CONSTRUÇÃO GERAL]
 
 	// criar ofertas disciplina iniciais
-	void criarOfertasDisciplina_(void);
+	void criarOfertasDisciplina_(bool limpar=true);
 	// com base na disciplina original identifica a teorica e a pratica
 	void associarDisciplinas_(Disciplina* const disciplina, Disciplina* &discTeorica, Disciplina* &discPratica);
 
@@ -422,10 +425,18 @@ private:
 								unordered_map<TurmaHeur*, unordered_set<AlunoHeur*>>* const &turmasAlunos,
 								unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios);
 	
+	// atendimento tatico
+	void loadAtendimentoTatico(AtendimentoTatico* const atendTatico, itCampODs const &itCampus, 
+											SalaHeur* const &sala, int const &dia, 
+											unordered_map<TurmaHeur*, unordered_set<AlunoHeur*>>* const &turmasAlunos,
+											unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios);
+
 	// get alunos atendidos no atendimento oferta
 	void getAlunosAtendidos(AtendimentoOferta* const atendOferta, unordered_set<AlunoHeur*> &alunos);
 	// get oferta disciplina se já foi criada. se não criar e retornar
 	OfertaDisciplina* getAddOfertaDisciplina(Disciplina* const &disciplina, itCampODs const &itCampus);
+	// get oferta disciplina se já foi criada. se não retornar nullptr
+	OfertaDisciplina* getOfertaDisciplina(Disciplina* const &disciplina, Campus* const campus);
 	// get turma se já foi criada, se não, criar e retornar
 	TurmaHeur* getAddTurma(OfertaDisciplina* const &ofertaDisc, int const &turmaId, bool const &teorico,
 						  SalaHeur* const &sala, ProfessorHeur* const &professor, 

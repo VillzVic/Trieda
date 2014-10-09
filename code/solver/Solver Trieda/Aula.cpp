@@ -92,7 +92,7 @@ void Aula::addCursoAtendido( Curso* curso, int qtd )
 	{
 		itMap->second += qtd;
 	}
-	else itMap->second = qtd;
+	else cursosAtendidos[curso] = qtd;
 
 }
 

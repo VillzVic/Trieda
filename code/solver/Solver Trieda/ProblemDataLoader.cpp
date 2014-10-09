@@ -1516,6 +1516,9 @@ void ProblemDataLoader::combinacaoDivCreditos()
    {
 	   Disciplina *disciplina = *itDisc;
 	   
+	   if (disciplina->getId() == 14161)
+		   std::cout<<"";
+
 	   // --------------------------------------------------------------------------------
 	   // Elimina regra específica de divisão de créditos, caso o parâmetro esteja desabilitado.
 	   if ( ! problemData->parametros->regrasEspecificasDivisaoCredito )

@@ -56,11 +56,13 @@ std::ostream & operator << ( std::ostream & out, AtendimentoOferta & atOferta )
 std::istream & operator >> ( std::istream &file, AtendimentoOferta* const &ptrAtendOferta )
 {
 	std::string line;
-	while( !getline( file, line ).eof() && (line.find("</AtendimentoOferta>") == string::npos))
+	while( !getline( file, line ).eof() && 
+		   ((line.find("</AtendimentoOferta>") == string::npos) &&
+		    (line.find("</atendimentoOferta>") == string::npos) ) )
 	{
 		// OFERTA CURSO CAMPI
 		// --------------------------------------------------------------------------
-		if(line.find("<ofertaCursoCampiId>") != string::npos)
+		if(line.find("<ofertaCursoCampiId>") != string::npos)		   
 		{
 			int oftId = InputMethods::fakeId;
 			InputMethods::getInlineAttrInt(line, "<ofertaCursoCampiId>", oftId);

@@ -102,7 +102,10 @@ void HeuristicaNuno::run(void)
 	// tentar melhorar a partir da solucao já carregada
 	else 
 	{
-		HeuristicaNuno::runImprovSolucao_();
+		if(ParametrosHeuristica::initSolLoadMode == ParametrosHeuristica::LoadInitSolAndImprove)
+			HeuristicaNuno::runImprovSolucao_();
+		else if(ParametrosHeuristica::initSolLoadMode == ParametrosHeuristica::LoadInitSolAndComplete)
+			HeuristicaNuno::runCompleteSolucao_();
 	}
 
 	// Teste: destruir parte da solução para testar load!
@@ -165,6 +168,44 @@ void HeuristicaNuno::runImprovSolucao_(void)
 		solucaoHeur = solutionLoaded;
 	}
 }
+// run solução do zero
+void HeuristicaNuno::runCompleteSolucao_(void)
+{
+	// verificar se tem conflitos
+	if(!HeuristicaNuno::solutionLoaded)
+		excepcao("HeuristicaNuno::run", "Solução carregada eh null!");
+	else if(!HeuristicaNuno::solutionLoaded->checkConflitos())
+		excepcao("HeuristicaNuno::run", "Solução carregada tem conflitos!");
+
+	HeuristicaNuno::solucaoHeur = HeuristicaNuno::solutionLoaded;
+	ProblemSolution * const partialSol = HeuristicaNuno::solutionLoaded->getProblemSolution();
+
+	logMsg("", 1);
+	logMsg(">>> Solucao inicial carregada. Gerar uma solução completa com o atendimento inicial fixado <<<", 1);
+	HeuristicaNuno::improveSolucao = false;
+	clock_t begin = clock();
+	int it = 0;
+
+	do
+	{
+		++it;
+		logMsgInt(">> GERAR SOLUCAO NR. ", it, 1);
+		SolucaoHeur* const sol = SolucaoHeur::gerarSolucaoInicial(partialSol);
+
+		if(sol->ehMelhor(HeuristicaNuno::solucaoHeur))
+		{
+			SolucaoHeur* formSol = HeuristicaNuno::solucaoHeur;
+			HeuristicaNuno::solucaoHeur = sol;
+			delete formSol;
+		}
+		else
+			delete sol;
+	}
+	while(it < HeuristicaNuno::limIterHeur && ((double(clock() - begin) / CLOCKS_PER_MINUTE) < HeuristicaNuno::limMinHeur));
+
+	delete partialSol;
+}
+
 
 // Clean memory
 void HeuristicaNuno::clean(void)

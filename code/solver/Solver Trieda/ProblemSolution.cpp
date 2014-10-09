@@ -3231,9 +3231,21 @@ ProblemSolution* ProblemSolution::lerSolucao(char* const filePath, bool modoTati
 	fileStream >> probSolution;
 	file.close();
 
+	ProblemSolution* ps = nullptr;
+
+	// libera memoria se nao foi encontrada solucao inicial
+	if (probSolution->atendimento_campus->size()==0)
+	{
+		delete probSolution;
+	}
+	else
+	{
+		ps = probSolution;
+	}
+
 	std::cout << "solucao carregada!" << endl;
 
-	return probSolution;
+	return ps;
 }
 
 std::ostream & operator << (

@@ -275,9 +275,6 @@
     <ClCompile Include="HeurNuno\RecursivePreProc.cpp">
       <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
     </ClCompile>
-    <ClCompile Include="HeurNuno\TurmasIncHorarioDia.cpp">
-      <Filter>HeuristicaNuno\Melhoradores da solução</Filter>
-    </ClCompile>
     <ClCompile Include="HeurNuno\ClusterUnidades.cpp">
       <Filter>HeuristicaNuno\Útil</Filter>
     </ClCompile>
@@ -317,6 +314,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\source\opt_gurobi.cpp">
       <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="HeurNuno\TurmasIncHorarioDia.cpp">
+      <Filter>HeuristicaNuno\Útil</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

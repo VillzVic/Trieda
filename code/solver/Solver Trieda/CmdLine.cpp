@@ -20,7 +20,7 @@ using std::stringstream;
 #endif
 
 
-#define DEFAULT_MIP_UNICO
+//#define DEFAULT_MIP_UNICO
 
 
 CmdLine::CmdLine( int argc, char**& argv) : argc_ (argc), argv_ (argv)
@@ -140,6 +140,15 @@ char* CmdLine::getInputName( char* inputFile ) const
 { 
 	strcpy(inputFile,inputFile_); 
 	return inputFile;
+}
+
+char* CmdLine::getInputWithPath( char* inputPlusPath ) const
+{
+	inputPlusPath[0]='\0';
+	getPath(inputPlusPath);
+	strcat(inputPlusPath,"\\");
+	getInputName(inputPlusPath);
+	return inputPlusPath;
 }
 
 char* CmdLine::getTempOutputName( char* tempOutput ) const

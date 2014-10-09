@@ -49,12 +49,22 @@ int mainHeur( CmdLine *cmd, ProblemData* data, ProblemSolution* &solution )
    // Carrega solução
    if ( load )
    {
-	   cout << "<< Loading solution..." << endl; fflush(0);
+	   cout << "<< Loading solution from output..." << endl; fflush(0);
 
 	   loadSolucaoInicial(cmd,solution);
 	   if(solution)
 	   {
 		   cout << ">>> Solução inicial carregada com sucesso!" << endl; fflush(0);
+	   }
+   }
+   else
+   {
+	   cout << "<< Searching for partial solution appended to input..." << endl; fflush(0);
+
+	   loadInputSolucaoInicial(cmd,solution);
+	   if(solution)
+	   {
+		   cout << ">>> Solução inicial anexada ao input carregada com sucesso!" << endl; fflush(0);
 	   }
    }
    
@@ -68,25 +78,17 @@ int mainHeur( CmdLine *cmd, ProblemData* data, ProblemSolution* &solution )
 		HeuristicaNuno::setInputInfo(path, inputFile, inputId);
 		HeuristicaNuno::setup(CentroDados::getProblemData());
 		
-	    cout << "<< 1" << endl; fflush(0);
-
 	    // carregar solução inicial
 		if(solution)
 			HeuristicaNuno::loadSolucao(solution);
 		
-	    cout << "<< 2" << endl; fflush(0);
-
 	    // load argumentos opcionais heuristica
 	    cmd->checkArgsHeuristica();
 		
-	    cout << "<< 3" << endl; fflush(0);
-
 		// Executa a heurística
 		ProblemSolution* solucaoHeuristica = nullptr;
 		runHeuristica(solucaoHeuristica);
 		
-	    cout << "<< 4" << endl; fflush(0);
-
 		// Print solução
 		if(solucaoHeuristica)
 		{
@@ -163,6 +165,25 @@ bool loadSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao)
 	return false;
 }
 
+// ----------------------------------------------------------------------------------------------
+
+// tenta carregar solução inicial caso tenha sido inserida
+bool loadInputSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao)
+{	
+	solucao = nullptr;
+	HeuristicaNuno::logMsg("tentar ler solucao anexada ao fim do input...", 0);
+
+	char fullPath[ 2048 ];
+	cmd->getInputWithPath(fullPath);
+
+	solucao = ProblemSolution::lerSolucao(fullPath);
+	if(solucao == nullptr)
+	{
+		HeuristicaNuno::logMsg("nenhuma solucao encontrada em anexo.", 0);
+		return false;
+	}
+	return true;
+}
 // ----------------------------------------------------------------------------------------------
 
 // run heuristica

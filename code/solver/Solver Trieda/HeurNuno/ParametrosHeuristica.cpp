@@ -183,5 +183,13 @@ const double ParametrosHeuristica::penalCredChAnterior = -1;
 double ParametrosHeuristica::percChAnterior = 0.80;				// default
 const bool ParametrosHeuristica::proibirGapProfVirt = false;
 
+
+// -------------------------------------------------------------------------------------------------
+// Solução inicial
+
+const ParametrosHeuristica::InitialSolLoadMode 
+	ParametrosHeuristica::initSolLoadMode = ParametrosHeuristica::LoadInitSolAndComplete;
+
+
 // Destruição da solução final para testar carregamento [deve tar estar FALSE no funcionamento normal]
 const bool ParametrosHeuristica::finalDestroy = false;

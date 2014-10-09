@@ -22,6 +22,7 @@
 #include "../AtendimentoSala.h"
 #include "../AtendimentoDiaSemana.h"
 #include "../AtendimentoTurno.h"
+#include "../AtendimentoTatico.h"
 #include "../AtendimentoHorarioAula.h"
 #include "../AtendimentoOferta.h"
 #include "../ProfessorVirtualOutput.h"
@@ -130,6 +131,26 @@ SolucaoHeur* SolucaoHeur::gerarSolucaoInicial(void)
 
 	return solucaoInicial;
 }
+// gera solução completa, fixando o atendimento da solução passada
+SolucaoHeur* SolucaoHeur::gerarSolucaoInicial(ProblemSolution * const partialSol)
+{
+	HeuristicaNuno::logMsg("Criar objeto SolucaoHeur", 1);
+	SolucaoHeur* solucaoInicial = SolucaoHeur::carregarSolucao(partialSol);
+
+	HeuristicaNuno::logMsgInt("Demandas nao atendidas Prior 1 (antes): ", solucaoInicial->nrDemandasNaoAtendidas(1), 1);
+
+	// [Pre-processamento] Criar as ofertas disciplina, i.e. oferta de disciplinas em campus
+	solucaoInicial->criarOfertasDisciplina_();
+	HeuristicaNuno::logMsgInt("Nr ofertas disciplina com Teorico e Pratico: ", solucaoInicial->nrDiscDuasComp(), 1);
+
+	// Fixa solução parcial
+	solucaoInicial->fixSolucao();
+
+	// Desenvolver solução
+	solucaoInicial->developSolucao();
+
+	return solucaoInicial;
+}
 // melhorar solução carregada
 void SolucaoHeur::improveSolucaoFixada(SolucaoHeur* const solucao)
 {
@@ -162,6 +183,7 @@ void SolucaoHeur::improveSolucaoFixada(SolucaoHeur* const solucao)
 	// (8) Log sugestões fechamento de turmas carregadas (e mudança de alunos)
 	solucao->checkClosedTurmasLoad();
 }
+
 // tentar só fazer trocas de sala (e fechar turmas caso necessario) de uma solução carregada
 void SolucaoHeur::realocSalasSolucaoFix(SolucaoHeur* const solucao)
 {
@@ -631,11 +653,14 @@ void SolucaoHeur::inicializarDemandasNaoAtendidasPorCurso_(unordered_map<Campus 
 // ------------------------------------- CONSTRUÇÃO GERAL -------------------------------------
 
 // criar ofertas disciplina iniciais
-void SolucaoHeur::criarOfertasDisciplina_(void)
+void SolucaoHeur::criarOfertasDisciplina_(bool limpar)
 {
 	HeuristicaNuno::logMsg("Criar ofertas disciplina!", 1);
-	ofertasDisciplina_.clear();
-	allOfertasDisc_.clear();
+	if(limpar)
+	{
+		ofertasDisciplina_.clear();
+		allOfertasDisc_.clear();
+	}
 
 	// disciplinas sem demanda (p1 e equiv)
 	int nrDiscSemDem = 0;
@@ -666,6 +691,9 @@ void SolucaoHeur::criarOfertasDisciplina_(void)
 				nrDiscSemDem++;
 				continue;
 			}
+
+			OfertaDisciplina *finder = getOfertaDisciplina(disciplina, campus);
+			if (finder) continue;
 
 			stats_->nrDisc_++;
 
@@ -2810,12 +2838,18 @@ void SolucaoHeur::loadAtendimentoSala(AtendimentoSala* const atendSala, itCampOD
 	for(auto itDia = atendSala->atendimentos_dias_semana->begin(); itDia != atendSala->atendimentos_dias_semana->end(); ++itDia)
 	{
 		const int dia = (*itDia)->getDiaSemana();
+		// Tag atendimentosTurnos
 		for(auto itTurno = (*itDia)->atendimentos_turno->begin(); itTurno != (*itDia)->atendimentos_turno->end(); ++itTurno)
 		{
 			for(auto itHor = (*itTurno)->atendimentos_horarios_aula->begin(); itHor != (*itTurno)->atendimentos_horarios_aula->end(); ++itHor)
 			{
 				loadAtendimentoHorarioAula(*itHor, itCampus, sala, dia, turmasAlunos, turmasHorarios);
 			}
+		}
+		// Tag atendimentosTatico
+		for(auto itTat = (*itDia)->atendimentos_tatico->begin(); itTat != (*itDia)->atendimentos_tatico->end(); ++itTat)
+		{
+			loadAtendimentoTatico(*itTat, itCampus, sala, dia, turmasAlunos, turmasHorarios);
 		}
 	}
 }
@@ -2917,6 +2951,46 @@ void SolucaoHeur::loadAtendimentoOferta(AtendimentoOferta* const atendOferta, it
 	itDia->second.insert(horario);
 }
 
+// atendimento tatico
+void SolucaoHeur::loadAtendimentoTatico(AtendimentoTatico* const atendTatico, itCampODs const &itCampus, 
+											SalaHeur* const &sala, int const &dia, 
+											unordered_map<TurmaHeur*, unordered_set<AlunoHeur*>>* const &turmasAlunos,
+											unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios)
+{
+	if(atendTatico->atendimento_oferta == nullptr)
+		HeuristicaNuno::excepcao("SolucaoHeur::loadAtendimentoTatico", "atendimento_oferta null!");
+	
+	int credsTeor = atendTatico->getQtdCreditosTeoricos();
+	int credsPrat = atendTatico->getQtdCreditosPraticos();
+
+	// obter horario aula
+	unordered_set<HorarioAula*> horarios;
+	GGroup<int> horsId = atendTatico->getHorariosAula();
+	for(auto itHor = horsId.begin(); itHor != horsId.end(); itHor++)
+	{
+		HorarioAula* h = CentroDados::getHorarioAula(*itHor);
+		horarios.insert(h);
+	}
+
+	if(credsTeor+credsPrat!=horarios.size())
+		HeuristicaNuno::excepcao("SolucaoHeur::loadAtendimentoTatico", "nro de horarios difere do nro de creditos!");
+
+	// AtendimentoTatico não informa professor, então é alocado inicialmente prof virtual.
+	auto itProf = professoresHeur.find(ParametrosHeuristica::professorVirtual->getId());
+	if(itProf == professoresHeur.end())
+		HeuristicaNuno::excepcao("SolucaoHeur::checkAtendimentoHorarioAula", "Professor virtual nao encontrado!");
+	ProfessorHeur* const professor = itProf->second;
+
+	bool ehTeorico = atendTatico->getQtdCreditosTeoricos();
+
+	// load atendimentos oferta
+	for (auto itHor=horarios.cbegin(); itHor!=horarios.cend(); itHor++ )
+	{
+		loadAtendimentoOferta(atendTatico->atendimento_oferta, itCampus, sala, dia, 
+			*itHor, professor, ehTeorico, turmasAlunos, turmasHorarios);
+	}
+}
+
 
 // get alunos atendidos no atendimento oferta
 void SolucaoHeur::getAlunosAtendidos(AtendimentoOferta* const atendOferta, unordered_set<AlunoHeur*> &alunos)
@@ -2970,6 +3044,22 @@ OfertaDisciplina* SolucaoHeur::getAddOfertaDisciplina(Disciplina* const &discipl
 	itCampus->second[disciplina] = ofertaDisc;
 	// inserir em allOfertasDisc_
 	allOfertasDisc_.push_back(ofertaDisc);
+
+	return ofertaDisc;
+}
+// get oferta disciplina se já foi criada. se não retorna nullptr
+OfertaDisciplina* SolucaoHeur::getOfertaDisciplina(Disciplina* const &disciplina, Campus* const campus)
+{
+	OfertaDisciplina* ofertaDisc=nullptr;
+	
+	// se já foi criada
+	auto itFindCp = ofertasDisciplina_.find(campus);
+	if(itFindCp != ofertasDisciplina_.end())
+	{
+		auto itFindDisc = itFindCp->second.find(disciplina);
+		if(itFindDisc != itFindCp->second.end())
+			ofertaDisc = itFindDisc->second;
+	}
 
 	return ofertaDisc;
 }

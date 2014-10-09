@@ -59,7 +59,7 @@ public:
 
 	// limite de iterações / tempo usando quando se quer gerar mais de uma solução de raiz. 
 	// [OBS: set limIterHeur = 1 para uma só solução]
-	static const int limIterHeur = 100;
+	static const int limIterHeur = 1000;
 	static const int limMinHeur = 2;
 
 	#pragma region [LOGS]
@@ -97,10 +97,12 @@ private:
 	// Solução inicial fixada carregada
 	static SolucaoHeur* solutionLoaded;
 
-	// run solução do zero
+	// run solution from zero
 	static void runNewSolucao_(void);
-	// run improve solução
+	// run improve solution
 	static void runImprovSolucao_(void);
+	// run completing initial solution
+	static void runCompleteSolucao_(void);
 
 	// [LOG]
 	static const int logLevel_ = 1;		// 0-console 1-essencial, 2-extenso, 3- debug

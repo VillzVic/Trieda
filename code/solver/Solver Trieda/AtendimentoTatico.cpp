@@ -70,12 +70,16 @@ std::ostream & operator << ( std::ostream& out, AtendimentoTatico & tatico )
 
 std::istream& operator >> ( std::istream &file, AtendimentoTatico* const &ptrAtendTatico )
 {
+	static int id=0;
+	id++;
+
 	std::string line;
 	while( !getline( file, line ).eof() && (line.find("</AtendimentoTatico>") == string::npos))
 	{
 		// ATENDIMENTOS OFERTA
 		// --------------------------------------------------------------------------
-		if(line.find("<AtendimentoOferta>") != string::npos)
+		if((line.find("<AtendimentoOferta>") != string::npos) ||
+		   (line.find("<atendimentoOferta>") != string::npos) )
 		{
 			AtendimentoOferta* const atendOferta = new AtendimentoOferta();
 			file >> atendOferta;
@@ -115,7 +119,7 @@ std::istream& operator >> ( std::istream &file, AtendimentoTatico* const &ptrAte
 			continue;
 		}
 
-		// HORARIOS AULA
+		// HORARIOS AULA (formato para quando é usado o AtendimentoTurno)
 		// --------------------------------------------------------------------------
 		if(line.find("<horarioAulaId>") != string::npos)
 		{
@@ -126,6 +130,30 @@ std::istream& operator >> ( std::istream &file, AtendimentoTatico* const &ptrAte
 
 			continue;
 		}
+
+		// HORARIOS AULA (formato para quando é usado o AtendimentoTatico)
+		// --------------------------------------------------------------------------
+		if(line.find("<horariosAula>") != string::npos)
+		{
+			// IDS
+			while( !getline( file, line ).eof() && (line.find("</horariosAula>") == string::npos))
+			{
+				if(line.find("<id>") != string::npos)
+				{
+					int horId = InputMethods::fakeId;
+					InputMethods::getInlineAttrInt(line, "<id>", horId);
+					if(horId != InputMethods::fakeId)
+						ptrAtendTatico->addHorarioAula(horId);
+					else // não veio com id correto. abortar!
+						InputMethods::excCarregarCampo("AtendimentoTatico", "<horariosAula>", line);
+				}		
+			}
+
+			continue;
+		}
 	}
+
+	ptrAtendTatico->setId(id);
+
 	return file;
 }
