@@ -2651,7 +2651,7 @@ public class ProfessoresServiceImpl
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		ProfessorVirtual professorVirtual = ProfessorVirtual.find(professorVirtualDTO.getId(), getInstituicaoEnsinoUser());
 		
-		ProfessorVirtual proxProfessorVirtual = ProfessorVirtual.findAnt(getInstituicaoEnsinoUser(), cenario, professorVirtual, order);
+		ProfessorVirtual proxProfessorVirtual = ProfessorVirtual.findProx(getInstituicaoEnsinoUser(), cenario, professorVirtual, order);
 
 		return ConvertBeans.toProfessorVirtualDTO(proxProfessorVirtual);
 	}
@@ -2662,8 +2662,8 @@ public class ProfessoresServiceImpl
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		ProfessorVirtual professorVirtual = ProfessorVirtual.find(professorVirtualDTO.getId(), getInstituicaoEnsinoUser());
 		
-		ProfessorVirtual proxProfessorVirtual = ProfessorVirtual.findAnt(getInstituicaoEnsinoUser(), cenario, professorVirtual, order);
+		ProfessorVirtual antProfessorVirtual = ProfessorVirtual.findAnt(getInstituicaoEnsinoUser(), cenario, professorVirtual, order);
 
-		return ConvertBeans.toProfessorVirtualDTO(proxProfessorVirtual);
+		return ConvertBeans.toProfessorVirtualDTO(antProfessorVirtual);
 	}
 }

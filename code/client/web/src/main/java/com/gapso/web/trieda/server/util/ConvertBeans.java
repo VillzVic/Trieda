@@ -126,7 +126,6 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
-import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class ConvertBeans {
 	
@@ -240,9 +239,7 @@ public class ConvertBeans {
 	public static CenarioDTO toCenarioDTO( Cenario domain )
 	{
 		CenarioDTO dto = new CenarioDTO();
-
-		InstituicaoEnsino instituicaoEnsino
-			= domain.getInstituicaoEnsino();
+		InstituicaoEnsino instituicaoEnsino = domain.getInstituicaoEnsino();
 
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
@@ -258,7 +255,7 @@ public class ConvertBeans {
 		dto.setAtualizadoUsuarioString( domain.getAtualizadoPor() == null ? null : domain.getAtualizadoPor().getNome() );
 		dto.setAtualizadoUsuarioDate( domain.getDataAtualizacao() );
 		dto.setAlunos(domain.hasAlunos());
-		dto.setProfessores(domain.hasProfessores());
+		dto.setProfessores(domain.hasProfessores() || (ProfessorVirtual.count(instituicaoEnsino,domain)>0));
 		dto.setSalas(domain.hasSalas());
 		dto.setOptimized(domain.isOptimized());
 			
