@@ -446,6 +446,19 @@ public class ProfessorVirtual
 		List< ProfessorVirtual > list = q.getResultList();
 		return list;
 	}
+	
+	public static int count(InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+		Query q = entityManager().createQuery(
+			" SELECT COUNT(o) FROM ProfessorVirtual o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" and o.cenario = :cenario"
+		);
+
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("cenario",cenario);
+
+		return ((Number)q.getSingleResult()).intValue();
+	}
 
 	//@Override
 	public int compareTo( ProfessorVirtual o )
