@@ -55,6 +55,9 @@ void AbridorTurmas::abrirTurmas(set<OfertaDisciplina*, T> &setOrd)
 		OfertaDisciplina* const oferta = *(setOrd.begin());
 		setOrd.erase(setOrd.begin());					// remover da lista
 
+		if (oferta->getDisciplina()->getId()==14646)
+			std::cout << "\nDisc 14646";
+
 		// tentar abrir turmas
 		bool abriu = preAbrirPosTurmasOfertaDisc_(oferta);
 

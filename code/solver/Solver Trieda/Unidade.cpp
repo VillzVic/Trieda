@@ -9,7 +9,10 @@ Unidade::Unidade( void )
 
 Unidade::~Unidade( void )
 {
-
+	// apagar salas
+	salas.deleteElements();
+	// apagar horarios
+	horarios.deleteElements();
 }
 
 void Unidade::le_arvore( ItemUnidade & elem )

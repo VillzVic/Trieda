@@ -35,31 +35,32 @@ ProblemSolution::~ProblemSolution()
 {
 	clearMapsDaSolucao();
 
-   if ( folgas != NULL )
+   if ( folgas )
    {
       folgas->deleteElements();
       delete folgas;
    }
 
-   if( atendimento_campus != NULL )
+   if( atendimento_campus )
    {
       atendimento_campus->deleteElements();
       delete atendimento_campus;
    }
+   
+   // DADOS DE PROBLEM-DATA! ACHO QUE NÃO DEVE SER DELETADO AQUI
+   //if ( professores_virtuais )
+   //{
+   //   professores_virtuais->deleteElements();
+   //   delete professores_virtuais;
+   //}
 
-   if ( professores_virtuais != NULL )
-   {
-      professores_virtuais->deleteElements();
-      delete professores_virtuais;
-   }
+   //if ( alunosDemanda )
+   //{
+   //   alunosDemanda->deleteElements();
+   //   delete alunosDemanda;
+   //}
 
-   if ( alunosDemanda != NULL )
-   {
-      alunosDemanda->deleteElements();
-      delete alunosDemanda;
-   }
-
-   if ( nao_atendimentos != NULL )
+   if ( nao_atendimentos )
    {
       nao_atendimentos->deleteElements();
       delete nao_atendimentos;

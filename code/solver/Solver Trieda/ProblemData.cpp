@@ -83,7 +83,6 @@ ProblemData::ProblemData( char inputName[1024], int inputId )
 
 ProblemData::~ProblemData()
 {
-	/*
 	turnosIES.deleteElements();
     calendarios.deleteElements();
     tipos_sala.deleteElements();
@@ -101,17 +100,13 @@ ProblemData::~ProblemData()
     cursos.deleteElements();
     demandas.deleteElements();
     ofertas.deleteElements();
-    delete parametros;
+    if(parametros) delete parametros;
     fixacoes.deleteElements();
     alunosDemanda.deleteElements();
     alunos.deleteElements();
     profsVirtuais.deleteElements(); // 1 por tipo de titulação
     equivalencias.deleteElements(); // só contém as teoricas
-	*/
 	
-//#ifndef HEURISTICA
-//	delete this->solTaticoInicial;
-//#endif
 }
 
 std::string ProblemData::inputIdToString()

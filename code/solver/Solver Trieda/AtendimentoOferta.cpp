@@ -142,6 +142,13 @@ std::istream & operator >> ( std::istream &file, AtendimentoOferta* const &ptrAt
 		// --------------------------------------------------------------------------
 		if(line.find("<turma>") != string::npos)
 		{
+			//string turmaStrId = InputMethods::fakeStrId;
+			//InputMethods::getInlineAttrStr(line, "<turma>", turmaStrId);
+			//if(turmaStrId != InputMethods::fakeStrId)
+			//	ptrAtendOferta->setTurmaStr(turmaStrId);
+			//else // não veio com id correto. abortar!
+			//	InputMethods::excCarregarCampo("AtendimentoOferta", "<turma>", line);
+
 			int turmaId = InputMethods::fakeId;
 			InputMethods::getInlineAttrInt(line, "<turma>", turmaId);
 			if(turmaId != InputMethods::fakeId)

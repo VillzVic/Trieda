@@ -4,6 +4,9 @@
 #include "HeurNuno/HeuristicaNuno.h"
 #include "CentroDados.h"
 
+
+const string InputMethods::fakeStrId = "fakeId";
+
 InputMethods::InputMethods(void)
 {
 }

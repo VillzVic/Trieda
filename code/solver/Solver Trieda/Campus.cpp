@@ -13,11 +13,21 @@ Campus::~Campus( void )
 {
 	// apagar clusters unidades
 	auto it = clustersUnidades.begin();
-	for(; it != clustersUnidades.end();)
+	for(; it != clustersUnidades.end(); it++)
 	{
-		delete *it;
-		clustersUnidades.erase(it++);
+		ConjUnidades *cjt = *it;
+		//clustersUnidades.erase(it);
+		if(cjt) delete cjt;
 	}
+	clustersUnidades.clear();
+
+	// apagar unidades
+	unidades.deleteElements();
+	// apagar professores
+	professores.deleteElements();
+	// apagar horarios
+	horarios.deleteElements();
+
 }
 
 void Campus::le_arvore( ItemCampus & elem ) 

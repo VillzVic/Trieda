@@ -32,6 +32,7 @@ public:
 
 	// Fake id
 	static const int fakeId = -2987348;
+	static const string fakeStrId;
 };
 
 #endif

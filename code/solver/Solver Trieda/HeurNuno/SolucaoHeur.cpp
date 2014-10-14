@@ -140,7 +140,7 @@ SolucaoHeur* SolucaoHeur::gerarSolucaoInicial(ProblemSolution * const partialSol
 	HeuristicaNuno::logMsgInt("Demandas nao atendidas Prior 1 (antes): ", solucaoInicial->nrDemandasNaoAtendidas(1), 1);
 
 	// [Pre-processamento] Criar as ofertas disciplina, i.e. oferta de disciplinas em campus
-	solucaoInicial->criarOfertasDisciplina_();
+	solucaoInicial->criarOfertasDisciplina_(false);
 	HeuristicaNuno::logMsgInt("Nr ofertas disciplina com Teorico e Pratico: ", solucaoInicial->nrDiscDuasComp(), 1);
 
 	// Fixa solução parcial
@@ -428,6 +428,9 @@ ProblemSolution* SolucaoHeur::getProblemSolution(void) const
 	criarOutput_(probSolution);
 	HeuristicaNuno::logMsg("criar output profs virtuais...", 1);
 	criarOutProfsVirtuais_(probSolution);
+
+	if(probSolution->alunosDemanda)
+		delete probSolution->alunosDemanda;
 	probSolution->alunosDemanda = new GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > >(HeuristicaNuno::probData->alunosDemanda);
 
 	HeuristicaNuno::logMsg("problem solution criada", 1);
