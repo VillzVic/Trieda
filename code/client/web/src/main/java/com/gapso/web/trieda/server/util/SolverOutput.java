@@ -208,6 +208,8 @@ public class SolverOutput
 		}
 		
 		// [ProfessorVirtualId -> ProfessorVirtual]
+		
+		
 		Map<Long,ProfessorVirtual> professorVirtualIdToProfessorVirtualMap = new HashMap<Long,ProfessorVirtual>();
 		Map<Long, GrupoAlocacoes> professorVirtualIdMapEliminacoesMotivosUsoPar = new HashMap<Long, GrupoAlocacoes>();
 		for (ItemProfessorVirtual itemProfessorVirtual : this.triedaOutput.getProfessoresVirtuais().getProfessorVirtual()) {
@@ -535,8 +537,16 @@ public class SolverOutput
 	@Transactional
 	private void removerTodosAtendimentosOperacionalJaSalvos(Set<Campus> campi, Set<Turno> turnos) {
 		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllBy(campi,turnos,instituicaoEnsino);
+		Set<ProfessorVirtual> professoresVirtuaisASeremRemovidos = new HashSet<ProfessorVirtual>();
 		for (AtendimentoOperacional at : atendimentosOperacional) {
+			if (at.getProfessorVirtual() != null) {
+				professoresVirtuaisASeremRemovidos.add(at.getProfessorVirtual());
+			}
 			at.remove();
+		}
+		
+		for (ProfessorVirtual pv : professoresVirtuaisASeremRemovidos) {
+			pv.remove();
 		}
 	}
 
