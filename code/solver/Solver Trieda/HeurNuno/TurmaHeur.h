@@ -20,6 +20,28 @@ class HorarioAula;
 class Campus;
 class Unidade;
 
+
+struct AtendFixacao
+{
+	AtendFixacao( bool abre, bool s, bool p, bool a, bool d, bool h )
+	{
+		fixaAbertura=abre;
+		fixaSala=s;
+		fixaProf=p;
+		fixaAlunos=a;
+		fixaDias=d;
+		fixaHorarios=h;	
+	}
+
+	bool fixaAbertura;
+	bool fixaSala;
+	bool fixaProf;
+	bool fixaAlunos;
+	bool fixaDias;
+	bool fixaHorarios;
+};
+
+
 class TurmaHeur
 {
 	friend class OfertaDisciplina;
@@ -27,7 +49,8 @@ public:
 	// construtor com base em turma potencial
 	TurmaHeur(const TurmaPotencial* &turmaPot, int turmaId);
 	// construtor usado no carregamento de solução apartir da problem solution
-	TurmaHeur(OfertaDisciplina* const oferta, bool teorico, int turmaId, SalaHeur* const sala, ProfessorHeur* const professor);
+	TurmaHeur(OfertaDisciplina* const oferta, bool teorico, int turmaId, SalaHeur* const sala,
+		ProfessorHeur* const professor, const AtendFixacao &fixacoes);
 
 	virtual ~TurmaHeur(void);
 
@@ -59,12 +82,14 @@ public:
 	void setProfessor(ProfessorHeur* const professor);
 	ProfessorHeur* getProfessor() const { return professor_; }
 	void removeProfessor();
+	bool profFixado() const { return profFixado_; }
 
 	// sala, unidade
 	void setSala(SalaHeur* const sala);
 	SalaHeur* getSala() const { return sala_; }
 	int unidadeId(void) const;
 	void setNewAulas(unordered_map<int, AulaHeur*> &aulas);
+	bool salaFixada() const { return salaFixada_; }
 
 	// add turma to prof e sala
 	void addTurmaProfSala (void);
@@ -85,7 +110,7 @@ public:
 	// verifica se ainda tem o numero de alunos abaixo do máximo para a disciplina
 	bool podeTerMaisAlunos (void) const;
 	// verifica se um aluno está fixado a esta turma
-	bool ehFixado(int alunoId) { return (alunosFixados_.find(alunoId) != alunosFixados_.end()); }
+	bool ehAlunoFixado(int alunoId) { return (alunosFixados_.find(alunoId) != alunosFixados_.end()); }
 	
 	// alunos
 	void getAlunos (unordered_set<AlunoHeur*> &alunos);
@@ -142,6 +167,9 @@ private:
 	bool keep_;
 	// obriga a abrir no MIP
 	bool mustAbrirMIP_;
+
+	bool profFixado_;
+	bool salaFixada_;
 
 	// alunos fixados
 	unordered_set<int> alunosFixados_;

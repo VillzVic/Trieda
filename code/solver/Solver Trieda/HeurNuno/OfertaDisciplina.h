@@ -19,6 +19,7 @@ class DadosHeuristica;
 class SolucaoHeur;
 class ConjUnidades;
 class Curso;
+struct AtendFixacao;
 
 class OfertaDisciplina
 {
@@ -80,7 +81,7 @@ public:
 	TurmaHeur* abrirTurma(const TurmaPotencial* &turmaPot);
 	// abrir turma com um determinado id e numa determinada sala [Load solução].
 	// OBS: sala e professor já carregados mas associados à turma no fim do carregamento da solução
-	TurmaHeur* abrirTurma(bool teorico, int id, SalaHeur* const &sala, ProfessorHeur* const &professor);
+	TurmaHeur* abrirTurma(bool teorico, int id, SalaHeur* const &sala, ProfessorHeur* const &professor, const AtendFixacao &fixacoes);
 	// registrar abertura de turma
 	void regAberturaTurma(TurmaHeur* const turma);
 	// fechar turma

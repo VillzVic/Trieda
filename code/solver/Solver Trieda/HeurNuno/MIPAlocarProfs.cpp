@@ -35,12 +35,12 @@ void MIPAlocarProfs::alocar(void)
 {
 	HeuristicaNuno::logMsg("", 1);
 	HeuristicaNuno::logMsg("MIP Realocar Professores.", 1);
-	HeuristicaNuno::logMsg("criar o modelo MIPAlocarProfs...", 1);
 
 	// preparar dados se professor virtual for individualizado
 	prepararDados();
 
 	// construir modelo
+	HeuristicaNuno::logMsg("criar o modelo MIPAlocarProfs...", 1);
 	buildLP_();
 	HeuristicaNuno::logMsg("modelo criado...", 1);
 	if(lp_->getNumCols() == 0)
@@ -232,18 +232,21 @@ void MIPAlocarProfs::criarVarsProfTurma_(TurmaHeur* const turma, unordered_set<P
 	unordered_map<int, AulaHeur*> aulas;
 	turma->getAulas(aulas);
 
-	// Var relativa ao Prof virtual único
-	ProfessorHeur* const profVirtualUnico = solucao_->professoresHeur.at(ParametrosHeuristica::profVirtualId);
-	
 	// var to be added in lp
-	MIPAlocarProfVar var;
-	var.reset();
-	var.setType( MIPAlocarProfVar::V_X_PROF_TURMA );
-	var.setProfessor(profVirtualUnico);
-	var.setTurma(turma);
-
-	int colNrVirt = addBinaryVarLP_(getCoefObjVarProfTurma(profVirtualUnico), var.toString().c_str());
-	itVarsTurma->second[profVirtualUnico] = colNrVirt;
+	if(!turma->profFixado())
+	{
+		// Var relativa ao Prof virtual único
+		ProfessorHeur* const profVirtualUnico = solucao_->professoresHeur.at(ParametrosHeuristica::profVirtualId);
+	
+		MIPAlocarProfVar var;
+		var.reset();
+		var.setType( MIPAlocarProfVar::V_X_PROF_TURMA );
+		var.setProfessor(profVirtualUnico);
+		var.setTurma(turma);
+	
+		int colNrVirt = addBinaryVarLP_(getCoefObjVarProfTurma(profVirtualUnico), var.toString().c_str());
+		itVarsTurma->second[profVirtualUnico] = colNrVirt;
+	}
 
 	// para cada professor associado
 	for(auto itProf = profsAssoc.begin(); itProf != profsAssoc.end(); ++itProf)
@@ -254,6 +257,10 @@ void MIPAlocarProfs::criarVarsProfTurma_(TurmaHeur* const turma, unordered_set<P
 
 		// se segunda fase, só associar virtual indiv
 		if(!(*itProf)->ehVirtual() && profsVirtuaisIndiv_)
+			continue;
+
+		// Se a turma possuir professor pré-fixado
+		if(turma->profFixado() && turma->getProfessor()!=(*itProf))
 			continue;
 
 		// disponibilidade

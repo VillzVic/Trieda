@@ -362,7 +362,8 @@ TurmaHeur* OfertaDisciplina::abrirTurma(const TurmaPotencial* &turmaPot)
 
 // abrir turma com um determinado id e numa determinada sala [Load solução]. Se ja houver uma com o mesmo tipo e id retornar essa.
 // OBS: sala e professor já carregados mas associados à turma no fim do carregamento da solução
-TurmaHeur* OfertaDisciplina::abrirTurma(bool teorico, int id, SalaHeur* const &sala, ProfessorHeur* const &professor)
+TurmaHeur* OfertaDisciplina::abrirTurma(bool teorico, int id, SalaHeur* const &sala, ProfessorHeur* const &professor,
+	const AtendFixacao &fixacoes)
 {
 	// verificar primeiro se existe
 	auto itTipo = turmas_.find(teorico);
@@ -374,7 +375,7 @@ TurmaHeur* OfertaDisciplina::abrirTurma(bool teorico, int id, SalaHeur* const &s
 	}
 
 	// Se não existe criar
-	TurmaHeur* const turma = new TurmaHeur(this, teorico, id, sala, professor);
+	TurmaHeur* const turma = new TurmaHeur(this, teorico, id, sala, professor, fixacoes);
 
 	// registar a turma em 'turmas_' e atualizar estatísticas
 	regAberturaTurma(turma);
@@ -777,7 +778,7 @@ void OfertaDisciplina::removeAluno(AlunoHeur* const aluno, bool fixado)
 // remove aluno da turma
 void OfertaDisciplina::removeAlunoTurma(AlunoHeur* const aluno, TurmaHeur* const turma, bool fixado, bool removeAlunoTot)
 {
-	if(!fixado && turma->ehFixado(aluno->getId()))
+	if(!fixado && turma->ehAlunoFixado(aluno->getId()))
 	{
 		HeuristicaNuno::warning("OfertaDisciplina::removeAlunoTurma", "Tentativa de remover um aluno fixado");
 		return;
@@ -1519,7 +1520,7 @@ void OfertaDisciplina::removerTodosAlunos(bool teorico, unordered_set<AlunoHeur*
 			if(!incompleto && (keepAlunos_.find(aluno->getId()) != keepAlunos_.end()))
 				continue;
 			// check se é fixado
-			if(!fixados && turma->ehFixado((*itAluno)->getId()))
+			if(!fixados && turma->ehAlunoFixado((*itAluno)->getId()))
 				continue;
 
 			removeAlunoTurma(aluno, turma, fixados, false);
@@ -1538,7 +1539,7 @@ bool OfertaDisciplina::ehFixado(AlunoHeur* const aluno) const
 
 	for(auto itT = it->second.begin(); itT != it->second.end(); ++itT)
 	{
-		if(itT->second->ehFixado(aluno->getId()))
+		if(itT->second->ehAlunoFixado(aluno->getId()))
 			return true;
 	}
 

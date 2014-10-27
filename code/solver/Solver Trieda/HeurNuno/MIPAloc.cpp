@@ -33,6 +33,7 @@ MIPAloc::~MIPAloc(void)
 	if(!lp_->freeProb())
 		HeuristicaNuno::warning("MIPAloc::~MIPAloc", "LP nao apagado com sucesso!!");
 	HeuristicaNuno::logMsg("done. free lp", 1);
+	delete lp_;
 
 	lp_ = nullptr;
 	delete[] solFinal_;
@@ -48,6 +49,8 @@ void MIPAloc::alocar(void)
 // Construir o modelo
 void MIPAloc::buildLP_(void)
 {
+	HeuristicaNuno::logMsg("new lp...", 1);
+
 	#ifdef SOLVER_CPLEX 
 		lp_ = new OPT_CPLEX;
 	#endif

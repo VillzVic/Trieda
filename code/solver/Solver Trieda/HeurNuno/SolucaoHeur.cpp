@@ -1849,7 +1849,14 @@ void SolucaoHeur::guardarSolucaoAtualAlunos_(SaveSolucao* const &saver) const
 // set todos os professores virtuais e guardar alocação actual dos professores (pré MIPAlocarProfs)
 void SolucaoHeur::getAllTurmasProf_(unordered_map<TurmaHeur*, ProfessorHeur*> &turmasProfsAtual, bool setVirtual)
 {
-	ProfessorHeur* const profVirtUnico = professoresHeur.at(ParametrosHeuristica::profVirtualId);
+	HeuristicaNuno::logMsg(">>> get All Turmas Prof: ", 1);
+	//ProfessorHeur* const profVirtUnico = professoresHeur.at(ParametrosHeuristica::profVirtualId);
+	ProfessorHeur* profVirtUnico = nullptr;
+	auto finder = professoresHeur.find(ParametrosHeuristica::profVirtualId);
+	if (finder == professoresHeur.end())
+		HeuristicaNuno::excepcao("SolucaoHeur::getAllTurmasProf_", "Professor virtual unico nao encontrado!");
+	else profVirtUnico = finder->second;
+
 	for(auto itOft = allOfertasDisc_.cbegin(); itOft != allOfertasDisc_.cend(); ++itOft)
 	{
 		OfertaDisciplina* const oferta = (*itOft);
@@ -2915,8 +2922,12 @@ void SolucaoHeur::loadAtendimentoOferta(AtendimentoOferta* const atendOferta, it
 	OfertaDisciplina* const ofertaDisc = getAddOfertaDisciplina(disciplina, itCampus);
 
 	// get/add turmaHeur
+	
+	// TODO: diferenciar o set da fixação para somente solução carregada!
+//	AtendFixacao fixacoes( true, true, (true && !professor->ehVirtual()), true, true, true );
+	AtendFixacao fixacoes( true, true, false, true, true, true );
 	const int turmaId = atendOferta->getTurma();
-	TurmaHeur* const turma = getAddTurma(ofertaDisc, turmaId, ofertaDisc->tipoTurmaFromTag(teorico), sala, professor, turmasAlunos, turmasHorarios);
+	TurmaHeur* const turma = getAddTurma(ofertaDisc, turmaId, ofertaDisc->tipoTurmaFromTag(teorico), sala, professor, turmasAlunos, turmasHorarios, fixacoes);
 
 	// registar turma por disciplina
 	if(itDisc->second.find(turma) == itDisc->second.end())
@@ -3070,7 +3081,8 @@ OfertaDisciplina* SolucaoHeur::getOfertaDisciplina(Disciplina* const &disciplina
 TurmaHeur* SolucaoHeur::getAddTurma(OfertaDisciplina* const &ofertaDisc, int const &turmaId, bool const &teorico,
 									SalaHeur* const &sala, ProfessorHeur* const &professor,
 									unordered_map<TurmaHeur*, unordered_set<AlunoHeur*>>* const &turmasAlunos,
-									unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios)
+									unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios,
+									const AtendFixacao &fixacoes)
 {
 	// ver se já tem turma com esse id
 	TurmaHeur* turma = ofertaDisc->getTurma(teorico, turmaId);
@@ -3078,7 +3090,7 @@ TurmaHeur* SolucaoHeur::getAddTurma(OfertaDisciplina* const &ofertaDisc, int con
 		return turma;
 
 	// criar uma nova turma
-	turma = ofertaDisc->abrirTurma(teorico, turmaId, sala, professor);
+	turma = ofertaDisc->abrirTurma(teorico, turmaId, sala, professor, fixacoes);
 	if(turma == nullptr)
 		HeuristicaNuno::excepcao("SolucaoHeur::getAddTurma", "Turma nula");
 

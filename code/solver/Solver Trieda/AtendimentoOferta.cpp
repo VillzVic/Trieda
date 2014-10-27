@@ -5,26 +5,26 @@
 int AtendimentoOferta::globalId_ = 0;
 
 AtendimentoOferta::AtendimentoOferta( int id )
-	: disciplina(nullptr)
+	: disciplina(nullptr), turmaStr_(InputMethods::fakeStrId)
 {
    this->setId( id );
    this->oferta_curso_campi_id = "";
    this->disciplina_id = NULL;
    this->quantidade = 0;
    this->turma = 99999999;
-   this->oferta = NULL;
+   this->oferta = nullptr;
    this->disciplina_substituta_id = NULL;
 }
 
 AtendimentoOferta::AtendimentoOferta( void )
-	: disciplina(nullptr)
+	: disciplina(nullptr), turmaStr_(InputMethods::fakeStrId)
 {
 	this->setId( ++AtendimentoOferta::globalId_ );
    this->oferta_curso_campi_id = "";
    this->disciplina_id = NULL;
    this->quantidade = 0;
    this->turma = 99999999;
-   this->oferta = NULL;
+   this->oferta = nullptr;
    this->disciplina_substituta_id = NULL;
 }
 
@@ -142,12 +142,12 @@ std::istream & operator >> ( std::istream &file, AtendimentoOferta* const &ptrAt
 		// --------------------------------------------------------------------------
 		if(line.find("<turma>") != string::npos)
 		{
-			//string turmaStrId = InputMethods::fakeStrId;
-			//InputMethods::getInlineAttrStr(line, "<turma>", turmaStrId);
-			//if(turmaStrId != InputMethods::fakeStrId)
-			//	ptrAtendOferta->setTurmaStr(turmaStrId);
-			//else // não veio com id correto. abortar!
-			//	InputMethods::excCarregarCampo("AtendimentoOferta", "<turma>", line);
+			string turmaStrId = InputMethods::fakeStrId;
+			InputMethods::getInlineAttrStr(line, "<turma>", turmaStrId);
+			if(turmaStrId != InputMethods::fakeStrId)
+				ptrAtendOferta->setTurmaStr(turmaStrId);
+			else // não veio com id correto. abortar!
+				InputMethods::excCarregarCampo("AtendimentoOferta", "<turma>", line);
 
 			int turmaId = InputMethods::fakeId;
 			InputMethods::getInlineAttrInt(line, "<turma>", turmaId);

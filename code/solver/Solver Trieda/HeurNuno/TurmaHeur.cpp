@@ -25,16 +25,20 @@ unsigned int TurmaHeur::globalIdCount_ = 0;
 TurmaHeur::TurmaHeur(const TurmaPotencial* &turmaPot, int turmaId)
 	: ofertaDisc(turmaPot->ofertaDisc), calendario(turmaPot->calendario), id(turmaId), tipoAula(turmaPot->tipoAula), 
 	aulas_(turmaPot->aulas), sala_(turmaPot->sala), professor_(turmaPot->professor), nrAlunos_(0), nrFormandos_(0), nrCoRequisito_(0),
-	carregada(false), globalId_(++TurmaHeur::globalIdCount_), salaLoaded(nullptr), keep_(false), mustAbrirMIP_(false)
+	carregada(false), globalId_(++TurmaHeur::globalIdCount_), salaLoaded(nullptr), keep_(false), mustAbrirMIP_(false),
+	profFixado_(false), salaFixada_(false)
 {
 	// NOTA! só se pode adicionar a turma ao prof/sala fora do construtor
 	// NOTA! Alunos adicionados em OfertaDisciplina::abrirTurma
 }
 
 // construtor usado no carregamento de solução apartir da problem solution
-TurmaHeur::TurmaHeur(OfertaDisciplina* const oferta, bool teorico, int turmaId, SalaHeur* const sala, ProfessorHeur* const professor)
+TurmaHeur::TurmaHeur(OfertaDisciplina* const oferta, bool teorico, int turmaId, SalaHeur* const sala, 
+	ProfessorHeur* const professor, const AtendFixacao &fixacoes)
 	: ofertaDisc(oferta), tipoAula(teorico), id(turmaId), sala_(sala), salaLoaded(sala), professor_(professor), nrAlunos_(0), nrFormandos_(0),
-	nrCoRequisito_(0), carregada(true), globalId_(++TurmaHeur::globalIdCount_), keep_(false), mustAbrirMIP_(false), capacidadeRestante_(10000)
+	nrCoRequisito_(0), carregada(true), globalId_(++TurmaHeur::globalIdCount_), keep_(false), mustAbrirMIP_(false),
+	profFixado_(false), salaFixada_(false),
+	capacidadeRestante_(10000)
 {
 	int maxAlunosDisc = ofertaDisc->getMaxAlunos(tipoAula);
 	int capacidade = min(maxAlunosDisc, sala->getSala()->getCapacidade());
@@ -42,6 +46,10 @@ TurmaHeur::TurmaHeur(OfertaDisciplina* const oferta, bool teorico, int turmaId, 
 
 	if(capacidadeRestante_ < 0)
 		HeuristicaNuno::excepcao("TurmaHeur::TurmaHeur", "Capacidade restante menor que zero!");
+
+	salaFixada_ = fixacoes.fixaSala;
+	profFixado_ = fixacoes.fixaProf;
+	setMustAbrirMIP(fixacoes.fixaAbertura);
 }
 
 TurmaHeur::~TurmaHeur(void)

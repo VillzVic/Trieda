@@ -964,6 +964,9 @@ void ImproveMethods::resetDispTurma(unordered_map<TurmaHeur*, int> &dispTurma)
 // tentar mudar de sala para a menor sala maior que a actual, que esteja disponível. Todos os alunos têm que estar disponíveis
 bool ImproveMethods::tryMudarSala(TurmaHeur* const turma, bool maior, bool igual)
 {
+	if (turma->salaFixada())
+		return false;
+
 	// verificar se turma já está no máximo de alunos possível da disciplina
 	if(!turma->podeTerMaisAlunos())
 		return false;
@@ -1147,7 +1150,7 @@ void ImproveMethods::reporAlocacao(OfertaDisciplina* const oferta, unordered_map
 		for(auto itAluno = itTurma->second.first.begin(); itAluno != itTurma->second.first.end(); ++itAluno)
 		{
 			AlunoHeur* const aluno = (*itAluno);
-			bool ehFixado = turma->ehFixado(aluno->getId());
+			bool ehFixado = turma->ehAlunoFixado(aluno->getId());
 			bool temAluno = oferta->temAlunoComp(aluno, turma->tipoAula);
 
 			if(temAluno)

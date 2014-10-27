@@ -35,6 +35,7 @@ class AtendimentoOferta;
 class AtendimentoTatico;
 class Curso;
 class SaveSolucao;
+struct AtendFixacao;
 
 struct compOftDisc;
 struct compOftDiscEquiv;
@@ -441,7 +442,8 @@ private:
 	TurmaHeur* getAddTurma(OfertaDisciplina* const &ofertaDisc, int const &turmaId, bool const &teorico,
 						  SalaHeur* const &sala, ProfessorHeur* const &professor, 
 						unordered_map<TurmaHeur*, unordered_set<AlunoHeur*>>* const &turmasAlunos,
-						unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios);
+						unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios,
+						const AtendFixacao &fixacoes);
 
 	// carregar as aulas para as turmas, define o calendário e associa a turma a professor e sala
 	void loadAulasTurmas(unordered_map<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>* const &turmasHorarios);

@@ -23,14 +23,14 @@ public:
    void setQuantidade( int value ) { this->quantidade = value; }
    void addQuantidade( int value ) { this->quantidade += value; }
    void setTurma( int value ) { this->turma = value; }
-   //void setTurmaStr( string value ) { this->turmaStr_ = value; }
+   void setTurmaStr( string value ) { this->turmaStr_ = value; }
    void setDisciplinaSubstitutaId( int value ) { this->disciplina_substituta_id = value; }
 
    std::string getOfertaCursoCampiId() const { return this->oferta_curso_campi_id; }
    int getDisciplinaId() const { return this->disciplina_id; }
    int getQuantidade() const { return this->quantidade; }
    int getTurma() const { return this->turma; }
-   //string getTurmaStr() const { return this->turmaStr_; }
+   string getTurmaStr() const { return this->turmaStr_; }
    int getDisciplinaSubstitutaId() const { return this->disciplina_substituta_id;}
 
    Disciplina * disciplina; // Disciplina atendida. Se tiver havido substituição, é a substituta. Caso contrario, é a original
@@ -44,7 +44,7 @@ private:
    int turma;
    int disciplina_substituta_id;
 
-   //string turmaStr_;
+   string turmaStr_;
 
    static int globalId_;
 };

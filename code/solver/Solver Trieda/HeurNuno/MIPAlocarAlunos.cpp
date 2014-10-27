@@ -422,7 +422,7 @@ void MIPAlocarAlunos::criarVariaveisAlunoTurma_(OfertaDisciplina* const oferta, 
 		//	HeuristicaNuno::excepcao("MIPAlocarAlunos::criarVariaveisAlunoTurma_", "Aluno ainda alocado a turmas!!");
 
 		// se o aluno não esta disponível para esta turma não criar variavel. Se for fixado criar sempre!!
-		if(!aluno->estaDisponivel(turma) && !turma->ehFixado(aluno->getId()))
+		if(!aluno->estaDisponivel(turma) && !turma->ehAlunoFixado(aluno->getId()))
 			continue;
 
 		// adicionar variavel ao modelo. OLD: incentivo se turma for do calendario da demanda
@@ -519,12 +519,14 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 	if(turmas.size() == 0)
 		return;
 
+	int invalid = -1;
+
 	// como sao ordenadas e é dado um coeficiente à sala com base na ordem, dá prioridade a salas mais pequenas.
 	set<SalaHeur*> salasAssoc;
 	oferta->getSalasAssociadas(salasAssoc, teorico);
 	unordered_map<SalaHeur*, int> emptyMap;
 	unordered_map<TurmaHeur*, int> emptyTurmasMap;
-
+	
 	for(auto it = turmas.begin(); it != turmas.end(); ++it)
 	{
 		TurmaHeur* const turma = (*it);
@@ -537,7 +539,7 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 		SalaHeur* const salaAtual = turma->getSala();
 
 		// procurar sala da solucao carregada
-		int salaIniId = -1;
+		int salaIniId = invalid;
 		auto itStart = solucaoHeur_->alocacoes.find(turma);
 		if(itStart != solucaoHeur_->alocacoes.end())
 		{
@@ -560,6 +562,13 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 			nrVarsTurmaSala_++;
 			itTSala->second[salaIni] = colNr;
 			itSTurma->second[turma] = colNr;
+		}
+
+		if (turma->salaFixada())
+		{
+			if(salaIniId==invalid)
+				HeuristicaNuno::warning("MIPAlocarAlunos::criarVariaveisTurmaSala_", "Turma com sala fixa sem var salaturma criada.");
+			continue;
 		}
 
 		for(auto itSala = salasAssoc.cbegin(); itSala != salasAssoc.cend(); ++itSala)
@@ -803,7 +812,7 @@ bool MIPAlocarAlunos::criarRestricoesTurmasOfertaComp_(int alunoId, OfertaDiscip
 		any = true;
 
 		// se o aluno for fixado, obrigar a ficar na turma se ela se mantiver aberta
-		if(turma->ehFixado(alunoId))
+		if(turma->ehAlunoFixado(alunoId))
 		{
 			auto itVarAbrir = varsAbrirTurma_.find(turma);
 			if(itVarAbrir == varsAbrirTurma_.end())
