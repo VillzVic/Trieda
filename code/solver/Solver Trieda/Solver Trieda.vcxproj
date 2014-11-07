@@ -533,7 +533,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;$(GUROBI_HOME)\include;$(XSD)\include;$(BOOST);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_GUROBI;UNIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_GUROBI;UNIT;PRINT_LOGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -759,6 +759,7 @@
     <ClCompile Include="OFBase.cpp" />
     <ClCompile Include="Oferta.cpp" />
     <ClCompile Include="ParametrosPlanejamento.cpp" />
+    <ClCompile Include="Polish.cpp" />
     <ClCompile Include="ProblemData.cpp" />
     <ClCompile Include="ProblemDataLoader.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;SOLVER_CPLEX;UNIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -889,6 +890,7 @@
     <ClInclude Include="OFBase.h" />
     <ClInclude Include="Oferta.h" />
     <ClInclude Include="ParametrosPlanejamento.h" />
+    <ClInclude Include="Polish.h" />
     <ClInclude Include="ProblemData.h" />
     <ClInclude Include="ProblemDataLoader.h" />
     <ClInclude Include="Professor.h" />

@@ -10,9 +10,7 @@ HorarioAula::HorarioAula( void )
 }
 
 HorarioAula::~HorarioAula( void )
-{
-   this->calendario = NULL;
-}
+{}
 
 DateTime HorarioAula::getFinal() const
 {

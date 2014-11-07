@@ -7,6 +7,7 @@ Sala::Sala(void)
 
 Sala::~Sala(void)
 {
+	this->horarios_disponiveis.deleteElements();
 }
 
 void Sala::le_arvore(ItemSala& elem)

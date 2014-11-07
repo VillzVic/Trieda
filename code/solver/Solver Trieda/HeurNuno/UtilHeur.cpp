@@ -442,6 +442,17 @@ void UtilHeur::printArray(int* arr, int size, int lvl)
 	HeuristicaNuno::logMsg(ss.str(), lvl);
 }
 
+void UtilHeur::printMemoryUsed()
+{	
+	//std::cout << (AulaHeur.nrBuild - AulaHeur.nrDestroy) * sizeof(AulaHeur);
+	int nrAulas = aulasHeurId_.size();
+	std::cout << "\nSize of aulasHeurId_ = " << (nrAulas) * (sizeof(AulaHeur) + sizeof(int));
+
+	int size = hashesToIdAulasReg_.size();
+	std::cout << "\nSize of hashesToIdAulasReg_ = " << (size) * (sizeof(size_t) + sizeof(int));
+
+}
+
 
 // valor da demanda
 // get valor de demanda

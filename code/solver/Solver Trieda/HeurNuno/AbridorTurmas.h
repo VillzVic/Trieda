@@ -187,15 +187,15 @@ private:
 	void escolherAlunos_(set<AlunoHeur*> &alunos, int max);
 
 	// add turma potencial
-	static bool addTurmaPotencial(const TurmaPotencial* turma, turmasPotOrd &turmasPot, unordered_set<const TurmaPotencial*> &turmasDivisao);
+	bool addTurmaPotencial(const TurmaPotencial* turma, turmasPotOrd &turmasPot, unordered_set<const TurmaPotencial*> &turmasDivisao);
 	// add turma potencial
-	static bool addTurmaPotencialTipo(const TurmaPotencial* turma, turmasPotOrd &turmasPot, set<const TurmaPotencial*> &turmasPotTipo, unordered_set<const TurmaPotencial*> &turmasDivisao);
+	bool addTurmaPotencialTipo(const TurmaPotencial* turma, turmasPotOrd &turmasPot, set<const TurmaPotencial*> &turmasPotTipo, unordered_set<const TurmaPotencial*> &turmasDivisao);
 	// verifica se a turma é dominada por outras turmas já geradas. retorna true se a nova turma for dominada
-	static bool verificaDominancia_(const TurmaPotencial* novaTurma, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao);
+	bool verificaDominancia_(const TurmaPotencial* novaTurma, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao);
 	// remove randomicamente uma turma das piores
-	static void removePiorRandom(set<const TurmaPotencial*> &turmasPot, unordered_set<const TurmaPotencial*> &turmasDivisao);
+	void removePiorRandom(set<const TurmaPotencial*> &turmasPot, unordered_set<const TurmaPotencial*> &turmasDivisao);
 	// remove as tuas cujo desvio do melhor valor excede o maximo
-	static void removeBadTurmas(set<const TurmaPotencial*> &turmasPot, unordered_set<const TurmaPotencial*> &turmasDivisao, double valorMax);
+	void removeBadTurmas(set<const TurmaPotencial*> &turmasPot, unordered_set<const TurmaPotencial*> &turmasDivisao, double valorMax);
 	// limpar turmas potenciais. limpa memória
 	void limparTurmasPotenciais_(turmasPotOrd &turmas);
 	

@@ -42,7 +42,8 @@ Professor::Professor( bool eVirtual )
 
 Professor::~Professor( void )
 {
-
+	horarios.deleteElements();
+	magisterio.deleteElements();
 }
 
 void Professor::le_arvore( ItemProfessor & elem )

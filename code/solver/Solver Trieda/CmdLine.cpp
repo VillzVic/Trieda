@@ -20,7 +20,7 @@ using std::stringstream;
 #endif
 
 
-//#define DEFAULT_MIP_UNICO
+#define DEFAULT_MIP_UNICO
 
 
 CmdLine::CmdLine( int argc, char**& argv) : argc_ (argc), argv_ (argv)

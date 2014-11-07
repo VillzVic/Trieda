@@ -215,6 +215,7 @@ void clearData( ProblemSolution * solution, ProblemData * data, ProblemDataLoade
 	std::cout << "\nClearData..."; fflush(0);
 
    // Delete solution
+   std::cout << " clearing solution..."; fflush(0);
    if (solution)
    {
 	   delete solution;
@@ -222,6 +223,7 @@ void clearData( ProblemSolution * solution, ProblemData * data, ProblemDataLoade
    }
 
    // Clear dataLoader
+   std::cout << " clearing data loader..."; fflush(0);
    if (dataLoader)
    {
 	   delete dataLoader;
@@ -229,8 +231,11 @@ void clearData( ProblemSolution * solution, ProblemData * data, ProblemDataLoade
    }
 
    // Clear data
+   std::cout << " clearing problem data..."; fflush(0);
    CentroDados::clearProblemData();
    data = nullptr;
+
+	std::cout << " finish cleaning!"; fflush(0);
 }
 
 void seed()

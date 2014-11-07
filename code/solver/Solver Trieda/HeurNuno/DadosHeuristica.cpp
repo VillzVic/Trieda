@@ -935,7 +935,8 @@ void DadosHeuristica::setCalsReduzidosDisc_(Disciplina* const disciplina)
 	if(calendarios.size() == 0)
 	{
 		HeuristicaNuno::logMsgInt("disc id: ", disciplina->getId(), 0);
-		HeuristicaNuno::excepcao("DadosHeuristica::setCalsReduzidosDisc_", "Disciplina nao tem calendarios associados");
+		HeuristicaNuno::warning("DadosHeuristica::setCalsReduzidosDisc_", "Disciplina nao tem calendarios associados");
+		return;
 	}
 
 	// calendarios dominados

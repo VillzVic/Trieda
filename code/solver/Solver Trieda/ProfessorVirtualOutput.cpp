@@ -27,11 +27,7 @@ ProfessorVirtualOutput::ProfessorVirtualOutput()
 
 ProfessorVirtualOutput::~ProfessorVirtualOutput()
 {
-   ITERA_GGROUP_LESSPTR( it_alocacoes, this->alocacoes, AlocacaoProfVirtual )
-   {
-	   delete (*it_alocacoes);
-   }
-   this->alocacoes.clear();
+	this->alocacoes.deleteElements();
 }
 
 AlocacaoProfVirtual* ProfessorVirtualOutput::getAlocacao( int discId, int turmaNr, int cpId, bool ehPrat )

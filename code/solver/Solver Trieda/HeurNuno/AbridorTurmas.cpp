@@ -20,6 +20,19 @@
 #include "ImproveMethods.h"
 #include <math.h>
 
+
+
+  
+#ifdef DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
+
+
 long AbridorTurmas::nrCombAnalise = 0;
 int AbridorTurmas::nrGeraUnids_ = 0;
 OfertaDisciplina* AbridorTurmas::currOferta = nullptr;
@@ -54,10 +67,7 @@ void AbridorTurmas::abrirTurmas(set<OfertaDisciplina*, T> &setOrd)
 	{
 		OfertaDisciplina* const oferta = *(setOrd.begin());
 		setOrd.erase(setOrd.begin());					// remover da lista
-
-		if (oferta->getDisciplina()->getId()==14646)
-			std::cout << "\nDisc 14646";
-
+		
 		// tentar abrir turmas
 		bool abriu = preAbrirPosTurmasOfertaDisc_(oferta);
 
@@ -261,7 +271,8 @@ bool AbridorTurmas::abrirTurmasOfertaDiscComp_(OfertaDisciplina* const ofertaDis
 		HeuristicaNuno::warning("AbridorTurmas::abrirTurmasOfertaDiscComp_", "Comp sec sem alunos incompletos!");
 		return nrAbertas;
 	}
-
+	
+    _CrtMemState s1, s2, s3;
 
 	// abrir turmas
 	do
@@ -269,7 +280,9 @@ bool AbridorTurmas::abrirTurmasOfertaDiscComp_(OfertaDisciplina* const ofertaDis
 		// gera turmas potenciais
 		HeuristicaNuno::logMsg("gerar turmas potenciais", 2);
 		turmasPotOrd turmasPotenciais;
-
+#ifdef DEBUG
+		_CrtMemCheckpoint( &s1 );
+#endif	
 		//AbridorTurmas::nrGeraUnids_ = 0;
 		geraTurmasPotenciais_(ofertaDisc, teorico, turmasPotenciais, compSec);
 		//HeuristicaNuno::logMsgInt("nr gera unids: ", AbridorTurmas::nrGeraUnids_, 1);
@@ -289,8 +302,19 @@ bool AbridorTurmas::abrirTurmasOfertaDiscComp_(OfertaDisciplina* const ofertaDis
 		else
 			stop = true;
 
+#ifdef DEBUG
+		_CrtMemCheckpoint( &s2 );
+		if ( _CrtMemDifference( &s3, &s1, &s2) )
+			_CrtMemDumpStatistics( &s3 );
+#endif	
+
 		// limpar memória turmas potenciais
 		limparTurmasPotenciais_(turmasPotenciais);
+		
+#ifdef DEBUG
+		_CrtDumpMemoryLeaks();
+		system("PAUSE");
+#endif	
 
 		// realocar
 		int nrTurmasTipo = ofertaDisc->nrTurmas(teorico);
@@ -658,6 +682,8 @@ void AbridorTurmas::geraTurmasDivisaoPosPreProc_(OfertaDisciplina* const &oferta
 
 		// liberta a memória
 		delete step;
+		
+		UtilHeur::printMemoryUsed();
 
 		//HeuristicaNuno::logMsgInt("steps queue size: ", queueSteps.size(), 1);
 	}
@@ -1527,7 +1553,7 @@ bool AbridorTurmas::addTurmaPotencialTipo(const TurmaPotencial* turma, turmasPot
 	// remover as turmas que já não são boas suficientes
 	HeuristicaNuno::logMsg("check remover piores", 3);
 	valorMax = (*turmasPotTipo.begin())->getValor();
-	AbridorTurmas::removeBadTurmas(turmasPotTipo, turmasDivisao, valorMax);
+	removeBadTurmas(turmasPotTipo, turmasDivisao, valorMax);
 	HeuristicaNuno::logMsg("done", 3);
 
 	if(turmasPotTipo.size() == 0)

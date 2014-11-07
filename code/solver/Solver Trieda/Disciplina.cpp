@@ -26,7 +26,10 @@ Disciplina::Disciplina(void)
 
 Disciplina::~Disciplina(void)
 {
-
+	if (horarios.size()>0)
+		horarios.deleteElements();
+	if (divisao_creditos.size()>0)
+		divisao_creditos.deleteElements();
 }
 
 void Disciplina::le_arvore( ItemDisciplina & elem )

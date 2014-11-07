@@ -20,14 +20,21 @@ Campus::~Campus( void )
 		if(cjt) delete cjt;
 	}
 	clustersUnidades.clear();
+	cout << "\n campus-clustersUnidades was deleted!"; fflush(0);
 
 	// apagar unidades
 	unidades.deleteElements();
+	
+	cout << "\n campus-unidades was deleted!"; fflush(0);
+
 	// apagar professores
 	professores.deleteElements();
+	
+	cout << "\n campus-professores was deleted!"; fflush(0);
+
 	// apagar horarios
 	horarios.deleteElements();
-
+	cout << "\n campus-horarios was deleted!"; fflush(0);
 }
 
 void Campus::le_arvore( ItemCampus & elem ) 

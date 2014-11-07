@@ -237,6 +237,8 @@ public:
 			vetor.push_back(obj);
 	}
 
+	static void printMemoryUsed();
+
 private:
 	// mapa para guardar aulas (diminuir uso de memória)
 	static unordered_map<int, AulaHeur> aulasHeurId_;
@@ -270,6 +272,7 @@ private:
 	// add aula. retorna id
 	static AulaHeur* addAula_(AulaHeur const &aula, size_t hash);
 	
+
 };
 
 #pragma region [ALIASES de ESTRUTURAS]

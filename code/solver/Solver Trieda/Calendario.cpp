@@ -11,9 +11,7 @@ Calendario::Calendario( void )
 }
 
 Calendario::~Calendario( void )
-{
-
-}
+{}
 
 void Calendario::le_arvore( ItemCalendario & elem ) 
 {

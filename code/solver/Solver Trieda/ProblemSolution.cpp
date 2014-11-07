@@ -47,13 +47,13 @@ ProblemSolution::~ProblemSolution()
       delete atendimento_campus;
    }
    
-   // DADOS DE PROBLEM-DATA! ACHO QUE NÃO DEVE SER DELETADO AQUI
-   //if ( professores_virtuais )
-   //{
-   //   professores_virtuais->deleteElements();
-   //   delete professores_virtuais;
-   //}
+   if ( professores_virtuais )
+   {
+      professores_virtuais->deleteElements();
+      delete professores_virtuais;
+   }
 
+   // DADOS DE PROBLEM-DATA! ACHO QUE NÃO DEVE SER DELETADO AQUI
    //if ( alunosDemanda )
    //{
    //   alunosDemanda->deleteElements();
@@ -106,17 +106,9 @@ void ProblemSolution::resetProblemSolution()
 
 ProfessorVirtualOutput* ProblemSolution::getProfVirtualOutput( int id )
 {
-	ProfessorVirtualOutput *pvo = new ProfessorVirtualOutput( id );
-	GGroup< ProfessorVirtualOutput * >::iterator itFinder = 
-		(*this->professores_virtuais).find( pvo );
-	delete pvo;
+	ProfessorVirtualOutput *pvo=nullptr;
 
-	pvo = NULL;
-	if ( itFinder != (*this->professores_virtuais).end() )	// nao ta funcionando o find
-		pvo = *itFinder;
-
-
-	itFinder = this->professores_virtuais->begin();
+	auto itFinder = this->professores_virtuais->begin();
 	for ( ; itFinder != this->professores_virtuais->end(); itFinder++ )
 	{
 		if ( itFinder->getId() == id )
@@ -125,7 +117,6 @@ ProfessorVirtualOutput* ProblemSolution::getProfVirtualOutput( int id )
 			break;
 		}
 	}
-
 
 	return pvo;
 }

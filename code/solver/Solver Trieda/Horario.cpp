@@ -4,8 +4,7 @@
 
 Horario::Horario(void)
 {
-//	turno = NULL;
-	horario_aula = NULL;
+	horario_aula = nullptr;
 	this->dias_semana.clear();
 }
 
@@ -15,7 +14,6 @@ Horario::Horario(void)
 Horario::Horario( Horario *h )
 {
 	this->horario_aula = new HorarioAula();
-	//this->horario_aula->setTurnoId( h->horario_aula->getTurnoId() );
 	this->horario_aula->setInicio( h->horario_aula->getInicio() );
 	this->horario_aula->setTempoAula( h->horario_aula->getTempoAula() );
 	this->horario_aula->dias_semana = h->horario_aula->dias_semana;
@@ -27,7 +25,8 @@ Horario::Horario( Horario *h )
 
 Horario::~Horario(void)
 {
-
+	// Não deleto HorarioAula aqui, porque a principio ele é criado somente no seu calendario
+	// e deverá ser deletado pelo mesmo.
 }
 
 void Horario::le_arvore( ItemHorario & elem ) 

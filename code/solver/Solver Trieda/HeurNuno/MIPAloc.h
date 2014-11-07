@@ -39,7 +39,7 @@ class MIPAloc
 public:
 	// não chamar directamente
 	MIPAloc(int tipoMip, std::string nome, SolucaoHeur* const solucao_);
-	~MIPAloc(void);
+	virtual ~MIPAloc(void);
 
 	// fazer alocação
 	virtual void alocar(void);

@@ -48,10 +48,10 @@ private:
 
    enum OutPutFileType
    {
-	  TAT_INT_BIN = 0,
-	  TAT_INT_BIN1 = 1,				
-	  TAT_INT_BIN2 = 2,		
-	  TAT_INT_BIN3 = 3
+	  MIP_GENERAL = 0,
+	  MIP_GARANTE_SOL = 1,				
+	  MIP_MAX_ATEND = 2,		
+	  MIP_DISP_PROF = 3
    };	  
 
    /********************************************************************
@@ -243,7 +243,10 @@ private:
 	#ifdef SOLVER_GUROBI 
 	   OPT_GUROBI* lp;
 	#endif
-
+	   
+	bool optimized;
+    double *xSol_;
+   
    // Hash which associates the column number with the VariableTatico object.
    VariableMIPUnicoHash vHashTatico;
 
@@ -261,6 +264,7 @@ private:
 
    int etapa;
 
+	void updateOptLogFileName(int campusId, int prioridade, int r);
     void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 	bool violaInsercao( Aluno* aluno, GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > aulasX );
 	void imprimeGradeHorAlunos( int campusId, int prioridade );
@@ -294,7 +298,8 @@ private:
 	int solveMaxAtendPorFasesDoDia( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
-	bool polish(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
+	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	bool polish(double *xSol, double maxTime, int percIni, double maxTempoSemMelhora);
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
 	Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
@@ -347,7 +352,7 @@ private:
 	static const int minCredDiaAluno;
 	static const bool considerarMinCredDiaAluno;
 
-	//
+	// log file name
 	string optLogFileName;
 };
 

@@ -91,22 +91,67 @@ ProblemData::~ProblemData()
     areas_titulacao.deleteElements();
     tipos_disciplina.deleteElements();
     niveis_dificuldade.deleteElements();
+
+	cout << "\n deleting tipos_curso..."; fflush(0);
     tipos_curso.deleteElements();
+	
+	cout << "\n deleting regras_div..."; fflush(0);
     regras_div.deleteElements();
-    campi.deleteElements();
+	
+	cout << "\n deleting tempo_campi..."; fflush(0);
     tempo_campi.deleteElements();
+	
+	cout << "\n deleting tempo_unidades..."; fflush(0);
     tempo_unidades.deleteElements();
+	
+	cout << "\n deleting disciplinas..."; fflush(0);
     disciplinas.deleteElements();
+	
+	cout << "\n deleting cursos..."; fflush(0);
     cursos.deleteElements();
+
+	cout << "\n deleting demandas..."; fflush(0);
     demandas.deleteElements();
+	
+	cout << "\n deleting ofertas..."; fflush(0);
     ofertas.deleteElements();
+	
+	cout << "\n deleting parametros..."; fflush(0);
     if(parametros) delete parametros;
+	
+	cout << "\n deleting fixacoes..."; fflush(0);
     fixacoes.deleteElements();
+	
+	cout << "\n deleting alunosDemanda..."; fflush(0);
     alunosDemanda.deleteElements();
+	
+	cout << "\n deleting alunos..."; fflush(0);
     alunos.deleteElements();
+	
+	cout << "\n deleting profsVirtuais..."; fflush(0);
     profsVirtuais.deleteElements(); // 1 por tipo de titulação
+	
+	cout << "\n deleting equivalencias..."; fflush(0);
     equivalencias.deleteElements(); // só contém as teoricas
 	
+	cout << "\n deleting horariosDia..."; fflush(0);
+	horariosDia.deleteElements();
+
+	cout << "\n clearHorarioAula..."; fflush(0);
+	clearHorarioAula();
+	
+	cout << "\n deleting campi..."; fflush(0);
+    campi.deleteElements();
+}
+
+void ProblemData::clearHorarioAula()
+{
+	for ( auto it = refHorarioAula.begin(); it != refHorarioAula.end(); )
+	{
+		HorarioAula *h = it->second;
+		refHorarioAula.erase(it);
+		if (h) delete h;
+	}
 }
 
 std::string ProblemData::inputIdToString()
@@ -201,36 +246,41 @@ void ProblemData::defineFasesDosTurnos()
 		DateTime dt_ant;
 		dt_ant.setHour(0);
 		dt_ant.setMinute(0);
-		
-		GGroup<DateTime> ggroup = mapCalendDateTime[ c ];
-		ITERA_GGROUP_N_PT( itDT, ggroup, DateTime )
+
+		auto finderC = mapCalendDateTime.find(c);
+		if (finderC != mapCalendDateTime.end())
 		{
-			int turnoIESatual = c->getTurnoIES( *itDT );
-			if ( itDT == ggroup.begin() ) turnoIESant = turnoIESatual;
+			GGroup<DateTime> ggroup = finderC->second;
 
-			turnoDif = ( turnoIESant != turnoIESatual ? true : false );
+			ITERA_GGROUP_N_PT( itDT, ggroup, DateTime )
+			{
+				int turnoIESatual = c->getTurnoIES( *itDT );
+				if ( itDT == ggroup.begin() ) turnoIESant = turnoIESatual;
 
-			DateTime dt = *itDT;
-			DateTime dif = dt - dt_ant;
-			int delta = dif.getHour()*60 + dif.getMinute();
-			if ( ( delta>=2*tempo ) || ( delta>=tempo && turnoDif ) )
-			{		
-				// Intervalo significativo => provável mudança de fase
+				turnoDif = ( turnoIESant != turnoIESatual ? true : false );
 
-				int n = map_Calend_FasesDtIf[c].size();
-				if ( n >= 1 )
-				{					
-					map_Calend_FasesDtIf[c][n-1].second = dt_ant;
+				DateTime dt = *itDT;
+				DateTime dif = dt - dt_ant;
+				int delta = dif.getHour()*60 + dif.getMinute();
+				if ( ( delta>=2*tempo ) || ( delta>=tempo && turnoDif ) )
+				{		
+					// Intervalo significativo => provável mudança de fase
+
+					int n = map_Calend_FasesDtIf[c].size();
+					if ( n >= 1 )
+					{					
+						map_Calend_FasesDtIf[c][n-1].second = dt_ant;
+					}
+
+					std::pair<DateTime,DateTime> parDT;
+					parDT.first = dt;
+					map_Calend_FasesDtIf[c].push_back( parDT );
 				}
-
-				std::pair<DateTime,DateTime> parDT;
-				parDT.first = dt;
-				map_Calend_FasesDtIf[c].push_back( parDT );
+				dt_ant = dt;
+				turnoIESant = turnoIESatual;
 			}
-			dt_ant = dt;
-			turnoIESant = turnoIESatual;
+			map_Calend_FasesDtIf[c].rbegin()->second = dt_ant;
 		}
-		map_Calend_FasesDtIf[c].rbegin()->second = dt_ant;
 	}
 
 	bool debugging = true;

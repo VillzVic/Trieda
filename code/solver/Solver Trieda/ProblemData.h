@@ -62,6 +62,8 @@ public:
    ProblemData( char input[1024], int inputId );
    virtual ~ProblemData( void );
    
+   void clearHorarioAula();
+
    enum MODO
    {
 	   TATICO = 1,
