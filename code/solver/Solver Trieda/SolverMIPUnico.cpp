@@ -71,179 +71,30 @@ int SolverMIPUnico::solve()
 
 #ifdef READ_SOLUTION
 	this->CARREGA_SOLUCAO = true;
-#endif
-#ifndef READ_SOLUTION
+#else
 	this->CARREGA_SOLUCAO = false;
 #endif
-
-
+	
    if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
 	  std::cout<<"\n------------------------------Operacional------------------------------\n";
 	  
 	  // OPERACIONAL COM TÁTICO
-      if ( problemData->atendimentosTatico != NULL
+      if ( problemData->atendimentosTatico != nullptr
             && problemData->atendimentosTatico->size() > 0 )
       {
-		  ITERA_GGROUP_LESSPTR( itAtTat, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
-         { 
-            Campus * campus = problemData->refCampus[ itAtTat->getCampusId() ];
-
-            AtendimentoCampus * atCampus = new AtendimentoCampus( this->problemSolution->getIdAtendimentos() );
-
-            atCampus->setId( campus->getId() );
-            atCampus->setCampusId( campus->getCodigo() );
-            atCampus->campus = campus;
-
-            ITERA_GGROUP( itAtUnd, itAtTat->atendimentosUnidades, AtendimentoUnidadeSolucao )
-            {
-               Unidade * unidade = problemData->refUnidade[ itAtUnd->getUnidadeId() ];
-
-               AtendimentoUnidade * atUnidade = new AtendimentoUnidade(
-                  this->problemSolution->getIdAtendimentos() );
-
-               atUnidade->setId( unidade->getId() );
-               atUnidade->setCodigoUnidade( unidade->getCodigo() );
-               atUnidade->unidade = unidade;
-
-               ITERA_GGROUP( itAtSala,
-                  itAtUnd->atendimentosSalas, AtendimentoSalaSolucao )
-               {
-                  Sala * sala = problemData->refSala[ itAtSala->getSalaId() ];
-
-                  AtendimentoSala * atSala = new AtendimentoSala(
-                     this->problemSolution->getIdAtendimentos() );
-
-                  atSala->setId( sala->getId() );
-                  atSala->setSalaId( sala->getCodigo() );
-                  atSala->sala = sala;
-
-                  ITERA_GGROUP( itAtDiaSemana,
-                     itAtSala->atendimentosDiasSemana, AtendimentoDiaSemanaSolucao )
-                  {
-                     AtendimentoDiaSemana * atDiaSemana = new AtendimentoDiaSemana(
-                        this->problemSolution->getIdAtendimentos() );
-
-                     atDiaSemana->setDiaSemana( itAtDiaSemana->getDiaSemana() );
-
-                     atSala->atendimentos_dias_semana->add( atDiaSemana );
-                  }
-
-                  atUnidade->atendimentos_salas->add( atSala );
-               }
-
-               atCampus->atendimentos_unidades->add( atUnidade );
-            }
-
-            problemSolution->atendimento_campus->add( atCampus );
-         }
-		  
-		  // -----------------------
-		  // Resolvendo o modelo operacional
-		  Operacional * solverOp = new Operacional( this->problemData, &this->CARREGA_SOLUCAO, &(this->solVarsOp), this->problemSolution );
-		  status = solverOp->solveOperacionalEtapas();
-		  delete solverOp;
-		  // -----------------------
-
+		  status = solveOpComTatico();
       }
-
 	  // OPERACIONAL SEM TÁTICO
       else
       {
-			// Neste caso, primeiro deve-se gerar uma saída para
-			// o modelo tático. Em seguida, deve-se resolver o
-			// modelo operacional com base na saída do modelo tático gerada.
-		  
-			// -------------------------------------------------
-			status = solveEscola();
-			
-			// -------------------------------------------------
-			relacionaAlunosDemandas();
-			
-			// -------------------------------------------------
-			// Write output tático
-			std::cout<<"\nImprimindo output tatico... ";
-			stringstream ssOutputFile;
-			ssOutputFile << "output_tat_";
-			ssOutputFile << problemData->getInputFileName().c_str();
-			ssOutputFile << "F";
-			if ( problemData->getInputId() ) ssOutputFile << "_id" << problemData->getInputId();
-
-			std::ofstream file;
-			file.open( ssOutputFile.str(), ios::out );
-			if ( file )
-			{
-				file << ( *problemSolution );
-				file.close();
-			}
-			else std::cout<<"Erro ao abrir arquivo "<< ssOutputFile.str();
-			std::cout<<" fim!\n";
-
-			// -------------------------------------------------
-			// Preenchendo a estrutura "atendimentosTatico".
-			problemData->atendimentosTatico
-			= new GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > >();
-
-			
-			if ( !problemSolution ){
-				std::cout<<"\nErro2! problemSolution null!"; fflush(0);
-				return 0;
-			}
-
-			ITERA_GGROUP( it_At_Campus,
-				( *problemSolution->atendimento_campus ), AtendimentoCampus )
-			{
-				std::cout<<"\nit_At_Campus..."; fflush(0);
-				problemData->atendimentosTatico->add(
-					new AtendimentoCampusSolucao( **it_At_Campus ) );
-			}
-			
-			// -------------------------------------------------
-			// Remove a referência para os atendimentos tático (que pertencem ao output tático)
-			std::cout<<"\nRemovendo referencias para atend tatico..."; fflush(0);
-			ITERA_GGROUP( it_At_Campus,
-				( *problemSolution->atendimento_campus ), AtendimentoCampus )
-			{
-				ITERA_GGROUP_LESSPTR( it_At_Unidade,
-					( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
-				{
-					ITERA_GGROUP_LESSPTR( it_At_Sala,
-						( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
-					{
-						ITERA_GGROUP_LESSPTR( it_At_DiaSemana,
-							( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
-						{
-							GGroup< AtendimentoTatico*, LessPtr<AtendimentoTatico> > * atendimentos_tatico
-								= it_At_DiaSemana->atendimentos_tatico;
-
-							atendimentos_tatico->clear();
-
-							GGroup< AtendimentoTurno*, LessPtr<AtendimentoTurno> > * atendimentos_turno
-								= it_At_DiaSemana->atendimentos_turno;
-
-							atendimentos_turno->clear();
-						}
-					}
-				}
-			}
-	    
-			std::cout<<"\n\n\n------------------------------Operacional------------------------------\n\n";
-			
-			// -------------------------------------------------
-			// Criando as aulas que serão utilizadas
-			// para resolver o modelo operacional
-			problemDataLoader->criaAulas();
-
-			// -----------------------
-			// Resolvendo o modelo operacional
-			Operacional * solverOp = new Operacional( this->problemData, &this->CARREGA_SOLUCAO, &(this->solVarsOp), this->problemSolution );
-			status = solverOp->solveOperacionalEtapas();
-			delete solverOp;
-						
-			this->problemSolution->computaMotivos(true,true);
-			// -----------------------
-      }	  
-
+		  status = solveOpSemTatico();
+      }
+   }
+   else
+   {
+	   CentroDados::printError("SolverMIPUnico::solve()", "Modo tatico esta obsoleto! Somente modo operacional eh aceito.");
+	   exit(1);
    }
       
    relacionaAlunosDemandas();
@@ -255,12 +106,184 @@ int SolverMIPUnico::solve()
    runtimess << hours << "h" << min;
 
    std::cout << "\n\nTotal Run Time = " << runtimess.str() << endl << endl;
-
-
+   
    return status;
 }
 
-int SolverMIPUnico::solveEscola()
+int SolverMIPUnico::solveOpComTatico()
+{ 
+	int status=true;
+
+	preencheAtendTaticoProbSol();
+
+	status = status && solveEscolaOp();
+	
+	return status;
+}
+
+void SolverMIPUnico::preencheAtendTaticoProbSol()
+{
+	if (!problemData->atendimentosTatico)
+		return;
+
+	ITERA_GGROUP_LESSPTR( itAtTat, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
+    { 
+		Campus * campus = problemData->refCampus[ itAtTat->getCampusId() ];
+
+		AtendimentoCampus * atCampus = new AtendimentoCampus( this->problemSolution->getIdAtendimentos() );
+
+		atCampus->setId( campus->getId() );
+		atCampus->setCampusId( campus->getCodigo() );
+		atCampus->campus = campus;
+
+		ITERA_GGROUP( itAtUnd, itAtTat->atendimentosUnidades, AtendimentoUnidadeSolucao )
+		{
+			Unidade * unidade = problemData->refUnidade[ itAtUnd->getUnidadeId() ];
+
+			AtendimentoUnidade * atUnidade = new AtendimentoUnidade(
+				this->problemSolution->getIdAtendimentos() );
+
+			atUnidade->setId( unidade->getId() );
+			atUnidade->setCodigoUnidade( unidade->getCodigo() );
+			atUnidade->unidade = unidade;
+
+			ITERA_GGROUP( itAtSala,
+				itAtUnd->atendimentosSalas, AtendimentoSalaSolucao )
+			{
+				Sala * sala = problemData->refSala[ itAtSala->getSalaId() ];
+
+				AtendimentoSala * atSala = new AtendimentoSala(
+					this->problemSolution->getIdAtendimentos() );
+
+				atSala->setId( sala->getId() );
+				atSala->setSalaId( sala->getCodigo() );
+				atSala->sala = sala;
+
+				ITERA_GGROUP( itAtDiaSemana,
+					itAtSala->atendimentosDiasSemana, AtendimentoDiaSemanaSolucao )
+				{
+					AtendimentoDiaSemana * atDiaSemana = new AtendimentoDiaSemana(
+					this->problemSolution->getIdAtendimentos() );
+
+					atDiaSemana->setDiaSemana( itAtDiaSemana->getDiaSemana() );
+
+					atSala->atendimentos_dias_semana->add( atDiaSemana );
+				}
+
+				atUnidade->atendimentos_salas->add( atSala );
+			}
+
+			atCampus->atendimentos_unidades->add( atUnidade );
+		}
+
+		problemSolution->atendimento_campus->add( atCampus );
+    }	
+}
+
+int SolverMIPUnico::solveOpSemTatico()
+{
+	// Primeiro deve-se gerar uma saída para
+	// o modelo tático. Em seguida, deve-se resolver o
+	// modelo operacional com base na saída do modelo tático gerada.
+
+	int status=true;
+
+	// -------------------------------------------------
+	status = status && solveEscolaTat();
+			
+	// -------------------------------------------------
+	relacionaAlunosDemandas();
+			
+	// -------------------------------------------------
+	writeOutputTatico();
+
+	// -------------------------------------------------
+	preencheAtendTaticoProbData();
+			
+	// -------------------------------------------------
+	clearAtendTaticoProbSol();
+			
+	// -------------------------------------------------
+	// Criando as aulas que serão utilizadas para resolver o modelo operacional
+	problemDataLoader->criaAulas();
+
+	// -----------------------
+	status = status && solveEscolaOp();
+	
+	return status;
+}
+
+bool SolverMIPUnico::preencheAtendTaticoProbData()
+{
+	if ( !problemSolution ){
+		CentroDados::printError("SolverMIPUnico::solve()", "problemSolution null!");
+		return false;
+	}
+	if ( !problemSolution->atendimento_campus ){
+		CentroDados::printError("SolverMIPUnico::solve()", "problemSolution->atendimento_campus null!");
+		return false;
+	}
+
+	// Preenchendo a estrutura "atendimentosTatico" de problemData.
+				
+	if (problemData->atendimentosTatico)
+		delete problemData->atendimentosTatico;
+	problemData->atendimentosTatico
+		= new GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > >();
+	
+	ITERA_GGROUP( it_At_Campus,
+		( *problemSolution->atendimento_campus ), AtendimentoCampus )
+	{
+		problemData->atendimentosTatico->add(
+			new AtendimentoCampusSolucao( **it_At_Campus ) );
+	}
+
+	return true;
+}
+
+bool SolverMIPUnico::clearAtendTaticoProbSol()
+{	
+	if ( !problemSolution ){
+		CentroDados::printError("SolverMIPUnico::clearAtendTaticoProbSol()", "problemSolution null!");
+		return false;
+	}
+	if ( !problemSolution->atendimento_campus ){
+		CentroDados::printError("SolverMIPUnico::clearAtendTaticoProbSol()", "problemSolution->atendimento_campus null!");
+		return false;
+	}
+
+	// Remove a referência para os atendimentos tático (que pertencem ao output tático)
+	std::cout<<"\nRemovendo referencias para atend tatico..."; fflush(0);
+	ITERA_GGROUP( it_At_Campus,
+		( *problemSolution->atendimento_campus ), AtendimentoCampus )
+	{
+		ITERA_GGROUP_LESSPTR( it_At_Unidade,
+			( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+		{
+			ITERA_GGROUP_LESSPTR( it_At_Sala,
+				( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+			{
+				ITERA_GGROUP_LESSPTR( it_At_DiaSemana,
+					( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+				{
+					GGroup< AtendimentoTatico*, LessPtr<AtendimentoTatico> > * atendimentos_tatico
+						= it_At_DiaSemana->atendimentos_tatico;
+
+					atendimentos_tatico->clear();
+
+					GGroup< AtendimentoTurno*, LessPtr<AtendimentoTurno> > * atendimentos_turno
+						= it_At_DiaSemana->atendimentos_turno;
+
+					atendimentos_turno->clear();
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+int SolverMIPUnico::solveEscolaTat()
 {
 	int status = 1;
 
@@ -269,91 +292,16 @@ int SolverMIPUnico::solveEscola()
 	std::cout << "\nIniciando MIP puro..." << endl;
 	
 	if ( this->CARREGA_SOLUCAO )
-	{
 		std::cout << "\nCARREGA_SOLUCAO = true\n" << endl;
-	}
 	
     ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
     {		
 		int campusId = ( *itCampus )->getId();
 		this->campusAtualId = campusId;
 		
-		int n_prioridades = problemData->nPrioridadesDemanda[campusId];
-		int P = 1;
+		solveCampusP1Escola();
+		solveCampusP2Escola();
 		
-		// ============================================ P1 =======================================================
-
-
-		std::cout<<"\n-------------------------- Campus " << campusId << "----------------------------\n";		
-		std::cout<<"\n-------------------------- Prioridade " << P << "---------------------------\n";
-		std::cout << "\nNumero total de niveis de prioridade no campus: " << n_prioridades << endl;
-					
-		// Cria e ordena os conjuntos de alunos
-		problemData->criaCjtAlunos( campusId, P, true );		
-		problemData->imprimeCjtAlunos( campusId );
-		problemData->constroiHistogramaDiscDemanda();
-		
-		if ( problemData->cjtAlunos.size() != 1 )
-		{
-			std::cout << "\nSomente 1 conjunto de alunos eh esperado aqui. Saindo...\n";
-			exit(1);
-		}
-
-		int grupoId = problemData->cjtAlunos.begin()->first;
-		
-		int r = 1;
-		if ( problemData->parametros->min_alunos_abertura_turmas )
-			r = 2;
-
-
-		// ==================================
-		// MODELO INTEGRADO	COM NOVAS TURMAS	
-
-		int NOVAS_TURMAS = 1;
-		bool EQUIV=true;
-		MIPUnico * solverEscola = new MIPUnico( this->problemData, &(this->solVarsTatico), &(this->vars_xh),
-																	&this->CARREGA_SOLUCAO, EQUIV, NOVAS_TURMAS );
-		solverEscola->solveMainEscola( campusId, P, r );
-		delete solverEscola;
-
-				
-//		verificaNaoAtendimentos( campusId, P );
-		
-		// ============================================ P2 =======================================================
-
-		P++;
-
-		if ( problemData->parametros->utilizarDemandasP2 )
-		if ( P <= n_prioridades )
-		{
-			std::cout << "\nAtualizacao de demandas de prioridade " << P <<"..."; fflush(NULL);
-			problemData->atualizaDemandas( P, campusId );
-			std::cout << "  atualizadas!\n"; fflush(NULL);
-
-			// ==================================
-			// MODELO INTEGRADO	PARA P2
-			if ( problemData->listSlackDemandaAluno.size() != 0 )
-			{
-				MIPUnico * solverEscola = new MIPUnico( 
-					this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 0 );
-				solverEscola->solveMainEscola( campusId, P, 1 );
-				delete solverEscola;
-			}
-						
-			if ( problemData->listSlackDemandaAluno.size() != 0 )
-			{
-				MIPUnico * solverEscola = new MIPUnico( 
-					this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 3 );
-				solverEscola->solveMainEscola( campusId, P, 1 );
-				delete solverEscola;
-			}
-			// ==================================
-		}
-		
-//		verificaNaoAtendimentos( campusId, P );
-		
-		// ========================================= FIM DO CAMPUS =================================================
-
 		problemData->confereExcessoP2( campusId );		
 		problemData->listSlackDemandaAluno.clear();
 		mudaCjtSalaParaSala();
@@ -362,6 +310,78 @@ int SolverMIPUnico::solveEscola()
 	}
 	
 	return (status);
+}
+
+void SolverMIPUnico::solveCampusP1Escola()
+{
+	int P = 1;
+	int n_prioridades = problemData->nPrioridadesDemanda[this->campusAtualId];
+
+	std::cout<<"\n-------------------------- Campus " << this->campusAtualId << "----------------------------\n";		
+	std::cout<<"\n-------------------------- Prioridade " << P << "---------------------------\n";
+	std::cout << "\nNumero total de niveis de prioridade no campus: " << n_prioridades << endl;
+					
+	// Cria e ordena os conjuntos de alunos
+	problemData->criaCjtAlunos( this->campusAtualId, P, true );		
+	problemData->imprimeCjtAlunos( this->campusAtualId );
+	problemData->constroiHistogramaDiscDemanda();
+		
+	if ( problemData->cjtAlunos.size() != 1 )
+	{
+		std::cout << "\nSomente 1 conjunto de alunos eh esperado aqui. Saindo...\n";
+		exit(1);
+	}
+
+	int grupoId = problemData->cjtAlunos.begin()->first;
+		
+	int r = 1;
+	if ( problemData->parametros->min_alunos_abertura_turmas )
+		r = 2;
+
+
+	// ==================================
+	// MODELO INTEGRADO	COM NOVAS TURMAS	
+
+	int NOVAS_TURMAS = 1;
+	bool EQUIV=true;
+	MIPUnico * solverEscola = new MIPUnico( this->problemData, &(this->solVarsTatico), &(this->vars_xh),
+																&this->CARREGA_SOLUCAO, EQUIV, NOVAS_TURMAS );
+	solverEscola->solveMainEscola( this->campusAtualId, P, r );
+	delete solverEscola;
+
+}
+
+void SolverMIPUnico::solveCampusP2Escola()
+{
+	int P = 2;
+	int n_prioridades = problemData->nPrioridadesDemanda[this->campusAtualId];
+
+	if ( problemData->parametros->utilizarDemandasP2 )
+	if ( P <= n_prioridades )
+	{		
+		std::cout<<"\n-------------------------- Campus " << this->campusAtualId << "----------------------------\n";		
+		std::cout<<"\n-------------------------- Prioridade " << P << "---------------------------\n";
+
+		problemData->atualizaDemandas( P, this->campusAtualId );
+
+		if ( problemData->listSlackDemandaAluno.size() != 0 )
+		{
+			// Só inserção de alunos
+			MIPUnico * solverEscola = new MIPUnico( 
+				this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 0 );
+			solverEscola->solveMainEscola( this->campusAtualId, P, 1 );
+			delete solverEscola;
+		}
+						
+		if ( problemData->listSlackDemandaAluno.size() != 0 )
+		{
+			// Permite novas turmas
+			MIPUnico * solverEscola = new MIPUnico( 
+				this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 3 );
+			solverEscola->solveMainEscola( this->campusAtualId, P, 1 );
+			delete solverEscola;
+		}
+	}
 }
 
 void SolverMIPUnico::relacionaAlunosDemandas()
@@ -1341,11 +1361,54 @@ void SolverMIPUnico::getSolutionTaticoPorAlunoComHorario()
 
 			problemSolution->atendimento_campus->add( at_Campus );
       }
-
-	  // todo: posso deletar isso aqui msm? Acrescentei qdo comecei a testar solucao inicial fixada, indo direto pro TatInt
-	  delete (*it_Vars_x);
    }
 
-   // todo: posso deletar isso aqui msm? Acrescentei qdo comecei a testar solucao inicial fixada, indo direto pro TatInt
-   vars_xh.clear();
+   clearSolutionTat();
+}
+
+int SolverMIPUnico::solveEscolaOp()
+{
+	int status=true;
+
+	Operacional * solverOp = new Operacional( this->problemData, &this->CARREGA_SOLUCAO, &(this->solVarsOp), this->problemSolution );
+	status = status && solverOp->solveOperacionalEtapas();
+	delete solverOp;
+	
+	clearSolutionOp();
+
+	this->problemSolution->computaMotivos(true,true);
+
+	return status;
+}
+
+void SolverMIPUnico::clearSolutionTat()
+{
+	solVarsTatico.deleteElements();
+	vars_xh.clear();
+}
+
+void SolverMIPUnico::clearSolutionOp()
+{
+	solVarsOp.deleteElements();
+}
+
+void SolverMIPUnico::writeOutputTatico()
+{
+	// Write output tático
+	std::cout<<"\nImprimindo output tatico... ";
+	stringstream ssOutputFile;
+	ssOutputFile << "output_tat_";
+	ssOutputFile << problemData->getInputFileName().c_str();
+	ssOutputFile << "F";
+	if ( problemData->getInputId() ) ssOutputFile << "_id" << problemData->getInputId();
+
+	std::ofstream file;
+	file.open( ssOutputFile.str(), ios::out );
+	if ( file )
+	{
+		file << ( *problemSolution );
+		file.close();
+	}
+	else std::cout<<"Erro ao abrir arquivo "<< ssOutputFile.str();
+	std::cout<<" fim!\n";
 }

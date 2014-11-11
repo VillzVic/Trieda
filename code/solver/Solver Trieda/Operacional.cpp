@@ -417,9 +417,11 @@ int Operacional::solveOperacional()
 int Operacional::solveOperacionalEtapas()
 {
 	bool status=true;
+	    
+	std::cout<<"\n\n\n------------------------------Operacional------------------------------\n\n";
 	
-   cout <<"\n\nOperacional::solveOperacionalEtapas";
-   cout<<"\nthis->CARREGA_SOLUCAO = " << *this->CARREGA_SOLUCAO << "\n";
+    cout <<"\n\nOperacional::solveOperacionalEtapas";
+    cout<<"\nthis->CARREGA_SOLUCAO = " << *this->CARREGA_SOLUCAO << "\n";
 
 	std::cout<<"\n============================================================\n";
 
@@ -1912,7 +1914,6 @@ int Operacional::solveOperacionalMIP()
 				}
 
 				lp->chgObj(lp->getNumCols(),newIdx,newObj);
-				lp->setMIPScreenLog(4);
 				lp->setNumIntSols(1);
 
 				status = lp->optimize( METHOD_MIP );
@@ -1973,7 +1974,6 @@ int Operacional::solveOperacionalMIP()
 				}
 				lp->updateLP();   
 
-				lp->setMIPScreenLog(4);
 				lp->setNumIntSols(1);
 
 				#ifdef PRINT_LOGS
@@ -2096,7 +2096,6 @@ int Operacional::solveOperacionalMIP()
 					lp->setMIPEmphasis(1);
 					lp->setCuts(0);
 					lp->setNodeLimit(10000000000);
-					lp->setPolishAfterNode(1);
 					lp->setPolishAfterTime( this->getTimeLimit(Solver::OP2) / 2 );
 					lp->setTimeLimit( this->getTimeLimit(Solver::OP2) );
 					lp->setNumIntSols(0);
@@ -2293,9 +2292,7 @@ int Operacional::solveOperacionalMIP()
 			lp->writeProbLP( this->getOpLpFileName(-1).c_str() );
 		#endif		
 		
-		lp->setMIPScreenLog(4);
 		lp->setMIPEmphasis(0);
-		lp->setPolishAfterNode(1000000000);
         lp->setCuts(0);
 		if ( SEM_FOLGA_DEMANDA ){
 			lp->setMIPEmphasis(0);
@@ -2486,7 +2483,6 @@ int Operacional::solveGaranteTotalAtendHorInicial( bool& CARREGA_SOL_PARCIAL, do
 		lp->setMIPEmphasis(1);
 		lp->setCuts(0);
 		lp->setNodeLimit(10000000000);
-		lp->setPolishAfterNode(1);
 		lp->setPolishAfterTime( this->getTimeLimit(Solver::OP1) / 2 );
 		lp->setTimeLimit( this->getTimeLimit(Solver::OP1) );
 		lp->setNumIntSols(0);
@@ -2717,7 +2713,6 @@ int Operacional::solveMaxAtendPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *
 			lp->setMIPEmphasis(1);
 			lp->setCuts(0);
 			lp->setNodeLimit(10000000000);
-			lp->setPolishAfterNode(1);
 			lp->setPolishAfterTime( this->getTimeLimit(Solver::OP2) / 2 );
 			lp->setTimeLimit( this->getTimeLimit(Solver::OP2) );
 			lp->setNumIntSols(0);
@@ -2962,7 +2957,6 @@ int Operacional::solveMinPVPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS 
 			lp->setMIPEmphasis(1);
 			lp->setCuts(0);
 			lp->setNodeLimit(10000000000);
-			lp->setPolishAfterNode(1);
 			lp->setPolishAfterTime( this->getTimeLimit(Solver::OP3) / 2 );
 			lp->setTimeLimit( this->getTimeLimit(Solver::OP3) );
 			lp->setNumIntSols(0);

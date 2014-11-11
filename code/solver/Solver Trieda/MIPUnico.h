@@ -54,6 +54,9 @@ private:
 	  MIP_DISP_PROF = 3
    };	  
 
+
+   void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
+
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
    *********************************************************************/
@@ -64,24 +67,17 @@ private:
    int criaVariavelTaticoAlunoCreditosAPartirDeX_MaisFiltroAluno( int campusId, int P );	// v_{a,i,d,u,s,hi,hf,t}    
    int criaVariavelTaticoAlunoCreditosAPartirDeX( int campusId, int P );					// v_{a,i,d,u,s,hi,hf,t}
    int criaVariavelTaticoOferecimentosAPartirDeX( int campusId, int P );
-   int criaVariavelTaticoConsecutivosAPartirDeX( int campusId, int P );
-   int criaVariavelTaticoCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P );
-   int criaVariavelTaticoFolgaCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P );   
-   int criaVariavelTaticoAberturaCompativelAPartirDeX( int campusId, int P );
+   int criaVariavelTaticoCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P );			// m_{i,d,k}
+   int criaVariavelTaticoFolgaCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P );	// fkp_{i,d,k} e fkm_{i,d,k}
+   int criaVariavelTaticoAberturaCompativelAPartirDeX( int campusId, int P );				// zc_{d,t}
    int criaVariavelTaticoAberturaAPartirDeX( int campusId, int prior );
    int criaVariavelTaticoAlocaAlunoTurmaDiscAPartirDeV( int campusId, int P );				// s_{i,d,a,cp}
 
-   int criaVariavelTaticoCreditos__( int campusId, int P );
-   void criaVariavelTaticoCreditosCopiadas( int campusId, int P, int &numVars );			// x_{i,d,u,s,hi,hf,t}      
-   int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
+   int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}
+   void criaVariavelTaticoCreditosCopiadas( int campusId, int P, int &numVars );			// x_{i,d,u,s,hi,hf,t}
    int criaVariavelTaticoCreditosComSolInicial( int campusId, int P );						// x_{i,d,u,s,hi,hf,t}
    int criaVariavelTaticoOferecimentos( int campusId, int P );								// o_{i,d,u,s}
-   int criaVariavelTaticoAlocaAlunoTurmaDisc( int campusId, int P );						// s_{i,d,a,cp}
    int criaVariavelTaticoCursoAlunos( int campusId, int P );								// b_{i,d,c,c'}
-   int criaVariavelTaticoConsecutivos( int campusId, int P );								// c_{i,d,t}
-   int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P );					// m_{i,d,k}   
-   int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int P );				// fkp_{i,d,k} e fkm_{i,d,k}
-   int criaVariavelTaticoAberturaCompativel( int campusId, int P );							// zc_{d,t}
    int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId, int P  );						// fd_{d,a}
    int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
    int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
@@ -89,8 +85,6 @@ private:
    int criaVariavelFolgaProibeCompartilhamento( int campusId, int P );						// fc_{i,d,c,c',cp}
    int criaVariavelFolgaPrioridadeInf( int campusId, int prior );							// fpi_{a,cp}
    int criaVariavelFolgaPrioridadeSup( int campusId, int prior );							// fps_{a,cp}
-   int criaVariavelTaticoAlocaAlunoTurmaDiscEquiv( int campusId, int P );					// s_{i,d,a,cp}
-   int criaVariavelTaticoAlocaAlunoTurmaDiscEquivTotal( int campusId, int P );				// s_{i,d,a,cp}
    int criaVariavelTaticoAbertura( int campusId, int prior, int r );						// z_{i,d,cp}
    int criaVariavelTaticoAlunosMesmaTurmaPratica( int campusId, int P );					// ss_{a1,a2,dp}
    int criaVariavelTaticoFolgaMinimoDemandaPorAluno( int campusId, int P_ATUAL );			// fmd_{a}
@@ -258,7 +252,6 @@ private:
    bool USAR_EQUIVALENCIA;
    bool PERMITIR_NOVAS_TURMAS;
    bool CRIAR_VARS_FIXADAS;
-   bool CRIANDO_V_ATRAVES_DE_X;
    int ITERACAO;
    bool PERMITIR_REALOCAR_ALUNO;
 
@@ -292,22 +285,22 @@ private:
 	void addVariaveisTatico();
 	void initCredsSala();
 	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
+	void clearVariablesMaps();
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
+
 	int solveMIPUnico( int campusId, int prioridade, int r );
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendPorFasesDoDia( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
-	bool polish(double *xSol, double maxTime, int percIni, double maxTempoSemMelhora);
+	
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
 	Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
 	ConjuntoSala* retornaSalaDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
 	GGroup< VariableTatico *, LessPtr<VariableTatico> > retornaAulasEmVarX( int turma, Disciplina* disciplina, int campusId );
-	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > retornaAulasEmVarXFinal( int turma, Disciplina* disciplina, int campusId );
-	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > retornaAulasEmVarV( Aluno* aluno, GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > aulasX );
-
+	
 	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > vars_v;
 	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
 

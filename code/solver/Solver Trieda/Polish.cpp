@@ -10,9 +10,12 @@
 using std::stringstream;
 
 
+double MIN_OPT_VALUE = 0.0;
+
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile )
-	: lp_(lp), vHashTatico(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual(999999999999.9)
+	: lp_(lp), vHashTatico(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual(999999999999.9),
+	nrPrePasses_(-1)
 {
 	originalLogFileName = originalLogFile;
 	hasOrigFile = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
@@ -303,45 +306,55 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 		  melhora = fabs(objN-objAtual);
 		  if(objAtual!=0) melhora /= objAtual;
 	  }
-
+	  
 	#pragma region SET NEW VALUES FOR PERC AND TEMPOITER
 	  if (status == OPTSTAT_UNOPTIMIZED)	// time limit
 	  {
 		  tempoIter += 50;
+		  setLpPrePasses();
 	  }
 	  else if ( optimal || gap <= 1.0 )		// TINY GAP
 	  {
 		  if (melhorou)
 		  {
-			  double minExcess = 50;
+			  // Adjust time limit in case it is too high
+			  double minExcess = max( 0.5*tempoIter, 50 );
 			  double runtime = (lp_->getRunTime()/CLOCKS_PER_SEC);
 			  if ( fabs(tempoIter-runtime) > minExcess )
 				  tempoIter = runtime+minExcess;
 		  }
+
+		  if ( fabs(objN-MIN_OPT_VALUE) < 10e-6)// Obj acchieved a known minimal possible value
+		  {
+			  okIter = false;
+		  }
+
 		  if ( perc<=10 )
 		  {
 			  if (perc <= 0) okIter = false;	// ótimo!
-			  else perc = 0;					// problema livre
+			  else if(!melhorou) perc = 0;		// problema livre
 		  }
 		  else
 		  {
-			  // diminui a parcela a deixar livre			  
+			  // diminui a parcela fixa
 			  //if(melhora>0.7) perc -= 5;
-			  if(melhora<0.01) perc -= 10;
+			  //if(melhora<0.01) perc -= 10;
+			  if(!melhorou) perc -= 10;
 		  }
 	  }
 	  else									// BIG GAP
 	  {
 		  if (!melhorou)
 		  {
-			  int increm = 10;
-			  if (perc+10 < 100)
-			  {
+			  int increm = 5;
+			  if (perc+increm < 100)
 				  perc += increm;
-				  chgParams();
-			  }
-			  			  
-			  if (!optimal) tempoIter += 20;
+
+			  chgParams(); 			  
+
+			  int incremTime = 20;					// increases the time limit by a fixed amount
+			  incremTime += (100-perc)*0.2;			// increases the time limit the more perc is close to 0.
+			  if (!optimal) tempoIter += incremTime;
 		  }
 	  }
 	#pragma endregion
@@ -446,8 +459,22 @@ void Polish::logIter(double perc, double tempoIter)
 	}
 }
 
+void Polish::setLpPrePasses()
+{
+	if (nrPrePasses_ == -1)
+		nrPrePasses_ = 5;
+	else if (nrPrePasses_ > 2)
+		nrPrePasses_--;
+	else return;
+
+	bool success = lp_->setPrePasses(nrPrePasses_);
+
+	if (!success) polishFile << "void Polish::setLpPrePasses(): fail!";
+}
+
 void Polish::setParams(double tempoIter)
 {
+	lp_->setPrePasses(nrPrePasses_);
   	lp_->setNumIntSols(10000000);
     lp_->setTimeLimit( tempoIter );
     lp_->setMIPRelTol( 0.1 );

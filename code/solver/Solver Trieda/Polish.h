@@ -57,6 +57,7 @@ private:
 
 	void logIter(double perc, double tempoIter);
 
+	void setLpPrePasses();
 	void setParams(double tempoIter);
 	void chgParams();
 	bool needsPolish();
@@ -81,6 +82,7 @@ private:
 	   int perc;
 	   int status;
 	   double objAtual;
+	   int nrPrePasses_;
 
 	   int *idxs;
 	   double *vals;

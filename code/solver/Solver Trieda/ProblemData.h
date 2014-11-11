@@ -551,6 +551,7 @@ public:
    std::map<DateTime, GGroup< std::pair<DateTime,DateTime> > > mapDtiSobrepoeDtiDtf;
 
    std::map<int, std::pair<DateTime*,int> > horarioAulaDateTime; 
+   bool getPairDateTime(int horId, std::pair<DateTime*,int> &) const;
 
    GGroup<DateTime*,LessPtr<DateTime> > horariosInicioValidos;
    GGroup<DateTime*,LessPtr<DateTime> > horariosTerminoValidos;

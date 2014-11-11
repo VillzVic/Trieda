@@ -430,6 +430,17 @@ int ProblemData::getHorarioDiaIdx( int dia, int horarioId )
    return ( dia * ( maxHorariosDif + 1 ) + horarioId );
 }
 
+bool ProblemData::getPairDateTime(int horId, std::pair<DateTime*,int> & result) const
+{
+	auto finder = horarioAulaDateTime.find(horId);
+	if ( finder != horarioAulaDateTime.end() )
+	{
+		result = finder->second;
+		return true;
+	}
+	return false;
+}
+
 DateTime* ProblemData::getDateTimeInicial( DateTime dt )
 {
 	// fim
@@ -2801,6 +2812,8 @@ AlunoDemanda* ProblemData::atualizaAlunoDemandaEquiv( int turma, Disciplina* dis
 */
 void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 {	
+	std::cout << "\nAtualizacao de demandas de prioridade " << novaPrioridade <<"..."; fflush(0);
+
 	int velhaPrioridade = novaPrioridade - 1;
 
 	mapDemandaAlunos.clear();
@@ -2945,6 +2958,8 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 	}
 
 	calculaDemandas();
+	
+	std::cout << "  atualizadas!\n"; fflush(0);
 }
 
 // Dado o id de uma demanda, retorna o campus correspondente.
@@ -4543,6 +4558,8 @@ void ProblemData::imprimeAlocacoesGerais( int campusId, int prioridade, int roda
 
 void ProblemData::imprimeDiscNTurmas( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico )
 {
+	std::cout<<"\nImprimeDiscNTurmas...\n"; fflush(NULL);
+
 	int totalAtendimentos=0;
 	int totalAtendimentosSemDivPT=0;
 	long int totalCargaHoraria=0;
@@ -6117,6 +6134,7 @@ void ProblemData::imprimeUtilizacaoSala( int campusId, int prioridade, int cjtAl
 	#ifndef PRINT_LOGS
 		return;
 	#endif
+	std::cout<<"\nImprime utilizacao das salas...\n"; fflush(NULL);
 
 	ofstream utilizaSalasFile;
 	std::string solFilenameCreditosSala( this->getUtilizacaoSalasFileName( campusId, prioridade, cjtAlunosId, heuristica, r, MIP ) );

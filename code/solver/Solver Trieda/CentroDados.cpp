@@ -100,6 +100,7 @@ void CentroDados::printTest( std::string method, std::string msg )
 	{
 		(CentroDados::fOutTest) << endl << method << ":"
 			<< endl << "\t" << msg << endl;
+		CentroDados::fOutError.flush();
 	}
 }
 
@@ -110,6 +111,7 @@ void CentroDados::printWarning( std::string method, std::string msg )
 	{
 		(CentroDados::fOutWarn) << endl << method << ":"
 			<< endl << "\t" << msg << endl;
+		CentroDados::fOutError.flush();
 	}
 }
 	
@@ -120,6 +122,7 @@ void CentroDados::printError( std::string method, std::string msg )
 	{
 		(CentroDados::fOutError) << endl << method << ":"
 			<< endl << "\t" << msg << endl;
+		CentroDados::fOutError.flush();
 	}
 }
 
