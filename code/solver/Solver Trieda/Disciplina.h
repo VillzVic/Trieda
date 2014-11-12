@@ -45,6 +45,9 @@ public:
    
    std::map< int, ConjuntoSala* > cjtSalasAssociados; // map[cjtSalaId] = cjtSala
       
+   void clearHors();
+   void clearDivCreds();
+
    virtual void le_arvore( ItemDisciplina & );
 
    int adicionaDemandaTotal( int d ) { return ( demanda_total += d ); }

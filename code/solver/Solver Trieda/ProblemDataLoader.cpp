@@ -1516,19 +1516,10 @@ void ProblemDataLoader::combinacaoDivCreditos()
    {
 	   Disciplina *disciplina = *itDisc;
 	   
-	   if (disciplina->getId() == 14161)
-		   std::cout<<"";
-
 	   // --------------------------------------------------------------------------------
 	   // Elimina regra específica de divisão de créditos, caso o parâmetro esteja desabilitado.
 	   if ( ! problemData->parametros->regrasEspecificasDivisaoCredito )
-	   {
-		   if ( disciplina->divisao_creditos.size() != 0 )
-		   {
-			   disciplina->divisao_creditos.deleteElements();
-			   disciplina->divisao_creditos.clear();
-		   }
-	   }
+		   disciplina->clearDivCreds();
 	   
 	   // --------------------------------------------------------------------------------
 	   // Se a disciplina não tem regra de divisão de créditos especificada, procura regras
@@ -1541,7 +1532,10 @@ void ProblemDataLoader::combinacaoDivCreditos()
 				if ( it_Creds_Regras != problemData->creds_Regras.end() )
 				{
 					ITERA_GGROUP_LESSPTR( itDiv, it_Creds_Regras->second, DivisaoCreditos )
-						disciplina->divisao_creditos.add( *itDiv );
+					{
+						DivisaoCreditos * divisao = new DivisaoCreditos(**itDiv);
+						disciplina->divisao_creditos.add( divisao );
+					}
 				}
 		   }
 	   }
@@ -1553,7 +1547,6 @@ void ProblemDataLoader::combinacaoDivCreditos()
 		   {
 				DivisaoCreditos * divisao = new DivisaoCreditos(1,0,0,0,0,0,0);
 				disciplina->divisao_creditos.add( divisao );
-				problemData->regras_div.add( divisao );
 		   }
 		   else
 		   {
@@ -2711,37 +2704,7 @@ void ProblemDataLoader::divideDisciplinas()
                GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > >::iterator it_Creds_Regras;
 
             // Limpa as divisões de créditos relacionadas à disciplina antiga, que envolviam creds prat E teor
-			(*it_disc)->divisao_creditos.deleteElements();
-			(*it_disc)->divisao_creditos.clear();
-
-			// Se for para usar somente regras já estipuladas pelo usuário, adiciona as novas regras das disciplinas
-			//if ( problemData->parametros->regrasGenericasDivisaoCredito )
-			//{
-			//	// Alterações relacionadas à disciplina antiga
-			//	it_Creds_Regras = problemData->creds_Regras.find( it_disc->getCredTeoricos() );
-
-			//	// Checando se existem regras de crédito
-			//	// cadastrada para o total de créditos da disciplina teórica.
-			//	if ( it_Creds_Regras != problemData->creds_Regras.end() )
-			//	{
-			//		ITERA_GGROUP_LESSPTR( itDiv, it_Creds_Regras->second, DivisaoCreditos )
-			//			(*it_disc)->divisao_creditos.add( *itDiv );
-			//	}
-			//	
-			//	// ---------------------------------------------------
-
-			//	// Alterações relacionadas à nova disciplina
-			//	it_Creds_Regras = problemData->creds_Regras.find(
-			//	   nova_disc->getCredPraticos() );
-
-			//	// Checando se existem regras de crédito
-			//	// cadastrada para o total de créditos da nova disciplina prática.
-			//	if ( it_Creds_Regras != problemData->creds_Regras.end() )
-			//	{
-			//		ITERA_GGROUP_LESSPTR( itDiv, it_Creds_Regras->second, DivisaoCreditos )
-			//			nova_disc->divisao_creditos.add( *itDiv );
-			//	}
-			//}
+			(*it_disc)->clearDivCreds();
          }
 
          //>>> Copiando HORARIO

@@ -146,7 +146,7 @@ ProblemData::~ProblemData()
 
 void ProblemData::clearHorarioAula()
 {
-	for ( auto it = refHorarioAula.begin(); it != refHorarioAula.end(); )
+	for ( auto it = refHorarioAula.begin(); it != refHorarioAula.end(); it = refHorarioAula.begin())
 	{
 		HorarioAula *h = it->second;
 		refHorarioAula.erase(it);

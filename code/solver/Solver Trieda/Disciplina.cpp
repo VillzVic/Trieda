@@ -26,10 +26,20 @@ Disciplina::Disciplina(void)
 
 Disciplina::~Disciplina(void)
 {
-	if (horarios.size()>0)
-		horarios.deleteElements();
-	if (divisao_creditos.size()>0)
-		divisao_creditos.deleteElements();
+	this->clearHors();
+	this->clearDivCreds();
+}
+
+void Disciplina::clearHors()
+{
+	horarios.deleteElements();
+	horarios.clear();
+}
+
+void Disciplina::clearDivCreds()
+{
+	divisao_creditos.deleteElements();
+	divisao_creditos.clear();
 }
 
 void Disciplina::le_arvore( ItemDisciplina & elem )
@@ -82,7 +92,7 @@ void Disciplina::le_arvore( ItemDisciplina & elem )
    prof_unico_discPT = elem.profUnicoCredsTeorPrat();
    aulas_continuas_teor_prat = elem.aulasContinuasTeorPrat();
 
-   divisao_creditos.clear();
+   clearDivCreds();
    if ( elem.divisaoDeCreditos().present() )
    {
 	   DivisaoCreditos * divisao = new DivisaoCreditos();
