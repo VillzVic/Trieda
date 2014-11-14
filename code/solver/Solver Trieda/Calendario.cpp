@@ -228,16 +228,16 @@ int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *h
 	if ( !possuiHorario( hi ) ||
 		 !possuiHorario( hf ) )
 	{
-		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ): \n";
-		std::cout<<"Horario hf ou hi nao encontrado no calendario.\n";		
+		std::stringstream msg;
+		msg <<"Horario hf ou hi nao encontrado no calendario.\n";		
+		CentroDados::printError("Calendario::retornaNroCreditosEntreHorarios()",msg.str());
 		return 0;
 	}	
 	if ( *hi > *hf && !hi->inicioFimIguais(*hf) )
 	{
-		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ): ";
-		std::cout<<"hi > hf\n";
-		std::cout<<"hi = "<<hi->getInicio();
-		std::cout<<"\thf = "<<hf->getInicio();
+		std::stringstream msg;
+		msg << "hi > hf\n" <<"hi = "<<hi->getInicio() <<"\thf = "<<hf->getInicio();
+		CentroDados::printError("Calendario::retornaNroCreditosEntreHorarios()",msg.str());
 		return 0;
 	}
 	else if ( hi->inicioFimIguais(*hf) )

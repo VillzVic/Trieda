@@ -54,12 +54,7 @@ void ProblemDataLoader::load()
    problemData->calculaCalendarioSomaInterv();
    dif = CentroDados::getLastRunTime();
    std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
-
-   std::cout << left << std::setw(70) << "\nCalcula tempo de intervalo por fase do dia dos calendarios..."; fflush(NULL);
-   problemData->copiaFasesDosTurnosParaSalas();
-   dif = CentroDados::getLastRunTime();
-   std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
-      
+         
    std::cout << left << std::setw(70) << "\nSet Fase Do Dia Dos HorariosAula..."; fflush(NULL);
    problemData->setFaseDoDiaDosHorariosAula();
    dif = CentroDados::getLastRunTime();
@@ -1510,12 +1505,10 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 
 void ProblemDataLoader::combinacaoDivCreditos()
 {
-	bool espelhar = true;
-
    ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
    {
 	   Disciplina *disciplina = *itDisc;
-	   
+	
 	   // --------------------------------------------------------------------------------
 	   // Elimina regra específica de divisão de créditos, caso o parâmetro esteja desabilitado.
 	   if ( ! problemData->parametros->regrasEspecificasDivisaoCredito )
@@ -1524,199 +1517,226 @@ void ProblemDataLoader::combinacaoDivCreditos()
 	   // --------------------------------------------------------------------------------
 	   // Se a disciplina não tem regra de divisão de créditos especificada, procura regras
 	   // gerais com o mesmo número total de créditos
-	   if ( disciplina->divisao_creditos.size() == 0 )
-	   {
-		   if ( problemData->parametros->regrasGenericasDivisaoCredito )
-		   {
-			    auto it_Creds_Regras = problemData->creds_Regras.find( disciplina->getTotalCreditos() );
-				if ( it_Creds_Regras != problemData->creds_Regras.end() )
-				{
-					ITERA_GGROUP_LESSPTR( itDiv, it_Creds_Regras->second, DivisaoCreditos )
-					{
-						DivisaoCreditos * divisao = new DivisaoCreditos(**itDiv);
-						disciplina->divisao_creditos.add( divisao );
-					}
-				}
-		   }
-	   }
+	   checkDivisaoGenerica(disciplina);
 	   
 	   // --------------------------------------------------------------------------------
-	   if ( disciplina->divisao_creditos.size() == 0 )
-	   {
-		   if ( disciplina->getTotalCreditos() == 1 )
-		   {
-				DivisaoCreditos * divisao = new DivisaoCreditos(1,0,0,0,0,0,0);
-				disciplina->divisao_creditos.add( divisao );
-		   }
-		   else
-		   {
-			   stringstream msg;
-			   msg << "Sem regra de divisao de " << disciplina->getTotalCreditos()
-				   << " creditos para a disciplina " << disciplina->getId();
-			   CentroDados::printWarning( "void ProblemDataLoader::combinacaoDivCreditos()", msg.str() );
-			   continue;
-		   }
-	   }
+	   if (!checkExisteDivisao(disciplina))
+		   continue;
 	   
 	   // --------------------------------------------------------------------------------
 	   // Calcula as combinações
-
 	   std::set< DivCredType > combinacoes;
-
-	   ITERA_GGROUP_LESSPTR( itDiv, disciplina->divisao_creditos, DivisaoCreditos )
-	   {
-		    DivisaoCreditos *divisao = *itDiv;
-						
-			std::map< int/*dia*/, int/*ncred*/ > mapDiaNCred;
-
-			for ( int i = 0; i < 7; i++ )
-			{
-				mapDiaNCred[i+2] = divisao->dia[i];
-			}
-			
-			// Para cada regra de divisão de creditos podem existir a original e mais 6
-			for ( int k = 0; k <= 6; k++ )
-			{
-				std::map< int/*dia*/, int/*ncred*/ > mapDiaNCredShift;
-
-				for ( auto it = mapDiaNCred.begin(); it != mapDiaNCred.end(); it++ )
-				{
-					std::map< int/*dia*/, int/*ncred*/ >::iterator itMinus1;
-					if ( it == mapDiaNCred.begin() )
-						itMinus1 = std::prev(mapDiaNCred.end());
-					else
-						itMinus1 = std::prev(it);
-
-					mapDiaNCredShift[it->first] = itMinus1->second;
-				}
-
-				mapDiaNCred.clear();
-				mapDiaNCred = mapDiaNCredShift;
-
-				bool adicionar = true;
-
-				// Verifica se as regras de divisão de créditos criadas possui dias válidos
-				for ( auto itDia = mapDiaNCred.begin(); itDia != mapDiaNCred.end(); itDia++ )
-				{
-					if ( itDia->second > 0 )
-					if ( disciplina->diasLetivos.find( itDia->first ) ==
-						 disciplina->diasLetivos.end() )
-					{
-						adicionar = false;
-						break;
-					}
-				}
-
-				if ( adicionar )
-				{
-					DivCredType div( mapDiaNCred );
-					combinacoes.insert(div);
-				}
-			}
-	   }
+	   criaCombinacoes(disciplina, combinacoes);
 	   
 	   // --------------------------------------------------------------------------------
 	   // Espelha as combinações calculadas anteriormente
-
-	   if ( espelhar )
-	   {
-		   std::set< DivCredType > espelhados;
-
-		   // Constroi as combinações espelhadas
-		   auto itK = combinacoes.begin();
-		   for ( ; itK != combinacoes.end(); itK++ )
-		   {
-			   DivCredType original = (*itK);
-			   		   
-			   DivCredType espelho; 
-			   
-			   bool adicionar=true;
-
-			   bool impar = ((int)original.diaNCred.size()) % 2;
-
-			   // Espelha
-			   auto itEsq = original.diaNCred.begin();
-			   auto itDir = original.diaNCred.end();
-			   bool cruzou = (itEsq == itDir);
-			   itDir--;
-
-			   while ( !cruzou && adicionar )			   
-			   {
-				   int diaEsq = itEsq->first;
-				   int ncredEsq = itEsq->second;				   
-				   int diaDir = itDir->first;
-				   int ncredDir = itDir->second;
-				   
-				   if ( ncredDir > 0 )	// Se ncred > 0
-				   {
-					   if ( disciplina->diasLetivos.find( diaEsq ) !=
-							disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
-					   {
-						   espelho.diaNCred[diaEsq] = ncredDir;
-					   }
-					   else
-					   {
-						   adicionar=false;
-					   }
-				   }
-				   else espelho.diaNCred[diaEsq] = ncredDir;
-
-				   if ( ncredEsq > 0 )	// Se ncred > 0
-				   {
-					   if ( disciplina->diasLetivos.find( diaDir ) !=
-							disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
-					   {
-						   espelho.diaNCred[diaDir] = ncredEsq;
-					   }
-					   else
-					   {
-						   adicionar=false;
-					   }
-				   }
-				   else espelho.diaNCred[diaDir] = ncredEsq;
-				   
-				   itEsq++;
-				   itDir--;
-				   
-				   if (impar) cruzou = (std::prev(itEsq) == std::next(itDir));
-				   else cruzou = (std::prev(itEsq) == itDir);
-			   }
-			   
-			   // Salva o espelho
-			   if ( adicionar )
-			   {
-				   if ( espelhados.find( espelho) == espelhados.end() )
-					   espelhados.insert( espelho );
-			   }
-		   }
-
-		   // Adiciona os espelhos
-		   for ( auto itEspelho = espelhados.begin(); itEspelho != espelhados.end(); itEspelho++ )
-		   {
-			   if ( combinacoes.find( *itEspelho ) == combinacoes.end() )
-				   combinacoes.insert(*itEspelho);
-		   }
-	   }
+	   espelhaCombinacoes(disciplina, combinacoes);
 
 	   // --------------------------------------------------------------------------------
 	   // Adiciona as combinações na disciplina
-	   for ( auto itK = combinacoes.begin(); itK != combinacoes.end(); itK++ )
-	   {
-		   DivCredType div = (*itK);
-
-		   std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > combK;
-
-		   for ( auto itMapDiaCred = div.diaNCred.begin(); itMapDiaCred != div.diaNCred.end(); itMapDiaCred++ )
-		   {			   
-			   combK.push_back( std::make_pair(itMapDiaCred->first, itMapDiaCred->second) );
-		   }
-
-		   disciplina->combinacao_divisao_creditos.push_back( combK );
-	   }
+	   addCombinacoes(disciplina, combinacoes);
    }
 
    problemData->imprimeCombinacaoCredsDisciplinas();
 }
+
+void ProblemDataLoader::checkDivisaoGenerica(Disciplina *disciplina)
+{
+	if ( !disciplina->possuiRegraCred() )
+	{
+		if ( problemData->parametros->regrasGenericasDivisaoCredito )
+		{
+			auto it_Creds_Regras = problemData->creds_Regras.find( disciplina->getTotalCreditos() );
+			if ( it_Creds_Regras != problemData->creds_Regras.end() )
+			{
+				ITERA_GGROUP_LESSPTR( itDiv, it_Creds_Regras->second, DivisaoCreditos )
+				{
+					DivisaoCreditos * divisao = new DivisaoCreditos(**itDiv);
+					disciplina->divisao_creditos.add( divisao );
+				}
+			}
+		}
+	}
+}
+
+bool ProblemDataLoader::checkExisteDivisao(Disciplina *disciplina)
+{
+	if ( !disciplina->possuiRegraCred() )
+	{
+		if ( disciplina->getTotalCreditos() == 1 )
+		{
+			DivisaoCreditos * divisao = new DivisaoCreditos(1,0,0,0,0,0,0);
+			disciplina->divisao_creditos.add( divisao );
+		}
+		else
+		{
+			stringstream msg;
+			msg << "Sem regra de divisao de " << disciplina->getTotalCreditos()
+				<< " creditos para a disciplina " << disciplina->getId();
+			CentroDados::printWarning( "void ProblemDataLoader::combinacaoDivCreditos()", msg.str() );
+			return false;
+		}
+	}
+	return true;
+}
+
+void ProblemDataLoader::criaCombinacoes(Disciplina *disciplina, std::set<DivCredType> &combinacoes)
+{
+	ITERA_GGROUP_LESSPTR( itDiv, disciplina->divisao_creditos, DivisaoCreditos )
+	{
+		DivisaoCreditos *divisao = *itDiv;
+						
+		std::map< int/*dia*/, int/*ncred*/ > mapDiaNCred;
+
+		for ( int i = 0; i < 7; i++ )
+		{
+			mapDiaNCred[i+2] = divisao->dia[i];
+		}
+			
+		// Para cada regra de divisão de creditos podem existir a original e mais 6
+		for ( int k = 0; k <= 6; k++ )
+		{
+			std::map< int/*dia*/, int/*ncred*/ > mapDiaNCredShift;
+
+			for ( auto it = mapDiaNCred.begin(); it != mapDiaNCred.end(); it++ )
+			{
+				std::map< int/*dia*/, int/*ncred*/ >::iterator itMinus1;
+				if ( it == mapDiaNCred.begin() )
+					itMinus1 = std::prev(mapDiaNCred.end());
+				else
+					itMinus1 = std::prev(it);
+
+				mapDiaNCredShift[it->first] = itMinus1->second;
+			}
+
+			mapDiaNCred.clear();
+			mapDiaNCred = mapDiaNCredShift;
+
+			bool adicionar = true;
+
+			// Verifica se as regras de divisão de créditos criadas possui dias válidos
+			for ( auto itDia = mapDiaNCred.begin(); itDia != mapDiaNCred.end(); itDia++ )
+			{
+				if ( itDia->second > 0 )
+				if ( disciplina->diasLetivos.find( itDia->first ) ==
+						disciplina->diasLetivos.end() )
+				{
+					adicionar = false;
+					break;
+				}
+			}
+
+			if ( adicionar )
+			{
+				DivCredType div( mapDiaNCred );
+				combinacoes.insert(div);
+			}
+		}
+	}
+}
+
+void ProblemDataLoader::espelhaCombinacoes(Disciplina *disciplina, std::set< DivCredType > &combinacoes)
+{
+	bool espelhar = true;
+
+	if ( espelhar )
+	{
+		std::set< DivCredType > espelhados;
+
+		// Constroi as combinações espelhadas
+		auto itK = combinacoes.begin();
+		for ( ; itK != combinacoes.end(); itK++ )
+		{
+			DivCredType original = (*itK);
+			   		   
+			DivCredType espelho; 
+			   
+			bool adicionar=true;
+
+			bool impar = ((int)original.diaNCred.size()) % 2;
+
+			// Espelha
+			auto itEsq = original.diaNCred.begin();
+			auto itDir = original.diaNCred.end();
+			bool cruzou = (itEsq == itDir);
+			itDir--;
+
+			while ( !cruzou && adicionar )			   
+			{
+				int diaEsq = itEsq->first;
+				int ncredEsq = itEsq->second;				   
+				int diaDir = itDir->first;
+				int ncredDir = itDir->second;
+				   
+				if ( ncredDir > 0 )	// Se ncred > 0
+				{
+					if ( disciplina->diasLetivos.find( diaEsq ) !=
+						disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
+					{
+						espelho.diaNCred[diaEsq] = ncredDir;
+					}
+					else
+					{
+						adicionar=false;
+					}
+				}
+				else espelho.diaNCred[diaEsq] = ncredDir;
+
+				if ( ncredEsq > 0 )	// Se ncred > 0
+				{
+					if ( disciplina->diasLetivos.find( diaDir ) !=
+						disciplina->diasLetivos.end() )	// Se a disciplina possui o dia
+					{
+						espelho.diaNCred[diaDir] = ncredEsq;
+					}
+					else
+					{
+						adicionar=false;
+					}
+				}
+				else espelho.diaNCred[diaDir] = ncredEsq;
+				   
+				itEsq++;
+				itDir--;
+				   
+				if (impar) cruzou = (std::prev(itEsq) == std::next(itDir));
+				else cruzou = (std::prev(itEsq) == itDir);
+			}
+			   
+			// Salva o espelho
+			if ( adicionar )
+			{
+				if ( espelhados.find( espelho) == espelhados.end() )
+					espelhados.insert( espelho );
+			}
+		}
+
+		// Adiciona os espelhos
+		for ( auto itEspelho = espelhados.begin(); itEspelho != espelhados.end(); itEspelho++ )
+		{
+			if ( combinacoes.find( *itEspelho ) == combinacoes.end() )
+				combinacoes.insert(*itEspelho);
+		}
+	}
+}
+
+void ProblemDataLoader::addCombinacoes(Disciplina *disciplina, std::set< DivCredType > const combinacoes)
+{
+	for ( auto itK = combinacoes.begin(); itK != combinacoes.end(); itK++ )
+	{
+		DivCredType div = (*itK);
+
+		std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > combK;
+
+		for ( auto itMapDiaCred = div.diaNCred.begin(); itMapDiaCred != div.diaNCred.end(); itMapDiaCred++ )
+		{			   
+			combK.push_back( std::make_pair(itMapDiaCred->first, itMapDiaCred->second) );
+		}
+
+		disciplina->combinacao_divisao_creditos.push_back( combK );
+	}
+}
+
 
 /*
 	Define um map de compatibilidade e incompatibilidade entre 2 cursos.

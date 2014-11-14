@@ -20,7 +20,6 @@ public:
    virtual ~Disciplina( void );
 
    GGroup< DivisaoCreditos*, LessPtr<DivisaoCreditos> > divisao_creditos;
- //  DivisaoCreditos * divisao_creditos;
    TipoDisciplina * tipo_disciplina;
    NivelDificuldade * nivel_dificuldade;
 
@@ -100,9 +99,11 @@ public:
    bool aulasContinuas() const { return aulas_continuas_teor_prat; }
    int getNroCredsRegraDiv( int k, int dia );
    bool temParPratTeor() const { return tem_par_prat_teor; }
+   bool possuiRegraCred() const;
 
    bool possuiHorariosNoDia( HorarioAula *hi, HorarioAula *hf, int dia );
    bool possuiHorariosOuCorrespondentesNoTurno( TurnoIES* turnoIES );
+   int getNrHorsNoTurno( TurnoIES* turnoIES ) const;
    GGroup< Horario*, LessPtr<Horario> > getHorariosOuCorrespondentes( TurnoIES* turnoIES );
    GGroup< HorarioAula*, LessPtr<HorarioAula> > getHorariosDia( Calendario* sl, int dia );
    GGroup< HorarioDia*, LessPtr<HorarioDia> > getHorariosDia( Calendario* sl ) { return calendarios[sl]; } 

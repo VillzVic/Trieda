@@ -42,7 +42,9 @@ Professor::Professor( bool eVirtual )
 
 Professor::~Professor( void )
 {
-	horarios.deleteElements();
+	// ToDo: horarios de profs virtuais criados pela heuristica são os mesmo de profs reais. Conferir se está ficando coisa sem delete
+	if (!eVirtual())
+		horarios.deleteElements();
 	magisterio.deleteElements();
 }
 

@@ -47,38 +47,7 @@ ProblemData::ProblemData( char inputName[1024], int inputId )
    
 	EQUIV_TRANSITIVIDADE = false;
 
-   this->atendimentosTatico = NULL;
-
-//#ifndef HEURISTICA
-//   this->solTaticoInicial = new SolucaoTaticoInicial();
-//#endif
-	  
-   // TODO: isso não deveria ser fixo aqui. Tem que ser geral, só para o problemData.
-   // Quando passar a vir definido pelo cliente, mudar isso!!! Na Sala também tem getTurno()!!
-      
-   DateTime tarde;
-   tarde.setHour(12);
-   tarde.setMinute(30);
-   this->setInicioTarde( tarde );
-
-#ifdef UNIRITTER
-   DateTime noite;
-   noite.setHour(17);
-   noite.setMinute(0);
-   this->setInicioNoite( noite );
-#elif defined KROTON
-   DateTime noite;
-   noite.setHour(17);
-   noite.setMinute(40);
-   this->setInicioNoite( noite );
-#elif defined UNIT
-   DateTime noite;
-   noite.setHour(18);
-   noite.setMinute(0);
-   this->setInicioNoite( noite );
-#endif
-
-   nroTurnos=3;
+   this->atendimentosTatico = nullptr;
 }
 
 ProblemData::~ProblemData()
@@ -383,36 +352,21 @@ void ProblemData::defineFasesDosTurnos()
 			}
 		}
 	}
-	
-	if ( debugging ) std::cout<<"\n\nFase 1: i=" << fase1.first << " f=" << fase1.second;
-	if ( debugging ) std::cout<<"\nFase 2: i=" << fase2.first << " f=" << fase2.second;
-	if ( debugging ) std::cout<<"\nFase 3: i=" << fase3.first << " f=" << fase3.second << std::endl;
+
+	std::cout << endl;
+	for (auto it = this->fasesDosTurnos.cbegin(); it != this->fasesDosTurnos.cend(); it++)
+	{
+		std::cout<<"\nFase " << it->first 
+			<< ": i=" << it->second.first.hourMinToStr() 
+			<< " f=" << it->second.second.hourMinToStr();
+	}
+	std::cout << endl;
 
 	if ( fase2.first < fase1.second )
 		std::cout<<"\nERRO: Inicio da fase 2 esta ocorrendo antes do fim da fase 1.";
 	if ( fase3.first < fase2.second )
 		std::cout<<"\nERRO: Inicio da fase 3 esta ocorrendo antes do fim da fase 2.";
-
-	if ( this->fasesDosTurnos.find( Tarde ) != this->fasesDosTurnos.end() )
-		this->setInicioTarde( fase2.first );	
-
-	if ( this->fasesDosTurnos.find( Noite ) != this->fasesDosTurnos.end() )
-		this->setInicioNoite( fase3.first );
 	
-}
-
-void ProblemData::copiaFasesDosTurnosParaSalas()
-{
-	ITERA_GGROUP_LESSPTR( itCp, campi, Campus )
-	{
-		ITERA_GGROUP_LESSPTR( itUnid, itCp->unidades, Unidade )
-		{
-			ITERA_GGROUP_LESSPTR( itSala, itUnid->salas, Sala )
-			{
-				itSala->setFasesTurnos( this->getInicioTarde(), this->getInicioNoite() );
-			}		
-		}		
-	}
 }
 
 int ProblemData::getHorarioDiaIdx( HorarioDia * horarioDia )
@@ -5934,24 +5888,10 @@ void ProblemData::preencheMapTurnoSemanasLetivas()
 
 		ITERA_GGROUP_LESSPTR( itHorAula, calendario->horarios_aula, HorarioAula )
 		{
-			if ( itHorAula->getInicio() < inicio_tarde )
-			{
-				this->mapTurnoSemanasLetivas[ Manha ].add( calendario );
-				calendario->addTurno( Manha, itHorAula->dias_semana );
-			//	this->turnos.add( Manha );
-			}
-			else if ( itHorAula->getInicio() < inicio_noite )
-			{
-				this->mapTurnoSemanasLetivas[ Tarde ].add( calendario );
-				calendario->addTurno( Tarde, itHorAula->dias_semana );
-			//	this->turnos.add( Tarde );
-			}
-			else
-			{
-				this->mapTurnoSemanasLetivas[ Noite ].add( calendario );
-				calendario->addTurno( Noite, itHorAula->dias_semana );
-			//	this->turnos.add( Noite );
-			}
+			int fase = getFaseDoDia( (*itHorAula)->getInicio() );
+
+			this->mapTurnoSemanasLetivas[ fase ].add( calendario );
+			calendario->addTurno( fase, itHorAula->dias_semana );
 		}	
 	}
 }
@@ -5965,36 +5905,24 @@ void ProblemData::preencheMapTurnoDisciplinas()
 
 		ITERA_GGROUP_LESSPTR( itHor, disciplina->horarios, Horario )
 		{
-			if ( itHor->horario_aula->getInicio() < inicio_tarde )
-			{
-				disciplina->addTurno( Manha, *itHor );
-			}
-			else if ( itHor->horario_aula->getInicio() < inicio_noite )
-			{
-				disciplina->addTurno( Tarde, *itHor );
-			}
-			else
-			{
-				disciplina->addTurno( Noite, *itHor );
-			}
+			int fase = getFaseDoDia( itHor->horario_aula->getInicio() );
+			disciplina->addTurno( fase, *itHor );
 		}	
 	}
 }
 
 int ProblemData::getFaseDoDia( DateTime dt )
 { 
-	if ( dt < inicio_tarde )
+	for (auto itFase = fasesDosTurnos.cbegin(); itFase != fasesDosTurnos.cend(); itFase++)
 	{
-		return Manha;
+		if ( itFase->second.first <= dt && dt <= itFase->second.second )
+			return itFase->first;
 	}
-	else if ( dt < inicio_noite )
-	{
-		return Tarde;
-	}
-	else
-	{
-		return Noite;
-	}
+
+	stringstream msg;
+	msg << "Fase do dia nao encontrada para " << dt.hourMinToStr();
+	CentroDados::printError("ProblemData::getFaseDoDia():", msg.str());
+	return -1;
 }
 
 DateTime ProblemData::getFimDaFase( int fase ) const

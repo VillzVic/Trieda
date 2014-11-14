@@ -15273,7 +15273,7 @@ int Operacional::criarRestricaoProfHiHf_()
 	// -------------------------------------------------------------------------------------------------
 	#pragma region Agrupa variáveis em mapProfDiaFaseHiHf e mapProfDiaFase
 	
-	// Percorre variaveis k_{p,i,d,t,hi}	
+	// Percorre variaveis x_{p,aula,hi}
 	for(auto itProf = vars_prof_aula2.begin(); itProf != vars_prof_aula2.end(); ++itProf)
 	{
 		Professor* const professor = itProf->first;
@@ -15311,6 +15311,7 @@ int Operacional::criarRestricaoProfHiHf_()
 							const int col = itTurma->second.first;
 							const VariableOp var = itTurma->second.second;
 		
+
 							// ----------- Recupera datetime final da aula
 
 							Calendario *calend = var.getHorarioAula()->getCalendario();
@@ -15329,7 +15330,9 @@ int Operacional::criarRestricaoProfHiHf_()
 
 							// ----------- mapProfDiaFase
 				
-							double duracaoAula = (dtf - dti).getDateMinutes();
+							HorarioAula *hi = var.getHorarioAula();
+							int nrCreds = var.getAula()->getTotalCreditos();
+							double duracaoAula = hi->getTempoAula() * nrCreds;
 							(*mapProfDiaFase2).insert( make_pair(col,duracaoAula) );							
 						}
 					}

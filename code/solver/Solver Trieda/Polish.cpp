@@ -3,9 +3,10 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <time.h>
-
 #include <sstream>
+#include <random>
+
+#include "CentroDados.h"
 
 using std::stringstream;
 
@@ -15,7 +16,7 @@ double MIN_OPT_VALUE = 0.0;
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile )
 	: lp_(lp), vHashTatico(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual(999999999999.9),
-	nrPrePasses_(-1)
+	nrPrePasses_(-1), heurFreq_(0.7)
 {
 	originalLogFileName = originalLogFile;
 	hasOrigFile = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
@@ -49,7 +50,7 @@ void Polish::init()
 	
 	// Constants
 	tempoIni = 50;
-	fixType = 2;
+	fixType = 1;
 	
 	// Init values
 	tempoIter = tempoIni;
@@ -138,7 +139,8 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	// Agora xSol é atributo do MIPUnico, então o carregamento da solucao não faz getX mais,
 	// sendo dispensavel essa garantia de solução aqui.
 	// guaranteeSol();
-	
+
+	closeLogFile();
 	restoreOriginalLogFile();
 	
     return polishing;
@@ -202,24 +204,10 @@ void Polish::fixVarsType1( std::set<std::pair<int,Disciplina*> > const &paraFixa
 			std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
 			if ( paraFixarUm.find(auxPair) != paraFixarUm.end() )
 			{
-				if ( xSol[vit->second] > 0.1 )
-				{
-					idxs[nBds] = vit->second;
-					vals[nBds] = (int)(xSol[vit->second]+0.5);
-					bds[nBds] = BOUNDTYPE::BOUND_UPPER;
-					nBds++;
-					idxs[nBds] = vit->second;
-					vals[nBds] = (int)(xSol[vit->second]+0.5);
-					bds[nBds] = BOUNDTYPE::BOUND_LOWER;
-					nBds++;
-				}
-				else
-				{
-					idxs[nBds] = vit->second;
-					vals[nBds] = 0.0;
-					bds[nBds] = BOUNDTYPE::BOUND_UPPER;
-					nBds++;
-				}
+				idxs[nBds] = vit->second;
+				vals[nBds] = (int)(xSol[vit->second]+0.5);
+				bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+				nBds++;
 			}
 			else if ( paraFixarZero.find(auxPair) != paraFixarZero.end() )
 			{
@@ -278,6 +266,8 @@ void Polish::optimize()
     lp_->copyMIPStartSol( lp_->getNumCols(), idxSol, xSol );
     lp_->updateLP();
     status = lp_->optimize( METHOD_MIP );
+	
+	checkFeasibility();
 }
 
 void Polish::getSolution(double &objN, double &gap)
@@ -377,11 +367,10 @@ void Polish::checkTimeWithoutImprov( bool &okIter, double objN )
 			cout << "Abort by timeWithoutChange. Limit of time without improvement" << tempoAtual << ", BestObj " << objN;
 			if (polishFile)
 			{
-				polishFile.flush();
-				polishFile.seekp(0, ios::end);
-				polishFile << "Abort by timeWithoutChange. Limit of time without improvement" 
-				<< tempoAtual << ", BestObj " << objN;
-				polishFile.flush();
+				stringstream ss;
+				ss << "Abort by timeWithoutChange. Limit of time without improvement" 
+					<< tempoAtual << ", BestObj " << objN;
+				printLog(ss.str());
 			}
 		}
 	}
@@ -413,10 +402,9 @@ void Polish::checkTimeLimit( bool &okIter )
 			cout << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime_ << endl;
 			if(polishFile)
 			{
-				polishFile.flush();
-				polishFile.seekp(0, ios::end);
-				polishFile << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime_ << endl;
-				polishFile.flush();
+				stringstream ss;
+				ss << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime_;
+				printLog(ss.str());
 			}
 		}
 	}
@@ -450,12 +438,11 @@ void Polish::logIter(double perc, double tempoIter)
 	cout <<"POLISH COM PERC = " << perc << ", TEMPOITER = " << tempoIter << endl; fflush(0);
 	if(polishFile)
 	{
-		polishFile.flush();
-		polishFile.seekp(0, ios::end);
-		polishFile <<"---------------------------------------------------------------------------"
-				<< std::endl << std::endl;
-		polishFile <<"POLISH COM PERC = " << perc << ", TEMPOITER = " << tempoIter << endl;
-		polishFile.flush();
+		stringstream ss;
+		ss <<"---------------------------------------------------------------------------\n\n";
+		ss <<"POLISH COM PERC = " << perc << ", TEMPOITER = " << tempoIter;
+		ss << "\nheurFreq_ = " << heurFreq_;
+		printLog(ss.str());
 	}
 }
 
@@ -469,7 +456,11 @@ void Polish::setLpPrePasses()
 
 	bool success = lp_->setPrePasses(nrPrePasses_);
 
-	if (!success) polishFile << "void Polish::setLpPrePasses(): fail!";
+	if (!success){
+		stringstream ss;
+		ss << "void Polish::setLpPrePasses(): fail!";
+		printLog(ss.str());
+	}
 }
 
 void Polish::setParams(double tempoIter)
@@ -479,16 +470,31 @@ void Polish::setParams(double tempoIter)
     lp_->setTimeLimit( tempoIter );
     lp_->setMIPRelTol( 0.1 );
     lp_->setMIPEmphasis( 1 );
-    lp_->setHeurFrequency( 0.7 );
+    lp_->setHeurFrequency( heurFreq_ );
 	lp_->setCuts(1);
 }
 
 void Polish::chgParams()
 {
-    lp_->setMIPRelTol( 0.1 );
-    lp_->setMIPEmphasis( 2 );
-    lp_->setHeurFrequency( 0.5 );
+	setNewHeurFreq();
+
+    lp_->setHeurFrequency( heurFreq_ );
 	lp_->setCuts(2);
+}
+
+void Polish::setNewHeurFreq()
+{
+	std::default_random_engine generator;
+	std::normal_distribution<double> distribution(0.5,0.25);
+	
+	heurFreq_ = distribution(generator);
+	if (heurFreq_ < 0 || heurFreq_ > 1)
+	{
+		stringstream msg;
+		msg << "heurFreq_ = " << heurFreq_ << " out of bounds!";
+		CentroDados::printError("double Polish::getNewHeurFreq()", msg.str());
+		heurFreq_ = 0.5;
+	}
 }
 
 bool Polish::optimized()
@@ -498,24 +504,40 @@ bool Polish::optimized()
 	return false;
 }
 
+bool Polish::infeasible()
+{
+	if (status == OPTSTAT_INFEASIBLE)
+		return true;
+	return false;
+}
+
+void Polish::checkFeasibility()
+{
+	if (infeasible())
+	{
+		stringstream ss;
+		ss <<"Error! Model is infeasible. Aborting..." << std::endl;
+		printLog(ss.str());
+		CentroDados::printError("bool Polish::needsPolish()",ss.str());
+		throw ss.str();
+	}
+}
+
 bool Polish::needsPolish()
 {
 	// ------------------------------------------------------------
 	// Procura rapidamente a solução exata, caso já se esteja perto do ótimo
 	if(polishFile)
 	{
-		polishFile.flush();
-		polishFile.seekp(0, ios::end);
-		polishFile <<"Verificando necessidade de polishing..." << std::endl;
-		polishFile.flush();
+		stringstream ss;
+		ss << "Verificando necessidade de polishing...";
+		printLog(ss.str());
 	}
 
 	lp_->setNumIntSols(10000000);
-	lp_->setTimeLimit( 50 );
-    lp_->copyMIPStartSol( lp_->getNumCols(), idxSol, xSol );
-    lp_->updateLP();
-	  
-    status = lp_->optimize( METHOD_MIP );	  
+	
+	optimize();
+
 	if (optimized())
 	{
 	    lp_->getX( xSol );	  
@@ -524,10 +546,9 @@ bool Polish::needsPolish()
 			cout << "\n\nPolish desnecessario, gap =" << lp_->getMIPGap() * 100 << std::endl;
 			if(polishFile)
 			{
-				polishFile.flush();
-				polishFile.seekp(0, ios::end);
-				polishFile <<"Polish desnecessario, gap = " << lp_->getMIPGap() * 100 << std::endl;
-				polishFile.flush();
+				stringstream ss;
+				ss <<"Polish desnecessario, gap = " << lp_->getMIPGap() * 100 << std::endl;
+				printLog(ss.str());
 			}
 			return false;
 		}
@@ -536,12 +557,10 @@ bool Polish::needsPolish()
 	cout << "\n\nPolishing..." << std::endl << std::endl;
 	if(polishFile)
 	{
-		polishFile.flush();
-		polishFile.seekp(0, ios::end);
-		polishFile <<"\nPolishing..." << std::endl << std::endl;
-		polishFile <<"-----------------------------------------------------------"
-			<< std::endl << std::endl;
-		polishFile.flush();
+		stringstream ss;
+		ss <<"\nPolishing...\n\n";
+		ss <<"-----------------------------------------------------------\n";
+		printLog(ss.str());
 	}
 
 	return true;
@@ -554,13 +573,13 @@ void Polish::guaranteeSol()
     // já que o lp sobre alteração nos bounds no final.
     if(polishFile)
     {
-		polishFile.flush();
-		polishFile.seekp(0, ios::end);
-		polishFile << "---------------------------------------------------------------------------"
-				<< "\n---------------------------------------------------------------------------"
-				<< "\nGarantindo presenca da solucao atraves de getX..." << std::endl;
-		polishFile.flush();
+		stringstream ss;
+		ss << "---------------------------------------------------------------------------"
+			<< "\n---------------------------------------------------------------------------"
+			<< "\nGarantindo presenca da solucao atraves de getX...";
+		printLog(ss.str());
     }
+
     lp_->copyMIPStartSol( lp_->getNumCols(), idxSol, xSol );
 	lp_->setTimeLimit( 50 );
 	status = lp_->optimize( METHOD_MIP );
@@ -578,6 +597,14 @@ void Polish::initLogFile()
    setOptLogFile(polishFile,ss.str());
 }
 
+void Polish::printLog( string msg )
+{
+	polishFile.flush();
+	polishFile.seekp(0,ios::end);
+	polishFile << msg << endl;
+	polishFile.flush();
+}
+
 void Polish::setOptLogFile(std::ofstream &logMip, string name, bool clear)
 {
    stringstream ss;
@@ -590,6 +617,12 @@ void Polish::setOptLogFile(std::ofstream &logMip, string name, bool clear)
 
    if(lp_)
 	   lp_->setLogFile((char*)ss.str().c_str());
+}
+
+void Polish::closeLogFile()
+{
+	if (polishFile.is_open())
+		polishFile.close();
 }
 
 void Polish::restoreOriginalLogFile()

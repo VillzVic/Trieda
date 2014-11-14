@@ -60,13 +60,18 @@ private:
 	void setLpPrePasses();
 	void setParams(double tempoIter);
 	void chgParams();
+	void setNewHeurFreq();
 	bool needsPolish();
 	bool optimized();
+	bool infeasible();
+	void checkFeasibility();
 
 	void guaranteeSol();
 
 	void initLogFile();
+	void printLog( string msg );
 	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
+	void closeLogFile();
 	void restoreOriginalLogFile();
 
 	// ---------------------------------------------------------------------------------
@@ -82,8 +87,12 @@ private:
 	   int perc;
 	   int status;
 	   double objAtual;
-	   int nrPrePasses_;
 
+	   // Gurobi parameters
+	   int nrPrePasses_;
+	   double heurFreq_;
+
+	   // Lp's variables' bounds and values
 	   int *idxs;
 	   double *vals;
 	   BOUNDTYPE *bds;	   

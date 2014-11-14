@@ -45,10 +45,7 @@ public:
    // Retorna calendario associado a alguma das demandas do aluno.
    // Isso não é o ideal, mas atualmente não existe forma precisa de obter isso.
    Calendario* getCalendario(){ return (oferta!=nullptr? oferta->curriculo->calendario : nullptr); }
-
-   // só usado a partir de prioridade 2 para a primeira heuristica (modelo tatico sem horarios)
-   void addNCredsAlocados( Calendario* sl, int dia, double value );
-
+   
    int getAlunoId() const { return this->alunoId; }
    std::string getNomeAluno() const { return this->nomeAluno; }
 
@@ -84,7 +81,6 @@ public:
 
    int getNroMaxCredCombinaSL( int k, Calendario *c, int dia );
    double getNroCreditosJaAlocados( Calendario* c, int dia );
-   double getTempoJaAlocado( int dia );
    AlunoDemanda* getAlunoDemanda( int disciplinaId );
    AlunoDemanda* getAlunoDemandaEquiv( Disciplina *disciplina );
    std::map< int /*dia*/, int /*size*/ > getCombinaCredSLSize() const { return combinaCredSLSize; }
@@ -124,6 +120,10 @@ public:
    void addNrCredsReqP1(int creds) { nrCredsReqP1 += creds; } 
    int getNrCredsReqP1(void) { return nrCredsReqP1; }
 
+   // Usado para tentar distribuir bem os créditos do aluno (MIP-Escola)
+   void setNrMedioCredsDia();
+   int getNrMedioCredsDia();
+
    void le_arvore( ItemAluno & elem );
 
    virtual bool operator < ( const Aluno & var ) const
@@ -159,6 +159,10 @@ private:
    bool formando;
    bool calouro;
    int prioridadeDoAluno;
+
+   // Media de creditos por dia, de acordo com a demanda do aluno.
+   // Usado no MIP-Escola para tentar equilibrar a alocação do aluno na semana
+   int nrCredsMedioDia_;
 
    std::map< int /*dia*/, int /*size*/ > combinaCredSLSize; // informa o numero total de combinações existentes para cada dia
 

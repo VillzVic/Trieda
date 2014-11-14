@@ -4,17 +4,9 @@
 
 ProblemData* CentroDados::problemData = nullptr;
 
-//std::string CentroDados::fNameOutTest = "test.txt";
-//std::string CentroDados::fNameOutWarn = "warnings.txt";
-//std::string CentroDados::fNameOutError = "errors.txt";
-
-static std::ofstream fOutTestTemp("test.txt",ios::app);
-static std::ofstream fOutWarnTemp("warnings.txt",ios::app);
-static std::ofstream fOutErrorTemp("errors.txt",ios::app);
-
-std::ofstream& CentroDados::fOutTest = fOutTestTemp;
-std::ofstream& CentroDados::fOutWarn = fOutWarnTemp;
-std::ofstream& CentroDados::fOutError = fOutErrorTemp;
+std::ofstream* CentroDados::fOutTest = nullptr;
+std::ofstream* CentroDados::fOutWarn = nullptr;
+std::ofstream* CentroDados::fOutError = nullptr;
 
 static CPUTimer timerTemp;
 CPUTimer CentroDados::timer = timerTemp;
@@ -53,76 +45,124 @@ void CentroDados::clearProblemData(void)
 	delete data;
 }
 
-void CentroDados::openFilesWarnError()
-{	
-	if( ! (CentroDados::fOutTest) )
-		throw "[EXC: CentroDado::CentroDados] fNameOutTest nao pode ser aberto!";
-	else
-		(CentroDados::fOutTest) << "\n===========================================================================" << endl
-		<< "Input " << problemData->getInputFileName() << " - id " << problemData->getInputId() << endl;
+void CentroDados::openErrorFile()
+{			
+	if(CentroDados::fOutError)
+	{
+		delete CentroDados::fOutError;
+		CentroDados::fOutError = nullptr;
+	}
 
-	if( ! (CentroDados::fOutError) )
-		throw "[EXC: CentroDado::CentroDados] fOutError nao pode ser aberto!";
-	else
-		(CentroDados::fOutError) << "\n===========================================================================" << endl
-		<< "Input " << problemData->getInputFileName() << " - id " << problemData->getInputId() << endl;
-
-	if( ! (CentroDados::fOutWarn) )
-		throw "[EXC: CentroDado::CentroDados] fOutWarn nao pode ser aberto!";
-	else
-		(CentroDados::fOutWarn) << "\n===========================================================================" << endl
+	CentroDados::fOutError = new ofstream("errors.txt",ios::app);
+	(*CentroDados::fOutError) << "\n===========================================================================" << endl
 		<< "Input " << problemData->getInputFileName() << " - id " << problemData->getInputId() << endl;
 }
 
-void CentroDados::closeFilesWarnError()
+void CentroDados::openWarnFile()
+{
+	if(CentroDados::fOutWarn)
+	{
+		delete CentroDados::fOutWarn;
+		CentroDados::fOutWarn = nullptr;
+	}
+
+	CentroDados::fOutWarn = new ofstream("warnings.txt",ios::app);
+	(*CentroDados::fOutWarn) << "\n===========================================================================" << endl
+		<< "Input " << problemData->getInputFileName() << " - id " << problemData->getInputId() << endl;
+}
+
+void CentroDados::openTestFile()
+{
+	if(CentroDados::fOutTest)
+	{
+		delete CentroDados::fOutTest;
+		CentroDados::fOutTest = nullptr;
+	}
+
+	CentroDados::fOutTest = new ofstream("test.txt",ios::app);
+	(*CentroDados::fOutTest) << "\n===========================================================================" << endl
+		<< "Input " << problemData->getInputFileName() << " - id " << problemData->getInputId() << endl;
+}
+
+void CentroDados::closeFiles()
+{
+	closeTestFile();
+	closeWarnFile();
+	closeErrorFile();
+}
+
+void CentroDados::closeTestFile()
 {
 	if(CentroDados::fOutTest) 
 	{
-		(CentroDados::fOutTest) << "===========================================================================" << endl;
-		CentroDados::fOutTest.close();
+		(*CentroDados::fOutTest) << "===========================================================================" << endl;
+		CentroDados::fOutTest->close();
+		delete CentroDados::fOutTest;
+		CentroDados::fOutTest = nullptr;
 	}
+}
+
+void CentroDados::closeWarnFile()
+{
 	if(CentroDados::fOutWarn) 
 	{
-		(CentroDados::fOutWarn) << "===========================================================================" << endl;
-		CentroDados::fOutWarn.close();
+		(*CentroDados::fOutWarn) << "===========================================================================" << endl;
+		CentroDados::fOutWarn->close();
+		delete CentroDados::fOutWarn;
+		CentroDados::fOutWarn = nullptr;
 	}
+}
+
+void CentroDados::closeErrorFile()
+{
 	if(CentroDados::fOutError) 
 	{
-		(CentroDados::fOutError) << "===========================================================================" << endl;
-		CentroDados::fOutError.close();
+		(*CentroDados::fOutError) << "===========================================================================" << endl;
+		CentroDados::fOutError->close();
+		delete CentroDados::fOutError;
+		CentroDados::fOutError = nullptr;
 	}
 }
 
 // Print test message
 void CentroDados::printTest( std::string method, std::string msg )
 {
+	if ( ! CentroDados::fOutTest )
+		openTestFile();
+
 	if ( CentroDados::fOutTest )
 	{
-		(CentroDados::fOutTest) << endl << method << ":"
+		(*CentroDados::fOutTest) << endl << method << ":"
 			<< endl << "\t" << msg << endl;
-		CentroDados::fOutError.flush();
+		CentroDados::fOutTest->flush();
 	}
 }
 
 // Print warning message
 void CentroDados::printWarning( std::string method, std::string msg )
 {
+	if ( ! CentroDados::fOutWarn )
+		openWarnFile();
+
 	if ( CentroDados::fOutWarn )
 	{
-		(CentroDados::fOutWarn) << endl << method << ":"
+		(*CentroDados::fOutWarn) << endl << method << ":"
 			<< endl << "\t" << msg << endl;
-		CentroDados::fOutError.flush();
+		CentroDados::fOutWarn->flush();
 	}
 }
 	
 // Print error message
 void CentroDados::printError( std::string method, std::string msg )
 {
+	if ( ! CentroDados::fOutError )
+		openErrorFile();
+
 	if ( CentroDados::fOutError )
 	{
-		(CentroDados::fOutError) << endl << method << ":"
+		(*CentroDados::fOutError) << endl << method << ":"
 			<< endl << "\t" << msg << endl;
-		CentroDados::fOutError.flush();
+		CentroDados::fOutError->flush();
 	}
 }
 

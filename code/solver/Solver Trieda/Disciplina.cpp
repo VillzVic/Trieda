@@ -370,10 +370,10 @@ bool Disciplina::inicioTerminoValidos( HorarioAula *hi, HorarioAula *hf, int dia
 {
 
 	bool debug=false;
-	if ( this->getId() == 13747 && hi->getInicio().getHour() == 7 && hi->getInicio().getMinute() == 50
-		&& hf->getInicio().getHour() == 11 && hf->getInicio().getMinute() == 20 )
+	if ( this->getId() == 16669 && hi->getInicio().getHour() == 15 && hi->getInicio().getMinute() == 20
+		&& hf->getInicio().getHour() == 18 && hf->getInicio().getMinute() == 20 )
 	{
-	//	debug=true;
+		//debug=true;
 	}
 
 	if (debug) std::cout<<"\nDisciplina::inicioTerminoValidos: disc->getId() == 13747, dia " 
@@ -386,8 +386,10 @@ bool Disciplina::inicioTerminoValidos( HorarioAula *hi, HorarioAula *hf, int dia
 
 	if ( hi->getTurnoIESId() != hf->getTurnoIESId() )
 	{
-	//	std::cout << "\nDisciplina::inicioTerminoValidos(): Caso impedido com turnos diferentes -> hi = " << hi->getId() 
-	//		<< ", hf = " << hf->getId() << " , disc " << this->getId();
+		if (debug)
+			std::cout << "\nDisciplina::inicioTerminoValidos(): Caso impedido com turnos diferentes -> hi = " << hi->getId() 
+				<< ", hf = " << hf->getId() << " , disc " << this->getId();
+
 		return false;
 	}
 
@@ -398,10 +400,7 @@ bool Disciplina::inicioTerminoValidos( HorarioAula *hi, HorarioAula *hf, int dia
 	}
 	if (debug) std::cout<<" 3";
 	Calendario *calendario = hi->getCalendario();
-
-	//if ( this->calendarios.find( calendario ) == this->calendarios.end() )
-	//	 return false;	
-
+	
 	std::pair<HorarioAula*, HorarioAula*> parHorarios( hi, hf );
 
 	// Procura, caso já tenha sido calculado
@@ -589,26 +588,9 @@ GGroup< HorarioAula*, LessPtr<HorarioAula> > Disciplina::getHorariosDia( Calenda
 	return horariosNoDia;
 }
 
-/*
-	Retorna os horarios que a disciplina possui disponivel no turnoIES
-*/
 GGroup< Horario*, LessPtr<Horario> > Disciplina::getHorariosOuCorrespondentes( TurnoIES* turnoIES )
 {
-	/*
-	int t = turnoIES->getId();
-	GGroup< Horario*, LessPtr<Horario> > horariosNoTurnoIES;
-
-	std::map< int, GGroup<Horario*, LessPtr<Horario>> > dias_hors = turnosIES[ t ]; // <turnoIES dias> que possui horários
-	
-	std::map< int, GGroup<Horario*, LessPtr<Horario>> >::iterator 
-		itMap = dias_hors.begin();
-	for ( ; itMap != dias_hors.end(); itMap++ )
-	{
-		horariosNoTurnoIES.add( itMap->second );		
-	}
-
-	return horariosNoTurnoIES;
-	*/
+	// Retorna os horarios que a disciplina possui disponivel no turnoIES
 
 	GGroup< Horario*, LessPtr<Horario> > horariosNoTurnoIES;
 
@@ -645,6 +627,26 @@ bool Disciplina::possuiHorariosOuCorrespondentesNoTurno( TurnoIES* turnoIES )
 	return false;
 }
 
+int Disciplina::getNrHorsNoTurno( TurnoIES* turnoIES ) const
+{
+	int nr = 0;
+	for (auto itDia = mapDiaDtiDtf.cbegin(); itDia != mapDiaDtiDtf.cend(); itDia++)
+	{
+		for ( auto itDti=itDia->second.cbegin(); itDti!=itDia->second.cend(); itDti++ )
+		{
+			DateTime dti = itDti->first;
+			for ( auto itDtf=itDti->second.begin(); itDtf!=itDti->second.end(); itDtf++ )
+			{
+				DateTime dtf = (*itDtf);
+				if (turnoIES->possuiHorarioDia(itDia->first, dti, dtf))
+				{
+					nr++; break;
+				}
+			}
+		}		
+	}
+	return nr;
+}
 
 int Disciplina::getNumTurmasNaSala( int cjtSalaId )
 {
@@ -848,7 +850,6 @@ int Disciplina::getNroTurmasAssociadas( int turma )
 	return n;
 }
 
-
 int Disciplina::getNroCredsRegraDiv( int k, int dia )
 {
 	int num = 0;
@@ -868,4 +869,12 @@ int Disciplina::getNroCredsRegraDiv( int k, int dia )
 	}
 
 	return num;
+}
+
+bool Disciplina::possuiRegraCred() const
+{
+	if (combinacao_divisao_creditos.size() > 0 ||
+		divisao_creditos.size() > 0)
+		return true;
+	return false;
 }

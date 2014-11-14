@@ -8,60 +8,88 @@ TurnoIES::TurnoIES( void )
 }
 
 TurnoIES::~TurnoIES( void )
-{
+{}
 
+void TurnoIES::addHorarioAula( HorarioAula* h )
+{ 
+	horarios_aula.add(h);
+	
+	ITERA_GGROUP_N_PT( itDia, h->dias_semana, int )
+	{
+		mapDiaDateTime[*itDia][h->getInicio()].insert(h);
+	}
 }
 
 /*
-  Dado um dia especifico, retorna o numero de horarios de aula disponiveis no dia da semana letiva e turno em questao
-  (ou numero de creditos).
+  Dado um dia especifico, retorna o numero de horarios de aula disponiveis.
 */
-int TurnoIES::getNroDeHorariosAula(int dia)
+int TurnoIES::getNroDeHorariosAula(int dia) const
 {
-	int nHorariosNoTurnoDoDia = 0;
-	ITERA_GGROUP_LESSPTR( it, horarios_aula, HorarioAula )
-	{
-		if ( it->horarioDisponivel(dia) ) nHorariosNoTurnoDoDia++;
-	}
-	return nHorariosNoTurnoDoDia;
+	auto finder = mapDiaDateTime.find(dia);
+	if (finder != mapDiaDateTime.end())
+		return finder->second.size();
+	return 0;
 }
 
-
 // Procura o horarioDia nos horarios do turno, ou um igual exceto pelo id.
-bool TurnoIES::possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia )
+bool TurnoIES::possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia ) const
 {	
-	ITERA_GGROUP_LESSPTR( itHorAula, horarios_aula, HorarioAula )
+	auto finderDia = mapDiaDateTime.find(dia);
+	if (finderDia != mapDiaDateTime.end())
 	{
-		if ( itHorAula->getInicio() == h->getInicio() )
-		if ( itHorAula->getTempoAula() == h->getTempoAula() )
-		if ( itHorAula->dias_semana.find(dia) != itHorAula->dias_semana.end() )
-		{ 
-			return true;
-		}
+		auto finderDti = finderDia->second.find(h->getInicio());
+		if (finderDti != finderDia->second.end())
+		{
+			for ( auto itHor=finderDti->second.cbegin(); itHor!=finderDti->second.cend(); itHor++ )
+			{
+				if ((*itHor)->getTempoAula() == h->getTempoAula())
+					return true;
+			}
+		}		
 	}
-
 	return false;
 }
 
+// Procura o horarioDia nos horarios do turno
+bool TurnoIES::possuiHorarioDia( int dia, DateTime dti, DateTime dtf ) const
+{	
+	auto finderDia = mapDiaDateTime.find(dia);
+	if (finderDia != mapDiaDateTime.end())
+	{
+		auto finderDti = finderDia->second.find(dti);
+		if (finderDti != finderDia->second.end())
+		{
+			for ( auto itHor=finderDti->second.cbegin(); itHor!=finderDti->second.cend(); itHor++ )
+			{
+				if ((*itHor)->getFinal() == dtf)
+					return true;
+			}
+		}		
+	}
+	return false;
+}
 
 // Procura o horarioDia nos horarios do turno, ou um igual exceto pelo id.
-GGroup<HorarioAula*,LessPtr<HorarioAula>> TurnoIES::retornaHorarioDiaOuCorrespondente( HorarioAula *h, int dia )
+GGroup<HorarioAula*,LessPtr<HorarioAula>> TurnoIES::retornaHorarioDiaOuCorrespondente( HorarioAula *h, int dia ) const
 {	
 	GGroup<HorarioAula*,LessPtr<HorarioAula>> ggroup;
 
-	ITERA_GGROUP_LESSPTR( itHorAula, horarios_aula, HorarioAula )
+	auto finderDia = mapDiaDateTime.find(dia);
+	if (finderDia != mapDiaDateTime.end())
 	{
-		if ( itHorAula->getInicio() == h->getInicio() )
-		if ( itHorAula->getTempoAula() == h->getTempoAula() )
-		if ( itHorAula->dias_semana.find(dia) != itHorAula->dias_semana.end() )
-		{ 
-			ggroup.add( *itHorAula );
-		}
+		auto finderDti = finderDia->second.find(h->getInicio());
+		if (finderDti != finderDia->second.end())
+		{
+			for ( auto itHor=finderDti->second.cbegin(); itHor!=finderDti->second.cend(); itHor++ )
+			{
+				if ((*itHor)->getTempoAula() == h->getTempoAula())
+					ggroup.add( (*itHor) );
+			}
+		}		
 	}
 
 	return ggroup;
 }
-
 
 // Verifica se todos os horarioDias entre hi e hf existem (iguais, exceto eventualmente pelo id) no turno.
 bool TurnoIES::possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *hf, int dia )
@@ -80,55 +108,20 @@ bool TurnoIES::possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *h
 	}
 
 	return valid;
-
-
-
-
-
-
-	//if ( hi->getCalendario()->getId() != hf->getCalendario()->getId() )
-	//{
-	//	std::cout << "\nErro em TurnoIES::possuiHorarioDiaOuCorrespondente(), "
-	//			  << "calendarios diferentes. So deveria ser par (hi, hf) com mesmo calendario!";
-	//	return false;
-	//}
-	//
-	//Calendario *sl = hi->getCalendario();
-	//int n = sl->retornaNroCreditosEntreHorarios(hi, hf);
-
-	//HorarioAula* h = hi;
-	//bool found = false;
-
-	//for ( int cred = 1; cred <= n; cred++ )
-	//{
-	//	found = false;
-	//	ITERA_GGROUP_LESSPTR( itHorAula, horarios_aula, HorarioAula )
-	//	{
-	//		if ( itHorAula->getInicio() == h->getInicio() )
-	//		if ( itHorAula->getTempoAula() == h->getTempoAula() )
-	//		if ( itHorAula->dias_semana.find(dia) != itHorAula->dias_semana.end() )
-	//		{
-	//			found = true;
-	//			break;
-	//		}
-	//	}
-	//	if (!found) break;
-	//	if (cred!=n) h = h->getCalendario()->getProximoHorario( h );
-
-	//	if ( h == NULL )
-	//		std::cout<<"\nErro! proximo horario null. N="<<n<<", cred="<<cred
-	//		<<", hi="<<hi->getId()<<", hf="<<hf->getId()<<", dia="<<dia;
-	//}
-
-	//return found;
 }
 
 // retorna horarios disponiveis no dia
 void TurnoIES::retornaHorariosDisponiveisNoDia( int dia, GGroup<HorarioAula*, LessPtr<HorarioAula>> &horarios) const
 {
-	ITERA_GGROUP_LESSPTR( it, horarios_aula, HorarioAula )
+	auto finderDia = mapDiaDateTime.find(dia);
+	if (finderDia != mapDiaDateTime.end())
 	{
-		if ( it->horarioDisponivel(dia) )
-			horarios.add(*it);
+		for ( auto itDti=finderDia->second.cbegin(); itDti!=finderDia->second.cend(); itDti++ )
+		{
+			for ( auto itHor=itDti->second.cbegin(); itHor!=itDti->second.cend(); itHor++ )
+			{
+				horarios.add(*itHor);
+			}
+		}		
 	}
 }

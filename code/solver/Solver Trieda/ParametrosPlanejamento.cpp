@@ -207,7 +207,7 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
 
    // ------------------------------------------------------------------------
    // Gap nos horararios dos alunos
-   proibirAlunoGap = ConstraintLevel::Weak;	//elem.proibirHorariosVaziosAluno();
+   proibirAlunoGap = ConstraintLevel::Strong;	//elem.proibirHorariosVaziosAluno();
    
    // ------------------------------------------------------------------------
 

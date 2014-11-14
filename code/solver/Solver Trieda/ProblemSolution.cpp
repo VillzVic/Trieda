@@ -53,12 +53,7 @@ ProblemSolution::~ProblemSolution()
       delete professores_virtuais;
    }
 
-   // DADOS DE PROBLEM-DATA! ACHO QUE NÃO DEVE SER DELETADO AQUI
-   //if ( alunosDemanda )
-   //{
-   //   alunosDemanda->deleteElements();
-   //   delete alunosDemanda;
-   //}
+   // alunosDemanda: dados de ProblemData, não deletar.
 
    if ( nao_atendimentos )
    {
@@ -86,8 +81,7 @@ void ProblemSolution::resetProblemSolution()
    }
    if ( alunosDemanda != NULL )
    {
-	   // Os objetos AlunoDemanda são parte do ProblemData, e não do ProblemSolution.
-	   // Não podem ser deletados para resetar a solução.
+	  // alunosDemanda: dados de ProblemData, não deletar.
       delete alunosDemanda;
    }
    if ( nao_atendimentos != NULL )

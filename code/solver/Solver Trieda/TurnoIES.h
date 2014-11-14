@@ -13,17 +13,20 @@ public:
    virtual ~TurnoIES( void );
 
    GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios_aula;
+   
+   std::map< int/*dia*/, std::map< DateTime, std::set<HorarioAula*> > > mapDiaDateTime;
 
    void setNome( std::string s ) { nome = s; }
 
-   int getNroDeHorariosAula(int dia);
+   int getNroDeHorariosAula(int dia) const;
    void retornaHorariosDisponiveisNoDia( int dia, GGroup<HorarioAula*, LessPtr<HorarioAula>> &horarios) const;
 
    std::string getNome() const { return nome; }
 
-   void addHorarioAula( HorarioAula* h ){ horarios_aula.add(h); }
-   bool possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia );
-   GGroup<HorarioAula*,LessPtr<HorarioAula>> retornaHorarioDiaOuCorrespondente( HorarioAula *h, int dia );
+   void addHorarioAula( HorarioAula* h );
+   bool possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia ) const;
+   bool possuiHorarioDia( int dia, DateTime dti, DateTime dtf ) const;
+   GGroup<HorarioAula*,LessPtr<HorarioAula>> retornaHorarioDiaOuCorrespondente( HorarioAula *h, int dia ) const;
    bool possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *hf, int dia );
 
    // numero de horarios na semana

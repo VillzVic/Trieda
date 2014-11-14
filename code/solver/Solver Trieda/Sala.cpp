@@ -1,5 +1,5 @@
 #include "Sala.h"
-//#include "ConverteHorariosCreditos.h"
+#include "CentroDados.h"
 
 Sala::Sala(void)
 {
@@ -437,8 +437,8 @@ void Sala::deleteHorarioDiaOcupados()
 	horariosDiaOcupados.clear(); 
 }
 
- bool Sala::sobrepoeHorarioDiaOcupado( HorarioAula *ha, int dia )
- {
+bool Sala::sobrepoeHorarioDiaOcupado( HorarioAula *ha, int dia )
+{
 	 ITERA_GGROUP_LESSPTR( itHorDia, horariosDiaOcupados, HorarioDia )
 	 {
 		 int diaOcupado = (*itHorDia)->getDia();
@@ -451,10 +451,10 @@ void Sala::deleteHorarioDiaOcupados()
 		 }
 	 }
 	 return false;
- }
+}
  
- bool Sala::sobrepoeAulaJaAlocada( HorarioAula *hi, HorarioAula *hf, int dia )
- {
+bool Sala::sobrepoeAulaJaAlocada( HorarioAula *hi, HorarioAula *hf, int dia )
+{
 	Calendario *calendario = hi->getCalendario();
 	int nCreds = calendario->retornaNroCreditosEntreHorarios( hi, hf );
 	HorarioAula *ha = hi;
@@ -475,10 +475,10 @@ void Sala::deleteHorarioDiaOcupados()
 		<<"\nhi = "<<hi->getId()<<" hf = "<<hf->getId()<<" dia = "<<dia<<" nCreds = "<<nCreds<<"\n";
 
 	return false;
- }
+}
 
- bool Sala::ehViavelNaSala( Disciplina* disciplina, HorarioAula *hi, HorarioAula *hf, int dia )
- {
+bool Sala::ehViavelNaSala( Disciplina* disciplina, HorarioAula *hi, HorarioAula *hf, int dia )
+{
 	 if ( this->sobrepoeAulaJaAlocada( hi, hf, dia ) )
 		return false;
 
@@ -521,34 +521,7 @@ void Sala::deleteHorarioDiaOcupados()
 	 if ( livre >= creds_restantes ) return true;
 	 
 	 return false;	
- }
-
-
- // ----------------------------------------------------------------------
- // TODO: isso não deveria estar duplicado aqui. Tem que ser geral, só para o problemData. 
- // Quando passar a vir definido pelo cliente, mudar isso!!!
-void Sala::setFasesTurnos( DateTime init, DateTime inin )
-{	
-	inicio_tarde = init;
-	inicio_noite = inin;
 }
-
-int Sala::getTurno( DateTime dt )
-{
-	if ( dt < inicio_tarde )
-	{
-		return Manha;
-	}
-	else if ( dt < inicio_noite )
-	{
-		return Tarde;
-	}
-	else
-	{
-		return Noite;
-	}
-}
-
 
 
  /*
@@ -578,8 +551,7 @@ void Sala::calculaTempoDispPorTurno()
 		{
 			if ( it_horarios_dia->getHorarioAula()->getCalendario() != sl ) continue;
 
-			int turno = getTurno( it_horarios_dia->getHorarioAula()->getInicio() );
-			//int turno = it_horarios_dia->getHorarioAula()->getTurnoId();
+			int turno = CentroDados::getFaseDoDia( it_horarios_dia->getHorarioAula()->getInicio() );
 			mapTurnoCalendTimes[turno][sl].add( *it_horarios_dia );			
 		}
 	}

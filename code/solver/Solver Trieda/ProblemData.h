@@ -45,7 +45,7 @@
 
 #define USAR_CALLBACK
 
-#define READ_SOLUTION
+//#define READ_SOLUTION
 
 #define ALUNO_TURNOS_DA_DEMANDA // Usado quando o aluno só pode ser alocado em turno existente no calendario da Oferta da Demanda que ele requisitou
 
@@ -559,11 +559,6 @@ public:
    DateTime* getDateTimeFinal( DateTime dt );
    GGroup<DateTime*, LessPtr<DateTime> > getDtiAnteriores( DateTime dtf );
 
-   void setInicioTarde( DateTime dt ) { inicio_tarde = dt; }
-   void setInicioNoite( DateTime dt ) { inicio_noite = dt; }
-   DateTime getInicioTarde() const { return inicio_tarde; }
-   DateTime getInicioNoite() const { return inicio_noite; }
-   void copiaFasesDosTurnosParaSalas();
    void setFaseDoDiaDosHorariosAula();
    void addHorariosAnalogosDisciplina();
 
@@ -572,7 +567,7 @@ public:
    
    int getFaseDoDia( DateTime dt );
    DateTime getFimDaFase( int fase ) const;
-   int getNroTotalDeFasesDoDia() const { return nroTurnos; }
+   int getNroTotalDeFasesDoDia() const { return fasesDosTurnos.size(); }
    bool haTurnoComumViavel( Disciplina *disciplina, TurnoIES *turnoIES );
    GGroup<int> getTurnosComunsViaveis( Disciplina *disciplina, TurnoIES *turnoIES );
    bool alocacaoEquivViavel( Demanda *demanda, Disciplina *disciplina );
@@ -635,10 +630,6 @@ public:
 
 	    map< int /*campusId*/, map< int /*turma*/, map< Disciplina*, GGroup<Aula*, LessPtr<Aula>>, LessPtr<Disciplina> > > > mapAulas;
  
-		DateTime inicio_tarde;		
-		DateTime inicio_noite;		
-		int nroTurnos;
-
 	    // histogram structures
 	    GGroup< std::pair<double,Disciplina*> > perc_Disc;
 		std::map< Disciplina*, double, LessPtr<Disciplina> > mapDiscPerc;

@@ -97,10 +97,7 @@ int main( int argc, char** argv )
    // Inicializa problem-data
    ProblemData* data = new ProblemData( argv[1], inputId );
    CentroDados::setProblemData(data);
-
-   // -----------------------------------------------------------
-   CentroDados::openFilesWarnError();
-   
+      
    // -----------------------------------------------------------
    // Inicializa arquivos de indicadores do solver
    Indicadores::setIndicadorFileName( argv[1], inputId );
@@ -168,7 +165,7 @@ int main( int argc, char** argv )
    	outTestFile << "Finished!" <<endl;
 	outTestFile.close();
 
-	CentroDados::closeFilesWarnError();
+	CentroDados::closeFiles();
 	
     // -----------------------------------------------------------
     

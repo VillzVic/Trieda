@@ -342,8 +342,8 @@ private:
 	// Alunos
 	static const int pesoGapAluno;
 	static const int pesoMinCredDiaAluno;
-	static const int minCredDiaAluno;
-	static const bool considerarMinCredDiaAluno;
+	static const int desvioMinCredDiaAluno;		// desvio máximo do nr médio de créditos por dia do aluno, sem que haja penalização 
+	static const int considerarMinCredDiaAluno;
 
 	// log file name
 	string optLogFileName;

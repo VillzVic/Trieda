@@ -14,6 +14,9 @@
 #include "ProblemData.h"
 #include "TRIEDA-InputXSD.h"
 
+struct DivCredType;
+
+
 class ProblemDataLoader
 {
 public:
@@ -219,6 +222,11 @@ private:
 
    // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina
    void combinacaoDivCreditos();
+   void checkDivisaoGenerica(Disciplina *disciplina);
+   bool checkExisteDivisao(Disciplina *disciplina);
+   void criaCombinacoes(Disciplina *disciplina, std::set<DivCredType> &combinacoes);
+   void espelhaCombinacoes(Disciplina *disciplina, std::set<DivCredType> &combinacoes);
+   void addCombinacoes(Disciplina *disciplina, std::set< DivCredType > const combinacoes);
 
    // Relaciona cada possível valor de crédito com as regras de créditos existentes.
    void relacionaCredsRegras();
@@ -323,6 +331,7 @@ namespace std
 		}
 	};
 };
+
 
 
 #endif

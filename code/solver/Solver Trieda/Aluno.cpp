@@ -30,7 +30,7 @@ std::ostream & operator << (
 }
  
 Aluno::Aluno( void )
-	: nrCredsReqP1(0)
+	: nrCredsReqP1(0), nrCredsMedioDia_(-1)
 {
    this->setAlunoId( -1 );
    this->oferta = NULL;
@@ -46,7 +46,7 @@ Aluno::Aluno( void )
 }
 
 Aluno::Aluno( int id, std::string nome, bool formando, Oferta* oft )
-	: nrCredsReqP1(0)
+	: nrCredsReqP1(0), nrCredsMedioDia_(-1)
 {
    this->setAlunoId( id );
    this->setNomeAluno( nome );
@@ -72,6 +72,30 @@ void Aluno::le_arvore( ItemAluno & elem )
    this->setNomeAluno( elem.nomeAluno() );
    this->setFormando( elem.formando() );
    this->setPrioridadeDoAluno( elem.prioridade() );
+}
+
+void Aluno::setNrMedioCredsDia()
+{
+	double nrCredsPorDia = 0;
+	for ( auto itAlDem = demandas.begin(); itAlDem != demandas.end(); itAlDem++ )
+	{
+		Demanda *demanda = itAlDem->demanda;
+
+		int nrCreds = demanda->disciplina->getTotalCreditos();
+		int nrDias = demanda->disciplina->diasLetivos.size();
+
+		double mediaPorDia = (double)nrCreds / (double)nrDias;
+		nrCredsPorDia += mediaPorDia;
+	}
+
+	nrCredsMedioDia_ = (int) nrCredsPorDia;
+}
+
+int Aluno::getNrMedioCredsDia()
+{ 
+	if (nrCredsMedioDia_==-1)
+		setNrMedioCredsDia();
+	return nrCredsMedioDia_; 
 }
 
 double Aluno::getReceita( Disciplina *disciplina ) 
@@ -222,22 +246,6 @@ double Aluno::getNroCreditosJaAlocados( Calendario* c, int dia )
 	return tempo;
 }
 
-double Aluno::getTempoJaAlocado( int dia )
-{
-	double tempo = 0.0;
-
-	std::map< Calendario*, std::map< int /*dia*/, double /*nCreds*/> >::iterator
-		itMap1 = nCredsAlocados.begin();
-	for ( ; itMap1 != nCredsAlocados.end(); itMap1++ )
-	{
-		std::map< int /*dia*/, double /*nCreds*/>::iterator
-			itMap2 = itMap1->second.find( dia );
-		if ( itMap2 != itMap1->second.end() )
-			tempo += itMap2->second;
-	}
-	return tempo;
-}
-
 bool Aluno::totalmenteAtendido()
 {
 	if ( this->getNroCreditosJaAlocados() >= this->getNroCredsOrigRequeridosP1() )
@@ -306,7 +314,7 @@ GGroup< Calendario*, LessPtr<Calendario> > Aluno::retornaSemanasLetivas()
 	return calendarios;
 }
 
-/*
+/*	-------------------------------------------------------------------------------------------
 	FUNÇÕES PARA CRIAR A REGRA DE COMBINAÇÃO DOS CREDITOS DO ALUNO
 */
 
@@ -469,36 +477,7 @@ std::map< Trio<int, int, Calendario*>, int > Aluno::retornaCombinaCredSL_Dominad
 	return dominados;
 }
 
-
-void Aluno::addNCredsAlocados( Calendario* sl, int dia, double value ) 
-{ 
-	std::map< Calendario*, std::map< int /*dia*/, double /*nCreds*/> >::iterator 
-		it1 = nCredsAlocados.find(sl);
-	
-	if ( it1 == nCredsAlocados.end() )
-	{
-		std::map< int /*dia*/, double /*nCreds*/> diasCreds;
-		diasCreds[dia] = value;
-
-		nCredsAlocados[ sl ] = diasCreds;
-	}
-	else
-	{
-		std::map< int , double >::iterator 
-			it2 = nCredsAlocados[sl].find( dia );
-		if ( it2 == nCredsAlocados[sl].end() )
-		{
-			std::map< int /*dia*/, double /*nCreds*/> diasCreds;
-			diasCreds[dia] = value;
-
-			nCredsAlocados[sl] = diasCreds;
-		}
-		else
-		{
-			nCredsAlocados[sl][dia] += value;
-		}
-	}	
-}
+//	-------------------------------------------------------------------------------------------
 
  bool Aluno::sobrepoeHorarioDiaOcupado( HorarioDia *hd )
  {

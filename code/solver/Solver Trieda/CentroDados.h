@@ -39,8 +39,13 @@ public:
 	// libertar a memória de problemData e set nullptr
 	static void clearProblemData(void);
 	
-	static void openFilesWarnError();
-	static void closeFilesWarnError();
+	static void openErrorFile();
+	static void openWarnFile();
+	static void openTestFile();
+	static void closeErrorFile();
+	static void closeWarnFile();
+	static void closeTestFile();
+	static void closeFiles();
 	
 	// Print test message
 	static void printTest( std::string method, std::string msg );
@@ -97,14 +102,10 @@ private:
 
 	// Dados do Problema: acessiveis de qualquer lugar
 	static ProblemData* problemData;
-	
-	//static std::string fNameOutTest;
-	//static std::string fNameOutWarn;
-	//static std::string fNameOutError;
 
-	static std::ofstream & fOutTest;
-	static std::ofstream & fOutWarn;
-	static std::ofstream & fOutError;
+	static std::ofstream *fOutTest;
+	static std::ofstream *fOutWarn;
+	static std::ofstream *fOutError;
 
 	static CPUTimer timer;
 };

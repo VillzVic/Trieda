@@ -70,7 +70,6 @@ public:
 
 	int getTempoMinSemanal( int turno );
 	int getTempoMaxSemanal( int turno );
-	int getTurno( DateTime dt );
 	
 	bool ehLab() const { return tipo_sala->getAceitaAulaPratica(); }
 	bool possuiHorariosNoDia( HorarioAula *hi, HorarioAula *hf, int dia );
@@ -132,8 +131,6 @@ public:
 	std::map< Trio< int/*dia*/, int /*k_id*/, Calendario* /*sl*/ >, int/*nroCreds*/ > combinaCredSL;
 	
 
-	void setFasesTurnos( DateTime init, DateTime inin );
-
 private:
 	
 	// Dado um conjunto de horários, retorna o conjunto de créditos correspondentes
@@ -164,15 +161,6 @@ private:
 	std::map< int /*dia*/, int /*size*/ > combinaCredSLSize;
 	
     GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDiaOcupados; // aulas alocadas. Preenchido após alocado por modelo tático / integrado.
-
-
-	// -----------------
-	// Fases dos Turnos		
-	DateTime inicio_tarde;		
-	DateTime inicio_noite;		
-	enum FasesTurnos { Manha=1, Tarde=2, Noite=3 };		
-	int nroTurnos;
-	// -----------------
 };
 
 #endif

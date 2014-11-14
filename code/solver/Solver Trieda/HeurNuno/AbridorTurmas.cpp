@@ -683,7 +683,7 @@ void AbridorTurmas::geraTurmasDivisaoPosPreProc_(OfertaDisciplina* const &oferta
 		// liberta a memória
 		delete step;
 		
-		UtilHeur::printMemoryUsed();
+		//UtilHeur::printMemoryUsed();
 
 		//HeuristicaNuno::logMsgInt("steps queue size: ", queueSteps.size(), 1);
 	}
