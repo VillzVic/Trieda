@@ -234,8 +234,14 @@ public class SolverInput
 		this.disciplinasComDemandaCurriculo.retainAll(disciplinasComCurriculo);
 	}
 
-	private void preencheMapHorarios()
-	{
+	private void preencheMapHorarios() {
+		// busca as disponibilidades para cada entidade
+		Map<Campus, List<Disponibilidade>> campusMapDisponibilidade = DisponibilidadeCampus.findDisponibilidadesPorCampus(cenario);
+		Map<Unidade, List<Disponibilidade>> unidadeMapDisponibilidade = DisponibilidadeUnidade.findDisponibilidadesPorUnidade(cenario);
+		Map<Sala, List<Disponibilidade>> salaMapDisponibilidade = DisponibilidadeSala.findDisponibilidadesPorAmbiente(cenario);
+		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = DisponibilidadeProfessor.findDisponibilidadesPorProfessor(cenario);
+		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisponibilidade = DisponibilidadeDisciplina.findDisponibilidadesPorDisciplina(cenario);
+		
 		this.horariosCampus = new HashMap< Campus, Set< HorarioDisponivelCenario > >();
 		this.horariosUnidades = new HashMap< Unidade, Set< HorarioDisponivelCenario > >();
 		this.horariosSalas = new HashMap< Sala, Set< HorarioDisponivelCenario > >();
@@ -243,178 +249,81 @@ public class SolverInput
 		this.horariosProfessores = new HashMap< Professor, Set< HorarioDisponivelCenario > >();
 		this.horariosFixacoes = new HashMap< Fixacao, Set< HorarioDisponivelCenario > >();
 		
-		Map<Campus, List<Disponibilidade>> campusMapDisponibilidade = new HashMap<Campus, List<Disponibilidade>>();
-		Map<Unidade, List<Disponibilidade>> unidadeMapDisponibilidade = new HashMap<Unidade, List<Disponibilidade>>();
-		Map<Sala, List<Disponibilidade>> salaMapDisponibilidade = new HashMap<Sala, List<Disponibilidade>>();
-		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = new HashMap<Professor, List<Disponibilidade>>();
-		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisponibilidade = new HashMap<Disciplina, List<Disponibilidade>>();
-		
-		List<DisponibilidadeCampus> disponibilidadesCampi = DisponibilidadeCampus.findBy(cenario);
-		for (DisponibilidadeCampus dispCam : disponibilidadesCampi) {
-			List<Disponibilidade> disponibilidades = campusMapDisponibilidade.get(dispCam.getCampus());
-			if (disponibilidades == null) {
-				disponibilidades = new ArrayList<Disponibilidade>();
-				campusMapDisponibilidade.put(dispCam.getCampus(), disponibilidades);
-			}
-			disponibilidades.add(dispCam);
-		}
-		
-		List<DisponibilidadeUnidade> disponibilidadesUnidades = DisponibilidadeUnidade.findBy(cenario);
-		for (DisponibilidadeUnidade dispUni : disponibilidadesUnidades) {
-			List<Disponibilidade> disponibilidades = unidadeMapDisponibilidade.get(dispUni.getUnidade());
-			if (disponibilidades == null) {
-				disponibilidades = new ArrayList<Disponibilidade>();
-				unidadeMapDisponibilidade.put(dispUni.getUnidade(), disponibilidades);
-			}
-			disponibilidades.add(dispUni);
-		}
-
-		List<DisponibilidadeSala> disponibilidadesSalas = DisponibilidadeSala.findBy(cenario);
-		for (DisponibilidadeSala dispSal : disponibilidadesSalas) {
-			List<Disponibilidade> disponibilidades = salaMapDisponibilidade.get(dispSal.getSala());
-			if (disponibilidades == null) {
-				disponibilidades = new ArrayList<Disponibilidade>();
-				salaMapDisponibilidade.put(dispSal.getSala(), disponibilidades);
-			}
-			disponibilidades.add(dispSal);
-		}
-		
-		List<DisponibilidadeDisciplina> disponibilidadesDisciplinas = DisponibilidadeDisciplina.findBy(cenario);
-		for (DisponibilidadeDisciplina dispDisc : disponibilidadesDisciplinas) {
-			List<Disponibilidade> disponibilidades = disciplinaMapDisponibilidade.get(dispDisc.getDisciplina());
-			if (disponibilidades == null) {
-				disponibilidades = new ArrayList<Disponibilidade>();
-				disciplinaMapDisponibilidade.put(dispDisc.getDisciplina(), disponibilidades);
-			}
-			disponibilidades.add(dispDisc);
-		}
-		
-		List<DisponibilidadeProfessor> disponibilidadesProfessores = DisponibilidadeProfessor.findBy(cenario);
-		for (DisponibilidadeProfessor dispProf : disponibilidadesProfessores) {
-			List<Disponibilidade> disponibilidades = professorMapDisponibilidade.get(dispProf.getProfessor());
-			if (disponibilidades == null) {
-				disponibilidades = new ArrayList<Disponibilidade>();
-				professorMapDisponibilidade.put(dispProf.getProfessor(), disponibilidades);
-			}
-			disponibilidades.add(dispProf);
-		}
-		
 		this.todosHorarioDisponivelCenario = HorarioDisponivelCenario.findAll( this.instituicaoEnsino, cenario );
-		for (HorarioDisponivelCenario hdc : this.todosHorarioDisponivelCenario) {
+		for (HorarioDisponivelCenario hdc : this.todosHorarioDisponivelCenario) { // para cada par (diaSemana,horário) das Semanas Letivas
 			// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
 			SemanaLetiva semanaLetivaDeHDC = hdc.getHorarioAula().getSemanaLetiva();
 			
-			for ( Campus campus : campusMapDisponibilidade.keySet() )
-			{
-				Set< HorarioDisponivelCenario > horarios
-					= this.horariosCampus.get( campus );
-
-				if ( horarios == null )
-				{
-					horarios = new HashSet< HorarioDisponivelCenario >();
-					this.horariosCampus.put( campus, horarios );
+			for (Campus campus : campusMapDisponibilidade.keySet()) {
+				Set<HorarioDisponivelCenario> horariosCampus = this.horariosCampus.get(campus);
+				if (horariosCampus == null) {
+					horariosCampus = new HashSet<HorarioDisponivelCenario>();
+					this.horariosCampus.put(campus, horariosCampus);
 				}
-
-				for ( Disponibilidade disponibilidade : campusMapDisponibilidade.get(campus) )
-				{
-					if (disponibilidade.ehCompativelCom(hdc))
-					{
-						horarios.add( hdc );
-					}
-				}
-			}
-			for ( Unidade unidade : unidadeMapDisponibilidade.keySet() )
-			{
-				Set< HorarioDisponivelCenario > horarios
-					= this.horariosUnidades.get( unidade );
-
-				if ( horarios == null )
-				{
-					horarios = new HashSet< HorarioDisponivelCenario >();
-					this.horariosUnidades.put( unidade, horarios ); 
-				}
-
-				for ( Disponibilidade disponibilidade : unidadeMapDisponibilidade.get(unidade) )
-				{
-					if (disponibilidade.ehCompativelCom(hdc))
-					{
-						horarios.add( hdc );
-					}
-				}
-			}
-			for ( Sala sala : salaMapDisponibilidade.keySet() )
-			{
-				Set< HorarioDisponivelCenario > horarios
-					= this.horariosSalas.get( sala );
-
-				if ( horarios == null )
-				{
-					horarios = new HashSet< HorarioDisponivelCenario >();
-					this.horariosSalas.put( sala, horarios ); 
-				}
-
-				for ( Disponibilidade disponibilidade : salaMapDisponibilidade.get(sala) )
-				{
-					if (disponibilidade.ehCompativelCom(hdc))
-					{
-						horarios.add( hdc );
-					}
-				}
-			}
-			for ( Disciplina disciplina : disciplinaMapDisponibilidade.keySet() )
-			{
-				Set< HorarioDisponivelCenario > horarios
-					= this.horariosDisciplinas.get( disciplina );
-
-				if ( horarios == null )
-				{
-					horarios = new HashSet< HorarioDisponivelCenario >();
-					this.horariosDisciplinas.put( disciplina, horarios ); 
-				}
-				
-				for ( Disponibilidade disponibilidade : disciplinaMapDisponibilidade.get(disciplina) )
-				{
-					if (disponibilidade.ehCompativelCom(hdc))
-					{
-						// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
-						if (disciplina.getSemanasLetivas().isEmpty() || disciplina.getSemanasLetivas().contains(semanaLetivaDeHDC)) {
-							horarios.add( hdc );
+				// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade do campus
+				if (Disponibilidade.ehCompativelCom(hdc, campusMapDisponibilidade.get(campus))) {
+					horariosCampus.add(hdc);
+					
+					for (Unidade unidade : campus.getUnidades()) {
+						Set<HorarioDisponivelCenario> horariosUnidade = this.horariosUnidades.get(unidade);
+						if (horariosUnidade == null) {
+							horariosUnidade = new HashSet<HorarioDisponivelCenario>();
+							this.horariosUnidades.put(unidade, horariosUnidade); 
+						}
+						// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade da unidade
+						if (Disponibilidade.ehCompativelCom(hdc, unidadeMapDisponibilidade.get(unidade))) {
+							horariosUnidade.add(hdc);
+							
+							for (Sala sala : unidade.getSalas()) {
+								Set<HorarioDisponivelCenario> horariosSala = this.horariosSalas.get(sala);
+								if (horariosSala == null) {
+									horariosSala = new HashSet<HorarioDisponivelCenario>();
+									this.horariosSalas.put(sala, horariosSala); 
+								}
+								// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade da sala
+								if (Disponibilidade.ehCompativelCom(hdc, salaMapDisponibilidade.get(sala))) {
+									horariosSala.add(hdc);
+								}
+							}
 						}
 					}
-						
 				}
 			}
-			for ( Professor professor : professorMapDisponibilidade.keySet() )
-			{
-				Set< HorarioDisponivelCenario > horarios
-					= this.horariosProfessores.get( professor );
-
-				if ( horarios == null )
-				{
-					horarios = new HashSet< HorarioDisponivelCenario >();
-					this.horariosProfessores.put( professor, horarios ); 
+			
+			for (Disciplina disciplina : disciplinaMapDisponibilidade.keySet()) {
+				Set<HorarioDisponivelCenario> horarios = this.horariosDisciplinas.get(disciplina);
+				if (horarios == null) {
+					horarios = new HashSet<HorarioDisponivelCenario>();
+					this.horariosDisciplinas.put(disciplina, horarios); 
 				}
-
-				for ( Disponibilidade disponibilidade : professorMapDisponibilidade.get(professor) )
-				{
-					if (disponibilidade.ehCompativelCom(hdc))
-					{
-						horarios.add( hdc );
+				// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade da disciplina
+				if (Disponibilidade.ehCompativelCom(hdc, disciplinaMapDisponibilidade.get(disciplina))) {
+					// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
+					if (disciplina.getSemanasLetivas().isEmpty() || disciplina.getSemanasLetivas().contains(semanaLetivaDeHDC)) {
+						horarios.add(hdc);
 					}
 				}
 			}
-			for ( Fixacao fixacao : hdc.getFixacoes() )
-			{
-				Set< HorarioDisponivelCenario > horarios
-					= this.horariosFixacoes.get( fixacao );
-
-				if ( horarios == null )
-				{
-					horarios = new HashSet< HorarioDisponivelCenario >();
-					this.horariosFixacoes.put( fixacao, horarios ); 
+			
+			for (Professor professor : professorMapDisponibilidade.keySet()) {
+				Set<HorarioDisponivelCenario> horarios = this.horariosProfessores.get(professor);
+				if (horarios == null) {
+					horarios = new HashSet<HorarioDisponivelCenario>();
+					this.horariosProfessores.put(professor, horarios); 
 				}
-
-				horarios.add( hdc );
+				// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade do professor
+				if (Disponibilidade.ehCompativelCom(hdc, professorMapDisponibilidade.get(professor))) {
+					horarios.add(hdc);
+				}
+			}
+			
+			for (Fixacao fixacao : hdc.getFixacoes()) {
+				Set<HorarioDisponivelCenario> horarios = this.horariosFixacoes.get(fixacao);
+				if (horarios == null) {
+					horarios = new HashSet<HorarioDisponivelCenario>();
+					this.horariosFixacoes.put(fixacao, horarios); 
+				}
+				horarios.add(hdc);
 			}
 		}
 	}
@@ -1239,7 +1148,7 @@ public class SolverInput
 				itemDeslocamento.setDestinoId(
 					deslocamento.getDestino().getId().intValue() );
 				itemDeslocamento.setTempo( deslocamento.getTempo() );
-				itemDeslocamento.setCusto( deslocamento.getCusto() );
+				itemDeslocamento.setCusto( 0.0/*deslocamento.getCusto()*/ ); // a tela da aplicação web não trata mais custo de deslocamento
 
 				grupoDeslocamento.getDeslocamento().add( itemDeslocamento );
 			}
@@ -1294,7 +1203,7 @@ public class SolverInput
 					itemDeslocamento.setDestinoId(
 						deslocamento.getDestino().getId().intValue() );
 					itemDeslocamento.setTempo( deslocamento.getTempo() );
-					itemDeslocamento.setCusto( deslocamento.getCusto() );
+					itemDeslocamento.setCusto( 0.0 /*deslocamento.getCusto()*/ ); // a tela da aplicação web não trata mais custo
 
 					grupoDeslocamento.getDeslocamento().add( itemDeslocamento );
 				}
@@ -1732,7 +1641,9 @@ public class SolverInput
 			}
 
 			for (Oferta oferta : ofertas) {
-				if (!this.parametro.getTurnos().contains(oferta.getTurno()) || !this.parametro.getCampi().contains(oferta.getCampus())) {
+				if (!this.parametro.getTurnos().contains(oferta.getTurno()) || 
+					!this.parametro.getCampi().contains(oferta.getCampus()) ||
+					oferta.getDemandas().isEmpty()) {
 					continue;
 				}
 

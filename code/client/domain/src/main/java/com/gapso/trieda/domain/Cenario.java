@@ -394,6 +394,7 @@ public class Cenario
 		}
 	}
 	
+	@Transactional
 	public static void limpaSolucoesCenario(Cenario cenario) {
 		List<Query> nativeQueries = new ArrayList<Query>();
 		nativeQueries.add(entityManager().createNativeQuery( "UPDATE alunos_demanda ad JOIN alunos a ON a.aln_id = ad.aln_id SET ald_atendido = FALSE WHERE a.cen_id = :cenario"));

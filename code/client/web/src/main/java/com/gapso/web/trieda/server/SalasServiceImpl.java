@@ -67,13 +67,12 @@ public class SalasServiceImpl
 	@Override
 	public SalaDTO getSala( Long id )
 	{
-		if ( id == null )
-		{
+		if (id == null) {
 			return null;
 		}
-
-		return ConvertBeans.toSalaDTO(
-			Sala.find( id, getInstituicaoEnsinoUser() ) );
+		Sala sala = Sala.find(id, getInstituicaoEnsinoUser());
+		SalaDTO dto = ConvertBeans.toSalaDTO(sala);
+		return dto;
 	}
 
 	@Override

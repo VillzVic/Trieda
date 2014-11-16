@@ -1,7 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -110,5 +113,19 @@ public class DisponibilidadeDisciplina extends Disponibilidade implements Serial
 		q.setParameter( "cenarioId", cenario.getId() );
 
 		return q.getResultList();
+	}
+	
+	public static Map<Disciplina, List<Disponibilidade>> findDisponibilidadesPorDisciplina(Cenario cenario) {
+		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisponibilidade = new HashMap<Disciplina, List<Disponibilidade>>();
+		List<DisponibilidadeDisciplina> disponibilidadesDisciplinas = findBy(cenario);
+		for (DisponibilidadeDisciplina dispDisc : disponibilidadesDisciplinas) {
+			List<Disponibilidade> disponibilidades = disciplinaMapDisponibilidade.get(dispDisc.getDisciplina());
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				disciplinaMapDisponibilidade.put(dispDisc.getDisciplina(), disponibilidades);
+			}
+			disponibilidades.add(dispDisc);
+		}
+		return disciplinaMapDisponibilidade;
 	}
 }

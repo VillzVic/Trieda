@@ -6,6 +6,419 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
+
+public class TextFieldMask extends TextField<String> {
+
+	public class Settings {
+
+		private String placeHolder;
+
+		public Settings() {
+
+		}
+
+		public Settings(String placeHolder) {
+			this.placeHolder = placeHolder;
+		}
+
+		public String getPlaceHolder() {
+			return placeHolder;
+		}
+
+		public void setPlaceHolder(String placeHolder) {
+			this.placeHolder = placeHolder;
+		}
+
+	}
+
+	private Settings settings;
+	private final String mask;
+	private int len;
+	private int partialPosition;
+	private int cursorBegin = -1;
+	private int cursorEnd = -1;
+	private Integer firstNonMaskPos;
+	private boolean ignore;
+	private String[] buffer;
+	private String[] tests;
+	private String focusText;
+	private int keyDownValue;
+
+	private static final Map<String, String> defs;
+
+	static {
+		defs = new HashMap<String, String>();
+		defs.put("9", "[0-9]");
+		defs.put("a", "[A-Za-z]");
+		defs.put("*", "[A-Za-z0-9]");
+	}
+
+	private static boolean cotainDef(String key) {
+
+		if (defs.get(key) != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private static String getDef(String key) {
+		return defs.get(key);
+	}
+
+	public TextFieldMask(String mask) {
+		super();
+		this.mask = mask;
+	}
+
+	private void buffer() {
+
+		String[] aux = split(mask);
+
+		buffer = new String[aux.length];
+
+		for (int i = 0; i < aux.length; i++) {
+			if (cotainDef(aux[i])) {
+				buffer[i] = settings.getPlaceHolder();
+			} else {
+				buffer[i] = aux[i];
+			}
+		}
+	}
+
+	private int checkVal(boolean allow) {
+
+		String test = "";
+
+		if (getValue() != null) {
+			test = getValue();
+		}
+
+		int lastMatch = -1;
+
+		int a = 0;
+
+		for (int i = 0, pos = 0; i < len; i++) {
+			if (tests[i] != null) {
+				buffer[i] = settings.getPlaceHolder();
+
+				while (pos++ < test.length()) {
+					String c = String.valueOf(test.charAt(pos - 1));
+
+					if (c.matches(tests[i])) {
+
+						buffer[i] = String.valueOf(c);
+						lastMatch = i;
+						a = i;
+						break;
+					}
+				}
+				if (pos > test.length()) {
+					a = i;
+					break;
+				}
+			} else if (i != partialPosition) {
+				try {
+					char d = test.charAt(pos);
+
+					if (buffer[i].equals(String.valueOf(d))) {
+						pos++;
+						lastMatch = i;
+					}
+				} catch (Exception e) {
+					continue;
+				}
+			}
+		}
+
+		if (allow || lastMatch + 1 >= partialPosition) {
+			writeBuffer();
+
+			if (!allow) {
+
+				if (getValue() != null) {
+					setValue(getValue().substring(0, lastMatch + 1));
+				}
+			}
+			a = partialPosition;
+		}
+
+		return a;
+	}
+
+	private void clearBuffer(int start, int end) {
+
+		for (int i = start; i < end && i < len; i++) {
+			if (tests[i] != null) {
+				buffer[i] = settings.getPlaceHolder();
+			}
+		}
+	}
+
+	private void each() {
+
+		for (int i = 0; i < tests.length; i++) {
+			String c = tests[i];
+
+			if (c == "?") {
+				len--;
+				partialPosition = i;
+			} else if (cotainDef(c)) {
+				tests[i] = getDef(c);
+
+				if (firstNonMaskPos == null) {
+					firstNonMaskPos = tests.length - 1;
+				}
+			} else {
+				tests[i] = null;
+			}
+		}
+	}
+
+	public void maskField() {
+
+		settings = new Settings("_");
+
+		tests = new String[] {};
+		partialPosition = mask.length();
+		firstNonMaskPos = null;
+		len = mask.length();
+
+		tests = split(mask);
+
+		each();
+		buffer();
+
+		ignore = false;
+
+		focusText = "";
+
+		if (getValue() != null) {
+			focusText = getValue();
+		}
+
+		if (!isReadOnly()) {
+			checkVal(false);
+		}
+	}
+
+	@Override
+	protected void onBlur(ComponentEvent be) {
+
+		super.onBlur(be);
+		checkVal(true);
+	}
+
+	@Override
+	protected void onFocus(ComponentEvent be) {
+
+		super.onFocus(be);
+
+		focusText = "";
+
+		if (getValue() != null) {
+			focusText = getValue();
+		}
+
+		int pos = checkVal(false);
+		writeBuffer();
+
+		if (pos == mask.length()) {
+			cursorBegin = 0;
+			cursorEnd = pos;
+			select(0, pos);
+		} else {
+			cursorBegin = pos;
+			cursorEnd = pos;
+			setCursorPos(pos);
+		}
+	}
+
+	@Override
+	protected void onKeyDown(FieldEvent fe) {
+
+		super.onKeyDown(fe);
+
+		int k = fe.getKeyCode();
+		keyDownValue = k;
+
+		ignore = k < 16 || k > 16 && k < 32 || k > 32 && k < 41;
+
+		// delete selection before proceeding
+		if (cursorBegin - cursorEnd != 0
+				&& (!ignore || k == KeyCodes.KEY_BACKSPACE || k == KeyCodes.KEY_DELETE)) {
+			clearBuffer(cursorBegin, cursorEnd);
+		}
+
+		// backspace, delete, and escape get special treatment
+		if (k == KeyCodes.KEY_BACKSPACE || k == KeyCodes.KEY_DELETE) {
+			shiftL(getCursorPos() + (k == KeyCodes.KEY_DELETE ? 0 : -1));
+			fe.stopEvent();
+		} else if (k == KeyCodes.KEY_ESCAPE) {// escape
+			setValue(focusText);
+			fe.stopEvent();
+		}
+	}
+
+	@Override
+	protected void onKeyPress(FieldEvent fe) {
+
+		super.onKeyPress(fe);
+
+		int k = (fe.getKeyCode() == 0) ? keyDownValue : fe.getKeyCode();
+
+		//Used to convert codes for fire fox
+		if(fe.getKeyCode() == 0 && k != 0){
+			switch(k){
+			case 96: k = 48; break; 
+			case 97: k = 49; break; 
+			case 98: k = 50; break; 
+			case 99: k = 51; break; 
+			case 100: k = 52; break; 
+			case 101: k = 53; break; 
+			case 102: k = 54; break; 
+			case 103: k = 55; break; 
+			case 104: k = 56; break; 
+			case 105: k = 57; break; 
+			}
+		};
+		if (ignore) {
+			// Fixes Mac FF bug on backspace
+			if (k == KeyCodes.KEY_BACKSPACE) {
+				fe.stopEvent();
+			}
+			return;
+		}
+
+		if (fe.isControlKey() || fe.isAltKey()) {// Ignore
+			//fe.stopEvent();
+		} else if (k >= 32 && k <= 125 || k > 186) {// typeable characters
+			int p = seekNext(getCursorPos() - 1);
+
+			if (p < len) {
+				String c = String.valueOf((char) k);
+				if (c.matches(tests[p])) {
+					shiftR(p);
+					buffer[p] = c;
+					writeBuffer();
+					int next = seekNext(p);
+					setCursorPos(next);
+					cursorBegin = next;
+					cursorEnd = next;
+				}
+			}
+		}
+		fe.stopEvent();
+	}
+
+	@Override
+	protected void onRender(Element target, int index) {
+		super.onRender(target, index);
+		maskField();
+	}
+
+	private int seekNext(int index) {
+
+		while (++index <= len) {
+			try {
+				if (tests[index] != null) {
+					break;
+				}
+			} catch (Exception e) {
+				break;
+			}
+		}
+		return index;
+	}
+
+	private void shiftL(int index) {
+		for (int i = index; i >= 0; i--) {
+			if (i < tests.length && tests[i] != null) {
+				index = i;
+				break;
+			}
+		}
+
+		for (int i = index; i < len; i++) {
+			if (i >= 0 && tests[i] != null) {
+				buffer[i] = settings.getPlaceHolder();
+
+				int j = seekNext(i);
+
+				if (j < len && buffer[j].matches(tests[i])) {
+					buffer[i] = buffer[j];
+				} else {
+					break;
+				}
+			}
+		}
+		writeBuffer();
+		setCursorPos(index);
+	}
+
+	private void shiftR(int index) {
+
+		String c = settings.getPlaceHolder();
+
+		for (int i = index; i < len; i++) {
+			if (tests[i] != null) {
+				int j = seekNext(i);
+				String t = buffer[i];
+				buffer[i] = c;
+				if (j < len && t.matches(tests[j])) {
+					c = t;
+				} else {
+					break;
+				}
+			}
+		}
+	}
+
+	private String[] split(String text) {
+		int length = text.length();
+		String[] array = new String[length];
+
+		for (int i = 0; i < length; i++) {
+			array[i] = String.valueOf(text.charAt(i));
+		}
+		return array;
+	}
+
+	private void writeBuffer() {
+
+		String valueAux = "";
+
+		for (String element2 : buffer) {
+			valueAux += element2;
+		}
+		setValue(valueAux);
+	}
+
+	/*
+	 * This is used as a hack for deleting items in the array. If highlighing something
+	 * use the 'Delete' key for more accurate results. Backspace will take one extra
+	 * character to the left. This can be dealt with later.
+	 */
+	@Override
+	public void onComponentEvent(ComponentEvent ce){
+		super.onComponentEvent(ce);
+		switch (ce.getEventTypeInt()) {
+		case Event.ONMOUSEUP: cursorBegin = getCursorPos(); break;
+		case Event.ONCLICK: cursorEnd = getSelectionLength() + cursorBegin; break;
+		}
+	}
+}
+
+/*
+import java.util.HashMap;
+import java.util.Map;
+
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.FieldEvent;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.KeyboardListener;
 
@@ -350,3 +763,4 @@ public class TextFieldMask extends TextField<String> {
 	}
 
 }
+*/

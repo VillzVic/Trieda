@@ -39,11 +39,14 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Disponibilidade;
+import com.gapso.trieda.domain.DisponibilidadeCampus;
 import com.gapso.trieda.domain.DisponibilidadeDisciplina;
+import com.gapso.trieda.domain.DisponibilidadeProfessor;
+import com.gapso.trieda.domain.DisponibilidadeSala;
+import com.gapso.trieda.domain.DisponibilidadeUnidade;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.HorarioAula;
-import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
@@ -53,8 +56,8 @@ import com.gapso.trieda.domain.RequisicaoOtimizacao;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.domain.Usuario;
-import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Grafo;
 import com.gapso.web.trieda.server.util.Profundidade;
@@ -85,7 +88,6 @@ import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
-import com.gapso.web.trieda.shared.dtos.DisponibilidadeDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.EstatisticasInputSolverXMLDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -153,6 +155,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			// CAMPUS
 			prw.setInitSubPartial("Verificando consistência dos campi...");
+				checkDisponibilidadesEspacoFisico(parametro,warnings,errors);
 				if (parametro.getProfessorEmMuitosCampi()) {
 					checkCampiSemDeslocamentos(parametro,errors);
 				}
@@ -168,6 +171,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
 				checkDisciplinasComMaxAlunosDiferentes(parametro,errors);
 				checkDivisoesCreditos(parametro,errors);
+				checkDisponibilidadesDisciplina(parametro,warnings,errors);
 			prw.endSubPartial();
 			
 			// EQUIVALÊNCIAS
@@ -196,13 +200,14 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors,warnings);
 				}
 				checkDemandasComDisciplinasSemCurriculo(parametro,errors);
-				checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
+				checkOfertas(parametro,errors, warnings);
 				checkExigeEquivalenciaForcadaAlunosDemanda(parametro,getInstituicaoEnsinoUser(),errors);
 			prw.endSubPartial();
 			
 			// PROFESSORES
 			prw.setInitSubPartial("Verificando consistência dos professores...");
-				checkProfessorComCargaHorariaMaximaZerada(parametro,errors, warnings);
+				checkProfessorComCargaHorariaMaximaZerada(parametro,errors,warnings);
+				checkDisponibilidadesProfessor(parametro,warnings,errors);
 			prw.endSubPartial();
 			
 			response.setErrors(errors);
@@ -925,7 +930,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	
 	private void checkDisciplinasSemLaboratorios(Campus campus, List<String> errors) {
 		// coleta as disciplinas que serão enviadas para o solver e que exigem laboratório
-		
 		Set<Disciplina> disciplinasQueExigemLaboratio = new HashSet<Disciplina>();
 		for (Oferta oferta : campus.getOfertas()) {
 			for (Demanda demanda : oferta.getDemandas()) {
@@ -938,43 +942,16 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		
 		// verifica se há disciplinas que exigem laboratório, porém, não estão associadas a laboratórios
 		for (Disciplina disciplina : disciplinasQueExigemLaboratio) {
-			// coleta os CurriculoDisciplina não associados a laboratórios
-			Set<CurriculoDisciplina> curriculosDisciplinasNaoAssociadosALaboratorios = new HashSet<CurriculoDisciplina>();
-			for (CurriculoDisciplina curriculoDisciplina : disciplina.getCurriculos()) {
-				// apenas faz a validação para curriculos com alguma oferta
-				if (!curriculoDisciplina.getCurriculo().getOfertas().isEmpty()) {
-					// verifica se tem oferta no campus a ser otimizado
-					boolean curriculoTemOfertaNoCampusASerOtimizado = false;
-					for (Oferta oferta : curriculoDisciplina.getCurriculo().getOfertas()) {
-						if (oferta.getCampus().equals(campus)) {
-							curriculoTemOfertaNoCampusASerOtimizado = true;
-							break;
-						}
-					}
-					
-					// apenas faz validação se currículo tem oferta no campus a ser otimizado
-					if (curriculoTemOfertaNoCampusASerOtimizado) {
-						boolean estaAssociadoComAlgumLaboratorio = false;
-						for (Sala sala : curriculoDisciplina.getDisciplina().getSalas()) {
-							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(campus)) {
-								estaAssociadoComAlgumLaboratorio = true;
-								break;
-							}
-						}
-						 
-						if (!estaAssociadoComAlgumLaboratorio) {
-							curriculosDisciplinasNaoAssociadosALaboratorios.add(curriculoDisciplina);
-						}
-					}
+			boolean disciplinaTemAssociacaoComAlgumLab = false;
+			for (Sala sala : disciplina.getSalas()) {
+				if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(campus)) { // somente para o campus em questão
+					disciplinaTemAssociacaoComAlgumLab = true;
+					break;
 				}
 			}
 			 
-			if (!curriculosDisciplinasNaoAssociadosALaboratorios.isEmpty()) {
-				String pares = "";
-				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasNaoAssociadosALaboratorios) {
-					pares += "(" + curriculoDisciplina.getCurriculo().getCodigo() + "," + curriculoDisciplina.getPeriodo() + "); ";
-				}
-				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + campus.getCodigo() + ", são eles: " + pares));
+			if (!disciplinaTemAssociacaoComAlgumLab) {
+				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, não está associada a nenhum laboratório do campus [" + campus.getCodigo() + "]."));
 			}
 		}
 	}
@@ -999,43 +976,20 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		
 		// verifica se há disciplinas que não exigem laboratório, porém, estão associadas somente a laboratórios
 		for (Disciplina disciplina : disciplinasQueNaoExigemLaboratorio) {
-			// coleta os CurriculoDisciplina associados somente a laboratórios
-			Set<CurriculoDisciplina> curriculosDisciplinasAssociadosSomenteALaboratorios = new HashSet<CurriculoDisciplina>();
-			for (CurriculoDisciplina curriculoDisciplina : disciplina.getCurriculos()) {
-				// apenas faz a validação para curriculos com alguma oferta
-				if (!curriculoDisciplina.getCurriculo().getOfertas().isEmpty()) {
-					// verifica se tem oferta no campus a ser otimizado
-					boolean curriculoTemOfertaNoCampusASerOtimizado = false;
-					for (Oferta oferta : curriculoDisciplina.getCurriculo().getOfertas()) {
-						if (oferta.getCampus().equals(campus)) {
-							curriculoTemOfertaNoCampusASerOtimizado = true;
-							break;
-						}
-					}
-					
-					// apenas faz validação se currículo tem oferta no campus a ser otimizado
-					if (curriculoTemOfertaNoCampusASerOtimizado) {
-						boolean estaAssociadoSomenteComLaboratorios = true;
-						for (Sala sala : curriculoDisciplina.getDisciplina().getSalas()) {
-							if (!sala.isLaboratorio() && sala.getUnidade().getCampus().equals(campus)) {
-								estaAssociadoSomenteComLaboratorios = false;
-								break;
-							}
-						}
-						 
-						if (estaAssociadoSomenteComLaboratorios && !curriculoDisciplina.getDisciplina().getSalas().isEmpty()) {
-							curriculosDisciplinasAssociadosSomenteALaboratorios.add(curriculoDisciplina);
-						}
+			boolean disciplinaTemAlgumaAssociacaoComAmbiente = false;
+			boolean disciplinaTemAssociacaoComAlgumaSalaDeAula = false;
+			for (Sala sala : disciplina.getSalas()) {
+				if (sala.getUnidade().getCampus().equals(campus)) { // somente para o campus em questão
+					disciplinaTemAlgumaAssociacaoComAmbiente = true;
+					if (!sala.isLaboratorio()) {
+						disciplinaTemAssociacaoComAlgumaSalaDeAula = true;
+						break;
 					}
 				}
 			}
 			 
-			if (!curriculosDisciplinasAssociadosSomenteALaboratorios.isEmpty()) {
-				String pares = "";
-				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasAssociadosSomenteALaboratorios) {
-					pares += "(" + curriculoDisciplina.getCurriculo().getCodigo() + "," + curriculoDisciplina.getPeriodo() + "); ";
-				}
-				warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que nao exige laboratório, contém pares (Matriz Curricular, Período) associados a somente laboratórios [" + campus.getCodigo() + ", são eles: " + pares));
+			if (disciplinaTemAlgumaAssociacaoComAmbiente && !disciplinaTemAssociacaoComAlgumaSalaDeAula) {
+				warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que não exige laboratório, está associada somente com laboratórios no campus [" + campus.getCodigo() + "]."));
 			}
 		}
 	}
@@ -1342,26 +1296,37 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 	}
 	
-	private void checkOfertaComCargaReceitaCreditoZerada(Parametro parametro, List<String> errors, List<String> warnings) {
-		
-		List<String> warningsAux = new ArrayList<String>();
-		
-		boolean todos = true;
+	private void checkOfertas(Parametro parametro, List<String> errors, List<String> warnings) {
+		boolean todosReceitaZerada = true;
+		boolean todosSemDemanda = true;
+		List<String> warningsAuxReceitaZerada = new ArrayList<String>();
+		List<String> warningsAuxSemDemanda = new ArrayList<String>();
 		
 		for (Campus campus : parametro.getCampi()) {
 			for (Oferta oferta : campus.getOfertas()) {
 				if(oferta.getReceita() == 0){
-					warningsAux.add(HtmlUtils.htmlUnescape("A oferta  [" + oferta.getNaturalKeyString() + "] está com receita de crétido igual a zero, o que prejudica a otimização"));
+					warningsAuxReceitaZerada.add(HtmlUtils.htmlUnescape("A oferta [" + oferta.getNaturalKeyString() + "] está com receita de crétido igual a zero, o que prejudica a otimização."));
 				} else {
-					todos = false;
+					todosReceitaZerada = false;
+				}
+				
+				if(oferta.getDemandas().isEmpty()){
+					warningsAuxSemDemanda.add(HtmlUtils.htmlUnescape("A oferta [" + oferta.getNaturalKeyString() + "] não possui demandas cadastradas, logo, será descartada do processo de otimização."));
+				} else {
+					todosSemDemanda = false;
 				}
 			}
 		}
 		
-		if(todos){
-			errors.add(HtmlUtils.htmlUnescape("Todas as ofertas estão com a receita de crédito zerada"));
+		if (todosReceitaZerada) {
+			errors.add(HtmlUtils.htmlUnescape("Todas as ofertas estão com a receita de crédito zerada."));
 		} else
-			warnings.addAll(warningsAux);
+			warnings.addAll(warningsAuxReceitaZerada);
+		
+		if (todosSemDemanda) {
+			errors.add(HtmlUtils.htmlUnescape("Nennhuma oferta possui demandas cadastradas."));
+		} else
+			warnings.addAll(warningsAuxSemDemanda);
 	}
 	
 	private void checkSemanasLetivasIncompativeis(Parametro parametro, List<String> errors) {
@@ -1936,6 +1901,125 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 		equivalenciasStr = equivalenciasStr.substring(0,equivalenciasStr.length()-2);
 		return equivalenciasStr;
+	}
+	
+	private void checkDisponibilidadesEspacoFisico(Parametro parametro, List<String> warnings, List<String> errors) {
+		Cenario cenario = parametro.getCenario();
+		
+		boolean nenhumCampusComDisponibilidade = true;
+		List<String> warningsCampi = new ArrayList<String>();
+		Map<Campus, List<Disponibilidade>> campusMapDisponibilidade = DisponibilidadeCampus.findDisponibilidadesPorCampus(cenario);
+		
+		boolean nenhumaUnidadeComDisponibilidade = true;
+		List<String> warningsUnidades = new ArrayList<String>();
+		Map<Unidade, List<Disponibilidade>> unidadeMapDisponibilidade = DisponibilidadeUnidade.findDisponibilidadesPorUnidade(cenario);
+		
+		boolean nenhumAmbienteComDisponibilidade = true;
+		List<String> warningsAmbientes = new ArrayList<String>();
+		Map<Sala, List<Disponibilidade>> salaMapDisponibilidade = DisponibilidadeSala.findDisponibilidadesPorAmbiente(cenario);
+		
+		for (Campus campus : parametro.getCampi()) {
+			List<Disponibilidade> dispCam = campusMapDisponibilidade.get(campus);
+			if (Disponibilidade.temAlgumaDisponibilidade(dispCam)) {
+				nenhumCampusComDisponibilidade = false;
+			} else {
+				warningsCampi.add(HtmlUtils.htmlUnescape("O campus [" + campus.getCodigo() + "] não tem nenhum horário disponível, ou seja, será desconsiderado da otimização."));
+			}
+			
+			for (Unidade unidade : campus.getUnidades()) {
+				List<Disponibilidade> dispUni = unidadeMapDisponibilidade.get(unidade);
+				if (Disponibilidade.temAlgumaDisponibilidade(dispUni)) {
+					nenhumaUnidadeComDisponibilidade = false;
+				} else {
+					warningsUnidades.add(HtmlUtils.htmlUnescape("A unidade [" + unidade.getCodigo() + "] não tem nenhum horário disponível, ou seja, será desconsiderada da otimização."));
+				}
+				
+				for (Sala sala : unidade.getSalas()) {
+					List<Disponibilidade> dispSal = salaMapDisponibilidade.get(sala);
+					if (Disponibilidade.temAlgumaDisponibilidade(dispSal)) {
+						nenhumAmbienteComDisponibilidade = false;
+					} else {
+						warningsAmbientes.add(HtmlUtils.htmlUnescape("O ambiente [" + sala.getCodigo() + "] não tem nenhum horário disponível, ou seja, será desconsiderada da otimização."));
+					}	
+				}
+			}
+		}
+		
+		if (nenhumCampusComDisponibilidade) {
+			errors.add(HtmlUtils.htmlUnescape("Nenhum dos campi selecionados para a otimização possui horário disponível."));
+		} else {
+			warnings.addAll(warningsCampi);
+		}
+		
+		if (nenhumaUnidadeComDisponibilidade) {
+			errors.add(HtmlUtils.htmlUnescape("Nenhuma das unidades presentes nos campi selecionados para a otimização possui horário disponível."));
+		} else {
+			warnings.addAll(warningsUnidades);
+		}
+		
+		if (nenhumAmbienteComDisponibilidade) {
+			errors.add(HtmlUtils.htmlUnescape("Nenhum dos ambientes presentes nos campi selecionados para a otimização possui horário disponível."));
+		} else {
+			warnings.addAll(warningsAmbientes);
+		}
+	}
+	
+	private void checkDisponibilidadesProfessor(Parametro parametro, List<String> warnings, List<String> errors) {
+		Cenario cenario = parametro.getCenario();
+		
+		boolean nenhumProfessorComDisponibilidade = true;
+		List<String> warningsProfessor = new ArrayList<String>();
+		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = DisponibilidadeProfessor.findDisponibilidadesPorProfessor(cenario);
+		
+		for (Campus campus : parametro.getCampi()) {
+			for (Professor professor : campus.getProfessores()) {
+				List<Disponibilidade> dispProf = professorMapDisponibilidade.get(professor);
+				if (Disponibilidade.temAlgumaDisponibilidade(dispProf)) {
+					nenhumProfessorComDisponibilidade = false;
+				} else {
+					warningsProfessor.add(HtmlUtils.htmlUnescape("O professor [" + professor.getCpf() + "] não tem nenhum horário disponível, ou seja, será desconsiderado da otimização."));
+				}
+			}
+		}
+		
+		if (nenhumProfessorComDisponibilidade) {
+			errors.add(HtmlUtils.htmlUnescape("Nenhum dos professores dos campi selecionados para a otimização possui horário disponível."));
+		} else {
+			warnings.addAll(warningsProfessor);
+		}
+	}
+	
+	private void checkDisponibilidadesDisciplina(Parametro parametro, List<String> warnings, List<String> errors) {
+		Cenario cenario = parametro.getCenario();
+		
+		boolean nenhumaDisciplinaComDisponibilidade = true;
+		List<String> warningsDisciplina = new ArrayList<String>();
+		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisponibilidade = DisponibilidadeDisciplina.findDisponibilidadesPorDisciplina(cenario);
+		
+		// colhe as disciplinas de acordo com os campi selecionados para otimização
+		Set<Disciplina> disciplinasSelecionadas = new HashSet<Disciplina>();
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				for (Demanda demanda : oferta.getDemandas()) {
+					disciplinasSelecionadas.add(demanda.getDisciplina());
+				}
+			}
+		}
+				
+		for (Disciplina disciplina : disciplinasSelecionadas) {
+			List<Disponibilidade> dispDisc = disciplinaMapDisponibilidade.get(disciplina);
+			if (Disponibilidade.temAlgumaDisponibilidade(dispDisc)) {
+				nenhumaDisciplinaComDisponibilidade = false;
+			} else {
+				warningsDisciplina.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "] não tem nenhum horário disponível, ou seja, será desconsiderada da otimização."));
+			}
+		}
+		
+		if (nenhumaDisciplinaComDisponibilidade) {
+			errors.add(HtmlUtils.htmlUnescape("Nenhum das disciplinas presentes no escopo da otimização possui horário disponível."));
+		} else {
+			warnings.addAll(warningsDisciplina);
+		}
 	}
 	
 	private void checkCampiSemDeslocamentos(Parametro parametro, List<String> errors) {

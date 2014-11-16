@@ -146,6 +146,10 @@ public abstract class Disponibilidade
 		this.domingo = domingo;
 	}
 	
+	public boolean temAlgumaDisponibilidade() {
+		return this.segunda || this.terca || this.quarta || this.quinta || this.sexta || this.sabado || this.domingo;
+	}
+	
 	public boolean ehCompativelCom(HorarioDisponivelCenario hdc) {
 		// Checa compatibilidade de dia da semana
 		boolean diaSemCompativel = false;
@@ -179,6 +183,15 @@ public abstract class Disponibilidade
 			oHoraFim.add(Calendar.MINUTE,hdc.getHorarioAula().getSemanaLetiva().getTempo());
 	
 			return (horaInicio.compareTo(oHoraInicio) <= 0 && horaFim.compareTo(oHoraFim) >= 0 );
+		}
+		return false;
+	}
+	
+	public static boolean ehCompativelCom(HorarioDisponivelCenario hdc, List<Disponibilidade> disponibilidades) {
+		for (Disponibilidade disponibilidade : disponibilidades) {
+			if (disponibilidade.ehCompativelCom(hdc)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -278,4 +291,15 @@ public abstract class Disponibilidade
 
 		return q.getResultList();
 	}
+    
+    public static boolean temAlgumaDisponibilidade(List<Disponibilidade> disponibilidades) {
+    	if (disponibilidades != null) {
+    		for (Disponibilidade disp : disponibilidades) {
+    			if (disp.temAlgumaDisponibilidade()) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
 }

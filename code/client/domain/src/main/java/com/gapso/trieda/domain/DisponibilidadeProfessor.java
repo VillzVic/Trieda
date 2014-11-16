@@ -1,7 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -129,5 +132,19 @@ public class DisponibilidadeProfessor extends Disponibilidade implements Seriali
 	
 	private static String diaSemanaStr(boolean diaSem) {
 		return diaSem ? "X" : "_";
+	}
+	
+	public static Map<Professor, List<Disponibilidade>> findDisponibilidadesPorProfessor(Cenario cenario) {
+		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = new HashMap<Professor, List<Disponibilidade>>();
+		List<DisponibilidadeProfessor> disponibilidadesProfessores = findBy(cenario);
+		for (DisponibilidadeProfessor dispProf : disponibilidadesProfessores) {
+			List<Disponibilidade> disponibilidades = professorMapDisponibilidade.get(dispProf.getProfessor());
+			if (disponibilidades == null) {
+				disponibilidades = new ArrayList<Disponibilidade>();
+				professorMapDisponibilidade.put(dispProf.getProfessor(), disponibilidades);
+			}
+			disponibilidades.add(dispProf);
+		}
+		return professorMapDisponibilidade;
 	}
 }
