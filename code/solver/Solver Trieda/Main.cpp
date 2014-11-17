@@ -156,9 +156,13 @@ int main( int argc, char** argv )
    // Interrompe a contagem de tempo
    int hours, min, sec;
    stopTimer( timer, tempoSec, hours, min, sec );
+   
+   stringstream runtime;
+   runtime << endl << "Tempo total de execucao: " << hours << "h" << min << "'" << sec << "''";
 
-   outTestFile << "\nTotal elapsed time: " << hours << "h" << min << "'" << sec << "''" << endl << endl;
-   std::cout << "\nTotal elapsed time: " << hours << "h" << min << "'" << sec << "''" << endl << endl;
+   outTestFile << runtime.str() << endl << endl;
+   std::cout << runtime.str() << endl << endl;
+   Indicadores::printIndicador( runtime.str() );
    
    // -----------------------------------------------------------
    // Fecha arquivo de teste

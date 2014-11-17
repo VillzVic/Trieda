@@ -287,6 +287,8 @@ private:
 	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
 	void clearVariablesMaps();
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
+	void verificaCarregaSolucao( int campusId, int prioridade, int r );
+	void criaNewLp( int campusId, int prioridade, int r );
 
 	int solveMIPUnico( int campusId, int prioridade, int r );
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );

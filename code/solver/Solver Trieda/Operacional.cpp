@@ -15,22 +15,6 @@
 #define PRINT_cria_restricoes
 
 
-//bool ordenaAtendimentosBaseHorarioAula(
-//   AtendimentoBase at1 , AtendimentoBase at2 )
-//{
-//   if ( at1.horario_aula == NULL
-//      || at2.horario_aula == NULL )
-//   {
-//      return false;
-//   }
-//
-//   if ( at1.horario_aula->getInicio() < at2.horario_aula->getInicio() ) return true;
-//   if ( at1.horario_aula->getInicio() > at2.horario_aula->getInicio() ) return false;
-//
-//   return false;
-//}
-
-
 
 
 Operacional::Operacional( ProblemData * aProblemData, bool *endCARREGA_SOLUCAO, 
@@ -43,7 +27,7 @@ Operacional::Operacional( ProblemData * aProblemData, bool *endCARREGA_SOLUCAO,
    solVarsOp = asolVarsOp;
    problemSolution = aproblemSolution;
 
-   FIXA_HOR_SOL_TATICO = true;
+   FIXA_HOR_SOL_TATICO = false;
 
    try
    {
@@ -326,93 +310,6 @@ bool Operacional::inSolution( VariableOp v )
 	}
 	return false;
 }
-
-#ifdef HEURISTICA_MARCIO
-int Operacional::solveOperacional()
-{
-   solveOperacionalEtapas();
-   // Criando uma solução inicial
-   SolucaoInicialOperacional solIni( *problemData );
-
-   std::cout << "Gerando uma solucao inicial para o modelo operacional" << std::endl;
-   SolucaoOperacional & solucaoOperacional = solIni.geraSolucaoInicial();
-
-   std::cout << "Solucao inicial gerada." << std::endl;
-
-   /*bool solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao inicial gerada" );
-   if ( solucao_valida )
-   {
-      std::cout << "Solucao Inicial VALIDA gerada." << std::endl;
-   }
-   else
-   {
-      std::cout << "Solucao Inicial NAO-VALIDA gerada." << std::endl;
-   }*/
-
-   solucaoOperacional.toString2();
-
-   // Avaliador
-   Avaliador avaliador;
-   std::cout << "Avaliando solucao" << std::endl;
-   avaliador.avaliaSolucao( solucaoOperacional, true );
-   std::cout << "Solucao avaliada." << std::endl;
-
-   // Estruturas de Vizinhança
-   //NSSeqSwapEqBlocks nsSeqSwapEqBlocks ( *problemData );
-   //NSSwapEqSchedulesBlocks nsSwapEqSchedulesBlocks ( *problemData );
-   //NSSwapEqTeachersBlocks nsSwapEqTeachersBlocks ( *problemData );
-   NSShift nsShift( *problemData );
-
-   // Heurísticas de Busca Local - Descida Randômica
-   //RandomDescentMethod rdmSeqSwapEqBlocks ( avaliador, nsSeqSwapEqBlocks, 300 );
-   //RandomDescentMethod rdmSwapEqSchedulesBlocks ( avaliador, nsSwapEqSchedulesBlocks, 300 );
-   //RandomDescentMethod rdmSwapEqTeachersBlocks ( avaliador, nsSwapEqTeachersBlocks, 300 );
-   RandomDescentMethod rdmShift ( avaliador, nsShift, 300 );
-
-   //rdmSeqSwapEqBlocks.exec( solucaoOperacional, 30, 0 );
-   //rdmSwapEqSchedulesBlocks.exec( solucaoOperacional, 30, 0 );
-   //rdmSwapEqTeachersBlocks.exec( solucaoOperacional, 30, 0 );
-   rdmShift.exec( solucaoOperacional, 30, 0 );
-
-   // Mecanismo de perturbação
-   //ILSLPerturbationLPlus2 ilslPerturbationPlus2 ( avaliador, -1, nsSeqSwapEqBlocks );
-   //ilslPerturbationPlus2.add_ns( nsSeqSwapEqBlocks );
-   //ilslPerturbationPlus2.add_ns( nsSwapEqSchedulesBlocks );
-   //ilslPerturbationPlus2.add_ns( nsSwapEqTeachersBlocks );
-   //ilslPerturbationPlus2.add_ns( nsShift );
-
-   // RVND
-   std::vector< Heuristic * > heuristicasBuscaLocal;
-   //heuristicasBuscaLocal.push_back( &rdmSeqSwapEqBlocks );
-   //heuristicasBuscaLocal.push_back( &rdmSwapEqSchedulesBlocks );
-   //heuristicasBuscaLocal.push_back( &rdmSwapEqTeachersBlocks );
-   heuristicasBuscaLocal.push_back( &rdmShift );
-
-   RVND rvnd( avaliador, heuristicasBuscaLocal );
-
-   // Busca Local Iterada por Níveis
-   //IteratedLocalSearchLevels ilsl ( avaliador, rvnd, ilslPerturbationPlus2, 20 , 4 );
-
-   // Parâmetro 2 : tempo ( em segundos )
-   //ilsl.exec( solucaoOperacional, 30, 0 );
-
-   // Avaliação final
-   avaliador.avaliaSolucao( solucaoOperacional, true );
-   /*solucao_valida = solucaoOperacional.validaSolucao( "Validando a solucao final" );
-   if ( solucao_valida )
-   {
-      std::cout << "Solucao final viavel." << std::endl;
-   }
-   else
-   {
-      std::cout << "A solucao final NAO ALOCOU todas as aulas." << std::endl;
-   }*/
-
-   // Armazena a solução operacional no problem solution
-   problemSolution->solucao_operacional = &( solucaoOperacional );
-   return 1;
-}
-#endif
 
 int Operacional::solveOperacionalEtapas()
 {
@@ -1762,7 +1659,7 @@ void Operacional::polishOperacional(double *xSol, double maxTime, int percIni, i
    delete [] bds;
 }
 
-void Operacional::clearModel()
+void Operacional::clearModelStructures()
 {	
 	vHashOp.clear();
 	cHashOp.clear();
@@ -1786,16 +1683,11 @@ void Operacional::setOptLogFile(std::ofstream &logMip, string name, bool clear)
 	   lp->setLogFile((char*)ss.str().c_str());
 }
 
-int Operacional::solveOperacionalMIP()
+void Operacional::verificaCarregaSolucao()
 {
-   int varNum = 0;
-   int constNum = 0;
-   
    cout <<"\n\nOperacional::solveOperacionalMIP";
    cout<<"\nthis->CARREGA_SOLUCAO = " << *this->CARREGA_SOLUCAO << "\n";
 
-   bool CARREGA_SOL_PARCIAL = * this->CARREGA_SOLUCAO;
-   
    if ( * this->CARREGA_SOLUCAO )
    {
 	   char solName[1024];
@@ -1812,57 +1704,65 @@ int Operacional::solveOperacionalMIP()
 		  fclose(fin);
 	   }
    }
+}
 
-   if ( lp != NULL )
-   {
-      lp->freeProb();
-      delete lp;
-#ifdef SOLVER_CPLEX
-	   lp = new OPT_CPLEX; 
-#endif
-#ifdef SOLVER_GUROBI
-	   lp = new OPT_GUROBI; 
-#endif
-   }
+void Operacional::criaNewLp()
+{
+	std::cout<<"\nCreating LP...\n"; fflush(NULL);
 
-    #pragma region LOG FILE
-   // set log file
-   static int id=0;
-   id++;
-   stringstream ss;
-   ss << "mipOp" << id;
-   ofstream opFile;
-   setOptLogFile(opFile,ss.str());
-	#pragma endregion
+	if ( lp != nullptr )
+	{
+		lp->freeProb();
+		delete lp;
+		lp = nullptr;
+	}
 
-   clearModel();
-
-   lp->createLP( "SolverOperacional",
-      OPTSENSE_MINIMIZE, PROB_MIP );
-
-#ifdef DEBUG
-   cout << "Creating LP...\n";
-#endif
-
-   relacionaProfessoresDisciplinas();
-
-   // Variable creation
-   varNum = criaVariaveisOperacional();
-
-	#ifdef PRINT_cria_variaveis
-   cout << "Total of Variables: " << varNum << "\n\n";
+	#ifdef SOLVER_CPLEX
+		lp = new OPT_CPLEX; 
+	#elif SOLVER_GUROBI
+		lp = new OPT_GUROBI; 
 	#endif
+		
+    lp->createLP( "SolverOperacional", OPTSENSE_MINIMIZE, PROB_MIP );
+}
+
+void Operacional::logFile(std::ofstream &opFile)
+{
+    // set log file
+    static int id=0;
+    id++;
+    stringstream ss;
+    ss << "mipOp" << id;
+    setOptLogFile(opFile,ss.str());
+}
+
+int Operacional::solveOperacionalMIP()
+{
+    int varNum = 0;
+    int constNum = 0;
     
+    bool CARREGA_SOL_PARCIAL = * this->CARREGA_SOLUCAO;
+
+    verificaCarregaSolucao();
+	
+	criaNewLp();
+
+	ofstream opFile;
+	logFile(opFile);
+
+    clearModelStructures();
+	
+    relacionaProfessoresDisciplinas();
+
+    // Variable creation
+    varNum = criaVariaveisOperacional();
+
     int status = 1;
 
 	if ( ! (* this->CARREGA_SOLUCAO) )
 	{
 		// Constraint creation
 		constNum = criaRestricoesOperacional();
-
-		#ifdef PRINT_cria_restricoes
-		cout << "Total of Constraints: " << constNum << "\n\n";
-		#endif
 
 		#ifdef DEBUG
 		 //  lp->writeProbLP( "SolverOperacional" );
@@ -2267,12 +2167,7 @@ int Operacional::solveOperacionalMIP()
 			// -------------------------------------------------------------
 		}
 		
-		std::cout<<"\n------------------------------------";
-		if ( SEM_FOLGA_DEMANDA )	// RODADA 1
-			std::cout<<"\nFO original\n\n";
-		else						// RODADA 2
-			std::cout<<"\nMaximo atendimento e Minimo prof virtual fixados e FO original\n\n";
-		
+
 		if(opFile)
 		{
 			opFile.seekp(0, ios::end);
@@ -2284,85 +2179,9 @@ int Operacional::solveOperacionalMIP()
 			opFile.flush();
 		}
 
-		fflush(NULL);
+		solveGeneral( CARREGA_SOL_PARCIAL, x );
 		
-		lp->updateLP();
 
-		#ifdef PRINT_LOGS
-			lp->writeProbLP( this->getOpLpFileName(-1).c_str() );
-		#endif		
-		
-		lp->setMIPEmphasis(0);
-        lp->setCuts(0);
-		if ( SEM_FOLGA_DEMANDA ){
-			lp->setMIPEmphasis(0);
-			lp->setTimeLimit( 3000 );
-			lp->setPolishAfterTime(1500);
-		}
-		else{
-			lp->setTimeLimit( this->getTimeLimit(Solver::OP) );
-			lp->setPolishAfterTime(3600);
-		}
-		lp->setNumIntSols(0);
-      lp->setHeurFrequency(0.5);
-      lp->setPreSolveIntensity(OPT_LEVEL2);
-		lp->setNodeLimit(1000000000);   
-      lp->setCuts(-1);
-		
-		#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-		//cb_data.timeLimit = this->getMaxTimeNoImprov(Solver::OP);		
-      cb_data.timeLimit = 300;
-		cb_data.gapMax = 15;
-		lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-		#endif
-				
-		if ( CARREGA_SOL_PARCIAL )
-		{
-			// procura e carrega solucao parcial
-			int statusReadBin = readOpSolBin( OutPutFileType::OP_BIN, x, 0 );
-			if ( !statusReadBin )
-			{
-				CARREGA_SOL_PARCIAL=false;
-			}
-			else{ 
-				writeOpSolTxt( OutPutFileType::OP_BIN, x, 0 );
-				
-				//// marreta: sol inicial, continua a otimizar
-				//CARREGA_SOL_PARCIAL=false;
-
-				//int *idxN = new int[ lp->getNumCols() ];
-				//vit = vHashOp.begin();
-				//for (; vit != vHashOp.end(); vit++ )
-				//{
-				//   idxN[ vit->second ] = vit->second;
-				//}
-				//int cpySolStatus = lp->copyMIPStartSol( lp->getNumCols(), idxN, x );
-				//if ( !cpySolStatus )
-				//	std::cout<<"\n\nfinal cpySolStatus = error" << endl;
-				//delete[] idxN;
-			}
-		}
-		if ( !CARREGA_SOL_PARCIAL )
-		{
-			// GENERATES SOLUTION
-			status = lp->optimize( METHOD_MIP );
-			lp->getX(x);
-			double mipGap = lp->getMIPGap() * 100;
-			fflush(NULL);
-		
-			#if !defined (DEBUG) && !defined (TESTE)
-				// polish aqui só para 1 rodada, aonde se estimam os virtuais
-				if ( SEM_FOLGA_DEMANDA && mipGap > 20)
-				{
-					polishOperacional(x, 2000, 80, 20, 1000);
-				}
-			#endif
-
-			writeOpSolBin( OutPutFileType::OP_BIN, x, 0 );
-			writeOpSolTxt( OutPutFileType::OP_BIN, x, 0 );
-		}
-
-		
 		delete [] obj;
 		delete [] idxN;
 		delete [] x;
@@ -2575,7 +2394,6 @@ int Operacional::solveGaranteTotalAtendHorInicial( bool& CARREGA_SOL_PARCIAL, do
 	
 	return status;
 }
-
 
 int Operacional::solveMaxAtendPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS )
 {
@@ -3050,6 +2868,86 @@ int Operacional::solveMinPVPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS 
 	return status;
 }
 
+int Operacional::solveGeneral( bool& CARREGA_SOL_PARCIAL, double *xS )
+{
+	int status = 0;		
+
+	bool SEM_FOLGA_DEMANDA = ( this->getRodada() == Operacional::OP_VIRTUAL_PERFIL )? true : false;
+
+	std::cout<<"\n------------------------------------";
+	if ( SEM_FOLGA_DEMANDA )	// RODADA 1
+		std::cout<<"\nFO original\n\n";
+	else						// RODADA 2
+		std::cout<<"\nMaximo atendimento e Minimo prof virtual fixados e FO original\n\n";
+		
+
+	fflush(NULL);
+		
+	lp->updateLP();
+
+	#ifdef PRINT_LOGS
+		lp->writeProbLP( this->getOpLpFileName(-1).c_str() );
+	#endif		
+		
+	lp->setMIPEmphasis(0);
+    lp->setCuts(0);
+	if ( SEM_FOLGA_DEMANDA ){
+		lp->setMIPEmphasis(0);
+		lp->setTimeLimit( 3000 );
+		lp->setPolishAfterTime(1500);
+	}
+	else{
+		lp->setTimeLimit( this->getTimeLimit(Solver::OP) );
+		lp->setPolishAfterTime(3600);
+	}
+	lp->setNumIntSols(0);
+    lp->setHeurFrequency(0.5);
+    lp->setPreSolveIntensity(OPT_LEVEL2);
+	lp->setNodeLimit(1000000000);   
+    lp->setCuts(-1);
+		
+	#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+	//cb_data.timeLimit = this->getMaxTimeNoImprov(Solver::OP);		
+    cb_data.timeLimit = 300;
+	cb_data.gapMax = 15;
+	lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+	#endif
+				
+	if ( CARREGA_SOL_PARCIAL )
+	{
+		// procura e carrega solucao parcial
+		int statusReadBin = readOpSolBin( OutPutFileType::OP_BIN, xS, 0 );
+		if ( !statusReadBin )
+		{
+			CARREGA_SOL_PARCIAL=false;
+		}
+		else{ 
+			writeOpSolTxt( OutPutFileType::OP_BIN, xS, 0 );
+		}
+	}
+	if ( !CARREGA_SOL_PARCIAL )
+	{
+		// GENERATES SOLUTION
+		status = lp->optimize( METHOD_MIP );
+		lp->getX(xS);
+		double mipGap = lp->getMIPGap() * 100;
+		fflush(NULL);
+		
+		#if !defined (DEBUG) && !defined (TESTE)
+		// polish aqui só para 1 rodada, aonde se estimam os virtuais
+		if ( SEM_FOLGA_DEMANDA && mipGap > 20)
+		{
+			polishOperacional(xS, 2000, 80, 20, 1000);
+		}
+		#endif
+
+		writeOpSolBin( OutPutFileType::OP_BIN, xS, 0 );
+		writeOpSolTxt( OutPutFileType::OP_BIN, xS, 0 );
+	}
+
+	return status;
+}
+
 
 void Operacional::carregaSolucaoOperacional()
 {	
@@ -3432,13 +3330,26 @@ void Operacional::preencheOutputOperacionalMIP()
 				 // --------------------------------------------
 				 // Recupera id do horario do turno correto
 				 TurnoIES* turnoIES = problemData->refTurnos[turnoIdIES];
-				 ITERA_GGROUP_LESSPTR( itHorAula, turnoIES->horarios_aula, HorarioAula )	// TODO: usar map com dia/dti ao inves de set
+				 GGroup<HorarioAula*,LessPtr<HorarioAula>> horsAnalogos = 
+					 turnoIES->retornaHorarioDiaOuCorrespondente(h, a->getDiaSemana());
+
+				 if (horsAnalogos.size() > 0)
 				 {
-					 if ( itHorAula->dias_semana.find(a->getDiaSemana()) != itHorAula->dias_semana.end() )
-					 if ( itHorAula->getInicio() == dti && itHorAula->getFinal() == dtf )
+					 horAula = *horsAnalogos.begin();
+					 ITERA_GGROUP_LESSPTR( itHorAula, horsAnalogos, HorarioAula )
 					 {
-						 horAula = *itHorAula;
-						 break;
+						 if ( itHorAula->getCalendario() == c )
+						 {
+							 horAula = *itHorAula;
+							 break;
+						 }
+					 }
+					 if ( horAula->getCalendario() != c )
+					 {
+						 stringstream msg;
+						 msg << "Nao existe horario analogo a " << dti.hourMinToStr() 
+							 << "-" << dtf.hourMinToStr() << " no turno " << turnoIdIES << " e calendario " << c->getId();
+						 CentroDados::printWarning( "void Operacional::preencheOutputOperacionalMIP()", msg.str() );
 					 }
 				 }
 				 if ( horAula==nullptr )
@@ -3639,270 +3550,6 @@ void Operacional::preencheOutputOperacionalMIP()
 						}
 					}
 				}
-            }
-         }
-      }
-   }
-	std::cout<<" done!\n"; fflush(NULL);
-}
-
-
-void Operacional::preencheOutputOperacionalMIP_antigo()
-{
-	std::cout<<"\nFilling in Output Operacional MIP..."; fflush(NULL);
-
-   Campus * campus = nullptr;
-   Unidade * unidade = nullptr;
-   Sala * sala = nullptr;
-   int dia_semana = 0;
-
-	// ---------------------------------------------------------------------------------------------
-	// Preenche problemSolution
-
-   ITERA_GGROUP( it_At_Campus,
-      ( *problemSolution->atendimento_campus ), AtendimentoCampus )
-   {
-      // Campus do atendimento
-      campus = it_At_Campus->campus;
-
-      ITERA_GGROUP_LESSPTR( it_At_Unidade,
-         ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
-      {
-         // Unidade do atendimento
-         unidade = problemData->refUnidade[ it_At_Unidade->getId() ];
-
-         ITERA_GGROUP_LESSPTR( it_At_Sala,
-            ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
-         {
-            // Sala do atendimento
-            sala = problemData->refSala[ it_At_Sala->getId() ];
-
-            ITERA_GGROUP_LESSPTR( it_At_DiaSemana,
-               ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
-            {
-               // Dia da semana do atendimento
-               dia_semana = it_At_DiaSemana->getDiaSemana();
-
-	//		   std::cout<<"\nAtendimentoDiaSemana id" << it_At_DiaSemana->getId(); fflush(NULL);
-			   
-			   if ( it_At_DiaSemana->atendimentos_turno == nullptr )
-				   it_At_DiaSemana->atendimentos_turno = new GGroup< AtendimentoTurno*, LessPtr<AtendimentoTurno> >();
-
-			   ITERA_GGROUP_LESSPTR( itOp, (*solVarsOp), VariableOp )
-			   {
-				  VariableOp * v = *itOp;
-				  
-                  if ( v->getType() != VariableOp::V_X_PROF_AULA_HOR )
-                  {
-                     continue;
-                  }
-                  
-				  if ( v->getAula() == nullptr )
-                  {
-					  std::cout<<"\nERRO, aula NULL. Var " << v->toString(); fflush(NULL);
-                      exit(1);
-                  }
-
-                  if ( v->getAula()->getSala() != sala ||
-					   v->getAula()->getDiaSemana() != dia_semana )
-                  {
-                     continue;
-                  }
-
-	//			  std::cout<<"\nv="<<v->toString()<<"..."; fflush(NULL);
-
-                  Aula * aula = v->getAula();
-
-                  // Procura o turno da aula
-                  Oferta * temp = ( *( aula->ofertas.begin() ) );
-				  if (temp==NULL){ std::cout<<"\nErro, aula sem oferta."; fflush(NULL); continue;}
-                  int turnoIdIES = temp->getTurnoId();
-
-                  AtendimentoTurno * atendimento_turno = nullptr;
-                  ITERA_GGROUP_LESSPTR( it, ( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
-                  {
-                     if ( it->getTurnoId() == turnoIdIES )
-                     {
-                        atendimento_turno = ( *it );
-                        break;
-                     }
-                  }
-
-                  if ( atendimento_turno == nullptr )
-                  {
-                     atendimento_turno = new AtendimentoTurno(
-                        this->problemSolution->getIdAtendimentos() );
-
-                     atendimento_turno->setId( turnoIdIES );
-                     atendimento_turno->setTurnoId( turnoIdIES );
-                    // atendimento_turno->turno = temp->turno;
-
-                     it_At_DiaSemana->atendimentos_turno->add( atendimento_turno );
-                  }
-				  
-				  HorarioAula * h = v->getHorarioAula();
-				  Calendario * c = h->getCalendario();
-
-	//			  std::cout<<"\nCriando AtendimentoHorarioAula para " << nCreds << " creds..."; fflush(NULL);
-				  
-				  int nCreds = 1;
-				  while ( h!=NULL && nCreds <= aula->getTotalCreditos() )
-				  {
-	//				  std::cout<<"\nH = "<<h->getId(); fflush(NULL);
-
-                     AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula(
-                        this->problemSolution->getIdAtendimentos() );
-					                      
-					 Professor * professor = v->getProfessor();
-
-                     atendimento_horario_aula->setId( h->getId() );
-                     atendimento_horario_aula->setHorarioAulaId( h->getId() );
-                     atendimento_horario_aula->setProfessorId( professor->getId() );
-                     atendimento_horario_aula->setProfVirtual( professor->eVirtual() );
-                     atendimento_horario_aula->setCreditoTeorico( aula->getCreditosTeoricos() > 0 );
-                     atendimento_horario_aula->horario_aula = h;
-                     atendimento_horario_aula->professor = professor;
-					 					 
-					 int counterAlunos = 0;
-
-					 // ----- alunosDemandasAtendidas -----
-					 Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-					 trio.set( campus->getId(), aula->getTurma(), aula->getDisciplina() );
-					 GGroup<AlunoDemanda*, LessPtr< AlunoDemanda >> *alunosDemanda =
-						& problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ];
-
-					 std::map<Oferta*, std::map<Disciplina*, GGroup<int /*alDemOrig*/ >, 
-						 LessPtr<Disciplina>>, LessPtr<Oferta>> *mapOftDiscorigAlsDem = aula->getMapOftDiscorigAlsDem();
-					 std::map<Oferta*, std::map<Disciplina*, GGroup<int /*alDemOrig*/ >, 
-						 LessPtr<Disciplina>>, LessPtr<Oferta>>::iterator itOft = mapOftDiscorigAlsDem->begin();
-					 for ( ; itOft != mapOftDiscorigAlsDem->end(); itOft++ )
-					 {						
-						 Oferta* oferta = itOft->first;
-
-						 bool db=false;
-						 if ( trio.second == 4 && trio.third->getId() == 14671 && oferta->getId()==457 )
-						 {
-							 //db=true; 
-						 }
-						 
-						 std::map<Disciplina*, GGroup<int /*alDemOrig*/ >, LessPtr<Disciplina>> *mapDiscOrig = & itOft->second;
-						 std::map<Disciplina*, GGroup<int /*alDemOrig*/ >, LessPtr<Disciplina>>::iterator itDiscOrig = mapDiscOrig->begin();
-						 for ( ; itDiscOrig != mapDiscOrig->end(); itDiscOrig++ )
-						 {							 
-							 Disciplina *discOriginal = itDiscOrig->first;
-
-							 if (db)
-								std::cout<<"\n\t\tDisc orig " << discOriginal->getId();
-							 
-							 AtendimentoOferta * atendimento_oferta = new AtendimentoOferta(
-							   this->problemSolution->getIdAtendimentos() );
-												
-							 bool EQUIV;
-
-							 if ( problemData->parametros->considerar_equivalencia_por_aluno && discOriginal != aula->getDisciplina() )
-							 {
-								atendimento_oferta->setDisciplinaSubstitutaId( aula->getDisciplina()->getId() );
-								atendimento_oferta->setDisciplinaId( discOriginal->getId() );
-								atendimento_oferta->disciplina = discOriginal;								
-								EQUIV = true;
-							 }
-							 else
-							 {
-								atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
-								atendimento_oferta->disciplina = aula->getDisciplina();
-								EQUIV = false;
-						 	 }
-
-							 atendimento_oferta->setTurma( aula->getTurma() );
-
-							 int n = itDiscOrig->second.size();
-												
-							 atendimento_oferta->alunosDemandasAtendidas.add( itDiscOrig->second );
-							 if ( db )
-							 {
-								 std::cout<<"\natendimento_oferta id=" << atendimento_oferta->getId();
-								std::cout<<"\nAlunos em turma == 4 && disciplina->getId() == 14671 && oferta->getId()==457";
-								for ( GGroup< int >::iterator it = atendimento_oferta->alunosDemandasAtendidas.begin();
-									it!=atendimento_oferta->alunosDemandasAtendidas.end(); it++ )	 
-								{
-									std::cout<<" " << *it;
-								}
-							 }
-
-							if ( n == 0 )
-								std::cout << "\nErro ao preencher o output operacional. Turma vazia ou alunos-demanda nao encontrados.";
-
-							counterAlunos += atendimento_oferta->alunosDemandasAtendidas.size();
-
-							atendimento_oferta->setQuantidade( n );
-							stringstream str;
-							str << oferta->getId();
-							atendimento_oferta->setOfertaCursoCampiId( str.str() );
-							atendimento_oferta->oferta = oferta;
-
-							if(db)
-							{
-								std::cout<<"\nBefore:";
-								ITERA_GGROUP_LESSPTR( itAO, *atendimento_horario_aula->atendimentos_ofertas, AtendimentoOferta )
-								{
-									std::cout<<" " << itAO->getId();
-								}
-							}
-
-							atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta ); 
-							
-							if(db)
-							{
-								std::cout<<"\nAfter:";
-								ITERA_GGROUP_LESSPTR( itAO, *atendimento_horario_aula->atendimentos_ofertas, AtendimentoOferta )
-								{
-									std::cout<<" " << itAO->getId();
-								}
-							}
-						}
-	//					std::cout<<"\n\t => fim oferta!"; fflush(NULL);
-                     }
-					 
-
-					 if ( counterAlunos != alunosDemanda->size() )
-						 std::cout	<< "\nErro! Numero de alunos na turma diferente do numero de alunos impressos no output."
-						 << "\nTurma " << aula->getTurma() << " Disc " << aula->getDisciplina()->getId() << " Campus " << campus->getId()
-						 << "\nNro de alunos impressos: " << counterAlunos << "\tTotal na turma: " << alunosDemanda->size(); fflush(NULL);
-
-
-                     bool achouAtHA = false;
-                     for (GGroup< AtendimentoHorarioAula*, LessPtr<AtendimentoHorarioAula> >::iterator itGHA =  atendimento_turno->atendimentos_horarios_aula->begin();
-                        itGHA != atendimento_turno->atendimentos_horarios_aula->end();
-                        itGHA++)
-                     {
-                        AtendimentoHorarioAula *aHA = *itGHA;
-
-                        if ( atendimento_horario_aula->getHorarioAulaId() == aHA->getHorarioAulaId() &&
-                             atendimento_horario_aula->getProfessorId() == aHA->getProfessorId() &&
-                             atendimento_horario_aula->getCreditoTeorico() == aHA->getCreditoTeorico() &&
-                             atendimento_horario_aula->profVirtual() == aHA->profVirtual() )
-                        {
-                           achouAtHA = true;
-                           break;
-                        }
-                     }
-
-                     if ( !achouAtHA )
-                        atendimento_turno->atendimentos_horarios_aula->add( atendimento_horario_aula );
-					 else std::cout<<"\nErro, atendimento duplo. Variavel " << v->toString() << endl;
-
-	//				 std::cout<<"\nFim H" << h->getId(); fflush(NULL);
-
-					 // itera
-					 h = c->getProximoHorario( h );
-					 nCreds++;
-                  }
-
-				  nCreds--;
-				  if ( nCreds != aula->getTotalCreditos() )
-					  std::cout<<"\nErro. Nao foi possivel encontrar os horarios completos da aula: " << aula->toString(); 
-				  fflush(NULL);
-               }
             }
          }
       }
@@ -4942,12 +4589,13 @@ int Operacional::criaVariaveisOperacional()
              << ( numVars - numVarsAnterior )  <<" " <<dif <<"seg" <<std::endl; fflush(NULL);
    numVarsAnterior = numVars;
 #endif
-   
-   
-
 
    lp->updateLP(); 
-
+   
+	#ifdef PRINT_cria_variaveis
+    cout << "Total of Variables: " << numVars << "\n\n";
+	#endif
+    
    return numVars;
 }
 
@@ -8593,6 +8241,10 @@ int Operacional::criaRestricoesOperacional()
 #endif	
 	
 	lp->updateLP();	
+	
+	#ifdef PRINT_cria_restricoes
+	cout << "Total of Constraints: " << restricoes << "\n\n";
+	#endif
 
 	return restricoes;
 }
@@ -11630,7 +11282,7 @@ int Operacional::criaRestricaoCargaHorariaMaximaProfessorSemana()
 /*
 	Seta variavel dpc_{p,c,d}
 
-	1) sum[i] y_{p,d,i} <= nTurmas_{d} * dpc_{p,c,d}		Para todo prof p, curso c, disc d E D_{teoricas}
+	1) sum[i] y_{p,d,i} <= numVarsY * dpc_{p,c,d}		Para todo prof p, curso c, disc d E D_{teoricas}
 
 		i pertencente a I_{d,c} U I_{-d,c} ( contem alunos do curso c )
 
@@ -11646,29 +11298,24 @@ int Operacional::criaRestricaoDiscProfCurso()
    double rhs = 0.0;
    char name[ 200 ];
    
-   ConstraintOp c;
-   VariableOp v_find;
-   VariableOpHash::iterator vit;
-   ConstraintOpHash::iterator cit;
+   // Agrupa variáveis
+   unordered_map<Professor*, unordered_map<Disciplina*, 
+	   unordered_map<Curso*, unordered_map< VariableOp::VariableOpType, set< pair<VariableOp,int> > >>>> mapVars;
 
-	vit = vHashOp.begin();
-
-	for( ; vit != vHashOp.end(); vit++ )
+	for( auto vit = vHashOp.begin(); vit != vHashOp.end(); vit++ )
 	{
 		VariableOp v = ( vit->first );
 
-		if (v.getType() != VariableOp::V_DISC_PROF_CURSO &&
-			v.getType() != VariableOp::V_Y_PROF_DISCIPLINA)
-		{
+		if (v.getType() != VariableOp::V_DISC_PROF_CURSO &&		// dpc_{d,p,c}
+			v.getType() != VariableOp::V_Y_PROF_DISCIPLINA)		// y_{p,d,i}
 			continue;
-		}
 
 		if ( v.getProfessor()->eVirtual() && this->getRodada() == Operacional::OP_VIRTUAL_PERFIL )
-		{
 			continue;
-		}
+		
+		pair<VariableOp,int> parVarId = make_pair(vit->first, vit->second);
 
-		if(v.getType() == VariableOp::V_DISC_PROF_CURSO)			// dpc_{d,p,c}
+		if(v.getType() == VariableOp::V_DISC_PROF_CURSO)		// dpc_{d,p,c}
 		{
 			// Restrições só por disciplina teorica.
 			if ( v.getDisciplina()->getId() < 0 )
@@ -11676,137 +11323,130 @@ int Operacional::criaRestricaoDiscProfCurso()
 				std::cout << "\nAtencao: variavel dpc a principio deveria ser somente para disc teorica."
 					<< " Var " << v.toString();
 				continue;
-			}
-
-			// CONTRAINT 1 -----------------------
-
-			c.reset();
-			c.setType( ConstraintOp::C_DISC_PROF_CURSO1 );
-			c.setProfessor( v.getProfessor() );
-			c.setCurso( v.getCurso() );
-			c.setDisciplina( v.getDisciplina() );
-
-			double M = v.getDisciplina()->getNumTurmas();
+			}	
 			
-			Disciplina *discPrat = problemData->getDisciplinaTeorPrat( v.getDisciplina() );
-
-			if ( discPrat != NULL )
-			{
-				M += discPrat->getNumTurmas();
-			}
-
-			cit = cHashOp.find(c);
-			if ( cit == cHashOp.end() )
-			{
-				cHashOp[ c ] = lp->getNumRows();
-				sprintf( name, "%s", c.toString().c_str() );
-				OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
-								
-				row.insert( vit->second, -M );
-
-				lp->addRow( row );
-				restricoes++;
-			}
-			else
-			{
-				lp->chgCoef(cit->second, vit->second, -M);
-			}		
-
-			// CONTRAINT 2 -----------------------
-
-			c.reset();
-			c.setType( ConstraintOp::C_DISC_PROF_CURSO2 );
-			c.setProfessor( v.getProfessor() );
-			c.setCurso( v.getCurso() );
-			c.setDisciplina( v.getDisciplina() );
-			
-			cit = cHashOp.find(c);
-			if ( cit == cHashOp.end() )
-			{
-				cHashOp[ c ] = lp->getNumRows();
-				sprintf( name, "%s", c.toString().c_str() );
-				OPT_ROW row( 100, OPT_ROW::GREATER, 0.0, name );
-								
-				row.insert( vit->second, -1.0 );
-
-				lp->addRow( row );
-				restricoes++;
-			}
-			else
-			{
-				lp->chgCoef(cit->second, vit->second, -1.0);
-			}
+			mapVars[v.getProfessor()][v.getDisciplina()][v.getCurso()][v.getType()].insert(parVarId);		
 		}
-		else if(v.getType() == VariableOp::V_Y_PROF_DISCIPLINA)			// y_{p,d,i}
+		if(v.getType() == VariableOp::V_Y_PROF_DISCIPLINA)		// y_{p,d,i}
 		{
-			Disciplina *disciplina = v.getDisciplina();
-
+			Disciplina *disciplina = v.getDisciplina();			
 			if ( disciplina->getId() < 0 )
 			{
 				// Restrições só por disciplina teorica.
 				disciplina = problemData->refDisciplinas[ abs( disciplina->getId() ) ];
 			}
-
+			
 			GGroup< Curso*, LessPtr<Curso> > cursosAtendidos = 
 				problemData->cursosAtendidosNaTurma( v.getTurma(), v.getDisciplina(), v.getCampus() );
 
 			ITERA_GGROUP_LESSPTR( it_curso, cursosAtendidos, Curso )
 			{
 				Curso * curso = *it_curso;
-								
-				// CONTRAINT 1 -----------------------
-
-				c.reset();
-				c.setType( ConstraintOp::C_DISC_PROF_CURSO1 );
-				c.setProfessor( v.getProfessor() );
-				c.setCurso( curso );
-				c.setDisciplina( disciplina );
-
-				cit = cHashOp.find(c);
-				if ( cit == cHashOp.end() )
-				{
-					cHashOp[ c ] = lp->getNumRows();
-
-					sprintf( name, "%s", c.toString().c_str() );
-					OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
-
-					row.insert( vit->second, 1.0 );
-
-					lp->addRow( row );
-					restricoes++;
-				}
-				else
-				{
-					lp->chgCoef(cit->second, vit->second, 1.0);
-				}
-
-				// CONTRAINT 2 -----------------------
-
-				c.reset();
-				c.setType( ConstraintOp::C_DISC_PROF_CURSO2 );
-				c.setProfessor( v.getProfessor() );
-				c.setCurso( curso );
-				c.setDisciplina( disciplina );
-
-				cit = cHashOp.find(c);
-				if ( cit == cHashOp.end() )
-				{
-					cHashOp[ c ] = lp->getNumRows();
-
-					sprintf( name, "%s", c.toString().c_str() );
-					OPT_ROW row( 100, OPT_ROW::GREATER, 0.0, name );
-
-					row.insert( vit->second, 1.0 );
-
-					lp->addRow( row );
-					restricoes++;
-				}
-				else
-				{
-					lp->chgCoef(cit->second, vit->second, 1.0);
-				}
+				mapVars[v.getProfessor()][disciplina][curso][v.getType()].insert(parVarId);
 			}
-		}		
+		}
+	}
+	
+   // Cria restrições
+	for( auto vitp = mapVars.cbegin(); vitp != mapVars.cend(); vitp++ )
+	{
+		Professor *professor = vitp->first;
+		for( auto vitd = vitp->second.cbegin(); vitd != vitp->second.cend(); vitd++ )
+		{
+			Disciplina *disciplina = vitd->first;
+			for( auto vitc = vitd->second.cbegin(); vitc != vitd->second.cend(); vitc++ )
+			{				
+				Curso *curso = vitc->first;
+				
+				// ------------------------------------------------------------------------
+				// V_Y_PROF_DISCIPLINA
+				
+				auto finderY = vitc->second.find( VariableOp::V_Y_PROF_DISCIPLINA );
+				if (finderY == vitc->second.cend())
+					continue;
+
+				set< pair<VariableOp,int> > paresVarYId = finderY->second;
+				int numVarsY = paresVarYId.size();
+
+				// ------------------------------------------------------------------------
+				// V_DISC_PROF_CURSO
+
+				auto finderDpc = vitc->second.find( VariableOp::V_DISC_PROF_CURSO );
+				if (finderDpc == vitc->second.cend())
+					continue;
+
+				pair<VariableOp,int> parVarDpcId = *finderDpc->second.cbegin();
+				int colDpc = parVarDpcId.second;				
+				
+				// ------------------------------------------------------------------------
+				// CONTRAINT 1 -----------------------
+				
+				ConstraintOp c1;
+				c1.reset();
+				c1.setType( ConstraintOp::C_DISC_PROF_CURSO1 );
+				c1.setProfessor( professor );
+				c1.setCurso( curso );
+				c1.setDisciplina( disciplina );
+
+				auto cit1 = cHashOp.find(c1);
+				if ( cit1 != cHashOp.end() )
+					continue;
+				
+				sprintf( name, "%s", c1.toString().c_str() );
+				OPT_ROW row1( 100, OPT_ROW::LESS, 0.0, name );						
+
+				// Insert y			
+				double coefY1 = 1.0;	
+				for ( auto it = paresVarYId.cbegin(); it != paresVarYId.cend(); it++ )
+				{
+					int colY = it->second;
+					row1.insert( colY, coefY1 );
+				}
+
+				// Insert dpc
+				double coefDpc1 = -numVarsY;
+				row1.insert( colDpc, coefDpc1 );
+				
+				// Insert constraint
+				cHashOp[ c1 ] = lp->getNumRows();
+				lp->addRow( row1 );
+				restricoes++;
+				
+				// ------------------------------------------------------------------------
+				// CONTRAINT 2 -----------------------
+				
+				ConstraintOp c2;
+				c2.reset();
+				c2.setType( ConstraintOp::C_DISC_PROF_CURSO2 );
+				c2.setProfessor( professor );
+				c2.setCurso( curso );
+				c2.setDisciplina( disciplina );
+				
+				auto cit2 = cHashOp.find(c2);
+				if ( cit2 != cHashOp.end() )
+					continue;
+				
+				sprintf( name, "%s", c2.toString().c_str() );
+				OPT_ROW row2( 100, OPT_ROW::GREATER, 0.0, name );
+
+				// Insert y			
+				double coefY2 = 1.0;	
+				for ( auto it = paresVarYId.cbegin(); it != paresVarYId.cend(); it++ )
+				{
+					int colY = it->second;
+					row2.insert( colY, coefY2 );
+				}
+
+				// Insert dpc
+				double coefDpc2 = -1.0;
+				row2.insert( colDpc, coefDpc2 );
+				
+				// Insert constraint
+				cHashOp[ c2 ] = lp->getNumRows();
+				lp->addRow( row2 );
+				restricoes++;								
+			}
+		}
 	}
 	
 	return restricoes;

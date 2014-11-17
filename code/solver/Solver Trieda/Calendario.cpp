@@ -229,7 +229,8 @@ int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *h
 		 !possuiHorario( hf ) )
 	{
 		std::stringstream msg;
-		msg <<"Horario hf ou hi nao encontrado no calendario.\n";		
+		msg <<"Horario hf " << hf->getId() << " ou hi " << hi->getId() 
+			<< " nao encontrado no calendario " << this->getId() << ".\n";		
 		CentroDados::printError("Calendario::retornaNroCreditosEntreHorarios()",msg.str());
 		return 0;
 	}	

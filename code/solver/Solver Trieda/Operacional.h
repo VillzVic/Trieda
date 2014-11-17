@@ -7,29 +7,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#include "ValidateSolution.h"
 #include "Solver.h"
 #include "VariableoP.h"
 #include "ConstraintOp.h"
 #include "opt_lp.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
-//#include "SolutionLoader.h"
 #include "ErrorHandler.h"
 #include "ProblemDataLoader.h"
-
-#ifdef HEURISTICA_MARCIO
-#include "SolucaoOperacional.h"
-#include "SolucaoInicialOperacional.h"
-#include "Avaliador.h"
-#include "NSSeqSwapEqBlocks.h"
-#include "NSSwapEqSchedulesBlocks.h"
-#include "NSSwapEqTeachersBlocks.h"
-#include "NSShift.h"
-#include "IteratedLocalSearchLevels.h"
-#include "RandomDescentMethod.h"
-#include "RVND.hpp"
-#endif
 
 
 class Operacional : public Solver
@@ -45,13 +30,17 @@ public:
    void getSolution( ProblemSolution * ){};
       
 
-    void relacionaProfessoresDisciplinas();
+   void relacionaProfessoresDisciplinas();
   	
+   void verificaCarregaSolucao();
+   void criaNewLp();
+   void logFile(std::ofstream &opFile);
+
    int solveOperacionalEtapas();
    void testaTrocarProfVirtualPorReal();
    void polishOperacional(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
    int solveOperacionalMIP();
-   void clearModel();
+   void clearModelStructures();
    void setOptLogFile(std::ofstream &logMip, string name, bool clear=true);
    void carregaSolucaoOperacional();
    void getSolutionOperacionalMIP();
@@ -60,14 +49,8 @@ public:
    void criaProfessoresVirtuaisPorCurso( int n, TipoTitulacao* titulacao, TipoContrato *contrato, Curso* curso, GGroup<Campus*,LessPtr<Campus>> campi );
    void separaProfsVirtuais();
    
-   void preencheOutputOperacionalMIP_antigo(); // apagar se o novo corrigido funcionar
-
 //   int calculaDeslocamentoUnidades( const int, const int );
    
-    #ifdef HEURISTICA_MARCIO
-   int solveOperacional();
-	#endif
-
 
 private:
 
@@ -188,8 +171,9 @@ private:
    int solveGaranteTotalAtendHorInicial( bool& CARREGA_SOL_PARCIAL, double *xS );
    int solveMaxAtendPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS );
    int solveMinPVPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS );
+   int solveGeneral( bool& CARREGA_SOL_PARCIAL, double *xS );
    
-   
+
    /********************************************************************************************************************
    **						        OUTROS																			  **
    /********************************************************************************************************************/

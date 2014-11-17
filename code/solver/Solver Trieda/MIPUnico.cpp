@@ -1895,18 +1895,13 @@ void MIPUnico::carregaVariaveisSolucao( int campusAtualId, int prioridade, int r
     return;
 }
 
-int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
-{	
-	std::cout<<"\nSolving...\n"; fflush(NULL);
-
-	int status = 0;
-			
-	bool CARREGA_SOL_PARCIAL = * this->CARREGA_SOLUCAO;
+void MIPUnico::verificaCarregaSolucao( int campusId, int prioridade, int r )
+{
    if ( (*this->CARREGA_SOLUCAO) )
    {
 	   char solName[1024];
 	   strcpy( solName, getSolucaoTaticoFileName( campusId, prioridade, r, 0 ).c_str() );
-	   //strcpy( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
+
 	   FILE* fin = fopen( solName,"rb");
 	   if ( fin == NULL )
 	   {
@@ -1918,38 +1913,27 @@ int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
 		  fclose(fin);
 	   }
    }
+}
 
-   int varNum = 0;
-   int constNum = 0;
-   
-   if ( lp != NULL )
-   {
-      lp->freeProb();
-      delete lp;
+void MIPUnico::criaNewLp( int campusId, int prioridade, int r )
+{
+	std::cout<<"\nCreating LP...\n"; fflush(NULL);
+
+	if ( lp != nullptr )
+	{
+		lp->freeProb();
+		delete lp;
+		lp = nullptr;
+	}
+
 	#ifdef SOLVER_CPLEX
-	   lp = new OPT_CPLEX; 
+		lp = new OPT_CPLEX; 
+	#elif SOLVER_GUROBI
+		lp = new OPT_GUROBI; 
 	#endif
-	#ifdef SOLVER_GUROBI
-	   lp = new OPT_GUROBI; 
-	#endif
-   }
-   
-    #pragma region LOG FILE
-   ofstream mipFile;
-   setOptLogFile(mipFile,optLogFileName);
-	#pragma endregion
-
-   if ( vHashTatico.size() > 0 )
-   {
-		clearVariablesMaps();
-   }
-   if ( cHashTatico.size() > 0 )
-   {
-	   cHashTatico.clear();
-   }
-
-   char lpName[1024], id[100];
-   strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
+	
+    char lpName[1024];
+    strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
 
 	if ( problemData->parametros->funcao_objetivo == 0
 		|| problemData->parametros->funcao_objetivo == 2 )
@@ -1960,8 +1944,38 @@ int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
 	{
 		lp->createLP( lpName, OPTSENSE_MINIMIZE, PROB_MIP );
 	}
+}
 
-   std::cout<<"\nCreating LP...\n"; fflush(NULL);
+int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
+{	
+	std::cout<<"\nSolving...\n"; fflush(NULL);
+
+	int status = 0;
+			
+	bool CARREGA_SOL_PARCIAL = * this->CARREGA_SOLUCAO;
+	
+	verificaCarregaSolucao(campusId, prioridade, r);
+
+    int varNum = 0;
+    int constNum = 0;
+   
+    criaNewLp(campusId, prioridade, r);
+   
+    #pragma region LOG FILE
+    ofstream mipFile;
+    setOptLogFile(mipFile,optLogFileName);
+	#pragma endregion
+
+    if ( vHashTatico.size() > 0 )
+    {
+		clearVariablesMaps();
+    }
+    if ( cHashTatico.size() > 0 )
+    {
+	   cHashTatico.clear();
+    }
+	
+	criaNewLp(campusId, prioridade, r);
 
 	// Variable creation
 	varNum = criaVariaveisTatico( campusId, prioridade, r );
