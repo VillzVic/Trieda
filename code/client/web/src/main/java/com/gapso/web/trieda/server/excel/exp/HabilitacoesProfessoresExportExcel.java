@@ -100,7 +100,7 @@ public class HabilitacoesProfessoresExportExcel
 	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< ProfessorDisciplina > professoresDisciplinas
-			= ProfessorDisciplina.findAll( this.instituicaoEnsino );
+			= ProfessorDisciplina.findByCenario(this.instituicaoEnsino, this.getCenario());
 
 		Map< String, Boolean > registeredData
 			= new HashMap< String, Boolean >();
