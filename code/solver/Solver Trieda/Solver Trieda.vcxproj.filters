@@ -321,6 +321,9 @@
     <ClCompile Include="Polish.cpp">
       <Filter>Puro MIP\MIP-Unico</Filter>
     </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CentroDados.h" />
@@ -653,6 +656,9 @@
     </ClInclude>
     <ClInclude Include="Polish.h">
       <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

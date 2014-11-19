@@ -634,8 +634,10 @@ void ProblemDataLoader::printInputDataLog()
 			ssProfs << "\nMáximo de habilitações: " << profComMaxHab->getNome()
 				<< " (CPF: " << profComMaxHab->getCpf() << ") com "	<< nroMaxHab << " disciplinas habilitadas.";
 		}
-		ssProfs << "\nMáximo de habilitações: " << profComMaxHab->getNome()
-			<< " (CPF: " << profComMaxHab->getCpf() << ") com "	<< nroMaxHab << " disciplinas habilitadas.";
+		else
+		{
+			ssProfs << "\nNão existe nenhuma associação de professor a disciplina.";
+		}
 
 		ssProfs << "\nDos " << totalProfs << " professores, " << nroProfAte2DiasDisp 
 			<< " estão disponíveis apenas 1 ou 2 dias na semana.";

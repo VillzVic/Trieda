@@ -68,7 +68,6 @@ private:
    int criaVariavelDisciplinaHorario( void );
    int criaVariavelProfessorCurso( void );
    int criaVariavelDiasProfessoresMinistramAulas( void );
-   int criaVariavelFolgaUltimaPrimeiraAulas( void );			 // NÃO USADA MAIS. RESTRIÇÃO SUBSTITUTA: INTERJORNADA
    int criaVariavelDiscProfCurso( void );
    int criaVariavelDiscProfOferta();
    int criaVariavelFolgaMaxDiscProfCurso( void );
@@ -109,14 +108,12 @@ private:
    int criaRestricaoProfessorDisciplinaUnicoPT( void );
    int criaRestricaoDisciplinaMesmoHorario( void );
    int criaRestricaoDisciplinaHorarioUnico( void );
-   int criaRestricaoDeslocamentoViavel( void ); // x3
    int criaRestricaoDeslocamentoProfessor( void ); // x5
    int criaRestricaoCalculaDiasProfMinistra_Min(); // x9
    int criaRestricaoCalculaDiasProfMinistra_Max(); // x9
    int criaRestricaoMaxDiasSemanaProf(  );
    int criaRestricaoMinCredDiariosProf(  );
    int criaRestricaoCargaHorariaMinimaProfessor( void ); // x10
-   int criaRestricaoUltimaPrimeiraAulas( void ); // x11			 // NÃO USADA MAIS. RESTRIÇÃO SUBSTITUTA: INTERJORNADA
    int criaRestricaoAlocacaoProfessorCurso( void ); // x12
    int criaRestricaoMinimoMestresCurso( void ); // x12
    int criaRestricaoMinimoDoutoresCurso( void ); // x12
@@ -168,11 +165,20 @@ private:
    **						        ETAPAS DA RESOLUÇÃO																  **
    /********************************************************************************************************************/
 
-   int solveGaranteTotalAtendHorInicial( bool& CARREGA_SOL_PARCIAL, double *xS );
    int solveMaxAtendPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS );
    int solveMinPVPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS );
-   int solveGeneral( bool& CARREGA_SOL_PARCIAL, double *xS );
+   int solveGeneral(bool& CARREGA_SOL_PARCIAL, double *xS, std::ofstream &opFile);
+
+   int solveRodada1(bool& CARREGA_SOL_PARCIAL, double *xS, std::ofstream &opFile);
+   int solveGaranteTotalAtendHorInicial( bool& CARREGA_SOL_PARCIAL, double *xS );
+   int solveFindAnyFeasibleSol(double *xS);
    
+   int solveRodada2(bool& CARREGA_SOL_PARCIAL, double *xS, std::ofstream &opFile);
+   int solveFindNullSol(bool& CARREGA_SOL_PARCIAL, double *xS, std::ofstream &opFile);
+   int copyProfsReaisEtapa1(bool& CARREGA_SOL_PARCIAL, double *x, std::ofstream &opFile);
+   int solveMaxAtendUnico(bool& CARREGA_SOL_PARCIAL, double *x, std::ofstream &opFile);
+   int solveMinVirtuais(bool& CARREGA_SOL_PARCIAL, double *x, std::ofstream &opFile);
+
 
    /********************************************************************************************************************
    **						        OUTROS																			  **
@@ -255,8 +261,10 @@ private:
    ProblemSolution * problemSolution;
    
    ProblemSolution * problemSolutionTemp;
-   
-   //ValidateSolutionOp * validateSolution;
+      
+   // If optimized_ is true, then xSol_ contains a feasible solution 
+   bool optimized_;
+   double *xSol_;   
 
    int rodadaOp;
 
@@ -266,8 +274,7 @@ private:
 	  OP_VIRTUAL_INDIVIDUAL = 2
    };
 
-   // The linear problem.	
-   //OPT_LP * lp;
+   // The linear problem.
 	#ifdef SOLVER_CPLEX 
 	   OPT_CPLEX *lp;
 	#endif
@@ -276,7 +283,9 @@ private:
 	#endif
 
 	bool FIXA_HOR_SOL_TATICO;
-
+	
+	// log file name
+	string optLogFileName_;
 };
 
 #endif

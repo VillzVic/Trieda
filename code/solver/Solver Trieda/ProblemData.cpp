@@ -1672,7 +1672,7 @@ int ProblemData::calculaTempoEntreCampusUnidades(
    Campus * campus_atual, Campus * campus_anterior,
    Unidade * unidade_atual, Unidade * unidade_anterior )
 {
-   int distancia = 0;
+   int tempoDesloc = 0;
 
    // As aulas são realizadas em campus diferentes
    if ( campus_atual->getId() != campus_anterior->getId() )
@@ -1686,7 +1686,7 @@ int ProblemData::calculaTempoEntreCampusUnidades(
          if ( it_tempo_campi->getOrigemId() == campus_anterior->getId()
 				&& it_tempo_campi->getDestinoId() == campus_atual->getId() )
          {
-            distancia = it_tempo_campi->getTempo();
+            tempoDesloc = it_tempo_campi->getTempo();
          }
       }
    }
@@ -1702,19 +1702,12 @@ int ProblemData::calculaTempoEntreCampusUnidades(
          if ( it_tempo_unidade->getOrigemId() == unidade_anterior->getId()
 				&& it_tempo_unidade->getDestinoId() == unidade_atual->getId() )
          {
-            distancia = it_tempo_unidade->getTempo();
+            tempoDesloc = it_tempo_unidade->getTempo();
          }
       }
    }
 
-   return distancia;
-}
-
-int ProblemData::minutosIntervalo( DateTime dt1, DateTime dt2 )
-{
-   DateTime back = ( dt1 - dt2 );
-   int minutes = ( back.getHour() * 60 + back.getMinute() );
-   return minutes;
+   return tempoDesloc;
 }
 
 

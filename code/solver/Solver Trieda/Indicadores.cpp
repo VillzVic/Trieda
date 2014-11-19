@@ -95,6 +95,7 @@ void Indicadores::printIndicador( std::string str )
 	if ( outFile )
 	{
 		outFile << str.c_str();
+		outFile.flush();
 		outFile.close();	
 	}
 	else

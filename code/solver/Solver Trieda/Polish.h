@@ -9,6 +9,7 @@
 #include "CPUTimerWin.h"
 
 #include "VariableMIPUnico.h"
+#include "VariableOp.h"
 
 #ifdef SOLVER_CPLEX
 #include "opt_cplex.h"
@@ -24,14 +25,21 @@ public:
 
 	#ifdef SOLVER_CPLEX
 		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile );
+		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile );
 	#elif SOLVER_GUROBI 
 		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile );
+		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile );
 	#endif
 
-		~Polish();
+	~Polish();
 
 	bool polish(double* xSol, double maxTime, int percIni, double maxTempoSemMelhora);
 
+	enum MODULE
+	{
+		TATICO = 1,
+		OPERACIONAL = 2
+	};
 
 private:
 	
@@ -46,14 +54,21 @@ private:
 				  std::set<std::pair<int,Disciplina*> > const &paraFixarZero );
 
 	void fixVarsType2();
+	void fixVarsType2Tatico();
+	void fixVarsType2Op();
 
 	void optimize();
 	void getSolution(double &objN, double &gap);
+	void setMelhora( double objN );
 	void updatePercAndTimeIter( bool &okIter, double objN, double gap );
+	void updatePercAndTimeIterSmallGap( bool &okIter, double objN );
+	void updatePercAndTimeIterBigGap( double objN );
 	void checkTimeWithoutImprov( bool &okIter, double objN );
 	void updateObj(double objN);
 	void checkTimeLimit(bool &okIter);
 	void unfixBounds();
+	void unfixBoundsTatico();
+	void unfixBoundsOp();
 
 	void logIter(double perc, double tempoIter);
 
@@ -64,6 +79,8 @@ private:
 	bool needsPolish();
 	bool optimized();
 	bool infeasible();
+	bool optimal();
+	bool unoptimized();
 	void checkFeasibility();
 
 	void guaranteeSol();
@@ -83,42 +100,50 @@ private:
 	#endif
 	   
 	   // Vars
-	   int tempoIter;
-	   int perc;
-	   int status;
-	   double objAtual;
+	   int tempoIter_;
+	   int perc_;
+	   int status_;
+	   double objAtual_;
+	   bool melhorou_;
+	   double melhora_;
+	   double runtime_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
 	   double heurFreq_;
 
 	   // Lp's variables' bounds and values
-	   int *idxs;
-	   double *vals;
-	   BOUNDTYPE *bds;	   
-	   double *ubVars;
-	   double *lbVars;
-	   int *idxSol;
+	   int *idxs_;
+	   double *vals_;
+	   BOUNDTYPE *bds_;	   
+	   double *ubVars_;
+	   double *lbVars_;
+	   int *idxSol_;
 
 	   // Constants
-	   int tempoIni; 
-	   int fixType;
+	   int tempoIni_; 
+	   int fixType_;
 	   double maxTime_;
 	   double maxTempoSemMelhora_;
 
-	   double *xSol;
+	   double *xSol_;
 	   
 	   // Hash which associates the column number with the VariableTatico object.
-	   VariableMIPUnicoHash const vHashTatico;
+	   VariableMIPUnicoHash const vHashTatico_;
 	   
+	   // Hash which associates the column number with the VariableOp object.
+	   VariableOpHash const vHashOp_;
+	   
+	   MODULE const module_;
+
 	   // Log file
-	   bool hasOrigFile;
-	   string originalLogFileName;
-	   ofstream polishFile;
+	   bool hasOrigFile_;
+	   string originalLogFileName_;
+	   ofstream polishFile_;
 
 	   // Timers
-	   CPUTimer tempoPol;
-	   CPUTimer tempoSemMelhora;
+	   CPUTimer tempoPol_;
+	   CPUTimer tempoSemMelhora_;
 };
 
 

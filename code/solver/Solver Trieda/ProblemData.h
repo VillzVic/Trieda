@@ -136,9 +136,6 @@ public:
    // se deslocar entre uma aula e outra
    int calculaTempoEntreCampusUnidades( Campus *, Campus *, Unidade *, Unidade * );
 
-   // Informa quantos minutos há entre os dados DateTime's
-   int minutosIntervalo( DateTime dt1, DateTime dt2 );
-
    // Verifica a ocorrência de última aula do dia ( D ) e primeira aula do dia ( D + 1 )
    bool verificaUltimaPrimeiraAulas( HorarioDia *, HorarioDia * );
 

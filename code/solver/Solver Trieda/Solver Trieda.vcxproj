@@ -533,7 +533,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;$(GUROBI_HOME)\include;$(XSD)\include;$(BOOST);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_GUROBI;UNIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_GUROBI;UNIT;PRINT_LOGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -789,6 +789,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Util.cpp" />
     <ClCompile Include="VariableMIPUnico.cpp" />
     <ClCompile Include="VariableOp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
@@ -937,6 +938,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Util.h" />
     <ClInclude Include="VariableMIPUnico.h" />
     <ClInclude Include="VariableOp.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>

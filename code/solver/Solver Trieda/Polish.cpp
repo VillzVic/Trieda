@@ -15,64 +15,82 @@ double MIN_OPT_VALUE = 0.0;
 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile )
-	: lp_(lp), vHashTatico(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual(999999999999.9),
-	nrPrePasses_(-1), heurFreq_(0.7)
+	: lp_(lp), vHashTatico_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
+	melhorou_(false), melhora_(0), runtime_(0),
+	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::TATICO)
 {
-	originalLogFileName = originalLogFile;
-	hasOrigFile = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
+	originalLogFileName_ = originalLogFile;
+	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
 }
+
+Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile )
+	: lp_(lp), vHashOp_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
+	melhorou_(false), melhora_(0), runtime_(0),
+	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::OPERACIONAL)
+{
+	originalLogFileName_ = originalLogFile;
+	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
+}
+
 
 Polish::~Polish()
 {
-	if (idxSol)
-		delete [] idxSol;
-	if (ubVars)
-		delete [] ubVars;
-	if (lbVars)   
-		delete [] lbVars;
-	if (idxs)
-		delete [] idxs;
-	if (vals)
-		delete [] vals;
-	if (bds)
-		delete [] bds;
+	if (idxSol_)
+		delete [] idxSol_;
+	if (ubVars_)
+		delete [] ubVars_;
+	if (lbVars_)   
+		delete [] lbVars_;
+	if (idxs_)
+		delete [] idxs_;
+	if (vals_)
+		delete [] vals_;
+	if (bds_)
+		delete [] bds_;
 }
 
 void Polish::init()
 {
 	if (!lp_) return;
-	
-	// Timers
-    tempoPol.reset();
-    tempoPol.start();
-    tempoSemMelhora.reset();
-    tempoSemMelhora.start();
-	
-	// Constants
-	tempoIni = 50;
-	fixType = 1;
-	
-	// Init values
-	tempoIter = tempoIni;
-	perc = 0;
-    status = 0;
-    objAtual = 999999999999.9;
 
-	idxs = new int[lp_->getNumCols()*2];
-	vals = new double[lp_->getNumCols()*2];
-	bds = new BOUNDTYPE[lp_->getNumCols()*2];
+	lp_->setCallbackFunc( NULL, NULL );
+
+	// Timers
+    tempoPol_.reset();
+    tempoPol_.start();
+    tempoSemMelhora_.reset();
+    tempoSemMelhora_.start();
+	
+	// Fix type
+	if (module_==Polish::TATICO)
+		fixType_ = 1;	
+	if (module_==Polish::OPERACIONAL)
+		fixType_ = 2;
+
+	// Constants
+	tempoIni_ = 50;
+
+	// Init values
+	tempoIter_ = tempoIni_;
+	perc_ = 0;
+    status_ = 0;
+    objAtual_ = 999999999999.9;
+
+	idxs_ = new int[lp_->getNumCols()*2];
+	vals_ = new double[lp_->getNumCols()*2];
+	bds_ = new BOUNDTYPE[lp_->getNumCols()*2];
 		
     // ORIGINAL VARIABLES BOUNDS
-    ubVars = new double[ lp_->getNumCols() ];
-    lbVars = new double[ lp_->getNumCols() ];
-    lp_->getUB(0,lp_->getNumCols()-1,ubVars);
-    lp_->getLB(0,lp_->getNumCols()-1,lbVars);
+    ubVars_ = new double[ lp_->getNumCols() ];
+    lbVars_ = new double[ lp_->getNumCols() ];
+    lp_->getUB(0,lp_->getNumCols()-1,ubVars_);
+    lp_->getLB(0,lp_->getNumCols()-1,lbVars_);
 	
 	// VARIABLES INDICES
-    idxSol = new int[ lp_->getNumCols() ];
+    idxSol_ = new int[ lp_->getNumCols() ];
     for ( int i = 0; i < lp_->getNumCols(); i++ )
     {
-      idxSol[ i ] = i;
+      idxSol_[ i ] = i;
     }
 }
 
@@ -82,11 +100,11 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
     
 	init();	      
 
-	xSol = xS;
+	xSol_ = xS;
 
     srand(123);
          
-    perc = percIni;
+    perc_ = percIni;
 	maxTime_ = maxTime;
 	maxTempoSemMelhora_ = maxTempoSemMelhora;
 
@@ -100,11 +118,11 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		polishing = false;
 	}
 
-	setParams(tempoIter);
+	setParams(tempoIter_);
 
     while (okIter)
     {     
-		if (fixType==1)
+		if (fixType_==1)
 		{
 			// Seleciona turmas e disciplinas para fixar
 			std::set<std::pair<int,Disciplina*> > paraFixarUm;
@@ -118,14 +136,16 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 			fixVarsType2();
 		}
 
-		logIter( perc, tempoIter );
+		logIter( perc_, tempoIter_ );
 
 		optimize();
 
 		double objN, gap;
 		getSolution(objN, gap);
 	  
-		updatePercAndTimeIter( okIter, objN, gap );
+		setMelhora(objN);
+
+		updatePercAndTimeIter(okIter, objN, gap);
 
 		checkTimeWithoutImprov(okIter, objN);
 	  
@@ -136,7 +156,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		unfixBounds();
     }
          
-	// Agora xSol é atributo do MIPUnico, então o carregamento da solucao não faz getX mais,
+	// Agora xSol_ é atributo do MIPUnico, então o carregamento da solucao não faz getX mais,
 	// sendo dispensavel essa garantia de solução aqui.
 	// guaranteeSol();
 
@@ -151,34 +171,34 @@ void Polish::decideVarsToFix( std::set<std::pair<int,Disciplina*> > &paraFixarUm
 							  std::set<std::pair<int,Disciplina*> > &paraFixarZero )
 {
     // Seleciona turmas e disciplinas para fixar
-    if ( fixType == 1 )
+    if ( fixType_ == 1 )
     {
         int nBds = 0;
-		auto vit = vHashTatico.begin();
-        while ( vit != vHashTatico.end() )
+		auto vit = vHashTatico_.begin();
+        while ( vit != vHashTatico_.end() )
         {
 			if ( vit->first.getType() == VariableMIPUnico::V_ABERTURA )
 			{
-				if ( rand() % 100 >= perc  )
+				if ( rand() % 100 >= perc_  )
 				{
 					vit++;
 					continue;
 				}
 
-				if (xSol[vit->second] > 0.1 )
+				if (xSol_[vit->second] > 0.1 )
 				{
-					idxs[nBds] = vit->second;
-					vals[nBds] = (int)(xSol[vit->second]+0.5);
-					bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+					idxs_[nBds] = vit->second;
+					vals_[nBds] = (int)(xSol_[vit->second]+0.5);
+					bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
 					nBds++;
 					std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
 					paraFixarUm.insert(auxPair);
 				}
 				else
 				{
-					idxs[nBds] = vit->second;
-					vals[nBds] = 0.0;
-					bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+					idxs_[nBds] = vit->second;
+					vals_[nBds] = 0.0;
+					bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
 					nBds++;
 					std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
 					paraFixarZero.insert(auxPair);
@@ -187,7 +207,7 @@ void Polish::decideVarsToFix( std::set<std::pair<int,Disciplina*> > &paraFixarUm
 
 			vit++;
         }
-        lp_->chgBds(nBds,idxs,bds,vals);
+        lp_->chgBds(nBds,idxs_,bds_,vals_);
         lp_->updateLP();
     }
 }
@@ -197,175 +217,232 @@ void Polish::fixVarsType1( std::set<std::pair<int,Disciplina*> > const &paraFixa
 					  std::set<std::pair<int,Disciplina*> > const &paraFixarZero )
 {
     int nBds = 0;
-    for ( auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
+    for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
     {
         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
         {
 			std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
 			if ( paraFixarUm.find(auxPair) != paraFixarUm.end() )
 			{
-				idxs[nBds] = vit->second;
-				vals[nBds] = (int)(xSol[vit->second]+0.5);
-				bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
+				bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
 				nBds++;
 			}
 			else if ( paraFixarZero.find(auxPair) != paraFixarZero.end() )
 			{
-				idxs[nBds] = vit->second;
-				vals[nBds] = 0.0;
-				bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = 0.0;
+				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
 				nBds++;
 			}
         }
     }
 
-    lp_->chgBds(nBds,idxs,bds,vals);
+    lp_->chgBds(nBds,idxs_,bds_,vals_);
     lp_->updateLP();	
 }
 
 void Polish::fixVarsType2()
 {
+	if (module_ == Polish::TATICO)
+	    fixVarsType2Tatico();
+	if (module_ == Polish::OPERACIONAL)
+	    fixVarsType2Op();
+}
+
+void Polish::fixVarsType2Tatico()
+{
     int nBds = 0;
-    for ( auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
+    for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
     {
         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
         {
-			if ( rand() % 100 >= perc  )
+			if ( rand() % 100 >= perc_  )
 			{
 				continue;
 			}
 
-			if ( xSol[vit->second] > 0.1 )
+			if ( xSol_[vit->second] > 0.1 )
 			{
-				idxs[nBds] = vit->second;
-				vals[nBds] = (int)(xSol[vit->second]+0.5);
-				bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
+				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
 				nBds++;
-				idxs[nBds] = vit->second;
-				vals[nBds] = (int)(xSol[vit->second]+0.5);
-				bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
+				bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
 				nBds++;
 			}
 			else
 			{
-				idxs[nBds] = vit->second;
-				vals[nBds] = 0.0;
-				bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = 0.0;
+				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
 				nBds++;
 			}
         }
     }
 
-    lp_->chgBds(nBds,idxs,bds,vals);
+    lp_->chgBds(nBds,idxs_,bds_,vals_);
+    lp_->updateLP();
+}
+
+void Polish::fixVarsType2Op()
+{
+    int nBds = 0;
+    for ( auto vit = vHashOp_.begin(); vit != vHashOp_.end(); vit++ )
+    {
+        if ( vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR )
+        {
+			if ( rand() % 100 >= perc_  )
+			{
+				continue;
+			}
+
+			if ( xSol_[vit->second] > 0.1 )
+			{
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
+				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
+				nBds++;
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
+				bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
+				nBds++;
+			}
+			else
+			{
+				idxs_[nBds] = vit->second;
+				vals_[nBds] = 0.0;
+				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
+				nBds++;
+			}
+        }
+    }
+
+    lp_->chgBds(nBds,idxs_,bds_,vals_);
     lp_->updateLP();
 }
 
 void Polish::optimize()
 {
-    lp_->setTimeLimit( tempoIter );
-    lp_->copyMIPStartSol( lp_->getNumCols(), idxSol, xSol );
+    lp_->setTimeLimit( tempoIter_ );
+    lp_->copyMIPStartSol( lp_->getNumCols(), idxSol_, xSol_ );
     lp_->updateLP();
-    status = lp_->optimize( METHOD_MIP );
+    status_ = lp_->optimize( METHOD_MIP );
 	
+	runtime_ = (lp_->getRunTime()/CLOCKS_PER_SEC);
+	  
 	checkFeasibility();
 }
 
 void Polish::getSolution(double &objN, double &gap)
 {
-    objN = objAtual;
+    objN = objAtual_;
 	gap = 100;
 	if (optimized())
 	{
-		lp_->getX( xSol );
+		lp_->getX( xSol_ );
 		objN = lp_->getObjVal();
 		gap = lp_->getMIPGap() * 100;
 	}
 }
 
-void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
+void Polish::setMelhora( double objN )
 {
-	  bool optimal = (status==OPTSTAT_MIPOPTIMAL);
+	// Indicador de melhora_ da solução.
+	// 0 indica nenhuma melhora_
+	// 1 indica 100% de melhora_
+	melhorou_ = (fabs(objN-objAtual_) > 0.001);
+	melhora_=0.0;
+	if (melhorou_)
+	{
+		melhora_ = fabs(objN-objAtual_);
+		if(objAtual_!=0) melhora_ /= objAtual_;
+	}
+}
 
-	  // Indicador de melhora da solução.
-	  // 0 indica nenhuma melhora
-	  // 1 indica 100% de melhora
-	  bool melhorou = (fabs(objN-objAtual) > 0.001);
-	  double melhora=0.0;
-	  if (melhorou)
+void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
+{			  	  	  
+	  if (perc_ <= 0)
 	  {
-		  melhora = fabs(objN-objAtual);
-		  if(objAtual!=0) melhora /= objAtual;
+		  okIter = false;
+		  return;
 	  }
-	  
-	#pragma region SET NEW VALUES FOR PERC AND TEMPOITER
-	  if (status == OPTSTAT_UNOPTIMIZED)	// time limit
+
+	  if (unoptimized())					// time limit
 	  {
-		  tempoIter += 50;
+		  tempoIter_ += 50;
 		  setLpPrePasses();
 	  }
-	  else if ( optimal || gap <= 1.0 )		// TINY GAP
+	  else if (optimal() || gap <= 1.0)		// TINY GAP
 	  {
-		  if (melhorou)
-		  {
-			  // Adjust time limit in case it is too high
-			  double minExcess = max( 0.5*tempoIter, 50 );
-			  double runtime = (lp_->getRunTime()/CLOCKS_PER_SEC);
-			  if ( fabs(tempoIter-runtime) > minExcess )
-				  tempoIter = runtime+minExcess;
-		  }
-
-		  if ( fabs(objN-MIN_OPT_VALUE) < 10e-6)// Obj acchieved a known minimal possible value
-		  {
-			  okIter = false;
-		  }
-
-		  if ( perc<=10 )
-		  {
-			  if (perc <= 0) okIter = false;	// ótimo!
-			  else if(!melhorou) perc = 0;		// problema livre
-		  }
-		  else
-		  {
-			  // diminui a parcela fixa
-			  //if(melhora>0.7) perc -= 5;
-			  //if(melhora<0.01) perc -= 10;
-			  if(!melhorou) perc -= 10;
-		  }
+		  updatePercAndTimeIterSmallGap( okIter, objN );
 	  }
 	  else									// BIG GAP
 	  {
-		  if (!melhorou)
-		  {
-			  int increm = 5;
-			  if (perc+increm < 100)
-				  perc += increm;
-
-			  chgParams(); 			  
-
-			  int incremTime = 20;					// increases the time limit by a fixed amount
-			  incremTime += (100-perc)*0.2;			// increases the time limit the more perc is close to 0.
-			  if (!optimal) tempoIter += incremTime;
-		  }
+		  updatePercAndTimeIterBigGap( objN );
 	  }
-	#pragma endregion
+}
+
+void Polish::updatePercAndTimeIterSmallGap( bool &okIter, double objN )
+{
+	if (melhorou_)
+	{
+		// Adjust time limit in case it is too high
+		double minExcess = max( 0.5*tempoIter_, 50 );
+		if ( fabs(tempoIter_-runtime_) > minExcess )
+			tempoIter_ = runtime_+minExcess;
+	}
+
+	if (fabs(objN-MIN_OPT_VALUE) < 10e-6)	// Obj acchieved a known minimal possible value
+	{
+		okIter = false;						// optimal!
+	}
+
+	if (perc_ <= 10)
+	{
+		if (perc_ <= 0) okIter = false;		// optimal!
+		else if(!melhorou_) perc_ = 0;		// free the problem
+	}
+	else
+	{		
+		if(!melhorou_) perc_ -= 10;			// decrease the fixed portion
+		if (perc_<0) perc_ = 0;
+
+		if (perc_==0) tempoIter_ *= 2;		// next iteration will be the last one
+	}
+}
+
+void Polish::updatePercAndTimeIterBigGap( double objN )
+{
+	if (!melhorou_ && perc_>0)
+	{
+		chgParams(); 			  
+
+		int incremTime = 20;					// increases the time limit by a fixed amount
+		incremTime += (100-perc_)*0.2;			// increases the time limit the more perc_ is close to 0.
+		if (!optimal()) tempoIter_ += incremTime;
+	}
 }
 
 void Polish::checkTimeWithoutImprov( bool &okIter, double objN )
 {
-	if ( fabs(objN-objAtual) < 0.0001 )
+	if ( fabs(objN-objAtual_) < 0.0001 )
 	{
 		/* no improvement */
-		tempoSemMelhora.stop();
-		double tempoAtual = tempoSemMelhora.getCronoTotalSecs();
-		tempoSemMelhora.start();
+		tempoSemMelhora_.stop();
+		double tempoAtual = tempoSemMelhora_.getCronoTotalSecs();
+		tempoSemMelhora_.start();
 		if ( tempoAtual >= maxTempoSemMelhora_ )
 		{
 			/* if there is too much time without any improvement, then quit */
 			okIter = false;
-			tempoSemMelhora.stop();
-			tempoPol.stop();
+			tempoSemMelhora_.stop();
+			tempoPol_.stop();
 			cout << "Abort by timeWithoutChange. Limit of time without improvement" << tempoAtual << ", BestObj " << objN;
-			if (polishFile)
+			if (polishFile_)
 			{
 				stringstream ss;
 				ss << "Abort by timeWithoutChange. Limit of time without improvement" 
@@ -376,31 +453,31 @@ void Polish::checkTimeWithoutImprov( bool &okIter, double objN )
 	}
 	else
 	{
-		tempoSemMelhora.stop();
-		tempoSemMelhora.reset();
-		tempoSemMelhora.start();		
+		tempoSemMelhora_.stop();
+		tempoSemMelhora_.reset();
+		tempoSemMelhora_.start();		
 	}
 }
 
 void Polish::updateObj(double objN)
 {
-	objAtual = objN;
+	objAtual_ = objN;
 }
 
 void Polish::checkTimeLimit( bool &okIter )
 {
 	if ( okIter )
     {
-		tempoPol.stop();
-		double tempoAtual = tempoPol.getCronoTotalSecs();
-		tempoPol.start();
+		tempoPol_.stop();
+		double tempoAtual = tempoPol_.getCronoTotalSecs();
+		tempoPol_.start();
 		if ( tempoAtual >= maxTime_ )
 		{
 			okIter = false;
-			tempoPol.stop();
-			tempoSemMelhora.stop();
+			tempoPol_.stop();
+			tempoSemMelhora_.stop();
 			cout << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime_ << endl;
-			if(polishFile)
+			if(polishFile_)
 			{
 				stringstream ss;
 				ss << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime_;
@@ -412,35 +489,66 @@ void Polish::checkTimeLimit( bool &okIter )
 
 void Polish::unfixBounds()
 {
+	if (module_ == Polish::TATICO)
+		unfixBoundsTatico();
+	if (module_ == Polish::OPERACIONAL)
+		unfixBoundsOp();
+}
+
+void Polish::unfixBoundsTatico()
+{
       // Volta bounds
       int nBds = 0;
-      for ( auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
+      for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
       {
          if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS || 
 			  vit->first.getType() == VariableMIPUnico::V_ABERTURA )
          {
-            idxs[nBds] = vit->second;
-            vals[nBds] = ubVars[vit->second];
-            bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+            idxs_[nBds] = vit->second;
+            vals_[nBds] = ubVars_[vit->second];
+            bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
             nBds++;
-            idxs[nBds] = vit->second;
-            vals[nBds] = lbVars[vit->second];
-            bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+            idxs_[nBds] = vit->second;
+            vals_[nBds] = lbVars_[vit->second];
+            bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
             nBds++;
          }         
       }	  
-      lp_->chgBds(nBds,idxs,bds,vals);
+      lp_->chgBds(nBds,idxs_,bds_,vals_);
       lp_->updateLP();
 }
 
-void Polish::logIter(double perc, double tempoIter)
+void Polish::unfixBoundsOp()
 {
-	cout <<"POLISH COM PERC = " << perc << ", TEMPOITER = " << tempoIter << endl; fflush(0);
-	if(polishFile)
+      // Volta bounds
+      int nBds = 0;
+      for ( auto vit = vHashOp_.begin(); vit != vHashOp_.end(); vit++ )
+      {
+		 if ( vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR || 
+			  vit->first.getType() == VariableOp::V_FOLGA_DEMANDA )
+         {
+            idxs_[nBds] = vit->second;
+            vals_[nBds] = ubVars_[vit->second];
+            bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
+            nBds++;
+            idxs_[nBds] = vit->second;
+            vals_[nBds] = lbVars_[vit->second];
+            bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
+            nBds++;
+         }         
+      }	  
+      lp_->chgBds(nBds,idxs_,bds_,vals_);
+      lp_->updateLP();
+}
+
+void Polish::logIter(double perc_, double tempoIter_)
+{
+	cout <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << tempoIter_ << endl; fflush(0);
+	if(polishFile_)
 	{
 		stringstream ss;
 		ss <<"---------------------------------------------------------------------------\n\n";
-		ss <<"POLISH COM PERC = " << perc << ", TEMPOITER = " << tempoIter;
+		ss <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << tempoIter_;
 		ss << "\nheurFreq_ = " << heurFreq_;
 		printLog(ss.str());
 	}
@@ -463,11 +571,11 @@ void Polish::setLpPrePasses()
 	}
 }
 
-void Polish::setParams(double tempoIter)
+void Polish::setParams(double tempoIter_)
 {
 	lp_->setPrePasses(nrPrePasses_);
   	lp_->setNumIntSols(10000000);
-    lp_->setTimeLimit( tempoIter );
+    lp_->setTimeLimit( tempoIter_ );
     lp_->setMIPRelTol( 0.1 );
     lp_->setMIPEmphasis( 1 );
     lp_->setHeurFrequency( heurFreq_ );
@@ -499,14 +607,28 @@ void Polish::setNewHeurFreq()
 
 bool Polish::optimized()
 {
-	if (status == OPTSTAT_MIPOPTIMAL || status == OPTSTAT_LPOPTIMAL || status == OPTSTAT_FEASIBLE)
+	if (status_ == OPTSTAT_MIPOPTIMAL || status_ == OPTSTAT_LPOPTIMAL || status_ == OPTSTAT_FEASIBLE)
 		return true;
 	return false;
 }
 
 bool Polish::infeasible()
 {
-	if (status == OPTSTAT_INFEASIBLE)
+	if (status_ == OPTSTAT_INFEASIBLE)
+		return true;
+	return false;
+}
+
+bool Polish::optimal()
+{
+	if (status_ == OPTSTAT_MIPOPTIMAL)
+		return true;
+	return false;
+}
+
+bool Polish::unoptimized()
+{
+	if (status_ == OPTSTAT_UNOPTIMIZED)
 		return true;
 	return false;
 }
@@ -527,7 +649,7 @@ bool Polish::needsPolish()
 {
 	// ------------------------------------------------------------
 	// Procura rapidamente a solução exata, caso já se esteja perto do ótimo
-	if(polishFile)
+	if(polishFile_)
 	{
 		stringstream ss;
 		ss << "Verificando necessidade de polishing...";
@@ -540,11 +662,11 @@ bool Polish::needsPolish()
 
 	if (optimized())
 	{
-	    lp_->getX( xSol );	  
+	    lp_->getX( xSol_ );	  
 		if ( lp_->getMIPGap() * 100 < 2.0 )
 		{
 			cout << "\n\nPolish desnecessario, gap =" << lp_->getMIPGap() * 100 << std::endl;
-			if(polishFile)
+			if(polishFile_)
 			{
 				stringstream ss;
 				ss <<"Polish desnecessario, gap = " << lp_->getMIPGap() * 100 << std::endl;
@@ -555,7 +677,7 @@ bool Polish::needsPolish()
 	}
 
 	cout << "\n\nPolishing..." << std::endl << std::endl;
-	if(polishFile)
+	if(polishFile_)
 	{
 		stringstream ss;
 		ss <<"\nPolishing...\n\n";
@@ -571,7 +693,7 @@ void Polish::guaranteeSol()
 	// -------------------------------------------------------------
     // Garante que não dará erro se houver um getX depois desse polish,
     // já que o lp sobre alteração nos bounds no final.
-    if(polishFile)
+    if(polishFile_)
     {
 		stringstream ss;
 		ss << "---------------------------------------------------------------------------"
@@ -580,10 +702,10 @@ void Polish::guaranteeSol()
 		printLog(ss.str());
     }
 
-    lp_->copyMIPStartSol( lp_->getNumCols(), idxSol, xSol );
+    lp_->copyMIPStartSol( lp_->getNumCols(), idxSol_, xSol_ );
 	lp_->setTimeLimit( 50 );
-	status = lp_->optimize( METHOD_MIP );
-	lp_->getX(xSol);
+	status_ = lp_->optimize( METHOD_MIP );
+	lp_->getX(xSol_);
 }
 
 void Polish::initLogFile()
@@ -592,17 +714,17 @@ void Polish::initLogFile()
    static int id=0;
    id++;
    stringstream ss;
-   ss << originalLogFileName << "Polish" << id;
+   ss << originalLogFileName_ << "Polish" << id;
    
-   setOptLogFile(polishFile,ss.str());
+   setOptLogFile(polishFile_,ss.str());
 }
 
 void Polish::printLog( string msg )
 {
-	polishFile.flush();
-	polishFile.seekp(0,ios::end);
-	polishFile << msg << endl;
-	polishFile.flush();
+	polishFile_.flush();
+	polishFile_.seekp(0,ios::end);
+	polishFile_ << msg << endl;
+	polishFile_.flush();
 }
 
 void Polish::setOptLogFile(std::ofstream &logMip, string name, bool clear)
@@ -621,15 +743,15 @@ void Polish::setOptLogFile(std::ofstream &logMip, string name, bool clear)
 
 void Polish::closeLogFile()
 {
-	if (polishFile.is_open())
-		polishFile.close();
+	if (polishFile_.is_open())
+		polishFile_.close();
 }
 
 void Polish::restoreOriginalLogFile()
 {
-	if (hasOrigFile)
+	if (hasOrigFile_)
 	{
 		std::ofstream out;
-		setOptLogFile(out,originalLogFileName,false);
+		setOptLogFile(out,originalLogFileName_,false);
 	}
 }

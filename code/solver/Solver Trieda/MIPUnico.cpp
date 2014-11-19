@@ -1646,7 +1646,7 @@ void MIPUnico::carregaVariaveisSolucao( int campusAtualId, int prioridade, int r
 			CentroDados::printError("MIPUnico::carregaVariaveisSolucao()", "Arquivo nao encontrado!");
 		    delete [] xSol_;
 			xSol_ = nullptr;
-			exit(0);
+			exit(EXIT_FAILURE);
 		}
 	}
 	else if (!optimized)
@@ -1987,7 +1987,9 @@ int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
 
 		
 		#ifdef PRINT_LOGS
-		lp->writeProbLP( lpName );
+		char lpName[1024];
+		if (lp->getProbName(lpName,1024))
+			lp->writeProbLP( lpName );
 		#endif
 	 		
 		
@@ -2268,16 +2270,10 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
 				polishing = pol->polish(xS, 3600, 90, 1000);
 				delete pol;
-			#elif defined SOLVER_GUROBI
-				lp->setCallbackFunc( NULL, NULL );
-
+			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
 				polishing = pol->polish(xS, 3600, 90, 1000);
 				delete pol;
-
-				#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-				lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );			
-				#endif
 			#endif
 		}
 		if (!polishing)
@@ -2405,16 +2401,10 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
 				polishing = pol->polish(xS, 1800, 90, 1000);
 				delete pol;
-			#elif defined SOLVER_GUROBI
-				lp->setCallbackFunc( NULL, NULL );
-				
+			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
 				polishing = pol->polish(xS, 1800, 90, 1000);
 				delete pol;
-
-				#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-				lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );			
-				#endif
 			#endif
 		}
 
