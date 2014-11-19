@@ -1,0 +1,783 @@
+\documentclass[landscape, lettersize]{article}
+\usepackage[dvips]{geometry} 
+\usepackage[brazil]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{epsfig}
+\usepackage[pdftex,hyperfigures]{hyperref}
+
+\textheight 17.29cm
+\textwidth 22.94cm 
+
+\oddsidemargin -0.6mm
+\evensidemargin -0.6mm
+
+\topmargin -1.5cm
+\begin{document}
+
+\title{TRIEDA - MIP ÚNICO}
+
+\author{Gapso}
+
+\maketitle
+
+\section{Modelo Único}
+
+\subsection{Notação}
+
+\subsubsection{Conjuntos}
+
+\begin{itemize}
+
+\item $A$ - Conjunto de alunos. Os elementos desse conjunto são 
+denotados por $a$.
+
+\item $Af$ - Conjunto de alunos formandos. Os elementos desse conjunto são 
+denotados por $a$.
+
+\item $C$ - Conjunto de cursos. Os elementos desse conjunto são denotados por $c$.
+
+\item $CC$ - Conjunto de cursos compatíveis.
+
+\item $CP$ - Conjunto de campus. Os elementos desse conjunto são denotados por $cp$.
+
+\item $D$ - Conjunto de disciplinas. Os elementos desse conjunto são denotados por $d$.
+
+\item $D_{a}$ - Conjunto de disciplinas demandadas pelo aluno $a$.
+
+\item $H_{t}$ - Conjunto de horários do dia $t$. Elementos desse conjunto são denotados por $h$.
+
+\item $I_{d}$ - Conjunto de turmas de uma disciplina $d$. 
+Os elementos desse conjunto são denotados por $i$.
+
+\item $O$ - Conjunto de ofertas de cursos. Os elementos desse conjunto são 
+denotados por $oft$.
+
+\item $O_{d}$ - Conjunto de ofertas de uma disciplina $d$. 
+Os elementos desse conjunto são denotados por $oft_{d}$.
+
+\item $Per_{oft}$ - Conjunto de períodos da matriz curricular associada à oferta $oft$. Os elementos desse conjunto são 
+denotados por $p$.
+
+\item $S_{u}$ - Conjunto de salas da unidade $u$. Os elementos desse conjunto são 
+denotados por $s$.
+
+\item $T$ - Conjunto de dias letivos da semana. Os elementos desse conjunto 
+são denotados por $t$.
+
+\item $U$ - Conjunto de unidades. Os elementos desse conjunto são denotados por $u$.
+
+\item $SL$ - Conjunto de semanas letivas. Os elementos desse conjunto são denotados por $sl$.
+
+\end{itemize}
+
+\subsubsection{Dados do Modelo}
+
+\begin{itemize}
+
+\item $Cap_{s,u}$ - Capacidade da sala $s$ da unidade $u$.
+
+\item $C_{d}$ - Total de créditos da disciplina $d$.
+
+\item $FC_{d,t}$ - número de créditos fixados para a disciplina $d$ no dia $t$ na sala $s$.
+
+\item $I_{d}$ - máximo de turmas que podem ser abertas da disciplina $d$.
+
+\item $M$ - big $M$.
+
+\item $N_{d,k,t}$ - número de créditos determinados para a disciplina $d$ no dia $t$ na combinação de divisão de crédito $k$.
+
+\item $NCH_{d,hi,hf}$ - número de créditos para a disciplina $d$ entre o horário $hi$ e o horário $hf$.
+
+\item $O_{cp}$ - conjunto de ofertas de um campus $cp$.
+
+\item $P_{d,c,cp}$ - demanda da disciplina $d$ no campus $cp$ para o curso $c$.
+
+\item $P_{d,oft}$ - demanda da disciplina $d$ da oferta $oft$.
+
+\item $Pmax_{d}$ - maior demanda da disciplina $d$.
+
+\item $\alpha$ - peso associado a função objetivo.
+
+\item $\beta$ - peso associado a função objetivo.
+
+\item $\delta$ - peso associado a função objetivo.
+
+\item $\gamma$ - peso associado a função objetivo.
+
+\item $\lambda$ - peso associado a função objetivo.
+
+\item $\omega$ - peso associado a função objetivo.
+
+\item $\psi$ - peso associado a função objetivo.
+
+\item $\rho$ - peso associado a função objetivo.
+
+\item $\tau$ - peso associado a função objetivo.
+
+\item $\theta$ - peso associado a função objetivo.
+
+\item $\xi$ - pesos associados a cada item da função objetivo.
+
+\item $MaxCred_{oft,t}$ - máximo de créditos para a oferta $oft$ no dia $t$.
+
+\item $minAlunos$ - numero minimo de alunos necessários para abertura de uma turma. É um valor de parâmetro cadastrado pelo cliente.
+
+\item $delta_{a,t}$ - tempo máximo de gap permitido dentro do dia t para o aluno a. É basicamente a soma da duração dos intervalos do dia.
+
+\item $delta_{t,f}$ - tempo máximo de gap permitido dentro da fase do dia f do dia t para um professor. É basicamente a soma da duração dos intervalos da fase do dia $f$ no dia $t$.
+
+
+\end{itemize}
+
+
+\subsubsection{Variáveis}
+
+\begin{itemize}
+
+\item $v_{a,i,d,s,t,hi,hf}$ - indica se o aluno $a$ está alocado na turma $i$ da disciplina $d$ foi alocada na unidade $u$ na sala $s$ do horário $hi$ ao horário $hf$ do dia $t$. 
+\item $x_{i,d,u,s,hi,hf,t}$ - indica se a turma $i$ da disciplina $d$ foi alocada na unidade $u$ na sala $s$ do horário $hi$ ao horário $hf$ do dia $t$. 
+\item $z_{i,d,cp}$ - binária que indica se a turma $i$ da disciplina $d$ no campus $cp$ foi aberta. 
+\item $o_{i,d,s}$ - binária que indica se a turma $i$ da disciplina $d$ foi alocada na sala $s$. 
+\item $fd_{d,a}$ - variável de folga, indica que o aluno $a$ não teve a demanda da disciplina $d$ atendida.
+\item $fkm_{d,i,t}$ - variável de folga inferior para a restrição de combinação de divisão de créditos. 
+\item $fkp_{d,i,t}$ - variável de folga superior para a restrição de combinação de divisão de créditos. 
+\item $m_{d,i,k}$ - variável binária que indica se a combinação de divisão de créditos $k$ foi escolhida para a turma $i$ da disciplina $d$.
+\item $\underline{h}_{a}$ - minimo de creditos alocados para o aluno $a$ em um dia da semana.
+\item $\overline{h}_{a}$ - maximo de creditos alocados para o aluno $a$ em um dia da semana.
+\item $zc_{d,t}$ - indica que a disciplina $d$ foi alocada no dia $t$.
+\item $fu_{i,d,i',d',t}$ - variável de folga binária que indica se as turmas $i$ da disciplina $d$ e $i'$ da disciplina $d'$ que compartilham alunos possuem aulas em unidades distintas no mesmo dia t.
+\item $ft_{i,d,cp}$ - usada somente em rodada de prioridade 2 em diante e caso haja fixação do resultado de prioridades
+anteriores. Variável binária de folga, usada na restrição de abertura sequencial de turmas. Assume o valor 1 caso exista uma turma
+$i'$ da disciplina $d$ alocada, com $i' > i$, sendo que $i$ não foi alocada.
+\item $s_{i,d,a}$ - variável binária que indica se o aluno $a$ foi alocado na turma $i$ da disciplina $d$.
+\item $b_{i,d,c}$ - indica se algum aluno do curso $c$ foi alocado para a $i$-ésima turma da disciplina $d$. 
+\item $fc_{i,d,c,c',cp}$ - variável de folga para a restrição em que o compartilhamento de turmas
+com alunos de cursos diferentes é proibido. 
+\item $fpi_{a,cp}$ - variável inteira que indica o tempo extra alocado para que o aluno $a$ no campus $cp$ (prioridade 2).
+\item $fps_{a,cp}$ - variável inteira que indica o tempo que faltou ser alocado para que o aluno $a$ no campus $cp$ (prioridade 2).
+\item $f_{i,d,cp}$ - variável binária que indica se há aluno formando alocado na turma $i$ da disciplina $d$ do campus $cp$.
+\item $du_{a,t}$ - variável binária que indica se o aluno $a$ tem aula no dia $t$.
+\item $fp_{d,t,h}$ - variável de folga inteira que indica se a disciplina $d$ tem aula no dia $t$ e horario $h$ e não possui professor real com disponibilidade nesse dia e horário para ministra-la.
+\item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
+\item $fos_{i,d,cp}$ - variável inteira de folga de ocupação de sala. Indica a diferença entre a capacidade da sala e o numero de alunos alocados na turma.
+\item $uu_{u,oft,p}$ - variável binária de uso de unidade por período de oferta. Indica que a unidade $u$ está sendo usada por alguma turma com alunos do período $p$ da oferta $oft$.
+\item $fuu_{oft,p}$ - variável inteira de folga de única unidade. Quando é usada, o seu valor indica o excesso de unidades usadas pelo período $p$ da oferta $oft$ que extrapola a exigência de unidade única para o período.
+\item $us_{s,oft,p}$ - variável binária de uso de sala por período de oferta. Indica que a sala $s$ está sendo usada por alguma turma com alunos do período $p$ da oferta $oft$.
+\item $fus_{oft,p}$ - variável inteira de folga de única sala. Quando é usada, o seu valor indica o excesso de salas usadas pelo período $p$ da oferta $oft$ que extrapola a exigência de sala única para o período.
+\item $k_{p,i,d,hi,hf,t}$ - indica se o professor $p$ dá aula para a turma $i$ da disciplina $d$ do horário $hi$ ao horário $hf$ do dia $t$. 
+\item $hip_{p,t,f}$ - indica o horário de início das aulas do professor $p$ (em minutos) na fase $f$ do dia $t$.
+\item $hfp_{p,t,f}$ - indica o horário de fim das aulas do professor $p$ (em minutos) na fase $f$ do dia $t$.
+\item $hia_{a,t}$ - indica o horário de início das aulas do aluno $a$ (em minutos) no dia $t$.
+\item $hfa_{a,t}$ - indica o horário de fim das aulas do aluno $a$ (em minutos) no dia $t$.
+\item $fpgap_{p,t,f}$ - folga indicando se existe gap nos horários alocados ao professor $p$ na fase $f$ do dia $t$.
+\item $fagap_{a,t}$ - folga indicando se existe gap nos horários alocados ao aluno $a$ no dia $t$.
+
+\end{itemize}
+
+\subsection{Formulação}
+
+\subsubsection{Função Objetivo}
+
+$$
+\begin{array}{rll}
+   \mbox{MIN} &
+      \delta \cdot \sum\limits_{d \in D} 
+\sum\limits_{i \in I_{d}} \sum\limits_{t \in T-{1}} c_{i,d,t}
+      \\
+      &
+       + \omega \cdot \sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
+      \\
+      &
+       + \psi \cdot \sum\limits_{d \in D} 
+\sum\limits_{t \in T} \sum\limits_{i \in I_{d}} fk_{d,i,k}
+      \\
+      &
+       + \alpha \cdot \sum\limits_{i \in I_{d}}\sum\limits_{d \in D}\sum\limits_{i' \in I_{d'}}\sum\limits_{d' \in D}\sum\limits_{t \in T} NAC_{i,d,i',d'}\cdot fu_{i,d,i',d',t}
+       \\
+       &
+       +/- \xi \cdot \sum\limits_{a \in A} \sum\limits_{t \in T} du_{a,t}
+      \\
+      &
+      + \alpha \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{c \in C} \sum\limits_{c' \in C}\sum\limits_{cp \in CP} fc_{i,d,c,c',cp}
+      \\
+      &
+      + \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{cp \in CP} ft_{i,d,cp}
+      \\
+      &
+      + \omega \cdot \sum\limits_{a \in A} \sum\limits_{cp \in Cp} fpi_{a,cp}      
+      \\
+      &
+      + \omega \cdot \sum\limits_{a \in A} \sum\limits_{cp \in Cp} fps_{a,cp}      
+      \\
+      &
+      + \omega \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
+      \\
+      &
+      + \omega \cdot \sum\limits_{a \in A} \sum\limits_{t \in T} fagap_{a,t}
+      
+      
+      
+\end{array}
+$$
+
+\subsubsection{Associa 'v' e 'x' e garante capacidade maxima da sala}
+
+\begin{eqnarray}
+\sum\limits_{a \in A} v_{a,i,d,s,t,hi,hf}  \le Cap_{s} \cdot x_{i,d,s,t,hi,hf} \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad 
+\forall s \in S \quad
+\forall t \in T \quad 
+\forall hi \in H \quad 
+\forall hf \in H
+\end{eqnarray}
+
+
+\subsubsection{Sala da turma}
+
+\begin{eqnarray}
+M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} x_{i,d,s,t,hi,hf}  \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\end{eqnarray}
+
+
+\subsubsection{Sala única}
+
+\begin{eqnarray}
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s}  \leq  z_{i,d,cp}  \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Atendimento da demanda do aluno}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d}} s_{i,d,a} + fd_{d,a} = 1  \nonumber \qquad 
+\forall a \in Al \quad
+\forall d \in D_{a}
+\end{eqnarray}
+
+
+
+\subsubsection{Associa aluno ao resto e garante número de créditos}
+
+\begin{eqnarray}
+C_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot v_{a,i,d,s,t,hi,hf} \nonumber \qquad 
+\forall a \in A \quad
+\forall i \in I_{d} \quad
+\forall d \in D_{a}
+\end{eqnarray}
+
+
+\subsubsection{Garante que se um aluno pertence a uma turma de uma disciplina, ele pertencerá a todas as aulas da mesma}
+
+\begin{eqnarray}
+\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot x_{i,d,s,t,hi,hf} = NC_{d} \cdot z_{i,d,cp} \nonumber \qquad
+\forall i \in I_{d} \quad
+\forall d \in D \quad
+\forall cp \in CP
+\end{eqnarray}
+
+
+
+\subsubsection{Evita sobreposição de aulas na grade curricular do aluno}
+
+\begin{eqnarray}
+\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\mbox{ sobrepoe }h}} v_{a,i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
+\forall cp \in CP \quad
+\forall a \in A \quad
+\forall t \in T \quad
+\forall h \in H_{d}
+\end{eqnarray}
+
+
+\subsubsection{Formandos 1}
+
+\begin{eqnarray}
+M \cdot f_{i,d,cp} \ge \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP
+\end{eqnarray}
+
+
+\subsubsection{Formandos 2}
+
+\begin{eqnarray}
+f_{i,d,cp} \le \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP
+\end{eqnarray}
+
+
+\subsubsection{Limita abertura de turmas}
+
+\begin{eqnarray}
+\sum\limits_{a \in A} s_{i,d,a} \ge MinAlunos \cdot ( z_{i,d,cp} - f_{i,d,cp} )  \nonumber \qquad 
+\forall i \in I \quad
+\forall d \in D_{a}
+\end{eqnarray}
+
+
+
+\subsubsection{Garante a alocação do aluno na disciplina prática e teórica}
+
+\mbox{Se houver mistura de alunos entre turmas práticas e teóricas:}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{dp}} s_{i,dp,a} = \sum\limits_{ i \in I_{dt} } s_{i,dt,a} \nonumber \qquad 
+\forall a \in Al \quad
+\forall (dp,dt) \in D_{a} \quad
+\end{eqnarray}
+
+\mbox{Se não houver mistura de alunos entre turmas práticas e teóricas:}
+
+\begin{eqnarray}
+s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad 
+\forall a \in Al \quad
+\forall i \in I_{d} \quad
+\forall (dp,dt) \in D_{a} \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Uso das salas para cada horário}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,s,t,hi,hf}  \leq  1  \nonumber \qquad 
+\forall cp \in CP \quad
+\forall u \in U_{cp} \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\forall h \in H \quad (hi,hf)\text{ sobrepoe }h
+\end{eqnarray}
+
+
+
+\subsubsection{Única sala e horario para cada turma e disciplina no dia}
+
+\begin{eqnarray}
+\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall t \in T \quad
+\forall cp \in CP 
+\end{eqnarray}
+
+
+\subsubsection{Contabiliza se houve aluno de determinado curso alocado em uma turma (*)}
+
+\begin{eqnarray}
+\sum\limits_{a \in A_{c}} s_{i,d,a} \leq M \cdot b_{i,d,c} \nonumber \qquad
+\forall c \in C \quad
+\forall d \in D \quad
+\forall i \in I_{d}
+\end{eqnarray}
+
+
+\subsubsection{Não permitir que alunos de cursos diferentes compartilhem turmas (*)}
+
+\begin{eqnarray} 
+b_{i,d,c} + b_{i,d,c'} - fc_{i,d,c,c'} \leq 1 \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall c,c' \in C\quad
+\end{eqnarray}
+
+
+\subsubsection{Não permitir que alunos de cursos incompatíveis compartilhem turmas (*)}
+
+\begin{eqnarray} 
+b_{i,d,c} + b_{i,d,c'}\leq 1 \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall c,c' \notin CC \quad
+\end{eqnarray}
+
+
+\subsubsection{Abertura sequencial de turmas}
+
+\begin{center}Se for a primeira rodada (sem fixações): \end{center}
+
+\begin{eqnarray}
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s} \geq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i',d,s} \nonumber \qquad 
+\forall d \in D \quad
+\forall i,i' \in I_{d} \quad i<i'
+\end{eqnarray}
+
+
+
+\subsubsection{Atendimento de demandas por prioridades: só para rodada de prioridade 2 em diante}
+
+\begin{eqnarray}
+\sum\limits_{d \in D_{a,p2}} \sum\limits_{i \in I_{d}} tempo_{d} \cdot nCreds_{d} \dot s_{i,d,a} -
+tempoCredsNATEND_{p1,a} + fps_{a} - fpi_{a} = 0 \nonumber \qquad 
+\forall a \in Al \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Regra de divisão de créditos}
+
+\begin{eqnarray}
+\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}}
+ NCreds_{hi,hf} \cdot x_{i,d,u,s,hi,hf,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fkp_{d,i,t} - fkm_{d,i,t} \nonumber \qquad 
+\forall cp \in CP \quad
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Somente uma combinação de regra de divisão de créditos pode ser escolhida}
+
+\begin{eqnarray}
+\sum\limits_{k \in K_{d}} m_{d,i,k} \leq 1 \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d}
+\end{eqnarray}
+
+
+\subsubsection{Ativação da variável zc}
+
+\begin{eqnarray}
+\sum\limits_{i \in I} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,u,s,hi,hf,t} \leq zc_{d,t} \cdot M \nonumber \qquad
+\forall cp \in CP \quad
+\forall d \in D \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Disciplinas incompatíveis}
+
+\begin{eqnarray}
+zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad 
+(d_1, d_2) \in D_{incompat} \quad
+\forall t \in T
+\end{eqnarray}
+
+
+
+\subsubsection{Contabiliza em quais unidades o aluno tem aula em cada dia}
+
+\begin{eqnarray}
+M \cdot au_{a,u,t} \ge
+\sum\limits_{s \in S_{u}} \sum\limits_{d \in D_{a}} \sum\limits_{i \in I_{d}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi \le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad
+\forall u \in U \quad
+\forall a \in A \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Contabiliza se o aluno tem aulas no mesmo dia em unidades distintas}
+
+\begin{eqnarray}
+\sum\limits_{u \in U} au_{a,u,t} + fu_{a,t} \le 1 \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T
+\end{eqnarray}
+
+
+
+\subsubsection{Contabiliza se o aluno possui aula no dia, a fim de MINIMIZAR o número de dias}
+
+\begin{eqnarray}
+M \cdot du_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
+\forall a \in A \quad
+\forall t \in T \quad
+\forall cp \in CP
+\end{eqnarray}
+
+
+
+\subsubsection{Contabiliza se o aluno possui aula no dia, a fim de MAXIMIZAR o número de dias}
+
+\begin{eqnarray}
+du_{a,t} \le \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
+\forall a \in A \quad
+\forall t \in T \quad
+\forall cp \in CP
+\end{eqnarray}
+
+   
+   
+\subsubsection{Professores disponiveis por dia e disciplina}
+
+\begin{eqnarray}
+\sum\limits_{s \in S}\sum\limits_{i \in I}\sum\limits_{hi \in H}\sum\limits_{\substack {hf \in H \\ h \in [hi,hf]}}
+x_{i,d,s,t,hi,hf} - fp_{d,t,h} \le nProfs_{d,t,h} \nonumber \qquad 
+\forall t \in T \quad
+\forall h \in H \quad
+\forall d \in D
+\end{eqnarray}
+ 
+
+\subsubsection{Aulas de disciplinas pratica/teorica continuas}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} x_{it,dt,s,t,hi,hf} \le \sum\limits_{h \in H}\sum\limits_{s \in S} x_{ip,dp,s,t,h,hi-1} + \sum\limits_{h \in H}\sum\limits_{s \in S} x_{ip,dp,s,t,hf+1,h}  \nonumber \qquad
+\\
+\forall d=(dt,dp) \in D \quad \mbox{ sendo d com obrigação de créditos contínuos} \quad
+\\
+\forall it \in I_{dt} \quad ip \in I_{dp} \quad \mbox{(it,dt) tem aluno comum com (ip,dp)} \quad
+\\
+\forall t \in T \quad
+\forall hi,hf \in H
+\end{eqnarray}
+
+
+
+\subsubsection{Alocação minima de demanda por aluno}
+
+\begin{eqnarray}
+\sum\limits_{d \in D} nCreds_{d} (1 - fd_{d,a}) \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
+\forall a \in Al
+\end{eqnarray}
+
+
+
+\subsubsection{Folga de ocupação de sala}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} Cap_{s} \cdot o_{i,d,s} - \sum\limits_{a \in Al} s_{i,d,cp,a} = fos_{i,d,cp} \nonumber \qquad 
+\forall i \in I \qquad
+\forall d \in D \qquad
+\forall cp \in CP
+\end{eqnarray}
+
+
+	
+\subsubsection{Seta o uso da sala para cada periodo de oferta}
+
+\begin{eqnarray}
+\sum\limits_{a \in A}\sum\limits_{i \in I_{d}}\sum\limits_{d \in D}\sum\limits_{u \in U}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} v_{a,i,d,s,u,t,hi,hf} \le bigM \cdot us_{s,oft,p} \nonumber \qquad \\
+\mbox{ aonde a = aluno cujo AlunoDemanda (a,d) esteja associado ao período p da oferta oft} \qquad \\
+\forall oft \in O \qquad
+\forall p \in Per_{oft} \qquad
+\forall s \in S
+\end{eqnarray}
+
+
+
+\subsubsection{Seta o uso da unidade para cada periodo de oferta}
+
+\begin{eqnarray}
+\sum\limits_{a \in A}\sum\limits_{i \in I_{d}}\sum\limits_{d \in D}\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} v_{a,i,d,s,u,t,hi,hf} \le bigM \cdot uu_{u,oft,p} \nonumber \qquad \\
+\mbox{ aonde a = aluno cujo AlunoDemanda (a,d) esteja associado ao período p da oferta oft} \qquad \\
+\forall oft \in O \qquad
+\forall p \in Per_{oft} \qquad
+\forall u \in U
+\end{eqnarray}
+
+
+
+\subsubsection{Limita as unidades usadas por cada período}
+
+\begin{eqnarray}
+\sum\limits_{u \in U} uu_{u,oft,p} + fuu_{oft,p} \le 1 \nonumber \qquad 
+\forall oft \in O \qquad
+\forall p \in Per_{oft}
+\\ \mbox{ sendo que a folga só existe caso haja possibilidade de compartilhamento de aulas do período com outra oferta.}
+\end{eqnarray}
+
+
+	
+\subsubsection{Limita as salas usadas por cada período}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} us_{s,oft,p} + fus_{oft,p} \le 1 \nonumber \qquad 
+\forall oft \in O \qquad
+\forall p \in Per_{oft}
+\\ \mbox{ sendo que a folga só existe caso haja possibilidade de compartilhamento de aulas do período com outra oferta.}
+\end{eqnarray}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 																				ALOCAÇÃO DE PROFESSORES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsubsection{Evita sobreposição de horários de professores em um mesmo dia}
+
+\begin{eqnarray}
+\sum_{ \substack {dti,dtf \in Dt \\ dt \in [dti,dtf)} } \sum\limits_{i} \sum\limits_{d} k_{p,i,d,t,dti,dtf} \le 1 \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dt \in Dt
+\end{eqnarray}
+
+
+\subsubsection{Associa professor à aula (seta variável k)}
+
+\begin{eqnarray}
+\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le k_{p,i,d,cp,t,dti} + ( 1 - y_{p,i,d,cp} ) \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP \quad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dti \in Dt
+\end{eqnarray}
+	
+
+\subsubsection{Associa professor à aula (seta variável k)}
+
+\begin{eqnarray}
+\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le \sum\limits_{p} k_{p,i,d,cp,t,dti} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP \quad
+\forall t \in T \quad
+\forall dti \in Dt
+\end{eqnarray}
+	
+
+\subsubsection{Associa professor à turma (seta variável y)}
+
+\begin{eqnarray}
+\sum\limits_{t} \sum\limits_{h} k_{p,i,d,cp,t,h} = nCreds_{d} \cdot y_{p,i,d,cp} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP \quad
+\forall p \in P
+\end{eqnarray}	
+	
+
+\subsubsection{Associa único professor à turma}
+
+\begin{eqnarray}
+\sum\limits_{p} y_{p,i,d,cp} = z_{i,d,cp} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP
+\end{eqnarray}	
+			
+		
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 																				GAP NOS HORÁRIOS DOS PROFESSORES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Seta o lower bound para a variável $hip_{p,t,f}$}
+
+\begin{eqnarray}
+hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{k \in K_{dti<dt}} k_{p,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dt \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Seta o upper bound para a variável $hip_{p,t,f}$}
+
+\begin{eqnarray}
+hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{k} k_{p,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dti \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Seta o lower bound para a variável $hfp_{p,t,f}$}
+
+\begin{eqnarray}
+hfp_{p,t,f} \geq \sum\limits_{k} m(dt) \cdot k_{p,t,dtf} \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dtf \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Seta o upper bound para a variável $hfp_{p,t,f}$}
+
+\begin{eqnarray}
+hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dt \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Proíbe gap no horário do professor em uma mesma fase do dia}
+
+\begin{eqnarray}
+\sum\limits_{k \in K_{h \in H_{f}}} tempo_{k} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F
+\end{eqnarray}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 																				GAP NOS HORÁRIOS DOS ALUNOS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsubsection{Seta o lower bound para a variável $hia_{a,t}$}
+
+\begin{eqnarray}
+hia_{a,t} \geq m(dt) \cdot ( 1 - \sum\limits_{v \in V_{dti<dt}} v_{a,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dt \in Dt_{f}
+\end{eqnarray}
+
+
+\subsubsection{Seta o upper bound para a variável $hia_{a,t}$}
+
+\begin{eqnarray}
+hia_{a,t} \leq m(dt) + M \cdot ( 1 - \sum\limits_{v} v_{a,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dti \in Dt
+\end{eqnarray}
+
+
+\subsubsection{Seta o lower bound para a variável $hfa_{a,t}$}
+
+\begin{eqnarray}
+hfp_{p,t,f} \geq \sum\limits_{v} m(dt) \cdot v_{a,t,dtf} \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dtf \in Dt
+\end{eqnarray}
+
+
+\subsubsection{Seta o upper bound para a variável $hfa_{a,t}$}
+
+\begin{eqnarray}
+hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dt \in Dt
+\end{eqnarray}
+
+
+\subsubsection{Proíbe gap no horário do aluno em um mesmo dia}
+
+\begin{eqnarray}
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} tempo_{v} \cdot v_{a,i,d,s,t,hi,hf} + delta_{a,t} + fagap_{a,t} \geq hfa_{a,t} - hia_{a,t} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T
+\end{eqnarray}
+
+
+
+
+
+\clearpage
+\end{document}
