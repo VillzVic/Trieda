@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sstream>
+
 #include <random>
 
 #include "CentroDados.h"
@@ -124,12 +125,8 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
     {     
 		if (fixType_==1)
 		{
-			// Seleciona turmas e disciplinas para fixar
-			std::set<std::pair<int,Disciplina*> > paraFixarUm;
-			std::set<std::pair<int,Disciplina*> > paraFixarZero;
-
-			decideVarsToFix( paraFixarUm, paraFixarZero );
-			fixVarsType1( paraFixarUm, paraFixarZero );
+			decideVarsToFixType1();
+			fixVarsType1();
 		}
 		else
 		{
@@ -167,9 +164,13 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 }
 
 
-void Polish::decideVarsToFix( std::set<std::pair<int,Disciplina*> > &paraFixarUm, 
-							  std::set<std::pair<int,Disciplina*> > &paraFixarZero )
+void Polish::decideVarsToFixType1()
 {
+	paraFixarUm_.clear();
+	paraFixarZero_.clear();
+
+	if (perc_<= 0) return;
+
     // Seleciona turmas e disciplinas para fixar
     if ( fixType_ == 1 )
     {
@@ -192,7 +193,7 @@ void Polish::decideVarsToFix( std::set<std::pair<int,Disciplina*> > &paraFixarUm
 					bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
 					nBds++;
 					std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
-					paraFixarUm.insert(auxPair);
+					paraFixarUm_.insert(auxPair);
 				}
 				else
 				{
@@ -201,7 +202,7 @@ void Polish::decideVarsToFix( std::set<std::pair<int,Disciplina*> > &paraFixarUm
 					bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
 					nBds++;
 					std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
-					paraFixarZero.insert(auxPair);
+					paraFixarZero_.insert(auxPair);
 				}
 			}
 
@@ -212,24 +213,25 @@ void Polish::decideVarsToFix( std::set<std::pair<int,Disciplina*> > &paraFixarUm
     }
 }
 
-
-void Polish::fixVarsType1( std::set<std::pair<int,Disciplina*> > const &paraFixarUm, 
-					  std::set<std::pair<int,Disciplina*> > const &paraFixarZero )
+void Polish::fixVarsType1()
 {
+	if (paraFixarUm_.size() == 0 && paraFixarZero_.size() == 0)
+		return;
+
     int nBds = 0;
     for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
     {
         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
         {
 			std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
-			if ( paraFixarUm.find(auxPair) != paraFixarUm.end() )
+			if ( paraFixarUm_.find(auxPair) != paraFixarUm_.end() )
 			{
 				idxs_[nBds] = vit->second;
 				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
 				bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
 				nBds++;
 			}
-			else if ( paraFixarZero.find(auxPair) != paraFixarZero.end() )
+			else if ( paraFixarZero_.find(auxPair) != paraFixarZero_.end() )
 			{
 				idxs_[nBds] = vit->second;
 				vals_[nBds] = 0.0;
@@ -332,8 +334,9 @@ void Polish::optimize()
     lp_->updateLP();
     status_ = lp_->optimize( METHOD_MIP );
 	
-	runtime_ = (lp_->getRunTime()/CLOCKS_PER_SEC);
-	  
+	runtime_ = (lp_->getRunTime());
+	timeLeft_ = fabs(tempoIter_-runtime_);
+
 	checkFeasibility();
 }
 
@@ -371,10 +374,12 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 		  return;
 	  }
 
-	  if (unoptimized())					// time limit
+	  if (!melhorou_ && timeLimitReached())	// TIME LIMIT
 	  {
 		  tempoIter_ += 50;
 		  setLpPrePasses();
+		  //if (perc_ <= 40) 
+			  chgLpRootRelax();
 	  }
 	  else if (optimal() || gap <= 1.0)		// TINY GAP
 	  {
@@ -388,14 +393,6 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 
 void Polish::updatePercAndTimeIterSmallGap( bool &okIter, double objN )
 {
-	if (melhorou_)
-	{
-		// Adjust time limit in case it is too high
-		double minExcess = max( 0.5*tempoIter_, 50 );
-		if ( fabs(tempoIter_-runtime_) > minExcess )
-			tempoIter_ = runtime_+minExcess;
-	}
-
 	if (fabs(objN-MIN_OPT_VALUE) < 10e-6)	// Obj acchieved a known minimal possible value
 	{
 		okIter = false;						// optimal!
@@ -408,10 +405,25 @@ void Polish::updatePercAndTimeIterSmallGap( bool &okIter, double objN )
 	}
 	else
 	{		
-		if(!melhorou_) perc_ -= 10;			// decrease the fixed portion
+		int percToSubtract = 0;
+		if(optimal() && timeLeft_>0.7*tempoIter_)
+			percToSubtract = 10;			// decrease the fixed portion if it was easy (fast) to solve
+		else if(!melhorou_)
+			percToSubtract = 10;			// decrease the fixed portion if no improvement was made
+		
+		perc_ -= percToSubtract;
+		
 		if (perc_<0) perc_ = 0;
 
 		if (perc_==0) tempoIter_ *= 2;		// next iteration will be the last one
+	}
+
+	if (melhorou_)
+	{
+		// Adjust time limit in case it is too high
+		double minExcess = max( 0.5*tempoIter_, 50 );
+		if ( timeLeft_ > minExcess )
+			tempoIter_ = runtime_+minExcess;
 	}
 }
 
@@ -421,9 +433,12 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 	{
 		chgParams(); 			  
 
-		int incremTime = 20;					// increases the time limit by a fixed amount
-		incremTime += (100-perc_)*0.2;			// increases the time limit the more perc_ is close to 0.
-		if (!optimal()) tempoIter_ += incremTime;
+		if (!optimal())						// not optimal => time limit reached => increases time limit
+		{
+			int incremTime = 20;			// increases the time limit by a fixed amount
+			incremTime += (100-perc_)*0.3;	// increases the time limit the more perc_ is close to 0.
+			tempoIter_ += incremTime;
+		}
 	}
 }
 
@@ -571,6 +586,21 @@ void Polish::setLpPrePasses()
 	}
 }
 
+void Polish::chgLpRootRelax()
+{
+	//lp_->getItCnt();
+	//lp_->setSimplexLimitIteration();
+
+	bool success = lp_->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
+	
+	stringstream ss;
+	if (success)
+		ss << "Polish::chgLpRootRelax(): METHOD_BARRIERANDCROSSOVER";
+	else
+		ss << "void Polish::chgLpRootRelax(): fail!";
+	printLog(ss.str());	
+}
+
 void Polish::setParams(double tempoIter_)
 {
 	lp_->setPrePasses(nrPrePasses_);
@@ -592,7 +622,8 @@ void Polish::chgParams()
 
 void Polish::setNewHeurFreq()
 {
-	std::default_random_engine generator;
+	std::default_random_engine generator( time(NULL) );
+
 	std::normal_distribution<double> distribution(0.5,0.25);
 	
 	heurFreq_ = distribution(generator);
@@ -600,7 +631,7 @@ void Polish::setNewHeurFreq()
 	{
 		stringstream msg;
 		msg << "heurFreq_ = " << heurFreq_ << " out of bounds!";
-		CentroDados::printError("double Polish::getNewHeurFreq()", msg.str());
+		CentroDados::printError("double Polish::setNewHeurFreq()", msg.str());
 		heurFreq_ = 0.5;
 	}
 }
@@ -629,6 +660,13 @@ bool Polish::optimal()
 bool Polish::unoptimized()
 {
 	if (status_ == OPTSTAT_UNOPTIMIZED)
+		return true;
+	return false;
+}
+
+bool Polish::timeLimitReached()
+{	
+	if (lp_->getGurobiStat() == GRB_TIME_LIMIT)
 		return true;
 	return false;
 }

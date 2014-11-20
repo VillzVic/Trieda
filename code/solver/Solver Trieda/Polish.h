@@ -47,11 +47,8 @@ private:
 
 	void init();
 
-	void decideVarsToFix( std::set<std::pair<int,Disciplina*> > &paraFixarUm, 
-						  std::set<std::pair<int,Disciplina*> > &paraFixarZero );
-
-	void fixVarsType1( std::set<std::pair<int,Disciplina*> > const &paraFixarUm, 
-				  std::set<std::pair<int,Disciplina*> > const &paraFixarZero );
+	void decideVarsToFixType1();
+	void fixVarsType1();
 
 	void fixVarsType2();
 	void fixVarsType2Tatico();
@@ -73,6 +70,7 @@ private:
 	void logIter(double perc, double tempoIter);
 
 	void setLpPrePasses();
+	void chgLpRootRelax();
 	void setParams(double tempoIter);
 	void chgParams();
 	void setNewHeurFreq();
@@ -81,6 +79,7 @@ private:
 	bool infeasible();
 	bool optimal();
 	bool unoptimized();
+	bool timeLimitReached();
 	void checkFeasibility();
 
 	void guaranteeSol();
@@ -100,13 +99,14 @@ private:
 	#endif
 	   
 	   // Vars
-	   int tempoIter_;
+	   double tempoIter_;
 	   int perc_;
 	   int status_;
 	   double objAtual_;
 	   bool melhorou_;
 	   double melhora_;
 	   double runtime_;
+	   double timeLeft_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
@@ -126,8 +126,13 @@ private:
 	   double maxTime_;
 	   double maxTempoSemMelhora_;
 
+	   // Solution
 	   double *xSol_;
 	   
+	   // Identify classes to fix
+	   std::set<std::pair<int,Disciplina*> > paraFixarUm_;
+	   std::set<std::pair<int,Disciplina*> > paraFixarZero_;
+
 	   // Hash which associates the column number with the VariableTatico object.
 	   VariableMIPUnicoHash const vHashTatico_;
 	   

@@ -318,11 +318,11 @@
     <ClCompile Include="HeurNuno\TurmasIncHorarioDia.cpp">
       <Filter>HeuristicaNuno\Útil</Filter>
     </ClCompile>
-    <ClCompile Include="Polish.cpp">
-      <Filter>Puro MIP\MIP-Unico</Filter>
-    </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Polish.cpp">
+      <Filter>Puro MIP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -654,11 +654,11 @@
     <ClInclude Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\include\opt_gurobi.h">
       <Filter>OPT_LP</Filter>
     </ClInclude>
-    <ClInclude Include="Polish.h">
-      <Filter>Puro MIP\MIP-Unico</Filter>
-    </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Polish.h">
+      <Filter>Puro MIP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

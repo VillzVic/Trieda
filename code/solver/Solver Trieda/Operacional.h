@@ -36,21 +36,23 @@ public:
    void criaNewLp();
    void logFile(std::ofstream &opFile);
 
+   bool optimized(OPTSTAT status) const;
    int solveOperacionalEtapas();
    void testaTrocarProfVirtualPorReal();
-   void polishOperacional(double *xSol, double maxTime, int percIni, int percMin, double maxTempoSemMelhora);
    int solveOperacionalMIP();
    void clearModelStructures();
    void setOptLogFile(std::ofstream &logMip, string name, bool clear=true);
+
+   bool leSolucaoDeArquivo();
+   bool verificaExistenciaDeSolucao();
    void carregaSolucaoOperacional();
+   void addMotivoNaoAtendTatico();
    void getSolutionOperacionalMIP();
    void preencheOutputOperacionalMIP();
    void geraMinimoDeProfessoresVirtuaisMIP();
    void criaProfessoresVirtuaisPorCurso( int n, TipoTitulacao* titulacao, TipoContrato *contrato, Curso* curso, GGroup<Campus*,LessPtr<Campus>> campi );
    void separaProfsVirtuais();
-   
-//   int calculaDeslocamentoUnidades( const int, const int );
-   
+      
 
 private:
 
@@ -94,13 +96,10 @@ private:
 
    int criaRestricoesOperacional(  );
    
-   int criaRestricaoAlunoHorario__2( void );
-
-   int criaRestricaoSalaParHorario(); // nao usado
-   int criaRestricaoSalaHorario( void );
-   int criaRestricaoProfessorParHorario(); // nao usado
-   int criaRestricaoProfessorHorario(  );
    int criaRestricaoAlunoHorario( void );
+
+   int criaRestricaoSalaHorario( void );
+   int criaRestricaoProfessorHorario(  );
    int criaRestricaoAlocAula( void );
    int criaRestricaoAtendimentoCompleto( void );
    int criaRestricaoProfessorDisciplina( void );
@@ -127,7 +126,6 @@ private:
    int criaRestricaoCargaHorariaMinimaProfessorSemana( void ); // x14
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void );
    int criaRestricaoProfHorarioMultiUnid( void );
-   int criaRestricaoGapsHorariosProfessores(  );
    int criaRestricaoCalculaNroProfsAlocadosCurso();
    int criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso();
    int criaRestricaoEstimaNroProfsVirtuaisMestresAlocadosCurso();
@@ -184,10 +182,6 @@ private:
    **						        OUTROS																			  **
    /********************************************************************************************************************/
 
- //  void buscaLocalTempoDeslocamentoSolucao();
-   
- //  int alteraHorarioAulaAtendimento( const int, const int );
-
    void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 
 	std::string getOpLpFileName( int etapa );
@@ -232,12 +226,28 @@ private:
 	
 
 
+   /********************************************************************************************************************
+   **						        SOLUÇÃO																			  **
+   /********************************************************************************************************************/
+   
+   bool *CARREGA_SOLUCAO;
 
+   GGroup< VariableOp *, LessPtr<VariableOp> > *solVarsOp;
+   
+   ProblemSolution * problemSolution;
+   
+   ProblemSolution * problemSolutionTemp;
+         
+   // If optimized_ is true, then xSol_ contains a feasible solution 
+   bool optimized_;
+   double *xSol_;   
+   
+   GGroup< Trio<int,int,Disciplina*> > naoAtendimentos; // <cp,i,d>
+
+	
    /********************************************************************************************************************
    **						        ESTRUTURAS E ATRIBUTOS															  **
    /********************************************************************************************************************/
-   
-
 
    enum OutPutFileType
    {
@@ -248,24 +258,6 @@ private:
 	  OP_BIN3 = 12
    };
    
-	bool *CARREGA_SOLUCAO;
-
-   // Hash which associates the column number with the VariableOp object.
-   VariableOpHash vHashOp;
-
-   // Hash which associates the row number with the ConstraintOp object.
-   ConstraintOpHash cHashOp;
-   
-   GGroup< VariableOp *, LessPtr<VariableOp> > *solVarsOp;
-   
-   ProblemSolution * problemSolution;
-   
-   ProblemSolution * problemSolutionTemp;
-      
-   // If optimized_ is true, then xSol_ contains a feasible solution 
-   bool optimized_;
-   double *xSol_;   
-
    int rodadaOp;
 
    enum Rodada
@@ -274,11 +266,16 @@ private:
 	  OP_VIRTUAL_INDIVIDUAL = 2
    };
 
+   // Hash which associates the column number with the VariableOp object.
+   VariableOpHash vHashOp;
+
+   // Hash which associates the row number with the ConstraintOp object.
+   ConstraintOpHash cHashOp;
+
    // The linear problem.
 	#ifdef SOLVER_CPLEX 
 	   OPT_CPLEX *lp;
-	#endif
-	#ifdef SOLVER_GUROBI 
+	#elif SOLVER_GUROBI 
 	   OPT_GUROBI* lp;
 	#endif
 

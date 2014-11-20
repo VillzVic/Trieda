@@ -50,8 +50,8 @@ private:
    {
 	  MIP_GENERAL = 0,
 	  MIP_GARANTE_SOL = 1,				
-	  MIP_MAX_ATEND = 2,		
-	  MIP_DISP_PROF = 3
+	  MIP_MAX_ATEND = 2,
+	  MIP_MIN_VIRT = 3
    };	  
 
 
@@ -143,8 +143,6 @@ private:
    int criaRestricaoTaticoAlocMinAluno( int campusId );
    int criaRestricaoFolgaOcupacaoSala( int campusId );
    int criaRestricaoProfDescansoMinimo( int campusId );
-   int criaRestricaoGapsHorariosProfessores();
-   int criaRestricaoGapsHorariosAlunos();
    
    int criaRestricaoSobreposHorariosProfs();
    int criaRestricaoProfAula();
@@ -295,6 +293,7 @@ private:
 	int solveMaxAtendPorFasesDoDia( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
 	bool SolVarsFound( VariableTatico v );

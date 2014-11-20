@@ -1231,8 +1231,8 @@ void MIPUnico::writeSolBin( int campusId, int prioridade, int r, int type, doubl
 			strcpy( solName, "maxAtend" );
 			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
 			break;
-		case (MIP_DISP_PROF):
-			strcpy( solName, "dispProf" );
+		case (MIP_MIN_VIRT):
+			strcpy( solName, "minVirt" );
 			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
 			break;
 	}
@@ -1338,8 +1338,8 @@ void MIPUnico::writeSolTxt( int campusId, int prioridade, int r, int type, doubl
 			strcpy( solName, "maxAtend" );
 			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
-		case (MIP_DISP_PROF):
-			strcpy( solName, "dispProf" );
+		case (MIP_MIN_VIRT):
+			strcpy( solName, "minVirt" );
 			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 	}
@@ -1386,8 +1386,8 @@ int MIPUnico::readSolBin( int campusId, int prioridade, int r, int type, double 
 			strcpy( solName, "maxAtend" );
 			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
 			break;
-		case (MIP_DISP_PROF):
-			strcpy( solName, "dispProf" );
+		case (MIP_MIN_VIRT):
+			strcpy( solName, "minVirt" );
 			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
 			break;
 	}
@@ -1445,8 +1445,8 @@ int MIPUnico::readSolTxt( int campusId, int prioridade, int r, int type, double 
 			strcpy( solName, "maxAtend" );
 			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
-		case (MIP_DISP_PROF):
-			strcpy( solName, "dispProf" );
+		case (MIP_MIN_VIRT):
+			strcpy( solName, "minVirt" );
 			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 	}
@@ -1530,8 +1530,8 @@ int MIPUnico::writeGapTxt( int campusId, int prioridade, int r, int type, double
 		case (MIP_MAX_ATEND):
 			step = "Max Atend";
 			break;
-		case (MIP_DISP_PROF):
-			step = "Disponibilidade dos Profs";
+		case (MIP_MIN_VIRT):
+			step = "Min Profs Virtuais";
 			break;
 		default:
 			step = "No type";
@@ -2020,6 +2020,19 @@ int MIPUnico::solveMIPUnico( int campusId, int prioridade, int r )
 
 		solveMaxAtend( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 		
+		
+		if(mipFile)
+		{
+			mipFile.flush();
+			mipFile.seekp(0, ios::end);
+			mipFile << "\n-----------------------------------------------------------------";
+			mipFile << "\nMinimizando nro de profs virtuais...\n";
+			mipFile.flush();
+		}
+
+		solveMinProfVirt( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+		
+
 		if(mipFile)
 		{
 			mipFile.flush();
@@ -2334,6 +2347,190 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 		VariableMIPUnico v = vit->first;
 
 		if (  v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO && xS[vit->second] < 0.1 ) // atendido
+		{
+			idxs[nBds] = vit->second;
+			vals[nBds] = 0.0;
+			bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+			nBds++;
+		}
+	}
+
+    lp->chgBds(nBds,idxs,bds,vals);
+	#pragma endregion
+	
+	// ------------------------------------------------------------------------------------
+	// Volta com a função objetivo original	
+	lp->chgObj(lp->getNumCols(),idxN,objN);
+
+	lp->updateLP();
+	
+	// ------------------------------------------------------------------------------------
+	// Copia solução
+	int cpyStatus = lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
+	std::cout << "\ncopyMIPStartSol = " << cpyStatus;
+ 
+	lp->updateLP();
+
+	delete[] idxs;
+	delete[] vals;
+	delete[] bds;
+	delete[] idxN;
+	delete[] objN;
+	
+	return status;
+}
+
+int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
+{
+	std::cout << "\n=========================================";
+	std::cout << "\nGarantindo min profs virtuais...\n"; fflush(NULL);
+		
+	int status = 0;
+
+	// -------------------------------------------------------------------
+	// Salvando função objetivo original
+	double *objN = new double[lp->getNumCols()];
+	lp->getObj(0,lp->getNumCols()-1,objN);
+		
+	// -------------------------------------------------------------------
+	// Lp name
+    char lpName[1024];
+    strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
+	
+	// -------------------------------------------------------------------
+	// FUNÇÃO OBJETIVO SOMENTE COM AS VARIAVEIS DE PROFS
+
+	int *idxN = new int[lp->getNumCols()];
+	int *idxs = new int[lp->getNumCols()*2];
+	double *vals = new double[lp->getNumCols()*2];
+	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
+	int nBds = 0;
+
+	#pragma region Modifica FO
+    nBds = 0;
+	auto vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		idxN[vit->second] = vit->second;
+
+		VariableMIPUnico v = vit->first;
+			
+		double coef = 0.0;		
+		if ( v.getType() == VariableMIPUnico::V_PROF_TURMA )
+		{     
+			if ( v.getProfessor()->eVirtual() )
+				coef = 1.0;
+		}
+
+		idxs[nBds] = vit->second;
+		vals[nBds] = coef;
+		nBds++;
+	}
+	
+    lp->chgObj(nBds,idxs,vals);
+    lp->updateLP();
+	#pragma endregion
+		
+	// ------------------------------------------------------------------------------------
+			
+	std::string lpName2;
+	lpName2 += "minVirt_";
+	lpName2 += string(lpName);
+
+	#ifdef PRINT_LOGS
+	lp->writeProbLP( lpName2.c_str() );
+	#endif
+	
+	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);				
+	lp->updateLP();
+
+	if ( CARREGA_SOL_PARCIAL )
+	{
+		// procura e carrega solucao parcial
+		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+		if ( !statusReadBin )
+		{
+			CARREGA_SOL_PARCIAL=false;
+		}
+		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+	}
+	if ( !CARREGA_SOL_PARCIAL )
+	{
+		// GENERATES SOLUTION 		 
+		
+		bool polishing = true;
+		if ( polishing )
+		{  
+			#ifdef SOLVER_CPLEX
+				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
+				polishing = pol->polish(xS, 3600, 90, 1000);
+				delete pol;
+			#elif defined SOLVER_GUROBI				
+				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
+				polishing = pol->polish(xS, 3600, 90, 1000);
+				delete pol;
+			#endif
+		}
+		if (!polishing)
+		{
+			#ifdef SOLVER_CPLEX
+				lp->setNumIntSols(100000000);
+				lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT2) );
+				lp->setMemoryEmphasis(true);
+				lp->setPreSolve(OPT_TRUE);
+				lp->setHeurFrequency(1.0);
+				lp->setMIPScreenLog( 4 );
+				lp->setMIPEmphasis(4);
+				lp->setNodeLimit(100000000);
+				lp->setPolishAfterIntSol(100000);
+				lp->setPolishAfterTime(1200);
+				lp->setPolishAfterNode(1);
+				lp->setSymetry(0);
+				lp->setProbe(-1);
+				lp->setCuts(0);
+			#endif
+			#ifdef SOLVER_GUROBI
+				lp->setNumIntSols(100000000);
+				lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT2) );
+				lp->setPreSolveIntensity(OPT_LEVEL2);
+				lp->setMIPEmphasis(1);
+				lp->setSymetry(-1);
+				lp->setCuts(2);
+				lp->setHeurFrequency(0.8);
+				lp->setPolishAfterTime( this->getTimeLimit(Solver::TAT_INT2) / 3 );
+
+				#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+				cb_data.timeLimit = 1800;
+				cb_data.gapMax = 40;
+				lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+				#endif
+			#endif
+			
+			status = lp->optimize( METHOD_MIP );
+			std::cout<<"\nStatus MIP_MIN_VIRT = "<<status; fflush(NULL);
+			lp->getX(xS);
+		}
+
+		writeSolBin( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS );
+		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+	}      
+	
+	fflush(NULL);
+		
+
+	// ------------------------------------------------------------------------------------
+	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
+
+	#pragma region Fixa solução
+    nBds = 0;
+	vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		VariableMIPUnico v = vit->first;
+
+		if ( v.getType() != VariableMIPUnico::V_PROF_TURMA ) continue;	// ToDo: O melhor é fixar o máximo de turmas com virtuais, embora fixar 'quais' deixa o prob mais facil
+		
+		if ( v.getProfessor()->eVirtual() && xS[vit->second] < 0.1 )	// turma sem prof virtual
 		{
 			idxs[nBds] = vit->second;
 			vals[nBds] = 0.0;
@@ -5782,7 +5979,7 @@ int MIPUnico::criaVariavelProfTurmaAPartirDeZ()
 																			
 						if ( professor->eVirtual() )
 							coef = disciplina->getTotalCreditos();
-						else if ( MIPUnico::minimizarCustoProf )
+						if ( MIPUnico::minimizarCustoProf )
 							coef = disciplina->getTotalCreditos() * professor->getValorCredito();
 
 						OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str());
@@ -11925,455 +12122,6 @@ int MIPUnico::criaRestricaoProfUnico()
 	return restricoes;
 }
 
-
-
-// --------------------------------------------------------------
-// COPIADO DO OPERACIONAL. ANTIGO, DELETAR QUANDO O NOVO FUNCIONAR
-
-int MIPUnico::criaRestricaoGapsHorariosProfessores()
-{
-   int restricoes = 0;
-
-   if ( !problemData->parametros->minimizar_horarios_vazios_professor )
-   {
-	   return restricoes;
-   }
-
-   VariableMIPUnicoHash::iterator vit;
-   VariableMIPUnicoHash::iterator vit_x;
-   VariableMIPUnicoHash::iterator vit_h;
-   
-   int nnz = 100; // TODO
-
-   double rhs = 0.0;
-   char name[ 200 ];
-
-   if ( nnz == 0 )
-   {
-      return 0;
-   }
-
-   map< Professor*, map< int, vector< VariableMIPUnicoHash::iterator > >, LessPtr< Professor > > variaveisHashHorariosIFProfessores;
-   map< Professor*, map< int, vector< VariableMIPUnicoHash::iterator > >, LessPtr< Professor > > variaveisHashX;
-
-   vit = vHashTatico.begin();
-
-   for (; vit != vHashTatico.end(); vit++ )
-   {
-      VariableMIPUnico v = ( vit->first );
-
-      if ( ( v.getType() == VariableMIPUnico::V_HI_PROFESSORES ) ||
-		   ( v.getType() == VariableMIPUnico::V_HF_PROFESSORES ) )
-      {
-		  if ( !v.getProfessor()->eVirtual() )
-			variaveisHashHorariosIFProfessores[v.getProfessor()][v.getDia()].push_back( vit );
-      }
-      else if ( v.getType() == VariableMIPUnico::V_PROF_AULA )
-      {
-		  if ( !v.getProfessor()->eVirtual() )
-			variaveisHashX[v.getProfessor()][v.getDia()].push_back( vit );
-      }
-   }
-
-   // Para cada professor
-   map< Professor*, map< int, vector< VariableMIPUnicoHash::iterator > >, LessPtr< Professor > >::iterator it1 = variaveisHashHorariosIFProfessores.begin();
-   for(; it1 != variaveisHashHorariosIFProfessores.end(); it1++)
-   {
-	   Professor *professor = it1->first;
-		
-	   // Para cada dia
-	   map< int, vector< VariableMIPUnicoHash::iterator > >::iterator it2 = it1->second.begin();
-	   for(; it2 != it1->second.end(); it2++)
-	   {
-		   int dia = it2->first;
-
-		   // --------------- C_GAPS_PROFESSORES_I_F ---------------------------------------
-		    
-         ConstraintMIPUnico c2;
-		   c2.reset();
-         c2.setType( ConstraintMIPUnico::C_GAPS_PROFESSORES_I_F );
-		   c2.setProfessor( professor );
-		   c2.setDia( dia );
-				
-		   if ( cHashTatico.find( c2 ) != cHashTatico.end() )
-		   {
-			   continue;
-		   }
-
-		   sprintf( name, "%s", c2.toString(etapa).c_str() );
-
-		   OPT_ROW row2( nnz, OPT_ROW::LESS, 0.0, name );
-
-		   // Par cada variavel Hi_{p,t} ou Hf_{p,t}
-		   vector< VariableMIPUnicoHash::iterator >::iterator it3 = it2->second.begin();
-		   for(; it3 != it2->second.end(); it3++)
-		   {
-			    vit_h = *it3;
-             VariableMIPUnico vh = vit_h->first;
-
-				// --------------- insere variaveis em C_GAPS_PROFESSORES_I_F ----------------------
-				
-				// Insere Hi_{p,t}
-             if ( vh.getType() == VariableMIPUnico::V_HI_PROFESSORES )
-				{
-					row2.insert( vit_h->second, 1.0 );		
-				}
-				// Insere Hf_{p,t}
-				else
-				{
-					row2.insert( vit_h->second, -1.0 );
-				}
-
-				// ------------------------------------------------------------------------------
-
-			   // Para cada horario no dia
-			   ITERA_GGROUP_LESSPTR( itHor, professor->horariosDia, HorarioDia )
-			   {
-				   if ( itHor->getDia() != dia )
-					   continue;
-
-				   HorarioAula * h = itHor->getHorarioAula();
-				
-				   int horEmMinutos = h->getInicio().getDateMinutes();
-
-				   // Variável Hi_{p,t}
-               if ( vh.getType() == VariableMIPUnico::V_HI_PROFESSORES )
-				   {
-					   // --------------- C_GAPS_PROFESSORES_I ---------------------------------------
-                  ConstraintMIPUnico c;
-						c.reset();
-                  c.setType( ConstraintMIPUnico::C_GAPS_PROFESSORES_I );
-						c.setProfessor( professor );
-						c.setDia( dia );
-						c.setHorarioAula( h );
-
-						double bigM = professor->getUltimoHorarioDisponivelDia( dia )->getInicio().getDateMinutes() + h->getTempoAula();						
-						
-						rhs = (double) horEmMinutos;
-						rhs += bigM;
-
-                  if ( cHashTatico.find( c ) == cHashTatico.end() )
-						{
-							sprintf( name, "%s", c.toString(etapa).c_str() );
-
-							OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
-
-							// Insere Hi_{p,t}
-							row.insert( vit_h->second, 1.0 );					   	   
-
-							bool inseriuVariavel = false;
-
-                     vector< VariableMIPUnicoHash::iterator > vars = variaveisHashX[professor][dia];
-							vector< VariableMIPUnicoHash::iterator >::iterator it4 = vars.begin();
-
-							for(; it4 != vars.end(); it4++)
-							{
-								vit_x = *it4;
-                        VariableMIPUnico v_x = vit_x->first;
-
-                        if ( v_x.getHorarioAulaInicial()->getId() == h->getId() )
-								{
-									row.insert( vit_x->second, bigM );			   
-									inseriuVariavel = true;
-								}
-							}
-
-							if ( inseriuVariavel )
-							{
-								cHashTatico[ c ] = lp->getNumRows();
-								lp->addRow( row );
-								restricoes++;
-							}
-						}
-						// --------------------------------------------------------------------
-				   }
-
-				   // Variável Hf_{p,t}
-               else if ( vh.getType() == VariableMIPUnico::V_HF_PROFESSORES )
-				   {
-					   // --------------- C_GAPS_PROFESSORES_F ---------------------------------------
-                  ConstraintMIPUnico c;
-					    c.reset();
-                   c.setType( ConstraintMIPUnico::C_GAPS_PROFESSORES_F );
-						c.setProfessor( professor );
-						c.setDia( dia );
-						c.setHorarioAula( h );
-
-						rhs = 0.0;
-
-						if ( cHashTatico.find( c ) == cHashTatico.end() )
-						{
-							sprintf( name, "%s", c.toString(etapa).c_str() );
-
-							OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
-
-							// Insere Hf_{p,t}
-							row.insert( vit_h->second, 1.0 );
-
-							bool inseriuVariavel = false;
-
-							vector< VariableMIPUnicoHash::iterator > vars = variaveisHashX[professor][dia];
-							vector< VariableMIPUnicoHash::iterator >::iterator it4 = vars.begin();
-
-							for(; it4 != vars.end(); it4++)
-							{
-								vit_x = *it4;
-                        VariableMIPUnico v_x = vit_x->first;
-
-                        if ( v_x.getHorarioAulaInicial()->getId() == h->getId() )
-								{
-									row.insert( vit_x->second, -horEmMinutos );							   
-									inseriuVariavel = true;
-								}
-							}
-
-							if ( inseriuVariavel )
-							{
-								cHashTatico[ c ] = lp->getNumRows();
-								lp->addRow( row );
-								restricoes++;
-							}
-						}
-					   // ------------------------------------------------------------------
-				   }			  
-			   }
-		   }
-
-		   if ( row2.getnnz() > 0 )
-		   {
-				cHashTatico[ c2 ] = lp->getNumRows();
-				lp->addRow( row2 );
-				restricoes++;
-		   }
-		    // --------------------------------------------------------------------------------
-	   }
-   }
-
-   return restricoes;
-}
-
-int MIPUnico::criaRestricaoGapsHorariosAlunos()
-{
-   int restricoes = 0;
-
-   if ( !problemData->parametros->minimizar_horarios_vazios_professor )
-   {
-	   return restricoes;
-   }
-
-   VariableMIPUnicoHash::iterator vit;
-   VariableMIPUnicoHash::iterator vit_x;
-   VariableMIPUnicoHash::iterator vit_h;
-   
-   int nnz = 100; // TODO
-
-   double rhs = 0.0;
-   char name[ 200 ];
-
-   if ( nnz == 0 )
-   {
-      return 0;
-   }
-
-   map< Professor*, map< int, vector< VariableMIPUnicoHash::iterator > >, LessPtr< Professor > > variaveisHashHorariosIFProfessores;
-   map< Professor*, map< int, vector< VariableMIPUnicoHash::iterator > >, LessPtr< Professor > > variaveisHashX;
-
-   vit = vHashTatico.begin();
-
-   for (; vit != vHashTatico.end(); vit++ )
-   {
-      VariableMIPUnico v = ( vit->first );
-
-      if ( ( v.getType() == VariableMIPUnico::V_HI_PROFESSORES ) ||
-		   ( v.getType() == VariableMIPUnico::V_HF_PROFESSORES ) )
-      {
-		  if ( !v.getProfessor()->eVirtual() )
-			variaveisHashHorariosIFProfessores[v.getProfessor()][v.getDia()].push_back( vit );
-      }
-      else if ( v.getType() == VariableMIPUnico::V_PROF_AULA )
-      {
-		  if ( !v.getProfessor()->eVirtual() )
-			variaveisHashX[v.getProfessor()][v.getDia()].push_back( vit );
-      }
-   }
-
-   // Para cada professor
-   map< Professor*, map< int, vector< VariableMIPUnicoHash::iterator > >, LessPtr< Professor > >::iterator it1 = variaveisHashHorariosIFProfessores.begin();
-   for(; it1 != variaveisHashHorariosIFProfessores.end(); it1++)
-   {
-	   Professor *professor = it1->first;
-		
-	   // Para cada dia
-	   map< int, vector< VariableMIPUnicoHash::iterator > >::iterator it2 = it1->second.begin();
-	   for(; it2 != it1->second.end(); it2++)
-	   {
-		   int dia = it2->first;
-
-		   // --------------- C_GAPS_PROFESSORES_I_F ---------------------------------------
-		    
-         ConstraintMIPUnico c2;
-		   c2.reset();
-         c2.setType( ConstraintMIPUnico::C_GAPS_PROFESSORES_I_F );
-		   c2.setProfessor( professor );
-		   c2.setDia( dia );
-				
-		   if ( cHashTatico.find( c2 ) != cHashTatico.end() )
-		   {
-			   continue;
-		   }
-
-		   sprintf( name, "%s", c2.toString(etapa).c_str() );
-
-		   OPT_ROW row2( nnz, OPT_ROW::LESS, 0.0, name );
-
-		   // Par cada variavel Hi_{p,t} ou Hf_{p,t}
-		   vector< VariableMIPUnicoHash::iterator >::iterator it3 = it2->second.begin();
-		   for(; it3 != it2->second.end(); it3++)
-		   {
-			    vit_h = *it3;
-             VariableMIPUnico vh = vit_h->first;
-
-				// --------------- insere variaveis em C_GAPS_PROFESSORES_I_F ----------------------
-				
-				// Insere Hi_{p,t}
-             if ( vh.getType() == VariableMIPUnico::V_HI_PROFESSORES )
-				{
-					row2.insert( vit_h->second, 1.0 );		
-				}
-				// Insere Hf_{p,t}
-				else
-				{
-					row2.insert( vit_h->second, -1.0 );
-				}
-
-				// ------------------------------------------------------------------------------
-
-			   // Para cada horario no dia
-			   ITERA_GGROUP_LESSPTR( itHor, professor->horariosDia, HorarioDia )
-			   {
-				   if ( itHor->getDia() != dia )
-					   continue;
-
-				   HorarioAula * h = itHor->getHorarioAula();
-				
-				   int horEmMinutos = h->getInicio().getDateMinutes();
-
-				   // Variável Hi_{p,t}
-               if ( vh.getType() == VariableMIPUnico::V_HI_PROFESSORES )
-				   {
-					   // --------------- C_GAPS_PROFESSORES_I ---------------------------------------
-                  ConstraintMIPUnico c;
-						c.reset();
-                  c.setType( ConstraintMIPUnico::C_GAPS_PROFESSORES_I );
-						c.setProfessor( professor );
-						c.setDia( dia );
-						c.setHorarioAula( h );
-
-						double bigM = professor->getUltimoHorarioDisponivelDia( dia )->getInicio().getDateMinutes() + h->getTempoAula();						
-						
-						rhs = (double) horEmMinutos;
-						rhs += bigM;
-
-                  if ( cHashTatico.find( c ) == cHashTatico.end() )
-						{
-							sprintf( name, "%s", c.toString(etapa).c_str() );
-
-							OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
-
-							// Insere Hi_{p,t}
-							row.insert( vit_h->second, 1.0 );					   	   
-
-							bool inseriuVariavel = false;
-
-                     vector< VariableMIPUnicoHash::iterator > vars = variaveisHashX[professor][dia];
-							vector< VariableMIPUnicoHash::iterator >::iterator it4 = vars.begin();
-
-							for(; it4 != vars.end(); it4++)
-							{
-								vit_x = *it4;
-                        VariableMIPUnico v_x = vit_x->first;
-
-                        if ( v_x.getHorarioAulaInicial()->getId() == h->getId() )
-								{
-									row.insert( vit_x->second, bigM );			   
-									inseriuVariavel = true;
-								}
-							}
-
-							if ( inseriuVariavel )
-							{
-								cHashTatico[ c ] = lp->getNumRows();
-								lp->addRow( row );
-								restricoes++;
-							}
-						}
-						// --------------------------------------------------------------------
-				   }
-
-				   // Variável Hf_{p,t}
-               else if ( vh.getType() == VariableMIPUnico::V_HF_PROFESSORES )
-				   {
-					   // --------------- C_GAPS_PROFESSORES_F ---------------------------------------
-                  ConstraintMIPUnico c;
-					    c.reset();
-                   c.setType( ConstraintMIPUnico::C_GAPS_PROFESSORES_F );
-						c.setProfessor( professor );
-						c.setDia( dia );
-						c.setHorarioAula( h );
-
-						rhs = 0.0;
-
-						if ( cHashTatico.find( c ) == cHashTatico.end() )
-						{
-							sprintf( name, "%s", c.toString(etapa).c_str() );
-
-							OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
-
-							// Insere Hf_{p,t}
-							row.insert( vit_h->second, 1.0 );
-
-							bool inseriuVariavel = false;
-
-							vector< VariableMIPUnicoHash::iterator > vars = variaveisHashX[professor][dia];
-							vector< VariableMIPUnicoHash::iterator >::iterator it4 = vars.begin();
-
-							for(; it4 != vars.end(); it4++)
-							{
-								vit_x = *it4;
-                        VariableMIPUnico v_x = vit_x->first;
-
-                        if ( v_x.getHorarioAulaInicial()->getId() == h->getId() )
-								{
-									row.insert( vit_x->second, -horEmMinutos );							   
-									inseriuVariavel = true;
-								}
-							}
-
-							if ( inseriuVariavel )
-							{
-								cHashTatico[ c ] = lp->getNumRows();
-								lp->addRow( row );
-								restricoes++;
-							}
-						}
-					   // ------------------------------------------------------------------
-				   }			  
-			   }
-		   }
-
-		   if ( row2.getnnz() > 0 )
-		   {
-				cHashTatico[ c2 ] = lp->getNumRows();
-				lp->addRow( row2 );
-				restricoes++;
-		   }
-		    // --------------------------------------------------------------------------------
-	   }
-   }
-
-   return restricoes;
-}
-  
 
 // --------------------------------------------------------------
 
