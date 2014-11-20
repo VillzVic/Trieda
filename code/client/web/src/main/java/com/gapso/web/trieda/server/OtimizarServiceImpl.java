@@ -1967,12 +1967,14 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	private void checkDisponibilidadesProfessor(Parametro parametro, List<String> warnings, List<String> errors) {
 		Cenario cenario = parametro.getCenario();
 		
+		boolean haProfessoresCadastrados = false;
 		boolean nenhumProfessorComDisponibilidade = true;
 		List<String> warningsProfessor = new ArrayList<String>();
 		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = DisponibilidadeProfessor.findDisponibilidadesPorProfessor(cenario);
 		
 		for (Campus campus : parametro.getCampi()) {
 			for (Professor professor : campus.getProfessores()) {
+				haProfessoresCadastrados = true; // se passou por aqui é que há pelo menos 1 professor cadastrado no escopo de otimização
 				List<Disponibilidade> dispProf = professorMapDisponibilidade.get(professor);
 				if (Disponibilidade.temAlgumaDisponibilidade(dispProf)) {
 					nenhumProfessorComDisponibilidade = false;
@@ -1982,10 +1984,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			}
 		}
 		
-		if (nenhumProfessorComDisponibilidade) {
-			errors.add(HtmlUtils.htmlUnescape("Nenhum dos professores dos campi selecionados para a otimização possui horário disponível."));
-		} else {
-			warnings.addAll(warningsProfessor);
+		if (haProfessoresCadastrados) {
+			if (nenhumProfessorComDisponibilidade) {
+				errors.add(HtmlUtils.htmlUnescape("Nenhum dos professores dos campi selecionados para a otimização possui horário disponível."));
+			} else {
+				warnings.addAll(warningsProfessor);
+			}
 		}
 	}
 	
