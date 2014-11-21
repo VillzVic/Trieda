@@ -65,6 +65,7 @@ import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileWriter;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportListReader;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportListWriter;
@@ -2165,8 +2166,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			boolean ehTatico = false;
 			// preenche horários
 			Map<Long,HorarioAula> horarioAulaIdToHorarioAulaMap = new HashMap<Long,HorarioAula>();
+			Map<Long,Turno> turnoIdToTurnoMap = new HashMap<Long,Turno>();
 			Map<String,Campus> campusIdToCampusMap =  Campus.buildCampusCodigoToCampusMap(new ArrayList<Campus>(cenario.getCampi()));
 			for (Turno turno : cenario.getTurnos()) {
+				turnoIdToTurnoMap.put(turno.getId(), turno);
 				for (HorarioAula horarioAula : turno.getHorariosAula()) {
 					horarioAulaIdToHorarioAulaMap.put(horarioAula.getId(),horarioAula);
 				}
@@ -2208,10 +2211,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 							{
 								for (ItemAtendimentoTurno atendimentoTurno : atendimentoDia.getAtendimentosTurnos().getAtendimentoTurno())
 								{
+									turnos.add(turnoIdToTurnoMap.get((long)atendimentoTurno.getTurnoId()));
 									for (ItemAtendimentoHorarioAula atendimentoHorarioAula : atendimentoTurno.getAtendimentosHorariosAula().getAtendimentoHorarioAula())
 									{
-										if (horarioAulaIdToHorarioAulaMap.get(Long.valueOf(atendimentoHorarioAula.getHorarioAulaId())).getTurno() != null)
-											turnos.add(horarioAulaIdToHorarioAulaMap.get(Long.valueOf(atendimentoHorarioAula.getHorarioAulaId())).getTurno());
+										if (horarioAulaIdToHorarioAulaMap.get(Long.valueOf(atendimentoHorarioAula.getHorarioAulaId())).getTurno() != null) {
+											turnos.add(horarioAulaIdToHorarioAulaMap.get(Long.valueOf(atendimentoHorarioAula.getHorarioAulaId())).getTurno());											
+										}
 										else
 										{
 											ret.get("error").add("Turno id("+ atendimentoTurno.getTurnoId() +") especificado na solução não esta cadastrado");
@@ -2280,7 +2285,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		return ProgressReportServiceImpl.getProgressReportWriterSession(request).get(chave);
 	}
 	
-	//public ProgressReportWriter getProgressReport() {
-	//	return progressReport;
-	//}
+	public ProgressReportWriter getProgressReport() {
+		return progressReport;
+	}
 }
