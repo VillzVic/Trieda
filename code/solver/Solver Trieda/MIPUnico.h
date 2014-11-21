@@ -2,6 +2,7 @@
 #define _MIP_UNICO_H_
 
 #include <vector>
+#include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
@@ -51,7 +52,8 @@ private:
 	  MIP_GENERAL = 0,
 	  MIP_GARANTE_SOL = 1,				
 	  MIP_MAX_ATEND = 2,
-	  MIP_MIN_VIRT = 3
+	  MIP_MIN_VIRT = 3,
+	  MIP_MIN_GAP_PROF = 4
    };	  
 
 
@@ -287,6 +289,8 @@ private:
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
 	void verificaCarregaSolucao( int campusId, int prioridade, int r );
 	void criaNewLp( int campusId, int prioridade, int r );
+	void clearStrutures();
+	void printLog( string msg );
 
 	int solveMIPUnico( int campusId, int prioridade, int r );
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
@@ -294,8 +298,11 @@ private:
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
+	int addConstrGapProf();
+
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
 	Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
@@ -348,6 +355,8 @@ private:
 
 	// log file name
 	string optLogFileName;
+    std::ofstream mipFile;
+
 };
 
 

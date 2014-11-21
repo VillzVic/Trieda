@@ -533,7 +533,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;$(GUROBI_HOME)\include;$(XSD)\include;$(BOOST);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_GUROBI;UNIT;PRINT_LOGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_GUROBI;UNIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -549,7 +549,7 @@
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xerces-c_3.lib;gurobi56.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xerces-c_3.lib;gurobi60.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GUROBI_HOME)\lib;$(XSD)\lib64\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>

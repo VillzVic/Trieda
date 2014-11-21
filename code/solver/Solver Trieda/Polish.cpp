@@ -378,8 +378,7 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 	  {
 		  tempoIter_ += 50;
 		  setLpPrePasses();
-		  //if (perc_ <= 40) 
-			  chgLpRootRelax();
+		  chgLpRootRelax();
 	  }
 	  else if (optimal() || gap <= 1.0)		// TINY GAP
 	  {
