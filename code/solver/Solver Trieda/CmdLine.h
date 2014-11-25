@@ -18,6 +18,7 @@ public:
 
 	int findArg(char* argFind);
 	bool findInputId(int &inputId);
+	void checkLoadPartialSol();
 	bool checkExecHeuristica();
 	void checkArgsHeuristica();
 	bool checkMinReceitaCredito();

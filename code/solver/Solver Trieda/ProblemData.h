@@ -45,8 +45,6 @@
 
 #define USAR_CALLBACK
 
-//#define READ_SOLUTION
-
 #define ALUNO_TURNOS_DA_DEMANDA // Usado quando o aluno só pode ser alocado em turno existente no calendario da Oferta da Demanda que ele requisitou
 
 #define EQUIVALENCIA_DESDE_O_INICIO

@@ -52,9 +52,9 @@ public:
 	  V_HF_ALUNOS = 38,							// hfa_{a,t}
 	  V_FOLGA_GAP_ALUNOS = 39,					// fagap_{a,t}
 	  V_FOLGA_GAP_PROF = 40,					// fpgap_{p,t}
-
-	  V_FOLGA_MIN_CRED_DIA_ALUNO = 41			// fcad_{a,t}
 	  
+	  V_FOLGA_MIN_CRED_DIA_ALUNO = 41,			// fcad_{a,t}
+	  	  
    };
 
    //Constructors

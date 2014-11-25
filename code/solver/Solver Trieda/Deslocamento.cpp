@@ -7,9 +7,7 @@ Deslocamento::Deslocamento(void)
 }
 
 Deslocamento::~Deslocamento(void)
-{
-
-}
+{}
 
 void Deslocamento::le_arvore( ItemDeslocamento & elem )
 {

@@ -869,6 +869,8 @@ bool UtilHeur::getAulasPossiveisDiaHors(int dia, int nrCreditos, gGroupHorarios 
 	HeuristicaNuno::logMsgInt("numero de créditos: ", nrCreditos, 3);
 	HeuristicaNuno::logMsgInt("numero de horários calendario/turno dia: ", (int)horariosDia.size(), 3);
 
+	Calendario* calendario = CentroDados::getCalendario(calendarioId);
+
 	for(auto itHor = horariosDia.begin(); itHor != horariosDia.end();)
 	{
 		set<HorarioAula*> horariosAula;
@@ -887,7 +889,8 @@ bool UtilHeur::getAulasPossiveisDiaHors(int dia, int nrCreditos, gGroupHorarios 
 				continue;
 			if((inter != 0) && (nrCreditos == 2))
 				break;
-			if(inter > ParametrosHeuristica::maxIntervAulas)
+			if(inter > ParametrosHeuristica::maxIntervAulas && 
+				calendario->restringeAulaComIntervalo())
 				break;
 
 			horariosAula.insert(*itHor2);

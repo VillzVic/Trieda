@@ -125,6 +125,7 @@ private:
 	   int fixType_;
 	   double maxTime_;
 	   double maxTempoSemMelhora_;
+	   double maxTempoIter_;
 
 	   // Solution
 	   double *xSol_;

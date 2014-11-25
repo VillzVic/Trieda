@@ -2706,9 +2706,9 @@ int Operacional::solveGeneral(bool& CARREGA_SOL_PARCIAL, double *xS, std::ofstre
 		std::cout<<"\nMaximo atendimento e Minimo prof virtual fixados e FO original\n\n";		
 	fflush(NULL);
 		
-	#ifdef PRINT_LOGS
+	//#ifdef PRINT_LOGS
 	lp->writeProbLP( this->getOpLpFileName(-1).c_str() );
-	#endif		
+	//#endif		
 						
 	if ( CARREGA_SOL_PARCIAL )
 	{
@@ -10852,7 +10852,7 @@ int Operacional::criaRestricaoDeslocamentoProfessor()
 		    int dia = itDia->first;
 		   
 		    set<pair<VariableOp, int>> const * const vars = &itDia->second;
-		   
+			
 			auto vit1 = vars->cbegin();
 			for (; vit1 != vars->cend(); vit1++ )
 			{
@@ -10861,24 +10861,37 @@ int Operacional::criaRestricaoDeslocamentoProfessor()
 
 				auto vit2 = std::next(vit1);
 				for (; vit2 != vars->cend(); vit2++ )
-				{
+				{		   
 					VariableOp v2 = vit2->first;
 					int idUnidade2 = v2.getSala()->getIdUnidade();
 
 					if ( idUnidade1 == idUnidade2 )
 						continue;
-
+					
 					if ( sobrepoem(v1.getAula(), v1.getHorarioAula(), v2.getAula(), v2.getHorarioAula()) )
 						continue;
-
-					Unidade * unidade1 = problemData->refUnidade[ idUnidade1 ];
-					Campus * campus1 = problemData->refCampus[ unidade1->getIdCampus() ];
-
-					Unidade * unidade2 = problemData->refUnidade[ idUnidade2 ];
-					Campus * campus2 = problemData->refCampus[ unidade2->getIdCampus() ];
+										
+					Unidade* unidadeOrig=nullptr;
+					Unidade* unidadeDest=nullptr;
+					Campus* campusOrig=nullptr;
+					Campus* campusDest=nullptr;
+					if ( v1.getHorarioAula()->getInicio() < v2.getHorarioAula()->getInicio() )
+					{
+						// v1 é origem
+						unidadeOrig = problemData->refUnidade[ idUnidade1 ];
+						unidadeDest = problemData->refUnidade[ idUnidade2 ];
+					}
+					else
+					{
+						// v1 é destino
+						unidadeOrig = problemData->refUnidade[ idUnidade2 ];
+						unidadeDest = problemData->refUnidade[ idUnidade1 ];
+					}
+					campusOrig = problemData->refCampus[ unidadeOrig->getIdCampus() ];
+					campusDest = problemData->refCampus[ unidadeDest->getIdCampus() ];
 
 					int tempo_minimo = problemData->calculaTempoEntreCampusUnidades(
-						campus1, campus2, unidade1, unidade2 );
+						campusDest, campusOrig, unidadeDest, unidadeOrig );
 
 					int nCreds1 = v1.getAula()->getTotalCreditos();
 					int nCreds2 = v2.getAula()->getTotalCreditos();
@@ -10900,7 +10913,7 @@ int Operacional::criaRestricaoDeslocamentoProfessor()
 						c.setPar2AulaHor(v2.getAula(), h2);
 
 						if ( cHashOp.find( c ) == cHashOp.end() )
-						{
+						{							
 							sprintf( name, "%s", c.toString().c_str() );
 
 							// Cria a restrição 'x_{p,a1,h1} + x_{p,a2,h2} <= 1'
@@ -10915,7 +10928,7 @@ int Operacional::criaRestricaoDeslocamentoProfessor()
 							cHashOp[ c ] = lp->getNumRows();
 							restricoes++;
 						}
-					}
+					}					
 				}
 			}
 	   }

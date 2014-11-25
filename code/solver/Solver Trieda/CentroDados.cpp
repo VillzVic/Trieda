@@ -4,6 +4,8 @@
 
 ProblemData* CentroDados::problemData = nullptr;
 
+bool CentroDados::READ_SOLUTION = false;
+
 std::ofstream* CentroDados::fOutTest = nullptr;
 std::ofstream* CentroDados::fOutWarn = nullptr;
 std::ofstream* CentroDados::fOutError = nullptr;

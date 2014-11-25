@@ -586,7 +586,7 @@
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xerces-c_3.lib;gurobi56.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xerces-c_3.lib;gurobi60.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GUROBI_HOME)\lib;$(XSD)\lib64\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>

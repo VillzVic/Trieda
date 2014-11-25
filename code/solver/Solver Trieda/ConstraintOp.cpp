@@ -784,14 +784,14 @@ std::string ConstraintOp::toString()
    if ( par1_aula_hor.second != NULL )
    {
 	   ss << "_(Aula" << par1_aula_hor.first->toString()
-		  << ",Hor" << par1_aula_hor.second<<")";
+		   << ",Hor" << par1_aula_hor.second->getId()<<")";
    }
 
    if ( par2_aula_hor.first != NULL )
    if ( par2_aula_hor.second != NULL )
    {
 	   ss << "_(Aula" << par2_aula_hor.first->toString()
-	      << ",Hor" << par2_aula_hor.second << ")";
+	      << ",Hor" << par2_aula_hor.second->getId() << ")";
    }
 
    if ( h != NULL )

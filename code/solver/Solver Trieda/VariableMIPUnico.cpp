@@ -281,11 +281,9 @@ std::string VariableMIPUnico::toString() const
        str <<"fagap"; break;
     case V_FOLGA_GAP_PROF:
        str <<"fpgap"; break;
-	   
     case V_FOLGA_MIN_CRED_DIA_ALUNO:
        str <<"fcad"; break;
-	   
-	   
+	   	   
     default:
         str << "!";
    }

@@ -272,17 +272,13 @@ bool AbridorTurmas::abrirTurmasOfertaDiscComp_(OfertaDisciplina* const ofertaDis
 		return nrAbertas;
 	}
 	
-    _CrtMemState s1, s2, s3;
-
 	// abrir turmas
 	do
 	{
 		// gera turmas potenciais
 		HeuristicaNuno::logMsg("gerar turmas potenciais", 2);
 		turmasPotOrd turmasPotenciais;
-#ifdef DEBUG
-		_CrtMemCheckpoint( &s1 );
-#endif	
+
 		//AbridorTurmas::nrGeraUnids_ = 0;
 		geraTurmasPotenciais_(ofertaDisc, teorico, turmasPotenciais, compSec);
 		//HeuristicaNuno::logMsgInt("nr gera unids: ", AbridorTurmas::nrGeraUnids_, 1);
@@ -301,21 +297,10 @@ bool AbridorTurmas::abrirTurmasOfertaDiscComp_(OfertaDisciplina* const ofertaDis
 		}
 		else
 			stop = true;
-
-#ifdef DEBUG
-		_CrtMemCheckpoint( &s2 );
-		if ( _CrtMemDifference( &s3, &s1, &s2) )
-			_CrtMemDumpStatistics( &s3 );
-#endif	
-
+		
 		// limpar memória turmas potenciais
 		limparTurmasPotenciais_(turmasPotenciais);
 		
-#ifdef DEBUG
-		_CrtDumpMemoryLeaks();
-		system("PAUSE");
-#endif	
-
 		// realocar
 		int nrTurmasTipo = ofertaDisc->nrTurmas(teorico);
 		int nrAlunosInc = ofertaDisc->nrAlunosIncompleto();

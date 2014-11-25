@@ -35,10 +35,14 @@ public:
 
 	// Set Problem Data (evitar que pointer seja mudado por engano)
 	static void setProblemData(ProblemData* const probData);
-
+	
 	// libertar a memória de problemData e set nullptr
 	static void clearProblemData(void);
 	
+	static void setLoadPartialSol(bool load) { READ_SOLUTION = load; }
+	
+	static bool getLoadPartialSol() { return READ_SOLUTION; }
+
 	static void openErrorFile();
 	static void openWarnFile();
 	static void openTestFile();
@@ -102,6 +106,8 @@ private:
 
 	// Dados do Problema: acessiveis de qualquer lugar
 	static ProblemData* problemData;
+
+	static bool READ_SOLUTION;
 
 	static std::ofstream *fOutTest;
 	static std::ofstream *fOutWarn;

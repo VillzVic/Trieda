@@ -1326,9 +1326,6 @@ void MIPUnico::readSolTxtAux( char *fileName, double *xSol )
 
 void MIPUnico::writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase )
 {
-	#ifndef PRINT_LOGS
-		return;
-	#endif
 
 	char solName[1024]="\0";
 
@@ -2457,7 +2454,7 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );		
 	}
 	if ( !CARREGA_SOL_PARCIAL )
 	{
@@ -2472,7 +2469,7 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 				delete pol;
 			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
-				polishing = pol->polish(xS, 3600, 90, 1000);
+				polishing = pol->polish(xS, 3600*1.5, 90, 1800);
 				delete pol;
 			#endif
 		}
@@ -2729,7 +2726,7 @@ int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREG
 
 		if ( v.getType() != VariableMIPUnico::V_FOLGA_GAP_PROF ) continue;
 		
-		if ( v.getProfessor()->eVirtual() )	// prof com gap mínimo
+		if ( !v.getProfessor()->eVirtual() )	// prof com gap mínimo
 		{
 			idxs[nBds] = vit->second;
 			vals[nBds] = xS[vit->second];
@@ -13677,3 +13674,117 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno()
 
 	return restricoes;
 }
+
+
+/*
+	Para todo prof p, unidades u1 e u2, dia t, horarios h1 e h2, 
+	tal que o intervalo de tempo entre as aulas h1 e h2 seja menor
+	do que o tempo de deslocamento entre as unidades u1 e u2.
+
+	k_{p,t,u1,h1} + k_{p,t,u2,h2} <= 1
+
+*/
+//int MIPUnico::criaRestricaoDeslocamentoProfessor()
+//{
+//   int restricoes = 0;
+//   int nnz = 2;
+//   double rhs = 1.0;
+//   char name[ 200 ];
+//
+//   if ( problemData->tempo_campi.size() == 0
+//      && problemData->tempo_unidades.size() == 0 )
+//   {
+//      return restricoes;
+//   }     
+//
+//   for( auto itProf = vars_w.cbegin(); itProf != vars_w.cend(); itProf++ )
+//   {
+//	   Professor * professor = itProf->first;
+//
+//	   for( auto itDia = itProf->second.cbegin(); itDia != itProf->second.cend(); itDia++ )
+//	   {
+//		    int dia = itDia->first;
+//		   
+//		    set<pair<VariableOp, int>> const * const vars = &itDia->second;
+//			
+//			auto vit1 = vars->cbegin();
+//			for (; vit1 != vars->cend(); vit1++ )
+//			{
+//				VariableMIPUnico v1 = vit1->first;
+//				int idUnidade1 = v1.getSala()->getIdUnidade();
+//
+//				auto vit2 = std::next(vit1);
+//				for (; vit2 != vars->cend(); vit2++ )
+//				{		   
+//					VariableMIPUnico v2 = vit2->first;
+//					int idUnidade2 = v2.getSala()->getIdUnidade();
+//
+//					if ( idUnidade1 == idUnidade2 )
+//						continue;
+//					
+//					if ( sobrepoem(v1.getAula(), v1.getHorarioAula(), v2.getAula(), v2.getHorarioAula()) )
+//						continue;
+//										
+//					Unidade* unidadeOrig=nullptr;
+//					Unidade* unidadeDest=nullptr;
+//					Campus* campusOrig=nullptr;
+//					Campus* campusDest=nullptr;
+//					if ( v1.getHorarioAula()->getInicio() < v2.getHorarioAula()->getInicio() )
+//					{
+//						// v1 é origem
+//						unidadeOrig = problemData->refUnidade[ idUnidade1 ];
+//						unidadeDest = problemData->refUnidade[ idUnidade2 ];
+//					}
+//					else
+//					{
+//						// v1 é destino
+//						unidadeOrig = problemData->refUnidade[ idUnidade2 ];
+//						unidadeDest = problemData->refUnidade[ idUnidade1 ];
+//					}
+//					campusOrig = problemData->refCampus[ unidadeOrig->getIdCampus() ];
+//					campusDest = problemData->refCampus[ unidadeDest->getIdCampus() ];
+//
+//					int tempo_minimo = problemData->calculaTempoEntreCampusUnidades(
+//						campusDest, campusOrig, unidadeDest, unidadeOrig );
+//
+//					int nCreds1 = v1.getAula()->getTotalCreditos();
+//					int nCreds2 = v2.getAula()->getTotalCreditos();
+//					HorarioAula *h1 = v1.getHorarioAula();
+//					HorarioAula *h2 = v2.getHorarioAula();					
+//					DateTime fim1;
+//					DateTime inicio2;					
+//					getFim1Inicio2(h1,nCreds1,h2,nCreds2,fim1,inicio2);
+//
+//					int tempo_interv = minutosIntervalo(fim1, inicio2);
+//					
+//					if ( tempo_minimo > tempo_interv )
+//					{
+//						ConstraintMIPUnico c;
+//						c.reset();
+//						c.setType( ConstraintMIPUnico::C_DESLOC_PROF );
+//						c.setProfessor( professor );
+//						c.setPar1AulaHor(v1.getAula(), h1);
+//						c.setPar2AulaHor(v2.getAula(), h2);
+//
+//						if ( cHashTatico.find( c ) == cHashTatico.end() )
+//						{							
+//							sprintf( name, "%s", c.toString().c_str() );
+//
+//							OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+//
+//							row.insert( vit1->second, 1.0 );
+//							row.insert( vit2->second, 1.0 );
+//
+//							lp->addRow( row );
+//				  
+//							cHashTatico[ c ] = lp->getNumRows();
+//							restricoes++;
+//						}
+//					}					
+//				}
+//			}
+//	   }
+//   }
+//
+//   return restricoes;
+//}

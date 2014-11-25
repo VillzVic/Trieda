@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 
+#include "CentroDados.h"
 #include "HeurNuno\HeuristicaNuno.h"
 #include "HeurNuno\\ParametrosHeuristica.h"
 
@@ -83,6 +84,9 @@ void CmdLine::init()
    // Tipo do solver a ser executado
    setTipoSolver();
    
+   // Check if initial partial solution should be load
+   checkLoadPartialSol();
+
    std::cout<<"\nid " << inputId_; fflush(0);
    std::cout<<"\npath " << path_; fflush(0);
    std::cout<<"\ninputFile" << inputFile_; fflush(0);
@@ -213,6 +217,20 @@ bool CmdLine::findInputId(int &inputId)
 	return true;
 }
 
+// --------- check args opcionais ---------------
+
+void CmdLine::checkLoadPartialSol()
+{
+	bool mip = ! checkExecHeuristica();
+
+	if (mip)
+	{
+		int idx = findArg( "-load" );
+		bool found = (idx >= 0) && (idx < argc_);
+		if (found)
+			CentroDados::setLoadPartialSol(true);
+	}
+}
 
 // [HEURÍSTICA]
 

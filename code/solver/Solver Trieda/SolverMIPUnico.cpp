@@ -69,11 +69,10 @@ int SolverMIPUnico::solve()
 {
    int status = 0;
 
-#ifdef READ_SOLUTION
-	this->CARREGA_SOLUCAO = true;
-#else
-	this->CARREGA_SOLUCAO = false;
-#endif
+   if (CentroDados::getLoadPartialSol())
+		this->CARREGA_SOLUCAO = true;
+   else
+		this->CARREGA_SOLUCAO = false;
 	
    if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {

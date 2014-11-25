@@ -350,6 +350,26 @@ void ProblemData::defineFasesDosTurnos()
 				this->fasesDosTurnos[ Tarde ] = fase2;
 				this->fasesDosTurnos[ Noite ] = fase3;
 			}
+			else
+			{
+				// ToDo: isso é uma gambiarra. Decidir melhor como definir as fases.
+				if ( deltai12 < deltai18 && deltaf18 < deltaf12 && itMapCalendFases->second.size()==1 )	// Tarde
+				{
+					if ( fase2.first > dti ) fase2.first = dti;
+					if ( fase2.second < dtf ) fase2.second = dtf;
+				
+					if ( debugging ) std::cout<<"\nTarde: i=" << dti << " f=" << dtf;
+					this->fasesDosTurnos[ Tarde ] = fase2;					
+				}
+				else { 
+					std::cout<<"\nATENCAO: calendario com faixa " << dti << "-" << dtf << " sem fase definida!"
+						<< "\ndeltai12 = " << deltai12
+						<< "\tdeltaf12 = " << deltaf12
+						<< "\ndeltai18 = " << deltai18
+						<< "\tdeltaf18 = " << deltaf18
+						<< "\nNr faixas = " << itMapCalendFases->second.size(); 
+				}
+			}
 		}
 	}
 
@@ -1690,8 +1710,10 @@ int ProblemData::calculaTempoEntreCampusUnidades(
          }
       }
    }
+
    // As aulas são realizadas em unidades diferentes
-   else if ( unidade_atual->getId() != unidade_anterior->getId() )
+   if ( tempoDesloc==0 )
+   if ( unidade_atual->getId() != unidade_anterior->getId() )
    {
       GGroup< Deslocamento *, LessPtr< Deslocamento > >::iterator it_tempo_unidade
          = this->tempo_unidades.begin();

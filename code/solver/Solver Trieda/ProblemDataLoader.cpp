@@ -3466,7 +3466,7 @@ void ProblemDataLoader::gera_refs()
 	  find_and_set_lessptr( uDestinoId, cpd->unidades, ( Unidade * & ) it_desl->destino, false );
 
    } // deslocamento unidades 
-
+   
    std::cout << "\nGerando referencias para demandas...";
    ITERA_GGROUP_LESSPTR( it_aluno_demanda,
       problemData->alunosDemanda, AlunoDemanda )

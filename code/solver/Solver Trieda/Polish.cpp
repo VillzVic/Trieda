@@ -17,7 +17,7 @@ double MIN_OPT_VALUE = 0.0;
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile )
 	: lp_(lp), vHashTatico_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0),
+	melhorou_(false), melhora_(0), runtime_(0), maxTempoIter_(250),
 	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::TATICO)
 {
 	originalLogFileName_ = originalLogFile;
@@ -26,7 +26,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile )
 	: lp_(lp), vHashOp_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0),
+	melhorou_(false), melhora_(0), runtime_(0), maxTempoIter_(250),
 	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::OPERACIONAL)
 {
 	originalLogFileName_ = originalLogFile;
@@ -377,7 +377,17 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 	  if (!melhorou_ && timeLimitReached())	// TIME LIMIT
 	  {
 		  tempoIter_ += 50;
-		  setLpPrePasses();
+		  if (perc_ < 20)
+			 if(tempoIter_ > 300) tempoIter_ = 300;
+		  if (perc_ < 30)
+			 if(tempoIter_ > 250) tempoIter_ = 250;
+		  if (perc_ < 40)
+			 if(tempoIter_ > 180) tempoIter_ = 180;
+		  if (perc_ >= 40)
+			 if(tempoIter_ > 120) tempoIter_ = 120;
+
+		  chgParams();
+		  //setLpPrePasses();
 		  chgLpRootRelax();
 	  }
 	  else if (optimal() || gap <= 1.0)		// TINY GAP
@@ -437,6 +447,9 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 			int incremTime = 20;			// increases the time limit by a fixed amount
 			incremTime += (100-perc_)*0.3;	// increases the time limit the more perc_ is close to 0.
 			tempoIter_ += incremTime;
+
+			if (tempoIter_ > maxTempoIter_) 
+				tempoIter_ = maxTempoIter_;
 		}
 	}
 }
@@ -678,6 +691,7 @@ void Polish::checkFeasibility()
 		ss <<"Error! Model is infeasible. Aborting..." << std::endl;
 		printLog(ss.str());
 		CentroDados::printError("bool Polish::needsPolish()",ss.str());
+		lp_->writeProbLP("infeasibleModelPolish");
 		throw ss.str();
 	}
 }

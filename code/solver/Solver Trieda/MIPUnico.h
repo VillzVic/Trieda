@@ -98,7 +98,8 @@ private:
    int criaVariaveisHiHfAlunoDiaAPartirDeV(void);											// hia_{a,t} e hfa_{a,t}
    int criaVariavelFolgaGapProfAPartirDeK(void);											// fpgap_{p,t,f}
    int criaVariavelFolgaGapAlunoAPartirDeV(void);											// fagap_{a,t}
-   
+   int criaVariavelWAPartirDeX();															// w_{p,u,t,h}
+
    int criarVariavelFolgaMinCredsDiaAluno();												// fcad_{a,t}
 
    /********************************************************************
@@ -179,6 +180,7 @@ private:
 		int rhs, const int colHi, const int colHf, set< pair<int,double> > const &varsColCoef);
 
 	int criarRestricaoMinCredsDiaAluno();
+	int criaRestricaoDeslocamentoProfessor();
 
 
    /* 
@@ -222,6 +224,10 @@ private:
 	
 	map< Campus*, map< Disciplina*, map< int /*turma*/,
 		pair<int /*col*/, VariableMIPUnico> >, LessPtr<Disciplina> >, LessPtr<Campus> > vars_abertura_turma;						// z_{i,d,cp}
+
+	map< Professor*, map< int /*dia*/, map<DateTime /*dti*/, map<DateTime /*dtf*/, map< Unidade*, 
+		set<pair<int /*col*/, VariableMIPUnico>>, LessPtr<Unidade> > > > >, LessPtr<Professor> > vars_w;							// w_{p,u,t,h}
+	
 
    /* 
 		****************************************************************************************************************
