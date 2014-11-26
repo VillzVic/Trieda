@@ -9,7 +9,7 @@
 #include "OfertaDisciplina.h"
 #include "SolucaoHeur.h"
 #include "TurmasIncHorarioDia.h"
-
+#include "../CentroDados.h"
 
 MIPAloc::MIPAloc(int tipoMip, std::string nome, SolucaoHeur* const solucao)
 	:  tipoMIP_(tipoMip), nome_(nome), solucao_(solucao), lp_(nullptr), solFinal_(nullptr), nrVars_(0)
@@ -66,9 +66,10 @@ void MIPAloc::buildLP_(void)
 	HeuristicaNuno::logMsg("criadas.", 1);
 
 	// imprime o modelo
-	#ifdef PRINT_LOGS
-	lp_->writeProbLP(nome_.c_str());
-	#endif
+	if (CentroDados::getPrintLogs())
+	{
+		lp_->writeProbLP(nome_.c_str());
+	}
 
 	std::stringstream ss;
 	ss << "modelo tem " << lp_->getNumCols() << " variaveis e " << lp_->getNumRows() << " restrições";
@@ -127,9 +128,10 @@ bool MIPAloc::solveLP_(void)
 	// se houver solução, carrega-la
 	if(status == OPTSTAT::OPTSTAT_MIPOPTIMAL || status == OPTSTAT::OPTSTAT_FEASIBLE)
 	{
-		#ifdef PRINT_LOGS
-		lp_->writeSol(nome_.c_str());
-		#endif
+		if (CentroDados::getPrintLogs())
+		{
+			lp_->writeSol(nome_.c_str());
+		}
 
 		return true;
 	}

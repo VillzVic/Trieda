@@ -54,3 +54,17 @@ bool sobrepoem(Aula * const aula1, HorarioAula* const h1, Aula * const aula2, Ho
 
 	return false;
 }
+
+bool sobrepoem(int nCreds1, HorarioAula* const h1, int nCreds2, HorarioAula* const h2)
+{
+	DateTime fim1;
+	DateTime inicio2;					
+	getFim1Inicio2(h1,nCreds1,h2,nCreds2,fim1,inicio2);
+
+	if ( fim1 > inicio2 )
+	{
+		return true;
+	}
+
+	return false;
+}

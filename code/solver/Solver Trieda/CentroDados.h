@@ -39,10 +39,12 @@ public:
 	// libertar a memória de problemData e set nullptr
 	static void clearProblemData(void);
 	
-	static void setLoadPartialSol(bool load) { READ_SOLUTION = load; }
-	
+	static void setLoadPartialSol(bool load) { READ_SOLUTION = load; }	
 	static bool getLoadPartialSol() { return READ_SOLUTION; }
-
+		
+	static void setPrintLogs(bool print) { PRINT_LOGS = print; }	
+	static bool getPrintLogs() { return PRINT_LOGS; }
+	
 	static void openErrorFile();
 	static void openWarnFile();
 	static void openTestFile();
@@ -108,7 +110,8 @@ private:
 	static ProblemData* problemData;
 
 	static bool READ_SOLUTION;
-
+	static bool PRINT_LOGS;
+	
 	static std::ofstream *fOutTest;
 	static std::ofstream *fOutWarn;
 	static std::ofstream *fOutError;

@@ -397,27 +397,27 @@ std::string VariableMIPUnico::toString() const
 
    if ( turma1 >= 0 )
    {
-      str << "_Turma1:" << turma1;
+      str << "_Turma1." << turma1;
    }
 
    if ( disc1 != nullptr )
    {
-      str << "_Disc1:" << disc1->getId();
+      str << "_Disc1." << disc1->getId();
    }
    
    if ( turma2 >= 0 )
    {
-      str << "_Turma2:" << turma2;
+      str << "_Turma2." << turma2;
    }
 
    if ( disc2 != nullptr )
    {
-      str << "_Disc2:" << disc2->getId();
+      str << "_Disc2." << disc2->getId();
    }
 
    if ( alunoDemanda != nullptr )
    {
-      str << "_AlDem:" << alunoDemanda->getId();
+      str << "_AlDem." << alunoDemanda->getId();
    }
       
    if ( parAlunos.first != nullptr && parAlunos.second != nullptr )

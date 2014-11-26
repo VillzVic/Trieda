@@ -3865,9 +3865,8 @@ int ProblemData::getQtdAlunoDemandaAtualPorCampus( int campusId )
 
 void ProblemData::imprimeCjtAlunos( int campusId )
 {	
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
 
 	int totalAlunos = 0, totalDemandas = 0, totalAlunoDemanda = 0;
 	int totalDemandasSP = 0, totalAlunoDemandaSP = 0;
@@ -4320,10 +4319,9 @@ std::string ProblemData::getUtilizacaoSalasFileName( int campusId, int prioridad
 
 void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, string MIP, int runtime )
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
-
+	
 	cout << "Imprimindo alocacao de alunos..." << endl;
 
 	int totalAtendimentos=0;
@@ -4616,9 +4614,8 @@ void ProblemData::imprimeDiscNTurmas( int campusId, int prioridade, int cjtAluno
 		}		
 	}
 
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
 
 	ofstream discTurmasFile;	
 	std::string discTurmasFileName( this->getDiscNTurmasFileName( campusId, prioridade, cjtAlunosId, heuristica, r, tatico ) );	
@@ -4901,9 +4898,8 @@ void ProblemData::imprimeFormandos()
 	if ( this->parametros->otimizarPor != "ALUNO" )
 		return;
 
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
 
 	ofstream formandosFile;
 	std::string formandosFilename( "alunosFormandos" );
@@ -4937,9 +4933,8 @@ void ProblemData::imprimeFormandos()
 
 void ProblemData::imprimeCombinacaoCredsDisciplinas()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
 
 	ofstream divCredFile;
 	std::string divFilename( "divCredsDisciplinas_input" );
@@ -5024,10 +5019,9 @@ void ProblemData::imprimeResumoDemandasPorAluno()
 	if ( this->parametros->otimizarPor != "ALUNO" )
 		return;
 	
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
-
+	
 	map< Aluno*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Aluno> > mapAlunoAlsDem;
 
 	ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemandaTotal, AlunoDemanda )
@@ -5137,9 +5131,8 @@ void ProblemData::imprimeResumoDemandasPorAlunoPosEquiv()
 	if ( this->parametros->otimizarPor != "ALUNO" )
 		return;
 
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
 
 	ofstream demandasFile;
 	std::string demandasFilename( "demandasAlunosPosEquiv_" );
@@ -5760,9 +5753,8 @@ void ProblemData::preencheMapParCalendHorariosDiaComuns()
 
 void ProblemData::imprimeAssociacaoDisciplinaSala()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
 
 	ofstream associacaoFile;
 	std::string associacaoFilename( "associacaoDiscSalas_" );
@@ -6074,9 +6066,9 @@ GGroup<int> ProblemData::alocacaoEquivViavelTurnosIES( Demanda *demanda, Discipl
 
 void ProblemData::imprimeUtilizacaoSala( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, string MIP )
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
+
 	std::cout<<"\nImprime utilizacao das salas...\n"; fflush(NULL);
 
 	ofstream utilizaSalasFile;

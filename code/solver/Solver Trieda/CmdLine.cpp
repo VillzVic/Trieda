@@ -86,6 +86,9 @@ void CmdLine::init()
    
    // Check if initial partial solution should be load
    checkLoadPartialSol();
+   
+   // Check if logs should be printed
+   checkPrintLogs();
 
    std::cout<<"\nid " << inputId_; fflush(0);
    std::cout<<"\npath " << path_; fflush(0);
@@ -230,6 +233,14 @@ void CmdLine::checkLoadPartialSol()
 		if (found)
 			CentroDados::setLoadPartialSol(true);
 	}
+}
+
+void CmdLine::checkPrintLogs()
+{
+	int idx = findArg( "-logs" );
+	bool found = (idx >= 0) && (idx < argc_);
+	if (found)
+		CentroDados::setPrintLogs(true);
 }
 
 // [HEURÍSTICA]
@@ -406,6 +417,9 @@ bool CmdLine::checkRelaxMinAlunos()
 // tenta carregar solução inicial caso tenha sido inserida
 bool CmdLine::loadSolucaoInicial( int &idx )
 {
+	if (!checkExecHeuristica())
+		return false;
+
 	HeuristicaNuno::logMsg("", 0);
 	HeuristicaNuno::logMsg("Tentar carregar solucao inicial", 0);
 
@@ -420,7 +434,7 @@ bool CmdLine::loadSolucaoInicial( int &idx )
 	++idx;
 	if(idx >= argc_ )
 	{
-		HeuristicaNuno::warning("main::loadSolucaoInicial", "Path nao inserido depois de load");
+		HeuristicaNuno::warning("CmdLine::loadSolucaoInicial", "Path nao inserido depois de load");
 		return false;
 	}
 

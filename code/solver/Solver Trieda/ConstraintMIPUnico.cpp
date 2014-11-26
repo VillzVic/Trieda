@@ -66,6 +66,12 @@ ConstraintMIPUnico& ConstraintMIPUnico::operator = ( const ConstraintMIPUnico & 
    this->periodo = cons.getPeriodo();
    this->professor_ = cons.getProfessor();
    this->faseDoDia_ = cons.getFaseDoDia();
+   this->u_orig = cons.getUnidOrig();
+   this->u_dest = cons.getUnidDest();
+   this->u_atual = cons.getUnidAtual();
+   this->h_atual = cons.getHorarioAulaAtual();
+   this->h_dest = cons.getHorarioAulaDest();
+   this->h_orig = cons.getHorarioAulaOrig();
 
    return *this;
 }
@@ -149,13 +155,7 @@ bool ConstraintMIPUnico::operator < ( const ConstraintMIPUnico & cons ) const
 
    if ( E_MENOR( this->getDisciplina2(),cons.getDisciplina2() ) ) return true;
    if ( E_MENOR( cons.getDisciplina2(), this->getDisciplina2() ) ) return false;
-
-   /*if ( E_MENOR( this->getHorarioAulaInicial(), cons.getHorarioAulaInicial() ) ) return true;
-   if ( E_MENOR( cons.getHorarioAulaInicial(), this->getHorarioAulaInicial() ) ) return false;
-
-   if ( E_MENOR( this->getHorarioAulaFinal(), cons.getHorarioAulaFinal() ) ) return true;
-   if ( E_MENOR( cons.getHorarioAulaFinal(), this->getHorarioAulaFinal() ) ) return false;*/
-
+   
    if ( this->getDateTimeInicial() < cons.getDateTimeInicial() ) return true;
    if ( this->getDateTimeInicial() > cons.getDateTimeInicial() ) return false;
    
@@ -173,9 +173,35 @@ bool ConstraintMIPUnico::operator < ( const ConstraintMIPUnico & cons ) const
    
    if (this->getFaseDoDia() < cons.getFaseDoDia()) return true;
    if (this->getFaseDoDia() > cons.getFaseDoDia()) return false;
+   
+   if (E_MENOR(this->getUnidOrig(),cons.getUnidOrig())) return true;
+   if (E_MENOR(cons.getUnidOrig(), this->getUnidOrig())) return false;
+   
+   if (E_MENOR(this->getUnidDest(),cons.getUnidDest())) return true;
+   if (E_MENOR(cons.getUnidDest(), this->getUnidDest())) return false;
+   
+   if (E_MENOR(this->getUnidAtual(),cons.getUnidAtual())) return true;
+   if (E_MENOR(cons.getUnidAtual(), this->getUnidAtual())) return false;
+   
+   if ( compLessHorarioAula( this->getHorarioAulaDest(), cons.getHorarioAulaDest() ) ) return true;
+   if ( compLessHorarioAula( cons.getHorarioAulaDest(), this->getHorarioAulaDest() ) ) return false;
+   
+   if ( compLessHorarioAula( this->getHorarioAulaAtual(), cons.getHorarioAulaAtual() ) ) return true;
+   if ( compLessHorarioAula( cons.getHorarioAulaAtual(), this->getHorarioAulaAtual() ) ) return false;
 
+   if ( compLessHorarioAula( this->getHorarioAulaOrig(), cons.getHorarioAulaOrig() ) ) return true;
+   if ( compLessHorarioAula( cons.getHorarioAulaOrig(), this->getHorarioAulaOrig() ) ) return false;
+      
    return false;
 
+}
+
+bool ConstraintMIPUnico::compLessHorarioAula( HorarioAula* h1, HorarioAula* h2 ) const
+{
+   if ( ( h1 == nullptr && h2 != nullptr) ||
+	   ( h2 != nullptr && h1 != nullptr && ( h1->comparaMenor(*h2) ) ) )
+		return true;
+   return false;
 }
 
 bool ConstraintMIPUnico::operator== (const ConstraintMIPUnico& cons) const
@@ -220,6 +246,13 @@ void ConstraintMIPUnico::reset()
    periodo = -1;
    professor_ = nullptr;
    faseDoDia_ = -1;
+   u_orig = nullptr;
+   u_dest = nullptr;
+   u_atual = nullptr;
+   h_orig = nullptr;
+   h_dest = nullptr;
+   h_atual = nullptr;
+   
 }
 
 std::string ConstraintMIPUnico::toString( int etapa )
@@ -349,8 +382,11 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_ALUNO_GAP"; break;	
 		
       case C_ALUNO_MIN_CREDS_DIA:
-        ss << "C_ALUNO_MIN_CREDS_DIA"; break;	
-		
+        ss << "C_ALUNO_MIN_CREDS_DIA"; break;		
+      case C_TEMPO_DESLOC_PROF:
+        ss << "C_TEMPO_DESLOC_PROF"; break;
+	  case C_NR_DESLOC_PROF:
+        ss << "C_NR_DESLOC_PROF"; break;	
 
    default:
       ss << "!";
@@ -512,6 +548,38 @@ std::string ConstraintMIPUnico::toString( int etapa )
    {
       ss << "_Fase" << faseDoDia_;
    }
+
+   if ( u_orig )
+   {
+      ss << "_uOrig" << u_orig->getId();
+   }
+     
+   if ( u_atual )
+   {
+      ss << "_uAtual" << u_atual->getId();
+   }
+
+   if ( u_dest )
+   {
+      ss << "_uDest" << u_dest->getId();
+   }
+
+   if ( h_orig )
+   {
+      ss << "_hOrig" << h_orig->getId();
+   }
+     
+   if ( h_atual )
+   {
+      ss << "_hAtual" << h_atual->getId();
+   }
+
+   if ( h_dest )
+   {
+      ss << "_hDest" << h_dest->getId();
+   }
+
+
 
    ss << "_}";
    std::string consName = "";

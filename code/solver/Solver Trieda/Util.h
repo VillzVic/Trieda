@@ -13,6 +13,6 @@ int minutosIntervalo( DateTime dt1, DateTime dt2 );
 
 // Returns if the lessons with the specified starting times overlap each other
 bool sobrepoem(Aula * const aula1, HorarioAula* const h1, Aula * const aula2, HorarioAula* const h2);
-
+bool sobrepoem(int nCreds1, HorarioAula* const h1, int nCreds2, HorarioAula* const h2);
 
 #endif

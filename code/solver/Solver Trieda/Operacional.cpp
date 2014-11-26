@@ -147,9 +147,10 @@ std::string Operacional::getSolucaoOpFileName( int etapa, int fase )
 
 void Operacional::writeOpSolBin( int type, double *xSol, int fase )
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	char solName[1024]="\0";
 
@@ -255,9 +256,10 @@ int Operacional::readOpSolBin( int type, double *xSol, int fase )
 
 void Operacional::writeOpSolTxt( int type, double *xSol, int fase )
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	char solName[1024]="\0";
 
@@ -1650,9 +1652,10 @@ int Operacional::solveGaranteTotalAtendHorInicial( bool& CARREGA_SOL_PARCIAL, do
 	lpNameGeral += "atendInic_";
 	lpNameGeral += string(lpName);
 
-	#ifdef PRINT_LOGS
-	lp->writeProbLP( lpNameGeral.c_str() );
-	#endif
+	if (CentroDados::getPrintLogs())
+	{
+		lp->writeProbLP( lpNameGeral.c_str() );
+	}
 				  				
 	lp->updateLP();
 		
@@ -1895,10 +1898,11 @@ int Operacional::solveFindNullSol(bool& CARREGA_SOL_PARCIAL, double *x, std::ofs
 
 	lp->setNumIntSols(1);
 
-	#ifdef PRINT_LOGS
+	if (CentroDados::getPrintLogs())
+	{
 		lp->writeProbLP( this->getOpLpFileName(0).c_str() );
-	#endif            
-            
+	}
+
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
@@ -2039,11 +2043,9 @@ int Operacional::solveMaxAtendUnico(bool& CARREGA_SOL_PARCIAL, double *x, std::o
 
 	lp->updateLP();
 
-	#ifdef PRINT_LOGS
-	lp->writeProbLP( this->getOpLpFileName(2).c_str() );		
-	#endif
+	if (CentroDados::getPrintLogs())
+		lp->writeProbLP( this->getOpLpFileName(2).c_str() );		
 	
-
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
@@ -2127,9 +2129,8 @@ int Operacional::solveMinVirtuais(bool& CARREGA_SOL_PARCIAL, double *x, std::ofs
 	}		
 	lp->updateLP();
 
-	#ifdef PRINT_LOGS
-	lp->writeProbLP( this->getOpLpFileName(3).c_str() );
-	#endif
+	if (CentroDados::getPrintLogs())
+		lp->writeProbLP( this->getOpLpFileName(3).c_str() );
 						
 	if ( CARREGA_SOL_PARCIAL )
 	{
@@ -2321,9 +2322,8 @@ int Operacional::solveMaxAtendPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *
 		lpNameGeral += "maxAtend" + sf + "_";
 		lpNameGeral += string(lpName);
 
-		#ifdef PRINT_LOGS
-		lp->writeProbLP( lpNameGeral.c_str() );
-		#endif
+		if (CentroDados::getPrintLogs())
+			lp->writeProbLP( lpNameGeral.c_str() );
 				  				
 		lp->updateLP();
 		
@@ -2569,9 +2569,8 @@ int Operacional::solveMinPVPorFasesDoDia( bool& CARREGA_SOL_PARCIAL, double *xS 
 		lpNameGeral += "minPV" + sf + "_";
 		lpNameGeral += string(lpName);
 
-		#ifdef PRINT_LOGS
-		lp->writeProbLP( lpNameGeral.c_str() );
-		#endif
+		if (CentroDados::getPrintLogs())
+			lp->writeProbLP( lpNameGeral.c_str() );
 							
 		#pragma region OTIMIZA OU CARREGA SOLUÇÃO PARA TODOS ALUNOS
 		if ( CARREGA_SOL_PARCIAL )
@@ -2706,9 +2705,8 @@ int Operacional::solveGeneral(bool& CARREGA_SOL_PARCIAL, double *xS, std::ofstre
 		std::cout<<"\nMaximo atendimento e Minimo prof virtual fixados e FO original\n\n";		
 	fflush(NULL);
 		
-	//#ifdef PRINT_LOGS
-	lp->writeProbLP( this->getOpLpFileName(-1).c_str() );
-	//#endif		
+	if (CentroDados::getPrintLogs())
+		lp->writeProbLP( this->getOpLpFileName(-1).c_str() );
 						
 	if ( CARREGA_SOL_PARCIAL )
 	{
@@ -10901,7 +10899,7 @@ int Operacional::criaRestricaoDeslocamentoProfessor()
 					DateTime inicio2;					
 					getFim1Inicio2(h1,nCreds1,h2,nCreds2,fim1,inicio2);
 
-					int tempo_interv = minutosIntervalo(fim1, inicio2);
+					int tempo_interv = minutosIntervalo(inicio2,fim1);
 					
 					if ( tempo_minimo > tempo_interv )
 					{

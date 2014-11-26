@@ -76,16 +76,17 @@ int Calendario::getNroDeHorariosAula(int dia)
 
 void Calendario::calculaProximosHorarioAula()
 {
-#ifdef PRINT_LOGS
 	std::ofstream outFile;
-	std::stringstream ssName;
-	ssName << "proximoHorarioCalendarios.txt";
-	outFile.open( ssName.str(), std::ios::app );
+	if (CentroDados::getPrintLogs())
+	{
+		std::stringstream ssName;
+		ssName << "proximoHorarioCalendarios.txt";
+		outFile.open( ssName.str(), std::ios::app );
 
-	outFile << "------------------------\n";
-	outFile << "Calendario " << this->getId() << std::endl << std::endl;
+		outFile << "------------------------\n";
+		outFile << "Calendario " << this->getId() << std::endl << std::endl;
+	}
 
-#endif
 	ITERA_GGROUP_LESSPTR( itHorarioAula, this->horarios_aula, HorarioAula )
 	{
 		HorarioAula *h = *itHorarioAula;
@@ -133,26 +134,28 @@ void Calendario::calculaProximosHorarioAula()
 			}
 		}
 
-#ifdef PRINT_LOGS
-		if (outFile )
+		if (CentroDados::getPrintLogs())	
 		{
-			outFile << h->getId() << "(" << h->getInicio() << ")  ->  ";
-			if ( proximoHor !=NULL ) 
-				outFile << proximoHor->getId() << "(" << proximoHor->getInicio() << ")\n" ;
-			else 
-				outFile << "NULL\n";
+			if (outFile )
+			{
+				outFile << h->getId() << "(" << h->getInicio() << ")  ->  ";
+				if ( proximoHor !=NULL ) 
+					outFile << proximoHor->getId() << "(" << proximoHor->getInicio() << ")\n" ;
+				else 
+					outFile << "NULL\n";
+			}
 		}
-#endif
 
 		mapProximoHorarioAula[h->getId()] = proximoHor;
 	}
 
-#ifdef PRINT_LOGS
-	if ( outFile )
+	if (CentroDados::getPrintLogs())
 	{
-		outFile.close();
+		if ( outFile )
+		{
+			outFile.close();
+		}
 	}
-#endif
 }
 
 

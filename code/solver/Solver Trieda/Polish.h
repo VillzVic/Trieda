@@ -74,6 +74,7 @@ private:
 	void setParams(double tempoIter);
 	void chgParams();
 	void setNewHeurFreq();
+	double getTempoCorrido();
 	bool needsPolish();
 	bool optimized();
 	bool infeasible();

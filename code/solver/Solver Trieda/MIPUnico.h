@@ -180,7 +180,8 @@ private:
 		int rhs, const int colHi, const int colHf, set< pair<int,double> > const &varsColCoef);
 
 	int criarRestricaoMinCredsDiaAluno();
-	int criaRestricaoDeslocamentoProfessor();
+	int criaRestricaoTempoDeslocProfessor();
+	int criaRestricaoNrMaxDeslocProfessor();
 
 
    /* 
@@ -188,10 +189,12 @@ private:
 								MAPS para organizar variaveis existentes e agilizar as restrições
    */
    
-	map< Campus*, map< Disciplina*, map< int /*turma*/, map< Professor*, map< int /*dia*/, map<DateTime /*dti*/, 
-		pair<int /*col*/, VariableMIPUnico> > >, LessPtr<Professor> > >, LessPtr<Disciplina> >, LessPtr<Campus> > vars_prof_aula1;	// k_{p,i,d,t,hi}
-	map< Professor*, map< int /*dia*/, map<DateTime /*dti*/, map< Campus*, map< Disciplina*, map< int /*turma*/,
-		pair<int /*col*/, VariableMIPUnico> >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Professor> > vars_prof_aula2;	// k_{p,i,d,t,hi}
+	map< Unidade*, map< Disciplina*, map< int /*turma*/, map< Professor*, map< int /*dia*/, map<DateTime /*dti*/, 
+		pair<int /*col*/, VariableMIPUnico> > >, LessPtr<Professor> > >, LessPtr<Disciplina> >, LessPtr<Unidade> > vars_prof_aula1;	// k_{p,i,d,u,t,hi}
+	map< Professor*, map< int /*dia*/, map<DateTime /*dti*/, map< Unidade*, map< Disciplina*, map< int /*turma*/,
+		pair<int /*col*/, VariableMIPUnico> >, LessPtr<Disciplina> >, LessPtr<Unidade> > > >, LessPtr<Professor> > vars_prof_aula2;	// k_{p,i,d,u,t,hi}
+	map< Professor*, map< int /*dia*/, map<Unidade*, map< HorarioAula*,
+		set< pair<int /*col*/,VariableMIPUnico> >, LessPtr<HorarioAula> >, LessPtr<Unidade> > >, LessPtr<Professor> > vars_prof_aula3;	// k_{p,i,d,u,t,hi}
 	
 	map< Aluno*, map< int /*dia*/, map<DateTime /*dti*/, map< Campus*, map< Disciplina*, map< int /*turma*/,
 		set< pair<int /*col*/, VariableMIPUnico> > >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Aluno> > vars_aluno_aula;		// v_{a,i,d,s,t,hi,hf}
@@ -222,12 +225,12 @@ private:
 	unordered_map< Campus*, unordered_map< Disciplina*, unordered_map< int /*turma*/, unordered_map< int /*dia*/,
 		map<DateTime /*dti*/, unordered_map<int /*col*/, VariableMIPUnico> > > > > > vars_turma_aula;								// x_{i,d,s,t,hi,hf}
 	
+	unordered_map< Unidade*, unordered_map< Disciplina*, unordered_map< int /*turma*/, unordered_map< int /*dia*/,
+		map<DateTime /*dti*/, unordered_map<int /*col*/, VariableMIPUnico> > > > > > vars_turma_aula2;								// x_{i,d,s,t,hi,hf}
+	
 	map< Campus*, map< Disciplina*, map< int /*turma*/,
 		pair<int /*col*/, VariableMIPUnico> >, LessPtr<Disciplina> >, LessPtr<Campus> > vars_abertura_turma;						// z_{i,d,cp}
-
-	map< Professor*, map< int /*dia*/, map<DateTime /*dti*/, map<DateTime /*dtf*/, map< Unidade*, 
-		set<pair<int /*col*/, VariableMIPUnico>>, LessPtr<Unidade> > > > >, LessPtr<Professor> > vars_w;							// w_{p,u,t,h}
-	
+		
 
    /* 
 		****************************************************************************************************************

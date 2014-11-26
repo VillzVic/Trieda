@@ -374,23 +374,7 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 		  return;
 	  }
 
-	  if (!melhorou_ && timeLimitReached())	// TIME LIMIT
-	  {
-		  tempoIter_ += 50;
-		  if (perc_ < 20)
-			 if(tempoIter_ > 300) tempoIter_ = 300;
-		  if (perc_ < 30)
-			 if(tempoIter_ > 250) tempoIter_ = 250;
-		  if (perc_ < 40)
-			 if(tempoIter_ > 180) tempoIter_ = 180;
-		  if (perc_ >= 40)
-			 if(tempoIter_ > 120) tempoIter_ = 120;
-
-		  chgParams();
-		  //setLpPrePasses();
-		  chgLpRootRelax();
-	  }
-	  else if (optimal() || gap <= 1.0)		// TINY GAP
+	  if (optimal() || gap <= 1.0)		// TINY GAP
 	  {
 		  updatePercAndTimeIterSmallGap( okIter, objN );
 	  }
@@ -442,14 +426,20 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 	{
 		chgParams(); 			  
 
-		if (!optimal())						// not optimal => time limit reached => increases time limit
+		if (timeLimitReached())				// time limit reached => increases time limit
 		{
 			int incremTime = 20;			// increases the time limit by a fixed amount
 			incremTime += (100-perc_)*0.3;	// increases the time limit the more perc_ is close to 0.
 			tempoIter_ += incremTime;
 
-			if (tempoIter_ > maxTempoIter_) 
-				tempoIter_ = maxTempoIter_;
+			if (perc_ < 20)
+				if(tempoIter_ > 300) tempoIter_ = 300;
+			if (perc_ < 30)
+				if(tempoIter_ > 250) tempoIter_ = 250;
+			if (perc_ < 40)
+				if(tempoIter_ > 180) tempoIter_ = 180;
+			if (perc_ >= 40)
+				if(tempoIter_ > 120) tempoIter_ = 120;
 		}
 	}
 }
@@ -495,9 +485,7 @@ void Polish::checkTimeLimit( bool &okIter )
 {
 	if ( okIter )
     {
-		tempoPol_.stop();
-		double tempoAtual = tempoPol_.getCronoTotalSecs();
-		tempoPol_.start();
+		double tempoAtual = getTempoCorrido();
 		if ( tempoAtual >= maxTime_ )
 		{
 			okIter = false;
@@ -577,6 +565,7 @@ void Polish::logIter(double perc_, double tempoIter_)
 		ss <<"---------------------------------------------------------------------------\n\n";
 		ss <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << tempoIter_;
 		ss << "\nheurFreq_ = " << heurFreq_;
+		ss << "\ntempo ja corrido = " << getTempoCorrido() << "\ttempo max = " << maxTime_;
 		printLog(ss.str());
 	}
 }
@@ -622,6 +611,7 @@ void Polish::setParams(double tempoIter_)
     lp_->setMIPEmphasis( 1 );
     lp_->setHeurFrequency( heurFreq_ );
 	lp_->setCuts(1);
+	lp_->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
 }
 
 void Polish::chgParams()
@@ -694,6 +684,14 @@ void Polish::checkFeasibility()
 		lp_->writeProbLP("infeasibleModelPolish");
 		throw ss.str();
 	}
+}
+
+double Polish::getTempoCorrido()
+{
+	tempoPol_.stop();
+	double tempoAtual = tempoPol_.getCronoTotalSecs();
+	tempoPol_.start();
+	return tempoAtual;
 }
 
 bool Polish::needsPolish()

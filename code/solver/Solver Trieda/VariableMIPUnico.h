@@ -44,7 +44,7 @@ public:
 	  V_SALA = 32,								// u_{s}
 
 	  V_PROF_TURMA = 33,						// y_{p,i,d,cp}
-	  V_PROF_AULA = 34,							// k_{p,i,d,cp,t,h}
+	  V_PROF_AULA = 34,							// k_{p,i,d,u,t,h}
 
 	  V_HI_PROFESSORES = 35,					// hip_{p,t,f}
 	  V_HF_PROFESSORES = 36,					// hfp_{p,t,f}

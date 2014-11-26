@@ -1859,9 +1859,11 @@ void ProblemSolution::verificaPossivelNovaTurma(
 {	
 	// ---------------------------------
 	// Saída com detalhes para análise interna
-	#ifdef PRINT_LOGS
-	ofstream outMotivosInternos( "infoExtraPossivelNovaTurm.txt", ios::app );
-	#endif
+	ofstream outMotivosInternos;
+	if (CentroDados::getPrintLogs())
+	{
+		outMotivosInternos.open( "infoExtraPossivelNovaTurm.txt", ios::app );
+	}
 	
 	// ---------------------------------
 	// Referencia para ProblemData
@@ -2027,7 +2029,8 @@ void ProblemSolution::verificaPossivelNovaTurma(
 						map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> >
 							*opcao = & semChoquesNaSala[opcaoIdx];
 										
-						#ifdef PRINT_LOGS	
+						if (CentroDados::getPrintLogs())
+						{
 						outMotivosInternos << "\n\n----------------------------------------------";
 						outMotivosInternos << "\nAnalise do nao atendimento do AlunoDemanda Id " << ad->getId();
 						outMotivosInternos << "\nPossivel nova turma " << strTurmaTipoCred 
@@ -2054,7 +2057,7 @@ void ProblemSolution::verificaPossivelNovaTurma(
 							if ( itAl->getAluno()->ehFormando() )
 								outMotivosInternos << " (formando)";
 						}
-						#endif
+						}
 					}
 				}
 
@@ -2117,9 +2120,10 @@ void ProblemSolution::verificaPossivelNovaTurma(
 		}
 	}
 
-	#ifdef PRINT_LOGS
-	outMotivosInternos.close();
-	#endif
+	if (CentroDados::getPrintLogs())
+	{
+		outMotivosInternos.close();
+	}
 }
 
 void ProblemSolution::verificaUsoDeProfsVirtuais()
@@ -2891,9 +2895,10 @@ void ProblemSolution::imprimeMapsDaSolucao()
 
 void ProblemSolution::imprimeMapSolDiscTurmaDiaAula()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	ofstream outFile;
 	string fileName("solDiscTurmaDiaAula.txt");
@@ -2972,9 +2977,10 @@ void ProblemSolution::imprimeMapSolDiscTurmaDiaAula()
 
 void ProblemSolution::imprimeMapSolAlunoDiaDiscAulas()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	ofstream outFile;
 	string fileName("solAlunoDiaDiscAulas.txt");
@@ -3000,9 +3006,10 @@ void ProblemSolution::imprimeMapSolAlunoDiaDiscAulas()
  
 void ProblemSolution::imprimeMapAlunoDiscTurmaCp()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	ofstream outFile;
 	string fileName("solAlunoDiscTurmaCp.txt");
@@ -3028,9 +3035,10 @@ void ProblemSolution::imprimeMapAlunoDiscTurmaCp()
 
 void ProblemSolution::imprimeMapSalaDiaHorariosVagos()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	ofstream outFile;
 	string fileName("solSalaDiaHorariosVagos.txt");
@@ -3074,9 +3082,10 @@ void ProblemSolution::imprimeMapSalaDiaHorariosVagos()
  
 void ProblemSolution::imprimeMapSolTurmaProfVirtualDiaAula()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	ofstream outFile;
 	string fileName("solTurmaProfVirtualDiaAula.txt");
@@ -3126,9 +3135,10 @@ void ProblemSolution::imprimeMapSolTurmaProfVirtualDiaAula()
  
 void ProblemSolution::imprimeMapSolProfRealDiaHorarios()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	ofstream outFile;
 	string fileName("solProfRealDiaHorariosAlocados.txt");
@@ -3171,9 +3181,10 @@ void ProblemSolution::imprimeMapSolProfRealDiaHorarios()
 
 void ProblemSolution::imprimeQuantChProfs()
 {
-	#ifndef PRINT_LOGS
+	if (!CentroDados::getPrintLogs())
+	{
 		return;
-	#endif
+	}
 
 	ofstream outFile;
 	string fileName("solQuantChProfs.txt");

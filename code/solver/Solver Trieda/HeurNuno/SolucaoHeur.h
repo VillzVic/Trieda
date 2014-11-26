@@ -136,9 +136,10 @@ public:
 				setOrd.insert(oferta);
 			}
 		}
-		#ifdef PRINT_LOGS
+	//	if (CentroDados::getPrintLogs())
+	//	{
 	//	imprimeOfertasDisc(setOrd,priorAluno);
-		#endif
+	//	}
 	}
 	// reordenar disciplinas
 	template<typename T>
@@ -160,9 +161,10 @@ public:
 		if(setOrd.size() != size)
 			HeuristicaNuno::excepcao("SolucaoHeur::reordenarOfertasDisciplina_", "Erro na copia!");
 
-		#ifdef PRINT_LOGS
+		//if (CentroDados::getPrintLogs())
+		//{
 		//imprimeOfertasDisc(setOrd,priorAluno);
-		#endif
+		//}
 	}
 
 	#pragma region [MÉTODOS DE VERIFICAÇÃO]

@@ -82,7 +82,9 @@ public:
 	  C_ALUNO_HOR_FIN_UB = 70,
 	  C_ALUNO_GAP = 71,
 
-	  C_ALUNO_MIN_CREDS_DIA = 72
+	  C_ALUNO_MIN_CREDS_DIA = 72,
+	  C_TEMPO_DESLOC_PROF = 73,
+	  C_NR_DESLOC_PROF = 74
 
    };
 
@@ -148,6 +150,14 @@ public:
    Professor* getProfessor() const { return professor_; }
    int getFaseDoDia() const { return faseDoDia_; }
 
+   Unidade * getUnidOrig() const { return u_orig; }
+   Unidade * getUnidDest() const { return u_dest; }
+   Unidade * getUnidAtual() const { return u_atual; }
+      
+   HorarioAula* getHorarioAulaOrig() const { return h_orig; }
+   HorarioAula* getHorarioAulaDest() const { return h_dest; }
+   HorarioAula* getHorarioAulaAtual() const { return h_atual; }
+
    //==================================================
    // SET METHODS 
    //==================================================
@@ -189,6 +199,16 @@ public:
    void setProfessor( Professor* p ) { professor_ = p; }
    void setFaseDoDia( int value ){ faseDoDia_ = value; }
 
+   void setUnidadeOrig( Unidade * uu ) {  u_orig = uu; }
+   void setUnidadeDest( Unidade * uu ) {  u_dest = uu; }
+   void setUnidadeAtual( Unidade * uu ) {  u_atual = uu; }
+
+   void setHorarioAulaOrig( HorarioAula * hh ) {  h_orig = hh; }
+   void setHorarioAulaDest( HorarioAula * hh ) {  h_dest = hh; }
+   void setHorarioAulaAtual( HorarioAula * hh ) {  h_atual = hh; }
+   
+   bool compLessHorarioAula( HorarioAula* h1, HorarioAula* h2 ) const;
+
 private:
 
    /** Attribute which defines the constraint type of the instance. */
@@ -198,9 +218,11 @@ private:
    Unidade* u;
    Sala* s;
    ConjuntoSala* cjtSalaCompart;
-
    ConjuntoSala* tps;
-
+   Unidade *u_orig;
+   Unidade *u_dest;
+   Unidade *u_atual;
+   
    int i; // Turma
    Curso* c;
 
@@ -224,6 +246,10 @@ private:
    std::pair<Oferta*, Oferta*> parOfts; // par de ofertas (restrição 1.2.36)
 
    HorarioAula* h;
+   
+   HorarioAula* h_orig;
+   HorarioAula* h_dest;
+   HorarioAula* h_atual;
    
    Aluno* aluno;
 

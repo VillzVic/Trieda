@@ -3064,9 +3064,8 @@ void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
 		}
     }
 
-   	#ifndef PRINT_LOGS
+   	if (!CentroDados::getPrintLogs())
 		return;
-	#endif
 		
    // ------------------------------------
 	// Imprime o mapDiscSubstituidaPor
@@ -5241,37 +5240,38 @@ void ProblemDataLoader::geraHorariosDia()
 	  }
    }
 
-	#ifdef PRINT_LOGS
-   ofstream outFileDiscHor;
-   outFileDiscHor.open( "DiscHor.txt", ios::out );
-   // Imprime horarios das discs para conferencia
-   ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
+   if (CentroDados::getPrintLogs())
    {
-	    Disciplina * disciplina = ( *itDisc );
-		outFileDiscHor << "\nDisciplina: " << disciplina->getId();
+	   ofstream outFileDiscHor;
+	   outFileDiscHor.open( "DiscHor.txt", ios::out );
+	   // Imprime horarios das discs para conferencia
+	   ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
+	   {
+			Disciplina * disciplina = ( *itDisc );
+			outFileDiscHor << "\nDisciplina: " << disciplina->getId();
 		
-		outFileDiscHor << "\n\tCalends originais associados: ";
-		GGroup< Calendario*, LessPtr<Calendario> > calendsOrig = disciplina->getCalendariosOriginais();
-		ITERA_GGROUP_LESSPTR( itCalend, calendsOrig, Calendario )
-		{
-			outFileDiscHor << "  " << itCalend->getId();
-		}
-		ITERA_GGROUP_LESSPTR( itHor, disciplina->horarios, Horario )
-		{
-			 Horario * horario = ( *itHor );
+			outFileDiscHor << "\n\tCalends originais associados: ";
+			GGroup< Calendario*, LessPtr<Calendario> > calendsOrig = disciplina->getCalendariosOriginais();
+			ITERA_GGROUP_LESSPTR( itCalend, calendsOrig, Calendario )
+			{
+				outFileDiscHor << "  " << itCalend->getId();
+			}
+			ITERA_GGROUP_LESSPTR( itHor, disciplina->horarios, Horario )
+			{
+				 Horario * horario = ( *itHor );
 			
-			 outFileDiscHor << "\n\tHorarioAula: " << horario->getHorarioAulaId()
-				 << ",   " << horario->horario_aula->getInicio()
-				 << " - " << horario->horario_aula->getFinal()
-				 << ",   " << horario->horario_aula->getCalendario()->getId() << "  - Dias ";
-			 ITERA_GGROUP_N_PT( itD, horario->dias_semana, int )
-			 {
-				 outFileDiscHor << " " << *itD;
-			 }
-		}
+				 outFileDiscHor << "\n\tHorarioAula: " << horario->getHorarioAulaId()
+					 << ",   " << horario->horario_aula->getInicio()
+					 << " - " << horario->horario_aula->getFinal()
+					 << ",   " << horario->horario_aula->getCalendario()->getId() << "  - Dias ";
+				 ITERA_GGROUP_N_PT( itD, horario->dias_semana, int )
+				 {
+					 outFileDiscHor << " " << *itD;
+				 }
+			}
+	   }
+	   outFileDiscHor.close();
    }
-   outFileDiscHor.close();
-	#endif
 }
 
 void ProblemDataLoader::relacionaProfessorDisciplinasAssociadas( void )
