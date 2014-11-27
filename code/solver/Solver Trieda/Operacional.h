@@ -107,25 +107,25 @@ private:
    int criaRestricaoProfessorDisciplinaUnicoPT( void );
    int criaRestricaoDisciplinaMesmoHorario( void );
    int criaRestricaoDisciplinaHorarioUnico( void );
-   int criaRestricaoDeslocamentoProfessor( void ); // x5
-   int criaRestricaoCalculaDiasProfMinistra_Min(); // x9
-   int criaRestricaoCalculaDiasProfMinistra_Max(); // x9
+   int criaRestricaoDeslocamentoProfessor( void );
+   int criaRestricaoNrMaxDeslocProfessor();
+   int criaRestricaoCalculaDiasProfMinistra_Min();
+   int criaRestricaoCalculaDiasProfMinistra_Max();
    int criaRestricaoMaxDiasSemanaProf(  );
    int criaRestricaoMinCredDiariosProf(  );
-   int criaRestricaoCargaHorariaMinimaProfessor( void ); // x10
-   int criaRestricaoAlocacaoProfessorCurso( void ); // x12
-   int criaRestricaoMinimoMestresCurso( void ); // x12
-   int criaRestricaoMinimoDoutoresCurso( void ); // x12
+   int criaRestricaoRedCargaHorAnteriorProfessor( void );
+   int criaRestricaoAlocacaoProfessorCurso( void );
+   int criaRestricaoMinimoMestresCurso( void );
+   int criaRestricaoMinimoDoutoresCurso( void );
    int criaRestricaoMaximoNaoMestresCurso();
    int criaRestricaoMaximoNaoDoutoresCurso();
-   int criaRestricaoDiscProfCurso(); // x13
-   int criaRestricaoMaxDiscProfCurso( void ); // x13
+   int criaRestricaoDiscProfCurso();
+   int criaRestricaoMaxDiscProfCurso( void );
    int criaRestricaoDiscProfOferta();
    int criaRestricaoMaxDiscProfPeriodoOferta();
    int criaRestricaoGaranteMinProfsPorCurso();
-   int criaRestricaoCargaHorariaMinimaProfessorSemana( void ); // x14
+   int criaRestricaoCargaHorariaMinimaProfessorSemana( void );
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void );
-   int criaRestricaoProfHorarioMultiUnid( void );
    int criaRestricaoCalculaNroProfsAlocadosCurso();
    int criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso();
    int criaRestricaoEstimaNroProfsVirtuaisMestresAlocadosCurso();

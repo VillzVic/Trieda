@@ -101,6 +101,7 @@ private:
    int criaVariavelWAPartirDeX();															// w_{p,u,t,h}
 
    int criarVariavelFolgaMinCredsDiaAluno();												// fcad_{a,t}
+   int criaVariavelFolgaCargaHorariaAnteriorProfessor();									// fch_{p}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -182,6 +183,7 @@ private:
 	int criarRestricaoMinCredsDiaAluno();
 	int criaRestricaoTempoDeslocProfessor();
 	int criaRestricaoNrMaxDeslocProfessor();
+	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 
    /* 

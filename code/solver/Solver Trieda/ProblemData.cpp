@@ -201,7 +201,7 @@ void ProblemData::defineFasesDosTurnos()
 		{
 			ITERA_GGROUP_LESSPTR( itHor, itTurnoIES->horarios_aula, HorarioAula )
 			{
-				if ( c->possuiHorario( *itHor ) )
+				if ( c->possuiHorario( *itHor ) && itHor->dias_semana.size()>0 )
 				{
 					mapCalendDateTime[ c ].add( itHor->getInicio() );
 				}

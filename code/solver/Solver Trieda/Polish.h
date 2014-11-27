@@ -60,6 +60,9 @@ private:
 	void updatePercAndTimeIter( bool &okIter, double objN, double gap );
 	void updatePercAndTimeIterSmallGap( bool &okIter, double objN );
 	void updatePercAndTimeIterBigGap( double objN );
+	void resetIterSemMelhora();
+	void checkIterSemMelhora();
+	void chgFixType();
 	void checkTimeWithoutImprov( bool &okIter, double objN );
 	void updateObj(double objN);
 	void checkTimeLimit(bool &okIter);
@@ -108,6 +111,7 @@ private:
 	   double melhora_;
 	   double runtime_;
 	   double timeLeft_;
+	   int nrIterSemMelhora_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
@@ -126,8 +130,8 @@ private:
 	   int fixType_;
 	   double maxTime_;
 	   double maxTempoSemMelhora_;
-	   double maxTempoIter_;
-
+	   int maxIterSemMelhora_; 
+	   
 	   // Solution
 	   double *xSol_;
 	   

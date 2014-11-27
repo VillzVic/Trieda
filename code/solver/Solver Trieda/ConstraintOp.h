@@ -41,7 +41,7 @@ public:
 	  C_DISC_PROF_CURSO2 = 23,
 	  C_MAX_DISC_PROF_CURSO = 24,
       C_AVALIACAO_CORPO_DOCENTE = 25,	  
-      C_DESLOC_PROF = 26,
+      C_TEMPO_DESLOC_PROF = 26,
       C_DESLOC_VIAVEL = 27,
       C_ULTIMA_PRIMEIRA_AULA_PROF = 28,
       C_GAPS_PROFESSORES = 29,
@@ -89,6 +89,8 @@ public:
       C_PROF_HOR_FIN_LB = 70,
 	  C_PROF_HOR_FIN_UB = 71,
 	  C_PROF_GAP = 72,
+
+	  C_NR_DESLOC_PROF = 73
    };
 
    /** Default constructor. */
@@ -153,6 +155,13 @@ public:
    DateTime * getDateTimeFinal() const { return dtf; }
    int getFaseDoDia() const { return faseDoDia_; }
    
+   Unidade * getUnidOrig() const { return u_orig; }
+   Unidade * getUnidDest() const { return u_dest; }
+   Unidade * getUnidAtual() const { return u_atual; }
+      
+   HorarioAula* getHorarioAulaOrig() const { return h_orig; }
+   HorarioAula* getHorarioAulaDest() const { return h_dest; }
+   HorarioAula* getHorarioAulaAtual() const { return h_atual; }
 
    //==================================================
    // SET METHODS 
@@ -193,6 +202,16 @@ public:
    void setDateTimeInicial( DateTime *dt ) { dti = dt; }
    void setDateTimeFinal( DateTime *dt ) { dtf = dt; }
    void setFaseDoDia( int value ){ faseDoDia_ = value; }
+   
+   void setUnidadeOrig( Unidade * uu ) {  u_orig = uu; }
+   void setUnidadeDest( Unidade * uu ) {  u_dest = uu; }
+   void setUnidadeAtual( Unidade * uu ) {  u_atual = uu; }
+
+   void setHorarioAulaOrig( HorarioAula * hh ) {  h_orig = hh; }
+   void setHorarioAulaDest( HorarioAula * hh ) {  h_dest = hh; }
+   void setHorarioAulaAtual( HorarioAula * hh ) {  h_atual = hh; }
+   
+   bool compLessHorarioAula( HorarioAula* h1, HorarioAula* h2 ) const;
 
 private:
    /** Attribute which defines the constraint type of the instance. */
@@ -218,6 +237,14 @@ private:
    int periodo;
    TipoContrato *contrato;
 
+   Unidade *u_orig;
+   Unidade *u_dest;
+   Unidade *u_atual;
+   
+   HorarioAula* h_orig;
+   HorarioAula* h_dest;
+   HorarioAula* h_atual;
+   
    // Horários de aula utilizados no modelo operacional,
    // no critério de minimização de gaps nos horários dos professores
    HorarioAula * h1;

@@ -54,6 +54,7 @@ public:
 	  V_FOLGA_GAP_PROF = 40,					// fpgap_{p,t}
 	  
 	  V_FOLGA_MIN_CRED_DIA_ALUNO = 41,			// fcad_{a,t}
+	  V_F_CARGA_HOR_ANT_PROF = 42				// fch_{p}
 	  	  
    };
 

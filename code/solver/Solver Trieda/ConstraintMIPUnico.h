@@ -84,8 +84,8 @@ public:
 
 	  C_ALUNO_MIN_CREDS_DIA = 72,
 	  C_TEMPO_DESLOC_PROF = 73,
-	  C_NR_DESLOC_PROF = 74
-
+	  C_NR_DESLOC_PROF = 74,
+	  C_CARGA_HOR_ANTERIOR = 75
    };
 
    /** Default constructor. */

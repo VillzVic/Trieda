@@ -6098,7 +6098,11 @@ int Operacional::criaVariavelFolgaCargaHorariaMinimaProfessor()
 {
    int num_vars = 0;
    double coeff = 10.0;
-   int ub = 168; // Total de horas da semana
+
+   if ( !problemData->parametros->evitar_reducao_carga_horaria_prof )
+   {
+      return num_vars;
+   }
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -6113,8 +6117,9 @@ int Operacional::criaVariavelFolgaCargaHorariaMinimaProfessor()
 
       if ( vHashOp.find( v ) == vHashOp.end() )
       {
-         v.setValue( 1.0 );
          vHashOp[ v ] = lp->getNumCols();
+
+		 int ub = (*it_prof)->getChAnterior();
 
          OPT_COL col( OPT_COL::VAR_INTEGRAL, coeff, 0.0, ub,
             ( char * )v.toString().c_str() );
@@ -7160,11 +7165,23 @@ int Operacional::criaRestricoesOperacional()
 	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-	std::cout << "numRest C_DESLOC_PROF: "
+	std::cout << "numRest C_TEMPO_DESLOC_PROF: "
 		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl; fflush(NULL);
 	numRestAnterior = restricoes;
 #endif
-	
+		
+	lp->updateLP();
+	timer.start();
+	restricoes += criaRestricaoNrMaxDeslocProfessor();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest C_NR_DESLOC_PROF: "
+		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl; fflush(NULL);
+	numRestAnterior = restricoes;
+#endif
+
 	/*
 	lp->updateLP();
 	timer.start();
@@ -7217,7 +7234,7 @@ int Operacional::criaRestricoesOperacional()
 
 	lp->updateLP();
 	timer.start();
-	restricoes += criaRestricaoCargaHorariaMinimaProfessor();
+	restricoes += criaRestricaoRedCargaHorAnteriorProfessor();
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7301,18 +7318,6 @@ int Operacional::criaRestricoesOperacional()
 
 #ifdef PRINT_cria_restricoes
 	std::cout << "numRest C_CARGA_HOR_MAX_PROF_SEMANA: "
-		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl; fflush(NULL);
-	numRestAnterior = restricoes;
-#endif
-	
-	lp->updateLP();
-	timer.start();
-//	restricoes += criaRestricaoProfHorarioMultiUnid();
-	timer.stop();
-	dif = timer.getCronoCurrSecs();
-
-#ifdef PRINT_cria_restricoes
-	std::cout << "numRest C_PROF_HORARIO_MULTIUNID: "
 		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl; fflush(NULL);
 	numRestAnterior = restricoes;
 #endif
@@ -9981,7 +9986,7 @@ int Operacional::criaRestricaoAlocacaoProfessorCurso()
 	return restricoes;
 }
 
-int Operacional::criaRestricaoCargaHorariaMinimaProfessor()
+int Operacional::criaRestricaoRedCargaHorAnteriorProfessor()
 {
    int restricoes = 0;
    int nnz = problemData->aulas.size();
@@ -10006,6 +10011,8 @@ int Operacional::criaRestricaoCargaHorariaMinimaProfessor()
    {
       Professor * professor = ( *it_prof );
 	        
+	  if (professor->eVirtual()) continue;
+
       c.reset();
       c.setType( ConstraintOp::C_CARGA_HOR_MIN_PROF );
       c.setProfessor( professor );
@@ -10808,6 +10815,9 @@ int Operacional::criaRestricaoGaranteMinProfsPorCurso()
 }
 
 /*
+	Garante um intervalo de tempo mínimo entre aulas de um mesmo professor
+	em um mesmo dia e em unidades ou campi distintos.
+
 	Para todo prof p, par de aulas a1 e a2 que ocorrem no mesmo dia, par de horarios h1 e h2, 
 	tal que o intervalo de tempo entre as aulas (a1,h1) e (a2,h2) seja menor
 	do que o tempo de deslocamento entre as unidades de a1 e a2.
@@ -10905,7 +10915,7 @@ int Operacional::criaRestricaoDeslocamentoProfessor()
 					{
 						ConstraintOp c;
 						c.reset();
-						c.setType( ConstraintOp::C_DESLOC_PROF );
+						c.setType( ConstraintOp::C_TEMPO_DESLOC_PROF );
 						c.setProfessor( professor );
 						c.setPar1AulaHor(v1.getAula(), h1);
 						c.setPar2AulaHor(v2.getAula(), h2);
@@ -10936,213 +10946,185 @@ int Operacional::criaRestricaoDeslocamentoProfessor()
 }
 
 /*
-	Garante um intervalo de tempo mínimo entre aulas de um mesmo professor
-	em um mesmo dia e em unidades distintas.
+	Para todo prof p, unidade u2, dia t, horario h2, 
+	
+	sum[i]sum[d]sum[s] x_{p,i,d,t,s,u1,h1} + sum[i]sum[d]sum[s] x_{p,i,d,t,s,u2,h2} + sum[i]sum[d]sum[s] x_{p,i,d,t,s,u3,h3} <= 2
+
+	tal que u1!=u2 e u3!=u2; h1<h2 e h3>h2.
 
 */
-int Operacional::criaRestricaoProfHorarioMultiUnid( void )
+int Operacional::criaRestricaoNrMaxDeslocProfessor()
 {
-	// todo: COMPARACAO DE HORARIO-DIA ESTA ERRADO! USAR DATETIME
+   int restricoes = 0;
+   char name[ 200 ];
 
-	int restricoes = 0;
-	int nnz;
-	char name[ 200 ];
+   if (!problemData->parametros->minimizar_desloc_prof)
+	   return restricoes;
+   
+   // Hash que armazena apenas as variáveis 'Xpah'
+   map<Professor*, map<int, map<Unidade*, map< HorarioAula*,
+	   set<pair<int,VariableOp>>, LessPtr<HorarioAula> >, LessPtr<Unidade> > >> hashXProfDia;
 
-	ConstraintOp c;
-	VariableOpHash::iterator vit;
-	ConstraintOpHash::iterator cit;
+   for (auto vit1 = vHashOp.begin(); vit1 != vHashOp.end(); vit1++ )
+   {
+      if ( vit1->first.getType() == VariableOp::V_X_PROF_AULA_HOR )
+      {
+		  VariableOp v = vit1->first;
+		  if ( v.getProfessor()->eVirtual() ) 
+			  continue;
 
-	map< Professor*, map< int, map< HorarioDia*, map< Aula*, vector< VariableOpHash::iterator >, 
-															 LessPtr< Aula > >,
-							                     LessPtr< HorarioDia > > >,
-					 LessPtr< Professor > > mapVariaveis;
+		  auto *auxMap = & hashXProfDia[v.getProfessor()][v.getDia()][v.getAula()->getUnidade()];
+			
+		  HorarioAula* h = v.getHorarioAula();
+		  int nCred = v.getAula()->getTotalCreditos();			  
+		  for (int k = 1; k <= nCred; k++)
+		  {
+			  if (!h)
+			  {
+				  CentroDados::printError("Operacional::criaRestricaoNrMaxDeslocProfessor()", "Horario null antes da hora!");
+				  break;
+			  }
+			  
+			  (*auxMap)[h].insert( make_pair(vit1->second, v) );
 
-	vit = vHashOp.begin();
-	while( vit != vHashOp.end() )
-	{
-		if( vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR && !vit->first.getProfessor()->eVirtual() )
-		{
-			VariableOp v = vit->first;
-			mapVariaveis[v.getProfessor()][v.getDia()][v.getHorario()][v.getAula()].push_back(vit);
-		}
+			  h = h->getCalendario()->getProximoHorario(h);
+		  }
+      }
+   }
 
-		vit++;
-	}
-
-	map< Professor*, map< int, map< HorarioDia*, map< Aula*, vector< VariableOpHash::iterator >, 
-		LessPtr< Aula > >, LessPtr< HorarioDia > > >, LessPtr< Professor > >::iterator it1 = mapVariaveis.begin();
-
-	for(; it1 != mapVariaveis.end(); it1++)
-	{
-		Professor *professor = it1->first;
-
-		map< int, map< HorarioDia*, map< Aula*, vector< VariableOpHash::iterator >, 
-				LessPtr< Aula > >, LessPtr< HorarioDia > > >::iterator it2 = it1->second.begin();
-
-		for(; it2 != it1->second.end(); it2++)
-		{
-			int dia = it2->first;
-
-			map< HorarioDia*, map< Aula*, vector< VariableOpHash::iterator >, 
-					LessPtr< Aula > >, LessPtr< HorarioDia > >::iterator it3 = it2->second.begin();
-
-			for(; it3 != it2->second.end(); it3++)
+   for( auto itProf = hashXProfDia.cbegin(); itProf != hashXProfDia.cend(); itProf++ )
+   {
+	   Professor * professor = itProf->first;
+	   
+	   for( auto itDia = itProf->second.cbegin(); itDia != itProf->second.cend(); itDia++ )
+	   {
+		    int dia = itDia->first;
+		   	   
+			// para cada unidade central
+			for( auto itUnidAtual = itDia->second.cbegin(); itUnidAtual != itDia->second.cend(); itUnidAtual++ )
 			{
-				HorarioDia *horControle = it3->first;
-				DateTime inicioControle = horControle->getHorarioAula()->getInicio();
+				Unidade *unidadeAtual = itUnidAtual->first;
 
-				map< HorarioDia*, map< Aula*, vector< VariableOpHash::iterator >, 
-							LessPtr< Aula > >, LessPtr< HorarioDia > >::iterator it4 = it2->second.begin();
-
-				for(; it4 != it2->second.end(); it4++)
+				// unidade origem != unidade atual
+				auto itUnidOrig = itDia->second.cbegin();
+				for( ; itUnidOrig != itDia->second.cend(); itUnidOrig++ )
 				{
-					HorarioDia *hor2 = it4->first;
-					DateTime inicio2 = hor2->getHorarioAula()->getInicio();
+					if (itUnidOrig==itUnidAtual) continue;
+					Unidade *unidadeOrig = itUnidOrig->first;
+					Campus* campusOrig = problemData->refCampus[ unidadeOrig->getIdCampus() ];
 
-					map< Aula*, vector< VariableOpHash::iterator >, 
-								LessPtr< Aula > >::iterator it5 = it3->second.begin();
-
-					for(; it5 != it3->second.end(); it5++)
+					// unidade destino != unidade atual
+					auto itUnidDest = itDia->second.cbegin();
+					for( ; itUnidDest != itDia->second.cend(); itUnidDest++ )
 					{
-						Aula *aula = it5->first;
+						if (itUnidDest==itUnidAtual) continue;
+						Unidade *unidadeDest = itUnidDest->first;
+						Campus* campusDest = problemData->refCampus[ unidadeDest->getIdCampus() ];
 
-						Unidade *unid = problemData->refUnidade[ aula->getSala()->getIdUnidade() ];
-						Campus *cp = problemData->retornaCampus( unid->getId() );
+						// Horario na unidade atual
+						for( auto itHorAtual = itUnidAtual->second.cbegin(); itHorAtual != itUnidAtual->second.cend(); itHorAtual++ )
+						{			
+							HorarioAula* hAtual = itHorAtual->first;
 
-						int tempoCred = aula->getDisciplina()->getTempoCredSemanaLetiva();
-						int nCred = aula->getTotalCreditos();
-						int duracaoAulaControle = tempoCred * nCred;
+							map< HorarioAula*, set< pair<int /*col*/,VariableOp> >, LessPtr<HorarioAula> >
+								mapHorsOrig;
+							map< HorarioAula*, set< pair<int /*col*/,VariableOp> >, LessPtr<HorarioAula> >
+								mapHorsDest;
 
-						c.reset();
-						c.setType( ConstraintOp::C_PROF_HORARIO_MULTIUNID );
-						c.setCampus( cp );
-						c.setUnidade( unid );
-						c.setProfessor( professor );
-						c.setDia( dia );
-						c.setHorarioAula( horControle->getHorarioAula() ); // Controle
-						c.setDuracaoAula( duracaoAulaControle ); // Controle
-						c.setH2( hor2->getHorarioAula() );
+							for( auto itHorOrig = itUnidOrig->second.cbegin(); itHorOrig != itUnidOrig->second.cend(); itHorOrig++ )
+							{			
+								HorarioAula* hOrig = itHorOrig->first;
 
-						cit = cHashOp.find( c );
+								// hOrig >= hAtual
+								if ( hAtual->comparaMenor(*hOrig) || hAtual->inicioFimIguais(*hOrig) )
+									continue;
 
-						if ( cHashOp.find( c ) == cHashOp.end() )
-						{
-							sprintf( name, "%s", c.toString().c_str() );
-							nnz = 100;
-							OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
-
-							bool inseriuUnidControle = false;
-							bool inseriuUnidDiferente = false;
-
-							map< Aula*, vector< VariableOpHash::iterator >, 
-										LessPtr< Aula > >::iterator it6 = it3->second.begin();
-
-							for(; it6 != it3->second.end(); it6++)
-							{
-								Aula *aula = it6->first;
-
-								Unidade *unidAula = problemData->refUnidade[ aula->getSala()->getIdUnidade() ];
-								Campus *cpAula = problemData->retornaCampus( unidAula->getId() );
-
-								if ( cpAula->getId() == cp->getId() &&
-									unidAula->getId() == unid->getId() )
-								{
-									Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio;
-									trio.set( cpAula->getId(), aula->getTurma(), aula->getDisciplina()->getId() );
-									GGroup< HorarioDia*, LessPtr< HorarioDia > > horariosDiaAula = problemData->mapTurma_HorComunsAosTurnosIES[trio];	
-									
-									if ( aula->getDiaSemana() != dia ||
-										horariosDiaAula.find( horControle ) == horariosDiaAula.end() )
-									{
-										continue;
-									}
-
-									int nCred = aula->getTotalCreditos();
-									int tempoCred = aula->getDisciplina()->getTempoCredSemanaLetiva();							
-									int aulaDuracao = tempoCred * nCred;
-
-									if ( aulaDuracao != duracaoAulaControle )
-									{
-										continue;
-									}
-
-									vector< VariableOpHash::iterator >::iterator it7 = it6->second.begin();
-									for(; it7 != it6->second.end(); it7++)
-									{
-										VariableOpHash::iterator vit = *it7;
-										row.insert(vit->second, 1.0);
-										inseriuUnidControle = true;
-									}
-								}
+								mapHorsOrig[itHorOrig->first] = itHorOrig->second;
 							}
 
-							it6 = it4->second.begin();
-
-							for(; it6 != it4->second.end(); it6++)
+							for( auto itHorDest = itUnidDest->second.cbegin(); itHorDest != itUnidDest->second.cend(); itHorDest++ )
 							{
-								Aula *aula = it6->first;
+								HorarioAula* hDest = itHorDest->first;
+																		
+								// hDest <= hAtual
+								if ( hDest->comparaMenor(*hAtual) || hDest->inicioFimIguais(*hAtual) )
+									continue;
 
-								Unidade *unidAula = problemData->refUnidade[ aula->getSala()->getIdUnidade() ];
-								Campus *cpAula = problemData->retornaCampus( unidAula->getId() );
+								mapHorsDest[itHorDest->first] = itHorDest->second;
+							}
+							
+							// Combina as duas unidades (origem e destino), que podem ser inclusive iguais,
+							// porém os horarios diferentes. A unidade atual é fixa.
+							for( auto itHorOrig = mapHorsOrig.cbegin(); itHorOrig != mapHorsOrig.cend(); itHorOrig++ )
+							{
+								HorarioAula* hOrig = itHorOrig->first;
 
-								if(! ( cpAula->getId() == cp->getId() &&
-									unidAula->getId() == unid->getId() ))
-								{
-									Trio< int /*campusId*/, int /*turma*/, int /*discId*/ > trio;
-									trio.set( cpAula->getId(), aula->getTurma(), aula->getDisciplina()->getId() );
-									GGroup< HorarioDia*, LessPtr< HorarioDia > > horariosDiaAula = problemData->mapTurma_HorComunsAosTurnosIES[trio];	
-									
-									if ( horariosDiaAula.find( hor2 ) == horariosDiaAula.end() ) // todo: nao precisa olhar 'dia' igual anteriormente?
-									{
-										continue;
-									}
+								for( auto itHorDest = mapHorsDest.cbegin(); itHorDest != mapHorsDest.cend(); itHorDest++ )
+								{							
+									HorarioAula* hDest = itHorDest->first;
 
-									int tempoCred = aula->getDisciplina()->getTempoCredSemanaLetiva();
-									int nCred = aula->getTotalCreditos();
-									int duracaoAula = tempoCred * nCred;
+									ConstraintOp c;
+									c.reset();
+									c.setType( ConstraintOp::C_NR_DESLOC_PROF );
+									c.setProfessor(professor);
+									c.setDia(dia);
+									c.setUnidadeOrig(unidadeOrig);
+									c.setUnidadeAtual(unidadeAtual);
+									c.setUnidadeDest(unidadeDest);
+									c.setHorarioAulaOrig(hOrig);
+									c.setHorarioAulaAtual(hAtual);		
+									c.setHorarioAulaDest(hDest);
 
-									int tempoMinDesloc = problemData->calculaTempoEntreCampusUnidades( cp, cpAula, unid, unidAula );
+									auto cit = cHashOp.find(c);
+									if ( cit == cHashOp.end() )
+									{				
+										sprintf( name, "%s", c.toString().c_str() );
 
-									DateTime fimControle = inicioControle;
-									fimControle.addMinutes( duracaoAulaControle + tempoMinDesloc );
+										int nnz = itHorOrig->second.size() + itHorDest->second.size();
+										OPT_ROW row( nnz, OPT_ROW::LESS, 2.0, name );
 
-									DateTime fim2 = inicio2;
-									fim2.addMinutes( duracaoAula + tempoMinDesloc );
-
-									if ( ( ( fim2 > inicioControle ) &&
-										( inicio2 < fimControle ) )										
-										||
-										( ( fimControle > inicio2 ) &&
-										( fimControle < fim2 ) ) )		// TODO: tem esse teste pro fim tb??
-									{
-										vector< VariableOpHash::iterator >::iterator it7 = it6->second.begin();
-										for(; it7 != it6->second.end(); it7++)
+										for( auto itVarAtual = itHorAtual->second.cbegin(); itVarAtual != itHorAtual->second.cend(); itVarAtual++ )
 										{
-											VariableOpHash::iterator vit = *it7;
-											row.insert(vit->second, 1.0);
-											inseriuUnidDiferente = true;
+											row.insert( itVarAtual->first, 1.0 );
 										}
-									}			
+										for( auto itVarOrig = itHorOrig->second.cbegin(); itVarOrig != itHorOrig->second.cend(); itVarOrig++ )
+										{
+											row.insert( itVarOrig->first, 1.0 );
+										}
+										for( auto itVarDest = itHorDest->second.cbegin(); itVarDest != itHorDest->second.cend(); itVarDest++ )
+										{	
+											row.insert( itVarDest->first, 1.0 );
+										}
+										lp->addRow( row );
+				  
+										cHashOp[ c ] = lp->getNumRows();
+										restricoes++;								
+									}
+									else
+									{
+										for( auto itVarAtual = itHorAtual->second.cbegin(); itVarAtual != itHorAtual->second.cend(); itVarAtual++ )
+										{
+											lp->chgCoef( cit->second, itVarAtual->first, 1.0 );
+										}
+										for( auto itVarOrig = itHorOrig->second.cbegin(); itVarOrig != itHorOrig->second.cend(); itVarOrig++ )
+										{
+											lp->chgCoef( cit->second, itVarOrig->first, 1.0 );
+										}
+										for( auto itVarDest = itHorDest->second.cbegin(); itVarDest != itHorDest->second.cend(); itVarDest++ )
+										{	
+											lp->chgCoef( cit->second, itVarDest->first, 1.0 );
+										}				
+									}
 								}
-							}
-
-							if ( inseriuUnidControle && inseriuUnidDiferente )
-							{
-								cHashOp[ c ] = lp->getNumRows();
-								lp->addRow( row );
-								restricoes++;
 							}
 						}
 					}
 				}
 			}
-		}
-	}
-
-	if (restricoes)
-		std::cout << "\nATENCAO: Conferir essa restricao de multi-unidade. Comparacao de horarios ta ok?\n";
-
-	return restricoes;
+	   }
+   }
+   
+   return restricoes;
 }
 
 int Operacional::criaRestricaoCalculaNroProfsAlocadosCurso()

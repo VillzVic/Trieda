@@ -3603,6 +3603,16 @@ int MIPUnico::criaVariaveisTatico( int campusId, int P, int r )
 	std::cout << "numVars \"fcad\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
 	numVarsAnterior = num_vars;
 			
+	
+   timer.start();
+	std::cout << "Criando \"fch\": ";fflush(NULL);				// fch_{p}
+   num_vars += this->criaVariavelFolgaCargaHorariaAnteriorProfessor();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	std::cout << "numVars \"fch\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
+	numVarsAnterior = num_vars;
+			
+	
 
 	lp->updateLP();
 
@@ -6694,6 +6704,40 @@ int MIPUnico::criarVariavelFolgaMinCredsDiaAluno()
 	return numVars;
 }
 
+// fch_{p}
+int MIPUnico::criaVariavelFolgaCargaHorariaAnteriorProfessor()
+{
+   int num_vars = 0;
+   double coeff = 10.0;
+
+   if ( !problemData->parametros->evitar_reducao_carga_horaria_prof )
+      return num_vars;
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      VariableMIPUnico v;
+      v.reset();
+      v.setType( VariableMIPUnico::V_F_CARGA_HOR_ANT_PROF );
+      v.setProfessor( *it_prof );
+
+      if ( vHashTatico.find( v ) == vHashTatico.end() )
+      {
+         vHashTatico[ v ] = lp->getNumCols();
+		 
+		 int ub = (*it_prof)->getChAnterior();
+
+		 OPT_COL col( OPT_COL::VAR_CONTINUOUS, coeff, 0.0, ub,
+            ( char * )v.toString().c_str() );
+
+         lp->newCol( col );
+         num_vars++;
+      }
+   }
+
+   return num_vars;
+}
 
 
 /* ----------------------------------------------------------------------------------
@@ -14001,3 +14045,63 @@ int MIPUnico::criaRestricaoNrMaxDeslocProfessor()
    
    return restricoes;
 }
+
+
+int MIPUnico::criaRestricaoRedCargaHorAnteriorProfessor()
+{
+   int restricoes = 0;
+   char name[ 200 ];
+
+   if ( !problemData->parametros->evitar_reducao_carga_horaria_prof )
+      return restricoes;
+
+   double percMaxReducaoCHP = problemData->parametros->perc_max_reducao_CHP;
+     
+   for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
+   {	   
+	   VariableMIPUnico v = vit->first;
+
+	   if (v.getType() != VariableMIPUnico::V_PROF_TURMA &&
+		   v.getType() != VariableMIPUnico::V_F_CARGA_HOR_ANT_PROF)
+		   continue;
+	          
+	   Professor * professor = v.getProfessor();
+	        
+	   if (professor->eVirtual()) continue;
+
+	   double coef = 0;	   
+	   if (v.getType() == VariableMIPUnico::V_PROF_TURMA)
+		   coef = v.getDisciplina()->getTotalCreditos();
+	   if (v.getType() == VariableMIPUnico::V_F_CARGA_HOR_ANT_PROF)
+		   coef = 1.0;
+
+	   ConstraintMIPUnico c;
+       c.reset();
+       c.setType( ConstraintMIPUnico::C_CARGA_HOR_ANTERIOR );
+       c.setProfessor( professor );
+
+       auto cit = cHashTatico.find( c );
+       if ( cit == cHashTatico.end() )
+       {
+			sprintf( name, "%s", c.toString(etapa).c_str() );
+			double rhs = professor->getChAnterior() * ( 1 - percMaxReducaoCHP/100 );
+			
+			int nnz = professor->magisterio.size();
+
+			OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+
+			row.insert( vit->second, coef );
+		     
+			cHashTatico[ c ] = lp->getNumRows();
+			lp->addRow( row );
+			restricoes++;
+       }
+	   else
+	   {
+		   lp->chgCoef( cit->second, vit->second, coef);
+	   }
+   }
+
+   return restricoes;
+}
+

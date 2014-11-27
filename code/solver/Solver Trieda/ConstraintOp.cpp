@@ -55,6 +55,12 @@ ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
    this->periodo = cons.getPeriodo();
    this->contrato = cons.getContrato();
    this->faseDoDia_ = cons.getFaseDoDia();
+   this->u_orig = cons.getUnidOrig();
+   this->u_dest = cons.getUnidDest();
+   this->u_atual = cons.getUnidAtual();
+   this->h_atual = cons.getHorarioAulaAtual();
+   this->h_dest = cons.getHorarioAulaDest();
+   this->h_orig = cons.getHorarioAulaOrig();
 
    return *this;
 }
@@ -531,6 +537,34 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
    if (this->getFaseDoDia() > cons.getFaseDoDia())
 	   return false;
 
+   
+   if (E_MENOR(this->getUnidOrig(),cons.getUnidOrig())) return true;
+   if (E_MENOR(cons.getUnidOrig(), this->getUnidOrig())) return false;
+   
+   if (E_MENOR(this->getUnidDest(),cons.getUnidDest())) return true;
+   if (E_MENOR(cons.getUnidDest(), this->getUnidDest())) return false;
+   
+   if (E_MENOR(this->getUnidAtual(),cons.getUnidAtual())) return true;
+   if (E_MENOR(cons.getUnidAtual(), this->getUnidAtual())) return false;
+   
+   if ( compLessHorarioAula( this->getHorarioAulaDest(), cons.getHorarioAulaDest() ) ) return true;
+   if ( compLessHorarioAula( cons.getHorarioAulaDest(), this->getHorarioAulaDest() ) ) return false;
+   
+   if ( compLessHorarioAula( this->getHorarioAulaAtual(), cons.getHorarioAulaAtual() ) ) return true;
+   if ( compLessHorarioAula( cons.getHorarioAulaAtual(), this->getHorarioAulaAtual() ) ) return false;
+
+   if ( compLessHorarioAula( this->getHorarioAulaOrig(), cons.getHorarioAulaOrig() ) ) return true;
+   if ( compLessHorarioAula( cons.getHorarioAulaOrig(), this->getHorarioAulaOrig() ) ) return false;
+
+
+   return false;
+}
+
+bool ConstraintOp::compLessHorarioAula( HorarioAula* h1, HorarioAula* h2 ) const
+{
+   if ( ( h1 == nullptr && h2 != nullptr) ||
+	   ( h2 != nullptr && h1 != nullptr && ( h1->comparaMenor(*h2) ) ) )
+		return true;
    return false;
 }
 
@@ -587,6 +621,12 @@ void ConstraintOp::reset()
    this->periodo = -1;
    this->contrato = NULL;
    this->faseDoDia_ = -1;
+   this->u_orig = nullptr;
+   this->u_dest = nullptr;
+   this->u_atual = nullptr;
+   this->h_orig = nullptr;
+   this->h_dest = nullptr;
+   this->h_atual = nullptr;
 }
 
 std::string ConstraintOp::toString()
@@ -651,8 +691,8 @@ std::string ConstraintOp::toString()
 		  ss << "C_MAX_DISC_PROF_CURSO"; break;
 	   case C_AVALIACAO_CORPO_DOCENTE:
 		  ss << "C_AVALIACAO_CORPO_DOCENTE"; break;
-	   case C_DESLOC_PROF:
-		  ss << "C_DESLOC_PROF"; break;
+	   case C_TEMPO_DESLOC_PROF:
+		  ss << "C_TEMPO_DESLOC_PROF"; break;
 	   case C_DESLOC_VIAVEL:
 		  ss << "C_DESLOC_VIAVEL"; break;
 	   case C_ULTIMA_PRIMEIRA_AULA_PROF:
@@ -736,6 +776,9 @@ std::string ConstraintOp::toString()
         ss << "C_PROF_HOR_FIN_UB"; break;	
       case C_PROF_GAP:
         ss << "C_PROF_GAP"; break;	
+
+	  case C_NR_DESLOC_PROF:
+        ss << "C_NR_DESLOC_PROF"; break;				
 
 	   default:
 		  ss << "!";
@@ -910,6 +953,36 @@ std::string ConstraintOp::toString()
    if ( faseDoDia_ >= 0 )
    {
       ss << "_Fase" << faseDoDia_;
+   }
+
+   if ( u_orig )
+   {
+      ss << "_uOrig" << u_orig->getId();
+   }
+     
+   if ( u_atual )
+   {
+      ss << "_uAtual" << u_atual->getId();
+   }
+
+   if ( u_dest )
+   {
+      ss << "_uDest" << u_dest->getId();
+   }
+
+   if ( h_orig )
+   {
+      ss << "_hOrig" << h_orig->getId();
+   }
+     
+   if ( h_atual )
+   {
+      ss << "_hAtual" << h_atual->getId();
+   }
+
+   if ( h_dest )
+   {
+      ss << "_hDest" << h_dest->getId();
    }
 
    ss << "_}";

@@ -283,6 +283,8 @@ std::string VariableMIPUnico::toString() const
        str <<"fpgap"; break;
     case V_FOLGA_MIN_CRED_DIA_ALUNO:
        str <<"fcad"; break;
+    case V_F_CARGA_HOR_ANT_PROF:
+       str <<"fch"; break;
 	   	   
     default:
         str << "!";

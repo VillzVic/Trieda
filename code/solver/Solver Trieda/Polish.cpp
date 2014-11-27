@@ -17,8 +17,8 @@ double MIN_OPT_VALUE = 0.0;
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile )
 	: lp_(lp), vHashTatico_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0), maxTempoIter_(250),
-	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::TATICO)
+	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(2),
+	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::TATICO), fixType_(2)
 {
 	originalLogFileName_ = originalLogFile;
 	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
@@ -26,8 +26,8 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile )
 	: lp_(lp), vHashOp_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0), maxTempoIter_(250),
-	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::OPERACIONAL)
+	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(2),
+	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::OPERACIONAL), fixType_(2)
 {
 	originalLogFileName_ = originalLogFile;
 	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
@@ -69,7 +69,7 @@ void Polish::init()
 		fixType_ = 2;
 
 	// Constants
-	tempoIni_ = 50;
+	tempoIni_ = 70;
 
 	// Init values
 	tempoIter_ = tempoIni_;
@@ -221,7 +221,8 @@ void Polish::fixVarsType1()
     int nBds = 0;
     for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
     {
-        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
+        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )//|| 
+			 //vit->first.getType() == VariableMIPUnico::V_PROF_AULA )
         {
 			std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
 			if ( paraFixarUm_.find(auxPair) != paraFixarUm_.end() )
@@ -258,7 +259,8 @@ void Polish::fixVarsType2Tatico()
     int nBds = 0;
     for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
     {
-        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
+        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS || 
+			 vit->first.getType() == VariableMIPUnico::V_PROF_AULA )
         {
 			if ( rand() % 100 >= perc_  )
 			{
@@ -386,6 +388,8 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 
 void Polish::updatePercAndTimeIterSmallGap( bool &okIter, double objN )
 {
+	resetIterSemMelhora();
+
 	if (fabs(objN-MIN_OPT_VALUE) < 10e-6)	// Obj acchieved a known minimal possible value
 	{
 		okIter = false;						// optimal!
@@ -424,24 +428,55 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 {
 	if (!melhorou_ && perc_>0)
 	{
-		chgParams(); 			  
+		checkIterSemMelhora();
 
+		chgParams(); 			  
+				
 		if (timeLimitReached())				// time limit reached => increases time limit
-		{
+		{		
 			int incremTime = 20;			// increases the time limit by a fixed amount
-			incremTime += (100-perc_)*0.3;	// increases the time limit the more perc_ is close to 0.
+			incremTime += (100-perc_)*0.2;	// increases the time limit the more perc_ is close to 0.
 			tempoIter_ += incremTime;
 
-			if (perc_ < 20)
-				if(tempoIter_ > 300) tempoIter_ = 300;
-			if (perc_ < 30)
+			if (perc_ >= 10 && perc_ < 20){
+				if(tempoIter_ > 350) tempoIter_ = 350;
+			}
+			else if (perc_ < 30){
 				if(tempoIter_ > 250) tempoIter_ = 250;
-			if (perc_ < 40)
+			}
+			else if (perc_ >= 30){
 				if(tempoIter_ > 180) tempoIter_ = 180;
-			if (perc_ >= 40)
-				if(tempoIter_ > 120) tempoIter_ = 120;
+			}
 		}
 	}
+	else heurFreq_ = 0.5;
+}
+
+void Polish::resetIterSemMelhora()
+{
+	nrIterSemMelhora_=0;
+}
+
+void Polish::checkIterSemMelhora()
+{
+	if (!optimal())
+	{
+		nrIterSemMelhora_++;
+		if (nrIterSemMelhora_ >	maxIterSemMelhora_)
+		{
+			//chgFixType();
+			heurFreq_ = 1.0;
+		}
+	}
+}
+
+void Polish::chgFixType()
+{
+	if (module_==Polish::TATICO)
+		fixType_ = (fixType_ == 1 ? 2:1);	// alternate fixType
+	
+	if (module_==Polish::OPERACIONAL)
+		fixType_ = 2;
 }
 
 void Polish::checkTimeWithoutImprov( bool &okIter, double objN )
@@ -517,7 +552,8 @@ void Polish::unfixBoundsTatico()
       for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
       {
          if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS || 
-			  vit->first.getType() == VariableMIPUnico::V_ABERTURA )
+			  vit->first.getType() == VariableMIPUnico::V_ABERTURA || 
+			  vit->first.getType() == VariableMIPUnico::V_PROF_AULA )
          {
             idxs_[nBds] = vit->second;
             vals_[nBds] = ubVars_[vit->second];
@@ -565,7 +601,8 @@ void Polish::logIter(double perc_, double tempoIter_)
 		ss <<"---------------------------------------------------------------------------\n\n";
 		ss <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << tempoIter_;
 		ss << "\nheurFreq_ = " << heurFreq_;
-		ss << "\ntempo ja corrido = " << getTempoCorrido() << "\ttempo max = " << maxTime_;
+		ss << "\nfixType_ = " << fixType_;
+		ss << "\ntempo ja corrido = " << getTempoCorrido() << "\ttempo max = " << maxTime_ << endl;
 		printLog(ss.str());
 	}
 }
@@ -608,15 +645,19 @@ void Polish::setParams(double tempoIter_)
   	lp_->setNumIntSols(10000000);
     lp_->setTimeLimit( tempoIter_ );
     lp_->setMIPRelTol( 0.1 );
-    lp_->setMIPEmphasis( 1 );
+    lp_->setMIPEmphasis( 1 );					// 1 = find better solutions
     lp_->setHeurFrequency( heurFreq_ );
-	lp_->setCuts(1);
+	lp_->setCuts(2);
+	lp_->setCliqueCuts(2);
+	lp_->setMIRCuts(2);
 	lp_->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
 }
 
 void Polish::chgParams()
 {
-	setNewHeurFreq();
+	//setNewHeurFreq();
+	if (perc_ <= 30)
+		lp_->setMIPEmphasis(2);					// 2 = prove optimality
 
     lp_->setHeurFrequency( heurFreq_ );
 	lp_->setCuts(2);
