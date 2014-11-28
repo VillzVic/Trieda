@@ -17,7 +17,7 @@ double MIN_OPT_VALUE = 0.0;
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile )
 	: lp_(lp), vHashTatico_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(2),
+	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
 	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::TATICO), fixType_(2)
 {
 	originalLogFileName_ = originalLogFile;
@@ -26,7 +26,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile )
 	: lp_(lp), vHashOp_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(2),
+	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
 	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::OPERACIONAL), fixType_(2)
 {
 	originalLogFileName_ = originalLogFile;
@@ -72,7 +72,7 @@ void Polish::init()
 	tempoIni_ = 70;
 
 	// Init values
-	tempoIter_ = tempoIni_;
+	timeIter_ = tempoIni_;
 	perc_ = 0;
     status_ = 0;
     objAtual_ = 999999999999.9;
@@ -119,7 +119,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		polishing = false;
 	}
 
-	setParams(tempoIter_);
+	setParams(timeIter_);
 
     while (okIter)
     {     
@@ -133,7 +133,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 			fixVarsType2();
 		}
 
-		logIter( perc_, tempoIter_ );
+		logIter( perc_, timeIter_ );
 
 		optimize();
 
@@ -331,13 +331,13 @@ void Polish::fixVarsType2Op()
 
 void Polish::optimize()
 {
-    lp_->setTimeLimit( tempoIter_ );
+    lp_->setTimeLimit( timeIter_ );
     lp_->copyMIPStartSol( lp_->getNumCols(), idxSol_, xSol_ );
     lp_->updateLP();
     status_ = lp_->optimize( METHOD_MIP );
 	
 	runtime_ = (lp_->getRunTime());
-	timeLeft_ = fabs(tempoIter_-runtime_);
+	timeLeft_ = fabs(timeIter_-runtime_);
 
 	checkFeasibility();
 }
@@ -403,7 +403,7 @@ void Polish::updatePercAndTimeIterSmallGap( bool &okIter, double objN )
 	else
 	{		
 		int percToSubtract = 0;
-		if(optimal() && timeLeft_>0.7*tempoIter_)
+		if(optimal() && timeLeft_>0.7*timeIter_)
 			percToSubtract = 10;			// decrease the fixed portion if it was easy (fast) to solve
 		else if(!melhorou_)
 			percToSubtract = 10;			// decrease the fixed portion if no improvement was made
@@ -411,17 +411,9 @@ void Polish::updatePercAndTimeIterSmallGap( bool &okIter, double objN )
 		perc_ -= percToSubtract;
 		
 		if (perc_<0) perc_ = 0;
-
-		if (perc_==0) tempoIter_ *= 2;		// next iteration will be the last one
 	}
 
-	if (melhorou_)
-	{
-		// Adjust time limit in case it is too high
-		double minExcess = max( 0.5*tempoIter_, 50 );
-		if ( timeLeft_ > minExcess )
-			tempoIter_ = runtime_+minExcess;
-	}
+	adjustTime();
 }
 
 void Polish::updatePercAndTimeIterBigGap( double objN )
@@ -432,24 +424,50 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 
 		chgParams(); 			  
 				
-		if (timeLimitReached())				// time limit reached => increases time limit
-		{		
-			int incremTime = 20;			// increases the time limit by a fixed amount
-			incremTime += (100-perc_)*0.2;	// increases the time limit the more perc_ is close to 0.
-			tempoIter_ += incremTime;
+		adjustTime();
 
-			if (perc_ >= 10 && perc_ < 20){
-				if(tempoIter_ > 350) tempoIter_ = 350;
-			}
-			else if (perc_ < 30){
-				if(tempoIter_ > 250) tempoIter_ = 250;
-			}
-			else if (perc_ >= 30){
-				if(tempoIter_ > 180) tempoIter_ = 180;
-			}
-		}
+		checkEndDueToIterSemMelhora();
 	}
 	else heurFreq_ = 0.5;
+}
+
+void Polish::adjustTime()
+{
+	if (!melhorou_ && timeLimitReached())
+		increaseTime();			// time limit reached => increases time limit
+	
+	if (melhorou_)
+		decreaseTime();			// Adjust time limit in case it is too high
+}
+
+void Polish::increaseTime()
+{
+	int incremTime = 20;			// increases the time limit by a fixed amount
+	incremTime += (100-perc_)*0.2;	// increases the time limit the more perc_ is close to 0.
+	timeIter_ += incremTime;
+
+	if (perc_ >= 10 && perc_ < 20){
+		if(timeIter_ > 350) timeIter_ = 350;
+	}
+	else if (perc_ < 30){
+		if(timeIter_ > 250) timeIter_ = 250;
+	}
+	else if (perc_ >= 30){
+		if(timeIter_ > 180) timeIter_ = 180;
+	}
+}
+
+void Polish::decreaseTime()
+{
+	if (perc_==0)
+		timeIter_ = getLeftTime();		// next iteration will be the last one
+	else
+	{
+		// Adjust time limit in case it is too high
+		double minExcess = max( 0.5*timeIter_, 50 );
+		if ( timeLeft_ > minExcess )
+			timeIter_ = runtime_+minExcess;
+	}
 }
 
 void Polish::resetIterSemMelhora()
@@ -459,13 +477,26 @@ void Polish::resetIterSemMelhora()
 
 void Polish::checkIterSemMelhora()
 {
-	if (!optimal())
+	if (!optimal() && !melhorou_)
 	{
 		nrIterSemMelhora_++;
-		if (nrIterSemMelhora_ >	maxIterSemMelhora_)
+	}
+}
+
+void Polish::checkEndDueToIterSemMelhora()
+{
+	if (nrIterSemMelhora_ >	maxIterSemMelhora_)
+	{
+		if (perc_ <= 30)
 		{
-			//chgFixType();
-			heurFreq_ = 1.0;
+			heurFreq_ = 0.8;
+			perc_ = 0;
+			timeIter_ = getLeftTime();
+
+			stringstream ss;
+			ss << "\nSetting perc = 0 due to no change of best solution for more than " << maxIterSemMelhora_ 
+				<<  " iterations. Lp will be 100% free at next iteration and time will be the total left time.";
+			printLog(ss.str());
 		}
 	}
 }
@@ -520,7 +551,7 @@ void Polish::checkTimeLimit( bool &okIter )
 {
 	if ( okIter )
     {
-		double tempoAtual = getTempoCorrido();
+		double tempoAtual = getTotalElapsedTime();
 		if ( tempoAtual >= maxTime_ )
 		{
 			okIter = false;
@@ -592,17 +623,17 @@ void Polish::unfixBoundsOp()
       lp_->updateLP();
 }
 
-void Polish::logIter(double perc_, double tempoIter_)
+void Polish::logIter(double perc_, double timeIter_)
 {
-	cout <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << tempoIter_ << endl; fflush(0);
+	cout <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << timeIter_ << endl; fflush(0);
 	if(polishFile_)
 	{
 		stringstream ss;
 		ss <<"---------------------------------------------------------------------------\n\n";
-		ss <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << tempoIter_;
+		ss <<"POLISH COM PERC = " << perc_ << ", TEMPOITER = " << timeIter_;
 		ss << "\nheurFreq_ = " << heurFreq_;
 		ss << "\nfixType_ = " << fixType_;
-		ss << "\ntempo ja corrido = " << getTempoCorrido() << "\ttempo max = " << maxTime_ << endl;
+		ss << "\ntempo ja corrido = " << getTotalElapsedTime() << "\ttempo max = " << maxTime_ << endl;
 		printLog(ss.str());
 	}
 }
@@ -639,11 +670,11 @@ void Polish::chgLpRootRelax()
 	printLog(ss.str());	
 }
 
-void Polish::setParams(double tempoIter_)
+void Polish::setParams(double timeIter_)
 {
 	lp_->setPrePasses(nrPrePasses_);
   	lp_->setNumIntSols(10000000);
-    lp_->setTimeLimit( tempoIter_ );
+    lp_->setTimeLimit( timeIter_ );
     lp_->setMIPRelTol( 0.1 );
     lp_->setMIPEmphasis( 1 );					// 1 = find better solutions
     lp_->setHeurFrequency( heurFreq_ );
@@ -655,9 +686,12 @@ void Polish::setParams(double tempoIter_)
 
 void Polish::chgParams()
 {
-	//setNewHeurFreq();
 	if (perc_ <= 30)
 		lp_->setMIPEmphasis(2);					// 2 = prove optimality
+	
+	//setNewHeurFreq();
+	if (nrIterSemMelhora_ >= 2)
+		heurFreq_ = 1.0;
 
     lp_->setHeurFrequency( heurFreq_ );
 	lp_->setCuts(2);
@@ -727,12 +761,17 @@ void Polish::checkFeasibility()
 	}
 }
 
-double Polish::getTempoCorrido()
+double Polish::getTotalElapsedTime()
 {
 	tempoPol_.stop();
 	double tempoAtual = tempoPol_.getCronoTotalSecs();
 	tempoPol_.start();
 	return tempoAtual;
+}
+
+double Polish::getLeftTime()
+{
+	return maxTime_ - getTotalElapsedTime();
 }
 
 bool Polish::needsPolish()

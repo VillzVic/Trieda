@@ -60,8 +60,12 @@ private:
 	void updatePercAndTimeIter( bool &okIter, double objN, double gap );
 	void updatePercAndTimeIterSmallGap( bool &okIter, double objN );
 	void updatePercAndTimeIterBigGap( double objN );
+	void adjustTime();
+	void increaseTime();
+	void decreaseTime();
 	void resetIterSemMelhora();
 	void checkIterSemMelhora();
+	void checkEndDueToIterSemMelhora();
 	void chgFixType();
 	void checkTimeWithoutImprov( bool &okIter, double objN );
 	void updateObj(double objN);
@@ -77,7 +81,8 @@ private:
 	void setParams(double tempoIter);
 	void chgParams();
 	void setNewHeurFreq();
-	double getTempoCorrido();
+	double getTotalElapsedTime();
+	double getLeftTime();
 	bool needsPolish();
 	bool optimized();
 	bool infeasible();
@@ -103,7 +108,7 @@ private:
 	#endif
 	   
 	   // Vars
-	   double tempoIter_;
+	   double timeIter_;
 	   int perc_;
 	   int status_;
 	   double objAtual_;
