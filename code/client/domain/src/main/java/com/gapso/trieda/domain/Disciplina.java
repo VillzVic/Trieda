@@ -1805,17 +1805,22 @@ public class Disciplina
 	}
 
 	@Transactional
-	public static void atualizaDisponibilidadesDisciplinas(
-			Map<Disciplina, Set<SemanaLetiva>> disciplinaMapSemanasLetivas, Cenario cenario) {
-		
-		for (Entry<Disciplina, Set<SemanaLetiva>> disciplinas : disciplinaMapSemanasLetivas.entrySet())
-		{
-			for (Disponibilidade disponibilidade : Disponibilidade.findBy(cenario, disciplinas.getKey().getId(), "DisponibilidadeDisciplina"))
-			{
+	public static void atualizaDisponibilidadesDisciplinas(Map<Disciplina, Set<SemanaLetiva>> disciplinaToSemanasLetivasMap, Cenario cenario) {
+		Map<Disciplina, List<Disponibilidade>> disciplinaToDisponibilidadesMap = DisponibilidadeDisciplina.findDisponibilidadesPorDisciplina(cenario);
+		for (Entry<Disciplina, Set<SemanaLetiva>> entry : disciplinaToSemanasLetivasMap.entrySet()) {
+			Disciplina disciplina = entry.getKey();
+			Set<SemanaLetiva> semanasLetivasDaDisciplina = entry.getValue();
+			
+			List<Disponibilidade> disponibilidadesDaDisciplina = disciplinaToDisponibilidadesMap.get(disciplina);
+			
+			// remove disponibilidades da disciplina
+			for (Disponibilidade disponibilidade : disponibilidadesDaDisciplina) {
 				disponibilidade.remove();
 			}
-			disciplinas.getKey().getDisponibilidades().clear();
-			disciplinas.getKey().preencheHorarios(disciplinas.getValue());
+			disciplina.getDisponibilidades().clear();
+			
+			// recalcula disponibilidades da disciplina com base nas semanas letivas associadas com a disciplina (via cadastro de currículos)
+			disciplina.preencheHorarios(semanasLetivasDaDisciplina);
 		}
 		
 	}

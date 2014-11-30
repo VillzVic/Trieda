@@ -138,8 +138,8 @@ public class AlunosDemandaImportExcel
 					}
 					else if ( MATRICULA_ALUNO_COLUMN_NAME.equals( columnName ) )
 					{
-						cell.setCellType( Cell.CELL_TYPE_STRING );
-						cellValue = getCellValue( cell );
+						//cell.setCellType( Cell.CELL_TYPE_STRING );
+						//cellValue = getCellValue( cell );
 						bean.setMatriculaAlunoStr( cellValue );
 					}
 					else if ( NOME_ALUNO_COLUMN_NAME.equals( columnName ) )

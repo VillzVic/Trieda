@@ -473,7 +473,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		for (Pair<Calendar,Calendar> par : horariosProcessados) {
 			Calendar h = par.getLeft();
 			Calendar hf = par.getRight();
-			while (!h.equals(hf)) {
+			while (h.before(hf)) {
 				if (temInfoDeHorario) {
 					labelsDasLinhasDaGradeHoraria.add(TriedaUtil.shortTimeString(h.getTime()));
 				} else {
@@ -555,7 +555,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		for (Pair<Calendar,Calendar> par : horariosProcessados) {
 			Calendar h = par.getLeft();
 			Calendar hf = par.getRight();
-			while (!h.equals(hf)) {
+			while (h.before(hf)) { // while (!h.equals(hf)) { .. entrava em loop
 				if (temInfoDeHorario) {
 					labelsDasLinhasDaGradeHoraria.add(TriedaUtil.shortTimeString(h.getTime()));
 				} else {
