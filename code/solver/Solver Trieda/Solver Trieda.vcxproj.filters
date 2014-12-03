@@ -203,15 +203,6 @@
     <ClCompile Include="OFBase.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="$(OPT_LP)\source\opt_col.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="$(OPT_LP)\source\opt_lp.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="$(OPT_LP)\source\opt_row.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
     <ClCompile Include="HeurNuno\AlunoHeur.cpp">
       <Filter>HeuristicaNuno\Estruturas</Filter>
     </ClCompile>
@@ -312,9 +303,6 @@
     <ClCompile Include="MainHeuristicaIES.cpp">
       <Filter>HeuristicaNuno</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\source\opt_gurobi.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
     <ClCompile Include="HeurNuno\TurmasIncHorarioDia.cpp">
       <Filter>HeuristicaNuno\Útil</Filter>
     </ClCompile>
@@ -323,6 +311,18 @@
     </ClCompile>
     <ClCompile Include="Polish.cpp">
       <Filter>Puro MIP</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_col.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_gurobi.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_lp.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
+      <Filter>OPT_LP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -536,15 +536,6 @@
     <ClInclude Include="Trio.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="$(OPT_LP)\include\opt_col.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="$(OPT_LP)\include\opt_lp.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="$(OPT_LP)\include\opt_row.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
     <ClInclude Include="HeurNuno\AlunoHeur.h">
       <Filter>HeuristicaNuno\Estruturas</Filter>
     </ClInclude>
@@ -651,14 +642,23 @@
     <ClInclude Include="HeurNuno\Node.h">
       <Filter>HeuristicaNuno</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\include\opt_gurobi.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="Polish.h">
       <Filter>Puro MIP</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_col.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_gurobi.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_lp.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
+      <Filter>OPT_LP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

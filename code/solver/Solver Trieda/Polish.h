@@ -24,11 +24,11 @@ class Polish
 public:
 
 	#ifdef SOLVER_CPLEX
-		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile );
-		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile );
+		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
+		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
 	#elif SOLVER_GUROBI 
-		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile );
-		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile );
+		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
+		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
 	#endif
 
 	~Polish();
@@ -41,6 +41,14 @@ public:
 		OPERACIONAL = 2
 	};
 
+	enum PHASE
+	{
+		PH_MAX_ATEND = 1,
+		PH_MIN_PV = 2,
+		PH_MIN_GAP = 3,
+		PH_OTHER = 4
+	};
+
 private:
 	
 	// ---------------------------------------------------------------------------------
@@ -48,6 +56,7 @@ private:
 	void init();
 
 	void decideVarsToFixType1();
+	void fixVarsProfType1();
 	void fixVarsType1();
 
 	void fixVarsType2();
@@ -98,6 +107,25 @@ private:
 	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
 	void closeLogFile();
 	void restoreOriginalLogFile();
+	
+	// ---------------------------------------------------------------------------------
+	// Local branch
+	
+	void mainLocalBranching();
+	bool localBranching();
+	void doLocalBranch();
+	void firstLBConstr();
+	void updateLBConstr();
+	void getLocalBranchVariables(int* idxsVars0, int* idxsVars1, double* coefs0, double* coefs1, int &numIdx0, int &numIdx1);
+	void removeLBConstr();
+	void optimizeLB();
+
+	double bestObjLB_;
+	bool melhorouLB_;
+	double timeIterLB_;
+	double runtimeLB_;
+	int lbRowNr_;
+	int k_;
 
 	// ---------------------------------------------------------------------------------
 
@@ -151,6 +179,7 @@ private:
 	   VariableOpHash const vHashOp_;
 	   
 	   MODULE const module_;
+	   int const phase_;
 
 	   // Log file
 	   bool hasOrigFile_;

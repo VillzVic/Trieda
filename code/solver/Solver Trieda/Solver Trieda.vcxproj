@@ -686,7 +686,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\source\opt_gurobi.cpp" />
     <ClCompile Include="AlocacaoProfVirtual.cpp" />
     <ClCompile Include="Aluno.cpp" />
     <ClCompile Include="AlunoDemanda.cpp" />
@@ -696,6 +695,10 @@
     <ClCompile Include="CmdLine.cpp" />
     <ClCompile Include="ConjUnidades.cpp" />
     <ClCompile Include="ConstraintMIPUnico.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_col.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_gurobi.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_lp.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp" />
     <ClCompile Include="Equivalencia.cpp" />
     <ClCompile Include="HeurNuno\AbridorTurmas.cpp" />
     <ClCompile Include="HeurNuno\AlunoHeur.cpp" />
@@ -778,9 +781,6 @@
     <ClCompile Include="$(CODELIB)\CPUTimerWin.cpp" />
     <ClCompile Include="$(CODELIB)\DateTime.cpp" />
     <ClCompile Include="$(CODELIB)\ErrorHandler.cpp" />
-    <ClCompile Include="$(OPT_LP)\source\opt_col.cpp" />
-    <ClCompile Include="$(OPT_LP)\source\opt_lp.cpp" />
-    <ClCompile Include="$(OPT_LP)\source\opt_row.cpp" />
     <ClCompile Include="ConstraintOp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
@@ -818,7 +818,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\include\opt_gurobi.h" />
     <ClInclude Include="AlocacaoProfVirtual.h" />
     <ClInclude Include="Aluno.h" />
     <ClInclude Include="AlunoDemanda.h" />
@@ -842,6 +841,10 @@
     <ClInclude Include="CreditoDisponivel.h" />
     <ClInclude Include="Curriculo.h" />
     <ClInclude Include="Curso.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_col.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_gurobi.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_lp.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h" />
     <ClInclude Include="Demanda.h" />
     <ClInclude Include="Deslocamento.h" />
     <ClInclude Include="Disciplina.h" />
@@ -927,9 +930,6 @@
     <ClInclude Include="$(CODELIB)\DateTime.h" />
     <ClInclude Include="$(CODELIB)\codelib\ErrorHandler.h" />
     <ClInclude Include="$(CODELIB)\GGroup.h" />
-    <ClInclude Include="$(OPT_LP)\include\opt_col.h" />
-    <ClInclude Include="$(OPT_LP)\include\opt_lp.h" />
-    <ClInclude Include="$(OPT_LP)\include\opt_row.h" />
     <ClInclude Include="ConstraintOp.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>

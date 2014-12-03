@@ -64,31 +64,14 @@ MIPUnico::MIPUnico( ProblemData * aProblemData,
    ITERACAO = fase;
    
    lp = nullptr;
-//   try
-//   {
-//#ifdef SOLVER_CPLEX
-//	   lp = new OPT_CPLEX; 
-//#endif
-//#ifdef SOLVER_GUROBI
-//	   lp = new OPT_GUROBI; 
-//#endif
-//   }
-//   catch(...)
-//   {
-//   }
-
 }
 
 MIPUnico::~MIPUnico()
 {
-   if ( lp != NULL )
-   {
+   if (lp)
       delete lp;
-   }   
-   if ( xSol_ )
-   {
-	   delete [] xSol_;   
-   }
+   if (xSol_)
+	   delete [] xSol_;
 }
 
 void MIPUnico::getSolution( ProblemSolution * problem_solution ){}
@@ -2449,7 +2432,7 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 		}
 		else{
 			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
-			//CARREGA_SOL_PARCIAL=false;
+			CARREGA_SOL_PARCIAL=false;
 		}
 	}
 	if ( !CARREGA_SOL_PARCIAL )
@@ -2460,11 +2443,11 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 		if ( polishing )
 		{  
 			#ifdef SOLVER_CPLEX
-				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
+				Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MIN_PV);
 				polishing = pol->polish(xS, 3600, 90, 1000);
 				delete pol;
 			#elif defined SOLVER_GUROBI				
-				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
+				Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MIN_PV);
 				polishing = pol->polish(xS, 3600*2, 90, 3600);
 				delete pol;
 			#endif

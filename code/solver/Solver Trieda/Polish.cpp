@@ -15,19 +15,23 @@ using std::stringstream;
 double MIN_OPT_VALUE = 0.0;
 
 
-Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile )
+Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile, int phase )
 	: lp_(lp), vHashTatico_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
-	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::TATICO), fixType_(2)
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
+	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
+	phase_(phase), 
+	k_(0)
 {
 	originalLogFileName_ = originalLogFile;
 	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
 }
 
-Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile )
+Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile, int phase )
 	: lp_(lp), vHashOp_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(false), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
-	nrPrePasses_(-1), heurFreq_(0.7), module_(Polish::OPERACIONAL), fixType_(2)
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
+	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
+	phase_(phase),
+	k_(0)
 {
 	originalLogFileName_ = originalLogFile;
 	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
@@ -74,7 +78,6 @@ void Polish::init()
 	// Init values
 	timeIter_ = tempoIni_;
 	perc_ = 0;
-    status_ = 0;
     objAtual_ = 999999999999.9;
 
 	idxs_ = new int[lp_->getNumCols()*2];
@@ -121,12 +124,14 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 
 	setParams(timeIter_);
 
+	if (phase_ != Polish::PH_MIN_PV)
     while (okIter)
     {     
 		if (fixType_==1)
 		{
 			decideVarsToFixType1();
 			fixVarsType1();
+			fixVarsProfType1();
 		}
 		else
 		{
@@ -151,11 +156,17 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		checkTimeLimit(okIter);
 	  
 		unfixBounds();
-    }
-         
-	// Agora xSol_ é atributo do MIPUnico, então o carregamento da solucao não faz getX mais,
-	// sendo dispensavel essa garantia de solução aqui.
-	// guaranteeSol();
+		
+		//if (module_ == Polish::TATICO)
+		//if (!melhorou_ && !optimal())
+		//if (phase_ == Polish::PH_MIN_PV)
+		//	mainLocalBranching();
+    }         
+		
+	
+	if (phase_ == Polish::PH_MIN_PV)
+		mainLocalBranching();
+
 
 	closeLogFile();
 	restoreOriginalLogFile();
@@ -213,6 +224,47 @@ void Polish::decideVarsToFixType1()
     }
 }
 
+void Polish::fixVarsProfType1()
+{
+    if ( fixType_ == 1 )
+    {
+        int nBds = 0;
+		auto vit = vHashTatico_.begin();
+        while ( vit != vHashTatico_.end() )
+        {
+			if ( vit->first.getType() == VariableMIPUnico::V_PROF_TURMA )
+			{
+				if ( rand() % 100 >= perc_ )
+				{
+					vit++;
+					continue;
+				}
+
+				// Fixa a não-utilização de professor virtual
+				if (xSol_[vit->second] < 0.1 && vit->first.getProfessor()->eVirtual())
+				{
+					idxs_[nBds] = vit->second;
+					vals_[nBds] = 0.0;
+					bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
+					nBds++;
+				}
+				// Fixa a utilização de professor real
+				else if (xSol_[vit->second] > 0.1 && !vit->first.getProfessor()->eVirtual())
+				{
+					idxs_[nBds] = vit->second;
+					vals_[nBds] = 1.0;
+					bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
+					nBds++;
+				}
+			}
+
+			vit++;
+        }
+        lp_->chgBds(nBds,idxs_,bds_,vals_);
+        lp_->updateLP();
+    }
+}
+
 void Polish::fixVarsType1()
 {
 	if (paraFixarUm_.size() == 0 && paraFixarZero_.size() == 0)
@@ -221,8 +273,7 @@ void Polish::fixVarsType1()
     int nBds = 0;
     for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
     {
-        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )//|| 
-			 //vit->first.getType() == VariableMIPUnico::V_PROF_AULA )
+        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
         {
 			std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
 			if ( paraFixarUm_.find(auxPair) != paraFixarUm_.end() )
@@ -428,7 +479,7 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 
 		checkEndDueToIterSemMelhora();
 	}
-	else heurFreq_ = 0.5;
+	//else heurFreq_ = 0.5;
 }
 
 void Polish::adjustTime()
@@ -446,13 +497,16 @@ void Polish::increaseTime()
 	incremTime += (100-perc_)*0.2;	// increases the time limit the more perc_ is close to 0.
 	timeIter_ += incremTime;
 
-	if (perc_ >= 10 && perc_ < 20){
+	// ToDo: substituir essa fixação de tempo máximo por um controle de acordo com o
+	// percentual de tempo gasto no branch and bound.
+
+	if (perc_ >= 10 && perc_ < 30){
 		if(timeIter_ > 350) timeIter_ = 350;
 	}
-	else if (perc_ < 30){
+	else if (perc_ < 40){
 		if(timeIter_ > 250) timeIter_ = 250;
 	}
-	else if (perc_ >= 30){
+	else if (perc_ >= 40){
 		if(timeIter_ > 180) timeIter_ = 180;
 	}
 }
@@ -487,7 +541,7 @@ void Polish::checkEndDueToIterSemMelhora()
 {
 	if (nrIterSemMelhora_ >	maxIterSemMelhora_)
 	{
-		if (perc_ <= 30)
+		if (perc_ <= 10)
 		{
 			heurFreq_ = 0.8;
 			perc_ = 0;
@@ -584,7 +638,7 @@ void Polish::unfixBoundsTatico()
       {
          if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS || 
 			  vit->first.getType() == VariableMIPUnico::V_ABERTURA || 
-			  vit->first.getType() == VariableMIPUnico::V_PROF_AULA )
+			  vit->first.getType() == VariableMIPUnico::V_PROF_TURMA )
          {
             idxs_[nBds] = vit->second;
             vals_[nBds] = ubVars_[vit->second];
@@ -686,8 +740,8 @@ void Polish::setParams(double timeIter_)
 
 void Polish::chgParams()
 {
-	if (perc_ <= 30)
-		lp_->setMIPEmphasis(2);					// 2 = prove optimality
+//	if (perc_ <= 30)
+//		lp_->setMIPEmphasis(2);					// 2 = prove optimality
 	
 	//setNewHeurFreq();
 	if (nrIterSemMelhora_ >= 2)
@@ -755,7 +809,7 @@ void Polish::checkFeasibility()
 		stringstream ss;
 		ss <<"Error! Model is infeasible. Aborting..." << std::endl;
 		printLog(ss.str());
-		CentroDados::printError("bool Polish::needsPolish()",ss.str());
+		CentroDados::printError("bool Polish::checkFeasibility()",ss.str());
 		lp_->writeProbLP("infeasibleModelPolish");
 		throw ss.str();
 	}
@@ -788,17 +842,19 @@ bool Polish::needsPolish()
 	lp_->setNumIntSols(10000000);
 	
 	optimize();
+	
+	double objN, gap;
+	getSolution(objN, gap);
 
 	if (optimized())
 	{
-	    lp_->getX( xSol_ );	  
-		if ( lp_->getMIPGap() * 100 < 2.0 )
+		if ( gap < 2.0 )
 		{
-			cout << "\n\nPolish desnecessario, gap =" << lp_->getMIPGap() * 100 << std::endl;
+			cout << "\n\nPolish desnecessario, gap =" << gap << std::endl;
 			if(polishFile_)
 			{
 				stringstream ss;
-				ss <<"Polish desnecessario, gap = " << lp_->getMIPGap() * 100 << std::endl;
+				ss <<"Polish desnecessario, gap = " << gap << std::endl;
 				printLog(ss.str());
 			}
 			return false;
@@ -883,4 +939,238 @@ void Polish::restoreOriginalLogFile()
 		std::ofstream out;
 		setOptLogFile(out,originalLogFileName_,false);
 	}
+}
+
+
+
+// ----------------------------------------------------------------------------------
+// Local Branching
+
+void Polish::mainLocalBranching()
+{	
+	k_ = 3;
+	timeIterLB_ = 400;
+	bestObjLB_ = objAtual_;
+	lbRowNr_ = lp_->getNumRows();
+
+	int at=0;
+	int maxIter=10;
+
+	setParams(timeIterLB_);
+
+	bool end = false;
+	while(!end)
+	{
+		string str = "\n******************************************************";
+		printLog(str);
+
+		bool improved = localBranching();
+
+		if (optimal())
+			k_++;
+		if (!optimal() && !improved)
+			k_--;
+		if (!optimal() && improved)
+			timeIterLB_ += 50;
+
+		if (fabs(bestObjLB_-MIN_OPT_VALUE) < 10e-6)
+			 end=true;
+
+		at++;
+		if (at > maxIter) end=true;
+	}
+	
+	objAtual_ = bestObjLB_;
+}
+
+bool Polish::localBranching()
+{
+	bool oneimprove = false;
+
+//	if (perc_ >= 40) return oneimprove;
+	
+	string str = "\n=========================================";
+	printLog(str);
+		
+	// First local branch
+	firstLBConstr();
+	
+	doLocalBranch();
+	
+	bool improved = true;
+	if (!melhorouLB_)
+		improved = false;
+	else
+		oneimprove = true;
+
+	// Iterates while there is improvement
+	while (improved)
+	{	
+		string str = "\n-------------------------------------";
+		printLog(str);
+
+		updateLBConstr();
+		
+		doLocalBranch();
+
+		if (!melhorouLB_)
+			improved = false;
+		else
+			oneimprove = true;
+	}
+	
+	stringstream ss2;
+	ss2 << "\nNo improvement was made. The End!\n";
+	printLog(ss2.str());
+
+	removeLBConstr();
+
+	return oneimprove;
+}
+
+
+void Polish::doLocalBranch()
+{
+	stringstream ss;
+	ss << "\n\nLocalBranching for k = " << k_ << "...\n";
+	printLog(ss.str());
+
+	optimizeLB();
+		
+	double objN, gap;
+	getSolution(objN, gap);
+
+	melhorouLB_ = fabs(objN - bestObjLB_) > 0.0001;
+
+	if (melhorouLB_) bestObjLB_ = objN;
+}
+
+void Polish::firstLBConstr()
+{			
+	int numIdx0 = 0;
+	int numIdx1 = 0;
+	int* idxsVars0 = new int[lp_->getNumCols()];
+	int* idxsVars1= new int[lp_->getNumCols()];
+	double* coefs0 = new double[lp_->getNumCols()];
+	double* coefs1 = new double[lp_->getNumCols()];
+
+	getLocalBranchVariables(idxsVars0, idxsVars1, coefs0, coefs1, numIdx0, numIdx1);
+			
+	// --------------------------------------------------
+
+	//k = (int) ((numIdx0+numIdx1) * 0.05) + 1;
+	
+	// --------------------------------------------------
+	int rhs = k_ - numIdx1;
+	OPT_ROW row (OPT_ROW::ROWSENSE::LESS, rhs, "LocalBranch");
+	row.insert(numIdx0,idxsVars0,coefs0);
+	row.insert(numIdx1,idxsVars1,coefs1);
+	lp_->addRow(row);
+    lp_->updateLP();
+
+
+	static bool wroteLp=false;
+	if (!wroteLp)
+	{
+		wroteLp=true;
+		stringstream sstr;
+		sstr << "LocalBranch-k" << k_;
+		lp_->writeProbLP( sstr.str().c_str());
+	}
+
+	delete [] idxsVars0;
+	delete [] idxsVars1;
+	delete [] coefs0;
+	delete [] coefs1;
+}
+
+void Polish::updateLBConstr()
+{			
+	int numIdx0 = 0;
+	int numIdx1 = 0;
+	int* idxsVars0= new int[lp_->getNumCols()];
+	int* idxsVars1= new int[lp_->getNumCols()];
+	double* coefs0 = new double[lp_->getNumCols()];
+	double* coefs1 = new double[lp_->getNumCols()];
+
+	getLocalBranchVariables(idxsVars0, idxsVars1, coefs0, coefs1, numIdx0, numIdx1);
+
+    for (int at = 0; at != numIdx0; at++)
+    {
+		lp_->chgCoef(lbRowNr_, idxsVars0[at], coefs0[at]);		
+    }
+
+    for (int at = 0; at != numIdx1; at++)
+    {
+		lp_->chgCoef(lbRowNr_, idxsVars1[at], coefs1[at]);		
+    }
+
+	// --------------------------------------------------
+	int rhs = k_ - numIdx1;
+	
+	int* rowNr = new int[1];
+	rowNr[0] = lbRowNr_;
+
+	lp_->chgRHS(lbRowNr_,rhs);
+	//lp_->chgCoefList(numIdx0,rowNr,idxsVars0,coefs0);
+	//lp_->chgCoefList(numIdx1,rowNr,idxsVars1,coefs1);	
+	lp_->updateLP();
+
+
+	delete [] idxsVars0;
+	delete [] idxsVars1;
+	delete [] coefs0;
+	delete [] coefs1;
+}
+
+void Polish::getLocalBranchVariables(int* idxsVars0, int* idxsVars1, double* coefs0, double* coefs1, int &numIdx0, int &numIdx1)
+{			
+	numIdx0 = 0;
+	numIdx1 = 0;
+
+    for (auto vit=vHashTatico_.begin(); vit != vHashTatico_.end(); vit++)
+    {
+		if ( vit->first.getType() == VariableMIPUnico::V_PROF_AULA )
+		{
+			if (!vit->first.getProfessor()->eVirtual())
+				continue;
+
+			if (xSol_[vit->second] > 0.1)
+			{
+				idxsVars1[numIdx1] = (vit->second);
+				coefs1[numIdx1] = -1.0;
+				numIdx1++;
+			}
+			else
+			{
+				idxsVars0[numIdx0] = (vit->second);
+				coefs0[numIdx0] = 1.0;
+				numIdx0++;
+			}
+		}
+		
+    }
+}
+
+void Polish::optimizeLB()
+{
+    lp_->setTimeLimit( timeIterLB_ );
+    lp_->copyMIPStartSol( lp_->getNumCols(), idxSol_, xSol_ );
+    lp_->updateLP();
+    status_ = lp_->optimize( METHOD_MIP );
+	
+	runtimeLB_ = (lp_->getRunTime());
+
+	checkFeasibility();
+}
+
+void Polish::removeLBConstr()
+{
+	int* rowNr = new int[1];
+	rowNr[0] = lbRowNr_;
+
+	lp_->delSetRows(1,rowNr);
+	lp_->updateLP();
+
+	delete [] rowNr;
 }
