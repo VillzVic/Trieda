@@ -205,6 +205,9 @@ bool AlunoHeur::estaDisponivelHorarios(OfertaDisciplina* const oferta, int dia, 
 	
 	// Com Turno
 	TurnoIES* const turno = alunoDem->demanda->getTurnoIES();
+	
+	// Com Calendario
+	Calendario* const calendario = alunoDem->demanda->getCalendario();
 
 	if(aula == nullptr)
 		HeuristicaNuno::excepcao("AlunoHeur::estaDisponivelHorarios", "Aula e nula!");
@@ -212,9 +215,20 @@ bool AlunoHeur::estaDisponivelHorarios(OfertaDisciplina* const oferta, int dia, 
 	for(auto itHor = aula->horarios.begin(); itHor != aula->horarios.end(); ++itHor)
 	{
 		if(!UtilHeur::turnoAbrange(turno, dia, *itHor))
+		{
 			return false;
+		}
+		if(!UtilHeur::calendarioAbrangeNoTurno(calendario, turno, dia, *itHor))
+		{
+			//std::cout << "\nCaso impedido: hor " << (*itHor)->getInicio()
+			//	<< " (id=" << (*itHor)->getId()
+			//	<< "), dia " << dia << ", aluno " << this->getAluno()->getAlunoId()
+			//	<< ", alunodemanda " << alunoDem->getId()
+			//	<< ", disc " << oferta->getDisciplina()->getId();
+			return false;
+		}
 	}
-
+	
 	return true;
 }
 bool AlunoHeur::estaDisponivel(OfertaDisciplina* const oferta, int dia, AulaHeur* const aula) const 

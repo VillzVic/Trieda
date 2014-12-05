@@ -38,6 +38,8 @@ unordered_map<int, unordered_map<int, unordered_set<int>>> UtilHeur::turnosAbran
 unordered_map<int, unordered_map<int, unordered_set<int>>> UtilHeur::turnosNaoAbrangem;
 unordered_map<int, unordered_map<int, unordered_set<int>>> UtilHeur::calendariosAbrangem;
 unordered_map<int, unordered_map<int, unordered_set<int>>> UtilHeur::calendariosNaoAbrangem;
+unordered_map<int,unordered_map<int, unordered_map<int, unordered_set<int>>>> UtilHeur::calendariosAbrangemNoTurno;
+unordered_map<int,unordered_map<int, unordered_map<int, unordered_set<int>>>> UtilHeur::calendariosNaoAbrangemNoTurno;
 
 UtilHeur::UtilHeur(void)
 {
@@ -48,6 +50,44 @@ UtilHeur::~UtilHeur(void)
 }
 
 // verifica se um calendario contem um horario
+bool UtilHeur::calendarioAbrangeNoTurno(Calendario* const calendario, 
+								TurnoIES* const turno, int dia, HorarioAula* const horario)
+{
+	if(calendario == nullptr || calendario == NULL)
+		HeuristicaNuno::excepcao("UtilHeur::calendarioAbrangeNoTurno", "calendario nulo!");
+	
+	if(turno == nullptr || turno == NULL)
+		HeuristicaNuno::excepcao("UtilHeur::calendarioAbrangeNoTurno", "turno nulo!");
+
+	int calendarioId = calendario->getId();
+	int turnoId = turno->getId();
+
+	// verificar se ja foi registado
+	int check = checkRegAbrange(calendarioId, turnoId, dia, 
+						horario, calendariosAbrangemNoTurno, calendariosNaoAbrangemNoTurno);
+	if(check > 0)
+		return true;
+	else if(check < 0)
+		return false;
+
+	auto horariosDia = calendario->retornaHorariosDisponiveis(dia,turnoId);
+	// verifica se o calendario tem um horário igual no turno
+	for(auto it = horariosDia.cbegin(); it != horariosDia.cend(); ++it)
+	{
+		if((*it)->inicioFimIguais(horario))
+		{
+			// registar abrangência
+			regAbrangencia(calendarioId, turnoId, dia, horario, calendariosAbrangemNoTurno);
+			return true;
+		}
+	}
+
+	// registar não abrangência
+	regAbrangencia(calendarioId, turnoId, dia, horario, calendariosNaoAbrangemNoTurno);
+
+	return false;
+}
+
 bool UtilHeur::calendarioAbrange(Calendario* const calendario, int dia, HorarioAula* const horario)
 {
 	if(calendario == nullptr || calendario == NULL)
@@ -103,11 +143,10 @@ bool UtilHeur::turnoAbrange(TurnoIES* const turno, int dia, HorarioAula* const h
 		return true;
 	else if(check < 0)
 		return false;
-
+	
 	// verifica se o turno tem um horário igual
 	for(auto it = turno->horarios_aula.begin(); it != turno->horarios_aula.end(); ++it)
 	{
-
 		// verificar dia semana
 		if(it->dias_semana.find(dia) == it->dias_semana.end())
 			continue;
@@ -119,7 +158,7 @@ bool UtilHeur::turnoAbrange(TurnoIES* const turno, int dia, HorarioAula* const h
 			return true;
 		}
 	}
-
+	
 	// registar não abrangência
 	regAbrangencia(turnoId, dia, horario, turnosNaoAbrangem);
 
@@ -1181,6 +1220,45 @@ int UtilHeur::checkRegAbrange(int id, int dia, HorarioAula* const horario,
 	return 0;
 }
 
+int UtilHeur::checkRegAbrange(int idCalend, int idTurno, int dia, HorarioAula* const horario,
+				unordered_map<int, unordered_map<int, unordered_map<int, unordered_set<int>>>> const &registoAbrange,
+				unordered_map<int, unordered_map<int, unordered_map<int, unordered_set<int>>>> const &registoNaoAbrange)
+{
+	// check se abrange
+	auto itSim = registoAbrange.find(idCalend);
+	if(itSim != registoAbrange.end())
+	{
+		auto itTurno = itSim->second.find(idTurno);
+		if(itTurno != itSim->second.end())
+		{
+			auto itDia = itTurno->second.find(dia);
+			if(itDia != itTurno->second.end())
+			{
+				if(itDia->second.find(horario->getId()) != itDia->second.end())
+					return 1;
+			}
+		}
+	}
+
+	// check se nao abrange
+	auto itNao = registoNaoAbrange.find(idCalend);
+	if(itNao != registoNaoAbrange.end())
+	{
+		auto itTurno = itNao->second.find(idTurno);
+		if(itTurno != itNao->second.end())
+		{
+			auto itDia = itTurno->second.find(dia);
+			if(itDia != itTurno->second.end())
+			{
+				if(itDia->second.find(horario->getId()) != itDia->second.end())
+					return -1;
+			}
+		}
+	}
+
+	return 0;
+}
+
 void UtilHeur::regAbrangencia(int id, int dia, HorarioAula* const horario, 
 							unordered_map<int, unordered_map<int, unordered_set<int>>> &registo)
 {
@@ -1189,6 +1267,33 @@ void UtilHeur::regAbrangencia(int id, int dia, HorarioAula* const horario,
 	{
 		unordered_map<int, unordered_set<int>> emptyMap;
 		itTurno = registo.insert(make_pair<int, unordered_map<int, unordered_set<int>>>(id, emptyMap)).first; 
+	}
+
+	auto itDia = itTurno->second.find(dia);
+	if(itDia == itTurno->second.end())
+	{
+		unordered_set<int> emptySet;
+		itDia = itTurno->second.insert(make_pair<int, unordered_set<int>>(dia, emptySet)).first;
+	}
+	itDia->second.insert(horario->getId());
+}
+
+void UtilHeur::regAbrangencia(int idCalend, int idTurno, int dia, HorarioAula* const horario, 
+				unordered_map<int, unordered_map<int, unordered_map<int, unordered_set<int>>>> &registo)
+{
+	auto itCalend = registo.find(idCalend);
+	if(itCalend == registo.end())
+	{
+		unordered_map<int, unordered_map<int, unordered_set<int>>> emptyMap;
+		itCalend = registo.insert(make_pair<int, 
+			unordered_map<int, unordered_map<int, unordered_set<int>>>>(idCalend, emptyMap)).first; 
+	}
+
+	auto itTurno = itCalend->second.find(idTurno);
+	if(itTurno == itCalend->second.end())
+	{
+		unordered_map<int, unordered_set<int>> emptyMap;
+		itTurno = itCalend->second.insert(make_pair<int, unordered_map<int, unordered_set<int>>>(idTurno, emptyMap)).first; 
 	}
 
 	auto itDia = itTurno->second.find(dia);

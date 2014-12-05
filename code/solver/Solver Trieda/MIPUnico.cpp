@@ -2432,7 +2432,7 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 		}
 		else{
 			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
-			CARREGA_SOL_PARCIAL=false;
+			//CARREGA_SOL_PARCIAL=false;
 		}
 	}
 	if ( !CARREGA_SOL_PARCIAL )

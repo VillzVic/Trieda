@@ -57,6 +57,8 @@ public:
 	static int idAulas;
 
 	// calendarios / turnos / horarios
+	static bool calendarioAbrangeNoTurno(Calendario* const calendario, 
+								TurnoIES* const turno, int dia, HorarioAula* const horario);
 	static bool calendarioAbrange(Calendario* const calendario, int dia, HorarioAula* const horario);
 	static bool calendarioAbrange(Calendario* const calendario, int dia, set<HorarioAula*> const &horarios);
 	static bool turnoAbrange(TurnoIES* const turno, int dia, HorarioAula* const horario);
@@ -257,13 +259,22 @@ private:
 	// acelerar verificacao de horarios. calendario.id -> dia -> horarioaula.id
 	static unordered_map<int, unordered_map<int, unordered_set<int>>> calendariosAbrangem;
 	static unordered_map<int, unordered_map<int, unordered_set<int>>> calendariosNaoAbrangem;
+	// acelerar verificacao de horarios. calendario.id -> turno.id -> dia -> horarioaula.id
+	static unordered_map<int,unordered_map<int, unordered_map<int, unordered_set<int>>>> calendariosAbrangemNoTurno;
+	static unordered_map<int,unordered_map<int, unordered_map<int, unordered_set<int>>>> calendariosNaoAbrangemNoTurno;
 
 	// (<0) -> nao abrange / (>0) -> abrange / (==0) unknown
 	static int checkRegAbrange(int id, int dia, HorarioAula* const horario,
 								unordered_map<int, unordered_map<int, unordered_set<int>>> const &registoAbrange,
 								unordered_map<int, unordered_map<int, unordered_set<int>>> const &registoNaoAbrange);
+	static int checkRegAbrange(int idCalend, int idTurno, int dia, HorarioAula* const horario,
+				unordered_map<int, unordered_map<int, unordered_map<int, unordered_set<int>>>> const &registoAbrange,
+				unordered_map<int, unordered_map<int, unordered_map<int, unordered_set<int>>>> const &registoNaoAbrange);
+
 	static void regAbrangencia(int id, int dia, HorarioAula* const horario, 
 							unordered_map<int, unordered_map<int, unordered_set<int>>> &registo);
+	static void regAbrangencia(int idCalend, int idTurno, int dia, HorarioAula* const horario, 
+				unordered_map<int, unordered_map<int, unordered_map<int, unordered_set<int>>>> &registo);
 
 	// retorna as aulas possiveis para um número de creditos e um conjunto de horarios
 	static bool getAulasPossiveisDiaHors(int dia, int nrCreditos, gGroupHorarios &horariosDia, int calendarioId, int campusId, int unidadeId, 

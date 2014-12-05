@@ -454,6 +454,21 @@ GGroup<HorarioAula*, LessPtr<HorarioAula>> Calendario::retornaHorariosDisponivei
 	return horarios;
 }
 
+std::unordered_set<HorarioAula*> Calendario::retornaHorariosDisponiveis( int dia, int turnoIdIES )
+{
+	std::unordered_set<HorarioAula*> horarios;
+	
+	auto itHor = horarios_aula.begin();
+	for ( ; itHor != horarios_aula.end(); itHor++ )
+	{ 
+		if (itHor->getTurnoIESId() == turnoIdIES)
+		if (itHor->dias_semana.find(dia) != itHor->dias_semana.end())
+			horarios.insert( *itHor );
+	}
+
+	return horarios;
+}
+
 /*
 	HorarioAula *h	: horarioAula inicial
 	int nCreds		: numero não-negativo de creditos a serem acrescentados à h

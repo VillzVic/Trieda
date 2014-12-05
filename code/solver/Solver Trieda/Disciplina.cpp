@@ -26,8 +26,9 @@ Disciplina::Disciplina(void)
 
 Disciplina::~Disciplina(void)
 {
-	this->clearHors();
-	this->clearDivCreds();
+	// ToDo
+	//this->clearHors();
+	//this->clearDivCreds();
 }
 
 void Disciplina::clearHors()

@@ -6,6 +6,8 @@
 #include "TurnoIES.h"
 #include "HorarioDia.h"
 
+#include <unordered_set>
+
 class Calendario :
    public OFBase
 {
@@ -75,7 +77,8 @@ public:
    bool possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *hf, int dia );
 
    GGroup<HorarioAula*, LessPtr<HorarioAula>> retornaHorariosDisponiveisNoDia( int dia );
-   
+   std::unordered_set<HorarioAula*> retornaHorariosDisponiveis( int dia, int turnoIdIES );
+
    HorarioAula * getHorarioMaisNCreds( HorarioAula *h, int nCreds );
 
    std::map< int, GGroup<HorarioAula*, LessPtr<HorarioAula>> > retornaDiaHorariosEmComum( GGroup<Calendario*,LessPtr<Calendario>> calendarios );
