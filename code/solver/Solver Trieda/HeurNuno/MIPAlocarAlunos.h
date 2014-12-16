@@ -20,7 +20,7 @@ static int nrMipsAlocarAlunos = 0;
 class MIPAlocarAlunos : MIPAloc
 {
 public:
-	MIPAlocarAlunos(SolucaoHeur* const solucao, SaveSolucao* const &solucaoHeur, bool realocSalas, double minRecCred, int priorAluno, bool alocarP2);
+	MIPAlocarAlunos(std::string nome, SolucaoHeur* const solucao, SaveSolucao* const &solucaoHeur, bool realocSalas, double minRecCred, int priorAluno, bool alocarP2);
 	virtual ~MIPAlocarAlunos(void);
 
 	// alocar alunos

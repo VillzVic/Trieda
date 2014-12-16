@@ -324,6 +324,9 @@
     <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
       <Filter>OPT_LP</Filter>
     </ClCompile>
+    <ClCompile Include="HeurNuno\MIPAlocarAlunoVar.cpp">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CentroDados.h" />
@@ -659,6 +662,9 @@
     </ClInclude>
     <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
       <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="HeurNuno\MIPAlocarAlunoVar.h">
+      <Filter>HeuristicaNuno\Estruturas</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

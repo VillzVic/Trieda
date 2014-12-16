@@ -19,11 +19,12 @@
 #include "SaveSolucao.h"
 #include <ctime>
 #include <math.h>
+#include "MIPAlocarAlunoVar.h"
 
 
-MIPAlocarAlunos::MIPAlocarAlunos(SolucaoHeur* const solucao, SaveSolucao* const &solucaoHeur, bool realocSalas, double minRecCred, 
+MIPAlocarAlunos::MIPAlocarAlunos(std::string nome, SolucaoHeur* const solucao, SaveSolucao* const &solucaoHeur, bool realocSalas, double minRecCred, 
 								int priorAluno, bool alocarP2)
-	: MIPAloc(0, "MIPAlocarAlunos", solucao), solucaoHeur_(solucaoHeur), realocSalas_(realocSalas), priorAluno_(priorAluno), alocarP2_(alocarP2), 
+	: MIPAloc(0, nome, solucao), solucaoHeur_(solucaoHeur), realocSalas_(realocSalas), priorAluno_(priorAluno), alocarP2_(alocarP2), 
 	  soTrocarSalas_(false), minRecCred_(minRecCred)
 {
 }
@@ -377,7 +378,12 @@ void MIPAlocarAlunos::criarVariavelAlunoOferta_(int campusId, int disciplinaId, 
 	double coef = getCoefVarAlunoOft_(oferta, aluno, prioridade);
 
 	// adicionar variavel ao modelo
-	int colNr = addBinaryVarLP_(coef, "alunoft");
+	MIPAlocarAlunoVar var;
+	var.setType(MIPAlocarAlunoVar::V_X_ALUNO_DISC);
+	var.setAluno(aluno);
+	var.setOfDisciplina(oferta);
+
+	int colNr = addBinaryVarLP_(coef, var.toString().c_str());
 	nrVarsAlunoOferta_++;
 	
 	varsAlunoOferta_[alunoId][oferta] = colNr;
@@ -425,8 +431,13 @@ void MIPAlocarAlunos::criarVariaveisAlunoTurma_(OfertaDisciplina* const oferta, 
 		if(!aluno->estaDisponivel(turma) && !turma->ehAlunoFixado(aluno->getId()))
 			continue;
 
+		MIPAlocarAlunoVar var;
+		var.setType(MIPAlocarAlunoVar::V_Y_ALUNO_TURMA);
+		var.setAluno(aluno);
+		var.setTurma(turma);
+
 		// adicionar variavel ao modelo. OLD: incentivo se turma for do calendario da demanda
-		int colNr = addBinaryVarLP_(0.0, "alunoturma");
+		int colNr = addBinaryVarLP_(0.0, var.toString().c_str());
 		nrVarsAlunoTurma_++;
 
 		// adicionar a estruturas
@@ -451,7 +462,13 @@ void MIPAlocarAlunos::criarVariaveisAbrirTurma_(unordered_set<TurmaHeur*> const 
 	{
 		TurmaHeur* const turma = (*itTurma);
 		double coef = getCoefVarAbrirTurma_(turma);
-		int colNr = addBinaryVarLP_(coef, "abrirturma");
+
+		MIPAlocarAlunoVar var;
+		var.setType(MIPAlocarAlunoVar::V_AT_ABRIR_TURMA);
+		var.setTurma(turma);
+
+		int colNr = addBinaryVarLP_(coef, var.toString().c_str());
+
 		nrVarsAbrirTurma_++;
 		varsAbrirTurma_[turma] = colNr;
 
@@ -481,6 +498,9 @@ void MIPAlocarAlunos::criarVariaveisAssocTurmas_(OfertaDisciplina* const oferta)
 	auto turmasTeoricas = oferta->getTurmasTipo(true);
 	auto turmasPraticas = oferta->getTurmasTipo(false);
 
+	if (oferta->getDisciplina()->getId()==14658)
+		std::cout<<"\n14658";
+
 	int it = 0;
 	for(auto itTeor = turmasTeoricas.begin(); itTeor != turmasTeoricas.end(); ++itTeor)
 	{
@@ -493,7 +513,22 @@ void MIPAlocarAlunos::criarVariaveisAssocTurmas_(OfertaDisciplina* const oferta)
 			if(it == 0)
 				varsAssocTurmasTP[itPrat->second] = mapaVazioP;
 
-			int colNr = addBinaryVarLP_(0.0, "assocturma");
+			MIPAlocarAlunoVar var;
+			var.setType(MIPAlocarAlunoVar::V_W_ASSOC_TURMA_PT);
+			var.setTurmaP(itPrat->second);
+			var.setTurmaT(itTeor->second);
+			
+			double lb=0.0;
+			double ub=1.0;
+			if (!oferta->assocAulaContValida(itTeor->second, itPrat->second))
+			{
+				std::cout<<"\n\nimpedir var " << var.toString();
+				std::cout<<"\nTem assoc registradas na teor: " << oferta->temAssoc(itTeor->second, itPrat->second);
+				std::cout<<"\nTem assoc registradas na prat: " << oferta->temAssoc(itPrat->second,itTeor->second);
+				ub=0.0;
+			}
+
+			int colNr = addBinaryVarLP_(0.0, var.toString().c_str(), lb, ub);
 			nrVarsAssoc_++;
 			if(!varsAssocTurmasTP[itTeor->second].insert(make_pair<TurmaHeur*, int>(itPrat->second, colNr)).second)
 				HeuristicaNuno::excepcao("MIPAlocarAlunos::criarVariaveisAssocTurmas_", "Var nao adicionada as varsAssocTurmasTP (T)");
@@ -557,8 +592,13 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 				itSTurma = varsSalaTurma_.insert(make_pair<SalaHeur*, unordered_map<TurmaHeur*, int>>(salaIni, emptyTurmasMap)).first;
 
 			// criar variavel e guardar
-			//int colNr = addBinaryVarLP_((0.001*salaIni->getCapacidade()), "salaturma");
-			int colNr = addBinaryVarLP_(0.0, "salaturma");
+			MIPAlocarAlunoVar var;
+			var.setType(MIPAlocarAlunoVar::V_R_SALA_TURMA);
+			var.setSala(salaIni);
+			var.setTurma(turma);
+
+			int colNr = addBinaryVarLP_(0.0, var.toString().c_str());
+
 			nrVarsTurmaSala_++;
 			itTSala->second[salaIni] = colNr;
 			itSTurma->second[turma] = colNr;
@@ -601,9 +641,14 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 			if(itSTurma == varsSalaTurma_.end())
 				itSTurma = varsSalaTurma_.insert(make_pair<SalaHeur*, unordered_map<TurmaHeur*, int>>(sala, emptyTurmasMap)).first;
 
-			// criar variavel e guardar
-			//int colNr = addBinaryVarLP_((0.001*sala->getCapacidade()), "salaturma");
-			int colNr = addBinaryVarLP_(0.0, "salaturma");
+			// criar variavel e guardar			
+			MIPAlocarAlunoVar var;
+			var.setType(MIPAlocarAlunoVar::V_R_SALA_TURMA);
+			var.setSala(sala);
+			var.setTurma(turma);
+
+			int colNr = addBinaryVarLP_(0.0, var.toString().c_str());
+
 			nrVarsTurmaSala_++;
 			itTSala->second[sala] = colNr;
 			itSTurma->second[turma] = colNr;

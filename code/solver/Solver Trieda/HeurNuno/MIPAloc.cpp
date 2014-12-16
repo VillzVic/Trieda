@@ -224,15 +224,12 @@ void MIPAloc::criarRestrTurmasIncompatHorarios_(unordered_map<TurmaHeur*, int> c
 //---------------------- UTIL ---------------------------------
 
 // adicionar variável binária. retorna número da coluna.
-int MIPAloc::addBinaryVarLP_(double coef, const char* nome)
+int MIPAloc::addBinaryVarLP_(double coef, const char* nome, int lb, int ub)
 {
 	// guardar número de coluna antes pois indexação começa em zero
 	int colNr = nrVars_;
 
-	//std::stringstream ss;
-	//ss << "var_" << nrVars_;
-
-	OPT_COL col (OPT_COL::VARTYPE::VAR_BINARY, coef, 0, 1, (char*) nome);
+	OPT_COL col (OPT_COL::VARTYPE::VAR_BINARY, coef, lb, ub, (char*) nome);
 	if(!lp_->addCol(col))
 		HeuristicaNuno::excepcao("MIPAloc::addBinaryVarLP_", "Variavel não adicionada ao LP.");
 	else

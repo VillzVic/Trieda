@@ -96,6 +96,15 @@ private:
 									unordered_map<int, unordered_set<int>> const &credsPossDia,
 									mapDispDiaCredAula &disponibilidades);
 
+	// preenche um map com a turma teorica (se houver) de cada aluno
+	static void getMapTurmaTeoricaAlunos_(OfertaDisciplina* const ofertaDisc,
+								unordered_set<AlunoHeur*> const &alunosDem,
+								unordered_map<AlunoHeur*, TurmaHeur*> &mapAlunoTurma);
+
+	static void getMapTurmaTeoricaAlunosNoDia_(int dia, 
+				unordered_map<AlunoHeur*, TurmaHeur*> &mapAlunoTurmaTeorNoDia,
+				unordered_map<AlunoHeur*, TurmaHeur*> const &mapAlunoTurmaTeor);
+
 	// verifica se a disciplina pode ter uma aula nesses dias.
 	static bool checkAulaDisciplina(Disciplina* const disciplina, int dia, AulaHeur* const aula);
 
@@ -146,6 +155,10 @@ private:
 	// obter alunos que estejam disponíveis para aquelas aulas, de entre um conjunto dado à partida pois é tida em conta a deslocação
 	void getAlunosDispUnidade_ (OfertaDisciplina* const ofertaDisc, unordered_set<AlunoHeur*> const &alunos, const unordered_map<int, AulaHeur*> &aulas, 
 								bool &temFormando, bool &temCoReq, set<AlunoHeur*>& alunosDisponiveis);
+	// obter alunos cuja aula teórica é imediatamente antes da aula pratica pretendida
+	void getAlunosAulaCont_(OfertaDisciplina* const ofertaDisc, int dia, AulaHeur* const aula,
+								  unordered_map<AlunoHeur*, TurmaHeur*> const &mapAlunoTurmaTeor,
+								  unordered_set<AlunoHeur*>& alunosDisponiveis);
 
 	// [DISPONIBILIDADE SALAS]
 

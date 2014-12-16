@@ -180,6 +180,11 @@ public:
 	bool checkMaxCredsAlocComp(void) const;
 	// [só 1x1 e 1xN] verificar se relação é cumprida
 	bool checkRelacTeorPrat(void) const;
+	// verificar se as disciplinas que exigem aulas continuas em prat/teor são respeitadas
+	bool checkAllAulasContinuas(void) const;
+	bool checkAulasContPorTurmaTeor(OfertaDisciplina* const oferta, TurmaHeur* const teor) const;
+	bool checkAulasContinuas(unordered_map<int, AulaHeur*> const &aulasp, 
+								unordered_map<int, AulaHeur*> const &aulast) const;
 
 	// recalcular stats
 	void checkStats(bool print = true) const;
@@ -211,6 +216,8 @@ public:
 	// imprime resumo de todas as oferta-disciplinas na ordem corrente
 	template<typename T>
 	void imprimeOfertasDisc( set<OfertaDisciplina*, T> const&, int );
+	
+	void printSolucaoLog_() const;
 
 	#pragma endregion
 	
@@ -311,6 +318,8 @@ private:
 	// escolher randomicamente uma percentagem no intervalo [minPerc, maxPerc]
 	static double getRandPerc(double maxPerc, double minPerc);
 
+	// get nome do proximo mip a ser impresso
+	static string getProxMIPNome(string nomeBase);
 	// re-alocar alunos e fechar turmas inválidas (so considerar demandas com prior <= priorAluno)
 	void realocarAlunosMIP_(SaveSolucao* const &solucaoAtual, bool realocSalas, int minRecCred, int priorAluno = 0, bool alocarP2 = true);
 	// alocar professores no final

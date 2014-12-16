@@ -104,15 +104,21 @@ public:
 	enum flagComp { MAIS_CRED, MENOS_CRED };
 	static flagComp flagCompAlunos;
 
+	virtual bool operator < ( const AlunoHeur &outro ) const
+	{
+	   return ( aluno_->getAlunoId() < outro.getAluno()->getAlunoId() );
+	} 
+
 	virtual bool operator == ( const AlunoHeur &outro ) const
 	{
-	   return ( aluno_->getAlunoId() == outro.getAluno()->getAlunoId() );
+	   return (!( *aluno_ < *outro.getAluno() ) && !( *outro.getAluno() < *aluno_ ));
 	} 
 
 	virtual bool operator != ( const AlunoHeur &outro ) const
 	{
-	   return ( aluno_->getAlunoId() != outro.getAluno()->getAlunoId() );
+	   return (( *aluno_ < *outro.getAluno() ) || ( *outro.getAluno() < *aluno_ ));
 	} 
+	
 
 
 private:

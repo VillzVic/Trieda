@@ -236,6 +236,10 @@ public:
 	bool temAnyAssoc(TurmaHeur* const turma) const;
 	// limpar associações de turmas (exceto as que must abrir no MIP)
 	void limparTurmasAssocPreMIP(void);
+	bool assocAulaContValida(TurmaHeur* const teorica, TurmaHeur* const pratica) const;
+	bool checkAulasContPorTurmaTeor(TurmaHeur* const teor) const;
+	bool checkAulasContinuas(unordered_map<int, AulaHeur*> const &aulasp, 
+						unordered_map<int, AulaHeur*> const &aulast) const;
 
 	int nrTurmas(bool teorico) const;
 	// retorna o numero de turmas (

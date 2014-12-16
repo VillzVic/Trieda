@@ -201,7 +201,8 @@ void SolucaoHeur::realocSalasSolucaoFix(SolucaoHeur* const solucao)
 	// (2) Tentar mudar de sala MIP
 	SaveSolucao* solucaoAtual = new SaveSolucao();
 	solucao->guardarSolucaoAtualAlunos_(solucaoAtual);
-	MIPAlocarAlunos mip (solucao, solucaoAtual, true, 0.0, 0, false);
+	string nome = getProxMIPNome("MIPAlocarAlunos");
+	MIPAlocarAlunos mip (nome.c_str(), solucao, solucaoAtual, true, 0.0, 0, false);
 	mip.realocarSalas();
 	delete solucaoAtual;
 	solucaoAtual = nullptr;
@@ -1235,6 +1236,15 @@ double SolucaoHeur::getRandPerc(double maxPerc, double minPerc)
     return minPerc + f * (maxPerc - minPerc);
 }
 
+string SolucaoHeur::getProxMIPNome(string nomeBase)
+{
+	static int counter=0;
+	counter++;
+	stringstream ss;
+	ss << nomeBase << counter;
+	return ss.str();
+}
+
 // re-alocar alunos e fechar turmas inválidas (so considerar demandas nao atendidas com prior <= priorAluno)
 void SolucaoHeur::realocarAlunosMIP_(SaveSolucao* const &solucaoAtual, bool realocSalas, int minRecCred, int priorAluno, bool alocarP2)
 {
@@ -1243,10 +1253,12 @@ void SolucaoHeur::realocarAlunosMIP_(SaveSolucao* const &solucaoAtual, bool real
 
 	// contar número de turmas inválidas
 	HeuristicaNuno::logMsgInt("Nr turmas invalidas: ", nrTurmasInvalidas(), 1);
+		
+	string nome = getProxMIPNome("MIPAlocarAlunos");
 
 	// realocá-los
 	HeuristicaNuno::logMsg("Criar MIP... ", 1);
-	MIPAlocarAlunos mipI (this, solucaoAtual, realocSalas, minRecCred, priorAluno, alocarP2);
+	MIPAlocarAlunos mipI (nome.c_str(), this, solucaoAtual, realocSalas, minRecCred, priorAluno, alocarP2);
 	mipI.alocar();
 
 	// verificar
@@ -2287,8 +2299,18 @@ void SolucaoHeur::verificacao_(bool incompletos) const
 		}
 	}
 
+	HeuristicaNuno::logMsg("Check aulas continuas", 1);
+	if(!checkAllAulasContinuas())
+	{
+		HeuristicaNuno::warning("SolucaoHeur::verificacao_", "Solução tem problemas de aulas continuas!");
+		ok = false;
+	}
+
+
 	// verificar as estatísticas e imprimir
 	checkStats();
+
+	printSolucaoLog_();
 
 	if(!ok)
 		HeuristicaNuno::excepcao("SolucaoHeur::verificacao_", "Solução em estado inválido! Abortar!");
@@ -2513,6 +2535,97 @@ bool SolucaoHeur::checkRelacTeorPrat(void) const
 
 	HeuristicaNuno::logMsg("Solucao respeita relacao teoricas x praticas.", 1);
 	return true;
+}
+
+bool SolucaoHeur::checkAllAulasContinuas(void) const
+{
+	bool ok=true;
+	for(auto itOft = allOfertasDisc_.cbegin(); itOft != allOfertasDisc_.cend(); ++itOft)
+	{
+		OfertaDisciplina* const oferta = (*itOft);
+		
+		if (oferta->nrTiposAula() != 2) continue;
+		if (!oferta->getDisciplina()->aulasContinuas()) continue;
+
+		unordered_set<TurmaHeur*> turmast;
+		oferta->getTurmasTipo(true,turmast);
+		for(auto itTeor = turmast.begin(); itTeor != turmast.end(); ++itTeor)
+		{
+			TurmaHeur* teor = *itTeor;
+
+			ok = ok && checkAulasContPorTurmaTeor(oferta,teor);
+		}
+	}
+
+	if (ok) HeuristicaNuno::logMsg("Solucao respeita aulas continuas teoricas x praticas.", 1);
+
+	return ok;
+}
+
+bool SolucaoHeur::checkAulasContPorTurmaTeor(OfertaDisciplina* const oferta, TurmaHeur* const teor) const
+{
+	if (oferta->nrTiposAula() != 2)
+		return true;
+	if (!oferta->getDisciplina()->aulasContinuas())
+		return true;
+
+	bool ok=true;
+	unordered_map<int, AulaHeur*> aulast;
+	teor->getAulas(aulast);
+
+	unordered_set<TurmaHeur*> turmasp;
+	oferta->getTurmasAssoc(teor,turmasp);
+	for(auto itPrat = turmasp.begin(); itPrat != turmasp.end(); ++itPrat)
+	{
+		TurmaHeur* prat = *itPrat;
+		
+		unordered_map<int, AulaHeur*> aulasp;
+		prat->getAulas(aulasp);
+
+		if(!checkAulasContinuas(aulasp,aulast))
+		{
+			stringstream ss;
+			ss << "Turma prat " << prat->id << " da disc " << oferta->getDisciplina()->getId()
+				 << " nao respeita aulas continuas com turma teor " << teor->id;
+			HeuristicaNuno::warning("SolucaoHeur::checkAulasContPorTurmaTeor", ss.str());
+			ok = false;
+		}
+	}
+	return ok;
+}
+
+bool SolucaoHeur::checkAulasContinuas(unordered_map<int, AulaHeur*> const &aulasp, 
+									unordered_map<int, AulaHeur*> const &aulast) const
+{
+	// verifica se toda aula pratica esta imediatamente após alguma aula teorica
+	// atenção: aulas devem ser todas da mesma disciplina e de turmas associadas (1xN).
+
+	bool ok=true;
+	for(auto itAulap = aulasp.begin(); itAulap != aulasp.end(); ++itAulap)
+	{
+		int diap = itAulap->first;
+		AulaHeur* aulap = itAulap->second;
+		DateTime dti;
+		aulap->getPrimeiroHor(dti);
+
+		auto findDiaT = aulast.find(diap);
+		if(findDiaT == aulast.end())
+		{
+			HeuristicaNuno::warning("SolucaoHeur::checkAulasContinuas", "Par pratica-teorica em dias diferentes!");
+			ok = false;
+		}
+		else
+		{
+			DateTime dtf;
+			findDiaT->second->getLastHor(dtf);
+			if (dti<dtf || (dti-dtf).timeMin() > ParametrosHeuristica::maxIntervAulas)
+			{
+				HeuristicaNuno::warning("SolucaoHeur::checkAulasContinuas", "Aulas pratica-teorica nao continuas!");
+				ok = false;
+			}
+		}
+	}
+	return ok;
 }
 
 // verificar stats
@@ -3302,33 +3415,6 @@ void SolucaoHeur::limparTurmasAssocAllOfertasPreMIP(void)
 	}
 }
 
-// imprime resumo de todas as oferta-disciplinas na ordem corrente
-template<typename T>
-void SolucaoHeur::imprimeOfertasDisc(set<OfertaDisciplina*, T> const & setOrd, int prior)
-{
-	std::stringstream ssTime;
-	ssTime << std::endl << "-----------------------------------------------------"
-	<< "-------------------------------------------------------------------------";
-	ssTime << std::endl << "[" << UtilHeur::currentDateTime() << "] - Prior " << prior << std::endl
-		<< "Status atual da solucao:" << std::endl
-		<< "\tTotal de atendimentos: " << nrDemandasAtendidas(0) << std::endl
-		<< "\tTotal de turmas: " << nrTurmas() << std::endl
-		<< "\tTotal de creds com profs virtuais: " << nrCreditosProfVirtual() << std::endl;
-
-	HeuristicaNuno::logOrdemOfertas( ssTime.str() );
-
-	for( auto itOft = setOrd.cbegin();
-		 itOft != setOrd.cend(); itOft++)
-	{
-		std::ostringstream out;
-		out << (**itOft);
-		
-		std::stringstream ssMsg;
-		ssMsg << out.str() << endl;
-		
-		HeuristicaNuno::logOrdemOfertas( ssMsg.str() );
-	}
-}
 
 // retorna o número de demandas não atendidas (original)
 int SolucaoHeur::nrDemandasNaoAtendidas(int prior) const
@@ -3524,5 +3610,128 @@ void SolucaoHeur::printDemandasAtendidas(char* append) const
 	}
 	logDem.close();
 }
+
+// imprime resumo de todas as oferta-disciplinas na ordem corrente
+template<typename T>
+void SolucaoHeur::imprimeOfertasDisc(set<OfertaDisciplina*, T> const & setOrd, int prior)
+{
+	std::stringstream ssTime;
+	ssTime << std::endl << "-----------------------------------------------------"
+	<< "-------------------------------------------------------------------------";
+	ssTime << std::endl << "[" << UtilHeur::currentDateTime() << "] - Prior " << prior << std::endl
+		<< "Status atual da solucao:" << std::endl
+		<< "\tTotal de atendimentos: " << nrDemandasAtendidas(0) << std::endl
+		<< "\tTotal de turmas: " << nrTurmas() << std::endl
+		<< "\tTotal de creds com profs virtuais: " << nrCreditosProfVirtual() << std::endl;
+
+	HeuristicaNuno::logOrdemOfertas( ssTime.str() );
+
+	for( auto itOft = setOrd.cbegin();
+		 itOft != setOrd.cend(); itOft++)
+	{
+		std::ostringstream out;
+		out << (**itOft);
+		
+		std::stringstream ssMsg;
+		ssMsg << out.str() << endl;
+		
+		HeuristicaNuno::logOrdemOfertas( ssMsg.str() );
+	}
+}
+
+// imprime solucao atual
+void SolucaoHeur::printSolucaoLog_() const
+{
+	if (!CentroDados::getPrintLogs())
+		return;
+
+	static int counter=0;
+	counter++;
+
+	std::stringstream ss;
+	ss << "solucaoAtual_" << counter << ".log";
+	std::ofstream logSol (ss.str());
+	
+	HeuristicaNuno::logMsg("Imprime solução atual", 1);
+	
+	// Problem Data
+	ProblemData* const probData = HeuristicaNuno::probData;
+		
+	unordered_set<TurmaHeur*> turmas;
+	unordered_map<int, AulaHeur*> aulas;
+	unordered_map<Demanda*, set<AlunoDemanda*>> alunosDemanda;
+
+	// CAMPUS
+	for(auto itOft = allOfertasDisc_.begin(); itOft != allOfertasDisc_.end(); ++itOft)
+	{
+			OfertaDisciplina* const ofertaDisc = *itOft;
+
+			Campus* const campus = ofertaDisc->getCampus();	
+			Disciplina* const disciplina = ofertaDisc->getDisciplina();
+			
+			// TURMAS
+			turmas.clear();
+			ofertaDisc->getTurmas(turmas);
+			for(auto itTurmas = turmas.begin(); itTurmas != turmas.end(); ++itTurmas)
+			{
+				TurmaHeur* const turma = *itTurmas;
+				ProfessorHeur* const professor = turma->getProfessor();
+				int unidadeId = turma->unidadeId();
+				
+				// get alunos demanda satisfeitas por oferta
+				alunosDemanda.clear();
+				turma->getDemandasAlunos(alunosDemanda);
+
+				logSol << "\n\n--------------------------------------------------";
+				logSol << "\n(Cp" << campus->getId() << ",Disc"	<< ofertaDisc->getDisciplina()->getId() 
+					<< ",Id" << turma->id << "):  "
+					<< "sala" << turma->getSala()->getId();
+				if (professor) logSol << ", prof" << professor->getId();
+
+				if(turma->ehCompSec())
+				{
+					unordered_set<TurmaHeur*> turmasTeor;
+					ofertaDisc->getTurmasAssoc(turma,turmasTeor);
+					for(auto it=turmasTeor.cbegin(); it!=turmasTeor.cend(); it++)
+						logSol << ", turma teorica associada: " << (*it)->id;
+				}
+
+				// AULAS
+				aulas.clear();
+				turma->getAulas(aulas);
+				logSol << "\n------------";
+				for(auto itAulas = aulas.cbegin(); itAulas != aulas.cend(); ++itAulas)
+				{
+					int dia = itAulas->first;
+					AulaHeur* const aula = itAulas->second;
+
+					DateTime primHorario;
+					aula->getPrimeiroHor(primHorario);
+					
+					DateTime endHorario;
+					aula->getLastHor(endHorario);
+
+					logSol << "\n\tDia" << dia << ", " << primHorario.hourMinToStr() << " - "
+						<< endHorario.hourMinToStr();										
+				}
+				// ALUNOS
+				int nrAlunos=0;
+				logSol << "\n------------\n\t";
+				for(auto itDem = alunosDemanda.cbegin(); itDem != alunosDemanda.cend(); ++itDem)
+				{
+					for(auto itAlunosDem = itDem->second.begin(); itAlunosDem != itDem->second.end(); ++itAlunosDem)
+					{
+						logSol << " AlDem" << (*itAlunosDem)->getId();
+						nrAlunos++;
+					}
+				}
+				logSol << "\t(" << nrAlunos << " alunos)";
+			}
+		
+	}
+
+	HeuristicaNuno::logMsg("Solucao atual impressa", 1);
+}
+
 
 // --------------------------------------------------------------------------

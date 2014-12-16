@@ -711,6 +711,7 @@
     <ClCompile Include="HeurNuno\ImproveMethods.cpp" />
     <ClCompile Include="HeurNuno\MIPAloc.cpp" />
     <ClCompile Include="HeurNuno\MIPAlocarAlunos.cpp" />
+    <ClCompile Include="HeurNuno\MIPAlocarAlunoVar.cpp" />
     <ClCompile Include="HeurNuno\MIPAlocarProfCons.cpp" />
     <ClCompile Include="HeurNuno\MIPAlocarProfs.cpp" />
     <ClCompile Include="HeurNuno\MIPAlocarProfVar.cpp" />
@@ -862,6 +863,7 @@
     <ClInclude Include="HeurNuno\ImproveMethods.h" />
     <ClInclude Include="HeurNuno\MIPAloc.h" />
     <ClInclude Include="HeurNuno\MIPAlocarAlunos.h" />
+    <ClInclude Include="HeurNuno\MIPAlocarAlunoVar.h" />
     <ClInclude Include="HeurNuno\MIPAlocarProfCons.h" />
     <ClInclude Include="HeurNuno\MIPAlocarProfs.h" />
     <ClInclude Include="HeurNuno\MIPAlocarProfVar.h" />

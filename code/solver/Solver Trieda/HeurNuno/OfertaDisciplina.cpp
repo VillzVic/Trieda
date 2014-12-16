@@ -2125,7 +2125,13 @@ void OfertaDisciplina::addCheckAssocTurmas_(TurmaHeur* const teorica, TurmaHeur*
 
 	if(itP->second.size() > 0 && (teorica->getGlobalId() != (*itP->second.begin())->getGlobalId()))
 	{
-		HeuristicaNuno::excepcao("OfertaDisciplina::addCheckAssocTurmas_", "[1x1 / 1xN] Turma pratica ja associada a outra turma teorica!");
+		stringstream ss;
+		ss << "[1x1 / 1xN] Turma pratica " << pratica->id << " da disciplina "
+			<< this->getDisciplina()->getId() << " ja associada aa turma teorica " 
+			<< (*itP->second.begin())->id << ". Tentativa de associa-la tb aa " 
+			<< teorica->id;
+		
+		HeuristicaNuno::excepcao("OfertaDisciplina::addCheckAssocTurmas_", ss.str());
 	}
 
 	// associar teórica à prática
@@ -2137,6 +2143,9 @@ void OfertaDisciplina::removeAssocTurma_(TurmaHeur* const turma)
 {
 	if(ParametrosHeuristica::relacPraticas == ParametrosHeuristica::abrePraticas::N_N || this->nrTiposAula() == 1)
 		return;
+
+	if(turma->ofertaDisc->getDisciplina()->getId()==14658)
+		std::cout<<"\nremoveAssocTurma_: 14658";
 
 	auto it = turmasAssoc_.find(turma);
 	if(it == turmasAssoc_.end())
@@ -2162,6 +2171,53 @@ void OfertaDisciplina::removeAssocTurma_(TurmaHeur* const turma)
 	// remover associações da turma
 	turmasAssoc_.erase(it);
 }
+
+bool OfertaDisciplina::assocAulaContValida(TurmaHeur* const teorica, TurmaHeur* const pratica) const
+{
+	if (this->nrTiposAula() != 2) return true;
+	if (!this->getDisciplina()->aulasContinuas()) return true;
+
+	unordered_map<int, AulaHeur*> aulast;
+	teorica->getAulas(aulast);
+
+	unordered_map<int, AulaHeur*> aulasp;
+	pratica->getAulas(aulasp);
+
+	return checkAulasContinuas(aulasp,aulast);
+}
+
+bool OfertaDisciplina::checkAulasContinuas(unordered_map<int, AulaHeur*> const &aulasp, 
+									unordered_map<int, AulaHeur*> const &aulast) const
+{
+	// verifica se toda aula pratica esta imediatamente após alguma aula teorica
+	// atenção: aulas devem ser todas da mesma disciplina e de turmas associadas (1xN).
+
+	bool ok=true;
+	for(auto itAulap = aulasp.begin(); itAulap != aulasp.end(); ++itAulap)
+	{
+		int diap = itAulap->first;
+		AulaHeur* aulap = itAulap->second;
+		DateTime dti;
+		aulap->getPrimeiroHor(dti);
+
+		auto findDiaT = aulast.find(diap);
+		if(findDiaT == aulast.end())
+		{
+			ok = false;
+		}
+		else
+		{
+			DateTime dtf;
+			findDiaT->second->getLastHor(dtf);
+			if (dti<dtf || (dti-dtf).timeMin() > ParametrosHeuristica::maxIntervAulas)
+			{
+				ok = false;
+			}
+		}
+	}
+	return ok;
+}
+
 
 
 // increase/decrease indicadores demanda de salas associadas!

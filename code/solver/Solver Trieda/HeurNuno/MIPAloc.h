@@ -78,7 +78,7 @@ protected:
 	// criar variáveis do modelo
 	virtual void criarVariaveis_(void);
 	// adicionar variável binária ao modelo. retorna número da coluna.
-	int addBinaryVarLP_(double coef, const char* nome);
+	int addBinaryVarLP_(double coef, const char* nome, int lb=0, int ub=1);
 	// adicionar variavel inteira ao modelo. retorna número da coluna.
 	int addIntVarLP_(double coef, int lb, int ub, const char* nome);
 	// adicionar variavel linear ao modelo. retorna numero da coluna.

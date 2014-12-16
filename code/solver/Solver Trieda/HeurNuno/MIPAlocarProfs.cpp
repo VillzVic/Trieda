@@ -1667,7 +1667,7 @@ void MIPAlocarProfs::checkChAnterior_(void)
 // verificar se a proibição de gaps no horários de mesma fase do dia do prof foi respeitada
 void MIPAlocarProfs::checkGapsProf_(void)
 {
-	if ( ! CentroDados::getProblemData()->parametros->proibirProfGapMTN )
+	if ( CentroDados::getProblemData()->parametros->proibirProfGapMTN != 2 )
 		return;
 
 	// ---------------------------------------------------------------------------------
