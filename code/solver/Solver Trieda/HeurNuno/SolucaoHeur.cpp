@@ -426,7 +426,7 @@ ProblemSolution* SolucaoHeur::getProblemSolution(void) const
 
 	ProblemSolution* const probSolution = new ProblemSolution(false);
 	HeuristicaNuno::logMsg("criar output...", 1);
-	criarOutput_(probSolution);
+	criarOutputNovo_(probSolution);
 	HeuristicaNuno::logMsg("criar output profs virtuais...", 1);
 	criarOutProfsVirtuais_(probSolution);
 
@@ -2732,6 +2732,7 @@ void SolucaoHeur::checkLogMudancasSala(void) const
 
 // ------------------------------------------ CRIAR OUTPUT ------------------------------------------
 
+
 // cria o output dos atendimentos
 void SolucaoHeur::criarOutput_(ProblemSolution* const solution) const
 {
@@ -2867,6 +2868,168 @@ void SolucaoHeur::criarOutput_(ProblemSolution* const solution) const
 
 	HeuristicaNuno::logMsg("Output atendimento criado!", 1);
 }
+
+
+
+// cria o output dos atendimentos
+void SolucaoHeur::criarOutputNovo_(ProblemSolution* const solution) const
+{
+	HeuristicaNuno::logMsg("Criar output atendimento da solução!", 1);
+	GGroup<AtendimentoCampus *>* const outputAtendimento = solution->atendimento_campus;
+	
+	// Cenário id
+	solution->setCenarioId( HeuristicaNuno::probData->getCenarioId() );
+	
+	unordered_set<TurmaHeur*> turmas;
+
+	// CAMPUS
+	for(auto itCampus = ofertasDisciplina_.begin(); itCampus != ofertasDisciplina_.end(); ++itCampus)
+	{
+		Campus* const campus = itCampus->first;
+		AtendimentoCampus* const atendCampus = new AtendimentoCampus(campus->getId());
+		atendCampus->campus = campus;
+		atendCampus->setCampusId(campus->getCodigo());
+		outputAtendimento->add(atendCampus);
+
+		// DISCIPLINAS / OFERTAS
+		for(auto itDisc = itCampus->second.begin(); itDisc != itCampus->second.end(); ++itDisc)
+		{
+			Disciplina* const disciplina = itDisc->first;
+			OfertaDisciplina* const ofertaDisc = itDisc->second;
+
+			// TURMAS
+			turmas.clear();
+			ofertaDisc->getTurmas(turmas);
+			for(auto itTurmas = turmas.begin(); itTurmas != turmas.end(); ++itTurmas)
+			{
+				TurmaHeur* const turma = *itTurmas;
+
+				criarTurmaOutput_(*atendCampus, turma);
+			}
+		}
+	}
+
+	HeuristicaNuno::logMsg("Output atendimento criado!", 1);
+}
+
+void SolucaoHeur::criarTurmaOutput_(AtendimentoCampus &atendCampus, TurmaHeur* const turma) const
+{
+	// Problem Data
+	ProblemData* const probData = HeuristicaNuno::probData;
+	
+	unordered_map<int, AulaHeur*> aulas;
+	unordered_map<Demanda*, set<AlunoDemanda*>> alunosDemanda;
+
+	ProfessorHeur* const professor = turma->getProfessor();
+	if(professor == nullptr)
+		HeuristicaNuno::excepcao("SolucaoHeur::criarTurmaOutput_", "Professor e nulo !");
+	
+	// get atendimento unidade
+	int unidadeId = turma->unidadeId();
+	AtendimentoUnidade* const atendUnid = atendCampus.getAddAtendUnidade(unidadeId);
+	auto itUnid = probData->refUnidade.find(unidadeId);
+	if(itUnid != probData->refUnidade.end())
+	{
+		atendUnid->unidade = itUnid->second;
+		atendUnid->setCodigoUnidade(itUnid->second->getCodigo());
+	}
+	else
+		HeuristicaNuno::warning("SolucaoHeur::criarTurmaOutput_", "Unidade nao encontrada");
+
+	// get atendimento sala
+	AtendimentoSala* const atendSala = atendUnid->getAddAtendSala(turma->getSala()->getId());
+	atendSala->sala = turma->getSala()->getSala();
+	atendSala->setSalaId(turma->getSala()->getSala()->getCodigo());
+
+	// get alunos demanda satisfeitas por oferta
+	alunosDemanda.clear();
+	turma->getDemandasAlunos(alunosDemanda);
+
+	// AULAS
+	aulas.clear();
+	turma->getAulas(aulas);
+	for(auto itAulas = aulas.cbegin(); itAulas != aulas.cend(); ++itAulas)
+	{
+		int dia = itAulas->first;
+		AulaHeur* const aula = itAulas->second;
+
+		criarAulaOutput_(*atendSala, turma, professor, aula, dia, alunosDemanda);
+	}
+}
+
+void SolucaoHeur::criarAulaOutput_(AtendimentoSala &atendSala, TurmaHeur* const turma, ProfessorHeur* const professor, 
+			AulaHeur* const aula, int dia, unordered_map<Demanda*, set<AlunoDemanda*>> const &alunosDemanda) const
+{
+	Disciplina* const disciplina = turma->ofertaDisc->getDisciplina();
+
+	// get atendimento diaSemana
+	AtendimentoDiaSemana* const atendDiaSem = atendSala.getAddAtendDiaSemana(dia);
+
+	// get id turno. NOTA: geração não tem mt em conta os turnos na discretização do output
+	DateTime primHorario;
+	aula->getPrimeiroHor(primHorario);
+	
+	// ITERADOR OFERTAS/ALUNOS
+	for(auto itDem = alunosDemanda.cbegin(); itDem != alunosDemanda.cend(); ++itDem)
+	{
+		Demanda* const demanda = itDem->first;		
+		Oferta* const oferta = demanda->oferta;
+		TurnoIES* const turno = oferta->turno;
+		Calendario* const calendario = demanda->getCalendario();
+
+		// get atendimento turno
+		AtendimentoTurno* const atendTurno = atendDiaSem->getAddAtendTurno(turno->getId());
+		atendTurno->turno = turno;
+		atendTurno->setTurnoId(turno->getId());
+
+		// HORARIOS
+		for(auto itHor = aula->horarios.begin(); itHor != aula->horarios.end(); ++itHor)
+		{			
+			HorarioAula* const h = *itHor;		
+			HorarioAula* const horario = turno->getHorarioDiaCorrespondente(calendario, h, dia);
+			if(!horario)
+			{
+				stringstream msg;
+				msg << "Horario " << h->getInicio() << " nao encontrado no dia " << dia 
+					<< " em turno " << turno->getId() << " e calendario " << calendario->getId()
+					<< " para demanda " << demanda->getId();
+				HeuristicaNuno::excepcao("SolucaoHeur::criarAulaOutput_",msg.str());
+			}
+
+			AtendimentoHorarioAula* const atendHor = atendTurno->getAddAtendHorarioAula(horario->getId());
+			// set informação
+			atendHor->horario_aula = horario;
+			atendHor->setProfessorId(professor->getId());
+			atendHor->professor = professor->getProfessor();
+			atendHor->setProfVirtual(professor->ehVirtual());
+			atendHor->setCreditoTeorico(turma->ehTeoricaTag());
+
+			AtendimentoOferta* const atendOferta = atendHor->getAddAtendOferta(oferta->getId());
+			// set informação
+			stringstream ss;
+			ss << oferta->getId();
+			atendOferta->setOfertaCursoCampiId(ss.str());
+			// set disciplina da alocação
+			atendOferta->disciplina = disciplina;
+			// set disciplina original
+			atendOferta->setDisciplinaId(demanda->getDisciplinaId());
+			// get disciplina substituta (caso equivalencia)
+			if(demanda->getDisciplinaId() != disciplina->getId())
+				atendOferta->setDisciplinaSubstitutaId(disciplina->getId());
+			// set nr alunos
+			atendOferta->addQuantidade(itDem->second.size());
+			// set turma
+			atendOferta->setTurma(turma->id);
+
+			// ITERADOR ALUNOS
+			for(auto itAlunosDem = itDem->second.begin(); itAlunosDem != itDem->second.end(); ++itAlunosDem)
+			{
+				atendOferta->alunosDemandasAtendidas.add((*itAlunosDem)->getId());
+			}
+		}
+	}
+}
+
 // cria o output de professores virtuais
 void SolucaoHeur::criarOutProfsVirtuais_(ProblemSolution* const solution) const
 {

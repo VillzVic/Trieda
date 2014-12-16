@@ -139,6 +139,7 @@ public:
 
 	// get profs associados
 	void getProfessoresAssociados (unordered_set<ProfessorHeur*> &profsAssoc) const;
+	bool haProfessorAssociado () const;
 		
     // Horarios-Dias comuns com cada professor real habilitado na OfertaDisciplina.
 	int getNroCredsLivresProfsEstimados() const;

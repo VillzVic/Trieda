@@ -1126,6 +1126,26 @@ void OfertaDisciplina::getProfessoresAssociados (unordered_set<ProfessorHeur*> &
 		}
 	}
 }
+bool OfertaDisciplina::haProfessorAssociado () const
+{
+	// reais
+	auto it = HeuristicaNuno::probData->mapProfessorDisciplinasAssociadas.begin();
+	for(; it!= HeuristicaNuno::probData->mapProfessorDisciplinasAssociadas.end(); it++)
+	{
+		int id = it->first->getId();
+		// verificar se professor pode leccionar esta disciplina, neste campus
+		if(it->second.find(getDisciplina()) != it->second.end()
+			&& campus_->professores.find(it->first) != campus_->professores.end())
+		{
+			auto itHeur = solucao_->professoresHeur.find(id);
+			if(itHeur == solucao_->professoresHeur.end())
+				continue;
+
+			return true;
+		}
+	}
+}
+
 
 int OfertaDisciplina::getNroCredsLivresProfsEstimados() const
 { 

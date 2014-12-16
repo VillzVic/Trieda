@@ -1859,8 +1859,9 @@ void ProblemSolution::verificaPossivelNovaTurma(
 {	
 	// ---------------------------------
 	// Saída com detalhes para análise interna
+	bool printMotivosInternos = CentroDados::getPrintLogs() && false;
 	ofstream outMotivosInternos;
-	if (CentroDados::getPrintLogs())
+	if (printMotivosInternos)
 	{
 		outMotivosInternos.open( "infoExtraPossivelNovaTurm.txt", ios::app );
 	}
@@ -2029,34 +2030,34 @@ void ProblemSolution::verificaPossivelNovaTurma(
 						map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> >
 							*opcao = & semChoquesNaSala[opcaoIdx];
 										
-						if (CentroDados::getPrintLogs())
+						if (printMotivosInternos)
 						{
-						outMotivosInternos << "\n\n----------------------------------------------";
-						outMotivosInternos << "\nAnalise do nao atendimento do AlunoDemanda Id " << ad->getId();
-						outMotivosInternos << "\nPossivel nova turma " << strTurmaTipoCred 
-							<< "no turno " << ad->demanda->getTurnoIES()->getNome() << "com seguinte alocacao:";
-						outMotivosInternos << "\nDisc " << discEquiv->getId() << "  " << discEquiv->getCodigo();
-						if ( discEquiv->temParPratTeor() )
-							outMotivosInternos << " (possui par teorico/prat)";
-						outMotivosInternos << " - " << discEquiv->getTotalCreditos() << " creditos.";
-						outMotivosInternos << "\nSala " << sala->getId() << "  " << sala->getCodigo();
-						auto itDiaOpcao = opcao->begin();
-						for ( ; itDiaOpcao != opcao->end(); itDiaOpcao++ )
-						{												
-							outMotivosInternos << "\nDia " << itDiaOpcao->first	<< "\nHorarios: ";
-							ITERA_GGROUP_LESSPTR( itHor, itDiaOpcao->second, HorarioAula )
-							{
-								outMotivosInternos << " " << itHor->getInicio().hourMinToStr();
+							outMotivosInternos << "\n\n----------------------------------------------";
+							outMotivosInternos << "\nAnalise do nao atendimento do AlunoDemanda Id " << ad->getId();
+							outMotivosInternos << "\nPossivel nova turma " << strTurmaTipoCred 
+								<< "no turno " << ad->demanda->getTurnoIES()->getNome() << "com seguinte alocacao:";
+							outMotivosInternos << "\nDisc " << discEquiv->getId() << "  " << discEquiv->getCodigo();
+							if ( discEquiv->temParPratTeor() )
+								outMotivosInternos << " (possui par teorico/prat)";
+							outMotivosInternos << " - " << discEquiv->getTotalCreditos() << " creditos.";
+							outMotivosInternos << "\nSala " << sala->getId() << "  " << sala->getCodigo();
+							auto itDiaOpcao = opcao->begin();
+							for ( ; itDiaOpcao != opcao->end(); itDiaOpcao++ )
+							{												
+								outMotivosInternos << "\nDia " << itDiaOpcao->first	<< "\nHorarios: ";
+								ITERA_GGROUP_LESSPTR( itHor, itDiaOpcao->second, HorarioAula )
+								{
+									outMotivosInternos << " " << itHor->getInicio().hourMinToStr();
+								}
 							}
-						}
 
-						outMotivosInternos << "\nAlsDem (" << itAlunosSemChoque->second.size() << " alunos): ";
-						ITERA_GGROUP_LESSPTR( itAl, itAlunosSemChoque->second, AlunoDemanda )
-						{
-							outMotivosInternos << " " << itAl->getId();
-							if ( itAl->getAluno()->ehFormando() )
-								outMotivosInternos << " (formando)";
-						}
+							outMotivosInternos << "\nAlsDem (" << itAlunosSemChoque->second.size() << " alunos): ";
+							ITERA_GGROUP_LESSPTR( itAl, itAlunosSemChoque->second, AlunoDemanda )
+							{
+								outMotivosInternos << " " << itAl->getId();
+								if ( itAl->getAluno()->ehFormando() )
+									outMotivosInternos << " (formando)";
+							}
 						}
 					}
 				}
@@ -2120,7 +2121,7 @@ void ProblemSolution::verificaPossivelNovaTurma(
 		}
 	}
 
-	if (CentroDados::getPrintLogs())
+	if (printMotivosInternos)
 	{
 		outMotivosInternos.close();
 	}

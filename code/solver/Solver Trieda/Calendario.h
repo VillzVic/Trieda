@@ -75,7 +75,7 @@ public:
    bool possuiHorarioDia( HorarioAula *h, int dia );
    HorarioAula* possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia );
    bool possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *hf, int dia );
-
+   
    GGroup<HorarioAula*, LessPtr<HorarioAula>> retornaHorariosDisponiveisNoDia( int dia );
    std::unordered_set<HorarioAula*> retornaHorariosDisponiveis( int dia, int turnoIdIES );
 

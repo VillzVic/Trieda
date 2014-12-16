@@ -18,6 +18,7 @@ Horario::Horario( Horario *h )
 	this->horario_aula->setTempoAula( h->horario_aula->getTempoAula() );
 	this->horario_aula->dias_semana = h->horario_aula->dias_semana;
 	this->horario_aula->setFaseDoDia( h->horario_aula->getFaseDoDia() );
+	this->horario_aula->setCalendario( h->horario_aula->getCalendario() );
 	this->dias_semana = h->dias_semana;
 	this->setHorarioAulaId( h->getHorarioAulaId() );
 	this->setTurnoIESId( h->getTurnoIESId() );

@@ -110,6 +110,26 @@ bool TurnoIES::possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *h
 	return valid;
 }
 
+// Procura o horarioDia no calendario, ou um igual exceto pelo id.
+HorarioAula* TurnoIES::getHorarioDiaCorrespondente( Calendario* const calendario, HorarioAula* const h, int dia )
+{	
+	auto itMapDia = mapDiaDateTime.find(dia);
+	if ( itMapDia != mapDiaDateTime.end() )
+	{
+		auto itMapDateTime = itMapDia->second.find( h->getInicio() );
+		if ( itMapDateTime != itMapDia->second.end() )
+		{ 		
+			for (auto itHor = itMapDateTime->second.cbegin(); itHor != itMapDateTime->second.cend(); itHor++)
+			{
+				if ( (*itHor)->getCalendario()->getId() == calendario->getId() )
+					return *itHor;
+			}
+		}		
+	}
+	return nullptr;
+}
+
+
 // retorna horarios disponiveis no dia
 void TurnoIES::retornaHorariosDisponiveisNoDia( int dia, GGroup<HorarioAula*, LessPtr<HorarioAula>> &horarios) const
 {

@@ -409,9 +409,19 @@ private:
 	#pragma endregion
 
 	#pragma region [CRIAR OUTPUT]
-
+	
 	// cria output de atendimentos
 	void criarOutput_(ProblemSolution* const solution) const;
+	
+	void criarOutputNovo_(ProblemSolution* const solution) const;
+
+	// criar output para a turma
+	void criarTurmaOutput_(AtendimentoCampus &atendCampus, TurmaHeur* const turma) const;
+	
+	// criar output para a aula
+	void criarAulaOutput_(AtendimentoSala &atendSala, TurmaHeur* const turma, ProfessorHeur* const professor,
+		AulaHeur* const aula, int dia, unordered_map<Demanda*, set<AlunoDemanda*>> const &alunosDemanda) const;
+
 	// cria output de professores virtuais.
 	void criarOutProfsVirtuais_(ProblemSolution* const solution) const;
 

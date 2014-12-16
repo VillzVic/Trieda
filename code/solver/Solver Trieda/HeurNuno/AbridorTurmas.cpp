@@ -530,6 +530,7 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 	const bool compSec = (ofertaDisc->temCompTeorica() && !teorico);
 	const bool primeira = !ofertaDisc->temTurmaTipo(teorico);
 	Disciplina* const disciplina = ofertaDisc->getDisciplina(teorico);
+	const bool haProfHab = ofertaDisc->haProfessorAssociado();
 
 	const bool aulasContinuas = ofertaDisc->getDisciplina()->aulasContinuas();
 	unordered_map<AlunoHeur*, TurmaHeur*> mapAlunoTurmaTeor;
@@ -579,13 +580,13 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 
 				// verificar se ultrapassa o máximo de aulas simultaneas da disciplina
 				if(ParametrosHeuristica::limTurmasSimultaneas)
-				{
+				{					
 					int nrSimult = nrTurmasSimultaneasDisc_(disciplina, dia, aula) + 1;
 					int nrProfsAssoc = nrProfsAssociadosHorario(ofertaDisc, dia, aula);
-					if(nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
-					{
+					if(haProfHab && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
 						continue;
-					}
+					else if (!haProfHab && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimultSemProfHab)
+						continue;
 				}
 
 				// set aula
