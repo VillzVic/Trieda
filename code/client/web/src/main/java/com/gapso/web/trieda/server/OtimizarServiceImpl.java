@@ -80,6 +80,7 @@ import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoHorarioAula;
+import com.gapso.web.trieda.server.xml.output.ItemAtendimentoOferta;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoSala;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTatico;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
@@ -2174,6 +2175,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					horarioAulaIdToHorarioAulaMap.put(horarioAula.getId(),horarioAula);
 				}
 			}
+			Map<Long,Oferta> ofertaIdToOfertaMap = new HashMap<Long,Oferta>();
+			for (Campus campus : cenario.getCampi()) {
+				for (Oferta oferta : campus.getOfertas()) {
+					ofertaIdToOfertaMap.put(oferta.getId(), oferta);
+				}
+			}
 			for (ItemAtendimentoCampus atendimento: triedaOutput.getAtendimentos().getAtendimentoCampus())
 			{
 				if (campusIdToCampusMap.get(atendimento.getCampusCodigo()) != null)
@@ -2221,6 +2228,16 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 										{
 											ret.get("error").add("Turno id("+ atendimentoTurno.getTurnoId() +") especificado na solução não esta cadastrado");
 											return ret;
+										}
+										
+										for (ItemAtendimentoOferta atendimentoOferta : atendimentoHorarioAula.getAtendimentosOfertas().getAtendimentoOferta()) {
+											Oferta oferta = ofertaIdToOfertaMap.get((long)atendimentoOferta.getOfertaCursoCampiId());
+											if (oferta != null) {
+												turnos.add(oferta.getTurno());
+											} else {
+												ret.get("error").add("Oferta id("+ atendimentoOferta.getOfertaCursoCampiId() +") especificado na solução não está presente no Map de ofertas.");
+												return ret;
+											}
 										}
 									}
 								}
