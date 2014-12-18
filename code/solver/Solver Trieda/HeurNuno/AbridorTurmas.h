@@ -222,7 +222,9 @@ private:
 
 	// nr profs assoc da disciplina
 	int nrProfsAssociadosHorario(OfertaDisciplina* const ofertaDisc, int dia, AulaHeur* const aula) const;
-
+	
+	// nr profs livres assoc da disciplina
+	int nrProfsLivresAssocEstimado(OfertaDisciplina* const ofertaDisc) const;
 	#pragma endregion
 };
 

@@ -124,7 +124,6 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 
 	setParams(timeIter_);
 
-	if (phase_ != Polish::PH_MIN_PV)
     while (okIter)
     {     
 		if (fixType_==1)
@@ -156,18 +155,11 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		checkTimeLimit(okIter);
 	  
 		unfixBounds();
-		
-		//if (module_ == Polish::TATICO)
-		//if (!melhorou_ && !optimal())
-		//if (phase_ == Polish::PH_MIN_PV)
-		//	mainLocalBranching();
-    }         
-		
+    }		
 	
-	if (phase_ == Polish::PH_MIN_PV)
-		mainLocalBranching();
-
-
+	//if (phase_ == Polish::PH_MIN_PV)
+	//	mainLocalBranching();
+	
 	closeLogFile();
 	restoreOriginalLogFile();
 	

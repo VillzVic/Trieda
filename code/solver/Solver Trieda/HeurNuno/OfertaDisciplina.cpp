@@ -1144,6 +1144,7 @@ bool OfertaDisciplina::haProfessorAssociado () const
 			return true;
 		}
 	}
+	return false;
 }
 
 

@@ -24,6 +24,16 @@ int MIPUnico::idCounter = 0;
 // -----------------------------------------------------------------------------------------------
 // Parâmetros
 
+// Gurobi
+const int MIPUnico::timeLimitMaxAtend = 3600*3;
+const int MIPUnico::timeLimitMaxAtendSemMelhora = 3600*2;
+const int MIPUnico::timeLimitMinProfVirt = 3600*4;
+const int MIPUnico::timeLimitMinProfVirtSemMelhora = 3600*2;
+const int MIPUnico::timeLimitMinGapProf = 3600*2;
+const int MIPUnico::timeLimitMinGapProfSemMelhora = 3600;
+const int MIPUnico::timeLimitGeneral= 3600*2;
+const int MIPUnico::timeLimitGeneralSemMelhora = 3600;
+
 // Disciplinas
 const int MIPUnico::consideraDivCredDisc = ParametrosPlanejamento::Weak;
 
@@ -2102,14 +2112,7 @@ int MIPUnico::solveGaranteSolucao( int campusId, int prioridade, int r, bool& CA
 	lp->setMIPEmphasis(0);
 	lp->setSymetry(0);
 	lp->setCuts(3);
-	lp->setNumIntSols(1);	
-
-	#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-	cb_data.timeLimit = this->getMaxTimeNoImprov(Solver::TAT_INT1);
-	cb_data.gapMax = 80;
-	lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-	#endif
-
+	lp->setNumIntSols(1);
 	lp->updateLP();
 #endif
 
@@ -2191,24 +2194,6 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 			vals[nBds] = 1.0;
 			nBds++;
 		}
-		else if ( v.getType() == VariableMIPUnico::V_FOLGA_ALUNO_MIN_ATEND1 )	// fmd: folga de mínimo de demanda por aluno
-		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 1.0;
-			nBds++;
-		}
-		else if ( v.getType() == VariableMIPUnico::V_FOLGA_ALUNO_MIN_ATEND2 )	// fmd: folga de mínimo de demanda por aluno
-		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 5.0;
-			nBds++;
-		}
-		else if ( v.getType() == VariableMIPUnico::V_FOLGA_ALUNO_MIN_ATEND3 )	// fmd: folga de mínimo de demanda por aluno
-		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 10.0;
-			nBds++;
-		}
 		else
 		{
 			idxs[nBds] = vit->second;
@@ -2259,7 +2244,7 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 				delete pol;
 			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
-				polishing = pol->polish(xS, 3600, 90, 1000);
+				polishing = pol->polish(xS, timeLimitMaxAtend, 90, timeLimitMaxAtendSemMelhora);
 				delete pol;
 			#endif
 		}
@@ -2448,7 +2433,7 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 				delete pol;
 			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MIN_PV);
-				polishing = pol->polish(xS, 3600*2, 90, 3600);
+				polishing = pol->polish(xS, timeLimitMinProfVirt, 90, timeLimitMinProfVirtSemMelhora);
 				delete pol;
 			#endif
 		}
@@ -2641,7 +2626,7 @@ int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREG
 				delete pol;
 			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
-				polishing = pol->polish(xS, 3600, 90, 1000);
+				polishing = pol->polish(xS, timeLimitMinGapProf, 90, timeLimitMinGapProfSemMelhora);
 				delete pol;
 			#endif
 		}
@@ -2778,7 +2763,7 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 				delete pol;
 			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
-				polishing = pol->polish(xS, 1800, 90, 1000);
+				polishing = pol->polish(xS, timeLimitGeneral, 90, timeLimitGeneralSemMelhora);
 				delete pol;
 			#endif
 		}

@@ -21,7 +21,7 @@ ProfessorHeur::~ProfessorHeur(void)
 {
 }
 
-// todo 
+// Verifica se o professor possui os horarios da aula no dia. Não olha para alocação do prof. 
 bool ProfessorHeur::estaDisponivelHorarios(int dia, AulaHeur* const aula) const 
 {
 	if(ehVirtual() || ehVirtualUnico_)

@@ -77,7 +77,7 @@ public:
 	// limitar numero de turmas simultaneas de uma disciplina
 	static const bool limTurmasSimultaneas;
 	static const int slackTurmasSimult;
-	static const int slackTurmasSimultSemProfHab;
+	static const int slackTurmasSimultSemProf;
 
 	// Máximo de turmas potenciais guardadas
 	static const int maxTurmasPotenciais;

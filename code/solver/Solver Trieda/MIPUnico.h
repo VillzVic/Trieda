@@ -350,6 +350,16 @@ private:
 	
 	// Constantes e parâmetros
 	    
+	// Gurobi
+	static const int timeLimitMaxAtend;
+	static const int timeLimitMaxAtendSemMelhora;
+	static const int timeLimitMinProfVirt;
+	static const int timeLimitMinProfVirtSemMelhora;
+	static const int timeLimitMinGapProf;
+	static const int timeLimitMinGapProfSemMelhora;
+	static const int timeLimitGeneral;
+	static const int timeLimitGeneralSemMelhora;
+
 	// Disciplinas
 	static const int consideraDivCredDisc;
 

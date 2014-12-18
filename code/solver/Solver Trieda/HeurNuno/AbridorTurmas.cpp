@@ -536,9 +536,13 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 	unordered_map<AlunoHeur*, TurmaHeur*> mapAlunoTurmaTeor;
 	if (aulasContinuas && compSec)
 	{
-		std::cout << "\ngetMapTurmaTeoricaAlunos_: disc " << ofertaDisc->getDisciplina()->getCodigo();
 		getMapTurmaTeoricaAlunos_(ofertaDisc, alunosDem, mapAlunoTurmaTeor);
 	}
+
+	int nrProfsLivresEst = nrProfsLivresAssocEstimado(ofertaDisc);
+
+	HeuristicaNuno::logMsgInt("nrProfsLivresEst: ", nrProfsLivresEst, 2);
+	HeuristicaNuno::logMsgInt("haProfHab: ", haProfHab, 2);
 
 	for(auto itDia = credsPossDia.cbegin(); itDia != credsPossDia.cend(); ++itDia)
 	{
@@ -583,9 +587,11 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 				{					
 					int nrSimult = nrTurmasSimultaneasDisc_(disciplina, dia, aula) + 1;
 					int nrProfsAssoc = nrProfsAssociadosHorario(ofertaDisc, dia, aula);
-					if(haProfHab && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
+					HeuristicaNuno::logMsgInt("\tnrSimult: ", nrSimult, 2);
+					HeuristicaNuno::logMsgInt("\tnrProfsAssoc: ", nrProfsAssoc, 2);
+					if(nrProfsLivresEst>0 && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
 						continue;
-					else if (!haProfHab && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimultSemProfHab)
+					else if (nrProfsLivresEst<=0 && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimultSemProf)
 						continue;
 				}
 
@@ -598,14 +604,8 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 				unordered_set<AlunoHeur*> alunosDemPTCont;
 				if (aulasContinuas && compSec)
 				{
-					DateTime dti;
-					aula->getPrimeiroHor(dti);
-					std::cout << "\n\t\tgetAlunosAulaCont_: dia " << dia << " aula hi=" << dti;
-
 					// filtra alunos com aulas teoricas no horario anterior					
 					getAlunosAulaCont_(ofertaDisc, dia, aula, mapAlunoTurmaTeorNoDia, alunosDemPTCont);
-					std::cout << " : " << alunosDemPTCont.size() << " alunos possiveis dentre um total de "
-						<< alunosDem.size();
 					if(alunosDemPTCont.size() == 0)
 						continue;
 					alunosDemConsiderados = &alunosDemPTCont;
@@ -660,10 +660,6 @@ void AbridorTurmas::getMapTurmaTeoricaAlunosNoDia_(int dia,
 		if (itAluno->second->getAulaDia(dia, aula))
 			mapAlunoTurmaTeorNoDia[itAluno->first] = itAluno->second;
 	}
-			
-	std::cout << "\n\tmapAlunoTurmaTeorNoDia: dia " << dia;
-	std::cout << " : " << mapAlunoTurmaTeorNoDia.size() 
-		<< " alunos com aula teor no dia dentre um total de " << mapAlunoTurmaTeor.size();
 }
 
 // verifica se a disciplina pode ter uma aula nesses dias.
@@ -1327,10 +1323,17 @@ void AbridorTurmas::getProfessoresDisponiveis_(unordered_set<ProfessorHeur*> con
 			profsDisponiveis.insert(*itProf);
 			algumPotencial = true;
 		}
-		else if(!algumPotencial)
+	}
+	if(!algumPotencial)
+	{
+		for(auto itProf = profsAssoc.cbegin(); itProf != profsAssoc.cend(); ++itProf)
 		{
-			if((*itProf)->estaDisponivelHorarios(aulas))
-				algumPotencial = true;
+			if(!algumPotencial)
+			{
+				// verificar se ele tem os horarios das aulas cadastrado nas disponibilidades
+				if((*itProf)->estaDisponivelHorarios(aulas))
+					algumPotencial = true;
+			}
 		}
 	}
 }
@@ -1870,6 +1873,20 @@ int AbridorTurmas::nrProfsAssociadosHorario(OfertaDisciplina* const ofertaDisc, 
 	for(auto it = profs.cbegin(); it != profs.cend(); ++it)
 	{
 		if((*it)->estaDisponivelHorarios(dia, aula))
+			nr++;
+	}
+	return nr;
+}
+
+// nr profs livres assoc da disciplina
+int AbridorTurmas::nrProfsLivresAssocEstimado(OfertaDisciplina* const ofertaDisc) const
+{
+	unordered_set<ProfessorHeur*> profs;
+	ofertaDisc->getProfessoresAssociados(profs);
+	int nr = 0;
+	for(auto it = profs.cbegin(); it != profs.cend(); ++it)
+	{
+		if((*it)->nroCredsLivresEstimados() >= ofertaDisc->getNrCreds())
 			nr++;
 	}
 	return nr;

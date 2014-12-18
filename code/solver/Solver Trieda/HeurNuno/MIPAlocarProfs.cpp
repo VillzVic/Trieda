@@ -1667,7 +1667,8 @@ void MIPAlocarProfs::checkChAnterior_(void)
 // verificar se a proibição de gaps no horários de mesma fase do dia do prof foi respeitada
 void MIPAlocarProfs::checkGapsProf_(void)
 {
-	if ( CentroDados::getProblemData()->parametros->proibirProfGapMTN != 2 )
+	if ( CentroDados::getProblemData()->parametros->proibirProfGapMTN !=
+		 ParametrosPlanejamento::ConstraintLevel::Strong)
 		return;
 
 	// ---------------------------------------------------------------------------------
@@ -1757,7 +1758,6 @@ void MIPAlocarProfs::checkGapsProf_(void)
 						msg << "Gap de " << gap << " mins encontrado no dia " << itDia->first << " fase "
 							<< itFase->first << " do prof " << itProf->first->getId();
 						CentroDados::printError("void MIPAlocarProfs::checkGapsProf_(void)", msg.str());
-					//	HeuristicaNuno::excepcao("void MIPAlocarProfs::checkGapsProf_(void)", msg.str());
 					}
 				}
 			}
