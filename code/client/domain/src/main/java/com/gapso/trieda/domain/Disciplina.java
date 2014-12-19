@@ -354,6 +354,13 @@ public class Disciplina
 	}
 	
 	@Transactional
+	public void persistAndPreencheHorarios(Set<SemanaLetiva> semanas)
+	{
+		persist();
+		preencheHorarios(semanas);
+	}
+	
+	@Transactional
 	public void persist()
 	{
 		if ( this.entityManager == null )

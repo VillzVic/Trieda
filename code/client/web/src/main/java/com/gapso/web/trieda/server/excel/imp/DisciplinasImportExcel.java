@@ -2,9 +2,11 @@ package com.gapso.web.trieda.server.excel.imp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -314,12 +316,9 @@ public class DisciplinasImportExcel
 
 	@Transactional
 	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
-	private void updateDataBase(
-		String sheetName, List< DisciplinasImportExcelBean > sheetContent )
-	{
-		Map< String, Disciplina > disciplinasBDMap
-			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+	private void updateDataBase(String sheetName, List< DisciplinasImportExcelBean > sheetContent) {
+		Map<String, Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(this.instituicaoEnsino,getCenario()));
+		Set<SemanaLetiva> semanasLetivas = new HashSet<SemanaLetiva>(SemanaLetiva.findByCenario(instituicaoEnsino, getCenario()));
 
 		List<Disciplina> persistedDisciplinas = new ArrayList<Disciplina>();
 		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
@@ -367,7 +366,7 @@ public class DisciplinasImportExcel
 				newDisciplina.setUsaSabado( disciplinaExcel.getUsaSabado() );
 				newDisciplina.setUsaDomingo( disciplinaExcel.getUsaDomingo() );
 
-				newDisciplina.persistAndPreencheHorarios();
+				newDisciplina.persistAndPreencheHorarios(semanasLetivas);
 				persistedDisciplinas.add(newDisciplina);
 			}
 			
@@ -377,10 +376,10 @@ public class DisciplinasImportExcel
 				}
 		}
 		
-		if (!persistedDisciplinas.isEmpty()) {
+		/*if (!persistedDisciplinas.isEmpty()) {
 			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Disciplina.preencheHorariosDasDisciplinas(persistedDisciplinas,semanasLetivas,instituicaoEnsino);
-		}
+		}*/
 	}
 
 	private void resolveHeaderColumnNames()

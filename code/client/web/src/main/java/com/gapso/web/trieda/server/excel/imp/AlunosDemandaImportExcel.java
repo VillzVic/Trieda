@@ -393,28 +393,12 @@ public class AlunosDemandaImportExcel
 	}
 
 	@Transactional
-	protected void updateDataBase(
-		String sheetName, List< AlunosDemandaImportExcelBean > sheetContent )
-	{
-		Map< String, Aluno > alunosBDMap
-			= Aluno.buildMatriculaAlunoToAlunoMap(
-				Aluno.findByCenario( this.instituicaoEnsino , getCenario()) );
-
-		Map< String, Demanda > demandasBDMap
-			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(
-				Demanda.findByCenario( this.instituicaoEnsino, getCenario() ) );
-
-		Map< String, Oferta > ofertasBDMap
-			= Oferta.buildCampusTurnoCurriculoToOfertaMap(
-				Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
-
-		Map< String, AlunoDemanda > alunosDemandaBD
-			= AlunoDemanda.buildCodAlunoCodDemandaToAlunosDemandasMap(
-				AlunoDemanda.findAll( this.instituicaoEnsino, getCenario() ) );
-
-		Map< String, CurriculoDisciplina > curriculosDisciplinaBD
-			= CurriculoDisciplina.buildCurriculoDisciplinaPeriodoMap(
-				CurriculoDisciplina.findByCenario( this.instituicaoEnsino , getCenario() ) );
+	protected void updateDataBase(String sheetName, List<AlunosDemandaImportExcelBean> sheetContent) {
+		Map<String,Aluno> alunosBDMap = Aluno.buildMatriculaAlunoToAlunoMap(Aluno.findByCenario(this.instituicaoEnsino,getCenario()));
+		Map<String,Demanda> demandasBDMap = Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(Demanda.findByCenario(this.instituicaoEnsino,getCenario()));
+		Map<String,Oferta> ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(Oferta.findByCenario(this.instituicaoEnsino,getCenario()));
+		Map<String,AlunoDemanda> alunosDemandaBD = AlunoDemanda.buildCodAlunoCodDemandaToAlunosDemandasMap(AlunoDemanda.findAll(this.instituicaoEnsino,getCenario()));
+		Map<String,CurriculoDisciplina> curriculosDisciplinaBD = CurriculoDisciplina.buildCurriculoDisciplinaPeriodoMap(CurriculoDisciplina.findByCenario(this.instituicaoEnsino,getCenario()));
 
 		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( AlunosDemandaImportExcelBean alunosDemandaExcel : sheetContent )
@@ -545,10 +529,8 @@ public class AlunosDemandaImportExcel
 		atualizaQuantidadeDemanda();
 	}
 	
-	private void atualizaQuantidadeDemanda()
-	{
-		List< AlunoDemanda > list
-			= AlunoDemanda.findAll( this.instituicaoEnsino );
+	private void atualizaQuantidadeDemanda() {
+		List<AlunoDemanda> list = AlunoDemanda.findAll(this.instituicaoEnsino,getCenario());
 
 		Map< Demanda, Set< String > > map
 			= new HashMap< Demanda, Set< String > >();

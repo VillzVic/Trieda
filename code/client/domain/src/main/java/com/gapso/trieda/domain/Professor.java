@@ -391,7 +391,13 @@ public class Professor
 	public void persistAndPreencheHorarios()
 	{
 		persist();
-		preencheHorarios();
+		preencheHorarios(new HashSet<SemanaLetiva>());
+	}
+	
+	public void persistAndPreencheHorarios(Set<SemanaLetiva> semanas)
+	{
+		persist();
+		preencheHorarios(semanas);
 	}
 	
 	@Transactional
@@ -462,14 +468,18 @@ public class Professor
 		}
 	}
 
-	 @Transactional
-	public void preencheHorarios()
+	@Transactional
+	public void preencheHorarios(Set<SemanaLetiva> semanas)
 	{
 		InstituicaoEnsino instituicaoEnsino
 			= this.getTipoContrato().getInstituicaoEnsino();
 
-		List< SemanaLetiva > listDomains
-			= SemanaLetiva.findByCenario( instituicaoEnsino, this.getCenario() );
+		Set< SemanaLetiva > listDomains = semanas;
+		if (semanas.isEmpty())
+		{
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario( instituicaoEnsino, this.getCenario() );
+			listDomains.addAll(semanasLetivas);
+		}
 
 		//Cria estrutura de dados inicial com mapeamento de horarios de todas as semanas letivas para cada dia da semana
 		Map<Semanas, Map<Date, Integer>> diaSemanaMapHorarioInicioMapHorarioFim = new HashMap<Semanas, Map<Date, Integer>>();

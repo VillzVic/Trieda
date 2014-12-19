@@ -2,9 +2,11 @@ package com.gapso.web.trieda.server.excel.imp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -383,12 +385,9 @@ public class ProfessoresImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase( String sheetName,
-		List< ProfessoresImportExcelBean > sheetContent )
-	{
-		Map< String, Professor > professoresBDMap
-			= Professor.buildProfessorCpfToProfessorMap(
-				Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
+	private void updateDataBase(String sheetName, List<ProfessoresImportExcelBean> sheetContent) {
+		Map<String, Professor> professoresBDMap = Professor.buildProfessorCpfToProfessorMap(Professor.findByCenario(this.instituicaoEnsino,getCenario()));
+		Set<SemanaLetiva> semanasLetivas = new HashSet<SemanaLetiva>(SemanaLetiva.findByCenario(instituicaoEnsino, getCenario()));
 
 		List<Professor> persistedProfessores = new ArrayList<Professor>();
 		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
@@ -430,7 +429,7 @@ public class ProfessoresImportExcel
 				newProfessor.setMaxDiasSemana( professorExcel.getMaxDiasSemana() );
 				newProfessor.setMinCreditosDia( professorExcel.getMinCreditosDia() );
 
-				newProfessor.persistAndPreencheHorarios();
+				newProfessor.persistAndPreencheHorarios(semanasLetivas);
 				persistedProfessores.add(newProfessor);
 			}
 			
@@ -440,10 +439,10 @@ public class ProfessoresImportExcel
 				}
 		}
 		
-		if (!persistedProfessores.isEmpty()) {
+		/*if (!persistedProfessores.isEmpty()) {
 			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Professor.preencheHorariosDosProfessores(persistedProfessores,semanasLetivas);
-		}
+		}*/
 	}
 
 	private void resolveHeaderColumnNames()
