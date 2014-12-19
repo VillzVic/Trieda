@@ -696,12 +696,29 @@ void ProblemData::le_turnosIES( TriedaInput & raiz )
 
 }
 
+void ProblemData::fillAllDiaDti()
+{
+	for (auto itCalend = calendarios.begin(); itCalend != calendarios.end(); itCalend++)
+	{
+		for (auto itDia = itCalend->mapDiaDateTime.begin(); itDia != itCalend->mapDiaDateTime.end(); itDia++)
+		{
+			auto ptr = &allDiaDti[itDia->first];
+			for (auto itDti = itDia->second.begin(); itDti != itDia->second.end(); itDti++)
+			{
+				ptr->insert(itDti->first);
+			}
+		}
+	}
+}
+
 void ProblemData::le_arvore( TriedaInput & raiz )
 {
    this->setCenarioId( 0 );//raiz.cenarioId() );
    this->calendarios.clear();
    LE_SEQ( this->calendarios, raiz.calendarios(), Calendario );
 	  
+   this->fillAllDiaDti();
+
    this->le_turnosIES( raiz );
 
    LE_SEQ( this->campi, raiz.campi(), Campus );

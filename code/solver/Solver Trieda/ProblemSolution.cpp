@@ -29,6 +29,7 @@ ProblemSolution::ProblemSolution( bool _modoOtmTatico )
    nroAlunoDemNaoAtendP1=0;
    nroAlunoDemAtendP2=0;
    nroAlunoDemAtendP1P2=0;
+   nrMaxDiscSimult_=0;
 }
 
 ProblemSolution::~ProblemSolution()
@@ -1104,12 +1105,7 @@ void ProblemSolution::clearMapsDaSolucao()
 	mapSolTurmaProfVirtualDiaAula.clear();
 	quantChProfs.clear();
 	mapSolTurmaCursos.clear();
-
-	//formandosAtendidos.clear();
-	//formandosNaoAtendidos.clear();
-	//calourosAtendidos.clear();
-	//calourosNaoAtendidos.clear();
-	
+		
 	std::cout << " limpando alunoSolution..."; fflush(0);
 
 	// ----------------------------------------------------------	
@@ -1123,6 +1119,62 @@ void ProblemSolution::clearMapsDaSolucao()
 	// ----------------------------------------------------------
 
 	std::cout << " limpo!"; fflush(0);
+}
+
+void ProblemSolution::verificaNrDiscSimultVirtual()
+{
+	cout << "\nverificaNrDiscSimultVirtual..."; fflush(0);
+
+   // PERCORRE TODAS AS TURMAS COM PROFESSORES VIRTUAIS
+   nrMaxDiscSimult_=0;
+   auto itFinder1 = mapSolTurmaProfVirtualDiaAula.begin();
+   for ( ; itFinder1 != mapSolTurmaProfVirtualDiaAula.end(); itFinder1++ )
+   {
+	    int cpId = itFinder1->first;
+		
+		auto itFinder2 = itFinder1->second.begin();
+		for ( ; itFinder2 != itFinder1->second.end(); itFinder2++ )
+		{
+			Disciplina* disciplina = itFinder2->first;
+			
+			unordered_map<int, map<DateTime, unordered_set<Aula*>>> mapDiaDtiAulas;
+			
+			// agrupa as aulas da disciplina de profs virtuais por dia/dti
+			auto itFinder3 = itFinder2->second.begin();
+			for ( ; itFinder3 != itFinder2->second.end(); itFinder3++ )
+			{	   
+			   auto itFinder4 = itFinder3->second.begin();			   
+			   for ( ; itFinder4 != itFinder3->second.end(); itFinder4++ )
+			   {
+				   auto itFinder5 = itFinder4->second.begin();
+				   for ( ; itFinder5 != itFinder4->second.end(); itFinder5++ )
+				   {
+					   int dia = itFinder5->first;
+					   Aula *aula = itFinder5->second;
+
+					   mapDiaDtiAulas[dia][*aula->getDateTimeInicial()].insert(aula);
+				   }
+			   }
+			}
+
+			// histograma
+			for (auto itDia=mapDiaDtiAulas.cbegin(); itDia!=mapDiaDtiAulas.cend(); itDia++)
+			{
+				for (auto itDti=itDia->second.cbegin(); itDti!=itDia->second.cend(); itDti++)
+				{
+					int qtd = itDti->second.size();
+					if (qtd>1)
+						mapNrDiscSimult[qtd].insert(disciplina);
+					if (qtd>nrMaxDiscSimult_)
+						nrMaxDiscSimult_ = qtd;
+				}
+			}
+		}
+   }
+
+   stringstream msg;
+   msg << "\nNr maximo de aulas de mesma disciplina simultaneas " << nrMaxDiscSimult_;
+   Indicadores::printIndicador( msg.str() );
 }
 
 void ProblemSolution::verificaNaoAtendimentosTaticos()
@@ -1243,13 +1295,6 @@ void ProblemSolution::verificaNaoAtendimentosTaticos()
 			}
 			else if ( (chCompleta || nroDiscsCompleto) && P1 && teorica )
 				alunoChCompletaMasP1NaoAtend.push_back( ad );
-		}
-		else
-		{
-			//if ( ad->getAluno()->ehFormando() )
-			//	formandosAtendidos[ad->getAluno()][ad->getPrioridade()].add( ad );
-			//if ( ad->getAluno()->ehCalouro() )
-			//	calourosAtendidos[ad->getAluno()][ad->getPrioridade()].add( ad );
 		}
 	}
 	
@@ -2793,7 +2838,8 @@ void ProblemSolution::verificaUsoDeProfsVirtuais()
 	int dif = CentroDados::getLastRunTime();
     CentroDados::stopTimer();
 	std::cout << " " << dif << "sec"; fflush(NULL);
-
+	
+	verificaNrDiscSimultVirtual();	
 }
 
 void ProblemSolution::computaMotivos( bool motivoNaoAtend, bool motivoUsoPV )
@@ -2892,6 +2938,9 @@ void ProblemSolution::imprimeMapsDaSolucao()
 	imprimeMapSolTurmaProfVirtualDiaAula();			
 	imprimeMapSolProfRealDiaHorarios();
 	imprimeQuantChProfs();
+
+	// Histograma para disciplinas com profs virtuais e aulas simultaneas
+	imprimeNrDiscSimultVirtual();
 }
 
 void ProblemSolution::imprimeMapSolDiscTurmaDiaAula()
@@ -3205,6 +3254,33 @@ void ProblemSolution::imprimeQuantChProfs()
 		outFile << "\n" << itProf->first << "\t\t\t" << itProf->second;
 	}
 		
+	outFile.close();
+}
+
+void ProblemSolution::imprimeNrDiscSimultVirtual()
+{	
+	if (!CentroDados::getPrintLogs())
+		return;
+
+	ofstream outFile;
+	string fileName("nrDiscSimultVirtual.txt");
+	outFile.open( fileName, ofstream::out );
+	if ( !outFile )
+	{
+		std::cout << "\nErro em void ProblemSolution::imprimeNrDiscSimultVirtual():"
+			<< " o arquivo " << fileName << " nao pode ser aberto.";
+		return;
+	}
+	
+	for (auto itNrSimult=mapNrDiscSimult.cbegin(); itNrSimult!=mapNrDiscSimult.cend(); itNrSimult++)
+	{
+		int qtd = itNrSimult->first;
+		outFile << "\nQtd de aulas simultaneas: " << qtd << "\n\tDisciplinas: ";
+		for (auto itDisc = itNrSimult->second.cbegin(); itDisc != itNrSimult->second.cend(); itDisc++)
+		{			
+			outFile << " " << (*itDisc)->getId();
+		}
+	}
 	outFile.close();
 }
 

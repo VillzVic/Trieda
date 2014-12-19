@@ -13,9 +13,10 @@ int TurmaPotencial::nrDestroy = 0;
 unsigned int TurmaPotencial::globalIdCount_ = 0;
 
 TurmaPotencial::TurmaPotencial(int turmaId, OfertaDisciplina* const oft, Calendario * const cal, bool tipo, unordered_map<int, AulaHeur*> aul,
-			  ProfessorHeur* const prof, SalaHeur* const sal, set<AlunoHeur*> aluns, int alunDisp, bool algPotProf)
+			  ProfessorHeur* const prof, SalaHeur* const sal, set<AlunoHeur*> aluns, int alunDisp, int algPotProfDisp, int algPotProfNaoDisp)
 			  : id(turmaId), ofertaDisc(oft), calendario(cal), tipoAula(tipo), aulas(aul), professor(prof), sala(sal), 
-			  alunos(aluns), algumPotencialProf(algPotProf), ok(true), globalId_(++TurmaPotencial::globalIdCount_)
+			  alunos(aluns), algumPotencialProfDisp(algPotProfDisp), algumPotencialProfNaoDisp(algPotProfNaoDisp),
+			  ok(true), globalId_(++TurmaPotencial::globalIdCount_)
 {
 	calcularValor_(aluns.size());
 }
@@ -40,7 +41,8 @@ void TurmaPotencial::operator= (const TurmaPotencial &other)
 	professor = other.professor;
 	sala = other.sala;
 	alunos = other.alunos;
-	algumPotencialProf = other.algumPotencialProf;
+	algumPotencialProfDisp = other.algumPotencialProfDisp;
+	algumPotencialProfNaoDisp = other.algumPotencialProfNaoDisp;
 	valor_ = other.getValor();
 	ok = (alunos.size() > 0);
 }
@@ -50,7 +52,7 @@ int TurmaPotencial::getTipoTurma(void) const
 	int idx = 2;
 	if(!professor->ehVirtual())
 		idx = 0;
-	else if(algumPotencialProf)
+	else if(algumPotencialProfDisp || algumPotencialProfNaoDisp)
 		idx = 1;
 	return idx;
 }
@@ -72,8 +74,10 @@ void TurmaPotencial::calcularValor_(int alunosDisp)
 		valor_ -= (indicSala / 10000);
 
 	// pequeno incentivo a turmas com prof real e horarios disponiveis
-	if(algumPotencialProf)
+	if(algumPotencialProfDisp)
 		valor_ += 0.001;
+	if(algumPotencialProfNaoDisp)
+		valor_ += 0.0001;
 	if(!professor->ehVirtual())
 		valor_ += 0.01;
 }

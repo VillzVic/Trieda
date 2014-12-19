@@ -149,6 +149,10 @@ public:
    // Para cada dia da semana, informa o
    // conjunto de horários aula disponíveis nesse dia
    std::map< int, GGroup< HorarioAula *, LessPtr< HorarioAula > > > horarios_aula_dia_semana;
+   
+   // Para cada dia da semana, informa o
+   // conjunto de horários de inicio disponíveis nesse dia
+   std::map< int, std::set<DateTime>> allDiaDti;
 
    // Conjunto de professores virtuais alocados na solução operacional
    std::vector< Professor * > professores_virtuais;
@@ -318,6 +322,7 @@ public:
 
 
    void le_turnosIES( TriedaInput & );
+   void fillAllDiaDti();
    virtual void le_arvore( TriedaInput & );
    
    void refDiscEquivalencias();

@@ -54,14 +54,33 @@ private:
 	// ---------------------------------------------------------------------------------
 
 	void init();
+	void loadUnidades();
+	void clusterUnidadesByProfs();
+
+	void fixVars();
+	void fixVarsTatico();
+	void fixVarsOp();
 
 	void decideVarsToFixType1();
 	void fixVarsProfType1();
 	void fixVarsType1();
 
-	void fixVarsType2();
 	void fixVarsType2Tatico();
 	void fixVarsType2Op();
+
+	void fixUnidsTatico();
+	void fixVarsDifUnidade();
+	void chooseRandUnidade();
+	int getNrFreeUnidade();
+	void chooseRandAndSetFreeUnidade();
+	void setNextRandFreeUnidade();
+	Unidade* getUnidadeAt(int at);
+	void clearFreeUnidade();
+	void addFreeUnid(Unidade* unid);
+	void setAllFreeUnidade();
+	bool isFree(Unidade* const unid);
+	bool allUnidadesAreFree();
+	bool thereIsFreeUnid();
 
 	void optimize();
 	void getSolution(double &objN, double &gap);
@@ -69,9 +88,12 @@ private:
 	void updatePercAndTimeIter( bool &okIter, double objN, double gap );
 	void updatePercAndTimeIterSmallGap( bool &okIter, double objN );
 	void updatePercAndTimeIterBigGap( double objN );
+	void adjustPercOrUnid(bool &okIter);
+	void decreasePercOrFreeUnid(int percToSubtract);
 	void adjustTime();
 	void increaseTime();
 	void decreaseTime();
+	void adjustOkIter(bool &okIter, double objN);
 	void resetIterSemMelhora();
 	void checkIterSemMelhora();
 	void checkEndDueToIterSemMelhora();
@@ -145,6 +167,11 @@ private:
 	   double runtime_;
 	   double timeLeft_;
 	   int nrIterSemMelhora_;
+	   
+	   // Unidade to leave free
+	   set<Unidade*> unidadeslivres_;
+	   int percUnidLivres_;
+	   bool tryBranch_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
@@ -178,6 +205,9 @@ private:
 	   // Hash which associates the column number with the VariableOp object.
 	   VariableOpHash const vHashOp_;
 	   
+	   // Unidades
+	   set<Unidade*> unidades_;
+
 	   MODULE const module_;
 	   int const phase_;
 

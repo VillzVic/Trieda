@@ -539,10 +539,9 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 		getMapTurmaTeoricaAlunos_(ofertaDisc, alunosDem, mapAlunoTurmaTeor);
 	}
 
-	int nrProfsLivresEst = nrProfsLivresAssocEstimado(ofertaDisc);
-
-	HeuristicaNuno::logMsgInt("nrProfsLivresEst: ", nrProfsLivresEst, 2);
-	HeuristicaNuno::logMsgInt("haProfHab: ", haProfHab, 2);
+	//int nrProfsLivresEst = nrProfsLivresAssocEstimado(ofertaDisc);
+	//HeuristicaNuno::logMsgInt("nrProfsLivresEst: ", nrProfsLivresEst, 2);
+	//HeuristicaNuno::logMsgInt("haProfHab: ", haProfHab, 2);
 
 	for(auto itDia = credsPossDia.cbegin(); itDia != credsPossDia.cend(); ++itDia)
 	{
@@ -587,12 +586,12 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 				{					
 					int nrSimult = nrTurmasSimultaneasDisc_(disciplina, dia, aula) + 1;
 					int nrProfsAssoc = nrProfsAssociadosHorario(ofertaDisc, dia, aula);
-					HeuristicaNuno::logMsgInt("\tnrSimult: ", nrSimult, 2);
-					HeuristicaNuno::logMsgInt("\tnrProfsAssoc: ", nrProfsAssoc, 2);
-					if(nrProfsLivresEst>0 && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
+					if(nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
 						continue;
-					else if (nrProfsLivresEst<=0 && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimultSemProf)
-						continue;
+					//if(nrProfsLivresEst>0 && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimult)
+					//	continue;
+					//else if (nrProfsLivresEst<=0 && nrSimult - nrProfsAssoc > ParametrosHeuristica::slackTurmasSimultSemProf)
+					//	continue;
 				}
 
 				// set aula
@@ -755,13 +754,12 @@ void AbridorTurmas::geraTurmasDivisaoRecHeap_(OfertaDisciplina* const &ofertaDis
 	if(step->itDia == divisao.cend())
 	{
 		HeuristicaNuno::logMsg("acabou, gerar turmas unidade", 3);
-		bool algumProfPot = true;
 		auto clustersUnid = ofertaDisc->getCampus()->getClustersUnids();
 		for(auto itClust = clustersUnid.cbegin(); itClust != clustersUnid.cend(); ++itClust)
 		{
 			const bool compSec = (ofertaDisc->temCompTeorica() && !teorico);
 			geraTurmasUnidade_(ofertaDisc, *itClust, calendario, teorico, *(step->aulas), *(step->alunosDisp), 
-								*(step->salasDisp), profsAssoc, algumProfPot, turmasPotenciais, turmasDivisao, compSec, true);
+								*(step->salasDisp), profsAssoc, turmasPotenciais, turmasDivisao, compSec, true);
 		}
 		return;
 	}
@@ -864,7 +862,7 @@ void AbridorTurmas::geraTurmasDivisaoRecHeap_(OfertaDisciplina* const &ofertaDis
 void AbridorTurmas::geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const ConjUnidades* const clusterUnid, Calendario * const calendario, 
 							bool teorico, unordered_map<int, AulaHeur*> const &aulas,  unordered_set<AlunoHeur*> const &alunosDisp,
 							unordered_set<SalaHeur*> const &salasDisp, unordered_set<ProfessorHeur*> const &profsDisp,
-							bool &algumProfPotencial, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
+							turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
 							const bool componenteSec, bool checkProfs)
 {
 	AbridorTurmas::nrGeraUnids_++;
@@ -910,11 +908,13 @@ void AbridorTurmas::geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const
 
 	// encontrar profs disponíveis considerando deslocação para unidade
 	set<ProfessorHeur*> profsDispUnidade;
+	int algumPotDisp=0;
+	int algumPotNaoDisp=0;
 	// check n foi feito
 	if(checkProfs)
-	{
+	{		
 		unordered_set<ProfessorHeur*> profsRealDisp;
-		getProfessoresDisponiveis_(profsDisp, newAulas, algumProfPotencial, profsRealDisp);
+		getProfessoresDisponiveis_(profsDisp, newAulas, algumPotDisp, algumPotNaoDisp, profsRealDisp);
 		for(auto itPS = profsRealDisp.cbegin(); itPS != profsRealDisp.cend(); ++itPS)
 			profsDispUnidade.insert(*itPS);
 	}
@@ -948,7 +948,7 @@ void AbridorTurmas::geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const
 	// Criar objecto turma potencial!
 	HeuristicaNuno::logMsg("criar turma potencial", 2);
 	const TurmaPotencial* turmaPot = new TurmaPotencial(++nrTurmas_, ofertaDisc, calendario, teorico, newAulas, prof, sala, alunosDisponiveis, 
-										nrAlunosDisp, algumProfPotencial);
+										nrAlunosDisp, algumPotDisp, algumPotNaoDisp);
 			
 	// adicionar às turmas potenciais
 	HeuristicaNuno::logMsg("add turma potencial", 3);
@@ -1312,28 +1312,27 @@ void AbridorTurmas::getProfessoresDispDivisao_(Calendario* const calendario, uno
 }
 // recebe as salas que estam disponíveis naquele horário e verifica quais pertencem ao conjunto de unidades
 void AbridorTurmas::getProfessoresDisponiveis_(unordered_set<ProfessorHeur*> const &profsAssoc, const unordered_map<int, AulaHeur*> &aulas, 
-									bool &algumPotencial, unordered_set<ProfessorHeur*>& profsDisponiveis)
+							int &algumPotDisp, int &algumPotNaoDisp, unordered_set<ProfessorHeur*>& profsDisponiveis)
 {
-	algumPotencial = false;
+	algumPotDisp = 0;
 	for(auto itProf = profsAssoc.cbegin(); itProf != profsAssoc.cend(); ++itProf)
 	{
 		// verificar se neste momento específico está disponível
 		if((*itProf)->estaDisponivel(aulas))
 		{
 			profsDisponiveis.insert(*itProf);
-			algumPotencial = true;
+			algumPotDisp++;
 		}
 	}
-	if(!algumPotencial)
+
+	algumPotNaoDisp=0;
+	if(!algumPotDisp)
 	{
 		for(auto itProf = profsAssoc.cbegin(); itProf != profsAssoc.cend(); ++itProf)
 		{
-			if(!algumPotencial)
-			{
-				// verificar se ele tem os horarios das aulas cadastrado nas disponibilidades
-				if((*itProf)->estaDisponivelHorarios(aulas))
-					algumPotencial = true;
-			}
+			// verificar se ele tem os horarios das aulas cadastrado nas disponibilidades
+			if((*itProf)->estaDisponivelHorarios(aulas))
+				algumPotNaoDisp++;
 		}
 	}
 }

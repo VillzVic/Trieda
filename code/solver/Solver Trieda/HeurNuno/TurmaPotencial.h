@@ -19,7 +19,7 @@ class TurmaPotencial
 {
 public:
 	TurmaPotencial(int turmaId, OfertaDisciplina* const oft, Calendario * const cal, bool tipo, unordered_map<int, AulaHeur*> aul,
-			  ProfessorHeur* const prof, SalaHeur* const sal, set<AlunoHeur*> aluns, int alunDisp, bool algPotProf);
+			  ProfessorHeur* const prof, SalaHeur* const sal, set<AlunoHeur*> aluns, int alunDisp, int algPotProfDisp,  int algPotProfNaoDisp);
 	TurmaPotencial(void);
 	~TurmaPotencial(void);
 
@@ -31,7 +31,8 @@ public:
 	ProfessorHeur* professor;
 	SalaHeur* sala;
 	set<AlunoHeur*> alunos;
-	bool algumPotencialProf;					// Se existe pelo menos um prof com disponibilidade de horário nesta data
+	int algumPotencialProfDisp;			// Nr profs com disponibilidade de horário nesta data
+	int algumPotencialProfNaoDisp;		// Nr profs sem disponibilidade de horário nesta data, mas cadastrado nela
 
 	unsigned int getGlobalId(void) const { return globalId_; }
 	double getValor(void) const { return valor_; }

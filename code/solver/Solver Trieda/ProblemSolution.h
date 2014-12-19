@@ -56,6 +56,7 @@ public:
    void verificaPossivelNovaTurma( NaoAtendimento *naoAtend, Disciplina *disc, AlunoDemanda *ad, int campusId,
 	   const map< TurnoIES*, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>>, LessPtr<TurnoIES> > &mapAlsDemNaoAtend );
 
+   void verificaNrDiscSimultVirtual();
    void verificaNaoAtendimentosTaticos();
    void verificaUsoDeProfsVirtuais();
    void computaMotivos( bool motivoNaoAtend, bool motivoUsoPV );
@@ -108,6 +109,7 @@ public:
    void imprimeMapSolTurmaProfVirtualDiaAula();
    void imprimeMapSolProfRealDiaHorarios();
    void imprimeQuantChProfs();
+   void imprimeNrDiscSimultVirtual();
    
    // ler solução de um arquivo
    static ProblemSolution* lerSolucao(char* const filePath, bool modoTatico = false);
@@ -130,6 +132,9 @@ private:
 	int nroTotalAlunoDemCalourosP1;
 	int nroTotalAlunoDemFormandosAtendP1;
 	int nroTotalAlunoDemCalourosAtendP1;
+	
+	int nrMaxDiscSimult_;
+    map<int, unordered_set<Disciplina*>> mapNrDiscSimult;
 
 	// -------------------------------
 	// Map de aulas da solução por turma
@@ -143,12 +148,7 @@ private:
 	// Maps de aulas da solução por aluno
 		
 	map< Aluno*, AlunoSolution*, LessPtr<Aluno> > mapAlunoSolution;
-
-	//map< Aluno*, map< int /*P*/, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda> > >, LessPtr<Aluno> > formandosAtendidos;
-	//map< Aluno*, map< int /*P*/, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda> > >, LessPtr<Aluno> > formandosNaoAtendidos;
-	//map< Aluno*, map< int /*P*/, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda> > >, LessPtr<Aluno> > calourosAtendidos;
-	//map< Aluno*, map< int /*P*/, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda> > >, LessPtr<Aluno> > calourosNaoAtendidos;
-
+	
 	// -------------------------------
 	// Map de aulas da solução por sala
 	map< Sala*, map<int /*dia*/, std::map<DateTime /*dti*/, std::map<DateTime /*dtf*/, 

@@ -26,8 +26,8 @@ int MIPUnico::idCounter = 0;
 
 // Gurobi
 const int MIPUnico::timeLimitMaxAtend = 3600*3;
-const int MIPUnico::timeLimitMaxAtendSemMelhora = 3600*2;
-const int MIPUnico::timeLimitMinProfVirt = 3600*4;
+const int MIPUnico::timeLimitMaxAtendSemMelhora = 3600;
+const int MIPUnico::timeLimitMinProfVirt = 3600*3;
 const int MIPUnico::timeLimitMinProfVirtSemMelhora = 3600*2;
 const int MIPUnico::timeLimitMinGapProf = 3600*2;
 const int MIPUnico::timeLimitMinGapProfSemMelhora = 3600;
@@ -2126,7 +2126,6 @@ int MIPUnico::solveGaranteSolucao( int campusId, int prioridade, int r, bool& CA
 	std::cout<<"\nStatus MIP_GARANTE_SOL = "<<status; fflush(NULL);
 	lp->getX(xS);
 	  	
-	writeSolBin( campusId, prioridade, r, OutPutFileType::MIP_GARANTE_SOL, xS );
 	writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_GARANTE_SOL, xS, 0 );
 		
 			
@@ -2288,7 +2287,6 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 			lp->getX(xS);
 		}
 
-		writeSolBin( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS );
 		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, 0 );
 	}      
 	
@@ -2477,7 +2475,6 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 			lp->getX(xS);
 		}
 
-		writeSolBin( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS );
 		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
 	}      
 	
@@ -2670,8 +2667,7 @@ int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREG
 			lp->getX(xS);
 		}
 
-		writeSolBin( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS );
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
 	}      
 	
 	fflush(NULL);
@@ -2806,7 +2802,6 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 			lp->getX(xSol_);
 		}
 
-		writeSolBin( campusId, prioridade, r, OutPutFileType::MIP_GENERAL, xS );
 		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_GENERAL, xS, 0 );
 	}
 			  		

@@ -11553,54 +11553,121 @@ int Operacional::criaRestricaoCalculaNroProfsVirtAlocadosCurso()
 // SÓ PARA RODADA 1
 int Operacional::criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso()
 {
-   int restricoes = 0;  
+    int restricoes = 0;  
+    int nnz;
+    double rhs;
+    char name[ 200 ];
+
+    ConstraintOp c;
+    VariableOpHash::iterator vit;
+    ConstraintOpHash::iterator cit;
+
+    std::map< Curso*,  std::map< TipoContrato*, std::map< int /*dia*/,
+	   std::map< DateTime /*dti*/, set<int> > >, 
+			LessPtr<TipoContrato> >, LessPtr<Curso> > mapCursoContrDiaDti;
    
-   int nnz;
-   double rhs;
-   char name[ 200 ];
+	for ( vit = vHashOp.begin(); vit != vHashOp.end(); vit++ )
+	{
+		VariableOp v = vit->first;
+		
+		if ( v.getType() != VariableOp::V_X_PROF_AULA_HOR )
+			continue;	
+		if ( ! v.getProfessor()->eVirtual() )
+			continue;
+		
+		TipoContrato* contrato = v.getProfessor()->tipo_contrato;
+		std::map< Curso*, int > *mapCursoAtendidos = v.getAula()->getMapCursosAtendidos();
+		int dia = v.getDia();
+		HorarioAula *hi = v.getHorarioAula();
 
-   ConstraintOp c;
-   VariableOpHash::iterator vit;
-   ConstraintOpHash::iterator cit;
+		int nCreds = v.getAula()->getTotalCreditos();
+		Calendario *calendario = hi->getCalendario();
+		HorarioAula *hf = calendario->getHorarioMaisNCreds(hi, nCreds-1);
 
-   // TODO: usar esse map por questao de eficiencia
- //  std::map< Curso*,  std::map< TipoContrato*, std::map< int /*dia*/, std::map< DateTime /*dti*/, 
-	//   std::map< DateTime /*dtf*/, VariableOpHash::iterator > > >, LessPtr<TipoContrato> >, LessPtr<Curso> > mapCursoContrDiaDtiDtf;
+		auto ptrAllDtis = &problemData->allDiaDti[dia];
 
-	//for ( vit = vHashOp.begin(); vit != vHashOp.end(); vit++ )
-	//{
-	//	VariableOp v = vit->first;
-	//	
-	//	if ( v.getType() != VariableOp::V_X_PROF_AULA_HOR )
-	//		continue;	
-	//	if ( ! v.getProfessor()->eVirtual() )
-	//		continue;
-	//	
-	//	TipoContrato* contrato = v.getProfessor()->tipo_contrat;
-	//	std::map< Curso*, int > *mapCursoAtendidos = v.getAula()->getMapCursosAtendidos();
-	//	int dia = v.getDia();
-	//	HorarioAula *hi = v.getHorarioAula();
+		std::map< Curso*, int >::iterator itCurso = mapCursoAtendidos->begin();
+		for( ; itCurso != mapCursoAtendidos->end(); itCurso++ )
+		{	
+			Curso *curso = itCurso->first;
 
-	//	int nCreds = v.getAula()->getTotalCreditos();
-	//	Calendario *calendario = hai->getCalendario();
-	//	HorarioAula *hf = calendario->getHorarioMaisNCreds(hai, nCreds-1);
-	//	DateTime *dtf = problemData->getDateTimeFinal( hf->getFinal() );
-	//	if ( dtf==NULL )
-	//	{
-	//		std::cout << "\nErro: dtf Null para final = " << hf->getFinal()
-	//				<< " e horario aula id = " << hf->getId();
-	//		continue;
-	//	}
-	//	
-	//	std::map< Curso*, int >::iterator itCurso = mapCursoAtendidos->begin();
-	//	for( ; itCurso != mapCursoAtendidos->end(); itCurso++ )
-	//	{	
-	//		Curso *curso = itCurso->first;
+			for( auto itDt=ptrAllDtis->cbegin(); itDt!=ptrAllDtis->cend(); itDt++ )
+			{	
+				if ( *itDt > hf->getFinal() ) break;
+				if ( *itDt >= hi->getInicio() && *itDt <= hf->getFinal())
+					mapCursoContrDiaDti[curso][contrato][dia][*itDt].insert(vit->second);
+			}
+		}
+	} 
 
-	//		mapCursoContrDiaDtiDtf[curso][contrato][dia][hi->getInicio()][hf->getFinal()] = vit;
-	//	}
-	//} 
+	for (auto itCurso = mapCursoContrDiaDti.cbegin(); itCurso != mapCursoContrDiaDti.cend(); itCurso++)
+	{
+		Curso *curso = itCurso->first;
+		for (auto itContr = itCurso->second.cbegin(); itContr != itCurso->second.cend(); itContr++)
+		{
+			TipoContrato *contrato = itContr->first;
+			for (auto itDia = itContr->second.cbegin(); itDia != itContr->second.cend(); itDia++)
+			{
+				int dia = itDia->first;
+				for (auto itHor = itDia->second.cbegin(); itHor != itDia->second.cend(); itHor++)
+				{
+					DateTime dt = itHor->first;
+					DateTime *pDti = problemData->getDateTimeInicial(dt);
 
+				    c.reset();
+				    c.setType( ConstraintOp::C_ESTIMA_NRO_PROFS_VIRTUAIS_CURSO );
+				    c.setCurso( curso );
+				    c.setDia( dia );
+				    c.setDateTimeInicial( pDti );
+				    c.setContrato( contrato );
+
+					cit = cHashOp.find( c );
+					if ( cit == cHashOp.end() )
+					{
+						sprintf( name, "%s", c.toString().c_str() );
+						nnz = itHor->second.size() + 1;
+						rhs = 0;
+						OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+
+						// insert x variables
+						for (auto itX = itHor->second.cbegin(); itX != itHor->second.cend(); itX++)
+						{
+							row.insert( *itX, 1.0 );
+						}
+
+						// Variavel npv_{c}
+						VariableOp v;
+						v.reset();
+						v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_CURSO );
+						v.setCurso( curso );
+						v.setContrato( contrato );
+						vit = vHashOp.find( v );
+						if ( vit != vHashOp.end() )
+						{
+							row.insert( vit->second, -1.0 );
+						}
+
+						// Insere restrição
+						if ( row.getnnz() > 1 )
+						{
+							cHashOp[ c ] = lp->getNumRows();
+							lp->addRow( row );
+							restricoes++;
+						}
+					}
+				}				
+			}				
+		}		
+	}
+
+/*	
+	// versão anterior, muito lenta. A nova não está considerando interjornada para prof virtual
+
+	double tempoMinimoDescanso = problemData->parametros->descansoMinProfValue;	// em horas
+	if ( tempoMinimoDescanso > 24 ) 
+		std::cout<<"TODO: a comparacao de dias de DateTime nao "
+			<<"esta considerando interjornada de mais de 24hs. Consertar.";
+	tempoMinimoDescanso *= 60;															// em minutos
 
    ITERA_GGROUP_LESSPTR( itHorDia, problemData->horariosDia, HorarioDia )
    {
@@ -11658,15 +11725,7 @@ int Operacional::criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso()
 					}      
 
 					if ( problemData->parametros->considerarDescansoMinProf )
-					{
-						double tempoMinimoDescanso = problemData->parametros->descansoMinProfValue;	// em horas
-
-						if ( tempoMinimoDescanso > 24 ) 
-							std::cout<<"TODO: a comparacao de dias de DateTime nao "
-								<<"esta considerando interjornada de mais de 24hs. Consertar.";
-
-					    tempoMinimoDescanso *= 60;													// em minutos
-						
+					{		    						
 						DateTime dtf_max = horarioAula->getInicio();						
 						dtf_max.subMinutes( tempoMinimoDescanso );
 						
@@ -11674,11 +11733,6 @@ int Operacional::criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso()
 						if ( dtf_max.getDay() == horarioAula->getInicio().getDay() )
 							continue;
 			
-						//std::cout<<"\n\nComecei dia "<<dia;
-						//std::cout<<"\ndtf_max="<<dtf_max;
-						//std::cout<<"\ndia anterior+1 = "<< dtf_max.getDay() + 1;
-						//std::cout<<"\ndia seguinte = "<<horarioAula->getInicio().getDay();
-
 						for ( vit = vHashOp.begin(); vit != vHashOp.end(); vit++ )
 						{
 							VariableOp v;
@@ -11694,9 +11748,6 @@ int Operacional::criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso()
 								HorarioAula *h = v.getHorarioAula();
 								Calendario *sl = h->getCalendario();
 								
-								//std::cout<<"\n" << v.toString();
-								//std::cout<<"\th " << h->getInicio();
-								//std::cout<<"\tnumCred " << v.getAula()->getTotalCreditos();
 								HorarioAula *hf = h;
 								DateTime dtfAula;
 								int n = 1;
@@ -11714,8 +11765,6 @@ int Operacional::criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso()
 									continue;
 								}
 																
-								//std::cout<<"\tdtfAula "<<dtfAula;
-
 								if (  dtf_max.earlierTime(dtfAula) )
 								{
 									row.insert( vit->second, 1.0 );
@@ -11748,6 +11797,7 @@ int Operacional::criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso()
 	   }
 
    }
+   */
 
    return restricoes;
 }

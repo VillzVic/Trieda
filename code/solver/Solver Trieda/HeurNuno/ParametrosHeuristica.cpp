@@ -126,7 +126,7 @@ const bool ParametrosHeuristica::heurRealocAlunos = true;
 const bool ParametrosHeuristica::dominanciaTurmas = true;
 // limitar nr de turmas de uma disciplina ao mesmo tempo
 const bool ParametrosHeuristica::limTurmasSimultaneas = true;
-const int ParametrosHeuristica::slackTurmasSimult = 0;
+const int ParametrosHeuristica::slackTurmasSimult = 2;
 const int ParametrosHeuristica::slackTurmasSimultSemProf = 3;
 
 const int ParametrosHeuristica::maxTurmasPotenciais = 100;

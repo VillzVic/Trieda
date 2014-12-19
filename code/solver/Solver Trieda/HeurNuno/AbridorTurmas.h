@@ -131,7 +131,7 @@ private:
 	void geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const ConjUnidades* const clusterUnid, Calendario * const calendario, 
 							bool teorico, unordered_map<int, AulaHeur*> const &aulas,  unordered_set<AlunoHeur*> const &alunosDisp,
 							unordered_set<SalaHeur*> const &salasDisp, unordered_set<ProfessorHeur*> const &profsDisp,
-							bool &algumProfPotencial, turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
+							turmasPotOrd &turmas, unordered_set<const TurmaPotencial*> &turmasDivisao,
 							const bool componenteSec, bool checkProfs = false);
 
 	// [ESCOLHA DE TURMA POTENCIAL]
@@ -179,7 +179,7 @@ private:
 								unordered_set<ProfessorHeur*> &profsDisp);
 	// obter professores que estejam disponiveis naquele horario
 	void getProfessoresDisponiveis_(unordered_set<ProfessorHeur*> const &profsAssoc, const unordered_map<int, AulaHeur*> &aulas, 
-									bool &algumPotencial, unordered_set<ProfessorHeur*>& profsDisponiveis);
+									int &algumPotDisp, int &algumPot, unordered_set<ProfessorHeur*>& profsDisponiveis);
 	// recebe os profs que estam disponíveis naquele horário e verifica quais estão disponiveis tendo em conta a deslocação
 	void getProfessoresDispUnidade_(unordered_set<ProfessorHeur*> const &profsDisp, const unordered_map<int, AulaHeur*> &aulas, set<ProfessorHeur*>& profsDispUnidade);
 

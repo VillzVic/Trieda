@@ -105,7 +105,7 @@ private:
 	static void runCompleteSolucao_(void);
 
 	// [LOG]
-	static const int logLevel_ = 2;		// 0-console 1-essencial, 2-extenso, 3- debug
+	static const int logLevel_ = 1;		// 0-console 1-essencial, 2-extenso, 3- debug
 	static const int consoleLogLevel_ = 1;
 	static const bool cutLog_ = true;
 	static const int cutRows_ = 1000000;
