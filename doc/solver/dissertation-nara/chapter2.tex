@@ -205,7 +205,7 @@ For instance, a set of $40$ students associated with the ``COMP-AFT'' offer dema
 \paragraph{Student--Demand}
 \label{defstdem}
 
-A student--demand is an individual request of a student for a course. It is made of a student, a demand and an integer number indicating the priority of this request (see ~\ref{defprior}).
+A student--demand is an individual request of a student for a course. It is made of a student and a demand.
 
 
 
@@ -223,19 +223,6 @@ In a complete and feasible solution, each course section has the following attri
 \item a professor who teaches the lessons.
 \end{itemize}
 
-
-%%%%%%%%%%%
-\paragraph{Professor Employment Agreement Type}
-\label{defagreement}
-
-An employment agreement type is an attribute of each professor. It is just a label, and can be \textit{full-time} or \textit{part-time}. It is necessary only to ensure constraint ~\ref{constrmincontr}.
-
-
-%%%%%%%%%%%
-\paragraph{Professor degree}
-\label{defdegree}
-
-Every professor has an attribute that indicates its degree. It is necessary only to ensure constraint ~\ref{constrminmastdoc}.
 
 
 
@@ -384,14 +371,9 @@ The most basic solution restrictions are based on resources availabilities. Ther
 
 Each \textit{virtual professor} means the hiring of a new professor by the institution. Whenever there is no feasible solution with full satisfied demand due to absence of professors, and only in this situation, virtual professors should be created by the solver and used until demand is fulfilled.
 
-For the profile to be realistic, we establish that:
-\begin{itemize}
-\item if a virtual professor teaches courses $A$ and $B$, then necessarily there is a curriculum which contains both courses. This avoids a profile involving very distinct areas. 
-\item if the minimum professor degree per major is considered (see section ~\ref{constrminmastdoc}), virtual professors should have their \textit{minimum degree} specified at the solution, so that majors with courses assigned to virtual professors don't violate the associated constraint.
-\item if the minimum professor employment agreement type per major is considered (see section ~\ref{constrmincontr}), virtual professors should have their \textit{minimum employment agreement type} specified at the solution, so that majors with courses assigned to virtual professors don't violate the associated constraint.
-\end{itemize}
+For the profile to be realistic, we establish that if a virtual professor teaches courses $A$ and $B$, then necessarily there is a curriculum which contains both courses. This avoids a profile involving very distinct areas. 
 
-Since a virtual professor is just a prediction of a new profile, except for the points above, it has default settings and full-available timetable.
+Since a virtual professor is just a prediction of a new profile, it has default settings and full-available timetable.
 
 Minimizing the number of credits assigned to virtual professors is considered the second most important aim in the multi-objective function of timetabling problems, second only to maximizing satisfied demands.
 
