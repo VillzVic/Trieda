@@ -1,0 +1,129 @@
+\chapter{Introduction}
+\label{chap:intro}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Here the ideas discussed in this dissertation are contextualized. Giving this, a brief introduction, some definitions and main variants to the Timetabling Problem (TTP) are provided.
+
+% ------------------------------------------------------------
+\section{Introducing the basic timetabling problem}
+
+\mynotes{DSS, Bilkent, Guenalay and Sahin, Guenalay2006, \cite{Guenalay2006}}
+Timetabling problems are an example of the types of practical scheduling problems faced by many organizations, including universities. The problem can be described as needing to schedule a given number of lectures, involving both teachers and classrooms, over a fixed period of time (typically a week), while sometimes having to satisfy a set of additional constraints of various types. The problem is known to be a hard problem and therefore many researchers have shown an interest in it since the early 1960's. Schaerf \cite{Schaerf99} showed that the problem is NP-complete and that exact optimal solution could be obtained only for small size problems.
+
+Although the original problem was set in the school environment, it now finds a wide range of application to areas from sport event timetabling to transportation timetabling studies.
+
+
+% ------------------------------------------------------------
+\section{Brazilian school timetabling problem}
+
+
+
+% ------------------------------------------------------------
+\section{Practical and realistic formulation}
+
+\mynotes{Purdue University, \cite{Murray2007}}
+It is a widely studied area and many potentially useful algorithms have been offered for solving the university course timetabling problem. Unfortunately, much of the work in this area has been conducted using artificial data sets or based on actual problems that have been greatly simplified. Methods developed have also rarely been extended to the solution of actual university problems of any large scale, instead most were restricted to a single department or school.
+
+The major differences between many of the problems studied and their real life counterparts are the additional complexity imposed by course structures, the variety of constraints imposed, and the distributed responsibility for information needed to solve such problems at a university-wide level.
+
+As pointed out in \cite{Murray2007}, the biggest obstacle to solving actual university course timetabling problems is that the complexity can increase considerably beyond that represented in standard formulations of the problem. As the complexity increases, it is easy to be caught in the dual bind that the problem is both more challenging to develop an effective solution approach for, and this approach is less likely to be usable on other university timetabling problems.
+
+As observed by Carter \cite{Carter2001}, there are few published papers that described actual implementations of course timetabling. From what we know, the first example of an automated and integrated course timetabling and student scheduling system across a institution was developed for the University of Waterloo between 1979 and 1985. Although the system was implemented 29 years ago, much of the discussion is still very relevant. By 2001, Carter expressed at \cite{Carter2001} his belief that there was still no system for solving the large-scale course timetabling problem with such level of mathematical sophistication.
+
+By 2006, Guenalay and Sahin introduced at \cite{Guenalay2006} a Decision Support System (DSS) for the university timetabling that allows the direct involvement of the decision maker. They affirmed that their model was the first one which simultaneously combined such a DSS approach with a goal programming optimization tool.
+
+\fixme{citar software!}
+
+
+% ------------------------------------------------------------
+\section{Main similar formulations and their differences}
+
+Among the few existing published works that considered more realistic formulations, we highlight \cite{Carter2001} and \cite{Murray2007} as those whose embraced problems were the most similar to the one considered in this work. Several practical issues emphasized by both of them were also identified during TRIEDA's development and are referenced along this work. Probably some challenges and problems faced both at solving methods development and deployment phase could have been avoided or at least minimized if we had a previous knowledge of these works.
+
+Still, differences exist between their timetabling problems and the one here presented. Following, the major points are listed.
+
+% ------------------
+At \cite{Carter2001}, we highlight:
+\begin{itemize}
+\item the number of course sections is previously defined.
+\item the assignment of instructors to course sections is not automated; that process is normally done manually in advance. 
+\item the system has been designed to solve the specific instance of the University of Waterloo problem; it is not portable, although many of the optimization routines were designed to solve a more general mathematical problem.
+\item the system requires a list of expected course offerings. Historically at Waterloo, 75\% of the course offerings are the same as the previous year.
+\end{itemize}
+
+% ------------------
+At \cite{Murray2007}, we highlight:
+\begin{itemize}
+\item the number of course sections is previously defined.
+\end{itemize}
+
+Further differences can be identified along this work.
+
+Because TRIEDA is a commercial software, it has been developed to be as portable and flexible as possible. Particularly, the system embraces most common rules and cases found in Brazilian universities and schools.
+
+A quite relevant increment of TRIEDA's problem is that it does not require the number of course sections previously defined --- this is also decided by the solver and is therefore an output information. Indeed, we still have not found any other system or published work for a similar university timetabling problem which does not need this as an input data. Such differential can specially lower university expenses, since the number of classes needed for demand satisfaction is usually reduced.
+
+
+% ------------------------------------------------------------
+\section{Data accuracy and Politics}
+
+\mynotes{from \cite{Murray2007}}
+Timetabling is a resource allocation problem; therefore, at most universities responsibility for constructing the timetable is distributed among the academic units with the faculty, physical facilities, and other resources required for offering instruction. Murray, M\"{u}ller and Rudov\'{a} observe at \cite{Murray2007} that providing support for this distributed responsibility is important because departmental timetablers have a much more intimate knowledge of the needs of the courses offered, the professor who might be able to teach a particular class, and the spaces available for specialized instruction than any database that might be maintained centrally. Maintaining each department's sense of ownership in the timetables that are produced is also an important factor in their acceptance of the solutions produced by an automated timetabling process. They say the process needs to be one that assists them rather than replaces them.
+
+Obtaining coherent and correct data is a particular important and sensitive issue. Because data accuracy depends on each department, it is extremely important that data collection phase of an automating process has a deep involvement of all of those who usually operate in the traditional manual process. Any inaccuracy of data can result in a bad or even non-deployable solution.
+
+\fixme{citar funcionalidade: motivos de nao atendimento}
+
+Murray, M\"{u}ller and Rudov\'{a} tells at \cite{Murray2007} that inequity in the quality of time and room assignments received by different departments and faculty members doomed a previous attempt at automating the timetabling process at Purdue University. A similar situation was faced by TRIEDA in July of 2014 while an attempt of deploying a solution in a Brazilian institution.
+
+Automating people assignments is different from automating other process --- the optimization factor is definitely \textbf{not} more important than people satisfaction. Only keeping that in mind it is possible to obtain an actual deployable solution.
+
+As wisely pointed out in \cite{Carter2001}, practical course timetabling is 10\% graph theory, and 90\% politics. Carter tells that when they first began designing the system for University of Waterloo, they were warned: \q{You can not dictate to professors when they will teach courses}. Consequently, they were told that course timetabling could not work. Or, more precisely, they can not assume that the timetable can use a clear slate. There are many possible reasons for this. Part-time professors may be available only on certain days or times. University professors often have other commitments and industrial research projects. Teaching is only a part of their job, and probably less than half of their time is devoted to teaching.
+
+It follows that it is essential to allow professors to restrict their available timetables as much (or as little) as they want.
+
+Guenalay and Sahin described at \cite{Guenalay2006} an approach for university timetabling with a goal programming optimization tool in order to process the instructor teaching time preferences. As they observed, using a multi-objective decision making model to solve the problem, and hence considering instructor preferences by using weights, cannot be considered consistently reliable. Such approach unifies the disparate goals of the model, but depends on very subjective choice of weights.
+
+Professors' availabilities and preferences issue should therefore not be underestimated.
+
+
+The primary design goal is to assist academic timetablers with the problem of building a good timetable, not necessarily finding a true optimal solution.
+
+
+% ------------------------------------------------------------
+\section{Timetabling Conferences}
+
+
+
+
+% ------------------------------------------------------------
+
+This is a test reference to \cite{Carter2001}.    % Waterloo, Canada
+This is a test reference to \cite{Murray2007}.    % Purdue (unitime), USA
+This is a test reference to \cite{Unitime}.       % website
+This is a test reference to \cite{DSS}.           % website
+This is a test reference to \cite{Guenalay2006}.  % Bilkent, Turkey, (DSS)
+This is a test reference to \cite{Mimosasoftware}.
+This is a test reference to \cite{Patat}.
+This is a test reference to \cite{Hstt}.				  % Benchmarking project for highschool
+This is a test reference to \cite{ITC2007}.				% International Timetabling Competition
+This is a test reference to \cite{Ectt}.					% Udine, Italy
+This is a test reference to \cite{Udine}.
+This is a test reference to \cite{Watt}.					% Working group on automated timetabling
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Dissertation Outline}
+This work is organized as follows: 
+\begin{itemize}
+	\item Chapter \ref{chap:timetabling} introduces Trieda's timetabling problem.
+	\item Chapter \ref{chap:mipformulation} shows the mathematical formulation for the problem.
+	\item Chapter \ref{chap:strategies} presents different approaches and strategies for solving the MIP formulation.
+	\item Chapter \ref{chap:constranalysis} analyzes the impact of some requirements in the MIP solving.
+	\item Chapter \ref{chap:converting} presents an attempt to converting a XHSTT format into a Trieda's problem format.
+	\item Chapter \ref{chap:conclusions} contains the conclusions of this work.
+\end{itemize}

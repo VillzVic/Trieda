@@ -1,0 +1,517 @@
+\chapter{Trieda's Timetabling Problem}
+\label{chap:timetabling}
+
+
+This chapter provides a complete definition to the timetabling problem considered in this dissertation.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introducing the system}
+\label{sec:system}
+
+
+TRIEDA is an academic planning system for educational institutions, designed as a multi-user application with a completely web-based interface. Unlike most academic planning systems, TRIEDA makes all necessary decisions so that a complete and optimized solution is provided. Besides, unlike most academic timetabling researches, which consider simplifications of the actual problem, TRIEDA provides applicable solutions.
+
+The system is based on a ''demand-drive`` philosophy where students first chose their courses, and having knowledge of the complete institution structure and available resources, the aim is to provide a complete and feasible solution that maximizes the number of satisfied requests while respecting a set of didactic-pedagogical requirements and reducing costs.
+
+
+\subsection{Simulation usability}
+\label{subsec:simulation}
+
+Carter tells us in \cite{Carter2001} that, in the Fall of 1988, the University of Waterloo opened the Davis Building. A total of 40 (smaller) classrooms across campus were replaced by 30 generally larger classrooms in the new building. The number of rooms decreased, but the total number of seats increased. The Scheduling Office was very concerned about how the new space would impact space allocation. The timetabling automated system developed for the university effectively was used for simulating the new scenario and solved a potentially serious planning problem.
+
+Therefore, as was exemplified, the system can also be used as a fast \q{What if?} tool to evaluate proposed changes in resources or institution rules.
+
+
+\subsection{Multiple scenarios}
+\label{subsec:scenarios}
+
+
+\subsection{Manual changes}
+\label{subsec:manual}
+
+
+\subsection{Non--satisfaction reasons}
+\label{subsec:reasons}
+
+
+\subsection{Virtual professor tips}
+\label{subsec:tips}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introducing the problem}
+\label{sec:deftrieda}
+
+% explain trieda's general problem and what must be assigned
+
+A solution is composed of a set of courses sections that should be offered in order that demands are satisfied. For each course section it must be decided:
+
+\begin{itemize}
+\item a set of students assigned to the section;
+\item the classroom where section's lessons take place;
+\item the time slots of each lesson;
+\item the professor assigned to the section;
+\end{itemize}
+
+The planning horizon is a week, i.e., it is considered that classes don't change from a week to another in the same term.
+ 
+Timetabling problems vary a lot depending on the kind of educational institution. Here two problems types are considered, called university timetabling problem and high school timetabling problem. For each one, TRIEDA uses a different solver method, as is accurately discussed in the next chapters.
+
+
+% School problem
+\subsection{School timetabling problem}
+\label{subsec:school}
+
+Unlike university problems, high school's students have low or no freedom at all in their choices for courses. Usually students are already clustered into sections, in the sense that if two students are in the same section, then they have same demands and should attend to the same classes. Therefore, in a school timetabling problem the maximum number of sections per course is known and assignments are made for each pre--defined cluster of students instead of for each single student.
+
+Besides, in high school, sections usually have pre--assigned rooms. This is not an obligation though. For practical courses, it is common for several sections to be assigned to the same classroom. For sport classes, it is even common that two or more classes simultaneously share a physical space, like a sports court. But indeed, only in a minority of cases shared rooms are involved.
+
+Constraints required for both types of problems also vary a lot, as described in section ~\ref{sec:allconstr}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Entities and Concepts}
+\label{sec:entities}
+
+
+%%%%%%%%%%%
+% Horario-Dia
+\paragraph{Time slot}
+\label{deftimeslot}
+
+Each time slot has a beginning time, an ending time and a weekday. For instance, Monday from 14:00 to 14:50. Besides, time slot duration is the number of minutes between the beginning and ending time of a time slot.
+
+
+%%%%%%%%%%%
+% Semana Letiva
+\paragraph{Calender Timetable}
+\label{deftimetable}
+
+Corresponds to the way a school term week is split in the sense of shifts (see ~\ref{defshift}) and time slots.
+
+Table ~\ref{tab:calendarioMT} shows an example of timetable with $2$ shifts (morning and afternoon), each one with $4$ class-times and a 30-minutes break between the $2$ first class-times and the $2$ last class-times of the shift. All class-times have $50$ minutes duration. From Monday to Friday all time slots are available, on Saturday only the morning time slots are available and on Sunday no time slot is available (unavailability is represented by a dash).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|r|r|r|r|r|r|r}
+Shifts & Time Slots & Mon & Tue & Wed & Thu & Fri & Sat & Sun \\\hline
+MORNING & 08:00 to 08:50 & & & & & & & - \\
+MORNING & 08:50 to 09:40 & & & & & & & - \\
+MORNING & 10:10 to 11:00 & & & & & & & - \\
+MORNING & 11:00 to 11:50 & & & & & & & - \\
+AFTERNOON & 14:00 to 14:50 & & & & & & - & - \\
+AFTERNOON & 14:50 to 15:40 & & & & & & - & - \\
+AFTERNOON & 16:10 to 17:00 & & & & & & - & - \\
+AFTERNOON & 17:00 to 17:50 & & & & & & - & -
+\end{tabular}
+\caption{\label{tab:calendarioMT}Morning-Afternoon Timetable.}
+\end{table}
+
+It is possible to register as many timetables as necessary. This way, besides the timetable at ~\ref{tab:calendarioMT} we can \textit{also} have the one at ~\ref{tab:calendarioTN}. 
+
+This timetable also has time slots in $2$ shifts, now afternoon and evening, but here class-times have $60$ minutes duration. It has $3$ class-times in the Afternoon shift and $4$ class-times in the Evening shift, the break-times are completely different from break-times of Morning-Afternoon Timetable, and there is not time slot available at weekends (Saturday and Sunday).
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|r|r|r|r|r|r|r}
+Shifts & Time Slots & Mon & Tue & Wed & Thu & Fri & Sat & Sun \\\hline
+AFTERNOON & 13:00 to 14:00 & & & & & & - & - \\
+AFTERNOON & 14:00 to 15:00 & & & & & & - & - \\
+AFTERNOON & 15:00 to 16:00 & & & & & & - & - \\
+EVENING & 18:00 to 19:00 & & & & & & - & - \\
+EVENING & 19:00 to 20:00 & & & & & & - & - \\
+EVENING & 20:20 to 21:20 & & & & & & - & - \\
+EVENING & 21:20 to 22:20 & & & & & & - & -
+\end{tabular}
+\caption{\label{tab:calendarioTN}Afternoon-Evening Timetable.}
+\end{table}
+
+
+Time slots of the same timetable must have the same duration and can not overlap each other. Time slots of different timetables are independent: they can be completely different and even overlap, as the examples have shown.
+
+
+%%%%%%%%%%%
+\paragraph{Shift}
+\label{defshift}
+
+A shift is a label for a set of slot times.
+
+It is mandatory that every time slot of a timetable belongs to some shift; a timetable can have time slots of different shifts; and a shift can have time slots of distinct timetables.
+
+There is no constraint for associating a time slot and a shift, which means that a shift can be seen simply as a label (usually called ``Morning'', ``Afternoon'', ``Evening'', ``Integral'', ``Morning-Afternoon'', etc) and time slots of the same shift can overlap each other or have distinct durations.
+
+The main role of the concept of shift is to define at which time slots a student can have classes, as discussed in section ~\ref{constrstudentsched}.
+
+
+%%%%%%%%%%%
+\paragraph{Course}
+\label{defcourse}
+
+A \textit{course} is a ``chair'' or ``subject'' that a student can take.
+paragraph
+In high-school the most common examples would be ``Mathematics'', ``Geography'' or ``Biology''. At university we have known courses as ``Calculus'' and ``Linear Algebra''.
+
+Every course has a total number of credits per week, with all the credits necessarily having the same duration. This means that if the student John Mayer takes classes of a course with $N$ credits of $50$ minutes duration, exactly $N$ time slots of $50$ minutes of John's week schedule must be assigned to lessons of this course.
+
+Every course has a set of time slots to which it can be assigned. These time slots can belong to different timetables, as long they have the same duration.
+
+Every course can be assigned to a specific set of classrooms where it can be held. When a course has practical credits (see section ~\ref{constroneroom} and ~\ref{constrptcourse}), it is possible that these must be held in special classrooms (laboratories). If there is no specific classroom associations, it is assumed that the course can be held in any classroom.
+
+
+
+%%%%%%%%%%%
+\paragraph{Curriculum}
+\label{defcurric}
+
+A \textit{curriculum} is the set of all courses, split in terms, of a version of a major.
+
+
+%%%%%%%%%%%
+\paragraph{Campus, Block and Classroom}
+\label{defclassroom}
+
+The basic physical structure of a university is formed by:
+\begin{itemize}
+\item \textit{Classroom}: room where classes can be held.
+\item \textit{Block}: set of classrooms, usually of the same building.
+\item \textit{Campus}: each campus has a set of blocks, besides other features.
+\end{itemize}
+
+
+%%%%%%%%%%%
+\paragraph{Offer}
+\label{defoffer}
+ 
+An \textit{offer} is made of a curriculum, shift and campus. Its interpretation is that courses of this curriculum are offered at the campus at the specific shift.
+
+
+%%%%%%%%%%%
+\paragraph{Demand}
+ \label{defdem}
+
+A \textit{demand} is made of a set of students, an offer and a course. Its interpretation is that this set of students, associated with the specified offer, should attend to the specified course.
+For instance, a set of $40$ students associated with the ``COMP-AFT'' offer demands for the course ``Calculus I''.
+
+
+%%%%%%%%%%%
+\paragraph{Student--Demand}
+\label{defstdem}
+
+A student--demand is an individual request of a student for a course. It is made of a student, a demand and an integer number indicating the priority of this request (see ~\ref{defprior}).
+
+
+
+%%%%%%%%%%%
+\paragraph{Section}
+\label{defsection}
+
+A section of a course is a set of students attending to the same lessons of the course. Sometimes it is called a ``class''.
+
+In a complete and feasible solution, each course section has the following attributes:
+\begin{itemize}
+\item a set of students;
+\item a classroom where the lessons take place;
+\item time slots for each course lesson, totaling the number of credits of the course;
+\item a professor who teaches the lessons.
+\end{itemize}
+
+
+%%%%%%%%%%%
+\paragraph{Professor Employment Agreement Type}
+\label{defagreement}
+
+An employment agreement type is an attribute of each professor. It is just a label, and can be \textit{full-time} or \textit{part-time}. It is necessary only to ensure constraint ~\ref{constrmincontr}.
+
+
+%%%%%%%%%%%
+\paragraph{Professor degree}
+\label{defdegree}
+
+Every professor has an attribute that indicates its degree. It is necessary only to ensure constraint ~\ref{constrminmastdoc}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagebreak
+
+\section{Constraints}
+\label{sec:allconstr}
+
+This section introduces all decision-making rules considered by this work. Next subsections organize these rules as beeing mandatory or optional constraints. An optional constraint can be either a hard or soft constraint, while a mandatory constraint is always hard, i.e., inviolable.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Hard and Mandatory Constraints}
+\label{sec:mandatory}
+
+
+\paragraph{Classroom Capacity}
+\label{constrroomcap}
+
+Each classroom has a mandatory register called "room capacity" which indicates the maximum number of students that it can simultaneously hold. Due to this physical capacity, no class can have more students than the capacity of the room where the lessons take place.
+
+
+\paragraph{Same classroom for each course section}
+\label{constroneroom}
+
+For each course section, all the credits of the course must be taught at the same classroom. The only exception is when the course has theoretical and practical credits, with the practical credits being held in a different room (laboratory room). In this case, the theoretical credits must be taught at one single classroom and the practical credits at one single laboratory.
+
+
+\paragraph{One professor for each course section}
+\label{constroneprof}
+
+For each course section, all the credits of the course must be taught by the same professor. The only exception is when the course has theoretical and practical credits, with the practical credits being held in a different room (laboratory room). In this case, the professor teaching the theoretical credits can be different from that teaching the practical credits.
+
+
+\paragraph{Capability for teaching courses}
+\label{constrcapab}
+
+For a professor to be assigned to classes of a course it is necessary that the professor is capable of teaching that course. So, each professor must have a register of courses that he is capable of teaching and every solution professor assignment must respect these registers.
+
+
+\paragraph{Availability}
+\label{constravailab}
+
+Every resource, i.e. professors and classrooms, has its own timetable availability that informs the time slots to which it can be assigned. Courses have also their own timetable availability.
+
+For instance, consider the table ~\ref{tab:availabMT} with the availability for professor Paul McCartney.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|r|r|r|r|r|r|r}
+Shifts & Time Slots & Mon & Tue & Wed & Thu & Fri & Sat & Sun \\\hline
+MORNING & 08:00 to 08:50 & & - & & & & - & - \\
+MORNING & 08:50 to 09:40 & & & & & & - & - \\
+AFTERNOON & 16:10 to 17:00 & & & & - & & - & - \\
+AFTERNOON & 17:00 to 17:50 & & & & & & - & -
+\end{tabular}
+\caption{\label{tab:availabMT}Available time slots.}
+\end{table}
+
+Professor McCartney can \textbf{not} be assigned to classes at any time slot on Saturdays or Sundays, neither from 8:00 to 8:50 on Tuesdays or 16:10 to 17:00 on Thursdays. At the others time slots he is available.
+
+These rules are hard constraints, which means they can not be broken.
+
+
+\paragraph{Student schedule}
+\label{constrstudentsched}
+
+Every resource has its own available timetable and it defines at which time slots they can be assigned. Students do not have an explicit timetable of availability, however there is still the need of constraining their possible time slots.
+
+Since it is possible that many offers exist at different shifts (see ~\ref{defoffer} and ~\ref{defshift}), it makes sense to limit the student's possible time slots to those which belong to the student's shift. Each offer specifies a major's curriculum, a shift and a campus where it is being offered, and every student is usually associated with one offer.
+
+For example, Etta James is a student of Computer Science, curriculum version \textit{v--98}, offered at the Morning shift and at campus I. It follows that Etta James can only be assigned to classes at time slots present at the Morning shift. Besides that, Ray Charles is a student of Economic Science at Morning-Afternoon shift at the same campus and both students need to take classes of Calculus I. They could be assigned to the same Calculus I section, as long its lessons are held at time slots belonging to both shifts, i.e., in the Morning.
+
+
+\paragraph{No time slots overlapping}
+\label{constroverlap}
+
+The most basic rule for any timetabling problem is the no overlapping in resources' and students' timetables. In other words, for each classroom, professor or student, any pair of classes assigned to it at the same day and same time is forbidden.
+
+
+\paragraph{Prohibit gaps in student's timetable}
+\label{constrmingapstudent}
+
+A gap in a student's timetable is an idle time window between classes \textit{at the same day}.
+
+Suppose the student Peggy Lee attends to a class from 8:00 to 10:00 on Monday, and then from 11:00 to 12:00 on the same day. The idle time window between 10:00 and 11:00 is an ``1-hour gap'' in the morning.
+
+Breaking times between time slots of a calender should be ignored. For example, if Peggy attends on Tuesday to a class from 08:00 to 08:50, a break from 08:50 to 09:10, and other classes from 09:10 to 12:00, there is no gap due to the 20-minutes break. Also, if her classes resumes at 13:00, and the time window 12:00--13:00 is an interval at her shift (lunch time, probably), there is no gap due to the 60-minutes break.
+
+
+\paragraph{Time for professor displacement between blocks and campi}
+\label{constrprofdisplactime}
+
+Whenever a professor is assigned to any pair of classes at the same day, which take place at different blocks or campi, the minimum transportation time spent between both spots must be considered.
+
+
+\paragraph{Practical and theoretical credits for a course}
+\label{constrptcourse}
+
+Each course (see ~\ref{defcourse}) has attributes which determine:
+
+\begin{enumerate}
+\item the number of theoretical credits;
+\item the number of practical credits;
+\item if the practical credits require labs;
+\item the maximum number of students in a theoretical class;
+\item the maximum number of students in a practical class;
+\end{enumerate}
+
+Therefore, every satisfied demand for a course that has practical and theoretical credits must respect the above items and every student attending to a course must be assigned to the total number of credits.
+
+
+\paragraph{Practical and theoretical course's sections}
+\label{constrptrelation}
+
+It is common for laboratories (usually for practical credits) to have smaller capacity than normal classrooms (usually for theoretical credits).
+
+Suppose that the course ``Introduction to Algorithms'' has both types of credits and requires a lab for the practical credits.  For a demand of $50$ students to this course to be completely satisfied, at least two rooms are necessarily needed: one classroom for theoretical credits and one lab for practical credits. Lets say the classroom handles $50$ students and the lab handles $30$ students. Consider the following cases.
+\begin{enumerate}
+\item If a class at the lab has exactly the same students as a class at the classroom, then it has at most $30$ students, which means the classroom has a maximum of $60\%$ of its total capacity used. Besides, for all students to be assigned, at least $2$ sections would have to be created for both credit types, each one with $25$ students on average.
+\item If a class at the lab do not need to have exactly the same students as a class at the classroom, then there is the possibility of assigning all the $50$ students to the same class for the theoretical credits at the classroom, using $100\%$ of its capacity. For the practical credits, $2$ sub-sections would have to be created, each one with $25$ students on average. In this case, every student attends to the same theoretical lessons, but possibly to different practical lessons.
+\end{enumerate}
+
+Splitting a demand for a course with both credit types allows efficient resources usage without affecting demand fulfillment. In other words, the costs are reduced and the income is kept.
+
+In real world, what is seen in educational institutions for courses with practical and theoretical credits are the possible relationships:
+\begin{itemize}
+\item 1 x 1 relationship: each theoretical section is associated with $1$ practical subsection, and vice-verse.
+\item 1 x N relationship: each theoretical section can be associated with $N$ practical subsections, and each practical subsection i associated with $1$ theoretical section.
+\item M x N relationship: each theoretical subsection can be associated with $n$ practical subsections, and each practical subsection can be associated with $M$ theoretical subsections.
+\end{itemize}
+
+Note that 1 x 1 relationship is a special case of 1 x N, which in turn is a special case of M x N.
+
+The default is lessons assignments for both subsection types to be quite independent, except for students. Unless the opposite is specified, they can have different professors assignments and there is no connection between their assigned days and time slots.
+
+The 1 x N relationship is also considered and described in \cite{Murray2007}, where it is called \textit{parent--child} relationship. There, subsections are called \textit{subparts} and the hole course is called \textit{instructional offering}. Also, there it is allowed for a course to have more than two types of credits. They exemplify a course with the ''Lecture`` parent subpart (theoretical credits) and ''Recitation`` and ''Laboratory`` children subparts (two kinds of practical credits). This is out of scope for this work, where it is considered only 2 types of credit, either theoretical or practical credit.
+
+
+\paragraph{Virtual Professors}
+\label{constrvirtprof}
+
+The most basic solution restrictions are based on resources availabilities. There is no assurance there are enough professors to meet the hole demand. Therefore, the concept of \textit{virtual professor} is introduced.
+
+Each \textit{virtual professor} means the hiring of a new professor by the institution. Whenever there is no feasible solution with full satisfied demand due to absence of professors, and only in this situation, virtual professors should be created by the solver and used until demand is fulfilled.
+
+For the profile to be realistic, we establish that:
+\begin{itemize}
+\item if a virtual professor teaches courses $A$ and $B$, then necessarily there is a curriculum which contains both courses. This avoids a profile involving very distinct areas. 
+\item if the minimum professor degree per major is considered (see section ~\ref{constrminmastdoc}), virtual professors should have their \textit{minimum degree} specified at the solution, so that majors with courses assigned to virtual professors don't violate the associated constraint.
+\item if the minimum professor employment agreement type per major is considered (see section ~\ref{constrmincontr}), virtual professors should have their \textit{minimum employment agreement type} specified at the solution, so that majors with courses assigned to virtual professors don't violate the associated constraint.
+\end{itemize}
+
+Since a virtual professor is just a prediction of a new profile, except for the points above, it has default settings and full-available timetable.
+
+Minimizing the number of credits assigned to virtual professors is considered the second most important aim in the multi-objective function of timetabling problems, second only to maximizing satisfied demands.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Optional Constraints}
+\label{subsec:optional}
+
+The following constraints are optional, which means that with their absence a consistent solution is still produced.
+
+Unlike the mandatory constraints, there are parameters to control if they should be considered or not. In case an optional constraint is considered, there is still the possibility of making it a hard or soft constraint. This varies according to the constraint type, as explained in more detail bellow.
+
+
+\paragraph{Demand fulfillment}
+\label{constrdemandfulfillm}
+
+The first objective of the problem is maximizing demand satisfaction. Since there is no insurance that the hole demand can be assigned, this is not considered as a hard constraint, but the first goal in objective function. Demand fulfillment is though usually achieved for high school problem instances.
+
+
+
+\paragraph{Credits Split Rules}
+\label{constrsplit}
+
+Courses may require more than $1$ weekday to have all their credits scheduled. Since not every credits split is appropriate, the concept of credits split rule is introduced to define suitable splits.
+
+For example, consider the following credits split rules at table ~\ref{tab:split}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|r|r|r|r|r|r|r}
+Course(s) & Day 1 & Day 2 & Day 3 & Day 4 & Day 5 & Day 6 & Day 7 \\\hline
+4-credits Courses & 2 & & 2 & & & & \\
+6-credits Courses & 2 & & 2 & 2 & & & \\
+6-credits Courses & 3 & & 3 & & & & \\
+INF332 (4 credits) & 2 & 2 & & & & & \\
+\end{tabular}
+\caption{\label{tab:split}Course credits split rule.}
+\end{table}
+
+The first $3$ rules are said to be general, while the fourth is a specific rule. The first rule says that 4-credits courses should be split into lessons of $2$ credits each and into $2$ weekdays preferably non-consecutive. Similarly, 6-credits courses should be split into lessons of $2$ credits each and into $3$ weekdays; or into lessons of $3$ credits each and into $2$ weekdays. At last, the course $INF332$ should be split into $2$ days, preferably consecutive, and each day with 2-credits lessons.
+
+Credits split rules are optional, but when present they are hard constraints in the sense of number of split days and number of credits per day. The way days alternate is violable. If there is a course with $m$ credits but no m-credits split rule, then m-credits course split is free.
+
+Whenever there is a specific credit split rule for a course, it must be respected, even if other generic split rules exist for the same number of credits.
+
+If a course has practical and theoretical credits, with the practical part requiring a lab, then split credit rules should be respected for each subsection. In other words, for such a course with $n$ practical credits and $m$ theoretical credits, practical subsections should follow n-credits split rules and theoretical subsections should follow m-credits split rules.
+
+Although the system does not make it mandatory for a course to have associated credits split rules, in actual solutions, this is an important issue and widely applied.
+
+
+\paragraph{Maximum number of weekdays that a professor is available}
+\label{constrmaxdaysprof}
+
+It is common that professors teach at more than one institution or have other activities. For this reason, regardless the available timetable of professors, it is possible that they have a limited number of days for teaching at the institution. For instance, although professor McCartney is available from Monday to Friday (see ~\ref{tab:availabMT}), it is possible that he can take only $3$ days of week, to be chosen between Monday to Friday, for teaching at the institution. Then, each professor has an integer attribute that indicates the maximum number of weekdays that he can be assigned to, with default value equal to $7$.
+
+
+\paragraph{Minimum number of credits at the day for a professor to teach}
+\label{constrmincredsdayprof}
+
+Regardless the available timetable of professors, it is possible that they request a minimum number of credits for teaching at a day. If professor Eric Clapton requires a minimum of $3$ credits, then he is assigned to classes on Monday (or any other day) only if the total of credits on Monday is equal or greater than $3$. The default minimum value is $1$ credit, i.e., the trivial case.
+
+
+\paragraph{Daily rest period}
+\label{constrrestperiod}
+
+For professors assignments to the applicable, some labor laws should be respected. The rest period law says that a minimum rest period between $2$ labor days is needed. In Brazil this minimum rest period is $11$ hours, which means, for instance, that if professor Tracy Chapman teaches until 22:00 of Monday, she can not be assigned to classes earlier than 9:00 on Tuesday morning. Whenever is considered, minimum rest periods are hard constraints.
+
+
+\paragraph{Minimum and maximum professor workload}
+\label{constrminmaxworkload}
+
+Among the labor laws which must be respected, so that professors assignments are applicable, there is the minimum and maximum professor workload. It may be forbidden that a professor has his workload reduced more than $k\%$ of his previous semester workload at the institution. This constraint guarantees some stability to employees. It may also be forbidden for a professor to be overloaded.
+
+For instance, professor Steven Tyler can have no more than $10\%$ of his previous semester workload reduced and has weekly a maximum workload equal to $24$ credits.
+
+
+\paragraph{Number of professor displacements between blocks and campi}
+\label{constrprofdisplacnum}
+
+Whenever a professor is assigned to any pair of classes at the same day, which take place at different blocks or campi, a maximum of 1 displacement can be established. For instance, if Professor Marvin Gaye teaches at block $A$ on Monday morning and at block $B$ on Monday afternoon, then he has already $1$ displacement on Monday to go from $A$ to $B$. He can not be assigned to any block on Monday other than $B$ after he moved to $B$ for the first time in the day. Likewise, he can not be assigned to any block on Monday morning other than $A$, otherwise Professor Gaye would have more than $1$ displacement in a day.
+
+
+
+\paragraph{Minimize gaps in professor's timetable}
+\label{constrmingapprof}
+
+A gap in a professor's timetable is an idle time window between classes \textit{at the same phase of a day}.
+
+Suppose professor Meschiya Lake teaches from 8:00 to 10:00 on Monday, and then from 11:00 to 12:00 on the same day. The idle time window between 10:00 and 11:00 is an ``1-hour gap'' in the morning.
+
+Breaking times between time slots of a calender should be ignored. For example, if a professor is assigned to a class from 08:00 to 08:50, a break from 08:50 to 09:10, and another class from 09:10 to 10:00, there is no gap due to the 20-minutes break.
+
+Gaps are undesirable. They lower professor's satisfaction and can sometimes even increase the institution cost, because according to labour laws the institution might have to pay the professor for the idle time.
+
+
+
+\paragraph{Professor preference for teaching courses}
+\label{constrprefercourse}
+
+Every professor has a list of courses it is able to teach. Among these courses, though, it is possible that there is a preference of the professor for teaching one instead of another. For representing this preference, every such pair [professor, course] has an associated integer value that varies from 1 to 10 and indicates the professor's preference for teaching that course, where 1 is the highest possible preference and 10 is the lowest.
+
+The importance given to professors preferences depends on the institution, i.e., how relevant is this aspect to it. Usually, professors' preferences have a low weight when compared to others requirements.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data quality}
+
+\subsection{Credits split rule}
+
+\subsection{Availability time}
+
+% professors (times and capability)
+% rooms
+% courses
+% intersection between resources availabilities
+
+\subsection{Assignments between courses and rooms}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
