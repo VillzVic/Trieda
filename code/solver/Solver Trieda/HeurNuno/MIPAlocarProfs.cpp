@@ -1668,7 +1668,7 @@ void MIPAlocarProfs::checkChAnterior_(void)
 void MIPAlocarProfs::checkGapsProf_(void)
 {
 	if ( CentroDados::getProblemData()->parametros->proibirProfGapMTN !=
-		 ParametrosPlanejamento::ConstraintLevel::Strong)
+		 ParametrosPlanejamento::Strong)
 		return;
 
 	// ---------------------------------------------------------------------------------

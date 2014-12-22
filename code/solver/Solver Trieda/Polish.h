@@ -54,8 +54,19 @@ private:
 	// ---------------------------------------------------------------------------------
 
 	void init();
+	void mapVariables();
+	void mapVariablesTat();
 	void loadUnidades();
+
 	void clusterUnidadesByProfs();
+	void mapProfUnidFromVariables(map<Professor*, set<Unidade*>> &profUnidcluster, 
+									map<Unidade*, set<Professor*>> &unidProfs);
+	void calculaNrProfComumParUnid(map<Professor*, set<Unidade*>> const &profUnidcluster, 
+								map<Unidade*, map<Unidade*, int>> &parUnidNrProfComum);
+	void calculaClustersProfsComuns(set<Unidade*> &unidsAddedToSomeCluster, 
+								map<Unidade*, set<Professor*>> const &unidProfs,
+								map<Unidade*, map<Unidade*, int>> const &parUnidNrProfComum);
+	void includeSingleClusters(set<Unidade*> const &unidsAddedToSomeCluster);
 
 	void fixVars();
 	void fixVarsTatico();
@@ -72,9 +83,12 @@ private:
 	void fixVarsDifUnidade();
 	void chooseRandUnidade();
 	int getNrFreeUnidade();
+	void chooseClusterAndSetFreeUnidade();
 	void chooseRandAndSetFreeUnidade();
-	void setNextRandFreeUnidade();
+	void chooseAndSetFreeUnidades();
+	void setNextRandFreeUnidade(int adjustPercUnid=0);
 	Unidade* getUnidadeAt(int at);
+	void adjustPercFreeUnid(int adjustment);
 	void clearFreeUnidade();
 	void addFreeUnid(Unidade* unid);
 	void setAllFreeUnidade();
@@ -84,24 +98,25 @@ private:
 
 	void optimize();
 	void getSolution(double &objN, double &gap);
-	void setMelhora( double objN );
-	void updatePercAndTimeIter( bool &okIter, double objN, double gap );
-	void updatePercAndTimeIterSmallGap( bool &okIter, double objN );
-	void updatePercAndTimeIterBigGap( double objN );
-	void adjustPercOrUnid(bool &okIter);
+	void setMelhora(double objN);
+	void updatePercAndTimeIter(double objN, double gap);
+	void updatePercAndTimeIterSmallGap(double objN);
+	void updatePercAndTimeIterBigGap(double objN);
+	void adjustPercOrUnid();
 	void decreasePercOrFreeUnid(int percToSubtract);
 	void adjustTime();
 	void increaseTime();
 	void decreaseTime();
-	void adjustOkIter(bool &okIter, double objN);
+	void adjustOkIter(double objN);
 	void resetIterSemMelhora();
 	void checkIterSemMelhora();
 	void checkEndDueToIterSemMelhora();
 	void chgFixType();
-	void checkTimeWithoutImprov( bool &okIter, double objN );
+	void checkTimeWithoutImprov(double objN);
 	void updateObj(double objN);
-	void checkTimeLimit(bool &okIter);
+	void checkTimeLimit();
 	void unfixBounds();
+	void unfixBoundsTatHash(VariableMIPUnicoHash const & hashVar);
 	void unfixBoundsTatico();
 	void unfixBoundsOp();
 
@@ -158,6 +173,7 @@ private:
 	#endif
 	   
 	   // Vars
+	   bool okIter_;
 	   double timeIter_;
 	   int perc_;
 	   int status_;
@@ -172,6 +188,7 @@ private:
 	   set<Unidade*> unidadeslivres_;
 	   int percUnidLivres_;
 	   bool tryBranch_;
+	   bool useFreeBlockPerCluster_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
@@ -201,13 +218,17 @@ private:
 
 	   // Hash which associates the column number with the VariableTatico object.
 	   VariableMIPUnicoHash const vHashTatico_;
-	   
+	   VariableMIPUnicoHash vHashTatX_;
+	   VariableMIPUnicoHash vHashTatZ_;
+	   VariableMIPUnicoHash vHashTatK_;
+
 	   // Hash which associates the column number with the VariableOp object.
 	   VariableOpHash const vHashOp_;
 	   
 	   // Unidades
 	   set<Unidade*> unidades_;
-
+	   set<set<Unidade*>> unidClustersByProfs_;
+	   
 	   MODULE const module_;
 	   int const phase_;
 

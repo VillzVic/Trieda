@@ -249,7 +249,7 @@ private:
 	   OPT_GUROBI* lp;
 	#endif
 	   
-	bool optimized;
+	bool optimized_;
     double *xSol_;
    
    // Hash which associates the column number with the VariableTatico object.
@@ -312,7 +312,14 @@ private:
 	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
+	void getXSol(double *xS);
+	bool optimize();
+	bool isOptimized(OPTSTAT status);
+	bool infeasible(OPTSTAT status);
+	void checkFeasibility(OPTSTAT status);
+	
 	int addConstrGapProf();
+	int copyInitialSolutionGapProf();
 
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );

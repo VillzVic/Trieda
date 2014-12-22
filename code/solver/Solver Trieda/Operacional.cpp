@@ -6295,10 +6295,8 @@ int Operacional::criaVariavelProfessorDiaHorarioIF()
 {
    int num_vars = 0;
 
-   if ( !problemData->parametros->minimizar_horarios_vazios_professor )
-   {
+   if (problemData->parametros->proibirProfGapMTN == ParametrosPlanejamento::Off)
 	   return num_vars;
-   }
 
    double coeff = 0.0;
    double peso = 10;

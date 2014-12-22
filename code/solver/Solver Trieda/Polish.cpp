@@ -19,7 +19,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 	: lp_(lp), vHashTatico_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
 	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
-	phase_(phase), percUnidLivres_(40), tryBranch_(false),
+	phase_(phase), percUnidLivres_(40), useFreeBlockPerCluster_(true), tryBranch_(false), okIter_(true),
 	k_(3)
 {
 	originalLogFileName_ = originalLogFile;
@@ -30,7 +30,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string origin
 	: lp_(lp), vHashOp_(hashVars), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
 	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(4),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
-	phase_(phase), percUnidLivres_(40), tryBranch_(false),
+	phase_(phase), percUnidLivres_(40), useFreeBlockPerCluster_(true), tryBranch_(false), okIter_(true),
 	k_(3)
 {
 	originalLogFileName_ = originalLogFile;
@@ -56,6 +56,8 @@ Polish::~Polish()
 void Polish::init()
 {
 	if (!lp_) return;
+	
+    initLogFile();
 
 	lp_->setCallbackFunc( NULL, NULL );
 
@@ -96,13 +98,43 @@ void Polish::init()
       idxSol_[ i ] = i;
     }
 
+	mapVariables();
 	loadUnidades();
 	setAllFreeUnidade();
+	clusterUnidadesByProfs();
+}
+
+void Polish::mapVariables()
+{
+	if (module_==Polish::TATICO)
+		mapVariablesTat();
+}
+
+void Polish::mapVariablesTat()
+{
+	if (module_!=Polish::TATICO)
+		return;
+
+    for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
+    {
+        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
+        {
+			vHashTatX_[vit->first] = vit->second;
+		}
+        if ( vit->first.getType() == VariableMIPUnico::V_PROF_TURMA )
+        {
+			vHashTatK_[vit->first] = vit->second;
+		}
+        if ( vit->first.getType() == VariableMIPUnico::V_ABERTURA )
+        {
+			vHashTatZ_[vit->first] = vit->second;
+		}
+	}
 }
 
 void Polish::loadUnidades()
 {
-    for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
+    for ( auto vit = vHashTatX_.begin(); vit != vHashTatX_.end(); vit++ )
     {
         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
         {
@@ -112,18 +144,141 @@ void Polish::loadUnidades()
 	}
 }
 
-void Polish::clusterUnidadesByProfs()
-{
-	map<Professor*, set<Unidade*>> profUnidcluster;
+// -------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+// Cluster unidades
 
-    for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
+void Polish::clusterUnidadesByProfs()
+{		
+	// -------------------
+	map<Professor*, set<Unidade*>> profUnidcluster;
+	map<Unidade*, set<Professor*>> unidProfs;
+	mapProfUnidFromVariables(profUnidcluster,unidProfs);
+	
+	// -------------------
+	// Calcula o nr de professores em comum para cada par de unidades
+	map<Unidade*, map<Unidade*, int>> parUnidNrProfComum;
+	calculaNrProfComumParUnid(profUnidcluster, parUnidNrProfComum);
+	
+	// -------------------
+	// Cluster unidades que compartilham um nr mínimo de professores com alguma outra
+	set<Unidade*> unidsAddedToSomeCluster;
+	calculaClustersProfsComuns(unidsAddedToSomeCluster, unidProfs, parUnidNrProfComum);
+	
+	// -------------------
+	// Garante que todas as unidades estão em algum cluster.
+	// Insere unidades que isoladas (não compartilham professores com nenhuma outra).
+	includeSingleClusters(unidsAddedToSomeCluster);
+}
+
+void Polish::mapProfUnidFromVariables(map<Professor*, set<Unidade*>> &profUnidcluster, 
+									map<Unidade*, set<Professor*>> &unidProfs)
+{
+    for ( auto vit = vHashTatX_.begin(); vit != vHashTatX_.end(); vit++ )
     {
-        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
-        {
-			profUnidcluster[vit->first.getProfessor()].insert(vit->first.getUnidade());
+		if (vit->first.getProfessor()->eVirtual()) continue;
+
+		profUnidcluster[vit->first.getProfessor()].insert(vit->first.getUnidade());
+		unidProfs[vit->first.getUnidade()].insert(vit->first.getProfessor());
+	}
+}
+
+void Polish::calculaNrProfComumParUnid(map<Professor*, set<Unidade*>> const &profUnidcluster, 
+									map<Unidade*, map<Unidade*, int>> &parUnidNrProfComum)
+{
+	// -------------------------------------------
+	// Calcula o nr de professores em comum para cada par de unidades
+	for ( auto pit = profUnidcluster.cbegin(); pit != profUnidcluster.cend(); pit++ )
+    {
+		if (pit->first->eVirtual()) continue;
+
+		for ( auto uit1 = pit->second.cbegin(); uit1 != pit->second.cend(); uit1++ )
+		{
+			auto finder1 = parUnidNrProfComum.find(*uit1);
+			if ( finder1 == parUnidNrProfComum.end())
+			{
+				map<Unidade*, int> empty;
+				finder1 = parUnidNrProfComum.insert( std::pair<Unidade*, map<Unidade*, int>>(*uit1, empty) ).first;
+			}
+
+			for ( auto uit2 = std::next(uit1); uit2 != pit->second.end(); uit2++ )
+			{				
+				auto finder2 = finder1->second.find(*uit2);
+				if ( finder2 == finder1->second.end())
+				{
+					finder2 = finder1->second.insert( std::pair<Unidade*,int>(*uit2, 0) ).first;
+				}
+				
+				finder2->second++;
+			}
 		}
 	}
 }
+
+void Polish::calculaClustersProfsComuns(set<Unidade*> &unidsAddedToSomeCluster, 
+									map<Unidade*, set<Professor*>> const &unidProfs,
+									map<Unidade*, map<Unidade*, int>> const &parUnidNrProfComum)
+{
+	for ( auto uit1 = parUnidNrProfComum.begin(); uit1 != parUnidNrProfComum.end(); uit1++ )
+    {
+		Unidade* const u1 = uit1->first;
+
+		int nrProfsU1 = 0;
+		auto unidProfFinder = unidProfs.find(u1);
+		if (unidProfFinder!=unidProfs.end()) 
+			nrProfsU1 = unidProfFinder->second.size();
+
+		set<Unidade*> cluster;
+		cluster.insert(u1);
+		unidsAddedToSomeCluster.insert(u1);
+
+		for ( auto uit2 = uit1->second.begin(); uit2 != uit1->second.end(); uit2++ )
+		{
+			Unidade* const u2 = uit2->first;
+			int nrProfsComuns = uit2->second;
+
+			if (nrProfsComuns > nrProfsU1/2)
+			{
+				cluster.insert(u2);
+				unidsAddedToSomeCluster.insert(u2);
+			}
+		}
+
+		unidClustersByProfs_.insert(cluster);
+	}
+}
+
+void Polish::includeSingleClusters(set<Unidade*> const &unidsAddedToSomeCluster)
+{
+	for ( auto uit1 = unidades_.begin(); uit1 != unidades_.end(); uit1++ )
+    {
+		if (unidsAddedToSomeCluster.find(*uit1) == unidsAddedToSomeCluster.end())
+		{
+			set<Unidade*> cluster;
+			cluster.insert(*uit1);
+			unidClustersByProfs_.insert(cluster);
+		}
+	}
+
+	printLog("\n");
+	int i=0;
+	for ( auto itcluster = unidClustersByProfs_.begin(); itcluster != unidClustersByProfs_.end(); itcluster++ )
+    {
+		i++;
+		stringstream ss;
+		ss << "\nCluster " << i << ": ";
+		for ( auto uit = itcluster->cbegin(); uit != itcluster->cend(); uit++ )
+		{
+			ss << (*uit)->getId() << " ";
+		}
+		printLog(ss.str());
+	}
+}
+
+
+// -------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+// Main polish
 
 bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemMelhora)
 {
@@ -138,20 +293,16 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
     perc_ = percIni;
 	maxTime_ = maxTime;
 	maxTempoSemMelhora_ = maxTempoSemMelhora;
-
-    bool okIter = true;
-
-    initLogFile();
-
+	
 	if( !needsPolish() )
 	{
-		okIter = false;
+		okIter_ = false;
 		polishing = false;
 	}
 
 	setParams(timeIter_);
 
-    while (okIter)
+    while (okIter_)
     {     
 		fixVars();
 
@@ -167,13 +318,13 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	  
 		setMelhora(objN);
 
-		updatePercAndTimeIter(okIter, objN, gap);
+		updatePercAndTimeIter(objN, gap);
 
-		checkTimeWithoutImprov(okIter, objN);
+		checkTimeWithoutImprov(objN);
 	  
 		updateObj(objN);
 	  
-		checkTimeLimit(okIter);
+		checkTimeLimit();
 	  
 		unfixBounds();
     }		
@@ -186,6 +337,10 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	
     return polishing;
 }
+
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// Fix variables
 
 void Polish::fixVars()
 {
@@ -227,8 +382,8 @@ void Polish::decideVarsToFixType1()
 
     // Seleciona turmas e disciplinas para fixar    
     int nBds = 0;
-	auto vit = vHashTatico_.begin();
-    while ( vit != vHashTatico_.end() )
+	auto vit = vHashTatZ_.begin();
+    while ( vit != vHashTatZ_.end() )
     {
 		if ( vit->first.getType() == VariableMIPUnico::V_ABERTURA )
 		{
@@ -269,8 +424,8 @@ void Polish::fixVarsProfType1()
 	if ( fixType_ != 1 ) return;
 
     int nBds = 0;
-	auto vit = vHashTatico_.begin();
-    while ( vit != vHashTatico_.end() )
+	auto vit = vHashTatK_.begin();
+    while ( vit != vHashTatK_.end() )
     {
 		if ( vit->first.getType() == VariableMIPUnico::V_PROF_TURMA )
 		{
@@ -312,7 +467,7 @@ void Polish::fixVarsType1()
 		return;
 
     int nBds = 0;
-    for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
+    for ( auto vit = vHashTatX_.begin(); vit != vHashTatX_.end(); vit++ )
     {
         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
         {
@@ -432,10 +587,9 @@ void Polish::fixVarsDifUnidade()
 
     // Seleciona turmas e disciplinas para fixar    
     int nBds = 0;	
-    for (auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++)
+    for (auto vit = vHashTatX_.begin(); vit != vHashTatX_.end(); vit++)
     {
-		if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS ||
-			 vit->first.getType() == VariableMIPUnico::V_PROF_AULA )
+		if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
 		{
 			if ( isFree(vit->first.getUnidade()) )
 				continue;
@@ -461,7 +615,8 @@ void Polish::fixVarsDifUnidade()
 }
 
 // -------------------------------------------------------------------------------------------------
-// Decide unidades livres
+// -------------------------------------------------------------------------------------------------
+// Decide free blocks
 
 void Polish::chooseRandUnidade()
 {
@@ -478,32 +633,52 @@ int Polish::getNrFreeUnidade()
 	return nr;
 }
 
+void Polish::chooseClusterAndSetFreeUnidade()
+{
+	int at = rand() % unidClustersByProfs_.size();
+	
+	auto itClusterAt = unidClustersByProfs_.cbegin();
+	std::advance(itClusterAt,at);
+
+	for (auto itUnid=itClusterAt->cbegin(); itUnid!=itClusterAt->cend(); itUnid++)
+	{
+		addFreeUnid(*itUnid);
+	}
+}
+
 void Polish::chooseRandAndSetFreeUnidade()
 {
-	clearFreeUnidade();
 	while (unidadeslivres_.size() != getNrFreeUnidade())
 	{
 		chooseRandUnidade();		
 	}
 }
 
-void Polish::setNextRandFreeUnidade()
+void Polish::chooseAndSetFreeUnidades()
+{
+	clearFreeUnidade();
+
+	if (useFreeBlockPerCluster_)
+		chooseClusterAndSetFreeUnidade();
+	else
+		chooseRandAndSetFreeUnidade();
+}
+
+void Polish::setNextRandFreeUnidade(int adjustPercUnid)
 {
 	static int counter=0;
 	counter++;
 
-	if (counter>=3)
+	adjustPercFreeUnid(adjustPercUnid);
+
+	if (counter>=4)
 	{
 		counter=0;
-		if(percUnidLivres_<70) percUnidLivres_ += 10;
 		setAllFreeUnidade();
 		return;
 	}
 
-	if(allUnidadesAreFree()) // Restart
-	if(percUnidLivres_>50) percUnidLivres_ = 50;
-
-	chooseRandAndSetFreeUnidade();
+	chooseAndSetFreeUnidades();
 }
 
 Unidade* Polish::getUnidadeAt(int at)
@@ -518,6 +693,14 @@ Unidade* Polish::getUnidadeAt(int at)
 		return nullptr;
 	}
 	return *std::next(unidades_.begin(), at);
+}
+
+void Polish::adjustPercFreeUnid(int adjustment)
+{
+	percUnidLivres_ += adjustment;
+	
+	if (percUnidLivres_>100) percUnidLivres_=100;
+	if (percUnidLivres_<0) percUnidLivres_=0;
 }
 
 void Polish::addFreeUnid(Unidade* unid)
@@ -557,6 +740,7 @@ bool Polish::thereIsFreeUnid()
 	return (unidadeslivres_.size() != 0);
 }
 
+// -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 
 void Polish::optimize()
@@ -598,17 +782,17 @@ void Polish::setMelhora( double objN )
 	}
 }
 
-void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
+void Polish::updatePercAndTimeIter(double objN, double gap)
 {			  	  	  
 	  if (perc_ <= 0)
 	  {
-		  okIter = false;
+		  okIter_ = false;
 		  return;
 	  }
 
 	  if (optimal() || gap <= 1.0)		// TINY GAP
 	  {
-		  updatePercAndTimeIterSmallGap( okIter, objN );
+		  updatePercAndTimeIterSmallGap( objN );
 	  }
 	  else									// BIG GAP
 	  {
@@ -616,13 +800,13 @@ void Polish::updatePercAndTimeIter( bool &okIter, double objN, double gap )
 	  }
 }
 
-void Polish::updatePercAndTimeIterSmallGap( bool &okIter, double objN )
+void Polish::updatePercAndTimeIterSmallGap( double objN )
 {
 	resetIterSemMelhora();
 
-	adjustOkIter(okIter, objN);
+	adjustOkIter(objN);
 
-	adjustPercOrUnid(okIter);
+	adjustPercOrUnid();
 
 	adjustTime();
 }
@@ -637,14 +821,14 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 				
 		adjustTime();
 		
-		if (allUnidadesAreFree()) //teste3
-			setNextRandFreeUnidade();
+		//if (allUnidadesAreFree()) //teste3
+			setNextRandFreeUnidade(-10);
 
 		checkEndDueToIterSemMelhora();
 	}
 }
 
-void Polish::adjustPercOrUnid(bool &okIter)
+void Polish::adjustPercOrUnid()
 {
 	if (perc_ <= 10)
 	{
@@ -670,7 +854,7 @@ void Polish::decreasePercOrFreeUnid(int percToSubtract)
 
 	if (!allUnidadesAreFree())
 	{
-		setNextRandFreeUnidade();
+		setNextRandFreeUnidade(10);
 		return;
 	}
 	
@@ -720,15 +904,15 @@ void Polish::decreaseTime()
 	}
 }
 
-void Polish::adjustOkIter(bool &okIter, double objN)
+void Polish::adjustOkIter(double objN)
 {
 	// Obj acchieved a known minimal possible value
 	if (fabs(objN-MIN_OPT_VALUE) < 10e-6)
-		okIter = false;		
+		okIter_ = false;		
 
 	// optimal!
 	if (perc_ <= 0 && allUnidadesAreFree())
-		okIter = false;
+		okIter_ = false;
 }
 
 void Polish::resetIterSemMelhora()
@@ -771,7 +955,7 @@ void Polish::chgFixType()
 		fixType_ = 2;
 }
 
-void Polish::checkTimeWithoutImprov( bool &okIter, double objN )
+void Polish::checkTimeWithoutImprov(double objN)
 {
 	if ( fabs(objN-objAtual_) < 0.0001 )
 	{
@@ -782,7 +966,7 @@ void Polish::checkTimeWithoutImprov( bool &okIter, double objN )
 		if ( tempoAtual >= maxTempoSemMelhora_ )
 		{
 			/* if there is too much time without any improvement, then quit */
-			okIter = false;
+			okIter_ = false;
 			tempoSemMelhora_.stop();
 			tempoPol_.stop();
 			cout << "Abort by timeWithoutChange. Limit of time without improvement" << tempoAtual << ", BestObj " << objN;
@@ -808,14 +992,14 @@ void Polish::updateObj(double objN)
 	objAtual_ = objN;
 }
 
-void Polish::checkTimeLimit( bool &okIter )
+void Polish::checkTimeLimit()
 {
-	if ( okIter )
+	if ( okIter_ )
     {
 		double tempoAtual = getTotalElapsedTime();
 		if ( tempoAtual >= maxTime_ )
 		{
-			okIter = false;
+			okIter_ = false;
 			tempoPol_.stop();
 			tempoSemMelhora_.stop();
 			cout << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime_ << endl;
@@ -837,28 +1021,31 @@ void Polish::unfixBounds()
 		unfixBoundsOp();
 }
 
-void Polish::unfixBoundsTatico()
+void Polish::unfixBoundsTatHash(VariableMIPUnicoHash const & hashVar)
 {
       // Volta bounds
       int nBds = 0;
-      for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
+      for ( auto vit = hashVar.begin(); vit != hashVar.end(); vit++ )
       {
-         if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS || 
-			  vit->first.getType() == VariableMIPUnico::V_ABERTURA || 
-			  vit->first.getType() == VariableMIPUnico::V_PROF_TURMA )
-         {
-            idxs_[nBds] = vit->second;
-            vals_[nBds] = ubVars_[vit->second];
-            bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
-            nBds++;
-            idxs_[nBds] = vit->second;
-            vals_[nBds] = lbVars_[vit->second];
-            bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
-            nBds++;
-         }         
+		  idxs_[nBds] = vit->second;
+		  vals_[nBds] = ubVars_[vit->second];
+		  bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
+		  nBds++;
+		  idxs_[nBds] = vit->second;
+		  vals_[nBds] = lbVars_[vit->second];
+		  bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
+		  nBds++;
       }	  
       lp_->chgBds(nBds,idxs_,bds_,vals_);
       lp_->updateLP();
+}
+
+void Polish::unfixBoundsTatico()
+{
+	// Volta bounds
+	unfixBoundsTatHash(vHashTatX_);	  
+	unfixBoundsTatHash(vHashTatZ_);
+	unfixBoundsTatHash(vHashTatK_);
 }
 
 void Polish::unfixBoundsOp()
