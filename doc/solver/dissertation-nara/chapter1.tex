@@ -39,30 +39,18 @@ By 2006, Guenalay and Sahin introduced at \cite{Guenalay2006} a Decision Support
 % ------------------------------------------------------------
 \section{Main similar formulations and their differences}
 
-Among the few existing published works that considered more realistic formulations, we highlight \cite{Carter2001} and \cite{Murray2007} as those whose embraced problems were the most similar to the one considered in this work. Several practical issues emphasized by both of them were also identified during TRIEDA's development and are referenced along this work. Probably some challenges and problems faced both at solving methods development and deployment phase could have been avoided or at least minimized if we had a previous knowledge of these works.
+For solving the high school timetabling problem, this work is based on an integer programming formulation together with strategies for helping at the convergence in the best solution search process.
 
-Still, differences exist between their timetabling problems and the one here presented. Following, the major points are listed.
+Among the existing published works that considered more realistic formulations for high school timetabling problems, we highlight \cite{Birbas2009} and \cite{Birbas2009} as those whose embraced problems were the most similar to the one considered in this work. Several practical issues emphasized by them were also identified during TRIEDA's development and were referenced along this work.
 
-% ------------------
-At \cite{Carter2001}, we highlight:
-\begin{itemize}
-\item the number of course sections is previously defined.
-\item the assignment of instructors to course sections is not automated; that process is normally done manually in advance. 
-\item the system has been designed to solve the specific instance of the University of Waterloo problem; it is not portable, although many of the optimization routines were designed to solve a more general mathematical problem.
-\item the system requires a list of expected course offerings. Historically at Waterloo, 75\% of the course offerings are the same as the previous year.
-\end{itemize}
-
-% ------------------
-At \cite{Murray2007}, we highlight:
-\begin{itemize}
-\item the number of course sections is previously defined.
-\end{itemize}
+Still, there are differences between their timetabling problems and the one here presented. Following, the major points are listed.
+-
+-
+-
 
 Further differences can be identified along this work.
 
 Because TRIEDA is a commercial software, it has been developed to be as portable and flexible as possible. Particularly, the system embraces most common rules and cases found in Brazilian universities and schools.
-
-A quite relevant increment of TRIEDA's problem is that it does not require the number of course sections previously defined --- this is also decided by the solver and is therefore an output information. Indeed, we still have not found any other system or published work for a similar university timetabling problem which does not need this as an input data. Such differential can specially lower university expenses, since the number of classes needed for demand satisfaction is usually reduced.
 
 
 % ------------------------------------------------------------
@@ -75,7 +63,7 @@ Obtaining coherent and correct data is a particular important and sensitive issu
 
 \fixme{citar funcionalidade: motivos de nao atendimento}
 
-Murray, M\"{u}ller and Rudov\'{a} tells at \cite{Murray2007} that inequity in the quality of time and room assignments received by different departments and faculty members doomed a previous attempt at automating the timetabling process at Purdue University. A similar situation was faced by TRIEDA in July of 2014 while an attempt of deploying a solution in a Brazilian institution.
+Murray, M\"{u}ller and Rudov\'{a} tells at \cite{Murray2007} that inequity in the quality of time and room assignments received by different departments and faculty members doomed a previous attempt at automating the timetabling process at Purdue University. A similar situation was faced by TRIEDA in July of 2014 while an attempt of deploying a solution in a Brazilian university.
 
 Automating people assignments is different from automating other process --- the optimization factor is definitely \textbf{not} more important than people satisfaction. Only keeping that in mind it is possible to obtain an actual deployable solution.
 
@@ -104,6 +92,10 @@ This is a test reference to \cite{Murray2007}.    % Purdue (unitime), USA
 This is a test reference to \cite{Unitime}.       % website
 This is a test reference to \cite{DSS}.           % website
 This is a test reference to \cite{Guenalay2006}.  % Bilkent, Turkey, (DSS)
+This is a test reference to \cite{Schaerf99}.  		% Schaerf99
+This is a test reference to \cite{Michael2002}.   % Michael2002
+This is a test reference to \cite{SchoolOverview2010}.   % SchoolOverview2010
+This is a test reference to \cite{Birbas2009}.    % Birbas2009
 This is a test reference to \cite{Mimosasoftware}.
 This is a test reference to \cite{Patat}.
 This is a test reference to \cite{Hstt}.				  % Benchmarking project for highschool

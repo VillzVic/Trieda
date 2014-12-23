@@ -70,6 +70,8 @@ Introduces CPLEX and Gurobi.
 \item $T$ - Set of weekdays. Elements of $T$ are called $t$.
 \item $U$ - Set of blocks. Elements of $U$ are called $u$.
 \item $SL$ - Set of calenders. Elements of $SL$ are called $sl$.
+\item $P$ - Set of all professors. Elements of $P$ are called $p$.
+\item $PV$ - Set of virtual professors. Elements of $PV$ are called $pv$ or $p$.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,13 +79,14 @@ Introduces CPLEX and Gurobi.
 
 \begin{itemize}
 \item $Cap_{s}$ - Capacity of classroom $s$.
-\item $C_{d}$ - Total of credits of course $d$.
+\item $nCreds_{d}$ - Total of credits of course $d$.
 \item $M$ - big $M$.
 \item $N_{d,k,t}$ - number of credits for course $d$ at day $t$ of credits split rule $k$.
 \item $NCH_{d,hi,hf}$ - number of credits for course $d$ from time slot $hi$ to time slot $hf$.
 \item $MinSize$ - minimum number of students required for offering a class.
 \item $delta_{a,t}$ - maximum of idle time allowed at day $t$ for student $a$. Used only for gap-constraints, usually is the sum of intervals at day $t$ of the student's calender.
 \item $delta_{t,f}$ - maximum of idle time allowed at phase $f$ of day $t$ for a professor. Used only for gap-constraints, usually is the average sum of intervals at phase $f$ of day $t$ of calenders.
+\item $pv$ - Unique virtual professor, to be used whenever the set of real professors is not enough for demand satisfaction.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,12 +102,13 @@ Introduces CPLEX and Gurobi.
 \item $fkp_{d,i,t}$ - slack variable for superior limit for credits split rule constraint.
 \item $m_{d,i,k}$ - binary variable, indicates if a credits split rule $k$ was chosen for section $i$ of course $d$.
 \item $s_{i,d,a}$ - binary variable, indicates if student $a$ is assigned to section $i$ of course $d$.
-\item $k_{p,i,d,hi,hf,t}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ from time slot $hi$ to time slot $hf$ of day $t$. 
-\item $hip_{p,t,f}$ - integer variable, indicates the time in minutes of the first time slot assigned to professor $p$ at phase $f$ of day $t$. For example, if the first class assigned to $p$ on $t=Monday$ and $f=morning$ starts at 9:30 am, then $hip_{p,t,f}=9\cdot 60 + 30 = 570$.
-\item $hfp_{p,t,f}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to professor $p$ at phase $f$ of day $t$.
+\item $k_{p,i,d,u,h,t}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ at block $u$ at time slot $h$ and day $t$.
+\item $y_{p,i,d,cp}$ - binary variable, indicates if professor $p$ is assigned to section $i$ of course $d$ of campus $cp$.
+\item $hip_{p,t,f}$ - integer variable, indicates the time in minutes of the first time slot assigned to professor $p$ at session $f$ of day $t$. For example, if the first class assigned to $p$ on $t=Monday$ and $f=morning$ starts at 9:30 am, then $hip_{p,t,f}=9\cdot 60 + 30 = 570$.
+\item $hfp_{p,t,f}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to professor $p$ at session $f$ of day $t$.
 \item $hia_{a,t}$ - integer variable, indicates the time in minutes of the first time slot assigned to student $a$ at day $t$.
 \item $hfa_{a,t}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to student $a$ at day $t$.
-\item $fpgap_{p,t,f}$ - integer slack variable, indicates the gap in phase $f$ of day $t$ of professor $p$'s schedule.
+\item $fpgap_{p,t,f}$ - integer slack variable, indicates the gap in session $f$ of day $t$ of professor $p$'s schedule.
 \end{itemize}
 
 
@@ -128,7 +132,7 @@ $$
       + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
       \\
       &
-      + \sum\limits_{a \in A} \sum\limits_{t \in T} fagap_{a,t}
+      + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp}
 \end{array}
 $$
 
@@ -149,8 +153,6 @@ $$
 \forall hf \in H
 \end{eqnarray}
 
-
-
 \subsubsection{Assigns the classroom of a section to variable 'o'}
 \begin{eqnarray}
 M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} x_{i,d,s,t,hi,hf}  \nonumber \qquad 
@@ -161,14 +163,12 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 \forall s \in S_{u} \quad
 \end{eqnarray}
 
-
 \subsubsection{Ensures single classroom per course section}
 \begin{eqnarray}
 \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s}  \leq  z_{i,d,cp}  \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \end{eqnarray}
-
 
 \subsubsection{No overlapping in classroom's timetable}
 \begin{eqnarray}
@@ -178,37 +178,33 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 \forall u \in U_{cp} \quad
 \forall s \in S_{u} \quad
 \forall t \in T \quad
-\forall h \in H \quad (hi,hf)\text{ overlap }h
+\forall h \in H \quad (hi,hf)\text{ overlaps }h
 \end{eqnarray}
 
-
-\subsubsection{Tries to satisfy students requirements}
+\subsubsection{Tries to satisfy each student requirement}
 \begin{eqnarray}
 \sum\limits_{i \in I_{d}} s_{i,d,a} + fd_{d,a} = 1  \nonumber \qquad 
 \forall a \in Al \quad
 \forall d \in D_{a}
 \end{eqnarray}
 
-
 \subsubsection{Assigns student's course section to lessons, while ensures course section's total number of credits}
 \begin{eqnarray}
-C_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot v_{a,i,d,s,t,hi,hf} \nonumber \qquad 
+nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot v_{a,i,d,s,t,hi,hf} \nonumber \qquad 
 \forall a \in A \quad
 \forall i \in I_{d} \quad
 \forall d \in D_{a}
 \end{eqnarray}
 
-
 \subsubsection{Links variables x and variable z, while ensures course section's total number of credits}
 \begin{eqnarray}
-\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot x_{i,d,s,t,hi,hf} = C_{d} \cdot z_{i,d,cp} \nonumber \qquad
+\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot x_{i,d,s,t,hi,hf} = nCreds_{d} \cdot z_{i,d,cp} \nonumber \qquad
 \forall i \in I_{d} \quad
 \forall d \in D \quad
 \forall cp \in CP
 \end{eqnarray}
 
-
-\subsubsection{Avoids classes overlap at student timetable}
+\subsubsection{Avoids classes overlapping at student timetable}
 \begin{eqnarray}
 \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\mbox{ overlaps }h}} v_{a,i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
 \\
@@ -217,7 +213,6 @@ C_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{h
 \forall t \in T \quad
 \forall h \in H_{d}
 \end{eqnarray}
-
 
 \subsubsection{Ensures student assignment to practical and theoretical credits}
 \mbox{If practical and theoretical course sections have MxN relationship:}
@@ -233,7 +228,6 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall i \in I_{d} \quad
 \forall (dp,dt) \in D_{a} \quad
 \end{eqnarray}
-
 
 \subsubsection{Single lesson for each course section per day}
 \begin{eqnarray}
@@ -267,7 +261,6 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -321,14 +314,13 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall d \in D \quad
 \forall cp \in CP
 \end{eqnarray}	
-			
-		
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %						GAP NOS HORÁRIOS DOS PROFESSORES
 \subsubsection{Professor's gaps avoidance}
 
-\paragraph{Sets lower bound for variable $hip_{p,t,f}$}
+\paragraph{Sets variable $hip_{p,t,f}$}
 \begin{eqnarray}
 hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{k \in K_{dti<dt}} k_{p,t,dti} ) \nonumber \qquad
 \forall p \in P \quad
@@ -336,8 +328,6 @@ hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{k \in K_{dti<dt}} k_{p,t,dti} ) 
 \forall f \in F \quad
 \forall dt \in Dt_{f}
 \end{eqnarray}
-
-\paragraph{Sets upper bound for variable $hip_{p,t,f}$}
 \begin{eqnarray}
 hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{k} k_{p,t,dti} ) \nonumber \qquad
 \forall p \in P \quad
@@ -346,7 +336,7 @@ hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{k} k_{p,t,dti} ) \nonumber \
 \forall dti \in Dt_{f}
 \end{eqnarray}
 
-\paragraph{Sets lower bound for variable $hfp_{p,t,f}$}
+\paragraph{Sets variable $hfp_{p,t,f}$}
 \begin{eqnarray}
 hfp_{p,t,f} \geq \sum\limits_{k} m(dt) \cdot k_{p,t,dtf} \nonumber \qquad
 \forall p \in P \quad
@@ -354,8 +344,6 @@ hfp_{p,t,f} \geq \sum\limits_{k} m(dt) \cdot k_{p,t,dtf} \nonumber \qquad
 \forall f \in F \quad
 \forall dtf \in Dt_{f}
 \end{eqnarray}
-
-\paragraph{Sets upper bound for variable $hfp_{p,t,f}$}
 \begin{eqnarray}
 hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) \nonumber \qquad
 \forall p \in P \quad
@@ -364,7 +352,7 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) 
 \forall dt \in Dt_{f}
 \end{eqnarray}
 
-\paragraph{Prohibits gap in phase of day \fixme{fase do dia} in professor timetable}
+\paragraph{Prohibits gap in each session of day in professor timetable}
 \begin{eqnarray}
 \sum\limits_{k \in K_{h \in H_{f}}} tempo_{k} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
 \\
@@ -378,15 +366,13 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) 
 % 				GAP NOS HORÁRIOS DOS ALUNOS
 \subsubsection{Student's gaps prohibition}
 
-\paragraph{Sets lower bound for variable $hia_{a,t}$}
+\paragraph{Sets variable $hia_{a,t}$}
 \begin{eqnarray}
 hia_{a,t} \geq m(dt) \cdot ( 1 - \sum\limits_{v \in V_{dti<dt}} v_{a,t,dti} ) \nonumber \qquad
 \forall p \in P \quad
 \forall t \in T \quad
 \forall dt \in Dt_{f}
 \end{eqnarray}
-
-\paragraph{Sets upper bound for variable $hia_{a,t}$}
 \begin{eqnarray}
 hia_{a,t} \leq m(dt) + M \cdot ( 1 - \sum\limits_{v} v_{a,t,dti} ) \nonumber \qquad
 \forall p \in P \quad
@@ -394,15 +380,13 @@ hia_{a,t} \leq m(dt) + M \cdot ( 1 - \sum\limits_{v} v_{a,t,dti} ) \nonumber \qq
 \forall dti \in Dt
 \end{eqnarray}
 
-\paragraph{Sets lower bound for variable $hfa_{a,t}$}
+\paragraph{Sets variable $hfa_{a,t}$}
 \begin{eqnarray}
 hfp_{p,t,f} \geq \sum\limits_{v} m(dt) \cdot v_{a,t,dtf} \nonumber \qquad
 \forall p \in P \quad
 \forall t \in T \quad
 \forall dtf \in Dt
 \end{eqnarray}
-
-\paragraph{Sets upper bound for variable $hfa_{a,t}$}
 \begin{eqnarray}
 hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \nonumber \qquad
 \forall p \in P \quad
@@ -417,7 +401,6 @@ hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \n
 \forall a \in A \quad
 \forall t \in T \quad
 \end{eqnarray}
-
 
 
 
@@ -470,9 +453,6 @@ hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \n
 \item $fchip_{p}$ - integer slack variable for the minimum workload for professor $p$.
 \item $fchsp_{p}$ - integer slack variable for the maximum workload for professor $p$
 \item $pt_{p,t}$ - binary variable that indicates if professor $p$ teaches at day $t$.
-\item $dpc_{p,d,c}$ - binary variable that indicates if professor $p$ teaches any lesson of course $d$ to major $c$.
-\item $dpo_{p,d,o}$ - binary variable that indicates if professor $p$ teaches any lesson of course $d$ to offer $o$.
-\item $fd_{a}$ - binary slack variable for assignment of lesson $a$.
 \item $np_{c}$ - integer variable that indicates the number of non-virtual professors assigned to major $c$.
 \item $npv_{c,r}$ - integer variable that indicates the number of virtual professors with employment agreement $r$ assigned to major $c$.
 \item $npvm_{c,r}$ - integer variable that indicates the number of virtual master professors with employment agreement $r$ assigned to major $c$.
@@ -504,13 +484,7 @@ $$
       \\
       &
        + \sum\limits_{p \in P} fchsp_{p}
-      \\                       
-      &
-       + \sum\limits_{p \in P} \sum\limits_{t \in T} ( hfp_{p,t} - hip_{p,t} )
-      \\                                         
-      &
-       + 1000000 \cdot \sum\limits_{c \in A} classSize_{a} \cdot fd_{a}
-      \\  
+      \\
       &
        + \sum\limits_{c \in C} \sum\limits_{r \in R} npv_{c,r}
       \\   
@@ -526,9 +500,6 @@ $$
       &
        (+-) \sum\limits_{p \in P} \sum\limits_{t \in T} pt_{p,t}
       \\   
-      &
-       + \sum\limits_{a \in Al} fmd_{a}         
-      \\
       &
       + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
 \end{array}
@@ -639,7 +610,7 @@ npvg_{c,r} + npvm_{c,r} + npvd_{c,r} = npv_{c,r} \nonumber \qquad
 
 \subsubsection{Calculates whether a professor is assigned to some lesson of a major (Sets $w_{p,c}$)}
 \begin{eqnarray}
-\sum\limits_{d \in D} \sum\limits_{i \in I_{d,c}} y_{p,d,i} \le nTurmas_{d} \cdot w_{p,c} \nonumber \qquad 
+\sum\limits_{d \in D} \sum\limits_{i \in I_{d,c}} y_{p,d,i} \le nSections_{d} \cdot w_{p,c} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
@@ -651,7 +622,7 @@ npvg_{c,r} + npvm_{c,r} + npvd_{c,r} = npv_{c,r} \nonumber \qquad
 
 \subsubsection{Ensures the minimum workload of a professor when compared with his previous semester's workload}
 \begin{eqnarray}
-\sum\limits_{i \in I_{d}}\sum\limits_{d \in D} nCreds_{d} \cdot y_{p,d,i} + fchm_{p} \ge chMinAnterior_{p} \nonumber \qquad 
+\sum\limits_{i \in I_{d}}\sum\limits_{d \in D} nCreds_{d} \cdot y_{p,d,i} + fchm_{p} \ge chMinPrevious_{p} \nonumber \qquad 
 \forall p \in P \quad
 \end{eqnarray}
 
@@ -663,29 +634,8 @@ npvg_{c,r} + npvm_{c,r} + npvd_{c,r} = npv_{c,r} \nonumber \qquad
 
 \subsubsection{Ensures the maximum workload of a professor}
 \begin{eqnarray}
-\sum\limits_{i \in I}\sum\limits_{d \in D}\sum\limits_{cp \in CP} tempo_{d} \cdot y_{p,i,d,cp} \le chMax_{p} \nonumber \qquad 
+\sum\limits_{i \in I}\sum\limits_{d \in D}\sum\limits_{cp \in CP} nCreds_{d} \cdot y_{p,i,d,cp} \le chMax_{p} \nonumber \qquad 
 \forall p \in P \quad
-\end{eqnarray}
-
-\subsubsection{Sets if a professor teaches a course for a major (Sets $dpc_{p,c,d}$)}
-\begin{eqnarray}
-\sum\limits_{i \in I_{d,c} \cup I_{-d,c} } y_{p,d,i} \le nTurmas_{d} \cdot dpc_{p,c,d} \nonumber \qquad 
-\forall p \in P \quad
-\forall c \in C \quad
-\forall d \in D_{theoretical}
-\end{eqnarray}    
-\begin{eqnarray}
-\sum\limits_{i \in I_{d,c} \cup I_{-d,c} } y_{p,d,i} \ge dpc_{p,c,d} \nonumber \qquad 
-\forall p \in P \quad
-\forall c \in C \quad
-\forall d \in D_{theoretical}
-\end{eqnarray}    
-
-\subsubsection{Ensures the maximum number of courses that a professor teaches for a major}
-\begin{eqnarray}
-\sum\limits_{d \in D_{c,teoricas}} dpc_{p,c,d} \le MaxDiscProfCurso_{c} \nonumber \qquad 
-\forall p \in P \quad
-\forall c \in C
 \end{eqnarray}
 
 \subsubsection{Ensures professor's minimum rest time}
@@ -693,21 +643,7 @@ npvg_{c,r} + npvm_{c,r} + npvd_{c,r} = npv_{c,r} \nonumber \qquad
 \sum\limits_{a \in A_{t}} x_{p,a,hf} + \sum\limits_{a \in A_{t+1}} x_{p,a,hi} \le 1 \nonumber \qquad 
 \forall p \in P \quad
 \forall t \in T \\
-\forall \mbox{ (hf,t) e (hi,t+1) tal que } \Delta_{(hf,t), (hi,t+1)} < MinRestTime
-\end{eqnarray}
-
-\subsubsection{Sets if a professor teaches a course for a major's offer (Sets $dpo_{p,o,d}$)}
-\begin{eqnarray}
-\sum\limits_{i \in I_{d,o} \cup I_{-d,o} } y_{p,d,i} \le nTurmas_{d} \cdot dpo_{p,o,d} \nonumber \qquad 
-\forall p \in P \quad
-\forall o \in O \quad
-\forall d \in D_{theoretical}
-\end{eqnarray}
-\begin{eqnarray}
-\sum\limits_{i \in I_{d,o} \cup I_{-d,o} } y_{p,d,i} \ge dpo_{p,o,d} \nonumber \qquad 
-\forall p \in P \quad
-\forall o \in O \quad
-\forall d \in D_{theoretical}
+\forall \mbox{ (hf,t) and (hi,t+1) s.t. } \Delta_{(hf,t), (hi,t+1)} < MinRestTime
 \end{eqnarray}
 
 	
@@ -716,7 +652,7 @@ npvg_{c,r} + npvm_{c,r} + npvd_{c,r} = npv_{c,r} \nonumber \qquad
 %						GAP NOS HORÁRIOS DOS PROFESSORES
 \subsubsection{Professor's gaps avoidance}
 	
-\paragraph{Sets lower bound for variable $hip_{p,t,f}$}
+\paragraph{Sets variable $hip_{p,t,f}$}
 \begin{eqnarray}
 hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{x \in X_{dti<dt}} x_{p,t,dti} ) \nonumber \qquad
 \forall p \in P \quad
@@ -724,8 +660,6 @@ hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{x \in X_{dti<dt}} x_{p,t,dti} ) 
 \forall f \in F \quad
 \forall dt \in Dt_{f}
 \end{eqnarray}
-
-\paragraph{Sets upper bound for variable $hip_{p,t,f}$}
 \begin{eqnarray}
 hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{x} x_{p,t,dti} ) \nonumber \qquad
 \forall p \in P \quad
@@ -734,7 +668,7 @@ hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{x} x_{p,t,dti} ) \nonumber \
 \forall dti \in Dt_{f}
 \end{eqnarray}
 
-\paragraph{Sets lower bound for variable $hfp_{p,t,f}$}
+\paragraph{Sets variable $hfp_{p,t,f}$}
 \begin{eqnarray}
 hfp_{p,t,f} \geq \sum\limits_{x} m(dt) \cdot x_{p,t,dtf} \nonumber \qquad
 \forall p \in P \quad
@@ -742,8 +676,6 @@ hfp_{p,t,f} \geq \sum\limits_{x} m(dt) \cdot x_{p,t,dtf} \nonumber \qquad
 \forall f \in F \quad
 \forall dtf \in Dt_{f}
 \end{eqnarray}
-
-\paragraph{Sets upper bound for variable $hfp_{p,t,f}$}
 \begin{eqnarray}
 hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{x \in X_{dtf>dt}} x_{p,t,dtf} ) \nonumber \qquad
 \forall p \in P \quad
@@ -752,7 +684,7 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{x \in X_{dtf>dt}} x_{p,t,dtf} ) 
 \forall dt \in Dt_{f}
 \end{eqnarray}
 
-\paragraph{Avoid gap in session of day in professor timetable}
+\paragraph{Avoid gap in each session of day in professor timetable}
 \begin{eqnarray}
 \sum\limits_{x \in X_{h \in H_{f}}} tempo_{x} \cdot x_{p,t,h} + delta_{f,t} + fagap_{a,t} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
 \forall p \in P \quad

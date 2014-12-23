@@ -2,7 +2,7 @@
 \label{chap:timetabling}
 
 
-This chapter provides a complete definition to the timetabling problem considered in this dissertation.
+School timetabling problems vary a lot from country to country. This chapter provides a complete definition to the timetabling problem for Brazilian elementary education system considered in this dissertation.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11,17 +11,19 @@ This chapter provides a complete definition to the timetabling problem considere
 \label{sec:system}
 
 
-TRIEDA is an academic planning system for educational institutions, designed as a multi-user application with a completely web-based interface. Unlike most academic planning systems, TRIEDA makes all necessary decisions so that a complete and optimized solution is provided. Besides, unlike most academic timetabling researches, which consider simplifications of the actual problem, TRIEDA provides applicable solutions.
+TRIEDA is an academic planning system for educational institutions, designed as a multi-user application with a completely web-based interface. Unlike many academic planning systems and timetabling researches, which consider simplifications of the actual problem, TRIEDA makes all necessary decisions so that a complete, optimized and applicable solution is provided.
 
-The system is based on a ''demand-drive`` philosophy where students first chose their courses, and having knowledge of the complete institution structure and available resources, the aim is to provide a complete and feasible solution that maximizes the number of satisfied requests while respecting a set of didactic-pedagogical requirements and reducing costs.
+Timetabling problems vary a lot depending on the kind of educational institution. The system has nowadays two distinct modules: one for solving high school timetabling problems and another for solving university timetabling problems. For each one, TRIEDA uses a completely different solver. This dissertation focus only on the high school module.
+
+The system is based on a \q{demand-drive} philosophy where students first chose their courses, and having knowledge of the complete institution structure and available resources, the aim is to provide a complete and feasible solution that maximizes the number of satisfied requests while respecting a set of didactic-pedagogical requirements. For the university module, reducing costs is also very aimed. For the school module, some didactic-pedagogical requirements together with professors satisfaction are usually the most important issue.
 
 
 \subsection{Simulation usability}
 \label{subsec:simulation}
 
-Carter tells us in \cite{Carter2001} that, in the Fall of 1988, the University of Waterloo opened the Davis Building. A total of 40 (smaller) classrooms across campus were replaced by 30 generally larger classrooms in the new building. The number of rooms decreased, but the total number of seats increased. The Scheduling Office was very concerned about how the new space would impact space allocation. The timetabling automated system developed for the university effectively was used for simulating the new scenario and solved a potentially serious planning problem.
+Carter tells us in \cite{Carter2001} that, in the Fall of 1988, the University of Waterloo opened the Davis Building. A total of 40 (smaller) classrooms across campus were replaced by 30 generally larger classrooms in the new building. The number of rooms decreased, but the total number of seats increased. The Scheduling Office was very concerned about how the new space would impact space allocation. A timetabling automated system developed for the university effectively was used for simulating the new scenario and solved a potentially serious planning problem.
 
-Therefore, as was exemplified, the system can also be used as a fast \q{What if?} tool to evaluate proposed changes in resources or institution rules.
+Therefore, as was exemplified, the timetabling system can also be used as a fast \q{What if?} tool to evaluate proposed changes in resources or institution rules.
 
 
 \subsection{Multiple scenarios}
@@ -44,35 +46,27 @@ Therefore, as was exemplified, the system can also be used as a fast \q{What if?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Introducing the problem}
-\label{sec:deftrieda}
+\section{Introducing the school timetabling problem}
+\label{deftriedaschool}
 
 % explain trieda's general problem and what must be assigned
+
+Unlike university problems, high school's students have low or no freedom at all in their choices for courses. Usually students are previously clustered into sections, in the sense that if two students are in the same section, then they have the same demands and should attend to the same lessons. Therefore, in a school timetabling problem the number of sections per course is known and assignments are made for each pre--defined cluster of students instead of for each single student.
+
+Besides, in high school, sections usually have pre--assigned rooms. This is not an obligation though. For practical courses, it is common that several sections attend to lessons at the same laboratory. For sport classes, it is even common that two or more classes simultaneously share a physical space, like a sports court. But indeed, only in a minority of cases shared rooms are involved.
 
 A solution is composed of a set of courses sections that should be offered in order that demands are satisfied. For each course section it must be decided:
 
 \begin{itemize}
-\item a set of students assigned to the section;
-\item the classroom where section's lessons take place;
+\item the classroom where section's lessons take place. Usually each section already has a pre--assigned room, but for practical courses it is to be decided;
 \item the time slots of each lesson;
 \item the professor assigned to the section;
 \end{itemize}
 
-The planning horizon is a week, i.e., it is considered that classes don't change from a week to another in the same term.
+No incomplete solution is acceptable.
+
+The planning horizon, or \textit{teaching period}, is a week. It refers to the timetable duration, so that it is considered that classes don't change from a week to another in the same year or planning term.
  
-Timetabling problems vary a lot depending on the kind of educational institution. Here two problems types are considered, called university timetabling problem and high school timetabling problem. For each one, TRIEDA uses a different solver method, as is accurately discussed in the next chapters.
-
-
-% School problem
-\subsection{School timetabling problem}
-\label{subsec:school}
-
-Unlike university problems, high school's students have low or no freedom at all in their choices for courses. Usually students are already clustered into sections, in the sense that if two students are in the same section, then they have same demands and should attend to the same classes. Therefore, in a school timetabling problem the maximum number of sections per course is known and assignments are made for each pre--defined cluster of students instead of for each single student.
-
-Besides, in high school, sections usually have pre--assigned rooms. This is not an obligation though. For practical courses, it is common for several sections to be assigned to the same classroom. For sport classes, it is even common that two or more classes simultaneously share a physical space, like a sports court. But indeed, only in a minority of cases shared rooms are involved.
-
-Constraints required for both types of problems also vary a lot, as described in section ~\ref{sec:allconstr}.
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,7 +151,7 @@ The main role of the concept of shift is to define at which time slots a student
 
 A \textit{course} is a ``chair'' or ``subject'' that a student can take.
 paragraph
-In high-school the most common examples would be ``Mathematics'', ``Geography'' or ``Biology''. At university we have known courses as ``Calculus'' and ``Linear Algebra''.
+Common examples in high-school are ``Mathematics'', ``Geography'' or ``Biology''.
 
 Every course has a total number of credits per week, with all the credits necessarily having the same duration. This means that if the student John Mayer takes classes of a course with $N$ credits of $50$ minutes duration, exactly $N$ time slots of $50$ minutes of John's week schedule must be assigned to lessons of this course.
 
@@ -171,7 +165,7 @@ Every course can be assigned to a specific set of classrooms where it can be hel
 \paragraph{Curriculum}
 \label{defcurric}
 
-A \textit{curriculum} is the set of all courses, split in terms, of a version of a major.
+A \textit{curriculum} is the set of all courses token at a school studying year.
 
 
 %%%%%%%%%%%
@@ -262,7 +256,7 @@ For each course section, all the credits of the course must be taught by the sam
 \paragraph{Capability for teaching courses}
 \label{constrcapab}
 
-For a professor to be assigned to classes of a course it is necessary that the professor is capable of teaching that course. So, each professor must have a register of courses that he is capable of teaching and every solution professor assignment must respect these registers.
+For a professor to be assigned to classes of a course it is necessary that the professor is capable of teaching that course. So, each professor must have a register of courses that he is capable of teaching and for every solution professor assignment must respect these registers.
 
 
 \paragraph{Availability}
@@ -286,7 +280,7 @@ AFTERNOON & 17:00 to 17:50 & & & & & & - & -
 
 Professor McCartney can \textbf{not} be assigned to classes at any time slot on Saturdays or Sundays, neither from 8:00 to 8:50 on Tuesdays or 16:10 to 17:00 on Thursdays. At the others time slots he is available.
 
-These rules are hard constraints, which means they can not be broken.
+These rules are hard constraints, which means they can not be violated.
 
 
 \paragraph{Student schedule}

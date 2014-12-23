@@ -1,0 +1,147 @@
+\documentclass[hidelinks,msc,british]{ThesisPUC_uk}
+
+\renewcommand{\subfigtopskip}{0in}
+\renewcommand{\subfigcapskip}{0in}
+\renewcommand{\subfigbottomskip}{0in}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\hyphenation{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\usepackage[alf,abnt-etal-cite=2,abnt-etal-text=it]{abntex2cite}
+\usepackage{url}
+\usepackage{cite}
+%\usepackage{natbib}
+%\bibliographystyle{plainnat}
+
+\usepackage{booktabs, multicol, multirow}
+\usepackage{pdflscape}
+\usepackage[section]{placeins}
+
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{array}
+\usepackage{enumerate}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage[chapter]{algorithm}
+\usepackage[skip=0pt]{caption}
+\usepackage[noend]{algpseudocode}
+\usepackage[justification=centering]{caption}
+\usepackage[none]{hyphenat}
+
+\usepackage{graphicx}
+%\usepackage{caption}
+\usepackage{subfigure}
+\usepackage{float}
+ 
+ %%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{xargs}                      % Use more than one optional parameter in a new commands
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\newcommandx{\fixme}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\mynotes}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+ %%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\q}[1]{``#1''}
+
+\usepackage{comment}
+\usepackage{fancyref}
+
+\allowdisplaybreaks
+\numberwithin{equation}{chapter}
+\FloatBarrier
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author{Nara Torres Moreira}
+\authorR{Moreira, Nara T.}
+\adviser{Marcus Vinicius Soledade Poggi de Arag\~ao}
+\adviserR{Poggi, Marcus}
+\title{Time Tabling}
+\titulo{Actual Solutions for School Timetabling Problem Through Integer Programming}
+\day{10th} \month{March} \year{2015}
+
+\city{Rio de Janeiro}
+\CDD{004}
+\department{Informatics}
+\program{Graduate}
+\school{Department of Informatics}
+\university{Pontif\'{i}cia Universidade Cat\'{o}lica do Rio de Janeiro}
+\uni{PUC-Rio}
+%\degree{Master in Informatics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\jury{%
+  \jurymember{}{Departamento de Inform\'atica -- PUC-Rio}%
+	%\schoolhead{}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\resume{
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\acknowledgment{%
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\abstract{%
+
+}
+
+\keywords{
+  \key{Timetabling}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\resumo{%
+
+}
+
+\chaves{
+	\chave{Actual Solutions for School Timetabling Problem Through Integer Programming}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tablesmode{figtab} % none, fig, tab ou figtab
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\dedication{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\epigraph{}
+%\epigraphauthor{}
+%\epigraphbook{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\include{chapter1}
+\include{chapter2}
+\include{chapter3}
+\include{chapter4}
+\include{chapter7}
+\include{chapter6}
+\include{chapter8}
+
+\bibliography{dissertation}
+\end{document}
+
