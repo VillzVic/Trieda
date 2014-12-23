@@ -53,11 +53,13 @@ private:
 	
 	// ---------------------------------------------------------------------------------
 
+	// Initializing
 	void init();
 	void mapVariables();
 	void mapVariablesTat();
 	void loadUnidades();
 
+	// Clustering unidades per professor
 	void clusterUnidadesByProfs();
 	void mapProfUnidFromVariables(map<Professor*, set<Unidade*>> &profUnidcluster, 
 									map<Unidade*, set<Professor*>> &unidProfs);
@@ -67,25 +69,32 @@ private:
 								map<Unidade*, set<Professor*>> const &unidProfs,
 								map<Unidade*, map<Unidade*, int>> const &parUnidNrProfComum);
 	void includeSingleClusters(set<Unidade*> const &unidsAddedToSomeCluster);
+	void addCluster(set<Unidade*> const & cluster);
 
+	// Fix variables
 	void fixVars();
 	void fixVarsTatico();
 	void fixVarsOp();
 
+	// Fix variable type 1
 	void decideVarsToFixType1();
 	void fixVarsProfType1();
 	void fixVarsType1();
 
+	// Fix variable type 2
 	void fixVarsType2Tatico();
 	void fixVarsType2Op();
 
+	// Setting unidades to fix or to free
 	void fixUnidsTatico();
 	void fixVarsDifUnidade();
 	void chooseRandUnidade();
 	int getNrFreeUnidade();
+	void chooseClusterFreeUnidade();
 	void chooseClusterAndSetFreeUnidade();
 	void chooseRandAndSetFreeUnidade();
 	void chooseAndSetFreeUnidades();
+	void decideTypeOfUnidToFree();
 	void setNextRandFreeUnidade(int adjustPercUnid=0);
 	Unidade* getUnidadeAt(int at);
 	void adjustPercFreeUnid(int adjustment);
@@ -172,7 +181,7 @@ private:
 	   OPT_GUROBI* lp_;
 	#endif
 	   
-	   // Vars
+	   // Variables
 	   bool okIter_;
 	   double timeIter_;
 	   int perc_;
@@ -188,7 +197,10 @@ private:
 	   set<Unidade*> unidadeslivres_;
 	   int percUnidLivres_;
 	   bool tryBranch_;
+	   // Cluster of unidades to leave free
 	   bool useFreeBlockPerCluster_;
+	   int clusterIdxFreeUnid_;
+	   std::set<int> clusterIdxToBeChosen_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
@@ -208,6 +220,7 @@ private:
 	   double maxTime_;
 	   double maxTempoSemMelhora_;
 	   int maxIterSemMelhora_; 
+	   bool fixarVarsTatProf_; 
 	   
 	   // Solution
 	   double *xSol_;
@@ -221,13 +234,14 @@ private:
 	   VariableMIPUnicoHash vHashTatX_;
 	   VariableMIPUnicoHash vHashTatZ_;
 	   VariableMIPUnicoHash vHashTatK_;
+	   VariableMIPUnicoHash vHashTatY_;
 
 	   // Hash which associates the column number with the VariableOp object.
 	   VariableOpHash const vHashOp_;
 	   
 	   // Unidades
 	   set<Unidade*> unidades_;
-	   set<set<Unidade*>> unidClustersByProfs_;
+	   map<int,set<Unidade*>> unidClustersByProfs_;
 	   
 	   MODULE const module_;
 	   int const phase_;

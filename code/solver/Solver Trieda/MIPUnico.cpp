@@ -2234,7 +2234,7 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 				delete pol;
 			#elif defined SOLVER_GUROBI				
 				Polish *pol = new Polish(lp, vHashTatico, optLogFileName);
-				polishing = pol->polish(xS, timeLimitMaxAtend, 90, timeLimitMaxAtendSemMelhora);
+				polishing = pol->polish(xS, timeLimitMaxAtend, 80, timeLimitMaxAtendSemMelhora);
 				delete pol;
 			#endif
 		}
