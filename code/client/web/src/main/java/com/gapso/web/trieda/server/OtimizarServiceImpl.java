@@ -199,7 +199,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
 					checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors,warnings);
 				} else {
-					checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors,warnings);
+					checkMaxCreditosSemanaisPorTurnoAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors,warnings);
 				}
 				checkDemandasComDisciplinasSemCurriculo(parametro,errors);
 				checkOfertas(parametro,errors, warnings);
@@ -1239,6 +1239,87 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			if (totalCreditosDoAluno > maxCreditosSemanais) {
 				warnings.add(HtmlUtils.htmlUnescape("O aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] viola a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Total de créditos do aluno = " + totalCreditosDoAluno));
+			}
+		}
+	}
+	
+	private void checkMaxCreditosSemanaisPorTurnoAluno_e_DisciplinasRepetidasPorAluno(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors, List<String> warnings) {
+		boolean realizaVerificacaoSomenteParaDemandasDePrioridade1 = true;
+		
+		// obtém os alunos do campus selecionado para otimização
+		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,parametro.getCampi(),parametro.getTurnos());
+		
+		// coleta demandas dos alunos por semanas letivas e turnos
+		Map<Aluno,Map<SemanaLetiva,Map<Turno,List<AlunoDemanda>>>> alunoToSemanaLetivaToTurnoToAlunoDemandasMap = new HashMap<Aluno,Map<SemanaLetiva,Map<Turno,List<AlunoDemanda>>>>();
+		for (AlunoDemanda alunoDemanda : demandasDeAlunoDosCampiSelecionados) {
+			Aluno aluno = alunoDemanda.getAluno();
+			Demanda demanda = alunoDemanda.getDemanda();
+			Oferta oferta = demanda.getOferta();
+			Turno turno = oferta.getTurno();
+			SemanaLetiva semanaLetiva = oferta.getCurriculo().getSemanaLetiva();
+			
+			// coleta demandas do aluno
+			Map<SemanaLetiva,Map<Turno,List<AlunoDemanda>>> semanaLetivaToTurnoToAlunoDemandasMapDoAluno = alunoToSemanaLetivaToTurnoToAlunoDemandasMap.get(aluno);
+			if (semanaLetivaToTurnoToAlunoDemandasMapDoAluno == null) {
+				semanaLetivaToTurnoToAlunoDemandasMapDoAluno = new HashMap<SemanaLetiva,Map<Turno,List<AlunoDemanda>>>();
+				alunoToSemanaLetivaToTurnoToAlunoDemandasMap.put(aluno, semanaLetivaToTurnoToAlunoDemandasMapDoAluno);
+			}
+			Map<Turno,List<AlunoDemanda>> turnoToDemandasMapDaSemanaLetivaDoAluno = semanaLetivaToTurnoToAlunoDemandasMapDoAluno.get(semanaLetiva);
+			if (turnoToDemandasMapDaSemanaLetivaDoAluno == null) {
+				turnoToDemandasMapDaSemanaLetivaDoAluno = new HashMap<Turno,List<AlunoDemanda>>();
+				semanaLetivaToTurnoToAlunoDemandasMapDoAluno.put(semanaLetiva,turnoToDemandasMapDaSemanaLetivaDoAluno);
+			}
+			List<AlunoDemanda> demandasDoAlunoNaSemanaLetivaNoTurno = turnoToDemandasMapDaSemanaLetivaDoAluno.get(turno);
+			if (demandasDoAlunoNaSemanaLetivaNoTurno == null) {
+				demandasDoAlunoNaSemanaLetivaNoTurno = new ArrayList<AlunoDemanda>();
+				turnoToDemandasMapDaSemanaLetivaDoAluno.put(turno,demandasDoAlunoNaSemanaLetivaNoTurno);
+			}
+			demandasDoAlunoNaSemanaLetivaNoTurno.add(alunoDemanda);
+		}
+		
+		// [SemanaLetivaId -> [TurnoId -> Máximo Créditos Semanais]]
+		Map<SemanaLetiva,Map<Turno,Integer>> semanaLetivaToTurnoToTotalCreditosMap = new HashMap<SemanaLetiva,Map<Turno,Integer>>();
+		for (Entry<Aluno, Map<SemanaLetiva, Map<Turno, List<AlunoDemanda>>>> entry1 : alunoToSemanaLetivaToTurnoToAlunoDemandasMap.entrySet()) {
+			Aluno aluno = entry1.getKey();
+			Set<Long> disciplinasDoAluno = new HashSet<Long>();
+			Set<String> disciplinasRepetidasParaOAluno = new HashSet<String>();
+			for (Entry<SemanaLetiva, Map<Turno, List<AlunoDemanda>>> entry2 : entry1.getValue().entrySet()) {
+				SemanaLetiva semanaLetiva = entry2.getKey();
+				Map<Turno,Integer> turnoToTotalCreditosMapDaSemanaLetiva = semanaLetivaToTurnoToTotalCreditosMap.get(semanaLetiva);
+				if (turnoToTotalCreditosMapDaSemanaLetiva == null) {
+					turnoToTotalCreditosMapDaSemanaLetiva = new HashMap<Turno,Integer>();
+					semanaLetivaToTurnoToTotalCreditosMap.put(semanaLetiva, turnoToTotalCreditosMapDaSemanaLetiva);
+				}
+				for (Entry<Turno, List<AlunoDemanda>> entry3 : entry2.getValue().entrySet()) {
+					Turno turno = entry3.getKey();
+					List<AlunoDemanda> demandasDoAluno = entry3.getValue();
+					
+					Integer maxCreditosSemanais = turnoToTotalCreditosMapDaSemanaLetiva.get(turno);
+					if (maxCreditosSemanais == null) {
+						maxCreditosSemanais = semanaLetiva.calcTotalCreditosSemanais(turno);
+						turnoToTotalCreditosMapDaSemanaLetiva.put(turno,maxCreditosSemanais);
+					}
+					
+					// calcula total de créditos do aluno e verifica existência de disciplinas repetidas
+					Integer totalCreditosDoAluno = 0;
+					for (AlunoDemanda alunoDemanda : demandasDoAluno) {
+						if (!realizaVerificacaoSomenteParaDemandasDePrioridade1 || (alunoDemanda.getPrioridade() == 1)) { // IF utilizado para, quando for o caso, considerar o check somente para demandas de prioridade 1
+							Disciplina disciplina = alunoDemanda.getDemanda().getDisciplina();
+							if (!disciplinasDoAluno.add(disciplina.getId())) {
+								disciplinasRepetidasParaOAluno.add(disciplina.getCodigo());
+							}
+							totalCreditosDoAluno += disciplina.getCreditosTotal();
+						}
+					}
+					
+					if (totalCreditosDoAluno > maxCreditosSemanais) {
+						warnings.add(HtmlUtils.htmlUnescape("O aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] viola a quantidade máxima de créditos semanais da semana letiva [" + semanaLetiva.getCodigo() + "] no turno [" + turno.getNome() + "]. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Total de créditos do aluno = " + totalCreditosDoAluno));
+					}
+				}
+			}
+			
+			if (!disciplinasRepetidasParaOAluno.isEmpty()) {
+				errors.add(HtmlUtils.htmlUnescape("O aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] pede por disciplinas repetidas, são elas: " + disciplinasRepetidasParaOAluno.toString()));
 			}
 		}
 	}
