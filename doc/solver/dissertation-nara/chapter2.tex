@@ -202,16 +202,29 @@ For instance, a set of $40$ students associated with the ``COMP-AFT'' offer dema
 A student--demand is an individual request of a student for a course. It is made of a student and a demand.
 
 
+%%%%%%%%%%%
+\paragraph{Class}
+\label{defclass}
+
+A class refers to a same group of students that will be taught a set of courses.
+
+
+%%%%%%%%%%%
+\paragraph{Lesson}
+\label{deflesson}
+
+A lesson refers to a particular course being taught to a class by a teacher at some period of a day.
+
 
 %%%%%%%%%%%
 \paragraph{Section}
 \label{defsection}
 
-A section of a course is a set of students attending to the same lessons of the course. Sometimes it is called a ``class''.
+A \textit{section of a course} is a class (set of students) and its associated set of lessons for the course.
 
 In a complete and feasible solution, each course section has the following attributes:
 \begin{itemize}
-\item a set of students;
+\item a set of students (class);
 \item a classroom where the lessons take place;
 \item time slots for each course lesson, totaling the number of credits of the course;
 \item a professor who teaches the lessons.
@@ -296,13 +309,13 @@ For example, Etta James is a student of Computer Science, curriculum version \te
 \paragraph{No time slots overlapping}
 \label{constroverlap}
 
-The most basic rule for any timetabling problem is the no overlapping in resources' and students' timetables. In other words, for each classroom, professor or student, any pair of classes assigned to it at the same day and same time is forbidden.
+The most basic rule for any timetabling problem is the no overlapping in resources and students timetables. In other words, any pair of classes assigned to the same entity (classroom, professor or student) at the same day and same time is forbidden.
 
 
-\paragraph{Prohibit gaps in student's timetable}
+\paragraph{Compact students timetables}
 \label{constrmingapstudent}
 
-A gap in a student's timetable is an idle time window between classes \textit{at the same day}.
+A \q{gap} or a \q{hole} in a student's timetable is an idle time window between classes \textit{at the same day}.
 
 Suppose the student Peggy Lee attends to a class from 8:00 to 10:00 on Monday, and then from 11:00 to 12:00 on the same day. The idle time window between 10:00 and 11:00 is an ``1-hour gap'' in the morning.
 
@@ -447,20 +460,25 @@ For instance, professor Steven Tyler can have no more than $10\%$ of his previou
 \paragraph{Number of professor displacements between blocks and campi}
 \label{constrprofdisplacnum}
 
-Whenever a professor is assigned to any pair of classes at the same day, which take place at different blocks or campi, a maximum of 1 displacement can be established. For instance, if Professor Marvin Gaye teaches at block $A$ on Monday morning and at block $B$ on Monday afternoon, then he has already $1$ displacement on Monday to go from $A$ to $B$. He can not be assigned to any block on Monday other than $B$ after he moved to $B$ for the first time in the day. Likewise, he can not be assigned to any block on Monday morning other than $A$, otherwise Professor Gaye would have more than $1$ displacement in a day.
+Whenever a professor is assigned to any pair of classes at the same day and taking place at different blocks or campi, a maximum of 1 displacement can be established.
+
+For instance, if Professor Marvin Gaye teaches at block $A$ on Monday morning and at block $B$ on Monday afternoon, then he has already $1$ displacement on Monday to go from $A$ to $B$. He can not be assigned to any block on Monday other than $B$ after he moved to $B$ for the first time in the day, and likewise any block other than $A$ before he had moved to $B$ for the first time in the day.
+
+Clearly, this restriction implies that a professor is never assigned to more than 2 blocks at the same day, but it is stronger than that, since a sequence of blocks $A \rightarrow B \rightarrow A$ in a day involves 2 blocks (ok!) and 2 displacements (not ok!).
+
+\mynotes{testar corte no modelo para limitar o nro de unidades no dia: sum[u] x <= 2}
 
 
-
-\paragraph{Minimize gaps in professor's timetable}
+\paragraph{Compactness in professor's timetable}
 \label{constrmingapprof}
 
-A gap in a professor's timetable is an idle time window between classes \textit{at the same phase of a day}.
+A \q{gap} or \q{hole} in a professor's timetable is an idle time window between classes at the same \textit{session of a day}.
 
 Suppose professor Meschiya Lake teaches from 8:00 to 10:00 on Monday, and then from 11:00 to 12:00 on the same day. The idle time window between 10:00 and 11:00 is an ``1-hour gap'' in the morning.
 
 Breaking times between time slots of a calender should be ignored. For example, if a professor is assigned to a class from 08:00 to 08:50, a break from 08:50 to 09:10, and another class from 09:10 to 10:00, there is no gap due to the 20-minutes break.
 
-Gaps are undesirable. They lower professor's satisfaction and can sometimes even increase the institution cost, because according to labour laws the institution might have to pay the professor for the idle time.
+Gaps are undesirable. They lower professor's satisfaction and can sometimes even increase the institution cost, because according to labor laws the institution might have to pay the professor for the idle time. Compactness requirements for professors are particularly important when teachers may work in multiple institutions.
 
 
 

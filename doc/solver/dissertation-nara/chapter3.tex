@@ -6,6 +6,10 @@
 
 This chapter describes a method for solving the problem which is purely based on mixed integer programming (MIP).
 
+As mentioned by \cite{Haroldo2012}, since exact methods, which try to find proven optimal solutions, can demand unrealistic amounts of processing time on most timetabling variants, the development of heuristics which are effective in practice received much attention from researches.
+
+At \cite{Birbas2009}: The lack of efficient software tools for the solution of IP models some years back has forced researchers away from suggesting standard IP solution techniques. Since the early 90's though, this obstacle has been removed and mathematical programming tools are contributing towards the effort of automating the timetabling process for high schools and for universities.
+
 This approach divides the problem in two modules, which were called 'tactical' and 'operational' module.
 
 
@@ -80,6 +84,8 @@ Introduces CPLEX and Gurobi.
 \begin{itemize}
 \item $Cap_{s}$ - Capacity of classroom $s$.
 \item $nCreds_{d}$ - Total of credits of course $d$.
+\item $duration_{h}$ - Total of minutes of time slot $h$.
+\item $duration_{hi,hf}$ - Total of minutes from the beginning of time slot $hi$ to the end of time slot $hf$.
 \item $M$ - big $M$.
 \item $N_{d,k,t}$ - number of credits for course $d$ at day $t$ of credits split rule $k$.
 \item $NCH_{d,hi,hf}$ - number of credits for course $d$ from time slot $hi$ to time slot $hf$.
@@ -319,6 +325,9 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %						GAP NOS HORÁRIOS DOS PROFESSORES
 \subsubsection{Professor's gaps avoidance}
+\label{constrProfessorGap}
+
+Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when the objective function have conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section \ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
 
 \paragraph{Sets variable $hip_{p,t,f}$}
 \begin{eqnarray}
@@ -354,7 +363,7 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) 
 
 \paragraph{Prohibits gap in each session of day in professor timetable}
 \begin{eqnarray}
-\sum\limits_{k \in K_{h \in H_{f}}} tempo_{k} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
+\sum\limits_{k \in K_{h \in H_{f}}} duration_{h} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
 \\
 \forall p \in P \quad
 \forall t \in T \quad
@@ -365,6 +374,7 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				GAP NOS HORÁRIOS DOS ALUNOS
 \subsubsection{Student's gaps prohibition}
+\label{constrStudentGap}
 
 \paragraph{Sets variable $hia_{a,t}$}
 \begin{eqnarray}
@@ -396,7 +406,7 @@ hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \n
 
 \paragraph{Prohibits gap in student timetable}
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} tempo_{hi,hf} \cdot v_{a,i,d,s,t,hi,hf} + delta_{a,t} \geq hfa_{a,t} - hia_{a,t} \nonumber \qquad
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} duration_{hi,hf} \cdot v_{a,i,d,s,t,hi,hf} + delta_{a,t} \geq hfa_{a,t} - hia_{a,t} \nonumber \qquad
 \\
 \forall a \in A \quad
 \forall t \in T \quad

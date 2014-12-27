@@ -8,15 +8,49 @@ Here the ideas discussed in this dissertation are contextualized. Giving this, a
 % ------------------------------------------------------------
 \section{Introducing the basic timetabling problem}
 
-\mynotes{DSS, Bilkent, Guenalay and Sahin, Guenalay2006, \cite{Guenalay2006}}
-Timetabling problems are an example of the types of practical scheduling problems faced by many organizations, including universities. The problem can be described as needing to schedule a given number of lectures, involving both teachers and classrooms, over a fixed period of time (typically a week), while sometimes having to satisfy a set of additional constraints of various types. The problem is known to be a hard problem and therefore many researchers have shown an interest in it since the early 1960's. Schaerf \cite{Schaerf99} showed that the problem is NP-complete and that exact optimal solution could be obtained only for small size problems.
+Timetabling problems are a kind of practical scheduling challenge faced by many organizations and important for their daily operations to succeed. Application areas vary widely from sport event timetabling to nurse scheduling, lectures scheduling and transportation timetabling. The general problem can be described as needing to satisfy a set of demands through the scheduling of meetings between those who demand and the available resources. The resulting timetables must be feasible and acceptable to all people and resources involved.
 
-Although the original problem was set in the school environment, it now finds a wide range of application to areas from sport event timetabling to transportation timetabling studies.
+This work is about timetabling in the school environment, which is where the original problem was set.
+
+In school timetabling, a given number of lectures, involving students, teachers and classrooms, should be schedule over a fixed period of time (typically a week), while usually having to satisfy a set of additional constraints of various types. For an actual and applied purpose, besides mandatory operational constraints, such as avoiding resources overbooking, it is essential to consider several solution quality constraints, which can be related to institution, pedagogical and personal needs.
+
+Because schools differ a lot in their educational policies, both when considering the same country and especially more between distinct countries, the criteria for quality and even timetable feasibility definition also depends on each educational system. Here the Brazilian school educational system is embraced. Studies based on the German school system can be found at \cite{Michael2002}, on the Greek system at \cite{Birbas1997} and \cite{Birbas2009}, on Brazilian system at \cite{Haroldo2012}. An overview of school timetabling research is provided by \cite{SchoolOverview2010}, describing the most common operational and quality requirements and the different solving methods that have been used.
+
+University timetabling problems have also been very studied and have many similarities with the school version. Studies based on a Turkish university system can be found at \cite{Guenalay2006} and on a Greek university system at \cite{Daskalaki2005}. For more complete approaches, one can check at \cite{Carter2001} for a Canada university system and at \cite{Murray2007} for an American university system.
+
+The problem is known to be a hard problem and therefore many researchers have shown an interest in it since the early 1960's. Schaerf \cite{Schaerf99} showed that the school timetabling problem is NP-complete and that exact optimal solution could be obtained only for small size problems. Furthermore, enhancing a model with real-world practical and quality requirements increases even more the complexity of the problem. For instance, considering the compactness requirement for students timetables (see \ref{constrStudentGap}), \cite{Asratian2002} shows that deciding whether a timetable that guarantees compactness for the students exits is NP-complete by itself.
+
 
 
 % ------------------------------------------------------------
 \section{Brazilian school timetabling problem}
 
+In Brazil, basic educational system is split in 3 stages:
+\begin{enumerate}
+\item Fundamental Education I
+\item Fundamental Education II
+\item Upper secondary education
+\end{enumerate}
+
+Fundamental Education is mandatory for children ages $6-14$. There are 9 \q{years} (as opposed to the former 8 \q{grades}). The current \q{First Year} broadly corresponds to the former Pre-School last year of private institutions, and its aim is to achieve literacy. Generally speaking, the only prerequisite for enrolling in first year is that a child should be 6 years old.
+
+The Federal Council of Education establishes a core curriculum consisting of Portuguese language, history, geography, science, mathematics, arts and physical education (for years 2, 3, 4 and 5). As for years 6, 7, 8 and 9, one or two foreign languages are also compulsory (usually an English and optional language).
+
+Each education system supplements this core curriculum with a diversified curriculum defined by the needs of the region and the abilities of individual students.
+
+Fundamental Education is divided in two stages, called \q{Ensino Fundamental I} (years $1-5$) and \q{Ensino Fundamental II} (years $6-9$). During \q{Ensino Fundamental I} each group of students is usually assisted by a single teacher. As for \q{Ensino Fundamental II}, there are as many teachers as subjects.
+
+Public fundamental schools are funded by municipal and state governments. The education is similar to the British.
+
+Students must have finished their Fundamental education before they are allowed to enroll in Secondary education (\q{Ensino M\'{e}dio}), which takes 3 years. Secondary education core curriculum comprises Portuguese (including Portuguese language, Brazilian and Portuguese literature), foreign language (usually English, also Spanish and very rarely French today), History, Geography, Mathematics, Physics, Chemistry and Biology. Philosophy and Sociology, which were banned during the military dictatorship (1964 to 1985), became compulsory again. The courses provided during this period are essentially designed to allow a young person to enter into an university. A minority of schools provides professional training along with mainstream secondary education. Professional training courses usually last 2 years and can be taken during the 2nd and 3rd years of Secondary education.
+
+Public middle schools are provided by state governments.
+
+Once a student has successfully completed secondary education, they may continue their studies at a public or private university. To enter a public university, students must sit an entrance exam, known as \q{vestibular}. Entrance exams to a private university are often little more than a formality and, as a consequence, public university degrees are usually valued much more highly than those from private institutions.
+
+The normal practice in Brazilian schools, both public and private, is to mix students of all study directions together in the same class. Due to the entrance exam to universities, it is common though at private schools for students at last year of secondary education to have extra specialized classes, which depend on their choice for undergraduation course.
+
+Data from \cite{WikiEducationInBrazil}.
 
 
 % ------------------------------------------------------------
