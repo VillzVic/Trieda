@@ -56,8 +56,9 @@ Data from \cite{WikiEducationInBrazil}.
 % ------------------------------------------------------------
 \section{Practical and realistic formulation}
 
-\mynotes{Purdue University, \cite{Murray2007}}
-It is a widely studied area and many potentially useful algorithms have been offered for solving the university course timetabling problem. Unfortunately, much of the work in this area has been conducted using artificial data sets or based on actual problems that have been greatly simplified. Methods developed have also rarely been extended to the solution of actual university problems of any large scale, instead most were restricted to a single department or school.
+Both school and university timetabling problems have been studied for over 50 years now. Many potentially useful solving algorithms and techniques have been discussed and offered, but unfortunately much of the work in this area has been conducted using artificial data sets or based on greatly simplified versions of actual problems. Often the considered scenario has already preassigned sets of entities, like professors to classes in the case of school timetabling or students to course sections in the case of university. Besides, methods developed have most times been restricted to a single university department or school block, instead of being extended to the solution of actual university and school problems of any large scale. Whenever the different departments or blocks have dependencies, like sharing resources, usually teaching staff, such partition of the problem is relevant and can therefore be prejudicial to the final solution quality and acceptance.
+
+For the university environment, we draw attention to \cite{Carter2001} and \cite{Murray2007} as those who made efforts on solving very realistic versions of the problem for universities in Canada and in USA. They described both the methods used for solving the problems and the challenges faced during the process of deploying solutions.
 
 The major differences between many of the problems studied and their real life counterparts are the additional complexity imposed by course structures, the variety of constraints imposed, and the distributed responsibility for information needed to solve such problems at a university-wide level.
 
@@ -67,7 +68,8 @@ As observed by Carter \cite{Carter2001}, there are few published papers that des
 
 By 2006, Guenalay and Sahin introduced at \cite{Guenalay2006} a Decision Support System (DSS) for the university timetabling that allows the direct involvement of the decision maker. They affirmed that their model was the first one which simultaneously combined such a DSS approach with a goal programming optimization tool.
 
-\fixme{citar software!}
+At \cite{Unitime} is described and widely documented the Unitime software, a system used at Purdue University \fixme{conferir} and which is also the focus of \cite{Murray2007}.
+\fixme{citar mais software!}
 
 
 % ------------------------------------------------------------
@@ -91,7 +93,7 @@ Because TRIEDA is a commercial software, it has been developed to be as portable
 \section{Data accuracy and Politics}
 
 \mynotes{from \cite{Murray2007}}
-Timetabling is a resource allocation problem; therefore, at most universities responsibility for constructing the timetable is distributed among the academic units with the faculty, physical facilities, and other resources required for offering instruction. Murray, M\"{u}ller and Rudov\'{a} observe at \cite{Murray2007} that providing support for this distributed responsibility is important because departmental timetablers have a much more intimate knowledge of the needs of the courses offered, the professor who might be able to teach a particular class, and the spaces available for specialized instruction than any database that might be maintained centrally. Maintaining each department's sense of ownership in the timetables that are produced is also an important factor in their acceptance of the solutions produced by an automated timetabling process. They say the process needs to be one that assists them rather than replaces them.
+Since timetabling is a resource allocation problem, at most big educational institutions responsibility for constructing the timetable is distributed among the academic units with the faculty, physical facilities, and other resources required for offering instruction. Murray, M\"{u}ller and Rudov\'{a} observe at \cite{Murray2007} that providing support for this distributed responsibility is important because departmental timetablers have a much more intimate knowledge of the needs of the courses offered, the professor who might be able to teach a particular class, and the spaces available for specialized instruction than any database that might be maintained centrally. Maintaining each department's sense of ownership in the timetables that are produced is also an important factor in their acceptance of the solutions produced by an automated timetabling process. They say the process needs to be one that assists them rather than replaces them.
 
 Obtaining coherent and correct data is a particular important and sensitive issue. Because data accuracy depends on each department, it is extremely important that data collection phase of an automating process has a deep involvement of all of those who usually operate in the traditional manual process. Any inaccuracy of data can result in a bad or even non-deployable solution.
 
@@ -101,20 +103,91 @@ Murray, M\"{u}ller and Rudov\'{a} tells at \cite{Murray2007} that inequity in th
 
 Automating people assignments is different from automating other process --- the optimization factor is definitely \textbf{not} more important than people satisfaction. Only keeping that in mind it is possible to obtain an actual deployable solution.
 
-As wisely pointed out in \cite{Carter2001}, practical course timetabling is 10\% graph theory, and 90\% politics. Carter tells that when they first began designing the system for University of Waterloo, they were warned: \q{You can not dictate to professors when they will teach courses}. Consequently, they were told that course timetabling could not work. Or, more precisely, they can not assume that the timetable can use a clear slate. There are many possible reasons for this. Part-time professors may be available only on certain days or times. University professors often have other commitments and industrial research projects. Teaching is only a part of their job, and probably less than half of their time is devoted to teaching.
+As wisely pointed out in \cite{Carter2001}, practical course timetabling is 10\% graph theory, and 90\% politics. Carter tells that when they first began designing a timetabling system for University of Waterloo, they were warned that they can not dictate when professors will teach courses. Consequently, they were told that course timetabling could not work or, more precisely, that they can not assume that the timetable can use a clear slate. This is because part-time professors may be available only on certain and specific days or times. University professors often have other commitments and industrial research projects. Teaching is only a part of their job, and probably less than half of their time is devoted to teaching. Similar statement is valid for high school teachers. It is very common that they teach in more than one school or have other activities.
 
-It follows that it is essential to allow professors to restrict their available timetables as much (or as little) as they want.
+It follows that it is essential to allow professors to restrict their available timetables as much as they want.
 
-Guenalay and Sahin described at \cite{Guenalay2006} an approach for university timetabling with a goal programming optimization tool in order to process the instructor teaching time preferences. As they observed, using a multi-objective decision making model to solve the problem, and hence considering instructor preferences by using weights, cannot be considered consistently reliable. Such approach unifies the disparate goals of the model, but depends on very subjective choice of weights.
+Guenalay and Sahin describe at \cite{Guenalay2006} an approach for university timetabling with a goal programming optimization tool in order to process the instructor teaching time preferences. As they observed, using a multi-objective function for considering instructor available preferences may not be enough for ensure a reliable and acceptable solution.
 
 Professors' availabilities and preferences issue should therefore not be underestimated.
 
-
-The primary design goal is to assist academic timetablers with the problem of building a good timetable, not necessarily finding a true optimal solution.
+The primary design goal is not necessarily finding a true optimal solution, but to assist academic timetablers with the problem of building a good and better timetable in an efficient way.
 
 
 % ------------------------------------------------------------
-\section{Timetabling Conferences}
+\section{Timetabling Conferences and Groups}
+
+\subsection{Practice and Theory of Automated Timetabling (Patat)}
+
+The International Series of Conferences on the Practice and Theory of Automated Timetabling (PATAT) is held biennially as a forum for both researchers and practitioners of timetabling to exchange ideas. The first edition was held in Edinburgh (UK) in 1995, and since that editions have taken place in Canada, Germany, Belgium, USA, Czech Republic, Northern Ireland and Norway. See \cite{Patat}.
+
+Whether it is sporting events, educational institutions, transportation or employee management the construction of efficient timetables which provide the maximum in way of flexibility for all constituent parts is as important as it is challenging. An increasingly important aspect within organizations is an automated approach which maximizes all aspects of resource usage. In doing so a number of quantitative and qualitative challenges must be dealt with from both a technical and practical perspective.
+
+An important aim of the Conference is to align the needs of practitioners and the objectives of researchers. This is achieved through the presentation and application of leading edge research techniques. Practitioners and Researchers alike are encouraged to present their work and experiences through a number of key presentations and workshops with the overall goal of developing efficient and practical solutions.
+
+The link between planning and management within the educational sector is explored and keynote talks are delivered by leading practitioners from the University sector and those companies which provide automated timetable solutions.
+
+
+
+\subsection{International Timetabling Competition (ITC)}
+The International Timetabling Competition (ITC) have happened in 3 editions, in 2002, 2007 and 2011.
+
+ITC from 2007 focused on examination and courses timetabling problems (see \cite{ITC2007}) and was sponsored by PATAT and WATT.
+
+Although for the sake of the competitive element, not all aspects of the real world problem are included, more depth and complexity are introduced significantly at each new competition.
+
+The competition is composed of three separate rounds. Although there is much overlap, these rounds represent distinct problems within the area of educational timetabling both from a research and practical perspective.
+
+The third International Timetabling Competition, in 2011, was devoted to High School Timetabling and sponsored by PATAT, EventMAP and CTIT (see \cite{ITC2011}).
+
+Following on from the first and second competitions, the third International Timetabling Competition aimed to stimulate timetabling research generally, and especially to encourage the alignment of research with practice by offering real-world instances of timetabling problems for solution.
+
+The overall objective of the competition were the following:
+\begin{itemize}
+\item Allow researchers to trial their techniques in a competitive setting on 'real world' practical problems.
+\item Close the gap which currently exists between research and practice within this important area of operational research.
+\item Encourage research in the area of complex NP hard real world problems.
+\item Attract researchers from all disciplines to compete.
+\item Further algorithmic development in the area of educational development.
+\item Generate all-time best solutions to these problem instances.
+\end{itemize}
+
+All instances were provided in XML.
+
+The first round made use of a set of existing benchmark data and aimed at generating the best recorded results. Competitors could use what ever resources and techniques in attempting to generate their solutions. This is an attempt to replicate the 'real world' where timetablers are more interested in achieving the 'best' solution as opposed to getting a solution quickly. Solutions must be submitted before May 7, 2012.
+The second round made use of the hidden archive. The winner was chosen based on effectiveness in a specified time (1000 seconds) on these instances. Imposing a restrictive time limit allows for the investigation of algorithmic techniques which can provide 'good' solutions in a short space of time. This is often a key requirement in the 'real world' when alternative solutions are required in a short space of time. Hidden instances were used to ensure submitted techniques are not overly tuned to particular instances of the data.
+
+In the third round, the hidden archive instances were released on June 11, 2012. As with the first round, competitors could use what ever resources and techniques in attempting to generate their solutions. The solutions were to be submitted one month later.
+
+
+
+
+
+\subsection{Hstt}
+% Benchmarking project for highschool
+
+The research in (High) School Timetabling was lacking the availability of exchangeable benchmarks in a uniform format. For this reason a group of researchers agreed on an xml-standard to exchange their datasets. At this moment there are around 50 datasets available. We reported on this project in the PATAT conferences of 2008 and 2010.
+
+Available are archives and datasets in XHSTT format, an evaluator for instances (by Jeff Kingston) and solutions in XHSTT, and a classification (by Nelishia Pillay) of high school timetabling.
+
+At chapter \ref{chap:converting} an attempt for solving XHSTT instances provided by \cite{Hstt} is detailed and registered.
+
+More information about this project at \cite{Hstt}.
+
+
+\subsection{Ectt}
+% Udine, Italy
+Following the spirit of the Second International Timetabling Competition (ITC2007), \cite{Ectt} provides a portfolio of formulations for the Curriculum-Based Course Timetabling problem as defined in [Bonutti, De Cesco, Di Gaspero and Schaerf, Annals of Operations Research].
+
+Through the website it is possible to download instances (both in text-only and XML format) and solutions contributed from the research community; validate your solutions online or download the source code of a solution validator; insert solutions, lower bounds, instances, and links of interest for the community; and generate random instances. All problem instances available to download are based on real data from various universities.
+
+
+\subsection{EURO Working Group on Automated Timetabling (Watt)}
+This is a test reference to \cite{Watt}.					% Working group on automated timetabling
+
+
+\subsection{Mista: Multidisciplinary international scheduling conference}
+This is a test reference to \cite{Mista}.
 
 
 
