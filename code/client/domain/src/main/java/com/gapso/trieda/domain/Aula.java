@@ -364,6 +364,8 @@ public class Aula
 	
 	private boolean ehViavelDeslocarParaAtender(Aula o, Map<String, Long> tempoDeslocamentoUnidades)
     {
+		// TODO: melhhorar para considerar deslocamentos entre campi
+		
         if (this.getSala().getUnidade().getId().equals(o.getSala().getUnidade().getId()))
         {
             return true;

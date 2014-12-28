@@ -334,6 +334,26 @@ public class DeslocamentoUnidade
 		
 		return deslocamentoUnidadesMapTempo;
 	}
+	
+	public static Map<String, Double> criaMapDeslocamentosEntreUnidades(List<DeslocamentoUnidade> deslocamentosUnidades) {
+		Map<String, Double> origemDestinoUnidadeToTempoDeslocamentoMap = new HashMap<String, Double>();
+		for (DeslocamentoUnidade deslocUnidades : deslocamentosUnidades) {
+			Unidade unOrig = deslocUnidades.getOrigem();
+			Unidade unDest = deslocUnidades.getDestino();
+			Integer tempoMinutos = deslocUnidades.getTempo();
+			String chaveOrigDestUnidade = CriaChaveDeslocamentoUnidade(unOrig,unDest);
+			origemDestinoUnidadeToTempoDeslocamentoMap.put(chaveOrigDestUnidade, (double)tempoMinutos);
+		}
+		return origemDestinoUnidadeToTempoDeslocamentoMap;
+	}
+	
+	public static String CriaChaveDeslocamentoUnidade(Unidade unOrig, Unidade unDest) {
+		return unOrig.getId() + "->" + unDest.getId();
+	}
+	
+	public static String CriaChaveDeslocamentoUnidade(Long unOrigId, Long unDestId) {
+		return unOrigId + "->" + unDestId;
+	}
 
 	public String toString()
 	{

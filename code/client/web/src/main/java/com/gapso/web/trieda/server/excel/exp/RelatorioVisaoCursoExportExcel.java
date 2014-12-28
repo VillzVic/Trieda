@@ -53,7 +53,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
 			InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension);
+		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, null, null, fileExtension);
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 	
@@ -61,7 +61,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino, fileExtension);
+		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino, null, null, fileExtension);
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 
@@ -299,7 +299,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 				disciplinas.add(disciplinaId);
 			}
 		}
-		buildCodigoDisciplinaToColorMap(disciplinas);
+		buildCodigoDisciplinaToColorMapElevaEducacao(disciplinas);//buildCodigoDisciplinaToColorMap(disciplinas);
 
 		// para cada bloco curricular
 		for(AtendimentoServiceRelatorioResponse sexteto : aulasInfo) {

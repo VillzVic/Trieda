@@ -16,6 +16,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.DeslocamentoCampus;
+import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
@@ -66,7 +68,13 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter, 
 		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(removeUnusedSheets, false, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension);
+		super(removeUnusedSheets, false, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, null, null, fileExtension);
+		
+		List<DeslocamentoCampus> deslocamentosCampi = DeslocamentoCampus.findByCenario(instituicaoEnsino, cenario);
+		this.origemDestinoCampusToTempoDeslocamentoMap = DeslocamentoCampus.criaMapDeslocamentosEntreCampi(deslocamentosCampi);
+		
+		List<DeslocamentoUnidade> deslocamentosUnidades = DeslocamentoUnidade.findAll(instituicaoEnsino, cenario);
+		this.origemDestinoUnidadeToTempoDeslocamentoMap = DeslocamentoUnidade.criaMapDeslocamentosEntreUnidades(deslocamentosUnidades);
 
 		this.isVisaoProfessor = isVisaoProfessor;
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();

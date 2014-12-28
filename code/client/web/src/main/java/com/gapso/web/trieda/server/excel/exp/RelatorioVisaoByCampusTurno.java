@@ -32,9 +32,12 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 	public RelatorioVisaoByCampusTurno(boolean removeUnusedSheets, boolean deveProcessarAtendimentosTaticos,
 			Cenario cenario, TriedaI18nConstants i18nConstants,
 			TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
-			InstituicaoEnsino instituicaoEnsino, String fileExtension)
+			InstituicaoEnsino instituicaoEnsino, 
+			Map<String, Double> origemDestinoCampusToTempoDeslocamentoMap,
+			Map<String, Double> origemDestinoUnidadeToTempoDeslocamentoMap,
+			String fileExtension)
 	{
-		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension);
+		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, origemDestinoCampusToTempoDeslocamentoMap, origemDestinoUnidadeToTempoDeslocamentoMap, fileExtension);
 		this.deveProcessarAtendimentosTaticos = deveProcessarAtendimentosTaticos;
 	}
 	
@@ -120,7 +123,7 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 				}
 			}
 		}
-		buildCodigoDisciplinaToColorMap(disciplinas);
+		buildCodigoDisciplinaToColorMapElevaEducacao(disciplinas);//buildCodigoDisciplinaToColorMap(disciplinas);
 
 		Set<V> entities = new HashSet<V>();
 		Map<V, AtendimentoServiceRelatorioResponse> entityMap = new HashMap<V, AtendimentoServiceRelatorioResponse>();

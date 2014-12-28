@@ -1,6 +1,8 @@
 package com.gapso.trieda.domain;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -235,6 +237,26 @@ public class DeslocamentoCampus
 
         return q.getResultList();
     }
+	
+	public static Map<String, Double> criaMapDeslocamentosEntreCampi(List<DeslocamentoCampus> deslocamentosCampi) {
+		Map<String, Double> origemDestinoCampusToTempoDeslocamentoMap = new HashMap<String, Double>();
+		for (DeslocamentoCampus deslocCampi : deslocamentosCampi) {
+			Campus camOrig = deslocCampi.getOrigem();
+			Campus camDest = deslocCampi.getDestino();
+			Integer tempoMinutos = deslocCampi.getTempo();
+			String chaveOrigDestCampus = CriaChaveDeslocamentoCampus(camOrig,camDest);
+			origemDestinoCampusToTempoDeslocamentoMap.put(chaveOrigDestCampus, (double)tempoMinutos);
+		}
+		return origemDestinoCampusToTempoDeslocamentoMap;
+	}
+	
+	public static String CriaChaveDeslocamentoCampus(Campus camOrig, Campus camDest) {
+		return camOrig.getId() + "->" + camDest.getId();
+	}
+	
+	public static String CriaChaveDeslocamentoCampus(Long camOrigId, Long camDestId) {
+		return camOrigId + "->" + camDestId;
+	}
 
 	public Campus getOrigem()
 	{

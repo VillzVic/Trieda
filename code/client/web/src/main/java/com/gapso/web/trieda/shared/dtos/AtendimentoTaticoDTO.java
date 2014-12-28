@@ -233,6 +233,7 @@ public class AtendimentoTaticoDTO
 		set( PROPERTY_UNIDADE_ID, value );
 	}
 
+	@Override
 	public Long getUnidadeId()
 	{
 		return get( PROPERTY_UNIDADE_ID );

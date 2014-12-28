@@ -50,6 +50,7 @@ public interface AtendimentoRelatorioDTO
 	public boolean isTeorico();
 	public Integer getTotalCreditoDisciplina();
 	public Integer getTotalCreditoDisciplinaSubstituta();
+	public Long getUnidadeId();
 	public String getUnidadeString();
 	public boolean isTatico();
 	public boolean isProfessorVirtual();

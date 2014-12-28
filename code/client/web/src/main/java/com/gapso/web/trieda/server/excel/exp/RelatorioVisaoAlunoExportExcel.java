@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.SemanaLetiva;
@@ -53,7 +54,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
 		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension);
+		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, null, null, fileExtension);
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 	
@@ -61,7 +62,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino, fileExtension);
+		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino, null, null, fileExtension);
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 
@@ -323,7 +324,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 				}
 			}
 		}
-		buildCodigoDisciplinaToColorMap(disciplinas);
+		buildCodigoDisciplinaToColorMapElevaEducacao(disciplinas);//buildCodigoDisciplinaToColorMap(disciplinas); //TODO: voltar ao normal
 
 		// para cada bloco curricular
 		for(Campus campus : mapControl.keySet()){

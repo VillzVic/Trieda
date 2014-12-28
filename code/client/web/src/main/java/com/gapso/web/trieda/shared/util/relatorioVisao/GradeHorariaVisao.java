@@ -1,9 +1,15 @@
 package com.gapso.web.trieda.shared.util.relatorioVisao;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -27,6 +33,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -53,6 +60,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected TurnoDTO turnoDTO;
 	protected QuickTip quickTip;
 	protected List<Long> disciplinasCores = new ArrayList<Long>();
+	protected Map<Long, String> disciplinaIdToCSSStyleMap = new HashMap<Long, String>();
 	protected CenarioDTO cenarioDTO;
 	protected AulaDTO aulaDestaque;
 	protected boolean gradeHorariaAlocacaoManual;
@@ -209,7 +217,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					}
 					
 					List<ColumnConfig> columns = getColumnList(result.getQtdColunasPorDiaSemana());
-					preencheCores();
+					preencheCoresElevaEducacao();//preencheCores();
 					grid.reconfigure(getListStore(), new ColumnModel(columns));
 					int totalLinhas = horariosEscritos.size();
 					for(int row = 0; row < totalLinhas; row++){
@@ -638,12 +646,16 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		return labels.size();
 	}
 	
-	public String getCssDisciplina(long id){
-		int index = this.disciplinasCores.indexOf(id);
-
-		if(index < 0 || index > 14) return "corDisciplina14";
-
-		return "corDisciplina" + index;
+	public String getCssDisciplina(long id) {
+		if (this.disciplinaIdToCSSStyleMap.isEmpty()) {
+			int index = this.disciplinasCores.indexOf(id);
+	
+			if(index < 0 || index > 14) return "corDisciplina14";
+	
+			return "corDisciplina" + index;
+		} else {
+			return this.disciplinaIdToCSSStyleMap.get(id);
+		}
 	}
 	
 	public void preencheCores(){
@@ -655,6 +667,37 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 
 		this.disciplinasCores.clear();
 		this.disciplinasCores.addAll(set);
+	}
+	
+	public void preencheCoresElevaEducacao() {
+		this.disciplinaIdToCSSStyleMap.clear();
+		
+		Map<Long, String> disciplinaIdToSiglaMap = new HashMap<Long, String>();
+		Set<String> disciplinasSiglas = new HashSet<String>();
+		
+		for(AtendimentoRelatorioDTO a : this.atendimentoDTO){
+			String disSigla = a.getDisciplinaOriginalCodigo();
+			if (disSigla.contains("_")) {
+				disSigla = disSigla.split("_")[0];
+			}
+			disciplinasSiglas.add(disSigla);
+			disciplinaIdToSiglaMap.put(a.getDisciplinaId(), disSigla);
+		}
+		
+		// ordena disciplinas e monta mapa de cores por disciplina
+		List<String> disciplinasOrdenadas = new ArrayList<String>(disciplinasSiglas);
+		Collections.sort(disciplinasOrdenadas);
+		Map<String, String> disciplinaSiglaToCorMap = new HashMap<String, String>();
+		for (String disciplinaSigla : disciplinasOrdenadas) {
+			String cssStyle = "corDisciplina" + (disciplinaSiglaToCorMap.size() % 14);
+			disciplinaSiglaToCorMap.put(disciplinaSigla,cssStyle);
+		}
+		for (Entry<Long, String> entry : disciplinaIdToSiglaMap.entrySet()) {
+			Long disId = entry.getKey();
+			String disSigla = disciplinaIdToSiglaMap.get(disId);
+			String cssStyle = disciplinaSiglaToCorMap.get(disSigla);
+			this.disciplinaIdToCSSStyleMap.put(disId,cssStyle);
+		}
 	}
 	
 	public class LinhaDeCredito extends BaseModel{

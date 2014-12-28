@@ -1,13 +1,14 @@
 package com.gapso.web.trieda.server.excel.exp;
 
-import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.poi.hssf.util.HSSFColor;
@@ -19,8 +20,15 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.DeslocamentoCampus;
+import com.gapso.trieda.domain.DeslocamentoUnidade;
+import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
@@ -28,6 +36,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHoraria;
 
@@ -68,10 +77,15 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	protected Set<String> horarioFimAula = new HashSet<String>();
 	protected List<String> labelsDasLinhasDaGradeHoraria;
 	protected List<Boolean> horarioEhIntervalo = new ArrayList<Boolean>();
+	protected Map<String, Turno> horarioToTurnoMap = new HashMap<String, Turno>();
+	protected Map<String, Double> origemDestinoCampusToTempoDeslocamentoMap = null;
+	protected Map<String, Double> origemDestinoUnidadeToTempoDeslocamentoMap = null;
 	
 	public RelatorioVisaoExportExcel(boolean removeUnusedSheets, Cenario cenario, 
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino,
+		Map<String, Double> origemDestinoCampusToTempoDeslocamentoMap,
+		Map<String, Double> origemDestinoUnidadeToTempoDeslocamentoMap,
 		String fileExtension)
 	{
 		super(false, null, cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
@@ -81,8 +95,66 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.codigoDisciplinaToColorMap = new HashMap<Long,CellStyle>();
 		this.initialRow = 5;
-
+		this.origemDestinoCampusToTempoDeslocamentoMap = origemDestinoCampusToTempoDeslocamentoMap;
+		this.origemDestinoUnidadeToTempoDeslocamentoMap = origemDestinoUnidadeToTempoDeslocamentoMap;
+		
 		this.setFilter(filter);
+		this.preencheMapHorariosTurnos(cenario);
+	}
+	
+	protected void preencheMapHorariosTurnos(Cenario cenario) {
+		Map<String, Map<Turno, Integer>> horarioToTurnoToQtdMap = new HashMap<String, Map<Turno, Integer>>();
+		for (SemanaLetiva sl : cenario.getSemanasLetivas()) {
+			for (HorarioAula ha : sl.getHorariosAula()) {				
+				Calendar hi = TriedaServerUtil.dateToCalendar(ha.getHorario());
+				Calendar hf = Calendar.getInstance();
+				hf.clear();
+				hf.setTime(hi.getTime());
+				hf.add(Calendar.MINUTE,sl.getTempo());												
+				
+				String hiStr = TriedaUtil.shortTimeString(hi.getTime());
+				String hfStr = TriedaUtil.shortTimeString(hf.getTime());
+				
+				Turno turno = ha.getTurno();
+				
+				Map<Turno, Integer> turnoToQtdMap = horarioToTurnoToQtdMap.get(hiStr);
+				if (turnoToQtdMap == null) {
+					turnoToQtdMap = new HashMap<Turno, Integer>();
+					horarioToTurnoToQtdMap.put(hiStr, turnoToQtdMap);
+				}
+				Integer qtd = turnoToQtdMap.get(turno);
+				if (qtd == null) {
+					qtd = 0;
+				}
+				turnoToQtdMap.put(turno, qtd+1);
+				
+				turnoToQtdMap = horarioToTurnoToQtdMap.get(hfStr);
+				if (turnoToQtdMap == null) {
+					turnoToQtdMap = new HashMap<Turno, Integer>();
+					horarioToTurnoToQtdMap.put(hfStr, turnoToQtdMap);
+				}
+				qtd = turnoToQtdMap.get(turno);
+				if (qtd == null) {
+					qtd = 0;
+				}
+				turnoToQtdMap.put(turno, qtd+1);
+			}
+		}
+		
+		for (Entry<String, Map<Turno, Integer>> entry1 : horarioToTurnoToQtdMap.entrySet()) {
+			String horario = entry1.getKey();
+			Turno turnoSelecionado = null;
+			int qtdOcorrenciasTurnoSelecionado = 0;
+			for (Entry<Turno, Integer> entry2 : entry1.getValue().entrySet()) {
+				Turno turno = entry2.getKey();
+				int qtdOcorrenciasTurno = entry2.getValue();
+				if (qtdOcorrenciasTurno > qtdOcorrenciasTurnoSelecionado) {
+					turnoSelecionado = turno;
+					qtdOcorrenciasTurnoSelecionado = qtdOcorrenciasTurno;
+				}
+			}
+			this.horarioToTurnoMap.put(horario, turnoSelecionado);
+		}
 	}
 	
 	protected abstract String getReportSheetName();
@@ -200,14 +272,17 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		return labels.size();
 	}
 	
-	protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, 
-				List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
-	{		
-		List<String> hiDasLinhasDaGradeHoraria = new ArrayList<String>();
+	protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula) {
+		if (this.origemDestinoUnidadeToTempoDeslocamentoMap != null) {
+			return writeAulasComBuracos(aulas, row, mdcTemposAula, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+		}
+		return writeAulasSemBuracos(aulas, row, mdcTemposAula, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+	}
+	
+	protected int writeAulasSemBuracos(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula) {
 		if (temInfoDeHorarios) { 
 			TrioDTO<List<String>,List<String>, List<Boolean>> parDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			labelsDasLinhasDaGradeHoraria = parDTO.getPrimeiro();
-			hiDasLinhasDaGradeHoraria = parDTO.getSegundo();
 			horarioEhIntervalo = parDTO.getTerceiro();
 		} else {
 			labelsDasLinhasDaGradeHoraria = horariosDaGradeHoraria;
@@ -265,14 +340,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				horarioFimAula.add(String.format("%02d", horarioFinalHoras) + ":" + String.format("%02d", horarioFinalMinutos));
 			}
 		}
-/*		for (String horarioInicio : horarioFimAula)
-		{
-			System.out.println("horario fim: " + horarioInicio);
-		}
-		for (String horarioInicio : horarioInicioAula)
-		{
-			System.out.println("horario inicio: " + horarioInicio);
-		}*/
+
 		// preenche grade vazia
 		int rowAdd = 0;
 		List<String> horariosEscritos = new ArrayList<String>();
@@ -370,6 +438,326 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		return (initialRow + horariosEscritos.size() + 1);
 	}
 	
+	protected int writeAulasComBuracos(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula) {		
+		if (temInfoDeHorarios) { 
+			TrioDTO<List<String>,List<String>, List<Boolean>> parDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			labelsDasLinhasDaGradeHoraria = parDTO.getPrimeiro();
+			horarioEhIntervalo = parDTO.getTerceiro();
+		} else {
+			labelsDasLinhasDaGradeHoraria = horariosDaGradeHoraria;
+		}
+		
+		// TODO: Utilizar ideia abaixo para generalizar impressão de mais de 65536 linhas em extensão XLS
+		// verifica se o max de linhas será extrapolado
+		if (isXls()){
+			Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,(labelsDasLinhasDaGradeHoraria.size()+12),sheet);
+			if (newSheet != null) {
+				System.out.println("RestructuringWorkbook");
+				row = this.initialRow;
+				sheet = newSheet;
+			}
+		}
+		
+		int initialRow = row;
+		int col = 2;
+	
+		Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
+		for(AtendimentoRelatorioDTO aula : aulas){
+			// agrupa as aulas por dia da semana e coleta disciplinas
+			List<AtendimentoRelatorioDTO> aulasDoDia = colunaGradeHorariaToAulasMap.get(aula.getSemana());
+			if(aulasDoDia == null){
+				aulasDoDia = new ArrayList<AtendimentoRelatorioDTO>();
+				colunaGradeHorariaToAulasMap.put(aula.getSemana(), aulasDoDia);
+			}
+			aulasDoDia.add(aula);
+			
+			// coleta horário inicial e final da aula
+			String[] horarioInicialArray = aula.getHorarioAulaString().split(":");
+			int horarioInicialHoras = Integer.parseInt(horarioInicialArray[0]);
+			int horarioInicialMinutos = Integer.parseInt(horarioInicialArray[1]);
+			horarioInicioAula.add(aula.getHorarioAulaString());
+			for (int i = 1; i <= aula.getTotalCreditos() ; i++) {
+				int horarioFinalHoras = horarioInicialHoras;
+				int horarioFinalMinutos = horarioInicialMinutos + (aula.getDuracaoDeUmaAulaEmMinutos() * i);
+				while (horarioFinalMinutos >= 60) {
+					horarioFinalHoras++;
+					horarioFinalMinutos -= 60;
+				}
+				horarioFimAula.add(String.format("%02d", horarioFinalHoras) + ":" + String.format("%02d", horarioFinalMinutos));
+			}
+		}
+
+		// preenche grade vazia
+		int rowAdd = 0;
+		List<String> horariosEscritos = new ArrayList<String>();
+		Map<Integer, Boolean> matrizIntervalos = new HashMap<Integer, Boolean>();
+		if (!labelsDasLinhasDaGradeHoraria.isEmpty()) {
+			String horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0, 5);
+			// para cada linha da grade horária
+			for (int linhaAtualGradeHor = 1; linhaAtualGradeHor < labelsDasLinhasDaGradeHoraria.size(); linhaAtualGradeHor++) {
+				String hiLinhaAtualGradeHor = labelsDasLinhasDaGradeHoraria.get(linhaAtualGradeHor).substring(0,5);
+				boolean haAlgumaAulaQueIniciaEmHIdaLinhaAtual = horarioInicioAula.contains(hiLinhaAtualGradeHor);
+				boolean haAlgumaAulaQueTerminaEmHIdaLinhaAtual = horarioFimAula.contains(hiLinhaAtualGradeHor);
+				if (haAlgumaAulaQueIniciaEmHIdaLinhaAtual || haAlgumaAulaQueTerminaEmHIdaLinhaAtual) {
+					horarioASerEscrito += " / " + hiLinhaAtualGradeHor;
+					// escreve células da coluna de carga horária
+					{
+						if (!isHorarioIntervalo(horarioASerEscrito))
+							setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], horarioASerEscrito);
+						else {
+							int rowEscrita = (row + rowAdd);
+							int colEscrita = col++;
+							setCell(rowEscrita, colEscrita, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
+							getRow((row + rowAdd -1), sheet).setHeight((short)200);
+							matrizIntervalos.put(rowEscrita, true);
+						}
+						horariosEscritos.add(horarioASerEscrito);
+					}
+					// escreve células das colunas dos dias da semana
+					{
+						for (int j = 0; j < Semanas.values().length; j++) {
+							setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
+						}
+					}
+					col = 2;
+					rowAdd++;
+					horarioASerEscrito = hiLinhaAtualGradeHor;
+				}
+			}
+			
+			horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(labelsDasLinhasDaGradeHoraria.size() -1).substring(8, 13);
+			setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], horarioASerEscrito);
+			horariosEscritos.add(horarioASerEscrito);
+			for(int j = 0; j < Semanas.values().length; j++) {
+				setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
+			}
+		}
+		
+		// para cada dia da semana, escreve as aulas no excel
+		Map<Integer, Map<Integer, AtendimentoRelatorioDTO>> matrizAulas = new HashMap<Integer, Map<Integer, AtendimentoRelatorioDTO>>();
+		Map<Integer, Integer> colToLastRowMap = new HashMap<Integer, Integer>();
+		for (Integer colunaGradeHoraria : colunaGradeHorariaToAulasMap.keySet()) {
+			Semanas diaSemana = Semanas.get(colunaGradeHoraria);
+	
+			// linha em que a escrita será iniciada
+			row = initialRow;
+			// coluna em que a escrita será iniciada
+			col = (diaSemana == Semanas.DOM) ? 9 : colunaGradeHoraria + 1;
+			
+			List<AtendimentoRelatorioDTO> aulasDoDia = colunaGradeHorariaToAulasMap.get(colunaGradeHoraria);
+			if(aulasDoDia == null || aulasDoDia.isEmpty()) continue;
+	
+			// para cada aula
+			for (AtendimentoRelatorioDTO aula : aulasDoDia) {
+				// obtém o estilo que será aplicado nas células que serão desenhadas
+				CellStyle style = getCellStyle(aula);
+				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
+				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
+				
+				if (temInfoDeHorarios) {
+					int index = getIndexHorario(aula.getHorarioAulaString(), horariosEscritos);//int index = horariosDeInicioDeAula.indexOf(aula.getHorarioAulaString());
+					if (index != -1) {
+						row = initialRow + index;
+					}
+					linhasDeExcelPorCreditoDaAula = getIndexHorario(getHorarioFinalAula(aula), horariosEscritos) - index - 1;
+				}
+	
+				String contentString = "", contentToolTipString = "";
+				try{
+					Method m = aula.getClass().getMethod("getContentVisao" + getReportEntity(), ReportType.class);
+					contentString = (String) m.invoke(aula, ReportType.EXCEL);
+					
+					m = aula.getClass().getMethod("getContentToolTipVisao" + getReportEntity(), ReportType.class);
+					contentToolTipString = (String) m.invoke(aula, ReportType.EXCEL);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+				// escreve célula principal
+				setCell(row, col, sheet, style, HtmlUtils.htmlUnescape(contentString), HtmlUtils.htmlUnescape(contentToolTipString));
+				// une células de acordo com a quantidade de créditos da aula
+				int rowF = row + linhasDeExcelPorCreditoDaAula;
+				if ((row != rowF)) {
+					if (rowF < row)
+						rowF = row;
+					//System.out.println("merging: " + row + "-" + rowF);
+					mergeCells(row, rowF, col, col, sheet, style);
+				}
+				insereAulaNaMatriz(row, rowF, col, aula, matrizAulas, colToLastRowMap);
+				
+				// fornece a oportunidade das classes concretas executarem algum processamento relacionado com aula durante a escrita da aula
+				onWriteAula(row,col,aula);
+	
+				if (!temInfoDeHorarios) {
+					row += aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
+				}
+			}
+		}
+		
+		// desenha buracos
+		Map<Integer, Map<Integer, TipoBuraco>> matrizBuracos = new HashMap<Integer, Map<Integer, TipoBuraco>>();
+		rowAdd = 0;
+		row = initialRow;
+		col = 2;
+		String horarioASerEscrito = labelsDasLinhasDaGradeHoraria.get(0).substring(0,5);
+		for (int linhaAtualGradeHor = 1; linhaAtualGradeHor < labelsDasLinhasDaGradeHoraria.size(); linhaAtualGradeHor++) {
+			String hiLinhaAtualGradeHor = labelsDasLinhasDaGradeHoraria.get(linhaAtualGradeHor).substring(0,5);
+			boolean haAlgumaAulaQueIniciaEmHIdaLinhaAtual = horarioInicioAula.contains(hiLinhaAtualGradeHor);
+			boolean haAlgumaAulaQueTerminaEmHIdaLinhaAtual = horarioFimAula.contains(hiLinhaAtualGradeHor);
+			if (haAlgumaAulaQueIniciaEmHIdaLinhaAtual || haAlgumaAulaQueTerminaEmHIdaLinhaAtual) {
+				horarioASerEscrito += " / " + hiLinhaAtualGradeHor;
+				if (!isHorarioIntervalo(horarioASerEscrito)) {
+					String hi = horarioASerEscrito.substring(0,5);
+					String hf = horarioASerEscrito.substring(8,13);
+					for (int j = 0; j < Semanas.values().length; j++) {
+						int rowEscrita = (row + rowAdd);
+						int colEscrita = col++;
+						TipoBuraco tipoBuraco = ehBuraco(rowEscrita, colEscrita, hi, hf, matrizAulas, colToLastRowMap, matrizBuracos, matrizIntervalos);
+						if (!TipoBuraco.NAO_EH_BURACO.equals(tipoBuraco)) {
+							setCell(rowEscrita, colEscrita, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], tipoBuraco.toString());
+						}
+					}
+				}
+				col = 2;
+				rowAdd++;
+				horarioASerEscrito = hiLinhaAtualGradeHor;
+			}
+		}
+		horarioASerEscrito += " / " + labelsDasLinhasDaGradeHoraria.get(labelsDasLinhasDaGradeHoraria.size()-1).substring(8,13);
+		String hi = horarioASerEscrito.substring(0,5);
+		String hf = horarioASerEscrito.substring(8,13);
+		for(int j = 0; j < Semanas.values().length; j++) {
+			int rowEscrita = (row + rowAdd);
+			int colEscrita = col++;
+			TipoBuraco tipoBuraco = ehBuraco(rowEscrita, colEscrita, hi, hf, matrizAulas, colToLastRowMap, matrizBuracos, matrizIntervalos);
+			if (!TipoBuraco.NAO_EH_BURACO.equals(tipoBuraco)) {
+				setCell((row + rowAdd), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], tipoBuraco.toString());
+			}
+		}
+		
+		return (initialRow + horariosEscritos.size() + 1);
+	}
+	
+	private void insereBuracoNaMatriz(int row, int col, TipoBuraco tipoBuraco, Map<Integer, Map<Integer, TipoBuraco>> matrizBuracos) {
+		Map<Integer, TipoBuraco> colToBuracosMap = matrizBuracos.get(row);
+		if (colToBuracosMap == null){
+			colToBuracosMap = new HashMap<Integer, TipoBuraco>();
+			matrizBuracos.put(row, colToBuracosMap);
+		}
+		colToBuracosMap.put(col, tipoBuraco);
+	}
+	
+	private void insereAulaNaMatriz(int row, int col, AtendimentoRelatorioDTO aula, Map<Integer, Map<Integer, AtendimentoRelatorioDTO>> matrizAulas) {
+		Map<Integer, AtendimentoRelatorioDTO> colToAulasMap = matrizAulas.get(row);
+		if (colToAulasMap == null){
+			colToAulasMap = new HashMap<Integer, AtendimentoRelatorioDTO>();
+			matrizAulas.put(row, colToAulasMap);
+		}
+		colToAulasMap.put(col, aula);
+	}
+	
+	private void insereAulaNaMatriz(int rowI, int rowF, int col, AtendimentoRelatorioDTO aula, Map<Integer, Map<Integer, AtendimentoRelatorioDTO>> matrizAulas, Map<Integer, Integer> colToLastRowMap) {
+		for (int row = rowI; row <= rowF; row++) {
+			insereAulaNaMatriz(row, col, aula, matrizAulas);
+		}
+		Integer lastRow = colToLastRowMap.get(col);
+		colToLastRowMap.put(col, (lastRow != null) ? Math.max(lastRow, rowF) : rowF);
+	}
+	
+	private AtendimentoRelatorioDTO getAula(int row, int col, Map<Integer, Map<Integer, AtendimentoRelatorioDTO>> matrizAulas) {		
+		Map<Integer, AtendimentoRelatorioDTO> colToAulasMap = matrizAulas.get(row);
+		if (colToAulasMap != null){
+			return colToAulasMap.get(col);
+		}
+		return null;
+	}
+	
+	private TipoBuraco getBuraco(int row, int col, Map<Integer, Map<Integer, TipoBuraco>> matrizBuracos) {		
+		Map<Integer, TipoBuraco> colToAulasMap = matrizBuracos.get(row);
+		if (colToAulasMap != null){
+			TipoBuraco tipoBuraco = colToAulasMap.get(col);
+			if (tipoBuraco != null) {
+				return tipoBuraco;
+			}
+		}
+		return TipoBuraco.NAO_EH_BURACO;
+	}
+	
+	enum TipoBuraco {NAO_EH_BURACO, BURACO_DESLOCAMENTO, BURACO};
+	private TipoBuraco ehBuraco(int row, int col, String hi, String hf, Map<Integer, Map<Integer, AtendimentoRelatorioDTO>> matrizAulas, Map<Integer, Integer> colToLastRowMap, Map<Integer, Map<Integer, TipoBuraco>> matrizBuracos, Map<Integer, Boolean> matrizIntervalos) {		
+		AtendimentoRelatorioDTO eventoEmQuestao = getAula(row, col, matrizAulas);
+		if (eventoEmQuestao == null) { // é candidato a buraco?
+			Turno turnoHIEventoEmQuestao = this.horarioToTurnoMap.get(hi); // turno do horário de início do possível buraco em questão
+			Turno turnoHFEventoEmQuestao = this.horarioToTurnoMap.get(hf); // turno do horário de fim do possíve buraco em questão
+			if ((turnoHIEventoEmQuestao != null) && turnoHIEventoEmQuestao.equals(turnoHFEventoEmQuestao)) { // para ser considerado buraco, intervalo tem que pertencer ao mesmo turno
+				// coleta o evento anterior ao possível buraco
+				AtendimentoRelatorioDTO eventoAnterior = null;
+				TipoBuraco buracoAnterior = null;
+				if (matrizIntervalos.get(row-1) != null) { // é um intervalo?
+					eventoAnterior = getAula(row-2, col, matrizAulas);
+					buracoAnterior = getBuraco(row-2, col, matrizBuracos);
+				} else {
+					eventoAnterior = getAula(row-1, col, matrizAulas);
+					buracoAnterior = getBuraco(row-1, col, matrizBuracos);
+				}
+				if ((eventoAnterior != null) || !TipoBuraco.NAO_EH_BURACO.equals(buracoAnterior)) {
+					// se entrou aqui, então:
+					//  - ou o evento anterior é uma aula normal
+					//  - ou o evento anterior é um buraco
+					
+					// coleta o evento posterior ao possível buraco
+					int lastRow = colToLastRowMap.get(col); // coleta a linha com o último evento existente
+					AtendimentoRelatorioDTO eventoPosterior = null;
+					int rowBusca = row;
+					do {
+						rowBusca++;
+						eventoPosterior = getAula(rowBusca, col, matrizAulas);
+					} while((eventoPosterior == null) && (rowBusca < lastRow));
+					/*if (matrizIntervalos.get(row+1) != null) { // é um intervalo?
+						eventoPosterior = getAula(row+2, col, matrizAulas);
+					} else {
+						eventoPosterior = getAula(row+1, col, matrizAulas);
+					}*/
+					if (eventoPosterior != null) { // evento posterior é uma aula?
+						Long turnoEventoAnterior = (eventoAnterior != null) ? this.horarioToTurnoMap.get(eventoAnterior.getHorarioAulaString()).getId() : turnoHIEventoEmQuestao.getId();
+						Long turnoEventoEmQuestao = turnoHIEventoEmQuestao.getId();
+						Long turnoEventoPosterior = this.horarioToTurnoMap.get(eventoPosterior.getHorarioAulaString()).getId();
+						// para ser considerado um buraco, os 3 eventos devem pertencer ao mesmo turno
+						if (turnoEventoAnterior.equals(turnoEventoEmQuestao) && turnoEventoEmQuestao.equals(turnoEventoPosterior)) {
+							// se entrou aqui o evento em questão é um buraco, agora resta saber se:
+							//   - é um buraco por motivo de deslocamento do professor entre unidades
+							//   - é um buraco mesmo
+							if (eventoAnterior != null) { // evento anterior é uma aula?
+								if (ehCasoDeslocamento(eventoAnterior,eventoPosterior)) {
+									insereBuracoNaMatriz(row, col, TipoBuraco.BURACO_DESLOCAMENTO, matrizBuracos);
+									return TipoBuraco.BURACO_DESLOCAMENTO;
+								}
+								insereBuracoNaMatriz(row, col, TipoBuraco.BURACO, matrizBuracos);
+								return TipoBuraco.BURACO;
+							}
+							return buracoAnterior;
+						}
+					}
+				}
+			}
+		}
+		return TipoBuraco.NAO_EH_BURACO;
+	}
+	
+	private boolean ehCasoDeslocamento(AtendimentoRelatorioDTO aula1, AtendimentoRelatorioDTO aula2) {
+		Double tempoDeslocamento = null;
+		if (!aula1.getUnidadeId().equals(aula2.getUnidadeId())) {
+			if (aula1.getCampusId().equals(aula2.getCampusId())) {
+				String chaveOrigemDestinoUnidade = DeslocamentoUnidade.CriaChaveDeslocamentoUnidade(aula1.getUnidadeId(),aula2.getUnidadeId());
+				tempoDeslocamento = this.origemDestinoUnidadeToTempoDeslocamentoMap.get(chaveOrigemDestinoUnidade);
+			} else {
+				String chaveOrigemDestinoCampus = DeslocamentoCampus.CriaChaveDeslocamentoCampus(aula1.getCampusId(),aula2.getCampusId());
+				tempoDeslocamento = this.origemDestinoCampusToTempoDeslocamentoMap.get(chaveOrigemDestinoCampus);
+			}
+		}
+		return tempoDeslocamento != null;
+	}
+	
 	protected void buildCodigoDisciplinaToColorMap(Set<Long> disciplinasIDs) {
 		// ordena disciplinas e monta mapa de cores por disciplina
 		List<Long> disciplinasOrdenadas = new ArrayList<Long>(disciplinasIDs);
@@ -377,6 +765,42 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		for (Long disciplinaId : disciplinasOrdenadas) {
 			CellStyle style = excelColorsPool.get(codigoDisciplinaToColorMap.size() % excelColorsPool.size());
 			codigoDisciplinaToColorMap.put(disciplinaId,style);
+		}
+	}
+	
+	protected void buildCodigoDisciplinaToColorMapElevaEducacao(Set<Long> disciplinas) {
+		Map<Long, Disciplina> disciplinasMap = new HashMap<Long, Disciplina>();
+		for (Disciplina disciplina : getCenario().getDisciplinas()) {
+			disciplinasMap.put(disciplina.getId(), disciplina);
+		}		
+		List<Disciplina> disList = new ArrayList<Disciplina>();
+		for (Long disId : disciplinas) {
+			disList.add(disciplinasMap.get(disId));
+		}
+		
+		Map<Disciplina, String> disciplinaToSiglaMap = new HashMap<Disciplina, String>();
+		Set<String> disciplinasSiglas = new HashSet<String>();
+		for (Disciplina disciplina : disList) {
+			String disSigla = disciplina.getCodigo();
+			if (disSigla.contains("_")) {
+				disSigla = disSigla.split("_")[0];
+			}
+			disciplinasSiglas.add(disSigla);
+			disciplinaToSiglaMap.put(disciplina, disSigla);
+		}
+		
+		// ordena disciplinas e monta mapa de cores por disciplina
+		List<String> disciplinasOrdenadas = new ArrayList<String>(disciplinasSiglas);
+		Collections.sort(disciplinasOrdenadas);
+		Map<String, CellStyle> disciplinaSiglaToCorMap = new HashMap<String, CellStyle>();
+		for (String disciplinaSigla : disciplinasOrdenadas) {
+			CellStyle style = excelColorsPool.get(disciplinaSiglaToCorMap.size() % excelColorsPool.size());
+			disciplinaSiglaToCorMap.put(disciplinaSigla,style);
+		}
+		for (Disciplina dis : disList) {
+			String disSigla = disciplinaToSiglaMap.get(dis);
+			CellStyle style = disciplinaSiglaToCorMap.get(disSigla);
+			codigoDisciplinaToColorMap.put(dis.getId(),style);
 		}
 	}
 
