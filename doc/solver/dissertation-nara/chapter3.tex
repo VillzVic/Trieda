@@ -93,6 +93,7 @@ Introduces CPLEX and Gurobi.
 \item $delta_{a,t}$ - maximum of idle time allowed at day $t$ for student $a$. Used only for gap-constraints, usually is the sum of intervals at day $t$ of the student's calender.
 \item $delta_{t,f}$ - maximum of idle time allowed at phase $f$ of day $t$ for a professor. Used only for gap-constraints, usually is the average sum of intervals at phase $f$ of day $t$ of calenders.
 \item $pv$ - Unique virtual professor, to be used whenever the set of real professors is not enough for demand satisfaction.
+\item $MinCredsDia_{a,t}$ - minimum number of credits expected for student $a$ at day $t$.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +116,7 @@ Introduces CPLEX and Gurobi.
 \item $hia_{a,t}$ - integer variable, indicates the time in minutes of the first time slot assigned to student $a$ at day $t$.
 \item $hfa_{a,t}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to student $a$ at day $t$.
 \item $fpgap_{p,t,f}$ - integer slack variable, indicates the gap in session $f$ of day $t$ of professor $p$'s schedule.
+\item $fcad_{a,t}$ - integer slack variable, indicates the number of credits bellow the expected assigned to student $a$ at day $t$.
 \end{itemize}
 
 
@@ -135,6 +137,9 @@ $$
 \sum\limits_{t \in T} \sum\limits_{i \in I_{d}} (fkp_{d,i,k} + fkm_{d,i,k})
       \\
       &
+       + \sum\limits_{a \in A} \sum\limits_{t \in T} fcad_{a,t}
+      \\
+      &      
       + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
       \\
       &
@@ -246,6 +251,17 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 		EXPECTED NUMBER OF CREDITS FOR EACH STUDENT PER DAY
+
+\paragraph{Try to ensure the expected number of credits for each student per day}
+\begin{eqnarray}
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} nCreds_{d} \cdot v_{a,i,d,s,t,hi,hf} + fcad_{a,t} \ge MinCredsDia_{a,t} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T
+\end{eqnarray}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 					CREDITS SPLIT RULES
 
 \subsubsection{Credits split rules}
@@ -320,10 +336,38 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall d \in D \quad
 \forall cp \in CP
 \end{eqnarray}	
+	
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%						PROFESSOR DISPLACEMENT
+
+\paragraph{Ensures enough time for displacement between blocks in the same day}
+\begin{eqnarray}
+\sum\limits_{i} \sum\limits_{d} k_{p,i,d,t,u1,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,t,u2,h2} \le 1 \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall u1 \in U \quad
+\forall u2 \in U \quad
+\forall h1 \in H \quad
+\forall h2 \in H \quad
+\mbox{s.t. time between ending of h1 and beginning of h2 is less than displacement time between u1 and u2}
+\end{eqnarray}	
+
+\paragraph{Ensures the maximum of 1 displacement for each professor per same day}
+\begin{eqnarray}
+\sum\limits_{i} \sum\limits_{d} k_{p,i,d,t,u1,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,t,u2,h2} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,t,u3,h3} \le 2 \nonumber \qquad
+\\
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall u2 \in U \quad
+\forall h2 \in H \quad
+\mbox{s.t. }u1 \neq u2 \qquad u3 \neq u2 \qquad h1<h2 \qquad h3>h2}
+\end{eqnarray}	
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%						GAP NOS HOR√ÅRIOS DOS PROFESSORES
+%						GAP NOS HORAÅRIOS DOS PROFESSORES
 \subsubsection{Professor's gaps avoidance}
 \label{constrProfessorGap}
 
