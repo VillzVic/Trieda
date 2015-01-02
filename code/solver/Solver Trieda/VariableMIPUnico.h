@@ -31,7 +31,6 @@ public:
       V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 15,// fkp{i,d,t,cp}
 	  V_ABERTURA_COMPATIVEL = 16,				// zc_{d,t}
 	  V_SLACK_COMPARTILHAMENTO = 17,			// fc_{i,d,c,c'}
-	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 19,		// fu_{i1,d1,i2,d2,t,cp}
 	  V_ALUNO_DIA = 21,							// du_{a,t}
 	  V_SLACK_PRIOR_INF = 22,					// fpi_{a,cp}
 	  V_SLACK_PRIOR_SUP = 23,					// fps_{a,cp}
@@ -40,7 +39,6 @@ public:
 	  V_FOLGA_ALUNO_MIN_ATEND1 = 28,			// fmd1_{a}
 	  V_FOLGA_ALUNO_MIN_ATEND2 = 29,			// fmd2_{a}
 	  V_FOLGA_ALUNO_MIN_ATEND3 = 30,			// fmd3_{a}
-	  V_FOLGA_OCUPA_SALA = 31,					// fos_{i,d,cp}
 	  V_SALA = 32,								// u_{s}
 
 	  V_PROF_TURMA = 33,						// y_{p,i,d,cp}
@@ -54,7 +52,9 @@ public:
 	  V_FOLGA_GAP_PROF = 40,					// fpgap_{p,t}
 	  
 	  V_FOLGA_MIN_CRED_DIA_ALUNO = 41,			// fcad_{a,t}
-	  V_F_CARGA_HOR_ANT_PROF = 42				// fch_{p}
+	  V_F_CARGA_HOR_ANT_PROF = 42,				// fch_{p}
+
+	  V_LONGO_DIA_ALUNO = 43					// l_{a,t}  // marretado
 	  	  
    };
 

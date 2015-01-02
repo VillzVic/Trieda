@@ -490,7 +490,7 @@ void ProblemDataLoader::printInputDataLog()
 		if ( disciplina->getId() > 0 )
 		{
 			totalDisc++;
-			if ( problemData->getNroProfPorDisc(disciplina) == 0 )
+			if ( disciplina->getNroProfRealHabilit() == 0 )
 				nroDiscSemProf++;
 		}
 
@@ -1482,6 +1482,7 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 				Disciplina *disc = problemData->refDisciplinas[ discId ];
 
 				problemData->mapDiscProfsHabilit[disc].add( *it_prof );
+				disc->addProfHabilit(*it_prof);
 
 				ITERA_GGROUP( it_hor, it_prof->horarios, Horario )
 				{

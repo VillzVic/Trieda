@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <set>
+#include <map>
 
 #include <ctime>
 #include "CPUTimerWin.h"
@@ -24,11 +25,11 @@ class Polish
 public:
 
 	#ifdef SOLVER_CPLEX
-		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
-		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
+		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
+		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
 	#elif SOLVER_GUROBI 
-		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
-		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER );
+		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
+		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
 	#endif
 
 	~Polish();
@@ -61,14 +62,14 @@ private:
 
 	// Clustering unidades per professor
 	void clusterUnidadesByProfs();
-	void mapProfUnidFromVariables(map<Professor*, set<Unidade*>> &profUnidcluster, 
-									map<Unidade*, set<Professor*>> &unidProfs);
-	void calculaNrProfComumParUnid(map<Professor*, set<Unidade*>> const &profUnidcluster, 
-								map<Unidade*, map<Unidade*, int>> &parUnidNrProfComum);
-	void calculaClustersProfsComuns(set<Unidade*> &unidsAddedToSomeCluster, 
-								map<Unidade*, set<Professor*>> const &unidProfs,
+	void mapProfUnidFromVariables();
+	void calculaNrProfComumParUnid(map<Unidade*, map<Unidade*, int>> &parUnidNrProfComum);
+	void calculaClustersProfsComuns(set<Unidade*> &unidsAddedToSomeCluster,
 								map<Unidade*, map<Unidade*, int>> const &parUnidNrProfComum);
+	void removeDuplicatedClusters();
+	static bool equals(set<Unidade*> const & c1, set<Unidade*> const & c2);
 	void includeSingleClusters(set<Unidade*> const &unidsAddedToSomeCluster);
+	void getProfsAssocCluster(set<Unidade*> const &cluster, set<Professor*> &clusterProfs);
 	void addCluster(set<Unidade*> const & cluster);
 
 	// Fix variables
@@ -90,6 +91,14 @@ private:
 	void fixVarsDifUnidade();
 	void chooseRandUnidade();
 	int getNrFreeUnidade();
+	int getFOValueProfGap(Professor* p);
+	int getFOValueClusterUnidade_MinPV(int idxCluster);
+	int getFOValueClusterUnidade_MinGapProf(int idxCluster);
+	int getFOValueClusterUnidade(int idxCluster);
+	void fillClusterIdxToBeChosen();
+	void reorderClusterIdxToBeChosen();
+	void chooseRandClusterFreeUnidade();
+	void chooseWorstClusterFreeUnidade();
 	void chooseClusterFreeUnidade();
 	void chooseClusterAndSetFreeUnidade();
 	void chooseRandAndSetFreeUnidade();
@@ -113,12 +122,15 @@ private:
 	void updatePercAndTimeIterBigGap(double objN);
 	void adjustPercOrUnid();
 	void decreasePercOrFreeUnid(int percToSubtract);
+	void decreasePerc(int percToSubtract);
 	void adjustTime();
 	void increaseTime();
 	void decreaseTime();
 	void adjustOkIter(double objN);
+	bool globalOptimal(double objN);
 	void resetIterSemMelhora();
-	void checkIterSemMelhora();
+	void updateIterSemMelhora();
+	bool checkDecreaseDueToIterSemMelhora();
 	void checkEndDueToIterSemMelhora();
 	void chgFixType();
 	void checkTimeWithoutImprov(double objN);
@@ -200,7 +212,8 @@ private:
 	   // Cluster of unidades to leave free
 	   bool useFreeBlockPerCluster_;
 	   int clusterIdxFreeUnid_;
-	   std::set<int> clusterIdxToBeChosen_;
+	   // <FO value associado, idxs>
+	   std::map<int,std::set<int>> clusterIdxToBeChosen_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
@@ -220,7 +233,8 @@ private:
 	   double maxTime_;
 	   double maxTempoSemMelhora_;
 	   int maxIterSemMelhora_; 
-	   bool fixarVarsTatProf_; 
+	   bool fixarVarsTatProf_;
+	   double minOptValue_;
 	   
 	   // Solution
 	   double *xSol_;
@@ -235,6 +249,7 @@ private:
 	   VariableMIPUnicoHash vHashTatZ_;
 	   VariableMIPUnicoHash vHashTatK_;
 	   VariableMIPUnicoHash vHashTatY_;
+	   VariableMIPUnicoHash vHashTatFolgaProfGap_;
 
 	   // Hash which associates the column number with the VariableOp object.
 	   VariableOpHash const vHashOp_;
@@ -242,7 +257,10 @@ private:
 	   // Unidades
 	   set<Unidade*> unidades_;
 	   map<int,set<Unidade*>> unidClustersByProfs_;
-	   
+	   map<int,set<Professor*>> clusterIdxProfs_;
+	   map<Professor*, set<Unidade*>> profUnidcluster_;
+	   map<Unidade*, set<Professor*>> unidProfs_;
+
 	   MODULE const module_;
 	   int const phase_;
 

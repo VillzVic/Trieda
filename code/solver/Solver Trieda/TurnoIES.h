@@ -22,6 +22,7 @@ public:
 
    int getNroDeHorariosAula(int dia) const;
    void retornaHorariosDisponiveisNoDia( int dia, GGroup<HorarioAula*, LessPtr<HorarioAula>> &horarios) const;
+   void retornaHorariosDisponiveisNoDia( int dia, std::map<DateTime, std::set<HorarioAula*>> *horarios);
 
    std::string getNome() const { return nome; }
 

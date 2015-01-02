@@ -145,3 +145,14 @@ void TurnoIES::retornaHorariosDisponiveisNoDia( int dia, GGroup<HorarioAula*, Le
 		}		
 	}
 }
+
+// retorna horarios disponiveis no dia
+void TurnoIES::retornaHorariosDisponiveisNoDia(int dia, std::map<DateTime,std::set<HorarioAula*>> *horarios)
+{
+	horarios=nullptr;
+	auto finderDia = mapDiaDateTime.find(dia);
+	if (finderDia != mapDiaDateTime.end())
+	{
+		horarios = &finderDia->second;
+	}
+}

@@ -124,6 +124,8 @@ public:
    void setNrMedioCredsDia();
    int getNrMedioCredsDia();
 
+   bool possuiEquivForcada();
+
    void le_arvore( ItemAluno & elem );
 
    virtual bool operator < ( const Aluno & var ) const

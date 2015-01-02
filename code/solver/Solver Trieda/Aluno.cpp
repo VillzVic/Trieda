@@ -98,6 +98,17 @@ int Aluno::getNrMedioCredsDia()
 	return nrCredsMedioDia_; 
 }
 
+bool Aluno::possuiEquivForcada()
+{
+	auto it = this->demandas.begin();
+	for (; it != this->demandas.end(); it++)
+	{
+		if (it->getExigeEquivalenciaForcada())
+			return true;
+	}
+	return false;
+}
+
 double Aluno::getReceita( Disciplina *disciplina ) 
 { 
 	AlunoDemanda *al = this->getAlunoDemandaEquiv( disciplina );

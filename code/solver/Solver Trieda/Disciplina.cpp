@@ -1,5 +1,6 @@
 #include "Disciplina.h"
 #include "CentroDados.h"
+#include "Professor.h"
 
 
 Disciplina::Disciplina(void)
@@ -878,4 +879,24 @@ bool Disciplina::possuiRegraCred() const
 		divisao_creditos.size() > 0)
 		return true;
 	return false;
+}
+
+void Disciplina::addProfHabilit(Professor* p)
+{ 
+	profsHabilit.insert(p); 
+}
+
+bool Disciplina::existeProfRealNoHorarioDia(int dia, HorarioAula* ha)
+{
+	for (auto pit = profsHabilit.cbegin(); pit != profsHabilit.cend(); pit++)
+	{
+		if ((*pit)->possuiHorariosNoDia(ha, ha, dia))
+			return true;
+	}
+	return false;
+}
+
+int Disciplina::getNroProfRealHabilit()
+{
+	return profsHabilit.size();
 }

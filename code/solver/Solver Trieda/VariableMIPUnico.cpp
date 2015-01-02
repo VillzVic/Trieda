@@ -236,9 +236,7 @@ std::string VariableMIPUnico::toString() const
      case V_SLACK_COMBINACAO_DIVISAO_CREDITO_P:
         str << "fkp"; break;
      case V_ABERTURA_COMPATIVEL:
-		str <<"zc"; break;		
-  	 case V_SLACK_ALUNO_VARIAS_UNID_DIA:
-		str <<"fu"; break;			
+		str <<"zc"; break;
   	 case V_TURMA_ATEND_CURSO:
 		str <<"b"; break;			
   	 case V_ALUNO_DIA:
@@ -261,8 +259,6 @@ std::string VariableMIPUnico::toString() const
 		str <<"fmd2"; break;
 	 case V_FOLGA_ALUNO_MIN_ATEND3:
 		str <<"fmd3"; break;
-	 case V_FOLGA_OCUPA_SALA:
-		str <<"fos"; break;
 	 case V_SALA:
 		str <<"u"; break;
 	 case V_PROF_TURMA:
@@ -286,6 +282,10 @@ std::string VariableMIPUnico::toString() const
     case V_F_CARGA_HOR_ANT_PROF:
        str <<"fch"; break;
 	   	   
+	case V_LONGO_DIA_ALUNO:
+       str <<"l"; break;
+	   	      
+
     default:
         str << "!";
    }

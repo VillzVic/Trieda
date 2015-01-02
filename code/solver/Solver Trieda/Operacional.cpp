@@ -4731,14 +4731,23 @@ int Operacional::criaVariavelProfessorAulaHorario( void )
 		AlunoDemanda* alDem = * problemData->mapCampusTurmaDisc_AlunosDemanda[trio].begin();
 		TurnoIES* turno = alDem->demanda->oferta->turno;
 
-		ITERA_GGROUP_LESSPTR( itHorAula, turno->horarios_aula, HorarioAula )
-		{
-			DateTime dt = itHorAula->getInicio();
-			Calendario *c = itHorAula->getCalendario();
+		std::map<DateTime, std::set<HorarioAula*>> *ptrMapTurnoHors=nullptr;
+		turno->retornaHorariosDisponiveisNoDia(dia, ptrMapTurnoHors);
+		if (!ptrMapTurnoHors) continue;
 
-			if ( c->getTempoAula() == discAula->getTempoCredSemanaLetiva() )
-			if ( itHorAula->dias_semana.find( dia ) != itHorAula->dias_semana.end() )
-				mapDiscTurmaDiaDtCalendTurnoHorAula[discAula][turma][*itAula][dt][c][turno->getId()] = *itHorAula;
+		for (auto itTurnoHors = ptrMapTurnoHors->cbegin(); itTurnoHors != ptrMapTurnoHors->cend(); itTurnoHors++)
+		{
+			for(auto itHorAula = itTurnoHors->second.cbegin(); itHorAula!=itTurnoHors->second.cend(); itHorAula++)
+			{
+				HorarioAula *h = *itHorAula;
+				DateTime dt = h->getInicio();
+				Calendario *c = h->getCalendario();
+
+				if ( alDem->demanda->getCalendario()->possuiHorarioDiaOuCorrespondente(h,h,dia) )
+				if ( c->getTempoAula() == discAula->getTempoCredSemanaLetiva() )
+				if ( h->dias_semana.find( dia ) != h->dias_semana.end() )
+					mapDiscTurmaDiaDtCalendTurnoHorAula[discAula][turma][*itAula][dt][c][turno->getId()] = h;
+			}
 		}
 	}
 
@@ -7433,7 +7442,8 @@ int Operacional::criaRestricoesOperacional()
    
 		lp->updateLP();
 		timer.start();
-		restricoes += criaRestricaoEstimaNroProfsVirtuaisPorContratoCurso();
+		// comentei pq está demorando e parece que a criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso() é identica!
+		//restricoes += criaRestricaoEstimaNroProfsVirtuaisPorContratoCurso();
 		timer.stop();
 		dif = timer.getCronoCurrSecs();
 
@@ -11591,8 +11601,8 @@ int Operacional::criaRestricaoEstimaNroProfsVirtuaisAlocadosCurso()
 
 			for( auto itDt=ptrAllDtis->cbegin(); itDt!=ptrAllDtis->cend(); itDt++ )
 			{	
-				if ( *itDt > hf->getFinal() ) break;
-				if ( *itDt >= hi->getInicio() && *itDt <= hf->getFinal())
+				if ( *itDt >= hf->getFinal() ) break;
+				if ( *itDt >= hi->getInicio() && *itDt < hf->getFinal())
 					mapCursoContrDiaDti[curso][contrato][dia][*itDt].insert(vit->second);
 			}
 		}
@@ -12371,12 +12381,11 @@ int Operacional::criaRestricaoSomaNroProfsVirtuaisAlocadosCurso()
 // SÓ PARA RODADA 1
 int Operacional::criaRestricaoEstimaNroProfsVirtuaisPorContratoCurso()
 {
-   int restricoes = 0;  
-
+   int restricoes = 0;
    int nnz;
    double rhs;
-   char name[ 200 ];  
-
+   char name[ 200 ];
+   
    ITERA_GGROUP_LESSPTR( itHorDia, problemData->horariosDia, HorarioDia )
    {
 	   int dia = (*itHorDia)->getDia();
@@ -12462,7 +12471,6 @@ int Operacional::criaRestricaoEstimaNroProfsVirtuaisPorContratoCurso()
 				}
 		   }
 	   }
-
    }
 
    return restricoes;

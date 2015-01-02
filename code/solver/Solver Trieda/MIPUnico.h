@@ -66,7 +66,6 @@ private:
    
    int criaVariaveisTatico( int campusId, int P, int r );
 
-   int criaVariavelTaticoAlunoCreditosAPartirDeX_MaisFiltroAluno( int campusId, int P );	// v_{a,i,d,u,s,hi,hf,t}    
    int criaVariavelTaticoAlunoCreditosAPartirDeX( int campusId, int P );					// v_{a,i,d,u,s,hi,hf,t}
    int criaVariavelTaticoOferecimentosAPartirDeX( int campusId, int P );
    int criaVariavelTaticoCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P );			// m_{i,d,k}
@@ -76,12 +75,9 @@ private:
    int criaVariavelTaticoAlocaAlunoTurmaDiscAPartirDeV( int campusId, int P );				// s_{i,d,a,cp}
 
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}
-   void criaVariavelTaticoCreditosCopiadas( int campusId, int P, int &numVars );			// x_{i,d,u,s,hi,hf,t}
-   int criaVariavelTaticoCreditosComSolInicial( int campusId, int P );						// x_{i,d,u,s,hi,hf,t}
    int criaVariavelTaticoOferecimentos( int campusId, int P );								// o_{i,d,u,s}
    int criaVariavelTaticoCursoAlunos( int campusId, int P );								// b_{i,d,c,c'}
    int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId, int P  );						// fd_{d,a}
-   int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
    int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
    int criaVariavelTaticoFolgaAbreTurmaSequencial( int campusId, int P );					// ft_{i,d,cp}
    int criaVariavelFolgaProibeCompartilhamento( int campusId, int P );						// fc_{i,d,c,c',cp}
@@ -90,10 +86,8 @@ private:
    int criaVariavelTaticoAbertura( int campusId, int prior, int r );						// z_{i,d,cp}
    int criaVariavelTaticoAlunosMesmaTurmaPratica( int campusId, int P );					// ss_{a1,a2,dp}
    int criaVariavelTaticoFolgaMinimoDemandaPorAluno( int campusId, int P_ATUAL );			// fmd_{a}
-   int criaVariavelFolgaOcupacaoSala( int campusId, int P_ATUAL );							// fos_{i,d,cp}
    int criaVariavelProfTurmaAPartirDeZ();													// y_{p,i,d,cp}
    int criaVariavelProfAulaAPartirDeX();													// k_{p,i,d,cp,t,h}
-   int criaVariavelProfessorDiaHorarioIF();
    int criaVariaveisHiHfProfFaseDoDiaAPartirDeK(void);										// hip_{p,t,f} e hfp_{p,t,f}
    int criaVariaveisHiHfAlunoDiaAPartirDeV(void);											// hia_{a,t} e hfa_{a,t}
    int criaVariavelFolgaGapProfAPartirDeK(void);											// fpgap_{p,t,f}
@@ -145,7 +139,6 @@ private:
    int criaRestricaoTaticoTurmaComOsMesmosAlunosPorAula( int campusId );
    int criaRestricaoTaticoDiscPTAulasContinuas( int campusId, int prioridade );
    int criaRestricaoTaticoAlocMinAluno( int campusId );
-   int criaRestricaoFolgaOcupacaoSala( int campusId );
    int criaRestricaoProfDescansoMinimo( int campusId );
    
    int criaRestricaoSobreposHorariosProfs();
@@ -185,6 +178,13 @@ private:
 	int criaRestricaoNrMaxDeslocProfessor();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
+	int criarRestricaoMinCredsDiaAluno_Marreta();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso1();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso2();
+	int criarVariavelDiaLongoAluno_MarretaCaso2();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_1();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_2();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_3();
 
    /* 
 		****************************************************************************************************************
@@ -341,8 +341,7 @@ private:
 	// map com o nro de folgas de demanda para o campus atual e prioridade no máximo P atual.
 	std::map< Disciplina*, int, LessPtr< Disciplina > > mapDiscNroFolgasDemandas;
 	inline int haFolgaDeAtendimento( Disciplina *disciplina ) { return this->mapDiscNroFolgasDemandas[disciplina]; }
-	bool permitirAbertura( int turma, Disciplina *disciplina, int campusId );
-
+	
 	void atualizarDemandasEquiv( int campusId, int prioridade );
 
 	std::map< Trio< int, Disciplina *, int >, bool > mapPermitirAbertura;
@@ -370,7 +369,8 @@ private:
 	// Disciplinas
 	static const int consideraDivCredDisc;
 
-	// Professores
+	// Professores	
+	static const bool filtroSoHorsComProfReal_;
 	static const bool minimizarCustoProf;
 	static const bool permiteCriarPV;
 	static const int pesoGapProf;

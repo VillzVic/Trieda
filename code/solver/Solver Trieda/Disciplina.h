@@ -11,6 +11,7 @@
 #include "Calendario.h"
 
 class ConjuntoSala;
+class Professor;
 
 class Disciplina :
    public OFBase
@@ -44,6 +45,12 @@ public:
    
    std::map< int, ConjuntoSala* > cjtSalasAssociados; // map[cjtSalaId] = cjtSala
       
+   // Guarda os professor reais que possuem habilitação para ministrar a disciplina.
+   std::set<Professor*> profsHabilit;
+   void addProfHabilit(Professor* p);
+   int getNroProfRealHabilit();
+   bool existeProfRealNoHorarioDia(int dia, HorarioAula* ha);
+
    void clearHors();
    void clearDivCreds();
 

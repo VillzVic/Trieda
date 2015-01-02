@@ -961,7 +961,7 @@ void ProblemSolution::constroiMapsDaSolucao()
 				nTurmasVirtT += itMapDisc->second.size();
 			}		
 
-			bool semProfRealHab = (problemData->getNroProfPorDisc( disc ) == 0);
+			bool semProfRealHab = (disc->getNroProfRealHabilit() == 0);
 
 			for ( auto itMapTurma = itMapDisc->second.begin(); itMapTurma != itMapDisc->second.end(); itMapTurma++ )
 			{
@@ -1002,7 +1002,7 @@ void ProblemSolution::constroiMapsDaSolucao()
 			for ( ; itDisc != itCp->second.end(); itDisc++ )
 			{
 				Disciplina *disc = itDisc->first;
-				if ( problemData->getNroProfPorDisc( disc ) == 0 )
+				if ( disc->getNroProfRealHabilit() == 0 )
 				{
 					auto itTurma = itDisc->second.begin();
 					for ( ; itTurma != itDisc->second.end(); itTurma++ )
@@ -1015,7 +1015,7 @@ void ProblemSolution::constroiMapsDaSolucao()
 						pvoId_totais.add( itTurma->second );
 
 						// Calcula nro de profs virtuais usados para turmas de disciplinas sem prof real habilitado
-						if ( problemData->getNroProfPorDisc( disc ) == 0 )
+						if ( disc->getNroProfRealHabilit() == 0 )
 						{
 							if ( disc->getId() > 0 ) nTurmasPV_semHabReal++;
 						
