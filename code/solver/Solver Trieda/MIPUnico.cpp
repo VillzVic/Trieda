@@ -35,8 +35,8 @@ const int MIPUnico::timeLimitMaxAtend = 3600*3;
 const int MIPUnico::timeLimitMaxAtendSemMelhora = 3600;
 const int MIPUnico::timeLimitMinProfVirt = 3600*4;
 const int MIPUnico::timeLimitMinProfVirtSemMelhora = 3600*3;
-const int MIPUnico::timeLimitMinGapProf = 3600*3;
-const int MIPUnico::timeLimitMinGapProfSemMelhora = 3600*2;
+const int MIPUnico::timeLimitMinGapProf = 3600*2;
+const int MIPUnico::timeLimitMinGapProfSemMelhora = 3600*1;
 const int MIPUnico::timeLimitGeneral= 3600;
 const int MIPUnico::timeLimitGeneralSemMelhora = 1800;
 
@@ -44,7 +44,7 @@ const int MIPUnico::timeLimitGeneralSemMelhora = 1800;
 const int MIPUnico::consideraDivCredDisc = ParametrosPlanejamento::Weak;
 
 // Professores
-const bool MIPUnico::filtroSoHorsComProfReal_ = true;
+const bool MIPUnico::filtroPVHorCompl_ = true;
 const bool MIPUnico::permiteCriarPV = true;
 const bool MIPUnico::minimizarCustoProf = false;
 const int MIPUnico::pesoGapProf = 1;
@@ -1963,63 +1963,57 @@ int MIPUnico::solveGaranteSolucao( int campusId, int prioridade, int r, bool& CA
 	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
 	int nBds = 0;
 
-	VariableMIPUnicoHash::iterator vit = vHashTatico.begin();
-	for ( ; vit != vHashTatico.end(); vit++ )
+	#pragma region ZERA ATENDIMENTOS
+	// desabilitado, porque dependendo do caso pode dar inviável
+	bool zeroAtend=false;
+	if (zeroAtend)
 	{
-		VariableMIPUnico v = vit->first;
-
-		int lb = (int)(lp->getLB(vit->second) + 0.5);
-		int ub = (int)(lp->getUB(vit->second) + 0.5);
-		
-		if ( v.getType() == VariableMIPUnico::V_ALOCA_ALUNO_TURMA_DISC )
+		auto vit = vHashTatico.begin();
+		for ( ; vit != vHashTatico.end(); vit++ )
 		{
+			VariableMIPUnico v = vit->first;
+
 			int lb = (int)(lp->getLB(vit->second) + 0.5);
 			int ub = (int)(lp->getUB(vit->second) + 0.5);
-
-			int turma = v.getTurma();
-			Aluno *aluno = v.getAluno();
-			Disciplina *disciplina = v.getDisciplina();
-
-			if ( problemData->retornaTurmaDiscAluno( aluno, disciplina ) == turma )
+		
+			if ( v.getType() == VariableMIPUnico::V_ALOCA_ALUNO_TURMA_DISC )
 			{
-				if ( lb != ub )							// se for variavel livre
-				{						
-					idxs[nBds] = vit->second;
-					valsOrig[nBds] = lp->getLB( vit->second );
-					vals[nBds] = 1.0;
-					bds[nBds] = BOUNDTYPE::BOUND_LOWER;
-					nBds++;
+				int lb = (int)(lp->getLB(vit->second) + 0.5);
+				int ub = (int)(lp->getUB(vit->second) + 0.5);
+
+				int turma = v.getTurma();
+				Aluno *aluno = v.getAluno();
+				Disciplina *disciplina = v.getDisciplina();
+
+				if ( problemData->retornaTurmaDiscAluno( aluno, disciplina ) == turma )
+				{
+					if ( lb != ub )							// se for variavel livre
+					{						
+						idxs[nBds] = vit->second;
+						valsOrig[nBds] = lp->getLB( vit->second );
+						vals[nBds] = 1.0;
+						bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+						nBds++;
+					}
+				}
+				else
+				{
+					if ( lb != ub )							// se for variavel livre
+					{						
+						idxs[nBds] = vit->second;
+						valsOrig[nBds] = lp->getUB( vit->second );
+						vals[nBds] = 0.0;
+						bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+						nBds++;
+					}			
 				}
 			}
-			else
-			{
-				if ( lb != ub )							// se for variavel livre
-				{						
-					idxs[nBds] = vit->second;
-					valsOrig[nBds] = lp->getUB( vit->second );
-					vals[nBds] = 0.0;
-					bds[nBds] = BOUNDTYPE::BOUND_UPPER;
-					nBds++;
-				}			
-			}
 		}
+		lp->chgBds(nBds,idxs,bds,vals);
+		lp->updateLP();
 	}
-	lp->chgBds(nBds,idxs,bds,vals);
-	   
-#ifdef SOLVER_CPLEX
-	lp->updateLP();
-	lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT1) );
-	lp->setPreSolve(OPT_TRUE);
-	lp->setHeurFrequency(1.0);
-	lp->setMIPScreenLog( 4 );
-	lp->setMIPEmphasis(0);
-	lp->setSymetry(0);
-	lp->setCuts(3);
-	lp->setNumIntSols(1);	
-	lp->updateLP();
-#elif SOLVER_GUROBI
-	lp->updateLP();
-	lp->setTimeLimit( this->getTimeLimit(Solver::TAT_INT1) );
+	#pragma endregion
+		
 	lp->setPreSolve(OPT_TRUE);
 	lp->setHeurFrequency(1.0);
 	lp->setMIPEmphasis(0);
@@ -2027,21 +2021,15 @@ int MIPUnico::solveGaranteSolucao( int campusId, int prioridade, int r, bool& CA
 	lp->setCuts(3);
 	lp->setNumIntSols(1);
 	lp->updateLP();
-#endif
 
 	std::string lpName1;
 	lpName1 += "garanteSol_";
 	lpName1 += string(lpName);
 		
-	optimize();
-	
+	optimize();	
 	getXSol(xS);
-	
-	writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_GARANTE_SOL, xS, 0 );
-					
-	// -------------------------------------------------------------------
-	// Volta as variaveis que estavam livres
-         
+						
+	// Volta as variaveis que estavam livres         
 	lp->chgBds( nBds,idxs,bds,valsOrig );
 	lp->updateLP();
 
@@ -3744,9 +3732,6 @@ int MIPUnico::criaVariavelTaticoCreditos( int campusId, int P )
 			
 			ITERA_GGROUP_N_PT( itDia, it_hor->dias_semana, int )
 			{
-				if ( !disciplina->existeProfRealNoHorarioDia(*itDia,ha) && filtroSoHorsComProfReal_ )
-					continue;
-
 				mapDiscDiaDtCalendTurnoHorAula[ disciplina ][ *itDia ][ ha->getInicio() ][ ha->getCalendario() ][ ha->getTurnoIESId() ] = ha;
 			}
 		}
@@ -5317,7 +5302,13 @@ int MIPUnico::criaVariavelProfAulaAPartirDeX()
 								Unidade * const unidade = x.getUnidade();
 								HorarioAula * const hf = x.getHorarioAulaFinal();
 								int fase = CentroDados::getFaseDoDia( x.getHorarioAulaInicial()->getInicio() );
-
+								
+								// improviso:melhorar
+								if ( MIPUnico::filtroPVHorCompl_ &&
+									 professor->eVirtual() && 
+									 disciplina->existeProfRealNoHorarioDia(dia,x.getHorarioAulaInicial()) )
+									continue;
+							
 								if ( !professor->eVirtual() &&
 									 !professor->possuiHorariosNoDia( x.getHorarioAulaInicial(), x.getHorarioAulaFinal(), dia ) )
 									continue;
@@ -13045,7 +13036,14 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso1()
 			// Insere restrição
 			if ( row.getnnz() )
 			{
-				lp->addRow( row );
+				bool added=lp->addRow( row );
+				if (!added)
+				{
+					stringstream ss;
+					ss << "Restricao nao adicionada! " << row.getName();
+					CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso1()", ss.str());
+					continue;
+				}
 				restricoes++;
 			}
 		}
@@ -13056,13 +13054,15 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso1()
 
 int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2()
 {
+	int restricoes = 0;
 	if (!MARRETA_EQUIV_FORC_DISTRIB)
-		return 0;
+		return restricoes;
 
 	criarVariavelDiaLongoAluno_MarretaCaso2();
-	criarRestricaoMinCredsDiaAluno_MarretaCaso2_1();
-	criarRestricaoMinCredsDiaAluno_MarretaCaso2_2();
-	criarRestricaoMinCredsDiaAluno_MarretaCaso2_3();
+	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2_1();
+	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2_2();
+	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2_3();
+	return restricoes;
 }
 
 int MIPUnico::criarVariavelDiaLongoAluno_MarretaCaso2()
@@ -13097,10 +13097,20 @@ int MIPUnico::criarVariavelDiaLongoAluno_MarretaCaso2()
 			
 			OPT_COL col( OPT_COL::VAR_BINARY, 0, 0, 1, (char*) var.toString().c_str() );
 
-			lp->newCol( col );
-			numVars++;			
+			bool added=lp->newCol( col );
+			if (!added)
+			{
+				std::stringstream ss;
+				ss << "Restricao nao adicionada! " << col.getName();
+				CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2()", ss.str());
+				continue;
+			}
+
+			numVars++;
 		}
 	}
+
+	lp->updateLP();
 
 	return numVars;
 }
@@ -13186,7 +13196,14 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()
 			// Insere restrição
 			if ( row.getnnz() )
 			{
-				lp->addRow( row );
+				bool added=lp->addRow( row );
+				if (!added)
+				{
+					stringstream ss;
+					ss << "Restricao nao adicionada! " << row.getName();
+					CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()", ss.str());
+					continue;
+				}
 				restricoes++;
 			}
 		}
@@ -13241,7 +13258,14 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_2()
 		// Insere restrição
 		if ( row.getnnz() )
 		{
-			lp->addRow( row );
+			bool added=lp->addRow( row );
+			if (!added)
+			{
+				stringstream ss;
+				ss << "Restricao nao adicionada! " << row.getName();
+				CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_2()", ss.str());
+				continue;
+			}
 			restricoes++;
 		}
 	}
@@ -13281,8 +13305,18 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_3()
 			double rhs = lb;
 			OPT_ROW row( 50, OPT_ROW::EQUAL, rhs, name );
 
-			lp->addRow( row );
+			row.insert(colHia,1);
+
+			bool added=lp->addRow( row );
+			if (!added)
+			{
+				stringstream ss;
+				ss << "Restricao nao adicionada! " << row.getName();
+				CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_3()", ss.str());
+				continue;
+			}
 			restricoes++;
 		}
 	}
+	return restricoes;
 }

@@ -886,7 +886,7 @@ void Disciplina::addProfHabilit(Professor* p)
 	profsHabilit.insert(p); 
 }
 
-bool Disciplina::existeProfRealNoHorarioDia(int dia, HorarioAula* ha)
+bool Disciplina::existeProfRealNoHorarioDia(int dia, HorarioAula* const ha) const
 {
 	for (auto pit = profsHabilit.cbegin(); pit != profsHabilit.cend(); pit++)
 	{
@@ -896,7 +896,7 @@ bool Disciplina::existeProfRealNoHorarioDia(int dia, HorarioAula* ha)
 	return false;
 }
 
-int Disciplina::getNroProfRealHabilit()
+int Disciplina::getNroProfRealHabilit() const
 {
 	return profsHabilit.size();
 }

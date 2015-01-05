@@ -48,8 +48,8 @@ public:
    // Guarda os professor reais que possuem habilitação para ministrar a disciplina.
    std::set<Professor*> profsHabilit;
    void addProfHabilit(Professor* p);
-   int getNroProfRealHabilit();
-   bool existeProfRealNoHorarioDia(int dia, HorarioAula* ha);
+   int getNroProfRealHabilit() const;
+   bool existeProfRealNoHorarioDia(int dia, HorarioAula* const ha) const;
 
    void clearHors();
    void clearDivCreds();

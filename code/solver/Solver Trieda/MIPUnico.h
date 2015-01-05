@@ -370,7 +370,7 @@ private:
 	static const int consideraDivCredDisc;
 
 	// Professores	
-	static const bool filtroSoHorsComProfReal_;
+	static const bool filtroPVHorCompl_;
 	static const bool minimizarCustoProf;
 	static const bool permiteCriarPV;
 	static const int pesoGapProf;
