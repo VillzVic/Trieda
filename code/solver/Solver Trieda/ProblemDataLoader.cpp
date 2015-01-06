@@ -5395,15 +5395,28 @@ void ProblemDataLoader::calculaCHOriginalPorAluno()
 {
    ITERA_GGROUP_LESSPTR( it_aluno_demanda,
       problemData->alunosDemanda, AlunoDemanda )
-   {            
-	  if ( it_aluno_demanda->getPrioridade()==1 )
-	  {
-		  Aluno * aluno = problemData->retornaAluno( it_aluno_demanda->getAlunoId() );
-		  aluno->addCargaHorariaOrigRequeridaP1( 
-			  it_aluno_demanda->demanda->disciplina->getTempoCredSemanaLetiva() *
-			  it_aluno_demanda->demanda->disciplina->getTotalCreditos() );
-		  aluno->addNroCredsOrigRequeridosP1(
-			  it_aluno_demanda->demanda->disciplina->getTotalCreditos() );
-	  }
+   {        
+	   AlunoDemanda *aldem = *it_aluno_demanda;
+	   if (aldem)
+	   {
+			if ( aldem->getPrioridade()==1 )
+			{
+				Aluno * aluno = problemData->retornaAluno( aldem->getAlunoId() );
+				if (aluno)
+				{
+					if (aldem->demanda)
+					{
+						if (aldem->demanda->disciplina)
+						{
+							aluno->addCargaHorariaOrigRequeridaP1( 
+								aldem->demanda->disciplina->getTempoCredSemanaLetiva() *
+								aldem->demanda->disciplina->getTotalCreditos() );
+							aluno->addNroCredsOrigRequeridosP1(
+								aldem->demanda->disciplina->getTotalCreditos() );
+						}else CentroDados::printError("void ProblemDataLoader::calculaCHOriginalPorAluno()","Disciplina null!");
+					}else CentroDados::printError("void ProblemDataLoader::calculaCHOriginalPorAluno()","Demanda null!");
+				}else CentroDados::printError("void ProblemDataLoader::calculaCHOriginalPorAluno()","Aluno null!");
+			}
+	   }else CentroDados::printError("void ProblemDataLoader::calculaCHOriginalPorAluno()","AlunoDemanda null!");
    }
 }

@@ -54,7 +54,8 @@ public:
 	  V_FOLGA_MIN_CRED_DIA_ALUNO = 41,			// fcad_{a,t}
 	  V_F_CARGA_HOR_ANT_PROF = 42,				// fch_{p}
 
-	  V_LONGO_DIA_ALUNO = 43					// l_{a,t}  // marretado
+	  V_LONGO_DIA_ALUNO = 43,					// l_{a,t}		// marretado
+	  V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA = 44	// fcadm_{a,t}  // marretado
 	  	  
    };
 

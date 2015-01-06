@@ -53,7 +53,8 @@ private:
 	  MIP_GARANTE_SOL = 1,				
 	  MIP_MAX_ATEND = 2,
 	  MIP_MIN_VIRT = 3,
-	  MIP_MIN_GAP_PROF = 4
+	  MIP_MIN_GAP_PROF = 4,
+	  MIP_MARRETA = 5
    };	  
 
 
@@ -179,6 +180,7 @@ private:
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 	int criarRestricaoMinCredsDiaAluno_Marreta();
+	int criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso1();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2();
 	int criarVariavelDiaLongoAluno_MarretaCaso2();
@@ -289,7 +291,6 @@ private:
 	void writeSolBin( int campusId, int prioridade, int r, int type, double *xSol );
 	void writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
    void readSolTxtAux( char *fileName, double *xSol );
-	int readSolBin( int campusId, int prioridade, int r, int type, double *xSol );
 	int writeGapTxt( int campusId, int prioridade, int r, int type, double gap );
 
 	void sincronizaSolucao( int campusAtualId, int prioridade, int r );
@@ -305,7 +306,10 @@ private:
 
 	int solveMIPUnico( int campusId, int prioridade, int r );
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	void zeraObjSolucao(int &nBdsObj, int* idxN);
+	void zeraAtendGaranteSolucao(int &nBds, double* valsOrig, int* idxs, BOUNDTYPE* bds);
 	int solveMaxAtendPorFasesDoDia( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int solveMaxAtendMarreta( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
@@ -323,8 +327,6 @@ private:
 
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
-	Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
-	ConjuntoSala* retornaSalaDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
 	GGroup< VariableTatico *, LessPtr<VariableTatico> > retornaAulasEmVarX( int turma, Disciplina* disciplina, int campusId );
 	
 	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > vars_v;

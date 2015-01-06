@@ -284,6 +284,8 @@ std::string VariableMIPUnico::toString() const
 	   	   
 	case V_LONGO_DIA_ALUNO:
        str <<"l"; break;
+	case V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA:
+       str <<"fcadm"; break;	   
 	   	      
 
     default:

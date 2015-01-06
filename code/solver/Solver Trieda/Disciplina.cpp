@@ -900,3 +900,15 @@ int Disciplina::getNroProfRealHabilit() const
 {
 	return profsHabilit.size();
 }
+
+double Disciplina::getTempoCredSemanaLetiva()
+{ 
+	if (this->calendarios.size() > 0)
+	{
+		return this->calendarios.begin()->first->getTempoAula(); 
+	}
+	stringstream ss;
+	ss << "Disciplina " << this->getId() << " sem calendarios associados.";
+	CentroDados::printWarning("double Disciplina::getTempoCredSemanaLetiva()",ss.str());
+	return 0;
+}

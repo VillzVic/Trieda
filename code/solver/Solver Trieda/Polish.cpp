@@ -122,7 +122,11 @@ void Polish::mapVariablesTat()
 
     for ( auto vit = vHashTatico_.begin(); vit != vHashTatico_.end(); vit++ )
     {
-        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
+		if ( vit->first.getType() == VariableMIPUnico::V_ALUNO_CREDITOS )
+        {
+			vHashTatV_[vit->first] = vit->second;
+		}
+		if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
         {
 			vHashTatX_[vit->first] = vit->second;
 		}
@@ -421,9 +425,7 @@ void Polish::fixVarsTatico()
 
 	if (fixType_==1)
 	{
-		decideVarsToFixType1();
-		fixVarsType1();
-		fixVarsProfType1();
+		fixVarsType1Tatico();
 	}
 	else
 	{
@@ -436,9 +438,9 @@ void Polish::fixVarsOp()
 	fixVarsType2Op();
 }
 
-void Polish::decideVarsToFixType1()
+void Polish::decideVarsToFixMarreta()
 {
-	if ( fixType_ != 1 ) return;
+	if ( phase_ != Polish::PH_MARRETA ) return;
 
 	paraFixarUm_.clear();
 	paraFixarZero_.clear();
@@ -446,17 +448,49 @@ void Polish::decideVarsToFixType1()
 	if (perc_<= 0) return;
 
     // Seleciona turmas e disciplinas para fixar    
-    int nBds = 0;
-	auto vit = vHashTatZ_.begin();
-    while ( vit != vHashTatZ_.end() )
+    int nBds = 0;	
+    for (auto vit = vHashTatV_.begin(); vit != vHashTatV_.end(); vit++)
+    {
+		if ( vit->first.getType() == VariableMIPUnico::V_ALUNO_CREDITOS )
+		{			
+			if (vit->first.getAluno()->possuiEquivForcada())
+			if (rand() % 100 >= perc_)
+				continue;
+
+			double value = (int)(xSol_[vit->second]+0.5);
+
+			if (!vit->first.getAluno()->possuiEquivForcada() && value > 0.1)
+				continue;
+
+			if (value > 0.1) bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
+			else bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
+
+			idxs_[nBds] = vit->second;
+			vals_[nBds] = value;
+			nBds++;
+		}
+    }
+    lp_->chgBds(nBds,idxs_,bds_,vals_);
+    lp_->updateLP();
+}
+
+void Polish::decideVarsToFixOther()
+{
+	if ( phase_ == Polish::PH_MARRETA ) return;
+	
+	paraFixarUm_.clear();
+	paraFixarZero_.clear();
+
+	if (perc_<= 0) return;
+
+    // Seleciona turmas e disciplinas para fixar    
+    int nBds = 0;	
+    for (auto vit = vHashTatZ_.begin(); vit != vHashTatZ_.end(); vit++)
     {
 		if ( vit->first.getType() == VariableMIPUnico::V_ABERTURA )
 		{
 			if ( rand() % 100 >= perc_  )
-			{
-				vit++;
 				continue;
-			}
 
 			if (xSol_[vit->second] > 0.1 )
 			{
@@ -477,11 +511,24 @@ void Polish::decideVarsToFixType1()
 				paraFixarZero_.insert(auxPair);
 			}
 		}
-
-		vit++;
     }
     lp_->chgBds(nBds,idxs_,bds_,vals_);
     lp_->updateLP();
+}
+
+void Polish::decideVarsToFixByPhase()
+{
+	if (phase_ == Polish::PH_MARRETA)
+		decideVarsToFixMarreta();
+	else
+		decideVarsToFixOther();
+}
+
+void Polish::fixVarsType1Tatico()
+{
+	decideVarsToFixByPhase();
+	fixVarsType1();
+	fixVarsProfType1();	
 }
 
 void Polish::fixVarsProfType1()
@@ -1167,9 +1214,9 @@ bool Polish::checkDecreaseDueToIterSemMelhora()
 {
 	if (nrIterSemMelhora_ >	maxIterSemMelhora_)
 	{
-		decreasePerc(10);
+		decreasePerc(5);
 		stringstream ss;
-		ss << "\nDecreasing 10\% in fixed solution due to no change of best solution for more than "
+		ss << "\nDecreasing 5\% in fixed solution due to no change of best solution for more than "
 			<< maxIterSemMelhora_ <<  " consecutive iterations.";
 		printLog(ss.str());
 		return true;
@@ -1292,6 +1339,9 @@ void Polish::unfixBoundsTatHash(VariableMIPUnicoHash const & hashVar)
 void Polish::unfixBoundsTatico()
 {
 	// Volta bounds
+	if ( phase_ == Polish::PH_MARRETA )
+		unfixBoundsTatHash(vHashTatV_);	
+	
 	unfixBoundsTatHash(vHashTatX_);	  
 	unfixBoundsTatHash(vHashTatZ_);	
 	if (fixarVarsTatProf_)

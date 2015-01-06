@@ -134,7 +134,7 @@ public:
    double getTotalTempo() { return ( getTotalCreditos() * getTempoCredSemanaLetiva() ); }
 
    // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
-   double getTempoCredSemanaLetiva() { return this->calendarios.begin()->first->getTempoAula(); } 
+   double getTempoCredSemanaLetiva();
 
    int getTotalCreditos() const { return this->getCredTeoricos() + this->getCredPraticos(); }
       

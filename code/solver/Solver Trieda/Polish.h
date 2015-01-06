@@ -44,6 +44,7 @@ public:
 
 	enum PHASE
 	{
+		PH_MARRETA = 0,
 		PH_MAX_ATEND = 1,
 		PH_MIN_PV = 2,
 		PH_MIN_GAP = 3,
@@ -78,9 +79,12 @@ private:
 	void fixVarsOp();
 
 	// Fix variable type 1
-	void decideVarsToFixType1();
+	void decideVarsToFixMarreta();
+	void decideVarsToFixOther();
+	void decideVarsToFixByPhase();
 	void fixVarsProfType1();
 	void fixVarsType1();
+	void fixVarsType1Tatico();
 
 	// Fix variable type 2
 	void fixVarsType2Tatico();
@@ -244,7 +248,8 @@ private:
 	   std::set<std::pair<int,Disciplina*> > paraFixarZero_;
 
 	   // Hash which associates the column number with the VariableTatico object.
-	   VariableMIPUnicoHash const vHashTatico_;
+	   VariableMIPUnicoHash const vHashTatico_;	   
+	   VariableMIPUnicoHash vHashTatV_;
 	   VariableMIPUnicoHash vHashTatX_;
 	   VariableMIPUnicoHash vHashTatZ_;
 	   VariableMIPUnicoHash vHashTatK_;
