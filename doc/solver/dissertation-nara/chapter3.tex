@@ -253,7 +253,7 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 		EXPECTED NUMBER OF CREDITS FOR EACH STUDENT PER DAY
 
-\paragraph{Try to ensure the expected number of credits for each student per day}
+\subsubsection{Try to ensure the expected number of credits for each student per day}
 \begin{eqnarray}
 \sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} nCreds_{d} \cdot v_{a,i,d,s,t,hi,hf} + fcad_{a,t} \ge MinCredsDia_{a,t} \nonumber \qquad
 \forall a \in A \quad
@@ -263,7 +263,6 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 					CREDITS SPLIT RULES
-
 \subsubsection{Credits split rules}
 
 \paragraph{Credits split rule for each course section}
@@ -286,7 +285,7 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 					ALOCAÇÃO DE PROFESSORES
+% 					PROFESSORS ASSIGNMENT
 \subsubsection{Professors assignment}
 
 \paragraph{No overlapping in professor's timetable}
@@ -297,7 +296,8 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall dt \in Dt
 \end{eqnarray}
 
-\paragraph{Assigns professor to class (sets variable k) - 1}
+\paragraph{Assigns professor to class (sets variable k)}
+% Part 1
 \begin{eqnarray}
 \sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le k_{p,i,d,cp,t,dti} + ( 1 - y_{p,i,d,cp} ) \nonumber \qquad
 \\
@@ -308,8 +308,7 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall t \in T \quad
 \forall dti \in Dt
 \end{eqnarray}
-	
-\paragraph{Assigns professor to class (sets variable k) - 2}
+% Part 2
 \begin{eqnarray}
 \sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le \sum\limits_{p} k_{p,i,d,cp,t,dti} \nonumber \qquad
 \\
@@ -336,10 +335,12 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall d \in D \quad
 \forall cp \in CP
 \end{eqnarray}	
-	
-	
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %						PROFESSOR DISPLACEMENT
+\subsubsection{Professor's displacement}
+\label{constrProfessorDisplac}
 
 \paragraph{Ensures enough time for displacement between blocks in the same day}
 \begin{eqnarray}
@@ -367,11 +368,11 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%						GAP NOS HORA�RIOS DOS PROFESSORES
+%						GAPS IN PROFESSOR'S TIMETABLE									% 							 
 \subsubsection{Professor's gaps avoidance}
 \label{constrProfessorGap}
 
-Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when the objective function have conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section \ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
+Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when it has conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section \ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
 
 \paragraph{Sets variable $hip_{p,t,f}$}
 \begin{eqnarray}
@@ -405,6 +406,8 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) 
 \forall dt \in Dt_{f}
 \end{eqnarray}
 
+Next, gaps in professor timetable are controlled. The usage of the slack variable $fpgap_{p,t,f}$ indicates the amount of idle time in session $f$ of day $t$ for professor $p$. The reduce of professors idle time is achieved through minimization of these slack variables in objective function.
+
 \paragraph{Prohibits gap in each session of day in professor timetable}
 \begin{eqnarray}
 \sum\limits_{k \in K_{h \in H_{f}}} duration_{h} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
@@ -416,37 +419,41 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 				GAP NOS HORÁRIOS DOS ALUNOS
+% 				GAPS IN STUDENT'S TIMETABLE
 \subsubsection{Student's gaps prohibition}
 \label{constrStudentGap}
+
+Next, analogous to constraints in \ref{constrProfessorGap}, variables $hia_{a,t}$ and $hfa_{a,t}$ are set.
 
 \paragraph{Sets variable $hia_{a,t}$}
 \begin{eqnarray}
 hia_{a,t} \geq m(dt) \cdot ( 1 - \sum\limits_{v \in V_{dti<dt}} v_{a,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
+\forall a \in A \quad
 \forall t \in T \quad
-\forall dt \in Dt_{f}
+\forall dt \in Dt
 \end{eqnarray}
 \begin{eqnarray}
 hia_{a,t} \leq m(dt) + M \cdot ( 1 - \sum\limits_{v} v_{a,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
+\forall a \in A \quad
 \forall t \in T \quad
 \forall dti \in Dt
 \end{eqnarray}
 
 \paragraph{Sets variable $hfa_{a,t}$}
 \begin{eqnarray}
-hfp_{p,t,f} \geq \sum\limits_{v} m(dt) \cdot v_{a,t,dtf} \nonumber \qquad
-\forall p \in P \quad
+hfa_{a,t} \geq \sum\limits_{v} m(dt) \cdot v_{a,t,dtf} \nonumber \qquad
+\forall a \in A \quad
 \forall t \in T \quad
 \forall dtf \in Dt
 \end{eqnarray}
 \begin{eqnarray}
 hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \nonumber \qquad
-\forall p \in P \quad
+\forall a \in A \quad
 \forall t \in T \quad
 \forall dt \in Dt
 \end{eqnarray}
+
+Next, gaps in student timetable are avoided. Unlike professors similar restriction, students can not have idle times, and therefore these are hard constraints and there are no slack variables.
 
 \paragraph{Prohibits gap in student timetable}
 \begin{eqnarray}
