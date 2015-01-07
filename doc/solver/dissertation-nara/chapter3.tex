@@ -75,7 +75,6 @@ Introduces CPLEX and Gurobi.
 \item $U$ - Set of blocks. Elements of $U$ are called $u$.
 \item $SL$ - Set of calenders. Elements of $SL$ are called $sl$.
 \item $P$ - Set of all professors. Elements of $P$ are called $p$.
-\item $PV$ - Set of virtual professors. Elements of $PV$ are called $pv$ or $p$.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,8 +362,8 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \forall t \in T \quad
 \forall u2 \in U \quad
 \forall h2 \in H \quad
-\mbox{s.t. }u1 \neq u2 \qquad u3 \neq u2 \qquad h1<h2 \qquad h3>h2}
-\end{eqnarray}	
+\mbox{s.t. }u1 \neq u2 \qquad u3 \neq u2 \qquad h1<h2 \qquad h3>h2
+\end{eqnarray}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -372,7 +371,7 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \subsubsection{Professor's gaps avoidance}
 \label{constrProfessorGap}
 
-Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when it has conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section \ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
+Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when it has conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section ~\ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
 
 \paragraph{Sets variable $hip_{p,t,f}$}
 \begin{eqnarray}
@@ -423,7 +422,7 @@ Next, gaps in professor timetable are controlled. The usage of the slack variabl
 \subsubsection{Student's gaps prohibition}
 \label{constrStudentGap}
 
-Next, analogous to constraints in \ref{constrProfessorGap}, variables $hia_{a,t}$ and $hfa_{a,t}$ are set.
+Next, analogous to constraints in ~\ref{constrProfessorGap}, variables $hia_{a,t}$ and $hfa_{a,t}$ are set.
 
 \paragraph{Sets variable $hia_{a,t}$}
 \begin{eqnarray}

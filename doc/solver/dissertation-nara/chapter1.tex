@@ -18,7 +18,7 @@ Because schools differ a lot in their educational policies, both when considerin
 
 University timetabling problems have also been very studied and have many similarities with the school version. Studies based on a Turkish university system can be found at \cite{Guenalay2006} and on a Greek university system at \cite{Daskalaki2005}. For more complete approaches, one can check at \cite{Carter2001} for a Canada university system and at \cite{Murray2007} for an American university system.
 
-The problem is known to be a hard problem and therefore many researchers have shown an interest in it since the early 1960's. Schaerf \cite{Schaerf99} showed that the school timetabling problem is NP-complete and that exact optimal solution could be obtained only for small size problems. Furthermore, enhancing a model with real-world practical and quality requirements increases even more the complexity of the problem. For instance, considering the compactness requirement for students timetables (see \ref{constrStudentGap}), \cite{Asratian2002} shows that deciding whether a timetable that guarantees compactness for the students exits is NP-complete by itself.
+The problem is known to be a hard problem and therefore many researchers have shown an interest in it since the early 1960's. Schaerf \cite{Schaerf99} showed that the school timetabling problem is NP-complete and that exact optimal solution could be obtained only for small size problems. Furthermore, enhancing a model with real-world practical and quality requirements increases even more the complexity of the problem. For instance, considering the compactness requirement for students timetables (see ~\ref{constrStudentGap}), \cite{Asratian2002} shows that deciding whether a timetable that guarantees compactness for the students exits is NP-complete by itself.
 
 
 
@@ -62,13 +62,13 @@ For the university environment, we draw attention to \cite{Carter2001} and \cite
 
 The major differences between many of the problems studied and their real life counterparts are the additional complexity imposed by course structures, the variety of constraints imposed, and the distributed responsibility for information needed to solve such problems at a university-wide level.
 
-As pointed out in \cite{Murray2007}, the biggest obstacle to solving actual university course timetabling problems is that the complexity can increase considerably beyond that represented in standard formulations of the problem. As the complexity increases, it is easy to be caught in the dual bind that the problem is both more challenging to develop an effective solution approach for, and this approach is less likely to be usable on other university timetabling problems.
+As pointed out in \cite{Murray2007}, the biggest obstacle to solve actual university course timetabling problems is that the complexity can increase considerably beyond that represented in standard formulations of the problem. As the complexity increases, it is easy to be caught in the dual bind that the problem is both more challenging to develop an effective solution approach for, and this approach is less likely to be usable on other university timetabling problems. Every institution has its own particularities, which make it harder to build a single and general solver for multiple institutions.
 
 As observed by Carter \cite{Carter2001}, there are few published papers that described actual implementations of course timetabling. From what we know, the first example of an automated and integrated course timetabling and student scheduling system across a institution was developed for the University of Waterloo between 1979 and 1985. Although the system was implemented 29 years ago, much of the discussion is still very relevant. By 2001, Carter expressed at \cite{Carter2001} his belief that there was still no system for solving the large-scale course timetabling problem with such level of mathematical sophistication.
 
 By 2006, Guenalay and Sahin introduced at \cite{Guenalay2006} a Decision Support System (DSS) for the university timetabling that allows the direct involvement of the decision maker. They affirmed that their model was the first one which simultaneously combined such a DSS approach with a goal programming optimization tool.
 
-At \cite{Unitime} is described and widely documented the Unitime software, a system used at Purdue University \fixme{conferir} and which is also the focus of \cite{Murray2007}.
+At \cite{Unitime} the Unitime software is described and widely documented. It is an open source system used at Purdue University and is also the focus of \cite{Murray2007}.
 \fixme{citar mais software!}
 
 
@@ -117,8 +117,11 @@ The primary design goal is not necessarily finding a true optimal solution, but 
 % ------------------------------------------------------------
 \section{Timetabling Conferences and Groups}
 
-\subsection{Practice and Theory of Automated Timetabling (Patat)}
+\fixme{Colocar logo para cada item}
 
+% ---------------
+\subsection{Practice and Theory of Automated Timetabling (Patat)}
+\label{patat}
 The International Series of Conferences on the Practice and Theory of Automated Timetabling (PATAT) is held biennially as a forum for both researchers and practitioners of timetabling to exchange ideas. The first edition was held in Edinburgh (UK) in 1995, and since that editions have taken place in Canada, Germany, Belgium, USA, Czech Republic, Northern Ireland and Norway. See \cite{Patat}.
 
 Whether it is sporting events, educational institutions, transportation or employee management the construction of efficient timetables which provide the maximum in way of flexibility for all constituent parts is as important as it is challenging. An increasingly important aspect within organizations is an automated approach which maximizes all aspects of resource usage. In doing so a number of quantitative and qualitative challenges must be dealt with from both a technical and practical perspective.
@@ -128,21 +131,18 @@ An important aim of the Conference is to align the needs of practitioners and th
 The link between planning and management within the educational sector is explored and keynote talks are delivered by leading practitioners from the University sector and those companies which provide automated timetable solutions.
 
 
-
+% ---------------
 \subsection{International Timetabling Competition (ITC)}
-The International Timetabling Competition (ITC) have happened in 3 editions, in 2002, 2007 and 2011.
+\label{itc}
+The International Timetabling Competition (ITC) has happened in 3 editions, in 2002, 2007 and 2011.
 
-ITC from 2007 focused on examination and courses timetabling problems (see \cite{ITC2007}) and was sponsored by PATAT and WATT.
+Not much information was found about the first ITC, in 2002.
 
-Although for the sake of the competitive element, not all aspects of the real world problem are included, more depth and complexity are introduced significantly at each new competition.
-
-The competition is composed of three separate rounds. Although there is much overlap, these rounds represent distinct problems within the area of educational timetabling both from a research and practical perspective.
+The second International Timetabling Competition, in 2007, focused on examination and courses timetabling problems and was sponsored by PATAT and WATT (see \cite{ITC2007}).
 
 The third International Timetabling Competition, in 2011, was devoted to High School Timetabling and sponsored by PATAT, EventMAP and CTIT (see \cite{ITC2011}).
 
-Following on from the first and second competitions, the third International Timetabling Competition aimed to stimulate timetabling research generally, and especially to encourage the alignment of research with practice by offering real-world instances of timetabling problems for solution.
-
-The overall objective of the competition were the following:
+The competition aims to stimulate timetabling research generally, and especially to encourage the alignment of research with practice by offering real-world instances of timetabling problems for solution. The overall objectives are the following:
 \begin{itemize}
 \item Allow researchers to trial their techniques in a competitive setting on 'real world' practical problems.
 \item Close the gap which currently exists between research and practice within this important area of operational research.
@@ -152,45 +152,71 @@ The overall objective of the competition were the following:
 \item Generate all-time best solutions to these problem instances.
 \end{itemize}
 
-All instances were provided in XML.
+Although for the sake of the competitive element not all aspects of the real world problem are included, more depth and complexity have been introduced significantly at each new edition.
 
-The first round made use of a set of existing benchmark data and aimed at generating the best recorded results. Competitors could use what ever resources and techniques in attempting to generate their solutions. This is an attempt to replicate the 'real world' where timetablers are more interested in achieving the 'best' solution as opposed to getting a solution quickly. Solutions must be submitted before May 7, 2012.
-The second round made use of the hidden archive. The winner was chosen based on effectiveness in a specified time (1000 seconds) on these instances. Imposing a restrictive time limit allows for the investigation of algorithmic techniques which can provide 'good' solutions in a short space of time. This is often a key requirement in the 'real world' when alternative solutions are required in a short space of time. Hidden instances were used to ensure submitted techniques are not overly tuned to particular instances of the data.
+The competition is composed of three separate rounds. Although there is much overlap, these rounds represent distinct problems within the area of educational timetabling both from a research and practical perspective.
 
-In the third round, the hidden archive instances were released on June 11, 2012. As with the first round, competitors could use what ever resources and techniques in attempting to generate their solutions. The solutions were to be submitted one month later.
+The first round made use of a set of existing benchmark data and aims at generating the best recorded results. Competitors can use what ever resources and techniques in attempting to generate their solutions. This is an attempt to replicate the 'real world' where timetablers are more interested in achieving the 'best' solution as opposed to getting a solution quickly.
+
+The second round makes use of the hidden archive. The winner is chosen based on effectiveness in a specified time on these instances. Imposing a restrictive time limit allows for the investigation of algorithmic techniques which can provide 'good' solutions in a short space of time. This is often a key requirement in the 'real world' when alternative solutions are required in a short space of time. Hidden instances are used to ensure submitted techniques are not overly tuned to particular instances of the data.
+
+In the third round, the hidden archive instances are released. As with the first round, competitors can use what ever resources and techniques in attempting to generate their solutions. Solutions are to be submitted one month later.
+
+All instances are provided in XML.
 
 
-
-
-
+% ---------------
 \subsection{Hstt}
+\label{hstt}
 % Benchmarking project for highschool
 
 The research in (High) School Timetabling was lacking the availability of exchangeable benchmarks in a uniform format. For this reason a group of researchers agreed on an xml-standard to exchange their datasets. At this moment there are around 50 datasets available. We reported on this project in the PATAT conferences of 2008 and 2010.
 
 Available are archives and datasets in XHSTT format, an evaluator for instances (by Jeff Kingston) and solutions in XHSTT, and a classification (by Nelishia Pillay) of high school timetabling.
 
-At chapter \ref{chap:converting} an attempt for solving XHSTT instances provided by \cite{Hstt} is detailed and registered.
+At chapter ~\ref{chap:converting} an attempt for solving XHSTT instances provided by \cite{Hstt} is detailed and registered.
 
 More information about this project at \cite{Hstt}.
 
 
+% ---------------
 \subsection{Ectt}
+\label{ectt}
 % Udine, Italy
-Following the spirit of the Second International Timetabling Competition (ITC2007), \cite{Ectt} provides a portfolio of formulations for the Curriculum-Based Course Timetabling problem as defined in [Bonutti, De Cesco, Di Gaspero and Schaerf, Annals of Operations Research].
+Following the spirit of the International Timetabling Competition (~\ref{itc}), \cite{Ectt} provides a portfolio of formulations for the Curriculum-Based Course Timetabling problem as defined in [Bonutti, De Cesco, Di Gaspero and Schaerf, Annals of Operations Research].
 
 Through the website it is possible to download instances (both in text-only and XML format) and solutions contributed from the research community; validate your solutions online or download the source code of a solution validator; insert solutions, lower bounds, instances, and links of interest for the community; and generate random instances. All problem instances available to download are based on real data from various universities.
 
 
-\subsection{EURO Working Group on Automated Timetabling (Watt)}
-This is a test reference to \cite{Watt}.					% Working group on automated timetabling
+% ---------------
+\subsection{EURO Working Group on Automated Timetabling (WATT)}
+\label{watt}
+
+WATT is the EURO Working Group on Automated Timetabling, formed to discuss, promote, and perform research into automated timetabling problems and methods.
+
+The WATT community was launched in the wake of the first international conference on the Practice and Theory of Automated Timetabling in 1995 (PATAT'95). Ever since, the interest group has flourished and memberships have steadily increased.
+
+The main studied categories are:
+\begin{itemize}
+\item Employee timetabling, which consists of \q{Nurse rostering} and \q{Personel scheduling};
+\item Educational timetabling, which consists of \q{Course timetabling}, \q{University timetabling} and \q{Exam timetabling};
+\item Sports timetabling, which consists of \q{Tournament scheduling} and \q{Referee assignment};
+\item Other timetabling problems.
+\end{itemize}
+Each category provides reference datasets and references to literature on the respective timetabling subject.
+
+Further information at \cite{Watt}.
 
 
+% ---------------
 \subsection{Mista: Multidisciplinary international scheduling conference}
-This is a test reference to \cite{Mista}.
+\label{mista}
 
+Mista is a conference series which serves as a forum for an international community of researchers, practitioners and vendors on all aspects of multi-disciplinary scheduling. The aim is to bring together scheduling researchers and practitioners from all the disciplines that engage with scheduling research. 
 
+It was held biennially since 2003 alternating between cities in UK, USA, France, Ireland and Belgium. In August 2015 the seventh conference will be held in Prague, Czech Republic.
 
+Further information at \cite{Mista}.
 
 % ------------------------------------------------------------
 
@@ -204,12 +230,6 @@ This is a test reference to \cite{Michael2002}.   % Michael2002
 This is a test reference to \cite{SchoolOverview2010}.   % SchoolOverview2010
 This is a test reference to \cite{Birbas2009}.    % Birbas2009
 This is a test reference to \cite{Mimosasoftware}.
-This is a test reference to \cite{Patat}.
-This is a test reference to \cite{Hstt}.				  % Benchmarking project for highschool
-This is a test reference to \cite{ITC2007}.				% International Timetabling Competition
-This is a test reference to \cite{Ectt}.					% Udine, Italy
-This is a test reference to \cite{Udine}.
-This is a test reference to \cite{Watt}.					% Working group on automated timetabling
 
 
 
@@ -219,10 +239,10 @@ This is a test reference to \cite{Watt}.					% Working group on automated timeta
 \section{Dissertation Outline}
 This work is organized as follows: 
 \begin{itemize}
-	\item Chapter \ref{chap:timetabling} introduces Trieda's timetabling problem.
-	\item Chapter \ref{chap:mipformulation} shows the mathematical formulation for the problem.
-	\item Chapter \ref{chap:strategies} presents different approaches and strategies for solving the MIP formulation.
-	\item Chapter \ref{chap:constranalysis} analyzes the impact of some requirements in the MIP solving.
-	\item Chapter \ref{chap:converting} presents an attempt to converting a XHSTT format into a Trieda's problem format.
-	\item Chapter \ref{chap:conclusions} contains the conclusions of this work.
+	\item Chapter ~\ref{chap:timetabling} introduces Trieda's timetabling problem.
+	\item Chapter ~\ref{chap:mipformulation} shows the mathematical formulation for the problem.
+	\item Chapter ~\ref{chap:strategies} presents different approaches and strategies for solving the MIP formulation.
+	\item Chapter ~\ref{chap:constranalysis} analyzes the impact of some requirements in the MIP solving.
+	\item Chapter ~\ref{chap:converting} presents an attempt to converting a XHSTT format into a Trieda's problem format.
+	\item Chapter ~\ref{chap:conclusions} contains the conclusions of this work.
 \end{itemize}
