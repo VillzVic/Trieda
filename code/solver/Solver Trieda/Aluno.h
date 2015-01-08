@@ -126,6 +126,11 @@ public:
 
    bool possuiEquivForcada();
 
+   void setTurnoPrincipal();
+   bool estaEmContraTurno(Disciplina* const disciplina);
+
+
+
    void le_arvore( ItemAluno & elem );
 
    virtual bool operator < ( const Aluno & var ) const
@@ -186,6 +191,8 @@ private:
    std::map< int /*tuplaId*/, GGroup< int/*discId*/ > > ids_discs_correquisito; 
     
    GGroup<int> campusIds;
+
+   TurnoIES* turnoPrincipal;
 };
 
 std::ostream & operator << ( std::ostream &, Aluno & );

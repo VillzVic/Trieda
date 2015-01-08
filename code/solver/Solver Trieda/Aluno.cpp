@@ -647,3 +647,41 @@ void Aluno::removeHorarioDiaOcupado( HorarioDia* hd )
 	 return ss.str();
  }
  
+void Aluno::setTurnoPrincipal()
+{
+	unordered_map<TurnoIES*, int> turnoNrDem;
+	ITERA_GGROUP_LESSPTR( itAlDem, this->demandas, AlunoDemanda )
+	{
+		TurnoIES* t = (*itAlDem)->demanda->getTurnoIES();
+
+		auto finder = turnoNrDem.find(t);
+		if (finder == turnoNrDem.end())
+		{
+			finder = turnoNrDem.insert( pair<TurnoIES*, int>(t, 0) ).first;
+		}
+		(finder->second)++;		
+	}
+
+	int nrMaxDem=0;
+	TurnoIES* turnoMaxDem=nullptr;
+	for (auto it = turnoNrDem.cbegin(); it!=turnoNrDem.cend(); it++)
+	{
+		if (it->second > nrMaxDem)
+		{
+			nrMaxDem = it->second;
+			turnoMaxDem = it->first;
+		}
+	}
+	turnoPrincipal = turnoMaxDem;
+}
+
+bool Aluno::estaEmContraTurno(Disciplina* const disciplina)
+{
+	AlunoDemanda* alDem = this->getAlunoDemanda(disciplina->getId());
+	if (alDem)
+	{
+		if (turnoPrincipal != alDem->demanda->getTurnoIES())
+			return true;
+	}
+	return false;
+}

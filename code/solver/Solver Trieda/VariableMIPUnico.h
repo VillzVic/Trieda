@@ -16,46 +16,50 @@ public:
    // All variable types
    enum VariableType
    {
-      V_ERROR = 0,
-	  V_ALUNO_CREDITOS = 1,						// v_{a,i,d,u,s,hi,hf,t}
-	  V_CREDITOS = 2,							// x_{i,d,u,s,hi,hf,t}
-      V_OFERECIMENTO = 3,						// o_{i,d,u,s}
-      V_ALOCA_ALUNO_TURMA_DISC = 4,				// s_{i,d,a}
-	  V_DIAS_CONSECUTIVOS = 5,					// c_{i,d,t}
-      V_SLACK_DEMANDA_ALUNO = 6,				// fd_{d,a}
-	  V_TURMA_ATEND_CURSO = 7,					// b_{i,d,c}
-      V_SLACK_ABERT_SEQ_TURMA = 10,				// ft_{i,d,cp}
+      V_ERROR,
+	  V_ALUNO_CREDITOS,						// v_{a,i,d,u,s,hi,hf,t}
+	  V_CREDITOS,							// x_{i,d,u,s,hi,hf,t}
+      V_OFERECIMENTO,						// o_{i,d,u,s}
+      V_ALOCA_ALUNO_TURMA_DISC,				// s_{i,d,a}
+	  V_DIAS_CONSECUTIVOS,					// c_{i,d,t}
+      V_SLACK_DEMANDA_ALUNO,				// fd_{d,a}
+	  V_TURMA_ATEND_CURSO,					// b_{i,d,c}
+      V_SLACK_ABERT_SEQ_TURMA,				// ft_{i,d,cp}
       
-      V_COMBINACAO_DIVISAO_CREDITO = 13,		// m{i,d,k,cp}
-      V_SLACK_COMBINACAO_DIVISAO_CREDITO_M = 14,// fkm{i,d,t,cp}
-      V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 15,// fkp{i,d,t,cp}
-	  V_ABERTURA_COMPATIVEL = 16,				// zc_{d,t}
-	  V_SLACK_COMPARTILHAMENTO = 17,			// fc_{i,d,c,c'}
-	  V_ALUNO_DIA = 21,							// du_{a,t}
-	  V_SLACK_PRIOR_INF = 22,					// fpi_{a,cp}
-	  V_SLACK_PRIOR_SUP = 23,					// fps_{a,cp}
-	  V_ABERTURA = 25,							// z_{i,d,cp}
-	  V_ALUNOS_MESMA_TURMA_PRAT = 27,			// ss_{dp,a1,a2}
-	  V_FOLGA_ALUNO_MIN_ATEND1 = 28,			// fmd1_{a}
-	  V_FOLGA_ALUNO_MIN_ATEND2 = 29,			// fmd2_{a}
-	  V_FOLGA_ALUNO_MIN_ATEND3 = 30,			// fmd3_{a}
-	  V_SALA = 32,								// u_{s}
+      V_COMBINACAO_DIVISAO_CREDITO,			// m{i,d,k,cp}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_M,	// fkm{i,d,t,cp}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_P,	// fkp{i,d,t,cp}
+	  V_ABERTURA_COMPATIVEL,				// zc_{d,t}
+	  V_SLACK_COMPARTILHAMENTO,				// fc_{i,d,c,c'}
+	  V_ALUNO_DIA,							// du_{a,t}
+	  V_SLACK_PRIOR_INF,					// fpi_{a,cp}
+	  V_SLACK_PRIOR_SUP,					// fps_{a,cp}
+	  V_ABERTURA,							// z_{i,d,cp}
+	  V_ALUNOS_MESMA_TURMA_PRAT,			// ss_{dp,a1,a2}
+	  V_FOLGA_ALUNO_MIN_ATEND1,				// fmd1_{a}
+	  V_FOLGA_ALUNO_MIN_ATEND2,				// fmd2_{a}
+	  V_FOLGA_ALUNO_MIN_ATEND3,				// fmd3_{a}
+	  V_SALA,								// u_{s}
 
-	  V_PROF_TURMA = 33,						// y_{p,i,d,cp}
-	  V_PROF_AULA = 34,							// k_{p,i,d,u,t,h}
+	  V_PROF_TURMA,							// y_{p,i,d,cp}
+	  V_PROF_AULA,							// k_{p,i,d,u,t,h}
+	  V_PROF_UNID,							// uu_{p,t,u}
 
-	  V_HI_PROFESSORES = 35,					// hip_{p,t,f}
-	  V_HF_PROFESSORES = 36,					// hfp_{p,t,f}
-	  V_HI_ALUNOS = 37,							// hia_{a,t}
-	  V_HF_ALUNOS = 38,							// hfa_{a,t}
-	  V_FOLGA_GAP_ALUNOS = 39,					// fagap_{a,t}
-	  V_FOLGA_GAP_PROF = 40,					// fpgap_{p,t}
+	  V_HI_PROFESSORES,						// hip_{p,t,f}
+	  V_HF_PROFESSORES,						// hfp_{p,t,f}
+	  V_HI_ALUNOS,							// hia_{a,t}
+	  V_HF_ALUNOS,							// hfa_{a,t}
+	  V_FOLGA_GAP_ALUNOS,					// fagap_{a,t}
+	  V_FOLGA_GAP_PROF,						// fpgap_{p,t}
 	  
-	  V_FOLGA_MIN_CRED_DIA_ALUNO = 41,			// fcad_{a,t}
-	  V_F_CARGA_HOR_ANT_PROF = 42,				// fch_{p}
+	  V_FOLGA_MIN_CRED_DIA_ALUNO,			// fcad_{a,t}
+	  V_F_CARGA_HOR_ANT_PROF,				// fch_{p}
 
-	  V_LONGO_DIA_ALUNO = 43,					// l_{a,t}		// marretado
-	  V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA = 44	// fcadm_{a,t}  // marretado
+	  V_LONGO_DIA_ALUNO,					// l_{a,t}		// marretado
+	  V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA,	// fcadm_{a,t}  // marretado
+
+	  V_INICIO_ALUNOS,						// inicio_{a,t,h}
+	  V_FIM_ALUNOS							// fim_{a,t,h}
 	  	  
    };
 

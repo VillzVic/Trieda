@@ -288,10 +288,8 @@ std::string ConstraintMIPUnico::toString( int etapa )
       ss << "_ALUNO_DISC_PRATICA_TEORICA):"; break;	  
    case C_DISC_PRATICA_TEORICA:
       ss << "_DISC_PRATICA_TEORICA):"; break;	  
-   case C_MIN_DIAS_ALUNO:
-      ss << "_MIN_DIAS_ALUNO):"; break;	  
-   case C_MAX_DIAS_ALUNO:
-      ss << "_MAX_DIAS_ALUNO):"; break;	  
+   case C_DIA_USADO_ALUNO:
+      ss << "_C_DIA_USADO_ALUNO):"; break;	  
    case C_ASSOCIA_V_X:
       ss << "_ASSOCIA_V_X):"; break;	  
 	case C_DEMANDA_DISC_ALUNO:
@@ -334,8 +332,7 @@ std::string ConstraintMIPUnico::toString( int etapa )
       ss << "C_PROF_MIN_DESCANSO):"; break;				  
 	case C_MAX_ALUNOS_TURMA:
       ss << "C_MAX_ALUNOS_TURMA):"; break;	  
-	  
-	  
+	  	  
 	case C_PROF_DIA_HOR:
       ss << "C_PROF_DIA_HOR):"; break;
 	case C_PROF_AULA:
@@ -387,8 +384,22 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_TEMPO_DESLOC_PROF"; break;
 	  case C_NR_DESLOC_PROF:
         ss << "C_NR_DESLOC_PROF"; break;
+	  case C_NR_UNIDS_PROF:
+        ss << "C_NR_UNIDS_PROF"; break;		
+	  case C_MAX_UNIDS_DIA_PROF:
+        ss << "C_MAX_UNIDS_DIA_PROF"; break;		
 	  case C_CARGA_HOR_ANTERIOR:
         ss << "C_CARGA_HOR_ANTERIOR"; break;	
+
+	  case C_ALUNO_HOR_INIC_DIA:
+        ss << "C_ALUNO_HOR_INIC_DIA"; break;	
+	  case C_ALUNO_HOR_FIM_DIA:
+        ss << "C_ALUNO_HOR_FIM_DIA"; break;		
+	  case C_ALUNO_HOR_INIC_UNICO:
+        ss << "C_ALUNO_HOR_INIC_UNICO"; break;		
+	  case C_ALUNO_HOR_FIM_UNICO:
+        ss << "C_ALUNO_HOR_FIM_UNICO"; break;	
+		
 
    default:
       ss << "!";

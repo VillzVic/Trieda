@@ -371,6 +371,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	
 	setParams(timeIter_);
 
+	int i=0;
     while (okIter_)
     {     
 		fixVars();
@@ -396,11 +397,13 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		checkTimeLimit();
 	  
 		unfixBounds();
-    }		
+		i++;
+    }
 	
-	//if (phase_ == Polish::PH_MIN_PV)
-	//	mainLocalBranching();
-	
+	stringstream ss;
+	ss << "\n\nNumber of performed iterations: " << i;
+	printLog(ss.str());
+		
 	closeLogFile();
 	restoreOriginalLogFile();
 	
@@ -438,14 +441,16 @@ void Polish::fixVarsOp()
 	fixVarsType2Op();
 }
 
-void Polish::decideVarsToFixMarreta()
+void Polish::clearVarsToFixType1()
 {
-	if ( phase_ != Polish::PH_MARRETA ) return;
-
 	paraFixarUm_.clear();
 	paraFixarZero_.clear();
+}
 
-	if (perc_<= 0) return;
+void Polish::decideVarsToFixMarreta()
+{
+	if (phase_ != Polish::PH_MARRETA) return;
+	if (perc_ <= 0) return;
 
     // Seleciona turmas e disciplinas para fixar    
     int nBds = 0;	
@@ -476,12 +481,8 @@ void Polish::decideVarsToFixMarreta()
 
 void Polish::decideVarsToFixOther()
 {
-	if ( phase_ == Polish::PH_MARRETA ) return;
-	
-	paraFixarUm_.clear();
-	paraFixarZero_.clear();
-
-	if (perc_<= 0) return;
+	if (phase_ == Polish::PH_MARRETA) return;
+	if (perc_ <= 0) return;
 
     // Seleciona turmas e disciplinas para fixar    
     int nBds = 0;	
@@ -526,6 +527,7 @@ void Polish::decideVarsToFixByPhase()
 
 void Polish::fixVarsType1Tatico()
 {
+	clearVarsToFixType1();
 	decideVarsToFixByPhase();
 	fixVarsType1();
 	fixVarsProfType1();	
@@ -1100,9 +1102,9 @@ void Polish::adjustPercOrUnid()
 	else
 	{		
 		if(optimal() && timeLeft_>0.7*timeIter_)
-			decreasePercOrFreeUnid(10);			// decrease the fixed portion if it was easy (fast) to solve
+			decreasePercOrFreeUnid(5);			// decrease the fixed portion if it was easy (fast) to solve
 		else if(!melhorou_)
-			decreasePercOrFreeUnid(15);			// decrease the fixed portion if no improvement was made		
+			decreasePercOrFreeUnid(10);			// decrease the fixed portion if no improvement was made		
 	}
 }
 
@@ -1178,11 +1180,11 @@ void Polish::adjustOkIter(double objN)
 {
 	// Obj acchieved a known minimal possible value
 	if (globalOptimal(objN))
-		okIter_ = true;		
+		okIter_ = false;		
 
 	// final!
 	if (perc_ <= 0 && allUnidadesAreFree())
-		okIter_ = true;
+		okIter_ = false;
 }
 
 bool Polish::globalOptimal(double objN)
@@ -1190,11 +1192,17 @@ bool Polish::globalOptimal(double objN)
 	// Obj acchieved a known minimal possible value
 	if (lp_->getObjSen() == OPTSENSE_MINIMIZE)
 	if (objN <= minOptValue_ + 10e-8)
+	{
+		printLog("\nGlobal optimal!!!");
 		return true;
-	
+	}
+
 	if (lp_->getObjSen() == OPTSENSE_MAXIMIZE)
 	if (objN >= minOptValue_ - 10e-8)
+	{
+		printLog("\nGlobal optimal!!!");
 		return true;
+	}
 	
 	return false;
 }

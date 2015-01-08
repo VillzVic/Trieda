@@ -49,16 +49,19 @@ private:
 
    enum OutPutFileType
    {
-	  MIP_GENERAL = 0,
-	  MIP_GARANTE_SOL = 1,				
-	  MIP_MAX_ATEND = 2,
-	  MIP_MIN_VIRT = 3,
-	  MIP_MIN_GAP_PROF = 4,
-	  MIP_MARRETA = 5
+	  MIP_GENERAL,
+	  MIP_GARANTE_SOL,
+	  MIP_MAX_ATEND,
+	  MIP_MIN_VIRT,
+	  MIP_MIN_TURMAS_COMPART,
+	  MIP_MIN_GAP_PROF,
+	  MIP_MARRETA
    };	  
 
 
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
+   bool haDemanda(Disciplina* const disc);
+   bool haDemandaPossivelNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
 
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
@@ -79,7 +82,7 @@ private:
    int criaVariavelTaticoOferecimentos( int campusId, int P );								// o_{i,d,u,s}
    int criaVariavelTaticoCursoAlunos( int campusId, int P );								// b_{i,d,c,c'}
    int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId, int P  );						// fd_{d,a}
-   int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
+   int criaVariavelTaticoDiaUsadoPeloAlunoAPartirDeV();										// du_{a,t}
    int criaVariavelTaticoFolgaAbreTurmaSequencial( int campusId, int P );					// ft_{i,d,cp}
    int criaVariavelFolgaProibeCompartilhamento( int campusId, int P );						// fc_{i,d,c,c',cp}
    int criaVariavelFolgaPrioridadeInf( int campusId, int prior );							// fpi_{a,cp}
@@ -91,12 +94,17 @@ private:
    int criaVariavelProfAulaAPartirDeX();													// k_{p,i,d,cp,t,h}
    int criaVariaveisHiHfProfFaseDoDiaAPartirDeK(void);										// hip_{p,t,f} e hfp_{p,t,f}
    int criaVariaveisHiHfAlunoDiaAPartirDeV(void);											// hia_{a,t} e hfa_{a,t}
+   int criaVariaveisInicioFimAlunoDiaAPartirDeV(void);										// inicio_{a,t,h} e fim_{a,t,h}
    int criaVariavelFolgaGapProfAPartirDeK(void);											// fpgap_{p,t,f}
+   int criaVariavelUnidUsadaProfAPartirDeK(void);											// uu_{p,t,u}
    int criaVariavelFolgaGapAlunoAPartirDeV(void);											// fagap_{a,t}
    int criaVariavelWAPartirDeX();															// w_{p,u,t,h}
 
    int criarVariavelFolgaMinCredsDiaAluno();												// fcad_{a,t}
    int criaVariavelFolgaCargaHorariaAnteriorProfessor();									// fch_{p}
+   
+
+   bool checkValidCol(int col) const;
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -124,8 +132,7 @@ private:
    int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
    int criaRestricaoTaticoAlunoHorario( int campusId );					// Restricao 1.2.12
    int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
-   int criaRestricaoTaticoMinDiasAluno( int campusId );
-   int criaRestricaoTaticoMaxDiasAluno( int campusId );
+   int criaRestricaoTaticoDiaUsadoPeloAluno();
    int criaRestricaoTaticoAtendeAluno( int campusId, int prioridade );
    int criaRestricaoTaticoSalaUnica( int campusId );
    int criaRestricaoTaticoSalaPorTurma( int campusId );
@@ -174,9 +181,34 @@ private:
 	int criarRestricaoAlunoGap_(Aluno* const aluno, const int dia,
 		int rhs, const int colHi, const int colHf, set< pair<int,double> > const &varsColCoef);
 
+	// criar restrições que impedem gaps nos horários do aluno em um mesmo dia (nova formulação)
+	int criarRestricaoGapDiaAluno();
+	int criarRestricaoAlunoDia_( Aluno* const aluno, const int dia,
+			map<DateTime, pair<int,int>> const &mapDiaVarsInicioFim, 
+			map<DateTime /*dti*/, map<Campus*, map<Disciplina*, map<int/*turma*/,	
+				set<pair<int/*col*/, VariableMIPUnico>>>, LessPtr<Disciplina>>, LessPtr<Campus>>> const &mapDiaVarsV);
+	int criarRestricaoAlunoDiaImpedeGap_( Aluno* const aluno, const int dia,
+			map<DateTime, pair<int,int>> const &mapDiaVarsInicioFim, 
+			map<DateTime /*dti*/, map<Campus*, map<Disciplina*, map<int/*turma*/,	
+				set<pair<int/*col*/, VariableMIPUnico>>>, LessPtr<Disciplina>>, LessPtr<Campus>>> const &mapDiaVarsV);
+	int criarRestricaoAlunoDiaInicio_( Aluno* const aluno, const int dia,
+			map<DateTime, pair<int,int>> const &mapDiaVarsInicioFim, 
+			map<DateTime /*dti*/, map<Campus*, map<Disciplina*, map<int/*turma*/,	
+				set<pair<int/*col*/, VariableMIPUnico>>>, LessPtr<Disciplina>>, LessPtr<Campus>>> const &mapDiaVarsV);
+	int criarRestricaoAlunoDiaFim_( Aluno* const aluno, const int dia,
+			map<DateTime, pair<int,int>> const &mapDiaVarsInicioFim, 
+			map<DateTime /*dti*/, map<Campus*, map<Disciplina*, map<int/*turma*/,	
+				set<pair<int/*col*/, VariableMIPUnico>>>, LessPtr<Disciplina>>, LessPtr<Campus>>> const &mapDiaVarsV);
+	int criarRestricaoAlunoDiaInicioUnico_( Aluno* const aluno, const int dia,
+			map<DateTime, pair<int,int>> const &mapDiaVarsInicioFim);
+	int criarRestricaoAlunoDiaFimUnico_( Aluno* const aluno, const int dia,
+			map<DateTime, pair<int,int>> const &mapDiaVarsInicioFim);
+
 	int criarRestricaoMinCredsDiaAluno();
 	int criaRestricaoTempoDeslocProfessor();
 	int criaRestricaoNrMaxDeslocProfessor();
+	int criaRestricaoUnidUsadaProf();
+	int criaRestricaoNrMaxUnidDiaProf();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 	int criarRestricaoMinCredsDiaAluno_Marreta();
@@ -187,6 +219,7 @@ private:
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_1();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_2();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_3();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_3_NovaFormGap();
 
    /* 
 		****************************************************************************************************************
@@ -200,6 +233,8 @@ private:
 	map< Professor*, map< int /*dia*/, map<Unidade*, map< HorarioAula*,
 		set< pair<int /*col*/,VariableMIPUnico> >, LessPtr<HorarioAula> >, LessPtr<Unidade> > >, LessPtr<Professor> > vars_prof_aula3;	// k_{p,i,d,u,t,hi}
 	
+	map<Professor*, map<int /*dia*/, map<Unidade*, int /*col*/>>> vars_prof_dia_unid;
+
 	map< Aluno*, map< int /*dia*/, map<DateTime /*dti*/, map< Campus*, map< Disciplina*, map< int /*turma*/,
 		set< pair<int /*col*/, VariableMIPUnico> > >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Aluno> > vars_aluno_aula;		// v_{a,i,d,s,t,hi,hf}
 
@@ -215,7 +250,8 @@ private:
 
 	// vars inteiras que indicam o primeiro hia e o último hfa horário do dia usados pelo aluno
 	// Aluno -> Dia -> (col. nr. hia/ col. nr. hfa)
-	unordered_map<Aluno*, unordered_map<int, pair<int,int>>> varsAlunoDiaHiHf;														// hia_{a,t} e hfa_{a,t}
+	map<Aluno*, unordered_map<int, pair<int,int>>> varsAlunoDiaHiHf;									// hia_{a,t} e hfa_{a,t}
+	map<Aluno*, unordered_map<int, map<DateTime, pair<int,int>>>, LessPtr<Aluno>> varsAlunoDiaInicioFim;	// inicio_{a,t,h} e fim_{a,t,h}
 	
 	// Professor -> Dia -> Fase do dia -> (col. nr. fpgap)
 	unordered_map<Professor*, unordered_map<int, unordered_map<int,int>>> varsProfFolgaGap;											// fpgap_{p,t,f}
@@ -313,6 +349,7 @@ private:
 	int solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
@@ -348,8 +385,8 @@ private:
 
 	std::map< Trio< int, Disciplina *, int >, bool > mapPermitirAbertura;
 
-	std::map< int /*discId*/, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
-	int getNroMaxAlunoDemanda( int discId );
+	std::map<Disciplina*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Disciplina> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
+	int getNroMaxAlunoDemanda(Disciplina* const disc);
 	
 	
    /* 
@@ -382,6 +419,7 @@ private:
 	static const int pesoMinCredDiaAluno;
 	static const int desvioMinCredDiaAluno;		// desvio máximo do nr médio de créditos por dia do aluno, sem que haja penalização 
 	static const int considerarMinCredDiaAluno;
+	static const bool ignorarGapAlunoContraTurno_;
 
 	// log file name
 	string optLogFileName;

@@ -413,6 +413,8 @@ void ProblemDataLoader::load()
    dif = CentroDados::getLastRunTime();
    std::cout << left << std::setw(10) << " " << dif << "sec"; fflush(NULL);
           
+   problemData->setTurnoPrincipalAlunos();
+   
    std::cout << left << std::setw(70) << "\nprintInputDataLog...";  fflush(NULL);
    this->printInputDataLog();
    dif = CentroDados::getLastRunTime();

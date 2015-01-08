@@ -25,11 +25,11 @@ class Polish
 public:
 
 	#ifdef SOLVER_CPLEX
-		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
-		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
+		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
+		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
 	#elif SOLVER_GUROBI 
-		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
-		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile, int phase=Polish::PH_OTHER, double maxFOAddValue=0 );
+		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
+		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
 	#endif
 
 	~Polish();
@@ -79,6 +79,7 @@ private:
 	void fixVarsOp();
 
 	// Fix variable type 1
+	void clearVarsToFixType1();
 	void decideVarsToFixMarreta();
 	void decideVarsToFixOther();
 	void decideVarsToFixByPhase();

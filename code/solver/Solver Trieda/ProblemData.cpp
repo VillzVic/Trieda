@@ -6523,3 +6523,11 @@ int ProblemData::getCalendariosMaxInterv( int dia, int fase )
 	}
 	return maxInterv;
 }
+
+void ProblemData::setTurnoPrincipalAlunos()
+{
+	for (auto itAl = alunos.begin(); itAl != alunos.end(); itAl++)
+	{
+		(*itAl)->setTurnoPrincipal();	
+	}
+}

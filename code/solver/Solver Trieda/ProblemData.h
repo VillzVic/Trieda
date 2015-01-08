@@ -624,6 +624,8 @@ public:
    int getCalendariosMaxSomaInterv( int dia );
    int getCalendariosMaxInterv( int dia, int fase );
 
+   void setTurnoPrincipalAlunos();
+
    private:
    
 		int modoOtimizacao;

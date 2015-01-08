@@ -2147,7 +2147,7 @@ int Operacional::solveMinVirtuais(bool& CARREGA_SOL_PARCIAL, double *x, std::ofs
 		bool polishing = true;
 		if ( polishing )
 		{  
-			Polish *pol = new Polish(lp, vHashOp, optLogFileName_);
+			Polish *pol = new Polish(lp, vHashOp, optLogFileName_, Polish::PH_OTHER);
 			polishing = pol->polish(x, 3600, 90, 1000);
 			delete pol;
 
@@ -2727,7 +2727,7 @@ int Operacional::solveGeneral(bool& CARREGA_SOL_PARCIAL, double *xS, std::ofstre
 		bool polishing = true;
 		if ( polishing )
 		{  
-			Polish *pol = new Polish(lp, vHashOp, optLogFileName_);
+			Polish *pol = new Polish(lp, vHashOp, optLogFileName_, Polish::PH_OTHER);
 			polishing = pol->polish(xS, 3600, 90, 1000);
 			delete pol;
 
@@ -4743,7 +4743,7 @@ int Operacional::criaVariavelProfessorAulaHorario( void )
 				DateTime dt = h->getInicio();
 				Calendario *c = h->getCalendario();
 
-				if ( alDem->demanda->getCalendario()->possuiHorarioDiaOuCorrespondente(h,h,dia) )
+				if ( alDem->podeNoHorario(h,dia) )
 				if ( c->getTempoAula() == discAula->getTempoCredSemanaLetiva() )
 				if ( h->dias_semana.find( dia ) != h->dias_semana.end() )
 					mapDiscTurmaDiaDtCalendTurnoHorAula[discAula][turma][*itAula][dt][c][turno->getId()] = h;

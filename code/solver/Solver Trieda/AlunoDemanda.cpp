@@ -1,4 +1,6 @@
 #include "AlunoDemanda.h"
+#include "TurnoIES.h"
+#include "Calendario.h"
 
 AlunoDemanda::AlunoDemanda( void )
 {
@@ -43,6 +45,14 @@ void AlunoDemanda::le_arvore( ItemAlunoDemanda & elem )
    this->setDemandaId( elem.demandaId() );
    this->setPrioridade( elem.prioridade() );
    this->setExigeEquivalenciaForcada( elem.exigeEquivalenciaForcada() );
+}
+
+bool AlunoDemanda::podeNoHorario(HorarioAula* const h, int dia) const
+{ 
+	TurnoIES* const turnoAlDem = demanda->getTurnoIES();
+	Calendario* const calendAlDem = demanda->getCalendario();
+
+	return turnoAlDem->possuiHorarioDiaOuCorrespondente(calendAlDem, h, dia);
 }
 
 std::ostream & operator << (

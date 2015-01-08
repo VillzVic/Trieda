@@ -303,3 +303,13 @@ bool Professor::possuiHorariosNoDia( HorarioAula *const hi, HorarioAula *const h
 
 	 return false;
 }
+
+int Professor::getMaxCredsDia(int dia) const
+{
+	auto finderDia = mapDiaDtiDtf.find(dia);
+	if (finderDia != mapDiaDtiDtf.cend())
+	{
+		return finderDia->second.size();
+	}
+	return 0;
+}

@@ -5,6 +5,7 @@
 #include "Demanda.h"
 
 class Aluno;
+class HorarioAula;
 
 class AlunoDemanda :
    public OFBase
@@ -38,6 +39,8 @@ public:
    Oferta* getOferta() const { return this->demanda->oferta; }
    Campus* getCampus() const { return this->getOferta()->campus; }
    Curso* getCurso() const { return this->demanda->oferta->curso; }
+
+   bool podeNoHorario(HorarioAula* const h, int dia) const;
 
    bool operator < ( const AlunoDemanda & var ) const
    {

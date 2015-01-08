@@ -264,7 +264,9 @@ std::string VariableMIPUnico::toString() const
 	 case V_PROF_TURMA:
 		str <<"y"; break;
 	 case V_PROF_AULA:
-		str <<"k"; break;		
+		str <<"k"; break;
+	 case V_PROF_UNID:
+		str <<"uu"; break;		
     case V_HI_PROFESSORES:
        str <<"hip"; break;
     case V_HF_PROFESSORES:
@@ -286,6 +288,11 @@ std::string VariableMIPUnico::toString() const
        str <<"l"; break;
 	case V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA:
        str <<"fcadm"; break;	   
+	   	      
+	case V_INICIO_ALUNOS:
+       str <<"inicio"; break;	   	      
+	case V_FIM_ALUNOS:
+       str <<"fim"; break;	   
 	   	      
 
     default:

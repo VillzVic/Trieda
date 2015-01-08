@@ -69,7 +69,9 @@ public:
    HorarioAula* getUltimoHorarioDisponivelDia( int dia );
 
    int getNroCredsCadastroDisc() const { return nroCredsCadastroDisc_; }
-
+   
+   int getMaxCredsDia(int dia) const;
+   
    bool possuiMagisterioEm( Disciplina* disciplina );
    
    GGroup< HorarioDia*,LessPtr<HorarioDia> > getHorariosAnterioresDisponivelDia( DateTime inicio, int dia );
