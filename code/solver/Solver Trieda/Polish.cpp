@@ -16,10 +16,10 @@ bool SO_USAR_WORST_CLUSTER=true;
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashTatico_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(7),
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
-	phase_(phase), percUnidLivres_(70), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
+	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
 	tryBranch_(false), okIter_(true),
 	k_(3)
 {
@@ -29,10 +29,10 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashOp_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(7),
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
-	phase_(phase), percUnidLivres_(70), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
+	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
 	tryBranch_(false), okIter_(true),
 	k_(3)
 {
@@ -886,8 +886,9 @@ void Polish::chooseClusterAndSetFreeUnidade()
 
 int Polish::getNrFreeUnidade()
 {
-	if (percUnidLivres_>100) percUnidLivres_=100;
-	int nr = ((double) percUnidLivres_ /100) * unidades_.size();
+	if (percUnidFixed_>100) percUnidFixed_=100;
+	if (percUnidFixed_<0) percUnidFixed_=0;
+	int nr = ((double) (100-percUnidFixed_) /100) * unidades_.size();
 	return nr;
 }
 
@@ -901,7 +902,7 @@ void Polish::chooseRandUnidade()
 
 void Polish::chooseRandAndSetFreeUnidade()
 {
-	while (unidadeslivres_.size() != getNrFreeUnidade())
+	while (unidadeslivres_.size() < getNrFreeUnidade())
 	{
 		chooseRandUnidade();		
 	}
@@ -916,7 +917,7 @@ void Polish::chooseAndSetFreeUnidades()
 
 	if (useFreeBlockPerCluster_)
 		chooseClusterAndSetFreeUnidade();
-	else
+	//else
 		chooseRandAndSetFreeUnidade();
 }
 
@@ -960,10 +961,10 @@ Unidade* Polish::getUnidadeAt(int at)
 
 void Polish::adjustPercFreeUnid(int adjustment)
 {
-	percUnidLivres_ += adjustment;
+	percUnidFixed_ += adjustment;
 	
-	if (percUnidLivres_>70) percUnidLivres_=70;
-	if (percUnidLivres_<20) percUnidLivres_=20;
+	if (percUnidFixed_>90) percUnidFixed_=90;
+	if (percUnidFixed_<10) percUnidFixed_=10;
 }
 
 void Polish::addFreeUnid(Unidade* unid)
@@ -1048,8 +1049,9 @@ void Polish::setMelhora( double objN )
 
 void Polish::updatePercAndTimeIter(double objN, double gap)
 {			  	  	  
-	  if (perc_ <= 0)
+	  if (allFree())
 	  {
+		  printLog("All free: The End!");
 		  okIter_ = false;
 		  return;
 	  }
@@ -1065,7 +1067,7 @@ void Polish::updatePercAndTimeIter(double objN, double gap)
 		  updatePercAndTimeIterBigGap( objN );
 	  }
 	  
-	  if (perc_ <= 0 && allUnidadesAreFree())
+	  if (allFree())
 		  timeIter_ = getLeftTime();
 }
 
@@ -1086,7 +1088,8 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 				
 		adjustTime();
 		
-		setNextRandFreeUnidade(-10);
+		int acresm = (allUnidadesAreFree() ? 0: 10);
+		setNextRandFreeUnidade(acresm);
 
 		checkDecreaseDueToIterSemMelhora();
 	}
@@ -1118,7 +1121,7 @@ void Polish::decreasePercOrFreeUnid(int percToSubtract)
 
 	if (!allUnidadesAreFree())
 	{
-		setNextRandFreeUnidade(10);
+		setNextRandFreeUnidade(-10);
 		return;
 	}
 	
@@ -1150,9 +1153,9 @@ void Polish::increaseTime()
 	// ToDo: substituir essa fixação de tempo máximo por um controle de acordo com o
 	// percentual de tempo gasto no branch and bound.
 
-	if (perc_<=0 && allUnidadesAreFree())
+	if (allFree())
 		timeIter_ = getLeftTime();		// next iteration will be the last one
-	else if (perc_ >= 10 && perc_ < 30){
+	else if (perc_ > 0 && perc_ < 30){
 		if(timeIter_ > 350) timeIter_ = 350;
 	}
 	else if (perc_ < 40){
@@ -1165,13 +1168,13 @@ void Polish::increaseTime()
 
 void Polish::decreaseTime()
 {
-	if (perc_<=0 && allUnidadesAreFree())
+	if (allFree())
 		timeIter_ = getLeftTime();		// next iteration will be the last one
 	else
 	{
 		// Adjust time limit in case it is too high
 		double minExcess = max( 0.5*timeIter_, 50 );
-		if ( timeLeft_ > minExcess )
+		if (timeLeft_ > minExcess)
 			timeIter_ = runtime_+minExcess;
 	}
 }
@@ -1183,8 +1186,13 @@ void Polish::adjustOkIter(double objN)
 		okIter_ = false;		
 
 	// final!
-	if (perc_ <= 0 && allUnidadesAreFree())
+	if (allFree())
 		okIter_ = false;
+}
+
+bool Polish::allFree()
+{
+	return (perc_ <= 0 && allUnidadesAreFree());
 }
 
 bool Polish::globalOptimal(double objN)
@@ -1395,6 +1403,7 @@ void Polish::logIter(double perc_, double timeIter_)
 		ss << "\ntempo ja corrido = " << getTotalElapsedTime() << "\ttempo max = " << maxTime_;
 				
 		ss << "\nuseFreeBlockPerCluster_ = " << useFreeBlockPerCluster_;
+		ss << "\tpercUnidFixed_ = " << percUnidFixed_;
 		ss << "\ntotal de unidades = " << unidades_.size();
 		ss << "\nunidades livres (" << unidadeslivres_.size() << "): ";
 		for (auto it=unidadeslivres_.begin(); it!=unidadeslivres_.end(); it++)

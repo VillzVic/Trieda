@@ -132,6 +132,7 @@ private:
 	void increaseTime();
 	void decreaseTime();
 	void adjustOkIter(double objN);
+	bool allFree();
 	bool globalOptimal(double objN);
 	void resetIterSemMelhora();
 	void updateIterSemMelhora();
@@ -212,7 +213,7 @@ private:
 	   
 	   // Unidade to leave free
 	   set<Unidade*> unidadeslivres_;
-	   int percUnidLivres_;
+	   int percUnidFixed_;
 	   bool tryBranch_;
 	   // Cluster of unidades to leave free
 	   bool useFreeBlockPerCluster_;

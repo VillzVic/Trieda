@@ -44,6 +44,7 @@ public:
 	  V_PROF_TURMA,							// y_{p,i,d,cp}
 	  V_PROF_AULA,							// k_{p,i,d,u,t,h}
 	  V_PROF_UNID,							// uu_{p,t,u}
+	  V_PROF_DESLOC,						// desloc_{p,t,u1,u2}
 
 	  V_HI_PROFESSORES,						// hip_{p,t,f}
 	  V_HF_PROFESSORES,						// hfp_{p,t,f}
@@ -81,7 +82,9 @@ public:
 
    Campus * getCampus() const { return cp; }
 
-   Unidade * getUnidade() const { return u; }
+   Unidade * getUnidade() const { return u; }   
+   Unidade * getUnidade1() const { return u1; }
+   Unidade * getUnidade2() const { return u2; }
 
    Sala * getSala() const { return s; }
 
@@ -152,6 +155,9 @@ public:
    void setCampus( Campus * cpp ) { cp = cpp; }
 
    void setUnidade( Unidade * uu ) {  u = uu; }
+
+   void setUnidade1( Unidade * uu ) {  u1 = uu; }  
+   void setUnidade2( Unidade * uu ) {  u2 = uu; }
 
    void setSala( Sala * ss ) {  s = ss; }
 
@@ -227,6 +233,8 @@ private:
    double value;
    Campus * cp;
    Unidade * u;
+   Unidade * u1;
+   Unidade * u2;
    Sala * s;
    ConjuntoSala * tps;
    int i; // Turma

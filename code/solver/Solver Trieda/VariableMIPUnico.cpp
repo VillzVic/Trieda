@@ -35,6 +35,8 @@ void VariableMIPUnico::reset()
    k = -1;
    cp = nullptr;
    u = nullptr;
+   u1 = nullptr;
+   u2 = nullptr;
    s = nullptr;
    tps = nullptr;
    c = nullptr;
@@ -74,6 +76,8 @@ VariableMIPUnico & VariableMIPUnico::operator = ( const VariableMIPUnico & var )
    this->type = var.getType();
    this->cp = var.getCampus();
    this->u = var.getUnidade();
+   this->u1 = var.getUnidade1();
+   this->u2 = var.getUnidade2();
    this->s = var.getSala();
    this->tps = var.getSubCjtSala();
    this->i = var.getTurma();
@@ -124,6 +128,12 @@ bool VariableMIPUnico::operator < ( const VariableMIPUnico & var ) const
 
    if ( E_MENOR( this->getUnidade(), var.getUnidade() ) ) return true;
    if ( E_MENOR( var.getUnidade(), this->getUnidade() ) ) return false;
+   
+   if ( E_MENOR( this->getUnidade1(), var.getUnidade1() ) ) return true;
+   if ( E_MENOR( var.getUnidade1(), this->getUnidade1() ) ) return false;
+   
+   if ( E_MENOR( this->getUnidade2(), var.getUnidade2() ) ) return true;
+   if ( E_MENOR( var.getUnidade2(), this->getUnidade2() ) ) return false;
 
    if ( E_MENOR( this->getSala(), var.getSala() ) ) return true;
    if ( E_MENOR( var.getSala(), this->getSala() ) ) return false;
@@ -267,6 +277,8 @@ std::string VariableMIPUnico::toString() const
 		str <<"k"; break;
 	 case V_PROF_UNID:
 		str <<"uu"; break;		
+	 case V_PROF_DESLOC:
+		str <<"desloc"; break;		
     case V_HI_PROFESSORES:
        str <<"hip"; break;
     case V_HF_PROFESSORES:
@@ -329,6 +341,16 @@ std::string VariableMIPUnico::toString() const
    if ( u != nullptr )
    {
       str << "_Unid" << u->getId();
+   }
+   
+   if ( u1 != nullptr )
+   {
+      str << "_1Unid" << u1->getId();
+   }
+   
+   if ( u2 != nullptr )
+   {
+      str << "_2Unid" << u2->getId();
    }
 
    if ( s != nullptr )

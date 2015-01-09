@@ -386,6 +386,8 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_NR_DESLOC_PROF"; break;
 	  case C_NR_UNIDS_PROF:
         ss << "C_NR_UNIDS_PROF"; break;		
+	  case C_DESLOC_PAR_UNID_PROF:
+        ss << "C_DESLOC_PAR_UNID_PROF"; break;
 	  case C_MAX_UNIDS_DIA_PROF:
         ss << "C_MAX_UNIDS_DIA_PROF"; break;		
 	  case C_CARGA_HOR_ANTERIOR:

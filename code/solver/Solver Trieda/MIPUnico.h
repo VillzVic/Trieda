@@ -55,6 +55,7 @@ private:
 	  MIP_MIN_VIRT,
 	  MIP_MIN_TURMAS_COMPART,
 	  MIP_MIN_GAP_PROF,
+	  MIP_MIN_DESLOC_PROF,
 	  MIP_MARRETA
    };	  
 
@@ -97,6 +98,7 @@ private:
    int criaVariaveisInicioFimAlunoDiaAPartirDeV(void);										// inicio_{a,t,h} e fim_{a,t,h}
    int criaVariavelFolgaGapProfAPartirDeK(void);											// fpgap_{p,t,f}
    int criaVariavelUnidUsadaProfAPartirDeK(void);											// uu_{p,t,u}
+   int criaVariavelDeslocProfAPartirDeK(void);												// desloc_{p,t,u1,2}
    int criaVariavelFolgaGapAlunoAPartirDeV(void);											// fagap_{a,t}
    int criaVariavelWAPartirDeX();															// w_{p,u,t,h}
 
@@ -206,21 +208,22 @@ private:
 
 	int criarRestricaoMinCredsDiaAluno();
 	int criaRestricaoTempoDeslocProfessor();
-	int criaRestricaoNrMaxDeslocProfessor();
+	int criaRestricaoMax1DeslocProfessor();
+	int criaRestricaoMinDeslocProfessor();
 	int criaRestricaoUnidUsadaProf();
 	int criaRestricaoNrMaxUnidDiaProf();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 	int criarRestricaoMinCredsDiaAluno_Marreta();
 	int criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1();
-	int criarRestricaoMinCredsDiaAluno_MarretaCaso1();
+	int criarRestricaoHorInicialDiaAluno_MarretaCaso1e2();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso1e2();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2();
 	int criarVariavelDiaLongoAluno_MarretaCaso2();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_1();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_2();
-	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_3();
-	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_3_NovaFormGap();
-
+	int criarRestricaoHorInicialDiaAluno_MarretaCaso2_3();
+	
    /* 
 		****************************************************************************************************************
 								MAPS para organizar variaveis existentes e agilizar as restrições
@@ -234,6 +237,7 @@ private:
 		set< pair<int /*col*/,VariableMIPUnico> >, LessPtr<HorarioAula> >, LessPtr<Unidade> > >, LessPtr<Professor> > vars_prof_aula3;	// k_{p,i,d,u,t,hi}
 	
 	map<Professor*, map<int /*dia*/, map<Unidade*, int /*col*/>>> vars_prof_dia_unid;
+	map<Professor*, map<int /*dia*/, map<Unidade*, map<Unidade*,int /*col*/>>>> vars_prof_desloc;	
 
 	map< Aluno*, map< int /*dia*/, map<DateTime /*dti*/, map< Campus*, map< Disciplina*, map< int /*turma*/,
 		set< pair<int /*col*/, VariableMIPUnico> > >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Aluno> > vars_aluno_aula;		// v_{a,i,d,s,t,hi,hf}
@@ -350,6 +354,7 @@ private:
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int solveMinDeslocProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );	
 	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
@@ -404,6 +409,9 @@ private:
 	static const int timeLimitMinGapProfSemMelhora;
 	static const int timeLimitGeneral;
 	static const int timeLimitGeneralSemMelhora;
+	static const int timeLimitMinDeslocProf_;
+	static const int timeLimitMinDeslocProfSemMelhora_;
+	
 
 	// Disciplinas
 	static const int consideraDivCredDisc;
