@@ -115,13 +115,16 @@ The primary design goal is not necessarily finding a true optimal solution, but 
 
 
 % ------------------------------------------------------------
-\section{Timetabling Conferences and Groups}
-
-\fixme{Colocar logo para cada item}
+\section{Timetabling Groups and Conferences}
 
 % ---------------
-\subsection{Practice and Theory of Automated Timetabling (Patat)}
+\subsection{Practice and Theory of Automated Timetabling Conferences (Patat)}
 \label{patat}
+
+\begin{figure}[h]
+\hfill\includegraphics[scale=0.8]{figures/patat.png}
+\end{figure}
+
 The International Series of Conferences on the Practice and Theory of Automated Timetabling (PATAT) is held biennially as a forum for both researchers and practitioners of timetabling to exchange ideas. The first edition was held in Edinburgh (UK) in 1995, and since that editions have taken place in Canada, Germany, Belgium, USA, Czech Republic, Northern Ireland and Norway. See \cite{Patat}.
 
 Whether it is sporting events, educational institutions, transportation or employee management the construction of efficient timetables which provide the maximum in way of flexibility for all constituent parts is as important as it is challenging. An increasingly important aspect within organizations is an automated approach which maximizes all aspects of resource usage. In doing so a number of quantitative and qualitative challenges must be dealt with from both a technical and practical perspective.
@@ -134,6 +137,11 @@ The link between planning and management within the educational sector is explor
 % ---------------
 \subsection{International Timetabling Competition (ITC)}
 \label{itc}
+
+\begin{figure}[h]
+\hfill\includegraphics[scale=0.8]{figures/itc.png}
+\end{figure}
+
 The International Timetabling Competition (ITC) has happened in 3 editions, in 2002, 2007 and 2011.
 
 Not much information was found about the first ITC, in 2002.
@@ -166,11 +174,11 @@ All instances are provided in XML.
 
 
 % ---------------
-\subsection{Hstt}
+\subsection{Data sets and an input format for High School Timetabling (Hstt)}
 \label{hstt}
 % Benchmarking project for highschool
 
-The research in (High) School Timetabling was lacking the availability of exchangeable benchmarks in a uniform format. For this reason a group of researchers agreed on an xml-standard to exchange their datasets. At this moment there are around 50 datasets available. We reported on this project in the PATAT conferences of 2008 and 2010.
+The research in (High) School Timetabling was lacking the availability of exchangeable benchmarks in a uniform format. For this reason a group of researchers agreed on an xml-standard to exchange their datasets. Latest update says there are around 50 datasets available. This project was reported in the PATAT conferences of 2008 and 2010.
 
 Available are archives and datasets in XHSTT format, an evaluator for instances (by Jeff Kingston) and solutions in XHSTT, and a classification (by Nelishia Pillay) of high school timetabling.
 
@@ -183,14 +191,47 @@ More information about this project at \cite{Hstt}.
 \subsection{Ectt}
 \label{ectt}
 % Udine, Italy
+
+\begin{figure}[h]
+\hfill\includegraphics[scale=0.4]{figures/ectt.png}
+\end{figure}
+
 Following the spirit of the International Timetabling Competition (~\ref{itc}), \cite{Ectt} provides a portfolio of formulations for the Curriculum-Based Course Timetabling problem as defined in [Bonutti, De Cesco, Di Gaspero and Schaerf, Annals of Operations Research].
 
 Through the website it is possible to download instances (both in text-only and XML format) and solutions contributed from the research community; validate your solutions online or download the source code of a solution validator; insert solutions, lower bounds, instances, and links of interest for the community; and generate random instances. All problem instances available to download are based on real data from various universities.
 
 
 % ---------------
+\subsection{Research Group on Scheduling and Timetabling in Udine}
+\label{satt}
+
+\begin{figure}[h]
+\hfill\includegraphics[scale=0.7]{figures/satt.png}
+\end{figure}
+
+The Scheduling and Timetabling research group in Udine is working on the solution of scheduling problems using both local search techniques and their hybridization with other paradigms (e.g. constraint programming). The researchers involved in the group have developed both academic prototypes and production systems for the solution of practical scheduling problems, such as workforce scheduling, shift design, timetabling, and sport scheduling. In addition, the group has been active in the system-modeling side, in the development of languages and tools for specifying problems and applications.
+
+Among the several projects to which the group is involved, we highlight the following for being related to timetabling problems:
+\begin{itemize}
+\item Educational Timetabling
+The educational timetabling problem consists in scheduling a sequence of events (typically lectures or examinations) which involves teachers and students in a prefixed period of time, satisfying a set of constraints of various types. Constraints involve, among others, overlapping of events with common participants, capacity of rooms, and student and teacher workload.
+\item Healthcare
+The Patient Admission Scheduling Problem (PAS) consists assigning patients to beds in such a way to maximize both medical treatment effectiveness and patients' comfort. The Dynamic Patient Admission Scheduling Problem under Uncertainty (PASU) extends the PAS problem, by including several real-world features, such as the presence of emergency patients, uncertainty in stay lengths, and the possibility to delay admissions.
+\item Multi-Agent Distributed Timetabling
+TT-MAS is a multi-agent system for distributed course timetabling. It is considered the timetabling problem for a set of university departments, in which each department prepares the schedule according to private rules, constraints, and objectives, and relying on own resources. In order to share and/or exchange resources for mutual benefits the system allows the departments to negotiate on a common marketplace and making use of an artificial currency.
+\end{itemize}
+
+More info at \cite{UdineSATT}.
+
+
+% ---------------
 \subsection{EURO Working Group on Automated Timetabling (WATT)}
 \label{watt}
+
+\begin{figure}[h]
+\hfill\includegraphics[scale=0.7]{figures/euro.png}
+\hfill\includegraphics[scale=0.35]{figures/watt.png}
+\end{figure}
 
 WATT is the EURO Working Group on Automated Timetabling, formed to discuss, promote, and perform research into automated timetabling problems and methods.
 
@@ -209,8 +250,12 @@ Further information at \cite{Watt}.
 
 
 % ---------------
-\subsection{Mista: Multidisciplinary international scheduling conference}
+\subsection{Mista: Multidisciplinary International Scheduling Conference}
 \label{mista}
+
+\begin{figure}[h]
+\hfill\includegraphics[scale=0.7]{figures/mista.png}
+\end{figure}
 
 Mista is a conference series which serves as a forum for an international community of researchers, practitioners and vendors on all aspects of multi-disciplinary scheduling. The aim is to bring together scheduling researchers and practitioners from all the disciplines that engage with scheduling research. 
 
@@ -230,6 +275,7 @@ This is a test reference to \cite{Michael2002}.   % Michael2002
 This is a test reference to \cite{SchoolOverview2010}.   % SchoolOverview2010
 This is a test reference to \cite{Birbas2009}.    % Birbas2009
 This is a test reference to \cite{Mimosasoftware}.
+This is a test reference to \cite{Eventmap}.
 
 
 
