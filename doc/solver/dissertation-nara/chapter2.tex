@@ -15,7 +15,7 @@ TRIEDA is an academic planning system for educational institutions, designed as 
 
 Timetabling problems vary a lot depending on the kind of educational institution. The system has nowadays two distinct modules: one for solving high school timetabling problems and another for solving university timetabling problems. For each one, TRIEDA uses a completely different solver. This dissertation focus only on the high school module.
 
-The system is based on a \q{demand-drive} philosophy where students first chose their courses, and having knowledge of the complete institution structure and available resources, the aim is to provide a complete and feasible solution that maximizes the number of satisfied requests while respecting a set of didactic-pedagogical requirements. For the university module, reducing costs is also very aimed. For the school module, some didactic-pedagogical requirements together with professors satisfaction are usually the most important issue.
+The system is based on a \q{demand-drive} philosophy where students first chose their courses, and having knowledge of the complete institution structure and available resources, the aim is to provide a complete and feasible solution that maximizes the number of satisfied requests while respecting a set of didactic-pedagogical requirements. For the university module, reducing costs is also strongly aimed. For the school module, some didactic-pedagogical requirements together with professors satisfaction are usually the most important issues.
 
 
 \subsection{Simulation usability}
@@ -29,20 +29,37 @@ Therefore, as was exemplified, the timetabling system can also be used as a fast
 \subsection{Multiple scenarios}
 \label{subsec:scenarios}
 
+Through the system interface the user can easily register each entity and resource of the institution and its quality requests. The set of all registered information for the problem defines a scenario. The system allows each user to create and manage multiple scenarios, which is very useful when comparing and evaluating the impact of different situations.
 
-% falar tb de forma de inputar os dados: importacao e exportacao de planilhas
+Registering data through the interface can be done manually one by one or importing Excel spreadsheets. Similarly, solution is graphically available for analysis through the interface or can also be exported to Excel spreadsheets.
+
+
+\subsection{Interface and solver interaction}
+\label{subsec:interaction}
+
+Interaction between the user interface and the solver is made by XML files. Once all problem data is registered by the user such that one has a consistent scenario, an optimization request can be made. Such request generates a XML input file and calls the solver, which reads the input file, loads data and starts the optimization process. Once the final solution is obtained, a XML output file is written and the solver process is ended. Following, the application loads the solution and user interface shows all results.
+
 
 \subsection{Manual changes}
 \label{subsec:manual}
+
+A very common requirement in logistic and planning systems is to allow the user to make manual changes in a solution. TRIEDA allows user to manually create new classes or modify existing classes, as long the result does not violate basic and necessary operational constraints.
 
 
 \subsection{Non--satisfaction reasons}
 \label{subsec:reasons}
 
+As discussed in section ~\ref{sec:accuracy}, data quality is essential for obtaining a good, feasible and applicable solution. Unfortunately, data inaccuracy is though very frequent and therefore the system should be prepared to deal with it, as long it is possible.
+
+Besides the possibility of data inaccuracy, it can be hard to affirm if the demand of a scenario can be fully satisfied, specially when it is a large instance. Analyzing both input data and solution for a real world problem is a hard task. As an user auxiliary functionality for solution analysis, the system exhibits for each non--satisfied demand possible explanations for the non-allocation. Such feature can help both to identify input data errors and to understand resources limitations.
+
 
 \subsection{Virtual professor tips}
 \label{subsec:tips}
 
+Because there is in general no insurance that there are enough teaching resources for fully satisfying the demand, the concept of virtual teaching resource is used (see ~\ref{defpv}). Virtual resources should though be used as little as possible.
+
+An extra functionality of the system for helping the user while managing a solution is called \q{virtual professors tips}. For each virtual professor assigned to a solution class, it may be exhibited a tip or a suggestion for a change in some professor availability that would lead to a possible substitution of that virtual resource for a real professor. This can be quite useful for scenarios where professors availability is very limited, but it is ineffective when professors are full-time.
 
 
 
@@ -60,7 +77,7 @@ Besides, in high school, sections usually have pre--assigned rooms. This is not 
 A solution is composed of a set of courses sections that should be offered in order that demands are satisfied. For each course section it must be decided:
 
 \begin{itemize}
-\item the classroom where section's lessons take place. Usually each section already has a pre--assigned room, but for practical courses it is to be decided;
+\item the classroom where section's lessons take place. Usually each section has a single possible room, but for practical courses it is to be decided;
 \item the time slots of each lesson;
 \item the professor assigned to the section;
 \end{itemize}
@@ -162,12 +179,11 @@ Every course has a set of time slots to which it can be assigned. These time slo
 Every course can be assigned to a specific set of classrooms where it can be held. When a course has practical credits (see section ~\ref{constroneroom} and ~\ref{constrptcourse}), it is possible that these must be held in special classrooms (laboratories). If there is no specific classroom associations, it is assumed that the course can be held in any classroom.
 
 
-
 %%%%%%%%%%%
 \paragraph{Curriculum}
 \label{defcurric}
 
-A \textit{curriculum} is the set of all courses token at a school studying year.
+A \textit{curriculum} is the set of all courses token by a student at a specific school studying year.
 
 
 %%%%%%%%%%%
@@ -208,7 +224,7 @@ A student--demand is an individual request of a student for a course. It is made
 \paragraph{Class}
 \label{defclass}
 
-A class refers to a same group of students that will be taught a set of courses.
+A class refers to the same group of students that will be taught a set of courses.
 
 
 %%%%%%%%%%%
@@ -233,6 +249,23 @@ In a complete and feasible solution, each course section has the following attri
 \end{itemize}
 
 
+%%%%%%%%%%%
+\paragraph{Professors}
+\label{defprof}
+
+Each professor is a teaching staff resource that can be assigned to classes, according to its features. Every professor has its own timetable availability, a list of courses that he/she is capable of teaching, among others attributes.
+
+
+
+%%%%%%%%%%%
+\paragraph{Virtual Professors}
+\label{defpv}
+
+The most basic solution restrictions are based on resources availabilities. There is no assurance in general there are enough professors to meet the hole demand. Therefore, the concept of \textit{virtual professor} is introduced.
+
+Each \textit{virtual professor} means the hiring of a new professor by the institution. Whenever there is no feasible solution with full satisfied demand due to absence of professors, and only in this situation, virtual professors should be created by the solver and used until demand is fulfilled.
+
+Since a virtual professor is just a prediction of a new profile, it has default settings, full-available timetable and is not considered at some professor quality restrictions.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -373,18 +406,12 @@ The default is lessons assignments for both subsection types to be quite indepen
 The 1 x N relationship is also considered and described in \cite{Murray2007}, where it is called \textit{parent--child} relationship. There, subsections are called \textit{subparts} and the hole course is called \textit{instructional offering}. Also, there it is allowed for a course to have more than two types of credits. They exemplify a course with the ''Lecture`` parent subpart (theoretical credits) and ''Recitation`` and ''Laboratory`` children subparts (two kinds of practical credits). This is out of scope for this work, where it is considered only 2 types of credit, either theoretical or practical credit.
 
 
-\paragraph{Virtual Professors}
+\paragraph{Minimizing Virtual Professors Usage}
 \label{constrvirtprof}
 
-The most basic solution restrictions are based on resources availabilities. There is no assurance there are enough professors to meet the hole demand. Therefore, the concept of \textit{virtual professor} is introduced.
-
-Each \textit{virtual professor} means the hiring of a new professor by the institution. Whenever there is no feasible solution with full satisfied demand due to absence of professors, and only in this situation, virtual professors should be created by the solver and used until demand is fulfilled.
-
-For the profile to be realistic, we establish that if a virtual professor teaches courses $A$ and $B$, then necessarily there is a curriculum which contains both courses. This avoids a profile involving very distinct areas. 
-
-Since a virtual professor is just a prediction of a new profile, it has default settings and full-available timetable.
-
 Minimizing the number of credits assigned to virtual professors is considered the second most important aim in the multi-objective function of timetabling problems, second only to maximizing satisfied demands.
+
+The solver should use a virtual professor if and only if there is not enough teaching staff resources available.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -460,6 +487,7 @@ For instance, professor Steven Tyler can have no more than $10\%$ of his previou
 
 
 \paragraph{Number of professor displacements between blocks and campi}
+\phantomsection
 \label{constrprofdisplacnum}
 
 Whenever a professor is assigned to any pair of classes at the same day and taking place at different blocks or campi, a maximum of 1 displacement can be established.
@@ -468,7 +496,11 @@ For instance, if Professor Marvin Gaye teaches at block $A$ on Monday morning an
 
 Clearly, this restriction implies that a professor is never assigned to more than 2 blocks at the same day, but it is stronger than that, since a sequence of blocks $A \rightarrow B \rightarrow A$ in a day involves 2 blocks (ok!) and 2 displacements (not ok!).
 
-\mynotes{testar corte no modelo para limitar o nro de unidades no dia: sum[u] x <= 2}
+
+\paragraph{Maximum number of blocks assigned to a professor in a day}
+\label{constrmaxblockprof}
+
+A weaker constraint than ~\ref{constrprofdisplacnum} is the limitation of the number of distinct blocks where a professor has classes to teach at the same day. The appropriate limit value varies with the physical distribution of the blocks. The more distant are the blocks from each other, the lower is the limit, since more travel time is necessary \fixme{conferir vocabulario}. Obviously, the insurance of ~\ref{constrprofdisplacnum} dismiss worries about this one.
 
 
 \paragraph{Compactness in professor's timetable}

@@ -60,16 +60,16 @@ Both school and university timetabling problems have been studied for over 50 ye
 
 For the university environment, we draw attention to \cite{Carter2001} and \cite{Murray2007} as those who made efforts on solving very realistic versions of the problem for universities in Canada and in USA. They described both the methods used for solving the problems and the challenges faced during the process of deploying solutions.
 
-The major differences between many of the problems studied and their real life counterparts are the additional complexity imposed by course structures, the variety of constraints imposed, and the distributed responsibility for information needed to solve such problems at a university-wide level.
+The major differences between many of the problems studied and their real life counterparts are the additional complexity imposed by course structures, the variety of quality constraints imposed, and the distributed responsibility for information needed to solve such problems at a wide level.
 
 As pointed out in \cite{Murray2007}, the biggest obstacle to solve actual university course timetabling problems is that the complexity can increase considerably beyond that represented in standard formulations of the problem. As the complexity increases, it is easy to be caught in the dual bind that the problem is both more challenging to develop an effective solution approach for, and this approach is less likely to be usable on other university timetabling problems. Every institution has its own particularities, which make it harder to build a single and general solver for multiple institutions.
 
-As observed by Carter \cite{Carter2001}, there are few published papers that described actual implementations of course timetabling. From what we know, the first example of an automated and integrated course timetabling and student scheduling system across a institution was developed for the University of Waterloo between 1979 and 1985. Although the system was implemented 29 years ago, much of the discussion is still very relevant. By 2001, Carter expressed at \cite{Carter2001} his belief that there was still no system for solving the large-scale course timetabling problem with such level of mathematical sophistication.
+As observed by Carter \cite{Carter2001}, there are still few published papers that described actual implementations of course timetabling. From what we know, the first example of an automated and integrated course timetabling and student scheduling system across a institution was developed for the University of Waterloo between 1979 and 1985. Although the system was implemented 29 years ago, much of the discussion is still very relevant. By 2001, Carter expressed at \cite{Carter2001} his belief that there was still no system for solving the large-scale course timetabling problem with such level of mathematical sophistication.
 
 By 2006, Guenalay and Sahin introduced at \cite{Guenalay2006} a Decision Support System (DSS) for the university timetabling that allows the direct involvement of the decision maker. They affirmed that their model was the first one which simultaneously combined such a DSS approach with a goal programming optimization tool.
 
-At \cite{Unitime} the Unitime software is described and widely documented. It is an open source system used at Purdue University and is also the focus of \cite{Murray2007}.
-\fixme{citar mais software!}
+At \cite{Unitime} the Unitime software is described and widely documented. It is an open source system used at Purdue University and also the focus of \cite{Murray2007}.
+\fixme{citar mais software! Mimosasoftware, Eventmap}
 
 
 % ------------------------------------------------------------
@@ -77,7 +77,7 @@ At \cite{Unitime} the Unitime software is described and widely documented. It is
 
 For solving the high school timetabling problem, this work is based on an integer programming formulation together with strategies for helping at the convergence in the best solution search process.
 
-Among the existing published works that considered more realistic formulations for high school timetabling problems, we highlight \cite{Birbas2009} and \cite{Birbas2009} as those whose embraced problems were the most similar to the one considered in this work. Several practical issues emphasized by them were also identified during TRIEDA's development and were referenced along this work.
+Among the existing published works that considered more realistic formulations for high school timetabling problems, we highlight \cite{Birbas2009} and \cite{Birbas2009} as those whose embraced problems were the most similar to the one considered in this work. Several practical issues emphasized by them were also faced during TRIEDA's development and are referenced along this work.
 
 Still, there are differences between their timetabling problems and the one here presented. Following, the major points are listed.
 -
@@ -91,6 +91,7 @@ Because TRIEDA is a commercial software, it has been developed to be as portable
 
 % ------------------------------------------------------------
 \section{Data accuracy and Politics}
+\label{sec:accuracy}
 
 \mynotes{from \cite{Murray2007}}
 Since timetabling is a resource allocation problem, at most big educational institutions responsibility for constructing the timetable is distributed among the academic units with the faculty, physical facilities, and other resources required for offering instruction. Murray, M\"{u}ller and Rudov\'{a} observe at \cite{Murray2007} that providing support for this distributed responsibility is important because departmental timetablers have a much more intimate knowledge of the needs of the courses offered, the professor who might be able to teach a particular class, and the spaces available for specialized instruction than any database that might be maintained centrally. Maintaining each department's sense of ownership in the timetables that are produced is also an important factor in their acceptance of the solutions produced by an automated timetabling process. They say the process needs to be one that assists them rather than replaces them.
@@ -101,7 +102,7 @@ Obtaining coherent and correct data is a particular important and sensitive issu
 
 Murray, M\"{u}ller and Rudov\'{a} tells at \cite{Murray2007} that inequity in the quality of time and room assignments received by different departments and faculty members doomed a previous attempt at automating the timetabling process at Purdue University. A similar situation was faced by TRIEDA in July of 2014 while an attempt of deploying a solution in a Brazilian university.
 
-Automating people assignments is different from automating other process --- the optimization factor is definitely \textbf{not} more important than people satisfaction. Only keeping that in mind it is possible to obtain an actual deployable solution.
+Automating people assignments is different from automating other process --- the optimization factor is definitely \textbf{not} more important than people satisfaction. Only keeping this in mind it is possible to obtain an actual deployable solution.
 
 As wisely pointed out in \cite{Carter2001}, practical course timetabling is 10\% graph theory, and 90\% politics. Carter tells that when they first began designing a timetabling system for University of Waterloo, they were warned that they can not dictate when professors will teach courses. Consequently, they were told that course timetabling could not work or, more precisely, that they can not assume that the timetable can use a clear slate. This is because part-time professors may be available only on certain and specific days or times. University professors often have other commitments and industrial research projects. Teaching is only a part of their job, and probably less than half of their time is devoted to teaching. Similar statement is valid for high school teachers. It is very common that they teach in more than one school or have other activities.
 
@@ -184,7 +185,7 @@ Available are archives and datasets in XHSTT format, an evaluator for instances 
 
 At chapter ~\ref{chap:converting} an attempt for solving XHSTT instances provided by \cite{Hstt} is detailed and registered.
 
-More information about this project at \cite{Hstt}.
+More information about this project can be found at \cite{Hstt}.
 
 
 % ---------------
@@ -196,7 +197,7 @@ More information about this project at \cite{Hstt}.
 \hfill\includegraphics[scale=0.4]{figures/ectt.png}
 \end{figure}
 
-Following the spirit of the International Timetabling Competition (~\ref{itc}), \cite{Ectt} provides a portfolio of formulations for the Curriculum-Based Course Timetabling problem as defined in [Bonutti, De Cesco, Di Gaspero and Schaerf, Annals of Operations Research].
+Following the spirit of the International Timetabling Competition (~\ref{itc}), \cite{Ectt} provides a portfolio of formulations for a version of the Curriculum-Based Course Timetabling problem.
 
 Through the website it is possible to download instances (both in text-only and XML format) and solutions contributed from the research community; validate your solutions online or download the source code of a solution validator; insert solutions, lower bounds, instances, and links of interest for the community; and generate random instances. All problem instances available to download are based on real data from various universities.
 
@@ -209,7 +210,7 @@ Through the website it is possible to download instances (both in text-only and 
 \hfill\includegraphics[scale=0.7]{figures/satt.png}
 \end{figure}
 
-The Scheduling and Timetabling research group in Udine is working on the solution of scheduling problems using both local search techniques and their hybridization with other paradigms (e.g. constraint programming). The researchers involved in the group have developed both academic prototypes and production systems for the solution of practical scheduling problems, such as workforce scheduling, shift design, timetabling, and sport scheduling. In addition, the group has been active in the system-modeling side, in the development of languages and tools for specifying problems and applications.
+The Scheduling and Timetabling research group in Udine is working on the solution of scheduling problems using both local search techniques and their hybridization with other paradigms (e.g. constraint programming). The researchers involved in the group have developed both academic prototypes and production systems for the solution of practical scheduling problems, such as workforce scheduling, shift design, timetabling, and sport scheduling.
 
 Among the several projects to which the group is involved, we highlight the following for being related to timetabling problems:
 \begin{itemize}
@@ -239,7 +240,7 @@ The WATT community was launched in the wake of the first international conferenc
 
 The main studied categories are:
 \begin{itemize}
-\item Employee timetabling, which consists of \q{Nurse rostering} and \q{Personel scheduling};
+\item Employee timetabling, which consists of \q{Nurse rostering} and \q{Personal scheduling};
 \item Educational timetabling, which consists of \q{Course timetabling}, \q{University timetabling} and \q{Exam timetabling};
 \item Sports timetabling, which consists of \q{Tournament scheduling} and \q{Referee assignment};
 \item Other timetabling problems.
