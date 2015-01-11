@@ -530,13 +530,13 @@ The importance given to professors preferences depends on the institution, i.e.,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Data quality}
 
-% intro
+Here we strengthen the importance of input data quality, an issue already introduced in section ~\ref{sec:accuracy}. Following the most common problems found in input data are highlighted.
 
 \subsection{Credits split rule}
 
 The higher is the total number $N$ of credits of a course, the more essential are credits split rules for obtaining a applicable solution for that course classes. Without a split rule, credits can be spread in any way along the week, which implies in a significant higher number of possible combinations whenever $N$ is big. Consequently the solution space increases, but more than that, this expansion may include solutions that are actually not interesting. Suppose the course \q{Math--3} has 7 credits to be spread along the week. It may not be interesting that these credits are split into 1 and 6 credits along two days, for example, or that all 7 credits are left in one single day.
 
-The absence of credits split rules can therefore reduce solution space quality, since it inserts a fake symmetry between solutions, and even hamper the convergence while searching for the best solution, since it boosts \fixme{boost esta correto?} solution space.
+The absence of credits split rules can therefore reduce solution space quality, since it inserts a fake symmetry between solutions, and even hamper convergence while searching for the best solution, since it boosts \fixme{boost esta correto?} solution space.
 
 
 \subsection{Availability times}
@@ -560,6 +560,10 @@ Finally, because resources, courses and students can all have their availability
 
 
 \subsection{Assignments between courses and rooms}
+
+As mentioned in ~\ref{defcourse}, every course has a list of classrooms where it can be hold and an empty list is interpreted as there being no restrictions of rooms to where it can be assigned. Registering wrong assignments between courses and classrooms could lead to not applicable solutions. For example, one could incautiously register a computer training course as possible to be assigned to a biology laboratory instead to a computer lab, which would make no sense at all.
+
+Gathering such data may not be a simple task though, specially when the institution has a large physical space. This is a particular harder issue for the university environment, where students are constantly moving between classrooms, courses are spread between several distinct departments and there is a high number of rooms. Fortunately, for schools this task is much less complicated and is usually done without great efforts.
 
 
 
