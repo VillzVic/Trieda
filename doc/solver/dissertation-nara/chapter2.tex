@@ -51,7 +51,7 @@ A very common requirement in logistic and planning systems is to allow the user 
 
 As discussed in section ~\ref{sec:accuracy}, data quality is essential for obtaining a good, feasible and applicable solution. Unfortunately, data inaccuracy is though very frequent and therefore the system should be prepared to deal with it, as long it is possible.
 
-Besides the possibility of data inaccuracy, it can be hard to affirm if the demand of a scenario can be fully satisfied, specially when it is a large instance. Analyzing both input data and solution for a real world problem is a hard task. As an user auxiliary functionality for solution analysis, the system exhibits for each non--satisfied demand possible explanations for the non-allocation. Such feature can help both to identify input data errors and to understand resources limitations.
+Besides the possibility of data inaccuracy, it can be hard to affirm if the demand of a scenario can be fully satisfied, specially when it is a large instance. Analyzing both input data and solution for a real world problem is a hard task. As an user auxiliary functionality for solution analysis, the system exhibits for each non--satisfied demand possible explanations for the non-allocation, which can help both to identify input data errors and to understand resources limitations.
 
 
 \subsection{Virtual professor tips}
@@ -267,6 +267,8 @@ Each \textit{virtual professor} means the hiring of a new professor by the insti
 
 Since a virtual professor is just a prediction of a new profile, it has default settings, full-available timetable and is not considered at some professor quality restrictions.
 
+The need of virtual teaching resources is also due to the usual floating feature of professors availability.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -449,7 +451,7 @@ INF332 (4 credits) & 2 & 2 & & & & & \\
 \caption{\label{tab:split}Course credits split rule.}
 \end{table}
 
-The first $3$ rules are said to be general, while the fourth is a specific rule. The first rule says that 4-credits courses should be split into lessons of $2$ credits each and into $2$ weekdays preferably non-consecutive. Similarly, 6-credits courses should be split into lessons of $2$ credits each and into $3$ weekdays; or into lessons of $3$ credits each and into $2$ weekdays. At last, the course $INF332$ should be split into $2$ days, preferably consecutive, and each day with 2-credits lessons.
+The first $3$ rules are said to be general, while the fourth is a specific rule. The first rule says that 4-credits courses should be split into lessons of $2$ credits each along $2$ weekdays preferably non-consecutive. Similarly, 6-credits courses should be split into lessons of $2$ credits each along $3$ weekdays; or into lessons of $3$ credits each along $2$ weekdays. At last, the course $INF332$ should be split into $2$ days, preferably consecutive, and each day with 2-credits lessons.
 
 Credits split rules are optional, but when present they are hard constraints in the sense of number of split days and number of credits per day. The way days alternate is violable. If there is a course with $m$ credits but no m-credits split rule, then m-credits course split is free.
 
@@ -528,14 +530,34 @@ The importance given to professors preferences depends on the institution, i.e.,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Data quality}
 
+% intro
+
 \subsection{Credits split rule}
 
-\subsection{Availability time}
+The higher is the total number $N$ of credits of a course, the more essential are credits split rules for obtaining a applicable solution for that course classes. Without a split rule, credits can be spread in any way along the week, which implies in a significant higher number of possible combinations whenever $N$ is big. Consequently the solution space increases, but more than that, this expansion may include solutions that are actually not interesting. Suppose the course \q{Math--3} has 7 credits to be spread along the week. It may not be interesting that these credits are split into 1 and 6 credits along two days, for example, or that all 7 credits are left in one single day.
 
-% professors (times and capability)
+The absence of credits split rules can therefore reduce solution space quality, since it inserts a fake symmetry between solutions, and even hamper the convergence while searching for the best solution, since it boosts \fixme{boost esta correto?} solution space.
+
+
+\subsection{Availability times}
+
+Probably the most important data quality issue is related to entities' availability times. As described in ~\ref{constravailab}, every professor, classroom and course has its own timetable availability. Also students have their possible assignment times constrained, as explained in ~\ref{constrstudentsched}.
+
+% professors
+Professors availabilities are usually the most hard and unstable information to be obtained, which is quite comprehensible. Many professors teach in more than one school or have extra activities, which implies in constrained and \textit{floating} teaching availabilities. On the other hand, accuracy of these data is extremely important, since professors satisfaction is essential for automated timetables to be deployed. Inaccuracy here will lead to real professors assigned to classes at actually unavailable times or to the use of virtual teaching resources.
+
 % rooms
+Most classrooms have a stable full-time availability, but some exceptions are common. Due to schools' physical space limitation, sometimes  physical education classes take place at rented sport courts, which have therefore constrained availabilities. The opposite is also possible, i.e., that a set of classrooms of the institution is being used by external events on specific time slots.
+
 % courses
+\mynotes{tem alguma coisa de horario de curso pra falar?}
+
+% students
+Constraining time slots to which students are assigned is also essential. In schools the most common is that each student has classes restricted to a session of the day (Morning or Afternoon). Still, usually the total weekly workload increases for students of advanced grades, which can make it necessary to extend classes beyond their main session. The restriction in students availability must then be considered and is modeled here through the concepts of shift and calender timetable, as explained in ~\ref{constrstudentsched}. Mistakes in input data when associating a student demand to a shift and a calender can lead to students assigned to classes at time slots that are out of their actual expected timetables.
+
 % intersection between resources availabilities
+Finally, because resources, courses and students can all have their availability limitations, it is clearly necessary that an appropriate intersection exists between them so that demands can be satisfied. For instance, inaccurate data could lead to a scenario where there are demands for the course \q{Biology-2} in the Afternoon, but professors capable of teaching this course are only available in the Morning. Such inconsistency would cause either an assignment with a virtual professor or non-satisfied demands.
+
 
 \subsection{Assignments between courses and rooms}
 
