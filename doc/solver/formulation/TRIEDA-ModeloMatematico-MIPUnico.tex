@@ -158,7 +158,6 @@ com alunos de cursos diferentes é proibido.
 \item $fpi_{a,cp}$ - variável inteira que indica o tempo extra alocado para que o aluno $a$ no campus $cp$ (prioridade 2).
 \item $fps_{a,cp}$ - variável inteira que indica o tempo que faltou ser alocado para que o aluno $a$ no campus $cp$ (prioridade 2).
 \item $f_{i,d,cp}$ - variável binária que indica se há aluno formando alocado na turma $i$ da disciplina $d$ do campus $cp$.
-\item $du_{a,t}$ - variável binária que indica se o aluno $a$ tem aula no dia $t$.
 \item $fp_{d,t,h}$ - variável de folga inteira que indica se a disciplina $d$ tem aula no dia $t$ e horario $h$ e não possui professor real com disponibilidade nesse dia e horário para ministra-la.
 \item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
 \item $fos_{i,d,cp}$ - variável inteira de folga de ocupação de sala. Indica a diferença entre a capacidade da sala e o numero de alunos alocados na turma.
@@ -169,10 +168,12 @@ com alunos de cursos diferentes é proibido.
 \item $k_{p,i,d,hi,hf,t}$ - indica se o professor $p$ dá aula para a turma $i$ da disciplina $d$ do horário $hi$ ao horário $hf$ do dia $t$. 
 \item $hip_{p,t,f}$ - indica o horário de início das aulas do professor $p$ (em minutos) na fase $f$ do dia $t$.
 \item $hfp_{p,t,f}$ - indica o horário de fim das aulas do professor $p$ (em minutos) na fase $f$ do dia $t$.
-\item $hia_{a,t}$ - indica o horário de início das aulas do aluno $a$ (em minutos) no dia $t$.
-\item $hfa_{a,t}$ - indica o horário de fim das aulas do aluno $a$ (em minutos) no dia $t$.
 \item $fpgap_{p,t,f}$ - folga indicando se existe gap nos horários alocados ao professor $p$ na fase $f$ do dia $t$.
-\item $fagap_{a,t}$ - folga indicando se existe gap nos horários alocados ao aluno $a$ no dia $t$.
+
+\item $inicio_{a,t,h}$ - variável binária que indica se as aulas do aluno $a$ no dia $t$ se iniciam no horario $h$.
+\item $fim_{a,t,h}$ - variável binária que indica se as aulas do aluno $a$ no dia $t$ terminam no horario $h$.
+\item $at_{a,t}$ - variável binária que indica se o aluno $a$ tem aula no dia $t$.
+
 
 \end{itemize}
 
@@ -181,7 +182,7 @@ com alunos de cursos diferentes é proibido.
 \subsubsection{Função Objetivo}
 
 $$
-\begin{array}{rll}
+\begin{array}{rl}
    \mbox{MIN} &
       \delta \cdot \sum\limits_{d \in D} 
 \sum\limits_{i \in I_{d}} \sum\limits_{t \in T-{1}} c_{i,d,t}
@@ -195,9 +196,6 @@ $$
       \\
       &
        + \alpha \cdot \sum\limits_{i \in I_{d}}\sum\limits_{d \in D}\sum\limits_{i' \in I_{d'}}\sum\limits_{d' \in D}\sum\limits_{t \in T} NAC_{i,d,i',d'}\cdot fu_{i,d,i',d',t}
-       \\
-       &
-       +/- \xi \cdot \sum\limits_{a \in A} \sum\limits_{t \in T} du_{a,t}
       \\
       &
       + \alpha \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{c \in C} \sum\limits_{c' \in C}\sum\limits_{cp \in CP} fc_{i,d,c,c',cp}
@@ -213,11 +211,6 @@ $$
       \\
       &
       + \omega \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
-      \\
-      &
-      + \omega \cdot \sum\limits_{a \in A} \sum\limits_{t \in T} fagap_{a,t}
-      
-      
       
 \end{array}
 $$
@@ -485,29 +478,6 @@ M \cdot au_{a,u,t} \ge
 \forall t \in T
 \end{eqnarray}
 
-
-
-\subsubsection{Contabiliza se o aluno possui aula no dia, a fim de MINIMIZAR o número de dias}
-
-\begin{eqnarray}
-M \cdot du_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
-\forall a \in A \quad
-\forall t \in T \quad
-\forall cp \in CP
-\end{eqnarray}
-
-
-
-\subsubsection{Contabiliza se o aluno possui aula no dia, a fim de MAXIMIZAR o número de dias}
-
-\begin{eqnarray}
-du_{a,t} \le \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
-\forall a \in A \quad
-\forall t \in T \quad
-\forall cp \in CP
-\end{eqnarray}
-
-   
    
 \subsubsection{Professores disponiveis por dia e disciplina}
 
@@ -727,52 +697,62 @@ hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\subsubsection{Seta o lower bound para a variável $hia_{a,t}$}
+\subsubsection{Contabiliza se o aluno possui aula no dia}
 
 \begin{eqnarray}
-hia_{a,t} \geq m(dt) \cdot ( 1 - \sum\limits_{v \in V_{dti<dt}} v_{a,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
+M \cdot at_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
+\forall a \in A \quad
 \forall t \in T \quad
-\forall dt \in Dt_{f}
+\forall cp \in CP
+\end{eqnarray}
+   
+
+\subsubsection{Seta o inicio das aulas do aluno no dia ($inicio_{a,t,h}$)}
+
+\begin{eqnarray}
+inicio_{a,t,h} = \sum\limits_{v} v_{a,t,hi} - \sum\limits_{h'\le h} inicio_{a,t,h'} + \sum\limits_{h'\le h} fim_{a,t,h'} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T \quad
+\forall h \in H
 \end{eqnarray}
 
 
-\subsubsection{Seta o upper bound para a variável $hia_{a,t}$}
+\subsubsection{Seta o fim das aulas do aluno no dia ($fim_{a,t,h}$)}
 
 \begin{eqnarray}
-hia_{a,t} \leq m(dt) + M \cdot ( 1 - \sum\limits_{v} v_{a,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
+fim_{a,t,h} = \sum\limits_{v} v_{a,t,hi} - \sum\limits_{h'\ge h} fim_{a,t,h'} + \sum\limits_{h'\ge h} inicio_{a,t,h'} \nonumber \qquad
+\forall a \in A \quad
 \forall t \in T \quad
-\forall dti \in Dt
+\forall h \in H
 \end{eqnarray}
 
 
-\subsubsection{Seta o lower bound para a variável $hfa_{a,t}$}
+\subsubsection{Unicidade de fins por dia}
 
 \begin{eqnarray}
-hfp_{p,t,f} \geq \sum\limits_{v} m(dt) \cdot v_{a,t,dtf} \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall dtf \in Dt
+\sum\limits_{h} fim_{a,t,h} = at_{a,t} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T
 \end{eqnarray}
 
 
-\subsubsection{Seta o upper bound para a variável $hfa_{a,t}$}
+\subsubsection{Unicidade de inicios por dia}
 
 \begin{eqnarray}
-hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall dt \in Dt
+\sum\limits_{h} inicio_{a,t,h} = at_{a,t} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T
 \end{eqnarray}
 
 
 \subsubsection{Proíbe gap no horário do aluno em um mesmo dia}
 
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} tempo_{v} \cdot v_{a,i,d,s,t,hi,hf} + delta_{a,t} + fagap_{a,t} \geq hfa_{a,t} - hia_{a,t} \nonumber \qquad
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi+,hf} = 
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi-,hf} - fim_{a,t,hi-} + inicio_{a,t,hi+} \nonumber \qquad
 \forall a \in A \quad
-\forall t \in T
+\forall t \in T \quad
+\forall hi+ \in H \quad hi- \in H \mbox{ s.t. hi- + 1 = hi+}
 \end{eqnarray}
 
 
