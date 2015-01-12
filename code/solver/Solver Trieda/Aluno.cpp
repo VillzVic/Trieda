@@ -675,6 +675,11 @@ void Aluno::setTurnoPrincipal()
 	turnoPrincipal = turnoMaxDem;
 }
 
+TurnoIES* Aluno::getTurnoPrinc() const
+{
+	return turnoPrincipal;
+}
+
 bool Aluno::estaEmContraTurno(Disciplina* const disciplina)
 {
 	AlunoDemanda* alDem = this->getAlunoDemanda(disciplina->getId());

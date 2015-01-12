@@ -16,7 +16,7 @@ bool SO_USAR_WORST_CLUSTER=true;
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashTatico_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
@@ -29,7 +29,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashOp_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
@@ -1043,7 +1043,7 @@ void Polish::setMelhora( double objN )
 	{
 		melhora_ = fabs(objN-objAtual_);
 		if(objAtual_!=0) melhora_ /= objAtual_;
-		resetIterSemMelhora();
+		resetIterSemMelhoraConsec();
 	}
 }
 
@@ -1107,7 +1107,10 @@ void Polish::adjustPercOrUnid()
 		if(optimal() && timeLeft_>0.7*timeIter_)
 			decreasePercOrFreeUnid(5);			// decrease the fixed portion if it was easy (fast) to solve
 		else if(!melhorou_)
-			decreasePercOrFreeUnid(10);			// decrease the fixed portion if no improvement was made		
+		{
+			if (nrIterSemMelhora_ > 2)
+				decreasePercOrFreeUnid(10);			// decrease the fixed portion if no improvement was made		
+		}
 	}
 }
 
@@ -1132,6 +1135,7 @@ void Polish::decreasePerc(int percToSubtract)
 {
 	perc_ -= percToSubtract;
 	if (perc_<0) perc_ = 0;
+	resetIterSemMelhoraConsec();
 	resetIterSemMelhora();
 }
 
@@ -1215,6 +1219,11 @@ bool Polish::globalOptimal(double objN)
 	return false;
 }
 
+void Polish::resetIterSemMelhoraConsec()
+{
+	nrIterSemMelhoraConsec_=0;
+}
+
 void Polish::resetIterSemMelhora()
 {
 	nrIterSemMelhora_=0;
@@ -1223,12 +1232,15 @@ void Polish::resetIterSemMelhora()
 void Polish::updateIterSemMelhora()
 {
 	if (!melhorou_)
+	{
+		nrIterSemMelhoraConsec_++;
 		nrIterSemMelhora_++;
+	}
 }
 
 bool Polish::checkDecreaseDueToIterSemMelhora()
 {
-	if (nrIterSemMelhora_ >	maxIterSemMelhora_)
+	if (nrIterSemMelhoraConsec_ >	maxIterSemMelhora_)
 	{
 		decreasePerc(5);
 		stringstream ss;
@@ -1242,7 +1254,7 @@ bool Polish::checkDecreaseDueToIterSemMelhora()
 
 void Polish::checkEndDueToIterSemMelhora()
 {
-	if (nrIterSemMelhora_ >	maxIterSemMelhora_)
+	if (nrIterSemMelhoraConsec_ >	maxIterSemMelhora_)
 	{
 		if (perc_ <= 10)
 		{
@@ -1466,7 +1478,7 @@ void Polish::chgParams()
 //		lp_->setMIPEmphasis(2);					// 2 = prove optimality
 	
 	//setNewHeurFreq();
-	if (nrIterSemMelhora_ >= 2)
+	if (nrIterSemMelhoraConsec_ >= 2)
 		heurFreq_ = 1.0;
 
     lp_->setHeurFrequency( heurFreq_ );

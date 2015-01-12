@@ -134,6 +134,7 @@ private:
 	void adjustOkIter(double objN);
 	bool allFree();
 	bool globalOptimal(double objN);
+	void resetIterSemMelhoraConsec();
 	void resetIterSemMelhora();
 	void updateIterSemMelhora();
 	bool checkDecreaseDueToIterSemMelhora();
@@ -209,6 +210,7 @@ private:
 	   double melhora_;
 	   double runtime_;
 	   double timeLeft_;
+	   int nrIterSemMelhoraConsec_;
 	   int nrIterSemMelhora_;
 	   
 	   // Unidade to leave free

@@ -415,14 +415,20 @@ private:
 
 	// Disciplinas
 	static const int consideraDivCredDisc;
+	static const double pesoDivCred;
 
 	// Professores	
 	static const bool filtroPVHorCompl_;
 	static const bool minimizarCustoProf;
 	static const bool permiteCriarPV;
-	static const int pesoGapProf;
+	static const double pesoGapProf;
+	static const double pesoCredPV;
+	static const double pesoDeslocProf;
+	static const double pesoCHAntProf;
+	
 
 	// Alunos
+	static const double pesoFD;
 	static const int pesoGapAluno;
 	static const int pesoMinCredDiaAluno;
 	static const int desvioMinCredDiaAluno;		// desvio máximo do nr médio de créditos por dia do aluno, sem que haja penalização 

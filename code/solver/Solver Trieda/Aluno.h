@@ -125,11 +125,11 @@ public:
    int getNrMedioCredsDia();
 
    bool possuiEquivForcada();
-
+   
    void setTurnoPrincipal();
+   TurnoIES* getTurnoPrinc() const;
    bool estaEmContraTurno(Disciplina* const disciplina);
-
-
+   
 
    void le_arvore( ItemAluno & elem );
 
