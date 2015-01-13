@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This chapter describes a method for solving the problem which is purely based on mixed integer programming (MIP).
+This chapter describes a method for solving the problem which is purely based on integer linear programming (ILP).
 
 As mentioned by \cite{Haroldo2012}, since exact methods, which try to find proven optimal solutions, can demand unrealistic amounts of processing time on most timetabling variants, the development of heuristics which are effective in practice received much attention from researches.
 
@@ -16,11 +16,20 @@ This approach divides the problem in two modules, which were called 'tactical' a
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Integer programming}
 
+A mathematical optimization problem consists of a set of equations which together define feasible solutions for a problem and an objective function that eliminates symmetries between these solutions and guides the search for the best solution.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Mixed integer program}
+An integer programming problem is a mathematical optimization in which some or all of the variables are restricted to be integers. When both objective function and constraints are linear, then it is called integer linear programming (ILP).
 
-Introduces MIP concept and general formulation.
+$$
+\begin{array}{rll}
+   \mbox{Maximize} & \sum\limits_{j=1}^n c_{j} \cdot x_{j} &
+      \\ & \sum\limits_{j=1}^n a_{ij} \cdot x_{j} = b_{i} & (i = 1, 2, \ldots, m)
+			\\ & x_{j} \ge 0 & (j = 1, 2, \ldots, n)
+			\\ & x_{j} \in \mathbb{Z} & (\mbox{for some or all }j = 1, 2, \ldots , n)
+\end{array}
+$$
+
+It is said to be a mixed integer program when some, but not all, variables are restricted to be integer, and is called a pure integer program when all decision variables must be integers.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +151,7 @@ $$
       + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
       \\
       &
-      + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp}
+      + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} y_{pv,i,d,cp}
 \end{array}
 $$
 
