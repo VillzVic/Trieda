@@ -121,10 +121,12 @@ Introduces CPLEX and Gurobi.
 \item $y_{p,i,d,cp}$ - binary variable, indicates if professor $p$ is assigned to section $i$ of course $d$ of campus $cp$.
 \item $hip_{p,t,f}$ - integer variable, indicates the time in minutes of the first time slot assigned to professor $p$ at session $f$ of day $t$. For example, if the first class assigned to $p$ on $t=Monday$ and $f=morning$ starts at 9:30 am, then $hip_{p,t,f}=9\cdot 60 + 30 = 570$.
 \item $hfp_{p,t,f}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to professor $p$ at session $f$ of day $t$.
-\item $hia_{a,t}$ - integer variable, indicates the time in minutes of the first time slot assigned to student $a$ at day $t$.
-\item $hfa_{a,t}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to student $a$ at day $t$.
 \item $fpgap_{p,t,f}$ - integer slack variable, indicates the gap in session $f$ of day $t$ of professor $p$'s schedule.
 \item $fcad_{a,t}$ - integer slack variable, indicates the number of credits bellow the expected assigned to student $a$ at day $t$.
+\item $begin_{a,t,h}$ - binary variable, indicates if first class of student $a$ at day $t$ begin at time $h$.
+\item $end_{a,t,h}$ - binary variable, indicates if last class of student $a$ at day $t$ begin at time $h$.
+\item $at_{a,t}$ - binary variable, indicates if student $a$ has classes at day $t$.
+
 \end{itemize}
 
 
@@ -431,47 +433,55 @@ Next, gaps in professor timetable are controlled. The usage of the slack variabl
 \subsubsection{Student's gaps prohibition}
 \label{constrStudentGap}
 
-Next, analogous to constraints in ~\ref{constrProfessorGap}, variables $hia_{a,t}$ and $hfa_{a,t}$ are set.
-
-\paragraph{Sets variable $hia_{a,t}$}
+\paragraph{Sets if student $a$ has classes at day $t$ (variable $at_{a,t}$)}
 \begin{eqnarray}
-hia_{a,t} \geq m(dt) \cdot ( 1 - \sum\limits_{v \in V_{dti<dt}} v_{a,t,dti} ) \nonumber \qquad
+M \cdot at_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
 \forall a \in A \quad
 \forall t \in T \quad
-\forall dt \in Dt
-\end{eqnarray}
-\begin{eqnarray}
-hia_{a,t} \leq m(dt) + M \cdot ( 1 - \sum\limits_{v} v_{a,t,dti} ) \nonumber \qquad
-\forall a \in A \quad
-\forall t \in T \quad
-\forall dti \in Dt
+\forall cp \in CP
 \end{eqnarray}
 
-\paragraph{Sets variable $hfa_{a,t}$}
+\paragraph{Sets beginning time of classes for student $a$ at day $t$ (variable $begin_{a,t,h}$)}
 \begin{eqnarray}
-hfa_{a,t} \geq \sum\limits_{v} m(dt) \cdot v_{a,t,dtf} \nonumber \qquad
+begin_{a,t,h} = \sum\limits_{v} v_{a,t,hi} - \sum\limits_{h'\le h} begin_{a,t,h'} + \sum\limits_{h'\le h} end_{a,t,h'} \nonumber \qquad
 \forall a \in A \quad
 \forall t \in T \quad
-\forall dtf \in Dt
-\end{eqnarray}
-\begin{eqnarray}
-hfa_{a,t} \leq m(dt) + M \cdot ( \sum\limits_{v \in V_{dtf>dt}} v_{a,t,dtf} ) \nonumber \qquad
-\forall a \in A \quad
-\forall t \in T \quad
-\forall dt \in Dt
+\forall h \in H
 \end{eqnarray}
 
-Next, gaps in student timetable are avoided. Unlike professors similar restriction, students can not have idle times, and therefore these are hard constraints and there are no slack variables.
+\paragraph{Sets ending time of classes for student $a$ at day $t$ (variable $end_{a,t,h}$)}
+\begin{eqnarray}
+end_{a,t,h} = \sum\limits_{v} v_{a,t,hi} - \sum\limits_{h'\ge h} end_{a,t,h'} + \sum\limits_{h'\ge h} begin_{a,t,h'} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T \quad
+\forall h \in H
+\end{eqnarray}
+
+\paragraph{Uniqueness of student's last class of the day}
+\begin{eqnarray}
+\sum\limits_{h} end_{a,t,h} = at_{a,t} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T
+\end{eqnarray}
+
+\paragraph{Uniqueness of student's first class of the day}
+\begin{eqnarray}
+\sum\limits_{h} begin_{a,t,h} = at_{a,t} \nonumber \qquad
+\forall a \in A \quad
+\forall t \in T
+\end{eqnarray}
+
+
+Next, gaps in student timetable are prevented. Unlike professors similar restriction, students can not have idle times, and therefore these are hard constraints and there are no slack variables.
 
 \paragraph{Prohibits gap in student timetable}
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} duration_{hi,hf} \cdot v_{a,i,d,s,t,hi,hf} + delta_{a,t} \geq hfa_{a,t} - hia_{a,t} \nonumber \qquad
-\\
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi+,hf} = 
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi-,hf} - end_{a,t,hi-} + begin_{a,t,hi+} \nonumber \qquad
 \forall a \in A \quad
 \forall t \in T \quad
+\forall hi+ \in H \quad hi- \in H \mbox{ s.t. hi- + 1 = hi+}
 \end{eqnarray}
-
-
 
 
 
