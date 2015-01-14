@@ -91,11 +91,17 @@ private:
 	void fixVarsType2Tatico();
 	void fixVarsType2Op();
 
+	// Fix variable type 3
+	void fixVarsType3Tatico();
+	void fixVarsType3();
+
 	// Setting unidades to fix or to free
 	void fixUnidsTatico();
 	void fixVarsDifUnidade();
 	void chooseRandUnidade();
+	int getPercUnidCurrentFixed();
 	int getNrFreeUnidade();
+	int getNrUnidToBeFree();
 	int getFOValueProfGap(Professor* p);
 	int getFOValueClusterUnidade_MinPV(int idxCluster);
 	int getFOValueClusterUnidade_MinGapProf(int idxCluster);
@@ -222,6 +228,9 @@ private:
 	   int clusterIdxFreeUnid_;
 	   // <FO value associado, idxs>
 	   std::map<int,std::set<int>> clusterIdxToBeChosen_;
+	   
+	   // teste tipo 3
+	   int idFreeUnid_;
 
 	   // Gurobi parameters
 	   int nrPrePasses_;
@@ -237,7 +246,8 @@ private:
 
 	   // Constants
 	   int tempoIni_; 
-	   int fixType_;
+	   int fixType_; 
+	   int fixTypeAnt_;
 	   double maxTime_;
 	   double maxTempoSemMelhora_;
 	   int maxIterSemMelhora_; 

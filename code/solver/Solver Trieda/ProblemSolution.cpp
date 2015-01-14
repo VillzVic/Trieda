@@ -99,6 +99,22 @@ void ProblemSolution::resetProblemSolution()
    idsAtendimentos = 1;
 }
 
+// procura o atendimento turno com um determinado id. se não encontra cria um novo e retorna-o
+AtendimentoCampus* ProblemSolution::getAddAtendCampus(int id_cp)
+{
+	auto itAtCp = atendimento_campus->begin();
+	for(; itAtCp != atendimento_campus->end(); ++itAtCp)
+	{
+		if(itAtCp->campus->getId() == id_cp)
+			return *itAtCp;
+	}
+
+	AtendimentoCampus* atendCp = new AtendimentoCampus(id_cp);	
+	atendimento_campus->add(atendCp);
+
+	return atendCp;
+}
+
 ProfessorVirtualOutput* ProblemSolution::getProfVirtualOutput( int id )
 {
 	ProfessorVirtualOutput *pvo=nullptr;

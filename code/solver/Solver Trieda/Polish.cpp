@@ -19,8 +19,8 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
-	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
-	tryBranch_(false), okIter_(true),
+	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
+	tryBranch_(false), okIter_(true), fixTypeAnt_(-1),
 	k_(3)
 {
 	originalLogFileName_ = originalLogFile;
@@ -32,8 +32,8 @@ Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string origin
 	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
-	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1),
-	tryBranch_(false), okIter_(true),
+	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
+	tryBranch_(false), okIter_(true), fixTypeAnt_(-1),
 	k_(3)
 {
 	originalLogFileName_ = originalLogFile;
@@ -423,16 +423,20 @@ void Polish::fixVars()
 }
 
 void Polish::fixVarsTatico()
-{
-	fixUnidsTatico();
-
+{	
 	if (fixType_==1)
 	{
+		fixUnidsTatico();
 		fixVarsType1Tatico();
 	}
-	else
+	else if (fixType_==2)
 	{
+		fixUnidsTatico();
 		fixVarsType2Tatico();
+	}
+	else if (fixType_==3)
+	{
+		fixVarsType3Tatico();
 	}
 }
 
@@ -648,6 +652,46 @@ void Polish::fixVarsType2Tatico()
     lp_->updateLP();
 }
 
+void Polish::fixVarsType3()
+{
+	if ( fixType_ != 3 ) return;
+	
+    int nBds = 0;
+    for ( auto vit = vHashTatX_.begin(); vit != vHashTatX_.end(); vit++ )
+    {
+        if ( vit->first.getType() == VariableMIPUnico::V_CREDITOS )
+        {
+			if (vit->first.getUnidade()->getId() == idFreeUnid_) continue;
+
+			int value = (int)(xSol_[vit->second]+0.5);
+
+			if (value > 0)
+				bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
+			else
+				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
+
+			idxs_[nBds] = vit->second;
+			vals_[nBds] = value;
+			nBds++;
+        }
+    }
+
+    lp_->chgBds(nBds,idxs_,bds_,vals_);
+    lp_->updateLP();
+}
+
+void Polish::fixVarsType3Tatico()
+{
+	if ( fixType_ != 3 ) return;
+
+	 int idx = rand() % unidades_.size();
+	 auto uit = unidades_.begin();
+	 std::advance(uit, idx);
+	 idFreeUnid_ = (*uit)->getId();
+
+	 fixVarsType3();
+}
+
 void Polish::fixVarsType2Op()
 {
     int nBds = 0;
@@ -709,7 +753,7 @@ void Polish::fixVarsDifUnidade()
 			if ( isFree(vit->first.getUnidade()) )
 				continue;
 
-			if (xSol_[vit->second] > 0.1 )
+			if (xSol_[vit->second] > 0.1)
 			{
 				idxs_[nBds] = vit->second;
 				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
@@ -884,7 +928,20 @@ void Polish::chooseClusterAndSetFreeUnidade()
 
 // ---------------------------------------
 
+int Polish::getPercUnidCurrentFixed()
+{
+	double n = unidadeslivres_.size();
+	double t = unidades_.size();
+	double p = 100 * (n/t);
+	return (int) p;
+}
+
 int Polish::getNrFreeUnidade()
+{
+	return unidadeslivres_.size();
+}
+
+int Polish::getNrUnidToBeFree()
 {
 	if (percUnidFixed_>100) percUnidFixed_=100;
 	if (percUnidFixed_<0) percUnidFixed_=0;
@@ -902,7 +959,7 @@ void Polish::chooseRandUnidade()
 
 void Polish::chooseRandAndSetFreeUnidade()
 {
-	while (unidadeslivres_.size() < getNrFreeUnidade())
+	while (unidadeslivres_.size() < getNrUnidToBeFree())
 	{
 		chooseRandUnidade();		
 	}
@@ -917,8 +974,8 @@ void Polish::chooseAndSetFreeUnidades()
 
 	if (useFreeBlockPerCluster_)
 		chooseClusterAndSetFreeUnidade();
-	//else
-		chooseRandAndSetFreeUnidade();
+
+	chooseRandAndSetFreeUnidade();
 }
 
 void Polish::decideTypeOfUnidToFree()
@@ -940,6 +997,12 @@ void Polish::setNextRandFreeUnidade(int adjustPercUnid)
 		counter=0;
 		setAllFreeUnidade();
 		return;
+	}
+
+	if (fixTypeAnt_!=3)
+	{
+		int chgType = rand() % 10;
+		if (chgType>=7) fixType_ = 3;
 	}
 
 	chooseAndSetFreeUnidades();
@@ -1056,6 +1119,9 @@ void Polish::updatePercAndTimeIter(double objN, double gap)
 		  return;
 	  }
 	  
+	  fixTypeAnt_ = fixType_;
+	  if (fixType_==3) fixType_ = 1;
+
 	  updateIterSemMelhora();
 	  
 	  if (optimal() || gap <= 1.0)		// TINY GAP
@@ -1086,12 +1152,12 @@ void Polish::updatePercAndTimeIterBigGap( double objN )
 	{
 		chgParams(); 			  
 				
-		adjustTime();
-		
 		int acresm = (allUnidadesAreFree() ? 0: 10);
 		setNextRandFreeUnidade(acresm);
 
 		checkDecreaseDueToIterSemMelhora();
+
+		adjustTime();		
 	}
 }
 
@@ -1108,7 +1174,7 @@ void Polish::adjustPercOrUnid()
 			decreasePercOrFreeUnid(5);			// decrease the fixed portion if it was easy (fast) to solve
 		else if(!melhorou_)
 		{
-			if (nrIterSemMelhora_ > 2)
+			if (nrIterSemMelhora_ > 1)
 				decreasePercOrFreeUnid(10);			// decrease the fixed portion if no improvement was made		
 		}
 	}
@@ -1150,8 +1216,9 @@ void Polish::adjustTime()
 
 void Polish::increaseTime()
 {
-	int incremTime = 20;			// increases the time limit by a fixed amount
-	incremTime += (100-perc_)*0.2;	// increases the time limit the more perc_ is close to 0.
+	int incremTime = 10;								// increases the time limit by a fixed amount
+	incremTime += (100-perc_)*0.2;						// increases the time limit the more perc_ is close to 0.
+	incremTime += (100-getPercUnidCurrentFixed())*0.2;	// increases the time limit the more blocks are free.
 	timeIter_ += incremTime;
 
 	// ToDo: substituir essa fixação de tempo máximo por um controle de acordo com o

@@ -25,8 +25,8 @@ class MIPUnico : public Solver
 public:
 	
 	MIPUnico( ProblemData * aProblemData, 
-				GGroup< VariableTatico *, LessPtr<VariableTatico> > *aSolVarsTatico, 
-				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh,
+				GGroup<VariableTatico *, LessPtr<VariableTatico>> *aSolVarsTatico, 
+				GGroup<VariableTatico *, LessPtr<VariableTatico>> *avars_xh,
 				bool *endCARREGA_SOLUCAO, bool equiv, int permitirNovasTurmas );
 
 	virtual ~MIPUnico();
@@ -34,8 +34,10 @@ public:
 
 	int solve();
     void getSolution( ProblemSolution * );
-	void solveMainEscola( int campusId, int prioridade, int r );
-	
+	void solveMainEscola( int campusId, int prioridade, int r, 
+		std::set<VariableMIPUnico *, LessPtr<VariableMIPUnico>> &solMipUnico );
+	void copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico);
+
    enum Etapas
    {
 	  Etapa1 = 1,
@@ -117,7 +119,6 @@ private:
    int criaRestricaoTaticoAssociaVeX( int campusId );
    int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
    int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId ); // Restricao 1.2.4
-   int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
    int criaRestricaoTaticoCursosIncompat( int campusId );
    int criaRestricaoTaticoProibeCompartilhamento( int campusId );
    int criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade ); 
@@ -126,8 +127,6 @@ private:
    int criaRestricaoTaticoAlunoDiscPraticaTeorica_MxN( int campusId );
    int criaRestricaoTaticoAlunoDiscPraticaTeorica_1x1( int campusId );
    int criaRestricaoTaticoAlunoDiscPraticaTeorica_1xN( int campusId );
-   int criaRestricaoTaticoAlunoDiscPraticaTeorica_1xN_antiga( int campusId );
-   int criaRestricaoTaticoAlunosMesmaTurmaPratica( int campusId );
    int criaRestricaoTaticoDivisaoCredito_hash( int campusId );
    int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
    int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
@@ -142,8 +141,6 @@ private:
    int criaRestricaoTaticoAbreTurmasEmSequencia( int campusId );
    int criaRestricaoTaticoAlunoCurso( int campusId );
    int criaRestricaoPrioridadesDemanda( int campusId, int prior );
-   int criaRestricaoPrioridadesDemanda_v2( int campusId, int prior );
-   int criaRestricaoPrioridadesDemandaEquiv( int campusId, int prior );
    int criaRestricaoTaticoAtendeAlunoEquivTotal( int campusId, int prioridade );
    int criaRestricaoTaticoAtivaZ( int campusId ); // não precisa, pode deletar. A restrição criaRestricaoTaticoSalaUnica engloba esta
    int criaRestricaoTaticoTurmaComOsMesmosAlunosPorAula( int campusId );
@@ -366,6 +363,10 @@ private:
 	
 	int addConstrGapProf();
 	int copyInitialSolutionGapProf();
+	int addConstrDivCred(int campusId);
+	int copyInitialSolutionDivCred();
+	int addConstrMinDesloc();
+	int copyInitialSolutionMinDesloc();
 
 	bool SolVarsFound( VariableTatico v );
 	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
@@ -418,6 +419,7 @@ private:
 	static const double pesoDivCred;
 
 	// Professores	
+	static const int MaxUnidProfDia_;
 	static const bool filtroPVHorCompl_;
 	static const bool minimizarCustoProf;
 	static const bool permiteCriarPV;

@@ -22,8 +22,11 @@
 #include "ProblemSolution.h"
 #include "ConstraintOp.h"
 
-
 using namespace std;
+
+
+const bool SolverMIPUnico::RODAR_OPERACIONAL_ = true;
+
 
 /*  ----------------------------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------------------------
@@ -63,6 +66,19 @@ SolverMIPUnico::~SolverMIPUnico()
       delete lp;
    }
    
+   clear();
+}
+
+void SolverMIPUnico::clear()
+{
+	if (!SolverMIPUnico::RODAR_OPERACIONAL_)
+	{
+		for (auto vit=solMipUnico_.begin(); vit!=solMipUnico_.end(); vit++)
+		{
+			if (*vit) delete *vit;
+		}
+	}
+	solMipUnico_.clear();
 }
 
 int SolverMIPUnico::solve()
@@ -195,13 +211,24 @@ int SolverMIPUnico::solveOpSemTatico()
 			
 	// -------------------------------------------------
 	writeOutputTatico();
-
+	
 	// -------------------------------------------------
 	preencheAtendTaticoProbData();
 			
 	// -------------------------------------------------
 	clearAtendTaticoProbSol();
-			
+	
+	// -------------------------------------------------
+	if (!RODAR_OPERACIONAL_)
+	{
+		extractSolution_();
+		criarOutputFinal_(problemSolution);
+		problemSolution->computaMotivos(true,true);
+		writeOutputOp_();
+
+		return status;
+	}
+
 	// -------------------------------------------------
 	// Criando as aulas que serão utilizadas para resolver o modelo operacional
 	problemDataLoader->criaAulas();
@@ -337,17 +364,15 @@ void SolverMIPUnico::solveCampusP1Escola()
 	if ( problemData->parametros->min_alunos_abertura_turmas )
 		r = 2;
 
-
 	// ==================================
 	// MODELO INTEGRADO	COM NOVAS TURMAS	
-
+	
 	int NOVAS_TURMAS = 1;
 	bool EQUIV=true;
 	MIPUnico * solverEscola = new MIPUnico( this->problemData, &(this->solVarsTatico), &(this->vars_xh),
-																&this->CARREGA_SOLUCAO, EQUIV, NOVAS_TURMAS );
-	solverEscola->solveMainEscola( this->campusAtualId, P, r );
-	delete solverEscola;
-
+											&this->CARREGA_SOLUCAO, EQUIV, NOVAS_TURMAS );
+	solverEscola->solveMainEscola( this->campusAtualId, P, r, solMipUnico_ );
+	delete solverEscola;	
 }
 
 void SolverMIPUnico::solveCampusP2Escola()
@@ -368,7 +393,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 			// Só inserção de alunos
 			MIPUnico * solverEscola = new MIPUnico( 
 				this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 0 );
-			solverEscola->solveMainEscola( this->campusAtualId, P, 1 );
+			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}
 						
@@ -377,7 +402,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 			// Permite novas turmas
 			MIPUnico * solverEscola = new MIPUnico( 
 				this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 3 );
-			solverEscola->solveMainEscola( this->campusAtualId, P, 1 );
+			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}
 	}
@@ -488,36 +513,26 @@ void SolverMIPUnico::relacionaAlunosDemandas()
    }
 
    // Preenchendo alunosDemanda com cada demanda atendida de cada aluno
-   if ( problemData->parametros->otimizarPor == "ALUNO" )
-   {
-	   ITERA_GGROUP_LESSPTR( it_alunosDemanda, problemData->alunosDemanda, AlunoDemanda )
-	   {
-		   AlunoDemanda * aluno_demanda = ( *it_alunosDemanda );
+	ITERA_GGROUP_LESSPTR( it_alunosDemanda, problemData->alunosDemanda, AlunoDemanda )
+	{
+		AlunoDemanda * aluno_demanda = ( *it_alunosDemanda );
 
-		   Disciplina * disc = aluno_demanda->demanda->disciplina;
-		   int alunoId = aluno_demanda->getAlunoId();
+		Disciplina * disc = aluno_demanda->demanda->disciplina;
+		int alunoId = aluno_demanda->getAlunoId();
 
-		   Aluno* a = problemData->retornaAluno( alunoId );
+		Aluno* a = problemData->retornaAluno( alunoId );
 
-		   GGroup< Trio<int, int, Disciplina*> > campusTurmaDiscAluno = problemData->mapAluno_CampusTurmaDisc[a];
-		   for ( GGroup< Trio<int, int, Disciplina*> >::iterator it_at_aluno = campusTurmaDiscAluno.begin();
-				 it_at_aluno != campusTurmaDiscAluno.end(); it_at_aluno++ )
-		   {
-			   if ( (*it_at_aluno).third->getId() == disc->getId() )
-			   {
-					this->problemSolution->alunosDemanda->add( aluno_demanda );
-			   }
-		   }
-	   }
-   }
+		GGroup< Trio<int, int, Disciplina*> > campusTurmaDiscAluno = problemData->mapAluno_CampusTurmaDisc[a];
+		for ( GGroup< Trio<int, int, Disciplina*> >::iterator it_at_aluno = campusTurmaDiscAluno.begin();
+				it_at_aluno != campusTurmaDiscAluno.end(); it_at_aluno++ )
+		{
+			if ( (*it_at_aluno).third->getId() == disc->getId() )
+			{
+				this->problemSolution->alunosDemanda->add( aluno_demanda );
+			}
+		}
+	}
 
-   // Preenchendo alunosDemanda de acordo com o numero de demandas atendidas
-   // (Escolhe os alunos que foram atendidos 'aleatoriamente' )
-   else if ( problemData->parametros->otimizarPor == "BLOCOCURRICULAR" )
-   {
-	   std::cout<<"\nNot done. Exiting...\n";
-	   exit(1);
-   }
    std::cout<<" done!\n";
 }
 
@@ -1393,6 +1408,8 @@ void SolverMIPUnico::clearSolutionOp()
 
 void SolverMIPUnico::writeOutputTatico()
 {
+	if(!problemSolution) return;
+
 	// Write output tático
 	std::cout<<"\nImprimindo output tatico... ";
 	stringstream ssOutputFile;
@@ -1410,4 +1427,393 @@ void SolverMIPUnico::writeOutputTatico()
 	}
 	else std::cout<<"Erro ao abrir arquivo "<< ssOutputFile.str();
 	std::cout<<" fim!\n";
+}
+
+void SolverMIPUnico::writeOutputOp_()
+{
+	if(!problemSolution) return;
+
+	// Write final output
+	std::cout<<"\nImprimindo output final... ";
+	stringstream ssOutputFile;
+	ssOutputFile << "output";
+	ssOutputFile << problemData->getInputFileName().c_str();
+	ssOutputFile << "F";
+	if ( problemData->getInputId() ) ssOutputFile << "_id" << problemData->getInputId();
+
+	std::ofstream file;
+	file.open( ssOutputFile.str(), ios::out );
+	if ( file )
+	{
+		file << ( *problemSolution );
+		file.close();
+	}
+	else std::cout<<"Erro ao abrir arquivo "<< ssOutputFile.str();
+	std::cout<<" fim!\n";
+}
+
+void SolverMIPUnico::extractSolution_()
+{
+	extractSolutionToMaps_();
+	extractSolutionFromMapY_();
+	extractSolutionFromMapX_();
+	extractSolutionFromMapS_();
+}
+
+void SolverMIPUnico::extractSolutionToMaps_()
+{
+	std::cout<<"\nextractSolutionToMaps..."; fflush(0);
+
+	for (auto itVar=solMipUnico_.begin(); itVar!=solMipUnico_.end(); itVar++)
+	{
+		if ((*itVar)->getType() == VariableMIPUnico::V_CREDITOS)
+		{
+			solMipUnicoX_.insert(*itVar);
+		}
+		if ((*itVar)->getType() == VariableMIPUnico::V_PROF_TURMA)
+		{
+			solMipUnicoY_.insert(*itVar);
+		}
+		if ((*itVar)->getType() == VariableMIPUnico::V_ALOCA_ALUNO_TURMA_DISC)
+		{
+			solMipUnicoS_.insert(*itVar);
+		}
+	}	
+}
+
+void SolverMIPUnico::extractSolutionFromMapY_()
+{
+	std::cout<<"\nextractSolutionFromMapY..."; fflush(0);
+
+	for (auto itVar=solMipUnicoY_.cbegin(); itVar!=solMipUnicoY_.cend(); itVar++)
+	{
+		VariableMIPUnico* const y = (*itVar);
+
+		Professor* const p = y->getProfessor();
+		Campus* const cp = y->getCampus();
+		Disciplina* const d = y->getDisciplina();
+		int const turma = y->getTurma();
+
+		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> empty;
+		solAulas_[cp][d][turma][p] = empty;
+	}
+}
+
+void SolverMIPUnico::extractSolutionFromMapX_()
+{
+	std::cout<<"\nextractSolutionFromMapX..."; fflush(0);
+
+	for (auto itVar=solMipUnicoX_.cbegin(); itVar!=solMipUnicoX_.cend(); itVar++)
+	{
+		VariableMIPUnico* const x = (*itVar);
+
+		int cpId = x->getUnidade()->getIdCampus();
+		Campus* const cp = problemData->refCampus[cpId];
+		Disciplina* const d = x->getDisciplina();
+		int const turma = x->getTurma();
+		
+		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*> >> *ptMapSala = nullptr;
+		getAulas(cp, d, turma, ptMapSala);
+		if (!ptMapSala) continue;
+		
+		ConjuntoSala* const cjtSala = x->getSubCjtSala();
+		Sala* const sala = cjtSala->getSala();
+		int const dia = x->getDia();
+		HorarioAula* const hi = x->getHorarioAulaInicial();
+		HorarioAula* const hf = x->getHorarioAulaFinal();
+		
+		// Insere sala
+		auto finderSala = ptMapSala->find(sala);
+		if (finderSala == ptMapSala->end())
+		{
+			unordered_map<int, unordered_set<HorarioAula*>> empty;
+			finderSala = ptMapSala->insert(
+				pair<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> (sala, empty)).first;		
+		}
+		
+		// Insere dia
+		auto finderDia = finderSala->second.find(dia);
+		if (finderDia == finderSala->second.end())
+		{
+			unordered_set<HorarioAula*> empty;
+			finderDia = finderSala->second.insert(
+				pair<int, unordered_set<HorarioAula*>> (dia, empty)).first;
+		}
+		
+		unordered_set<HorarioAula*> *mapHorAls = &finderDia->second;
+		
+		// Insere cada horario
+		Calendario* const c = hi->getCalendario();
+		int nrTotalCreds = c->retornaNroCreditosEntreHorarios(hi,hf);
+		HorarioAula* h = hi;
+		int n=0;
+		while (n < nrTotalCreds && h!=nullptr)
+		{
+			mapHorAls->insert(h);
+
+			h = c->getProximoHorario(h);
+			n++;
+		}
+	}	
+}
+
+void SolverMIPUnico::extractSolutionFromMapS_()
+{
+	std::cout<<"\nextractSolutionFromMapS..."; fflush(0);
+
+	for (auto itVar=solMipUnicoS_.cbegin(); itVar!=solMipUnicoS_.cend(); itVar++)
+	{
+		VariableMIPUnico* const s = (*itVar);
+
+		AlunoDemanda* const alDem = s->getAlunoDemanda();
+		Campus* const cp = s->getCampus();
+		Disciplina* const d = s->getDisciplina();
+		int const turma = s->getTurma();
+
+		solTurmaAlunosAloc_[cp][d][turma].insert(alDem);
+	}	
+}
+
+void SolverMIPUnico::getAulas(Campus* const cp, Disciplina* const d, int const turma,
+	unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*> >> * &ptMapSala)
+{
+	auto finderCp = solAulas_.find(cp);
+	if (finderCp != solAulas_.end())
+	{
+		auto finderDisc = finderCp->second.find(d);
+		if (finderDisc != finderCp->second.end())
+		{
+			auto finderTurma = finderDisc->second.find(turma);
+			if (finderTurma != finderDisc->second.end())
+			{
+				auto *itProf = &finderTurma->second;
+				if (itProf->size() != 1)
+				{
+					if (itProf->size() > 1)
+						CentroDados::printError("SolverMIPUnico::getAulas",
+						"Turma com mais de um professor no mapeamento de aulas!");
+					if (itProf->size() == 0)
+						CentroDados::printError("SolverMIPUnico::getAulas",
+							"Turma sem professores no mapeamento de aulas!");
+					return;
+				}
+
+				ptMapSala = & itProf->begin()->second;
+				return;
+			}
+		}
+	}
+	CentroDados::printWarning("SolverMIPUnico::getAulas", "Turma nao encontrada no mapeamento de aulas!");
+}
+
+void SolverMIPUnico::getAlDemsAlocados(Campus* const cp, Disciplina* const d, 
+						int const turma, unordered_set<AlunoDemanda*> &alDems) const
+{
+	auto finderCp = solTurmaAlunosAloc_.find(cp);
+	if (finderCp != solTurmaAlunosAloc_.cend())
+	{
+		auto finderDisc = finderCp->second.find(d);
+		if (finderDisc != finderCp->second.cend())
+		{
+			auto finderTurma = finderDisc->second.find(turma);
+			if (finderTurma != finderDisc->second.cend())
+			{
+				for (auto itAlDem=finderTurma->second.cbegin(); itAlDem!=finderTurma->second.cend(); itAlDem++)
+				{
+					alDems.insert(*itAlDem);
+				}
+				return;
+			}
+		}
+	}
+	CentroDados::printWarning("SolverMIPUnico::getAlDemsAlocados", "Turma nao encontrada no mapeamento de alunos!");
+}
+
+// cria o output dos atendimentos
+void SolverMIPUnico::criarOutputFinal_(ProblemSolution* const solution) const
+{
+	cout << "Criando output op de atendimento da solução... "; fflush(0);
+	if (!solution)
+	{
+		CentroDados::printWarning("SolverMIPUnico::criarOutputNovo_", "Solucao null!");
+		return;
+	}
+	if (solAulas_.size()==0)
+	{
+		CentroDados::printWarning("SolverMIPUnico::criarOutputNovo_", "Map de solucao vazio!");
+		return;
+	}
+	if (solTurmaAlunosAloc_.size()==0)
+	{
+		CentroDados::printWarning("SolverMIPUnico::criarOutputNovo_", "Map de alocacao de alunos vazio!");
+		return;
+	}
+	
+	// Cenário id
+	solution->setCenarioId( problemData->getCenarioId() );
+	
+	// CAMPUS
+	for(auto itCampus = solAulas_.cbegin(); itCampus != solAulas_.cend(); ++itCampus)
+	{
+		Campus* const campus = itCampus->first;
+		AtendimentoCampus* const atendCampus = solution->getAddAtendCampus(campus->getId());
+		atendCampus->campus = campus;
+		atendCampus->setCampusId(campus->getCodigo());
+		
+		// DISCIPLINAS / OFERTAS
+		for(auto itDisc = itCampus->second.cbegin(); itDisc != itCampus->second.cend(); ++itDisc)
+		{
+			Disciplina* const disciplina = itDisc->first;
+		
+			// TURMAS
+			for(auto itTurmas = itDisc->second.cbegin(); itTurmas != itDisc->second.cend(); ++itTurmas)
+			{		
+				const int turmaId = itTurmas->first;
+
+				unordered_set<AlunoDemanda*> alsDemAlocados;
+				getAlDemsAlocados(campus, disciplina, turmaId, alsDemAlocados);
+
+				unordered_map<Demanda*, unordered_set<AlunoDemanda*>> mapDemAlDems;
+				for(auto itAlDem = alsDemAlocados.cbegin(); itAlDem != alsDemAlocados.cend(); ++itAlDem)
+				{
+					mapDemAlDems[(*itAlDem)->demanda].insert(*itAlDem);
+				}
+
+				criarTurmaOutput_(*atendCampus, disciplina, turmaId, itTurmas->second, mapDemAlDems);
+			}
+		}
+	}
+
+	cout << "Output atendimento criado!";
+}
+
+void SolverMIPUnico::criarTurmaOutput_(AtendimentoCampus &atendCampus, Disciplina* const disciplina, int turmaId, 
+	   unordered_map<Professor*, unordered_map<Sala*, unordered_map<int,
+	   unordered_set<HorarioAula*>>> > const & mapTurma,
+	   unordered_map<Demanda*, unordered_set<AlunoDemanda*>> const &mapDemAlDems) const
+{		
+	if (mapTurma.size()==0)
+		CentroDados::printWarning("SolverMIPUnico::criarTurmaOutput_", "Map de prof da turma vazio!");
+
+	for(auto itProf = mapTurma.cbegin(); itProf != mapTurma.cend(); ++itProf)
+	{
+		Professor* const professor = itProf->first;
+	
+		if (itProf->second.size()==0)
+			CentroDados::printWarning("SolverMIPUnico::criarTurmaOutput_", "Map de sala da turma vazio!");
+
+		for(auto itSala = itProf->second.cbegin(); itSala != itProf->second.cend(); ++itSala)
+		{
+			Sala* const sala = itSala->first;
+
+			// get atendimento unidade
+			int unidadeId = sala->getIdUnidade();
+			AtendimentoUnidade* const atendUnid = atendCampus.getAddAtendUnidade(unidadeId);
+			auto itUnid = problemData->refUnidade.find(unidadeId);
+			if(itUnid != problemData->refUnidade.end())
+			{
+				atendUnid->unidade = itUnid->second;
+				atendUnid->setCodigoUnidade(itUnid->second->getCodigo());
+			}
+			else
+			{
+				CentroDados::printError("SolverMIPUnico::criarTurmaOutput_", "Unidade nao encontrada");
+				continue;
+			}
+
+			// get atendimento sala
+			AtendimentoSala* const atendSala = atendUnid->getAddAtendSala(sala->getId());
+			atendSala->sala = sala;
+			atendSala->setSalaId(sala->getCodigo());
+			
+			// aulas
+			if (itSala->second.size()==0)
+				CentroDados::printWarning("SolverMIPUnico::criarTurmaOutput_", "Map de aulas da turma vazio!");
+
+			for(auto itAulas = itSala->second.cbegin(); itAulas != itSala->second.cend(); ++itAulas)
+			{
+				int dia = itAulas->first;
+
+				criarAulasOutput_(*atendSala, disciplina, turmaId, professor, dia, itAulas->second, mapDemAlDems);
+			}
+		}
+	}
+}
+
+void SolverMIPUnico::criarAulasOutput_(AtendimentoSala &atendSala, Disciplina* const disciplina, int turmaId,
+	Professor* const professor, int dia, unordered_set<HorarioAula*> const &mapHorAlDems,
+	unordered_map<Demanda*, unordered_set<AlunoDemanda*>> const &mapDemAlDems) const
+{	
+	// get atendimento diaSemana
+	AtendimentoDiaSemana* const atendDia = atendSala.getAddAtendDiaSemana(dia);
+	
+	// HORARIOS
+	for(auto itHor = mapHorAlDems.cbegin(); itHor != mapHorAlDems.cend(); ++itHor)
+	{			
+		HorarioAula* const h = *itHor;
+		
+		criarAulaPorOfertaOutput_(*atendDia, disciplina, turmaId, professor, h, dia, mapDemAlDems);
+	}
+}
+
+void SolverMIPUnico::criarAulaPorOfertaOutput_(AtendimentoDiaSemana &atendDia, Disciplina* const disciplina, int turmaId,
+	Professor* const professor, HorarioAula* const hBase, int dia,
+	unordered_map<Demanda*, unordered_set<AlunoDemanda*>> const &mapDemAlDems) const
+{	
+	for(auto itDem = mapDemAlDems.cbegin(); itDem != mapDemAlDems.cend(); ++itDem)
+	{
+		Demanda* const demanda = itDem->first;
+
+		Oferta* const oferta = demanda->oferta;
+		TurnoIES* const turno = oferta->turno;
+		Calendario* const calendario = demanda->getCalendario();
+
+		HorarioAula* const horario = turno->getHorarioDiaCorrespondente(calendario, hBase, dia);
+		if(!horario)
+		{
+			stringstream msg;
+			msg << "Horario " << hBase->getInicio() << " nao encontrado no dia " << dia 
+				<< " em turno " << turno->getId() << " e calendario " << calendario->getId();
+			CentroDados::printError("SolverMIPUnico::criarAulaPorOfertaOutput_",msg.str());
+			return;
+		}
+
+		const bool credTeor = (disciplina->getId() > 0);
+
+		// get atendimento turno
+		AtendimentoTurno* const atendTurno = atendDia.getAddAtendTurno(turno->getId());
+		atendTurno->turno = turno;
+		atendTurno->setTurnoId(turno->getId());
+
+		AtendimentoHorarioAula* const atendHor = atendTurno->getAddAtendHorarioAula(horario->getId());
+		// set informação
+		atendHor->horario_aula = horario;
+		atendHor->setProfessorId(professor->getId());
+		atendHor->professor = professor;
+		atendHor->setProfVirtual(professor->eVirtual());
+		atendHor->setCreditoTeorico(credTeor);
+
+		AtendimentoOferta* const atendOferta = atendHor->getAddAtendOferta(oferta->getId());
+		// set informação
+		stringstream ss;
+		ss << oferta->getId();
+		atendOferta->setOfertaCursoCampiId(ss.str());
+		// set disciplina da alocação
+		atendOferta->disciplina = disciplina;
+		// set disciplina original
+		atendOferta->setDisciplinaId( abs(demanda->getDisciplinaId()) );
+		// get disciplina substituta (caso equivalencia)
+		if(demanda->getDisciplinaId() != disciplina->getId())
+			atendOferta->setDisciplinaSubstitutaId( abs(disciplina->getId()) );
+		// set nr alunos
+		atendOferta->addQuantidade(itDem->second.size());
+		// set turma
+		atendOferta->setTurma(turmaId);
+
+		for(auto itAlDem = itDem->second.cbegin(); itAlDem != itDem->second.cend(); ++itAlDem)
+		{
+			AlunoDemanda* const alDem = *itAlDem;
+			atendOferta->alunosDemandasAtendidas.add(alDem->getId());
+		}
+	}
 }

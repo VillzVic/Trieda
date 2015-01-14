@@ -24,6 +24,7 @@ public:
    virtual ~ProblemSolution(); 
 
    void resetProblemSolution();
+   AtendimentoCampus* getAddAtendCampus(int id_cp);
 
    RestricaoVioladaGroup * getFolgas() const { return this->folgas; }
    GGroup< AtendimentoCampus * > * atendimento_campus;
