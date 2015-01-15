@@ -1456,8 +1456,9 @@ void SolverMIPUnico::extractSolution_()
 {
 	extractSolutionToMaps_();
 	extractSolutionFromMapY_();
-	extractSolutionFromMapX_();
 	extractSolutionFromMapS_();
+	individualizaProfsVirtuais_();
+	extractSolutionFromMapX_();
 }
 
 void SolverMIPUnico::extractSolutionToMaps_()
@@ -1493,9 +1494,15 @@ void SolverMIPUnico::extractSolutionFromMapY_()
 		Campus* const cp = y->getCampus();
 		Disciplina* const d = y->getDisciplina();
 		int const turma = y->getTurma();
-
-		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> empty;
-		solAulas_[cp][d][turma][p] = empty;
+		
+		if (p->eVirtual())
+		{
+			cadastraTurmaMapPV(cp, d, turma);	// A ser individualizado
+		}
+		else
+		{
+			associaProfATurmaMapAulas(cp, d, turma, p);
+		}
 	}
 }
 
@@ -1564,7 +1571,8 @@ void SolverMIPUnico::extractSolutionFromMapS_()
 	for (auto itVar=solMipUnicoS_.cbegin(); itVar!=solMipUnicoS_.cend(); itVar++)
 	{
 		VariableMIPUnico* const s = (*itVar);
-
+		
+		Aluno* const aluno = s->getAluno();
 		AlunoDemanda* const alDem = s->getAlunoDemanda();
 		Campus* const cp = s->getCampus();
 		Disciplina* const d = s->getDisciplina();
@@ -1572,6 +1580,246 @@ void SolverMIPUnico::extractSolutionFromMapS_()
 
 		solTurmaAlunosAloc_[cp][d][turma].insert(alDem);
 	}	
+}
+
+void SolverMIPUnico::individualizaProfsVirtuais_()
+{
+	unordered_map<Aluno*, unordered_map<Campus*, unordered_map<Disciplina*, int>>> alunoTurmasParaIndiv;
+
+	agrupaTurmaProfVirtPorAluno_(alunoTurmasParaIndiv);
+	individualProfVirtPorAluno_(alunoTurmasParaIndiv);
+}
+
+void SolverMIPUnico::agrupaTurmaProfVirtPorAluno_(
+	unordered_map<Aluno*, unordered_map<Campus*, unordered_map<Disciplina*, int>>> &alunoTurmasParaIndiv)
+{	
+	std::cout<<"\nagrupaTurmaProfVirtPorAluno_..."; fflush(0);
+
+	// Para cada turma com pv
+	for (auto itCp=solTurmasComPV_.cbegin(); itCp!=solTurmasComPV_.cend(); itCp++)
+	{
+		auto finderCp = solTurmaAlunosAloc_.find(itCp->first);
+		if (finderCp == solTurmaAlunosAloc_.end())
+			CentroDados::printError("SolverMIPUnico::individualizaProfsVirtuais_()","Campus nao encontrado no map de alunos!");
+
+		for (auto itDisc=itCp->second.cbegin(); itDisc!=itCp->second.cend(); itDisc++)
+		{
+			auto finderDisc = finderCp->second.find(itDisc->first);
+			if (finderDisc == finderCp->second.end())
+				CentroDados::printError("SolverMIPUnico::individualizaProfsVirtuais_()","Dísc nao encontrada no map de alunos!");
+
+			for (auto itTurma=itDisc->second.cbegin(); itTurma!=itDisc->second.cend(); itTurma++)
+			{
+				auto finderTurma = finderDisc->second.find(itTurma->first);
+				if (finderTurma == finderDisc->second.end())
+					CentroDados::printError("SolverMIPUnico::individualizaProfsVirtuais_()","Turma nao encontrada no map de alunos!");
+				if (finderTurma->second.size()==0)
+					CentroDados::printError("SolverMIPUnico::individualizaProfsVirtuais_()","Turma vazia!");
+
+				for (auto itAl=finderTurma->second.cbegin(); itAl!=finderTurma->second.cend(); itAl++)
+				{
+					Aluno* const aluno = (*itAl)->getAluno();
+					
+					alunoTurmasParaIndiv[aluno][itCp->first][itDisc->first] = itTurma->first;
+				}
+			}
+		}
+	}
+}
+
+void SolverMIPUnico::individualProfVirtPorAluno_(
+	unordered_map<Aluno*, unordered_map<Campus*, unordered_map<Disciplina*, int>>> const &alunoTurmasParaIndiv)
+{
+	std::cout<<"\nindividualProfVirtPorAluno_..."; fflush(0);
+
+	for (auto itAl=alunoTurmasParaIndiv.cbegin(); itAl!=alunoTurmasParaIndiv.cend(); itAl++)
+	{
+		unordered_map<Campus*, unordered_map<Disciplina*, int>> turmas;
+		
+		// Seleciona as turmas que não possuem prof associado,
+		// pois pode já ter havido alocação de prof virtual individual em caso de compartilhamento de turmas
+		for (auto itCp=itAl->second.cbegin(); itCp!=itAl->second.cend(); itCp++)
+		{
+			for (auto itDisc=itCp->second.cbegin(); itDisc!=itCp->second.cend(); itDisc++)
+			{
+				int turma = itDisc->second;
+				
+				if (!existeProfVirt(itCp->first, itDisc->first, turma))
+				{
+					turmas[itCp->first][itDisc->first] = turma;
+				}
+			}
+		}
+		
+		// Cria prof virtual para o aluno e o conecta às turmas correspondentes
+		if (turmas.size() > 0)
+		{
+			Professor* pvPorAluno = criaProfessorVirtual();
+
+			for (auto itCp=turmas.cbegin(); itCp!=turmas.cend(); itCp++)
+			{
+				for (auto itDisc=itCp->second.cbegin(); itDisc!=itCp->second.cend(); itDisc++)
+				{
+					pvPorAluno->addMagisterio(itDisc->first->getId(), 0, 10);
+					associaProfATurma(itCp->first, itDisc->first, itDisc->second, pvPorAluno);
+				}	
+				itCp->first->professores.add(pvPorAluno);
+			}
+		}
+	}
+}
+
+Professor* SolverMIPUnico::criaProfessorVirtual()
+{	
+	int idProf = - 1 * (int) problemData->professores_virtuais.size();
+	
+	Professor* professor = new Professor( true );   
+	idProf--;
+	professor->setId(idProf);
+	professor->titulacao = problemData->retornaTipoTitulacaoMinimo();
+	professor->setTitulacaoId( professor->titulacao->getId() );
+
+	std::string nome = professor->getNome();
+	stringstream ss; ss << idProf;
+	nome += ss.str();
+	professor->setNome(nome);
+
+	//professor->setCursoAssociado(curso);
+
+	professor->tipo_contrato = problemData->retornaTipoContratoMinimo();
+	professor->setTipoContratoId(professor->tipo_contrato->getId());
+		
+	problemData->professores_virtuais.push_back(professor);
+
+	return professor;
+}
+
+bool SolverMIPUnico::cadastraTurmaMapPV(Campus* const cp, Disciplina* const d, int const turma)
+{	
+	auto finderCp = solTurmasComPV_.find(cp);
+	if (finderCp == solTurmasComPV_.end())
+	{
+		unordered_map<Disciplina*, unordered_map<int, Professor*>> empty;
+		finderCp = solTurmasComPV_.insert(
+			pair<Campus*, unordered_map<Disciplina*, unordered_map<int, Professor*>>> (cp, empty)).first;
+	}
+
+	auto finderDisc = finderCp->second.find(d);
+	if (finderDisc == finderCp->second.end())
+	{
+		unordered_map<int, Professor*> empty;
+		finderDisc = finderCp->second.insert(
+			pair<Disciplina*, unordered_map<int, Professor*>> (d, empty)).first;
+	}
+
+	auto finderTurma = finderDisc->second.find(turma);
+	if (finderTurma == finderDisc->second.end())
+	{
+		finderTurma = finderDisc->second.insert(
+			pair<int, Professor*> (turma, nullptr)).first;
+	}
+	
+	return false;
+}
+
+bool SolverMIPUnico::associaProfATurma(Campus* const cp, Disciplina* const d, int const turma, Professor* const p)
+{
+	bool assoc = false;
+	assoc = associaProfATurmaMapPV(cp, d, turma, p);
+	assoc &= associaProfATurmaMapAulas(cp, d, turma, p);
+	return assoc;
+}
+
+bool SolverMIPUnico::associaProfATurmaMapPV(Campus* const cp, Disciplina* const d, int const turma, Professor* const p)
+{
+	if (!p->eVirtual()) return false;
+
+	auto finderCp = solTurmasComPV_.find(cp);
+	if (finderCp == solTurmasComPV_.end())
+	{
+		unordered_map<Disciplina*, unordered_map<int, Professor*>> empty;
+		finderCp = solTurmasComPV_.insert(
+			pair<Campus*, unordered_map<Disciplina*, unordered_map<int, Professor*>>> (cp, empty)).first;
+	}
+
+	auto finderDisc = finderCp->second.find(d);
+	if (finderDisc == finderCp->second.end())
+	{
+		unordered_map<int, Professor*> empty;
+		finderDisc = finderCp->second.insert(
+			pair<Disciplina*, unordered_map<int, Professor*>> (d, empty)).first;
+	}
+
+	auto finderTurma = finderDisc->second.find(turma);
+	if (finderTurma == finderDisc->second.end())
+	{
+		finderTurma = finderDisc->second.insert(
+			pair<int, Professor*> (turma, nullptr)).first;
+	}
+
+	if (finderTurma->second == nullptr)
+	{
+		finderTurma->second = p;
+		return true;
+	}
+
+	return false;
+}
+
+bool SolverMIPUnico::associaProfATurmaMapAulas(Campus* const cp, Disciplina* const d, int const turma, Professor* const p)
+{
+	auto finderCp = solAulas_.find(cp);
+	if (finderCp == solAulas_.end())
+	{
+		MapDiscTurmProfSalaDiaHors empty;
+		finderCp = solAulas_.insert(pair<Campus*, MapDiscTurmProfSalaDiaHors> (cp, empty)).first;
+	}
+
+	auto finderDisc = finderCp->second.find(d);
+	if (finderDisc == finderCp->second.end())
+	{
+		MapTurmProfSalaDiaHors empty;
+		finderDisc = finderCp->second.insert(pair<Disciplina*, MapTurmProfSalaDiaHors> (d, empty)).first;
+	}
+
+	auto finderTurma = finderDisc->second.find(turma);
+	if (finderTurma == finderDisc->second.end())
+	{
+		MapProfSalaDiaHors empty;
+		finderTurma = finderDisc->second.insert(pair<int, MapProfSalaDiaHors> (turma, empty)).first;
+	}
+
+	auto finderProf = finderTurma->second.find(p);
+	if (finderProf == finderTurma->second.end())
+	{
+		if (finderTurma->second.size() > 0)
+			CentroDados::printError("SolverMIPUnico::associaProfATurmaMapAulas", "Mais de um professor associado aa turma!!");
+
+		MapSalaDiaHors empty;
+		finderProf = finderTurma->second.insert(pair<Professor*, MapSalaDiaHors> (p, empty)).first;				
+		return true;
+	}
+
+	return false;
+}
+
+bool SolverMIPUnico::existeProfVirt(Campus* const cp, Disciplina* const d, int const turma) const
+{
+	auto finderCp = solTurmasComPV_.find(cp);
+	if (finderCp != solTurmasComPV_.end())
+	{
+		auto finderDisc = finderCp->second.find(d);
+		if (finderDisc != finderCp->second.end())
+		{
+			auto finderTurma = finderDisc->second.find(turma);
+			if (finderTurma != finderDisc->second.end())
+			{
+				if (finderTurma->second != nullptr)
+					return true;
+			}
+		}
+	}
+	return false;
 }
 
 void SolverMIPUnico::getAulas(Campus* const cp, Disciplina* const d, int const turma,

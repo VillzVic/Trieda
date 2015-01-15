@@ -45,6 +45,7 @@ public:
    void setMinCredsDiarios( int value ) { min_creds_diarios = value; }
    void setCursoAssociado( Curso* c ){ curso = c; }
    void addDisponibilidade( int dia, DateTime dti, DateTime dtf );
+   void addMagisterio(int discId, int nota, int preferencia);
 
    std::string getCpf() const { return cpf; }
    std::string getNome() const { return nome; }

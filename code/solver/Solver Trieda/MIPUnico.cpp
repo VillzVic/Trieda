@@ -17,6 +17,7 @@ using namespace std;
 
 bool RODAR_OPERACIONAL = true;
 
+const bool MIN_FD_JUNTO_COM_PROF_VIRT = false;
 
 const bool CONSTR_DESLOC_PROF_SEPARADO = true;
 const bool CONSTR_DIV_CRED_SEPARADO = true;
@@ -40,12 +41,12 @@ const int MIPUnico::timeLimitMaxAtend = 3600*4;
 const int MIPUnico::timeLimitMaxAtendSemMelhora = 3600*2;
 const int MIPUnico::timeLimitMinProfVirt = 3600*3;
 const int MIPUnico::timeLimitMinProfVirtSemMelhora = 3600*2;
-const int MIPUnico::timeLimitMinGapProf = 3600*2;
-const int MIPUnico::timeLimitMinGapProfSemMelhora = 3600*1;
-const int MIPUnico::timeLimitGeneral= 3600*1;
+const int MIPUnico::timeLimitMinGapProf = 3600;
+const int MIPUnico::timeLimitMinGapProfSemMelhora = 1800;
+const int MIPUnico::timeLimitGeneral= 3600;
 const int MIPUnico::timeLimitGeneralSemMelhora = 1800;
-const int MIPUnico::timeLimitMinDeslocProf_= 3600*1.5;
-const int MIPUnico::timeLimitMinDeslocProfSemMelhora_ = 3600;
+const int MIPUnico::timeLimitMinDeslocProf_= 3600;
+const int MIPUnico::timeLimitMinDeslocProfSemMelhora_ = 1800;
 
 
 // Disciplinas
@@ -2456,7 +2457,8 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 
 		row.insert(vit->second, numCred);
 
-		nrMaxCredNaoAtend += numCred;
+		if (xS[vit->second] > 0.1)
+			nrMaxCredNaoAtend += numCred;
 	}
 	
 	if (row.getnnz() > 0)
@@ -2531,11 +2533,13 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 		if ( v.getType() == VariableMIPUnico::V_PROF_TURMA )
 		{     
 			if ( v.getProfessor()->eVirtual() )
-				coef = 1.0;
+				coef = v.getDisciplina()->getTotalCreditos();
 		}
-		if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
+
+		if (MIN_FD_JUNTO_COM_PROF_VIRT)
+		if (v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO)
 		{
-			coef = 0.0001;
+			coef = 0.0001 * v.getDisciplina()->getTotalCreditos();
 		}
 
 		idxs[nBds] = vit->second;
@@ -2631,34 +2635,69 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
 
-	#pragma region Fixa solução
-    nBds = 0;
-	vit = vHashTatico.begin();
-	for ( ; vit != vHashTatico.end(); vit++ )
+	#pragma region Fixa solução	por restrição
+	
+	OPT_ROW row( 300, OPT_ROW::LESS, 0, "C_MIN_PV_" );
+		
+	int nrMaxCredPV=0;
+	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
 	{
 		VariableMIPUnico v = vit->first;
-				
-		if ( v.getType() == VariableMIPUnico::V_PROF_TURMA )	// ToDo: O melhor é fixar o máximo de turmas com virtuais, embora fixar 'quais' deixa o prob mais facil
-		if ( v.getProfessor()->eVirtual() && xS[vit->second] < 0.1 )	// turma sem prof virtual
-		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 0.0;
-			bds[nBds] = BOUNDTYPE::BOUND_UPPER;
-			nBds++;
-		}
 
-		if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
-		if ( xS[vit->second] < 0.1 )
+		if (v.getType() != VariableMIPUnico::V_PROF_TURMA)
+			continue;
+		if (!v.getProfessor()->eVirtual())
+			continue;
+		
+		int numCred = vit->first.getDisciplina()->getTotalCreditos();
+
+		row.insert(vit->second, numCred);
+
+		if (xS[vit->second] > 0.1) // atendido com pv
 		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 0.0;
-			bds[nBds] = BOUNDTYPE::BOUND_UPPER;
-			nBds++;
-		}
+			nrMaxCredPV += numCred;
+		}			
 	}
-
-    lp->chgBds(nBds,idxs,bds,vals);
+	
+	if (row.getnnz() > 0)
+	{
+		row.setRhs(nrMaxCredPV);
+		lp->addRow(row);
+		lp->updateLP();
+	}
 	#pragma endregion
+
+
+	//#pragma region Fixa solução por variavel
+ //   nBds = 0;
+	//vit = vHashTatico.begin();
+	//for ( ; vit != vHashTatico.end(); vit++ )
+	//{
+	//	VariableMIPUnico v = vit->first;
+	//			
+	//	// turma sem prof virtual
+	//	if (v.getType() == VariableMIPUnico::V_PROF_TURMA)
+	//	if (v.getProfessor()->eVirtual() && xS[vit->second] < 0.1)
+	//	{
+	//		idxs[nBds] = vit->second;
+	//		vals[nBds] = 0.0;
+	//		bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+	//		nBds++;
+	//	}
+
+	//	if (MIN_FD_JUNTO_COM_PROF_VIRT)
+	//	if (v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO)
+	//	if (xS[vit->second] < 0.1)
+	//	{
+	//		idxs[nBds] = vit->second;
+	//		vals[nBds] = 0.0;
+	//		bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+	//		nBds++;
+	//	}
+	//}
+
+ //   lp->chgBds(nBds,idxs,bds,vals);
+	//#pragma endregion
 	
 	// ------------------------------------------------------------------------------------
 	// Volta com a função objetivo original	

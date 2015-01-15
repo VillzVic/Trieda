@@ -90,6 +90,18 @@ void Professor::le_arvore( ItemProfessor & elem )
 	}
 }
 
+void Professor::addMagisterio(int discId, int nota, int preferencia)
+{
+	Magisterio * m = new Magisterio();
+
+	int id = this->magisterio.size() + 1;
+	m->setId( id );	
+	m->setNota(nota);
+	m->setPreferencia(preferencia);
+	m->setDisciplinaId(discId);
+
+	this->magisterio.add( m );
+}
 
 void Professor::addDisponibilidade( int dia, DateTime dti, DateTime dtf )
 {

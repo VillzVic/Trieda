@@ -50,6 +50,19 @@ private:
    void extractSolutionFromMapX_();
    void extractSolutionFromMapS_();
 
+   void individualizaProfsVirtuais_();   
+   void agrupaTurmaProfVirtPorAluno_(
+	   unordered_map<Aluno*, unordered_map<Campus*, unordered_map<Disciplina*, int>>> &alunoTurmasParaIndiv);      
+   void individualProfVirtPorAluno_(
+	   unordered_map<Aluno*, unordered_map<Campus*, unordered_map<Disciplina*, int>>> const &alunoTurmasParaIndiv);
+
+   Professor* criaProfessorVirtual();
+   bool cadastraTurmaMapPV(Campus* const cp, Disciplina* const d, int const turma);
+   bool associaProfATurma(Campus* const cp, Disciplina* const d, int const turma, Professor* const p);
+   bool associaProfATurmaMapPV(Campus* const cp, Disciplina* const d, int const turma, Professor* const p);
+   bool associaProfATurmaMapAulas(Campus* const cp, Disciplina* const d, int const turma, Professor* const p);
+   bool existeProfVirt(Campus* const cp, Disciplina* const d, int const turma) const;
+
    void getAulas(Campus* const cp, Disciplina* const d, int const turma,
 		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*> >> * &ptMapSala);
 
@@ -98,8 +111,26 @@ private:
    unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, unordered_map<Professor*,
 	   unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> >>>> solAulas_;
 
-   unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, unordered_set<AlunoDemanda*> >>> solTurmaAlunosAloc_;
+   unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, Professor*>>> solTurmasComPV_;
 
+   unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, unordered_set<AlunoDemanda*> >>> solTurmaAlunosAloc_;
+   
+   // ------------
+   // Typedefs
+   typedef unordered_map<Disciplina*, unordered_map<int, unordered_map<Professor*,
+		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> >>> MapDiscTurmProfSalaDiaHors;
+   
+   typedef unordered_map<int, unordered_map<Professor*,
+		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> >> MapTurmProfSalaDiaHors;
+   
+   typedef unordered_map<Professor*,
+		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> > MapProfSalaDiaHors;
+   
+   typedef unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> MapSalaDiaHors;
+   
+   typedef unordered_map<int, unordered_set<HorarioAula*>> MapDiaHors;
+
+   // ------------ 
 
    struct Ordena
    {
