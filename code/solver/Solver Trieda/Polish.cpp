@@ -16,7 +16,7 @@ bool SO_USAR_WORST_CLUSTER=true;
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashTatico_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(8),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
@@ -29,7 +29,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashOp_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(9),
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(8),
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
@@ -1501,13 +1501,13 @@ void Polish::setLpPrePasses()
 		nrPrePasses_--;
 	else return;
 
-	bool success = lp_->setPrePasses(nrPrePasses_);
+	//bool success = lp_->setPrePasses(nrPrePasses_);
 
-	if (!success){
-		stringstream ss;
-		ss << "void Polish::setLpPrePasses(): fail!";
-		printLog(ss.str());
-	}
+	//if (!success){
+	//	stringstream ss;
+	//	ss << "void Polish::setLpPrePasses(): fail!";
+	//	printLog(ss.str());
+	//}
 }
 
 void Polish::chgLpRootRelax()
@@ -1527,7 +1527,7 @@ void Polish::chgLpRootRelax()
 
 void Polish::setParams(double timeIter_)
 {
-	lp_->setPrePasses(nrPrePasses_);
+	//lp_->setPrePasses(nrPrePasses_);
   	lp_->setNumIntSols(10000000);
     lp_->setTimeLimit( timeIter_ );
     lp_->setMIPRelTol( 0.1 );

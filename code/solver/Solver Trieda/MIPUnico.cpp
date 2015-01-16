@@ -3917,10 +3917,27 @@ bool MIPUnico::haDemandaPossivelNoDiaHor(Disciplina* const disc, int dia, Horari
 	{
 		for (auto itAlDem=finder->second.begin(); itAlDem!=finder->second.end(); itAlDem++)
 		{
-			if (itAlDem->podeNoHorario(ha,dia))
+			if ((*itAlDem)->podeNoHorario(ha,dia))
 				return true;
 		}
 	}
+	return false;
+}
+
+bool MIPUnico::haProfPossivelNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha)
+{
+	auto finderDisc = problemData->mapDiscProfsHabilit.find(disc);
+	if (finderDisc == problemData->mapDiscProfsHabilit.end())
+		return false;
+
+	for (auto itProf=finderDisc->second.begin(); itProf!=finderDisc->second.end(); itProf++)
+	{
+		if ((*itProf)->possuiHorariosNoDia(ha, ha, dia))
+		{
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -4488,6 +4505,9 @@ int MIPUnico::criaVariavelTaticoCreditos( int campusId, int P )
 			ITERA_GGROUP_N_PT( itDia, it_hor->dias_semana, int )
 			{
 				if ( !haDemandaPossivelNoDiaHor(disciplina, *itDia, ha) )
+					continue;
+
+				if ( !haProfPossivelNoDiaHor(disciplina, *itDia, ha) && !MIPUnico::permiteCriarPV)
 					continue;
 
 				mapDiscDiaDtCalendTurnoHorAula[ disciplina ][ *itDia ][ ha->getInicio() ][ ha->getCalendario() ][ ha->getTurnoIESId() ] = ha;
@@ -10756,6 +10776,8 @@ int MIPUnico::criaRestricaoProfAulaSum()
     ConstraintMIPUnico c;
     ConstraintMIPUnicoHash::iterator cit;
 	
+	//std::cout << "\n0"; fflush(0);
+
 	// Percorrendo variaveis k
 	// Unidade
 	auto itVarsUnid = vars_prof_aula1.begin();
@@ -10763,8 +10785,12 @@ int MIPUnico::criaRestricaoProfAulaSum()
 	{
 		Unidade *unidade = itVarsUnid->first;
 		
+		//std::cout << "\n1"; fflush(0);
+
 		auto itVarUnidX = vars_turma_aula2.find(unidade);
 		if ( itVarUnidX == vars_turma_aula2.end() ) continue;
+				
+		//std::cout << "\n1.1"; fflush(0);
 
 		// Disciplina
 		auto itVarsDisc = itVarsUnid->second.begin();
@@ -10772,17 +10798,27 @@ int MIPUnico::criaRestricaoProfAulaSum()
 		{
 			Disciplina *disciplina = itVarsDisc->first;
 					
+			//std::cout << "\n2.1"; fflush(0);
+
 			auto itVarDiscX = itVarUnidX->second.find(disciplina);
 			if ( itVarDiscX == itVarUnidX->second.end() ) continue;
-
+			
+			//std::cout << "\n2.2"; fflush(0);
+			
 			// Turma
 			auto itVarsTurma = itVarsDisc->second.begin();
 			for ( ; itVarsTurma != itVarsDisc->second.end(); itVarsTurma++ )
 			{
+				//std::cout << "\n3.1"; fflush(0);
+
 				int turma = itVarsTurma->first;
+
+				//std::cout << "\n3.2"; fflush(0);
 
 				auto itVarTurmaX = itVarDiscX->second.find(turma);
 				if ( itVarTurmaX == itVarDiscX->second.end() ) continue;
+
+				//std::cout << "\n3.3"; fflush(0);
 
 				// Professor
 				auto itVarsProf = itVarsTurma->second.begin();
@@ -10790,16 +10826,22 @@ int MIPUnico::criaRestricaoProfAulaSum()
 				{
 					Professor *professor = itVarsProf->first;
 	
+					//std::cout << "\n4.1"; fflush(0);
+
 					// Dia
 					auto itVarsDia = itVarsProf->second.begin();
 					for ( ; itVarsDia != itVarsProf->second.end(); itVarsDia++ )
 					{
 						int dia = itVarsDia->first;
 				
+						//std::cout << "\n5.1"; fflush(0);
+
 						auto itVarDiaX = itVarTurmaX->second.find(dia);
 						if ( itVarDiaX == itVarTurmaX->second.end() ) continue;
 
 						auto *mapDtiX = & itVarDiaX->second;
+
+						//std::cout << "\n5.2"; fflush(0);
 
 						// Dti
 						auto itVarsDti = itVarsDia->second.begin();
@@ -10807,12 +10849,19 @@ int MIPUnico::criaRestricaoProfAulaSum()
 						{
 							DateTime dti = itVarsDti->first;
 				
+							//std::cout << "\n6.1  " << dti.hourMinToStr(); fflush(0);
+
 							// Vars
 							int kCol = itVarsDti->second.first;
 							VariableMIPUnico kVar = itVarsDti->second.second;
 
+							//std::cout << "\n6.2  " << kCol; fflush(0);
+							//std::cout << kVar.toString(); fflush(0);
+
 							DateTime kDti = kVar.getDateTimeInicial();
 							DateTime kDtf = kVar.getDateTimeFinal();
+
+							//std::cout << "\n6.3 "; fflush(0);
 
 							// Sets constraint
 							c.reset();
@@ -10824,10 +10873,14 @@ int MIPUnico::criaRestricaoProfAulaSum()
 							c.setDisciplina( kVar.getDisciplina() );
 							c.setUnidade( kVar.getUnidade() );
 
+							//std::cout << "\n6.4  " << c.toString(etapa); fflush(0);
+
 							cit = cHashTatico.find(c);
 							if(cit == cHashTatico.end())
 							{
 								int nnz = itVarsDia->second.size();
+
+								//std::cout << "\n6.5  "; fflush(0);
 
 								sprintf( name, "%s", c.toString( etapa ).c_str() );
 								OPT_ROW row( nnz, OPT_ROW::EQUAL, 0, name );
@@ -10836,27 +10889,39 @@ int MIPUnico::criaRestricaoProfAulaSum()
 								// k
 								row.insert( kCol, -1.0);
 
+								//std::cout << "\n6.6 "; fflush(0);
+
 								// -------------------------------------
 								// x
 								int nVars=0;								
 								for ( auto itDtiX = mapDtiX->begin(); itDtiX != mapDtiX->end(); itDtiX++ )
 								{
+									//std::cout << "\n7.1"; fflush(0);
+
 									if ( itDtiX->first > kDtf )					// x_{dti} > k_{dtf}
 										break;
+
+									//std::cout << "\n7.2"; fflush(0);
 
 									for ( auto itVarsX = itDtiX->second.begin(); itVarsX != itDtiX->second.end(); itVarsX++ )
 									{
 										int xCol = itVarsX->first;
 										VariableMIPUnico x = itVarsX->second;
 
+										//std::cout << "\n7.3" << x.toString();
+
 										if ( x.getDateTimeFinal() < kDti )		// x_{dtf} < k_{dti}
 											continue;
 
 										bool found=false;
 
+										//std::cout << "\n7.4"; fflush(0);
+
 										HorarioAula *h = x.getHorarioAulaInicial();								
 										while ( h!=nullptr && !found )
 										{
+											//std::cout << "\n7.4 loop"; fflush(0);
+
 											DateTime xDti = h->getInicio();
 											DateTime xDtf = h->getFinal();											
 
@@ -10866,6 +10931,8 @@ int MIPUnico::criaRestricaoProfAulaSum()
 												h = h->getCalendario()->getProximoHorario(h);
 										}
 
+										//std::cout << "\n7.3 fim"; fflush(0);
+
 										// inserts x
 										if (found)
 										{
@@ -10873,8 +10940,11 @@ int MIPUnico::criaRestricaoProfAulaSum()
 											nVars++;
 										}
 									}
+									//std::cout << "\n7 fim"; fflush(0);
 								}								
 								// -------------------------------------
+
+								//std::cout << "\n6.6 "; fflush(0);
 
 								// Inserts constraint
 								if ( nVars )
@@ -10883,34 +10953,50 @@ int MIPUnico::criaRestricaoProfAulaSum()
 									lp->addRow( row );
 									restricoes++;
 								}
+
+								//std::cout << "\n6.7 "; fflush(0);
 							}
 							else
 							{
+								//std::cout << "\n6.8 "; fflush(0);
+
 								// -------------------------------------
 								// k
 								lp->chgCoef( cit->second, kCol, -1.0 );
+
+								//std::cout << "\n6.9 "; fflush(0);
 
 								// -------------------------------------
 								// x
 								int nVars=0;								
 								for ( auto itDtiX = mapDtiX->begin(); itDtiX != mapDtiX->end(); itDtiX++ )
 								{
+									//std::cout << "\n8.1 "; fflush(0);
+
 									if ( itDtiX->first > kDtf )					// x_{dti} > k_{dtf}
 										break;
+
+									//std::cout << "\n8.2"; fflush(0);
 
 									for ( auto itVarsX = itDtiX->second.begin(); itVarsX != itDtiX->second.end(); itVarsX++ )
 									{
 										int xCol = itVarsX->first;
 										VariableMIPUnico x = itVarsX->second;
 
+										//std::cout << "\n8.3 " << x.toString(); fflush(0);
+
 										if ( x.getDateTimeFinal() < kDti )		// x_{dtf} < k_{dti}
 											continue;
 
 										bool found=false;
 
+										//std::cout << "\n8.4"; fflush(0);
+
 										HorarioAula *h = x.getHorarioAulaInicial();								
 										while ( h!=nullptr && !found )
 										{
+										//	std::cout << "\n8.4 loop"; fflush(0);
+
 											DateTime xDti = h->getInicio();
 											DateTime xDtf = h->getFinal();											
 
@@ -10925,9 +11011,10 @@ int MIPUnico::criaRestricaoProfAulaSum()
 										{
 											lp->chgCoef( cit->second, xCol, 1.0 );
 										}
+										//std::cout << "\n8.3 fim"; fflush(0);
 									}
 								}							
-
+								//std::cout << "\n6.10 "; fflush(0);
 							}
 						}
 					}
@@ -12387,7 +12474,10 @@ int MIPUnico::criarRestricaoAlunoGap_( Aluno* const aluno, const int dia,
 int MIPUnico::criarRestricaoGapDiaAluno()
 {
 	int numRestr=0;
-	
+	if ( problemData->parametros->proibirAlunoGap ==
+		 ParametrosPlanejamento::ConstraintLevel::Off )
+		return numRestr;
+		
 	for(auto itAluno = varsAlunoDiaInicioFim.cbegin(); itAluno != varsAlunoDiaInicioFim.cend(); ++itAluno)
 	{
 		Aluno *aluno = itAluno->first;

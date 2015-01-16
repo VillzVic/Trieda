@@ -65,6 +65,7 @@ private:
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
    bool haDemanda(Disciplina* const disc);
    bool haDemandaPossivelNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
+   bool haProfPossivelNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
 
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
