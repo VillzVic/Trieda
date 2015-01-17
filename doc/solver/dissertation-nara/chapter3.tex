@@ -10,30 +10,99 @@ As mentioned by \cite{Haroldo2012}, since exact methods, which try to find prove
 
 At \cite{Birbas2009}: The lack of efficient software tools for the solution of IP models some years back has forced researchers away from suggesting standard IP solution techniques. Since the early 90's though, this obstacle has been removed and mathematical programming tools are contributing towards the effort of automating the timetabling process for high schools and for universities.
 
-This approach divides the problem in two modules, which were called 'tactical' and 'operational' module.
+Section ~\ref{IP} introduces the main concepts of integer linear programming, which are fundamental in understanding the developed solving method. Further and more complete explanations about integer programming can be found at \cite{Wolsey98}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Integer programming}
+\label{IP}
 
 A mathematical optimization problem consists of a set of equations which together define feasible solutions for a problem and an objective function that eliminates symmetries between these solutions and guides the search for the best solution.
 
-An integer programming problem is a mathematical optimization in which some or all of the variables are restricted to be integers. When both objective function and constraints are linear, then it is called integer linear programming (ILP).
+When both objective function and constraints are linear, then it is called \textit{Linear Programming (LP)}.
 
 $$
-\begin{array}{rll}
-   \mbox{Maximize} & \sum\limits_{j=1}^n c_{j} \cdot x_{j} &
-      \\ & \sum\limits_{j=1}^n a_{ij} \cdot x_{j} = b_{i} & (i = 1, 2, \ldots, m)
-			\\ & x_{j} \ge 0 & (j = 1, 2, \ldots, n)
-			\\ & x_{j} \in \mathbb{Z} & (\mbox{for some or all }j = 1, 2, \ldots , n)
+\begin{array}{rl}
+   \mbox{Maximize} & c \cdot x
+								\\ & A \cdot x \le b
+								\\ & x \in \mathbb{R}^{n}_{+}
 \end{array}
 $$
 
-It is said to be a mixed integer program when some, but not all, variables are restricted to be integer, and is called a pure integer program when all decision variables must be integers.
+where $A$ is a matrix such that $A \in \mathbb{R}^{m \times n}$, $c$ is a row vector such that $c \in \mathbb{R}^n$, $b$ is a column vector such that $b \in \mathbb{R}^m$, and $x$ is a column vector of decision variables.
+
+Variations of a linear program are obtained when one constraints variables' domain. A \textit{Mixed Integer Program (MIP)} is a mathematical optimization in which some but not all variables are restricted to be integers. 
+
+$$
+\begin{array}{rlll}
+   \mbox{Maximize} & c \cdot x & +  & h \cdot y
+								\\ & A \cdot x & +  & G \cdot y \le b
+								\\ & x \in \mathbb{R}^{n}_{+} &, & y \in \mathbb{Z}^{p}_{+}
+\end{array}
+$$
+
+where $G$ is a matrix such that $G \in \mathbb{R}^{m \times p}$, $h$ is a row vector such that $h \in \mathbb{R}^p$, and $y$ is a column vector of integer decision variables.
+
+When all decision variables must be integers, the program is called a \textit{Pure Integer Linear Program (IP)}; and when all decision variables are restricted to ${0,1}$ values, then we have a \textit{Binary Integer Program (BIP)}.
+
+Very efficient methods for solving linear programs are known, with the Simplex Method being the most famous one. Because integer programs look pretty much like linear programs, it is not a surprise that linear programming theory and practice is essential in understanding and solving integer programs. Solving an integer program is far more challenging than solving its linear version though.
+
+Since the integer set $\mathbb{Z}$ is a countable set, it is clear that every integer program has a countable number of solutions and that every bounded integer program has a countable and finite set of solutions. Thus, theoretically, these problems can be solved by enumeration. In practice, to be feasible, such approach depends on the size of the possible solutions set, and that is where difficulty stems from.
+
+To illustrate the situation, consider a general assignment problem, where $n$ people are available to carry out $n$ jobs and each person must be assigned to carry out exactly one job. There is an one-to-one correspondence between assignments and permutations of ${1, \ldots ,n}$. Thus there are $n!$ solutions to compare. At table ~\ref{table:factorial} one can have a glimpse of what happens in this case when n grows.
+
+\begin{table}[ht]
+\caption{Combinatorial explosion of possible solutions for factorial function problems} % title of Table
+\centering
+\begin{tabular}{c c} 							% centered columns
+\hline\hline 											% inserts double horizontal lines
+$n$ & $n!$ \\ [0.5ex] 						% heading													
+\hline 														% inserts single horizontal line
+10 & $3.6 \cdot 10^6$ \\
+100 & $9.33 \cdot 10^{157}$ \\
+1000 & $4.02 \cdot 10^{2567}$ \\ [1ex] 	% [1ex] adds vertical space
+\hline
+\end{tabular}
+\label{table:factorial} 					% is used to refer this table in the text
+\end{table}
+
+
+The obvious conclusion is that using complete enumeration for solving combinatorial problems, also known as \q{brute-force search} or \q{exhaustive search}, is feasible only for small values of $n$.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Alternative formulations}
+
+For every integer subset $X \subset \mathbb{Z}^n$ there is an infinite number of linear programs such that their feasible integer solution space is equal to $X$. Figure ~\ref{fig:linearForm} illustrates a subset $X \subset \mathbb{Z}^2$ of integer points and 3 different possible ways ($P_{1}$, $P_{2}$ and $P_{3}$) to linearly constrain the subset so that no integer point of $X$ is out of the bounded area and no integer point out of $X$ is inside the bounded area.
+
+\begin{figure}[h]
+\centering
+\hfill\includegraphics[scale=1.0]{figures/linearForm3.png}
+\caption{Different linear formulations}
+\label{fig:linearForm}
+\end{figure}
+
+Following are some useful definitions for the subject.
+
+\paragraph{Definition}
+A subset of $\mathbb{R}^{n}$ described by a finite set of linear constraints $P=\{x \in \mathbb{R}^{n}: Ax \le b\}$ is a \textit{polyhedron}.
+
+\paragraph{Definition}
+A polyhedron $P \subseteq \mathbb{R}^{n+p}$ is a \textit{formulation} for a set $X \subseteq \mathbb{Z}^{n} \times \mathbb{R}^{p}$ if and only if $X = P \cup (\mathbb{Z}^{n} \times \mathbb{R}^{p})$.
+
+\vspace{7 mm}
+
+Although all three formulations in figure ~\ref{fig:linearForm} are valid for definition of subset $X$, the formulation $P_{1}$ is ideal, because solving a linear program over $P_{1}$ leads to an optimal solution lying at an extreme point. Since each extreme point of $P_{1}$ is integer, it follows that the integer program is solved.
+
+Generally speaking, given a set $X \subseteq \mathbb{R}^n$ and two formulations $P_{1}$ and $P_{2}$ for $X$, $P_{1}$ is a better formulation than $P_{2}$ if $P_{1} \subset P_{2}$. Formulation $P_{1}$ is said to be \textit{tighter} than $P_{2}$.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Linear relaxation}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +130,18 @@ Introduces CPLEX and Gurobi.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    TATIC MODULE     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Tactical module}
+\section{IP - Assignment Formulation}
+
+The process of formulating an integer program can be organized in three steps:
+
+\begin{enumerate}
+\item Define what appear to be the necessary variables.
+\item Use these variables to define a set of constraints so that the feasible points correspond to feasible solutions to the problem.
+\item Use these variables to define the objective function.
+\end{enumerate}
+
+Usually the need of auxiliary variables arises while formulating constraints, which gives an iterative feature to the process until a consistent model is reached.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,7 +178,6 @@ Introduces CPLEX and Gurobi.
 \item $N_{d,k,t}$ - number of credits for course $d$ at day $t$ of credits split rule $k$.
 \item $NCH_{d,hi,hf}$ - number of credits for course $d$ from time slot $hi$ to time slot $hf$.
 \item $MinSize$ - minimum number of students required for offering a class.
-\item $delta_{a,t}$ - maximum of idle time allowed at day $t$ for student $a$. Used only for gap-constraints, usually is the sum of intervals at day $t$ of the student's calender.
 \item $delta_{t,f}$ - maximum of idle time allowed at phase $f$ of day $t$ for a professor. Used only for gap-constraints, usually is the average sum of intervals at phase $f$ of day $t$ of calenders.
 \item $pv$ - Unique virtual professor, to be used whenever the set of real professors is not enough for demand satisfaction.
 \item $MinCredsDia_{a,t}$ - minimum number of credits expected for student $a$ at day $t$.
@@ -133,7 +212,7 @@ Introduces CPLEX and Gurobi.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{MIP  Assignment Formulation}
+\subsection{Formulation}
 
 
 \subsubsection{Objective function}
@@ -484,376 +563,6 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 \end{eqnarray}
 
 
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%    OPERATIONAL MODULE     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Operational module}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Notation}
-
-\subsubsection{Additional Sets}
-\begin{itemize}
-\item $I_{d}$ - set of sections for a course $d$.  Elements of $I_{d}$ are called $i$.
-\item $I_{d,c}$ - set of sections for a course $d$ that contain student of major $c$. Elements of $I_{d,c}$ are called $i$.
-\item $A$ - set of lessons. A lesson is a number of credits of a section $i$ of course $d$, held at some classroom $s$ at a day $t$. Elements of $A$ are called $a$.
-\item $P$ - Set of all professors. Elements of $P$ are called $p$.
-\item $P_{m}$ - Set of master professors. Professors with higher degree are not included here. Elements of $P_{m}$ are called $p$.
-\item $P_{d}$ - Set of doctor professors. Elements of $P$ are called $p$.
-\item $PV$ - Set of virtual professors. Elements of $P$ are called $p$.
-\item $PV_{d}$ - Set of virtual doctor professors. Elements of $P$ are called $p$.
-\item $PV_{m}$ - Set of virtual master professors. Elements of $P$ are called $p$.
-\item $PV_{g}$ - Set of virtual not master neither doctor professors. Elements of $P$ are called $p$.
-\item $Al$ - Set of virtual student. Elements of $Al$ are called $al$.
-\item $R$ - Set of employment agreement types. They are usually full-time, partial-time and hour-paid-time. Elements of $R$ are called $r$.
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsubsection{Model data}
-\begin{itemize}
-\item $m(h)$ - clock time of time slot h in minutes.
-\item $minCont_{c,r}$ - minimum percentage of professors with employment agreement type $r$ at major $c$.
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Variables}
-\begin{itemize}
-\item $x_{p,a,h}$ - binary variable that indicates if professor $p$ is assigned to lesson $a$ at time slot $h$.
-\item $y_{p,d,i,cp}$ - binary variable that indicates if professor $p$ is assigned to section $i$ of course $d$.
-\item $w_{p,c}$ - binary variable that indicates if professor $p$ teaches classes for major $c$.
-\item $fmm_{c}$ - integer slack variable for the minimum percentage of master professors in major $c$.
-\item $fmd_{c}$ - integer slack variable for the minimum percentage of doctor professors in major $c$.
-\item $fchmp_{p}$ - integer slack variable for the minimum workload for professor $p$ when compared with the previous semester.
-\item $fchip_{p}$ - integer slack variable for the minimum workload for professor $p$.
-\item $fchsp_{p}$ - integer slack variable for the maximum workload for professor $p$
-\item $pt_{p,t}$ - binary variable that indicates if professor $p$ teaches at day $t$.
-\item $np_{c}$ - integer variable that indicates the number of non-virtual professors assigned to major $c$.
-\item $npv_{c,r}$ - integer variable that indicates the number of virtual professors with employment agreement $r$ assigned to major $c$.
-\item $npvm_{c,r}$ - integer variable that indicates the number of virtual master professors with employment agreement $r$ assigned to major $c$.
-\item $npvd_{c,r}$ - integer variable that indicates the number of virtual doctor professors with employment agreement $r$ assigned to major $c$.
-\item $npvg_{c,r}$ - integer variable that indicates the number of virtual not master neither doctor professors with employment agreement $r$ assigned to major $c$.
-\item $hip_{p,t,f}$ - integer variable, indicates the time in minutes of the first time slot assigned to professor $p$ at phase $f$ of day $t$. For example, if the first class assigned to $p$ on $t=Monday$ and $f=morning$ starts at 9:30 am, then $hip_{p,t,f}=9\cdot 60 + 30 = 570$.
-\item $hfp_{p,t,f}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to professor $p$ at phase $f$ of day $t$.
-\item $fpgap_{p,t,f}$ - integer slack variable, indicates the gap in phase $f$ of day $t$ of professor $p$'s schedule.
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Objective function}
-
-$$
-\begin{array}{rl}
-   \mbox{MIN} &
-       \sum\limits_{pv \in PV} \sum\limits_{a \in A} \sum\limits_{h \in H} x_{pv,a,h}
-      \\
-      &
-       + \sum\limits_{p \in P} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D}
-       ( ( 10 - grade ) \cdot wGrade + ( 10 - pref ) \cdot wPref + costCred \cdot nCredsCourse ) \cdot y_{p,d,i}
-      \\
-      &
-       + \sum\limits_{p \in P} fchmp_{p}
-      \\                 
-      &
-       + \sum\limits_{p \in P} fchip_{p}
-      \\
-      &
-       + \sum\limits_{p \in P} fchsp_{p}
-      \\
-      &
-       + \sum\limits_{c \in C} \sum\limits_{r \in R} npv_{c,r}
-      \\   
-      &
-       + \sum\limits_{c \in C} \sum\limits_{r \in R} npvm_{c,r}
-      \\   
-      &
-       + \sum\limits_{c \in C} \sum\limits_{r \in R} npvd_{c,r}
-      \\               
-      &
-       + \sum\limits_{c \in C} \sum\limits_{r \in R} npvg_{c,r}
-      \\                     
-      &
-       (+-) \sum\limits_{p \in P} \sum\limits_{t \in T} pt_{p,t}
-      \\   
-      &
-      + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
-\end{array}
-$$
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{MIP - Assignment Formulation - Both steps}
-
-\subsubsection{Complete assignment of classes}
-\begin{eqnarray}
-\sum\limits_{p \in P \cup PV}\sum\limits_{h \in H} x_{p,a,s,d,i,t,h} =  1 \nonumber \qquad 
-\forall a \in A 
-\end{eqnarray}
-
-\subsubsection{No overlapping in classroom's timetable}
-\begin{eqnarray}
-\sum\limits_{p \in P \cup PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ overlaps }h}} x_{p,a,h'} \leq  1 \nonumber \qquad 
-\forall s \in S \quad
-\forall t \in T \quad
-\forall h \in H
-\end{eqnarray}
-
-\subsubsection{No overlapping in professor's timetable}
-\begin{eqnarray}
-\sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ overlaps }h}} x_{p,a,h'} \leq  1 \nonumber \qquad 
-\forall p \in P \quad
-\forall t \in T \quad
-\forall h \in H
-\end{eqnarray}
-
-\subsubsection{No overlapping in student's timetable}
-\begin{eqnarray}
-\sum\limits_{p \in P \cup PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ overlaps }h}}
-  x_{p,a,h'} \leq  1 \nonumber \qquad 
-\forall al \in Al \quad
-\forall t \in T \quad
-\forall h \in H
-\end{eqnarray}
-
-\subsubsection{Links professor to lessons and course sections}
-\begin{eqnarray}
-\sum\limits_{a \in A} \sum\limits_{s \in S} \sum\limits_{t \in T} \sum\limits_{h \in H} x_{p,a,s,d,i,t,h} \leq  M \cdot y_{p,d,i,cp} \nonumber \qquad 
-\forall p \in P \cup PV \quad
-\forall cp \in Cp \quad
-\forall d \in D \quad
-\forall i \in I_{d}
-\end{eqnarray}
-
-\subsubsection{Single professor per course section}
-\begin{eqnarray}
-\sum\limits_{p \in P \cup PV} y_{p,d,i,cp} \leq 1 \nonumber \qquad
-\forall cp \in Cp \quad
-\forall d \in D \quad
-\forall i \in I_{d}
-\end{eqnarray}
-
-\subsubsection{Counts the number of real professors per course}
-\begin{eqnarray}
-\sum\limits_{p \in P} w_{p,c} = np_{c} \nonumber \qquad 
-\forall c \in C
-\end{eqnarray}
-
-\subsubsection{Ensures the maximum percentage of non-master professors}
-\begin{eqnarray}
-\sum\limits_{r \in R} npvg_{c,r} + \sum\limits_{p \in P_{g}} w_{p,c} \le (1-mm) \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
-\forall c \in C \quad
-\end{eqnarray}
-
-\subsubsection{Ensures the maximum percentage of non-doctor professors}
-\begin{eqnarray}
-\sum\limits_{r \in R}( npvg_{c,r} + npvm_{c,r} ) \sum\limits_{p \in P_{g} \cup P_{m} } w_{p,c} \le (1-md) \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
-\forall c \in C \quad
-\end{eqnarray}
-
-\subsubsection{Ensures the minimum percentage of master professors per major}
-\begin{eqnarray}
-\sum\limits_{r \in R} (npvm_{c,r} + npvd_{c,r}) + \sum\limits_{p \in P_{m \cup d}} w_{p,c} \ge mm_{c} \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
-\forall c \in C \quad
-\end{eqnarray}
-
-\subsubsection{Ensures the minimum percentage of doctor professors per major}
-\begin{eqnarray}
-\sum\limits_{r \in R} npvd_{c,r} + \sum\limits_{p \in P_{d}} w_{p,c} \ge md_{c} \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \nonumber \qquad 
-\forall c \in C \quad
-\end{eqnarray}
-
-\subsubsection{Ensures the maximum percentage of professors without a employment contract type}
-\begin{eqnarray}
-\sum\limits_{r' \in R_{\le r}}( npv_{c,r'} ) \sum\limits_{p \in P_{\le r} } w_{p,c} \le (1-minCont_{c,r}) \cdot (np_{c} + \sum\limits_{r' \in R} npv_{c,r'}) \nonumber \qquad 
-\forall c \in C \quad
-\forall r \in R
-\end{eqnarray}
-
-\subsubsection{Ensures the minimum percentage of professors with a employment contract type per major}
-\begin{eqnarray}
-\sum\limits_{r' \in R_{\ge r}} npv_{c,r'} + \sum\limits_{p \in P_{\ge r}} w_{p,c} \ge minCont_{c,r} \cdot (np_{c} + \sum\limits_{r' \in R} npv_{c,r'}) \nonumber \qquad 
-\forall c \in C \quad
-\forall r \in R
-\end{eqnarray}
-
-\subsubsection{Consistence for the number of virtual professors}
-\begin{eqnarray}
-npvg_{c,r} + npvm_{c,r} + npvd_{c,r} = npv_{c,r} \nonumber \qquad 
-\forall c \in C \quad
-\end{eqnarray}
-
-\subsubsection{Calculates whether a professor is assigned to some lesson of a major (Sets $w_{p,c}$)}
-\begin{eqnarray}
-\sum\limits_{d \in D} \sum\limits_{i \in I_{d,c}} y_{p,d,i} \le nSections_{d} \cdot w_{p,c} \nonumber \qquad 
-\forall p \in P \quad
-\forall c \in C
-\end{eqnarray}
-\begin{eqnarray}
-\sum\limits_{d \in D} \sum\limits_{i \in I_{d,c}} y_{p,d,i} \ge w_{p,c} \nonumber \qquad 
-\forall p \in P \quad
-\forall c \in C
-\end{eqnarray}
-
-\subsubsection{Ensures the minimum workload of a professor when compared with his previous semester's workload}
-\begin{eqnarray}
-\sum\limits_{i \in I_{d}}\sum\limits_{d \in D} nCreds_{d} \cdot y_{p,d,i} + fchm_{p} \ge chMinPrevious_{p} \nonumber \qquad 
-\forall p \in P \quad
-\end{eqnarray}
-
-\subsubsection{Ensures the minimum workload of a professor}
-\begin{eqnarray}
-\sum\limits_{a \in A}\sum\limits_{h \in H} nCreds_{a} \cdot x_{p,a,h} + fchi_{p} \ge chMin_{p} \nonumber \qquad 
-\forall p \in P \quad
-\end{eqnarray}
-
-\subsubsection{Ensures the maximum workload of a professor}
-\begin{eqnarray}
-\sum\limits_{i \in I}\sum\limits_{d \in D}\sum\limits_{cp \in CP} nCreds_{d} \cdot y_{p,i,d,cp} \le chMax_{p} \nonumber \qquad 
-\forall p \in P \quad
-\end{eqnarray}
-
-\subsubsection{Ensures professor's minimum rest time}
-\begin{eqnarray}
-\sum\limits_{a \in A_{t}} x_{p,a,hf} + \sum\limits_{a \in A_{t+1}} x_{p,a,hi} \le 1 \nonumber \qquad 
-\forall p \in P \quad
-\forall t \in T \\
-\forall \mbox{ (hf,t) and (hi,t+1) s.t. } \Delta_{(hf,t), (hi,t+1)} < MinRestTime
-\end{eqnarray}
-
-	
-	
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%						GAP NOS HORÁRIOS DOS PROFESSORES
-\subsubsection{Professor's gaps avoidance}
-	
-\paragraph{Sets variable $hip_{p,t,f}$}
-\begin{eqnarray}
-hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{x \in X_{dti<dt}} x_{p,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dt \in Dt_{f}
-\end{eqnarray}
-\begin{eqnarray}
-hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{x} x_{p,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dti \in Dt_{f}
-\end{eqnarray}
-
-\paragraph{Sets variable $hfp_{p,t,f}$}
-\begin{eqnarray}
-hfp_{p,t,f} \geq \sum\limits_{x} m(dt) \cdot x_{p,t,dtf} \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dtf \in Dt_{f}
-\end{eqnarray}
-\begin{eqnarray}
-hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{x \in X_{dtf>dt}} x_{p,t,dtf} ) \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dt \in Dt_{f}
-\end{eqnarray}
-
-\paragraph{Avoid gap in each session of day in professor timetable}
-\begin{eqnarray}
-\sum\limits_{x \in X_{h \in H_{f}}} tempo_{x} \cdot x_{p,t,h} + delta_{f,t} + fagap_{a,t} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F
-\end{eqnarray}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{MIP - Assignment Formulation - Only step 1}
-
-\subsubsection{(R1) Estimates the number of virtual professors per major}
-\begin{eqnarray}
-\sum\limits_{pv \in PV_{r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ overlaps }h}} x_{pv,a,h'} \le npv_{c,r} \nonumber \qquad 
-\forall h \in H \quad
-\forall c \in C \quad
-\forall r \in R \quad
-\forall t \in T
-\end{eqnarray}
-
-\subsubsection{(R1) Estimates the number of virtual master professors per major}
-\begin{eqnarray}
-\sum\limits_{pv \in PV_{m,r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ overlaps }h}} x_{pv,a,h'} \le npvm_{c,r} \nonumber \qquad 
-\forall h \in H \quad
-\forall c \in C \quad
-\forall r \in R \quad
-\forall t \in T
-\end{eqnarray}
-
-\subsubsection{(R1) Estimates the number of virtual doctor professors per major}
-\begin{eqnarray}
-\sum\limits_{pv \in PV_{d,r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ overlaps }h}} x_{pv,a,h'} \le npvd_{c,r} \nonumber \qquad 
-\forall h \in H \quad
-\forall c \in C \quad
-\forall r \in R \quad
-\forall t \in T
-\end{eqnarray}
-
-\subsubsection{(R1) Estimates the number of virtual general professors per major}
-\begin{eqnarray}
-\sum\limits_{pv \in PV_{g,r}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ overlaps }h}} x_{pv,a,h'} \le npvg_{c,r} \nonumber \qquad 
-\forall h \in H \quad
-\forall c \in C \quad
-\forall r \in R \quad
-\forall t \in T
-\end{eqnarray}
-
-\subsubsection{(R1) Ensures minimum number of professors per major. It is needed when there is a non-trivial maximum number of courses assigned to a professor per course.}
-\begin{eqnarray}
-MaxDiscProfCurso_{c} \cdot (np_{c} + \sum\limits_{r \in R} npv_{c,r}) \ge qtdDiscComAulas_{c} \nonumber \qquad 
-\forall c \in C \quad
-\end{eqnarray}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{MIP - Assignment Formulation - Only step 2}
-
-\subsubsection{(R2) Calculates the number of virtual professors per course}
-\begin{eqnarray}
-\sum\limits_{p \in PV_{r}} w_{p,c} = npv_{c,r} \nonumber \qquad 
-\forall c \in C \quad
-\forall r \in R
-\end{eqnarray}
-
-\subsubsection{(R2) Calculates the number of virtual master professors per course}
-\begin{eqnarray}
-\sum\limits_{p \in PV_{m,r}} w_{p,c} = npvm_{c,r} \nonumber \qquad 
-\forall c \in C \quad
-\forall r \in R
-\end{eqnarray}
-
-\subsubsection{(R2) Calculates the number of virtual doctor professors per course}
-\begin{eqnarray}
-\sum\limits_{p \in PV_{d,r}} w_{p,c} = npvd_{c,r} \nonumber \qquad 
-\forall c \in C \quad
-\forall r \in R
-\end{eqnarray}
-
-\subsubsection{(R2) Calculates the number of virtual general professors per course}
-\begin{eqnarray}
-\sum\limits_{p \in PV_{g,r}} w_{p,c} = npvg_{c,r} \nonumber \qquad 
-\forall c \in C \quad
-\forall r \in R
-\end{eqnarray}
-      
-\subsubsection{(R2) Virtual professor usage}
-\begin{eqnarray}
-M \cdot pv_{p} \ge \sum\limits_{c \in C} w_{p,c} \nonumber \qquad 
-\forall p \in PV
-\end{eqnarray}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
