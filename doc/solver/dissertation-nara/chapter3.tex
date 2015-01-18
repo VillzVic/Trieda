@@ -100,8 +100,44 @@ Generally speaking, given a set $X \subseteq \mathbb{R}^n$ and two formulations 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Linear relaxation}
+\subsection{Optimality and relaxation}
 
+Regardless of the method used in the search for the optimal solution $x^*$ of an integer program, some stopping criteria is needed in the algorithm, which is equivalent to prove that a given point $x^*$ is optimal.
+A pretty intuitive way is to obtain lower and upper bounds for the objective function value of the optimal solution. Hence, given an IP $$z = max\{c(x): x \in X \subseteq \mathbb{Z}^n\},$$ any algorithm will construct a decreasing sequence $$\overline{z_{1}} \ge \overline{z_{2}} \ge \ldots \overline{z_{s}} \ge z$$ of upper bounds, and an increasing sequence $$\underline{z_{1}} \le \underline{z_{2}} \le \underline{z_{t}} \le \ldots z$$ of lower bounds, and stop when $z_{s} - z_{t}$ is small enough.
+
+Considering a maximization problem, any feasible solution provides a lower bound, also known as primal bounds. Finding upper bounds, known as dual bounds, is a different challenge. The main approach is by \q{relaxation}, the idea being to replace a difficult max (min) $IP$ by a simpler optimization problem whose optimal value is at least as large (small) as $z$.
+
+\paragraph{Definition}
+A problem (RP) $z^R = max\{f(x): x \in T \subseteq \mathbb{R}^n\}$ is a relaxation of (IP) $z = max\{c(x): x \in X \subseteq R^n\}$ if:
+\begin{enumerate}
+\item $X \subseteq T$, and
+\item $f(x) \ge c(x)$ for all $x \in X$
+\end{enumerate}
+
+\paragraph{Proposition}
+If RP is a relaxation of IP, then $z^R \ge z$.
+
+%%%%%%%%%%%%%%
+\subsubsection{Linear programming relaxation}
+
+One way of relaxing an integer program is to enlarge the set of feasible solutions so that one optimizes over a larger set. For example, at figure ~\ref{fig:linearForm} all the three formulations $P_{1}$, $P_{2}$ and $P_{3}$ are relaxations of the original problem if we ignore the integrality constraints.
+
+\paragraph{Definition}
+For the integer program $max\{c(x): x \in P \cup \mathbb{Z}^n\}$ with formulation $P = \{x \in \mathbb{R}^{n}_{+}: Ax \le b\}$, the \textit{linear programming relaxation} is the linear program $z^{LP} = max\{cx: x \in P\}$.
+
+However, the more the feasible solution space is enlarged, the more different the relaxed problem becomes from the original problem, which can lead to more distinct optimal solutions values for both problems. When using linear relaxations for obtaining dual bounds, this is very relevant. The more relaxed in the objective function direction is the formulation, the more distant from the actual optimal solution value will be the upper bound obtained, as illustrated in figure ~\ref{fig:objDirection}. In general, the tighter is the relaxation, the better.
+
+\begin{figure}[h]
+\centering
+\hfill\includegraphics[scale=0.6]{figures/linearForm2.png}
+\caption{Linear relaxation in the direction of objective function}
+\label{fig:objDirection}
+\end{figure}
+
+Notice, though, that for a relaxation of a IP to provide an upper bound, it must be solved to optimality.
+
+%%%%%%%%%%%%%%
+\subsubsection{Duality}
 
 
 
