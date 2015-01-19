@@ -21,13 +21,14 @@ A mathematical optimization problem consists of a set of equations which togethe
 
 When both objective function and constraints are linear, then it is called \textit{Linear Programming (LP)}.
 
-$$
-\begin{array}{rl}
-   \mbox{Maximize} & c \cdot x
+\begin{subequations}
+\label{eq:LP}
+\begin{align}
+   \mbox{Maximize } & c \cdot x
 								\\ & A \cdot x \le b
 								\\ & x \in \mathbb{R}^{n}_{+}
-\end{array}
-$$
+\end{align}
+\end{subequations}
 
 where $A$ is a matrix such that $A \in \mathbb{R}^{m \times n}$, $c$ is a row vector such that $c \in \mathbb{R}^n$, $b$ is a column vector such that $b \in \mathbb{R}^m$, and $x$ is a column vector of decision variables.
 
@@ -43,7 +44,18 @@ $$
 
 where $G$ is a matrix such that $G \in \mathbb{R}^{m \times p}$, $h$ is a row vector such that $h \in \mathbb{R}^p$, and $y$ is a column vector of integer decision variables.
 
-When all decision variables must be integers, the program is called a \textit{Pure Integer Linear Program (IP)}; and when all decision variables are restricted to ${0,1}$ values, then we have a \textit{Binary Integer Program (BIP)}.
+When all decision variables must be integers, the program is called a \textit{Pure Integer Linear Program (IP)}:
+
+\begin{subequations}
+\label{eq:IP}
+\begin{align}
+   \mbox{Maximize } & c \cdot x
+								\\ & A \cdot x \le b
+								\\ & x \in \mathbb{Z}^{n}_{+}
+\end{align}
+\end{subequations}
+
+When all decision variables are restricted to ${0,1}$ values, then we have a \textit{Binary Integer Program (BIP)}.
 
 Very efficient methods for solving linear programs are known, with the Simplex Method being the most famous one. Because integer programs look pretty much like linear programs, it is not a surprise that linear programming theory and practice is essential in understanding and solving integer programs. Solving an integer program is far more challenging than solving its linear version though.
 
@@ -139,14 +151,24 @@ Notice, though, that for a relaxation of a IP to provide an upper bound, it must
 %%%%%%%%%%%%%%
 \subsubsection{Duality}
 
+Another way of finding dual bounds is through duality properties. Consider the previously introduced linear program given by \eqref{eq:LP}, called \textit{primal} problem, the following problem is referred as its \textit{dual} problem.
+
+\begin{subequations}
+\label{eq:Dual}
+\begin{align}
+   \mbox{Minimize } & u \cdot b
+								\\ & u \cdot A \ge c
+								\\ & u \in \mathbb{R}^{m}_{+}
+\end{align}
+\end{subequations}
+
+Every linear program has an associated dual problem. The value of \textit{any} dual feasible solution provides an upper bound on the primal objective function value, which makes it an advantage compared to the linear relaxation. A linear programming relaxation immediately leads to a dual problem, which can then be used to obtaining dual bounds.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Integrality gap}
 
-Introduces integrality gap concept.
-
-As in all combinatorial scheduling models, the problem grows more complex as the number of side constraints increases.\fixme{Colocar essa frase no lugar adequado!}
+Linear programming relaxation is thus a standard technique for designing approximation algorithms for hard optimization problems. Since such relaxation removes variables' integrality constraints, the optimal value for the relaxed maximization problem is necessarily greater than or equal to the optimal value for the original problem. Integrality gap is the maximum ratio between the solution quality of the integer program and of its relaxation. It essentially represents the inherent limits of a particular linear relaxation in approximating an integer program.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,6 +181,9 @@ Introduces branch and bound concept.
 \subsection{MIP Solver}
 
 Introduces CPLEX and Gurobi.
+
+
+As in all combinatorial scheduling models, the problem grows more complex as the number of side constraints increases.\fixme{Colocar essa frase no lugar adequado!}
 
 
 
