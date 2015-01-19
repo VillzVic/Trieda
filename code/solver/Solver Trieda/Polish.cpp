@@ -992,7 +992,7 @@ void Polish::setNextRandFreeUnidade(int adjustPercUnid)
 
 	adjustPercFreeUnid(adjustPercUnid);
 
-	if (counter>=4)
+	if (counter >= 4 || perc_ <= 0)
 	{
 		counter=0;
 		setAllFreeUnidade();
@@ -1148,7 +1148,7 @@ void Polish::updatePercAndTimeIterSmallGap( double objN )
 
 void Polish::updatePercAndTimeIterBigGap( double objN )
 {
-	if (!melhorou_ && perc_>0)
+	if (!melhorou_)
 	{
 		chgParams(); 			  
 				

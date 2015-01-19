@@ -92,7 +92,9 @@ public:
 	  C_ALUNO_HOR_INIC_DIA,
 	  C_ALUNO_HOR_FIM_DIA,
 	  C_ALUNO_HOR_INIC_UNICO,
-	  C_ALUNO_HOR_FIM_UNICO
+	  C_ALUNO_HOR_FIM_UNICO,
+	  
+	  C_GARANTE_MIN_ATEND
    };
 
    /** Default constructor. */

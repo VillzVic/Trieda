@@ -356,6 +356,13 @@ private:
 	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
+	bool fixaSolMaxAtendMarreta(double* const xS);
+	bool fixaSolMaxAtend(double* const xS);
+	bool fixaSolMinProfVirt(double* const xS);
+	bool fixaSolMinTurmas(double* const xS);
+	bool fixaSolMinDeslocProf(double* const xS);
+	bool fixaSolMinGapProf(double* const xS);
+
 	void getXSol(double *xS);
 	bool optimize();
 	bool isOptimized(OPTSTAT status);
@@ -407,6 +414,8 @@ private:
 	static const int timeLimitMaxAtendSemMelhora;
 	static const int timeLimitMinProfVirt;
 	static const int timeLimitMinProfVirtSemMelhora;
+	static const int timeLimitMinTurmas;
+	static const int timeLimitMinTurmasSemMelhora;
 	static const int timeLimitMinGapProf;
 	static const int timeLimitMinGapProfSemMelhora;
 	static const int timeLimitGeneral;

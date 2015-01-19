@@ -402,6 +402,9 @@ std::string ConstraintMIPUnico::toString( int etapa )
 	  case C_ALUNO_HOR_FIM_UNICO:
         ss << "C_ALUNO_HOR_FIM_UNICO"; break;	
 		
+	  case C_GARANTE_MIN_ATEND:
+        ss << "C_GARANTE_MIN_ATEND"; break;	
+			
 
    default:
       ss << "!";

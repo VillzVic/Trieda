@@ -21,11 +21,12 @@
 #include "ProblemData.h"
 #include "ProblemSolution.h"
 #include "ConstraintOp.h"
+#include "AlocacaoProfVirtual.h"
 
 using namespace std;
 
 
-const bool SolverMIPUnico::RODAR_OPERACIONAL_ = true;
+const bool SolverMIPUnico::RODAR_OPERACIONAL_ = false;
 
 
 /*  ----------------------------------------------------------------------------------------------------------
@@ -1932,6 +1933,8 @@ void SolverMIPUnico::criarOutputFinal_(ProblemSolution* const solution) const
 		}
 	}
 
+	criarOutProfsVirtuais_(solution);
+
 	cout << "Output atendimento criado!";
 }
 
@@ -2062,6 +2065,53 @@ void SolverMIPUnico::criarAulaPorOfertaOutput_(AtendimentoDiaSemana &atendDia, D
 		{
 			AlunoDemanda* const alDem = *itAlDem;
 			atendOferta->alunosDemandasAtendidas.add(alDem->getId());
+		}
+	}
+}
+
+// cria o output de professores virtuais
+void SolverMIPUnico::criarOutProfsVirtuais_(ProblemSolution* const solution) const
+{
+	cout << "\ncriarOutProfsVirtuais_...";
+
+	GGroup<ProfessorVirtualOutput*>* profsVirtuaisOutput = solution->professores_virtuais;
+
+	// iterar profs virtuais
+	for(auto itCp = solTurmasComPV_.cbegin(); itCp != solTurmasComPV_.cend(); ++itCp)
+	{
+		for(auto itDisc = itCp->second.cbegin(); itDisc != itCp->second.cend(); ++itDisc)
+		{
+			for(auto itTurma = itDisc->second.cbegin(); itTurma != itDisc->second.cend(); ++itTurma)
+			{
+				// criar output prof virtual único (se ele tiver turmas)
+				Professor* const pv = itTurma->second;
+				int virtualId = pv->getId();
+				
+				ProfessorVirtualOutput* profVirtualOut = solution->getProfVirtualOutput(virtualId);
+				
+				if (!profVirtualOut)
+				{
+					profVirtualOut = new ProfessorVirtualOutput(virtualId);
+					if(pv->titulacao != nullptr)
+						profVirtualOut->setTitulacaoId(pv->getTitulacaoId());
+					if(pv->tipo_contrato != nullptr)
+						profVirtualOut->setContratoId(pv->getTipoContratoId());
+					profsVirtuaisOutput->add(profVirtualOut);
+				}
+
+				int disciplina = itDisc->first->getId();
+				int turmaNr = itTurma->first;
+				int campus = itCp->first->getId();
+				bool ehPrat = (disciplina < 0);
+		
+				AlocacaoProfVirtual* alocacao = new AlocacaoProfVirtual(disciplina, turmaNr, campus, ehPrat);
+				
+				bool jaExiste=false;
+				if (profVirtualOut->alocacoes.size() > 0)
+					jaExiste=true;
+				
+				profVirtualOut->alocacoes.add(alocacao);
+			}
 		}
 	}
 }

@@ -686,10 +686,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_col.cpp" />
-    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_gurobi.cpp" />
-    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_lp.cpp" />
-    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_row.cpp" />
     <ClCompile Include="AlocacaoProfVirtual.cpp" />
     <ClCompile Include="Aluno.cpp" />
     <ClCompile Include="AlunoDemanda.cpp" />
@@ -699,6 +695,10 @@
     <ClCompile Include="CmdLine.cpp" />
     <ClCompile Include="ConjUnidades.cpp" />
     <ClCompile Include="ConstraintMIPUnico.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_col.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_gurobi.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_lp.cpp" />
+    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp" />
     <ClCompile Include="Equivalencia.cpp" />
     <ClCompile Include="HeurNuno\AbridorTurmas.cpp" />
     <ClCompile Include="HeurNuno\AlunoHeur.cpp" />
@@ -819,10 +819,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_col.h" />
-    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_gurobi.h" />
-    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_lp.h" />
-    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_row.h" />
     <ClInclude Include="AlocacaoProfVirtual.h" />
     <ClInclude Include="Aluno.h" />
     <ClInclude Include="AlunoDemanda.h" />
@@ -846,6 +842,10 @@
     <ClInclude Include="CreditoDisponivel.h" />
     <ClInclude Include="Curriculo.h" />
     <ClInclude Include="Curso.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_col.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_gurobi.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_lp.h" />
+    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h" />
     <ClInclude Include="Demanda.h" />
     <ClInclude Include="Deslocamento.h" />
     <ClInclude Include="Disciplina.h" />

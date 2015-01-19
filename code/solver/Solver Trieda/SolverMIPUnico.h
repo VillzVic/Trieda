@@ -80,6 +80,8 @@ private:
    void criarAulaPorOfertaOutput_(AtendimentoDiaSemana &atendDia, Disciplina* const disciplina, int turmaId,
 	   Professor* const professor, HorarioAula* const h, int dia, 
 	   unordered_map<Demanda*, unordered_set<AlunoDemanda*>> const &mapDemAlDems) const;
+   // criar professores virtuais para problem solution
+   void criarOutProfsVirtuais_(ProblemSolution* const solution) const;
 
 	void clear();
 	void clearSolutionTat();

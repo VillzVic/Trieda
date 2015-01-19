@@ -30,7 +30,7 @@ std::ostream & operator << (
 }
  
 Aluno::Aluno( void )
-	: nrCredsReqP1(0), nrCredsMedioDia_(-1)
+	: nrCredsReqP1(0), nrCredsMedioDia_(-1), turnoPrincipal_(nullptr)
 {
    this->setAlunoId( -1 );
    this->oferta = NULL;
@@ -46,7 +46,7 @@ Aluno::Aluno( void )
 }
 
 Aluno::Aluno( int id, std::string nome, bool formando, Oferta* oft )
-	: nrCredsReqP1(0), nrCredsMedioDia_(-1)
+	: nrCredsReqP1(0), nrCredsMedioDia_(-1), turnoPrincipal_(nullptr)
 {
    this->setAlunoId( id );
    this->setNomeAluno( nome );
@@ -672,12 +672,12 @@ void Aluno::setTurnoPrincipal()
 			turnoMaxDem = it->first;
 		}
 	}
-	turnoPrincipal = turnoMaxDem;
+	turnoPrincipal_ = turnoMaxDem;
 }
 
 TurnoIES* Aluno::getTurnoPrinc() const
 {
-	return turnoPrincipal;
+	return turnoPrincipal_;
 }
 
 bool Aluno::estaEmContraTurno(Disciplina* const disciplina)
@@ -685,8 +685,51 @@ bool Aluno::estaEmContraTurno(Disciplina* const disciplina)
 	AlunoDemanda* alDem = this->getAlunoDemanda(disciplina->getId());
 	if (alDem)
 	{
-		if (turnoPrincipal != alDem->demanda->getTurnoIES())
+		if (turnoPrincipal_ != alDem->demanda->getTurnoIES())
 			return true;
 	}
 	return false;
+}
+
+bool Aluno::ehContraTurno(TurnoIES* turno)
+{
+	return (turno == turnoPrincipal_);
+}
+
+bool Aluno::chEhIgualDisponibSemanaLetiva(bool ignoraContraTurno)
+{
+	// Método usado no caso de escola.
+
+	unordered_set<Calendario*> calends;
+	int disponib=0;
+	int ch=0;
+	for (auto itAlDem = demandas.begin(); itAlDem != demandas.end(); itAlDem++)
+	{
+		if (!ehContraTurno(itAlDem->demanda->getTurnoIES()))
+		{
+			ch += itAlDem->demanda->disciplina->getTotalCreditos();
+			calends.insert(itAlDem->demanda->getCalendario());
+		}
+	}
+
+	if (calends.size() > 1)
+		CentroDados::printWarning("Aluno::chEhIgualDisponibSemanaLetiva()",
+				"Mais de um calendario para o aluno. Isso complica o calculo da disponibilidade do aluno.");
+	
+	if (calends.size() > 0)
+	{
+		Calendario* const c = *calends.begin();
+
+		for (auto itHor = c->horarios_aula.begin(); itHor != c->horarios_aula.end(); itHor++)
+		{
+			if (itHor->getTurnoIESId() == turnoPrincipal_->getId())
+			{
+				disponib++;
+			}
+		}
+	}
+
+	bool ehIgual = (disponib == ch);
+
+	return ehIgual;
 }

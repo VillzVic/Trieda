@@ -129,7 +129,9 @@ public:
    void setTurnoPrincipal();
    TurnoIES* getTurnoPrinc() const;
    bool estaEmContraTurno(Disciplina* const disciplina);
-   
+   bool ehContraTurno(TurnoIES* turno);
+
+   bool chEhIgualDisponibSemanaLetiva(bool ignoraContraTurno=true);
 
    void le_arvore( ItemAluno & elem );
 
@@ -192,7 +194,7 @@ private:
     
    GGroup<int> campusIds;
 
-   TurnoIES* turnoPrincipal;
+   TurnoIES* turnoPrincipal_;
 };
 
 std::ostream & operator << ( std::ostream &, Aluno & );
