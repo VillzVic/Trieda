@@ -73,7 +73,8 @@ public:
    bool possuiHorario( HorarioAula *h );
    
    bool possuiHorarioDia( HorarioAula *h, int dia );
-   HorarioAula* possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia );
+   HorarioAula* possuiHorarioDiaOuCorrespondente(int duracao, DateTime dti, int dia);
+   HorarioAula* possuiHorarioDiaOuCorrespondente(HorarioAula *h, int dia);
    bool possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *hf, int dia );
    
    GGroup<HorarioAula*, LessPtr<HorarioAula>> retornaHorariosDisponiveisNoDia( int dia );

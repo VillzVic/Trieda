@@ -6531,3 +6531,424 @@ void ProblemData::setTurnoPrincipalAlunos()
 		(*itAl)->setTurnoPrincipal();	
 	}
 }
+
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------
+
+void ProblemData::getProfsIntersecMapeados(Disciplina* const disciplina, std::unordered_map<TurnoIES*, std::unordered_map<Calendario*, 
+			std::unordered_map<Professor*, std::map<int, std::set<DateTime> >>>> &profsIntersec)
+{
+	std::map<int, std::map<DateTime, std::unordered_set<Professor*> >> diaDtsProfsIntersec;
+	disciplina->getProfsIntersec(diaDtsProfsIntersec);
+
+	for (auto itDiaDisc = diaDtsProfsIntersec.cbegin(); itDiaDisc != diaDtsProfsIntersec.cend(); itDiaDisc++)
+	{
+		int dia = itDiaDisc->first;
+
+		for (auto itDtDisc = itDiaDisc->second.begin(); itDtDisc != itDiaDisc->second.end(); itDtDisc++)
+		{
+			DateTime dti = itDtDisc->first;
+						
+			for (auto itCalend = this->calendarios.begin(); itCalend != this->calendarios.end(); itCalend++)
+			{
+				Calendario* const calendario = *itCalend;
+				
+				if (!calendario->possuiHorarioDiaOuCorrespondente(disciplina->getTempoCredSemanaLetiva(), dti, dia))	continue;
+
+				for (auto itTurno = calendario->turnosIES.begin(); itTurno != calendario->turnosIES.end(); itTurno++)
+				{
+					TurnoIES* const turno = *itTurno;
+
+					if (!turno->possuiHorarioDiaOuCorrespondente(calendario, dti, dia)) continue;
+
+					for (auto itProfDisc = itDtDisc->second.begin(); itProfDisc != itDtDisc->second.end(); itProfDisc++)
+					{
+						profsIntersec[turno][calendario][*itProfDisc][dia].insert(dti);
+					}
+				}
+			}
+		}
+	}
+}
+
+void ProblemData::getDemandasMapeadas(std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+			std::unordered_map<Calendario*, std::set<AlunoDemanda*>>>>> &mapDiscTurnoCalend)
+{
+	std::cout << "\ngetDemandasMapeadas";
+
+	// Agrupa aluno-demanda
+	for (auto itAlDem = alunosDemanda.begin(); itAlDem != alunosDemanda.end(); itAlDem++)
+	{
+		AlunoDemanda* const alDem = *itAlDem;
+		Demanda* const demanda = alDem->demanda;
+		Disciplina* const disciplina = demanda->disciplina;
+		TurnoIES* const turno = demanda->getTurnoIES();
+		Calendario* const calendario = demanda->getCalendario();
+
+		mapDiscTurnoCalend[disciplina->getCodigo()][disciplina][turno][calendario].insert(alDem);
+	}
+}
+
+void ProblemData::getDemandasIntersecDisponib(
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+		std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> const & mapDiscDemandaTurnoCalend,
+	std::unordered_map<Disciplina*, std::map<Professor*, 
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> &mapDiscIntersec,
+	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> &mapProfDiaDiscIntersec,
+	std::map<string, std::unordered_map<Disciplina*, std::set<AlunoDemanda*>>> &alDemSemIntersec)
+{
+	std::cout << "\ngetDemandasIntersecDisponib";
+
+	// Get demandas filtradas por intersecao de disponibilidade
+
+	for (auto itCodeDiscDemanda = mapDiscDemandaTurnoCalend.cbegin(); itCodeDiscDemanda != mapDiscDemandaTurnoCalend.cend(); itCodeDiscDemanda++)
+	{
+		for (auto itDiscDemanda = itCodeDiscDemanda->second.cbegin(); itDiscDemanda != itCodeDiscDemanda->second.cend(); itDiscDemanda++)
+		{
+			Disciplina* const disciplina = itDiscDemanda->first;
+		
+			// Acha a intersecao de disponibilidades da disc e dos profs habilitados
+			std::unordered_map<TurnoIES*, std::unordered_map<Calendario*, std::unordered_map<Professor*, 
+				std::map<int, std::set<DateTime> >>>> profsIntersec;
+			getProfsIntersecMapeados(disciplina, profsIntersec);
+			if (profsIntersec.size()==0)
+			{
+				auto ptDemSemIntersec = & alDemSemIntersec[disciplina->getCodigo()][disciplina];
+				for (auto itTurnoDemanda = itDiscDemanda->second.cbegin(); itTurnoDemanda != itDiscDemanda->second.cend(); itTurnoDemanda++)
+				{
+					for (auto itCalendDemanda = itTurnoDemanda->second.cbegin(); itCalendDemanda != itTurnoDemanda->second.cend(); itCalendDemanda++)
+					{
+						for (auto itAlDem = itCalendDemanda->second.cbegin(); itAlDem != itCalendDemanda->second.cend(); itAlDem++)
+						{
+							ptDemSemIntersec->insert(*itAlDem);
+						}
+					}
+				}
+				continue;
+			}
+
+			for (auto itTurnoDemanda = itDiscDemanda->second.cbegin(); itTurnoDemanda != itDiscDemanda->second.cend(); itTurnoDemanda++)
+			{
+				TurnoIES* const turno = itTurnoDemanda->first;
+
+				auto finderTurnoProf = profsIntersec.find(turno);
+				if (finderTurnoProf == profsIntersec.end())
+				{
+					auto ptDemSemIntersec = & alDemSemIntersec[disciplina->getCodigo()][disciplina];
+					for (auto itCalendDemanda = itTurnoDemanda->second.cbegin(); itCalendDemanda != itTurnoDemanda->second.cend(); itCalendDemanda++)
+					{
+						for (auto itAlDem = itCalendDemanda->second.cbegin(); itAlDem != itCalendDemanda->second.cend(); itAlDem++)
+						{
+							ptDemSemIntersec->insert(*itAlDem);
+						}
+					}
+					continue;
+				}
+
+				for (auto itCalendDemanda = itTurnoDemanda->second.cbegin(); itCalendDemanda != itTurnoDemanda->second.cend(); itCalendDemanda++)
+				{
+					Calendario* const calendario = itCalendDemanda->first;
+
+					auto finderCalendProf = finderTurnoProf->second.find(calendario);
+					if (finderCalendProf == finderTurnoProf->second.end())
+					{
+						auto ptDemSemIntersec = & alDemSemIntersec[disciplina->getCodigo()][disciplina];
+						for (auto itAlDem = itCalendDemanda->second.cbegin(); itAlDem != itCalendDemanda->second.cend(); itAlDem++)
+						{
+							ptDemSemIntersec->insert(*itAlDem);
+						}
+						continue;
+					}
+
+					for (auto itProf = finderCalendProf->second.cbegin(); itProf != finderCalendProf->second.cend(); itProf++)
+					{
+						std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > par;
+						par.first = itProf->second;
+						par.second = itCalendDemanda->second;
+
+						mapDiscIntersec[disciplina][itProf->first] = par;
+
+						for (auto itDia = itProf->second.cbegin(); itDia != itProf->second.cend(); itDia++)
+						{
+							for (auto itDti = itDia->second.cbegin(); itDti != itDia->second.cend(); itDti++)
+							{
+								mapProfDiaDiscIntersec[itProf->first][itDia->first][*itDti].insert(disciplina);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void ProblemData::orderIntersecDisponibDemandas(
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+		std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> const &mapDiscDemandaTurnoCalend,
+	std::unordered_map<Disciplina*, std::map<Professor*, 
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> const &mapDiscIntersec,
+		std::map<int, std::unordered_set<Disciplina*>> &orderDemandas)
+{
+	std::cout << "\norderIntersecDisponibDemandas";
+
+	for (auto itCodeDiscDemanda = mapDiscDemandaTurnoCalend.cbegin(); 
+		itCodeDiscDemanda != mapDiscDemandaTurnoCalend.cend(); itCodeDiscDemanda++)
+	{
+		for (auto itDiscDemanda = itCodeDiscDemanda->second.cbegin();
+			itDiscDemanda != itCodeDiscDemanda->second.cend(); itDiscDemanda++)
+		{
+			Disciplina * const disciplina = itDiscDemanda->first;
+
+			int nCredsDisc = disciplina->getTotalCreditos();
+			double maxRazao=0;
+
+			// Para cada disciplina com intersec de disponibilidade
+			auto finderDiscDispon = mapDiscIntersec.find(disciplina);
+			if (finderDiscDispon != mapDiscIntersec.cend())
+			{			
+				// Para cada prof com intersec de disponibilidade
+				for (auto itProfDispon = finderDiscDispon->second.cbegin();
+						itProfDispon != finderDiscDispon->second.cend(); itProfDispon++)
+				{
+					Professor * const professor = itProfDispon->first;
+
+					// Para cada dia com intersec de disponibilidade				
+					int nCredsProf=0;
+					auto const * const mapDispon = & itProfDispon->second.first;
+					for (auto itDiaDispon = mapDispon->cbegin(); itDiaDispon != mapDispon->cend(); itDiaDispon++)
+					{
+						nCredsProf += itDiaDispon->second.size();
+					}
+				
+					int nDiasProf = mapDispon->size();
+				
+					double razao=0;
+					if (nCredsDisc>0) razao = (double) nCredsProf / nCredsDisc;
+
+					maxRazao = (razao > maxRazao ? razao : maxRazao);
+				}			
+			}
+
+			orderDemandas[maxRazao].insert(disciplina);		
+		}
+	}
+}
+
+void ProblemData::printOrderedIntersecDisponibDemandas(
+		std::map<int, std::unordered_set<Disciplina*>> const &orderDemandas,
+		std::map<string, std::unordered_map<Disciplina*, std::set<AlunoDemanda*>>> const &alDemSemIntersec)
+{
+	std::cout << "\nprintOrderedIntersecDisponibDemandas";
+
+	// Print summary
+	std::ofstream out("nrcreds-intersec-disponib-disc.txt",ios::out);
+	if (!out) return;
+
+	int nAlDemSemInters=0;
+	out << "-------------------------------------------------------------------------";
+	out << "\nDemandas sem nenhum professor habilitado no turno e calendario dos alunos:\n";
+	for (auto itDiscCode = alDemSemIntersec.cbegin(); itDiscCode != alDemSemIntersec.cend(); itDiscCode++)
+	{
+		for (auto itDiscSemIntersec = itDiscCode->second.cbegin(); itDiscSemIntersec != itDiscCode->second.cend(); itDiscSemIntersec++)
+		{
+			out << "\nDisc = " << itDiscSemIntersec->first->getCodigo() << " - " << itDiscSemIntersec->first->getId();
+
+			out << "\n\tAlunos-Demanda:";
+			for (auto itAlDem = itDiscSemIntersec->second.cbegin(); itAlDem != itDiscSemIntersec->second.cend(); itAlDem++)
+			{
+				out << "  (" << (*itAlDem)->getId() << "," << (*itAlDem)->getAluno()->getNomeAluno() << ")";
+			}
+
+			nAlDemSemInters += itDiscSemIntersec->second.size();
+		}
+	}
+	out << "\nTotal de alunos-demanda sem nenhum professor habilitado no turno e calendario dos alunos:" << nAlDemSemInters;
+
+
+	out << "\n\n\n-------------------------------------------------------------------------";
+	out << "\nRazao ordenada entre nr creditos disponiveis do professor e nr de creditos da disciplina:\n";
+	for (auto itOrderRazao = orderDemandas.cbegin(); itOrderRazao != orderDemandas.cend(); itOrderRazao++)
+	{
+		out << "\nCredsProf / CredsDisc = " << itOrderRazao->first;
+		out << "\t\tQtd de discs = " << itOrderRazao->second.size();
+
+		// Reordena por codigo, para que disciplinas semelhantes fiquem ordenadas
+		std::map<string, Disciplina*> reorderedByCode;
+		for (auto itDisc = itOrderRazao->second.cbegin(); itDisc != itOrderRazao->second.cend(); itDisc++)
+		{
+			reorderedByCode[(*itDisc)->getCodigo()] = (*itDisc);
+		}
+
+		for (auto itCodeDisc = reorderedByCode.cbegin(); itCodeDisc != reorderedByCode.cend(); itCodeDisc++)
+		{
+			out << "\n\tDisc " << itCodeDisc->second->getId() << " - " << itCodeDisc->second->getCodigo();
+		}
+	}
+	out.flush();
+	out.close();
+}
+
+void ProblemData::printFullIntersecDisponibDemandas(
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+		std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> const & mapDiscDemandaTurnoCalend,
+	std::unordered_map<Disciplina*, std::map<Professor*, 
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> const &mapDiscIntersec)
+{
+	std::cout << "\nprintFullIntersecDisponibDemandas";
+
+	std::ofstream out("disc-intersec-disponib.txt",ios::out);
+	if (!out) return;
+
+	for (auto itCodeDiscDemanda = mapDiscDemandaTurnoCalend.cbegin(); 
+		itCodeDiscDemanda != mapDiscDemandaTurnoCalend.cend(); itCodeDiscDemanda++)
+	{
+		for (auto itDiscDemanda = itCodeDiscDemanda->second.cbegin();
+			itDiscDemanda != itCodeDiscDemanda->second.cend(); itDiscDemanda++)
+		{
+			Disciplina * const disciplina = itDiscDemanda->first;
+
+			int nCredsDisc = disciplina->getTotalCreditos();
+
+			out << "\n------------------------";
+			out << "\nDisciplina " << disciplina->getId() << " - " << disciplina->getCodigo();
+			out << " --- " << nCredsDisc << " creditos";
+
+			// Para cada disciplina com intersec de disponibilidade
+			auto finderDiscDispon = mapDiscIntersec.find(disciplina);
+			if (finderDiscDispon != mapDiscIntersec.cend())
+			{			
+				// Para cada prof com intersec de disponibilidade
+				for (auto itProfDispon = finderDiscDispon->second.cbegin();
+						itProfDispon != finderDiscDispon->second.cend(); itProfDispon++)
+				{
+					Professor * const professor = itProfDispon->first;
+
+					// Para cada dia com intersec de disponibilidade
+				
+					int nCredsProf=0;
+					auto const * const mapDispon = & itProfDispon->second.first;
+					for (auto itDiaDispon = mapDispon->cbegin(); itDiaDispon != mapDispon->cend(); itDiaDispon++)
+					{
+						nCredsProf += itDiaDispon->second.size();
+					}
+				
+					int nDiasProf = mapDispon->size();
+
+					// Para cada aluno-demanda com intersec de disponibilidade
+					auto const * const alunosDispon = & itProfDispon->second.second;
+					//for (auto itAlunoDispon = alunosDispon->cbegin(); itAlunoDispon != alunosDispon->cend(); itAlunoDispon++)
+					//{
+
+					//}
+
+					double razao=0;
+					if (nCredsDisc>0) razao = (double) nCredsProf / nCredsDisc;
+
+					out << "\n\tProf " << professor->getId() << " - " << professor->getNome();
+					out << "\n\t\t" << nCredsProf << " creditos do prof";
+					out << "\n\t\t" << nDiasProf << " dias do prof";
+					out << "\n\t\t" << alunosDispon->size() << " alunos-demanda";
+					out << "\n\tCredsProf / CredsDisc = " << razao;
+				}
+			}
+			out.flush();
+		}
+	}
+	out.close();
+}
+
+void ProblemData::printProfDiaDisponibDiscs(
+	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> const &mapProfDiaDiscIntersec)
+{
+	std::cout << "\nprintFullIntersecDisponibDemandas";
+
+	std::ofstream out("prof-dia-intersec-disponib.txt",ios::out);
+	if (!out) return;
+
+	// Para cada prof com intersec de disponibilidade
+	for (auto itProfDemanda = mapProfDiaDiscIntersec.cbegin();
+		itProfDemanda != mapProfDiaDiscIntersec.cend(); itProfDemanda++)
+	{
+		Professor * const professor = itProfDemanda->first;
+
+		out << "\n------------------------";
+		out << "\nProfessor " << professor->getId() << " - " << professor->getNome();
+			
+		// Para cada dia com intersec de disponibilidade
+		for (auto itDiaInters = itProfDemanda->second.cbegin();
+				itDiaInters != itProfDemanda->second.cend(); itDiaInters++)
+		{
+			int dia = itDiaInters->first;
+			
+			out << "\n\tDia " << dia;
+			out << "\n\t\tMaximo de creds livres no dia: " << itDiaInters->second.size();
+			out << "\n\t\tNr de discs associadas no dia: "  ;
+						
+			std::set<Disciplina*> discs;
+			for (auto itDti = itDiaInters->second.cbegin();
+				itDti != itDiaInters->second.cend(); itDti++)
+			{
+				for (auto itDisc = itDti->second.cbegin();
+					itDisc != itDti->second.cend(); itDisc++)
+				{
+					discs.insert(*itDisc);
+				}
+			}
+			out << discs.size();
+
+			for (auto itDti = itDiaInters->second.cbegin();
+				itDti != itDiaInters->second.cend(); itDti++)
+			{
+				out << "\n\t\t  " << itDti->first.hourMinToStr() 
+					<< "  (" << itDti->second.size() << " disciplinas): ";
+				
+				// Reordena por codigo, para que disciplinas semelhantes fiquem ordenadas
+				std::map<string, Disciplina*> reorderedByCode;
+				for (auto itDisc = itDti->second.cbegin(); itDisc != itDti->second.cend(); itDisc++)
+				{
+					reorderedByCode[(*itDisc)->getCodigo()] = (*itDisc);
+				}
+
+				for (auto itCodeDisc = reorderedByCode.cbegin(); itCodeDisc != reorderedByCode.cend(); itCodeDisc++)
+				{
+					out << " " << itCodeDisc->second->getCodigo();
+				}
+
+			}
+		}
+		out.flush();
+	}
+	out.close();
+}
+
+void ProblemData::estatisticasDemandasEscola()
+{
+	// ---------------------
+	// Agrupa aluno-demanda
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+			std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> mapDiscTurnoCalend;
+	getDemandasMapeadas(mapDiscTurnoCalend);
+		
+	// --------------------
+	// Get demandas filtradas por intersecao de disponibilidade
+	std::unordered_map<Disciplina*, std::map<Professor*,
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> mapDiscIntersec;
+	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> mapProfDiaDiscIntersec;
+	std::map<string, std::unordered_map<Disciplina*, std::set<AlunoDemanda*>>> alDemSemIntersec;
+	getDemandasIntersecDisponib(mapDiscTurnoCalend, mapDiscIntersec, mapProfDiaDiscIntersec, alDemSemIntersec);
+	
+	// --------------------
+	std::map<int, std::unordered_set<Disciplina*>> orderDemandas;
+	orderIntersecDisponibDemandas(mapDiscTurnoCalend, mapDiscIntersec, orderDemandas);
+
+	// --------------------
+	printFullIntersecDisponibDemandas(mapDiscTurnoCalend, mapDiscIntersec);
+	// --------------------
+	printOrderedIntersecDisponibDemandas(orderDemandas, alDemSemIntersec);
+	// --------------------
+	printProfDiaDisponibDiscs(mapProfDiaDiscIntersec);
+}

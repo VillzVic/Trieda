@@ -315,16 +315,16 @@
     <ClCompile Include="HeurNuno\MIPAlocarAlunoVar.cpp">
       <Filter>HeuristicaNuno\Estruturas</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_col.cpp">
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_col.cpp">
       <Filter>OPT_LP</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_gurobi.cpp">
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_gurobi.cpp">
       <Filter>OPT_LP</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_lp.cpp">
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_lp.cpp">
       <Filter>OPT_LP</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_row.cpp">
       <Filter>OPT_LP</Filter>
     </ClCompile>
   </ItemGroup>
@@ -654,16 +654,16 @@
     <ClInclude Include="HeurNuno\MIPAlocarAlunoVar.h">
       <Filter>HeuristicaNuno\Estruturas</Filter>
     </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_col.h">
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_col.h">
       <Filter>OPT_LP</Filter>
     </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_gurobi.h">
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_gurobi.h">
       <Filter>OPT_LP</Filter>
     </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_lp.h">
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_lp.h">
       <Filter>OPT_LP</Filter>
     </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_row.h">
       <Filter>OPT_LP</Filter>
     </ClInclude>
   </ItemGroup>

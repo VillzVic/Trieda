@@ -31,8 +31,9 @@ public:
    bool possuiHorarioDia( int dia, DateTime dti, DateTime dtf ) const;
    GGroup<HorarioAula*,LessPtr<HorarioAula>> retornaHorarioDiaOuCorrespondente( HorarioAula *h, int dia ) const;
    bool possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *hf, int dia );
-   bool possuiHorarioDiaOuCorrespondente( Calendario* const calendario, HorarioAula* const h, int dia );
-   HorarioAula* getHorarioDiaCorrespondente( Calendario* const calendario, HorarioAula* const h, int dia );
+   bool possuiHorarioDiaOuCorrespondente( Calendario* const calendario, DateTime dti, int dia );
+   HorarioAula* getHorarioDiaOuCorrespondente(Calendario* const calendario, DateTime dti, int dia);
+   HorarioAula* getHorarioDiaOuCorrespondente(Calendario* const calendario, HorarioAula* const h, int dia);
    
    // numero de horarios na semana
    int nrHorariosSemana;

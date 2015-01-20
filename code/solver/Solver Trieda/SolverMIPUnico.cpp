@@ -2019,7 +2019,7 @@ void SolverMIPUnico::criarAulaPorOfertaOutput_(AtendimentoDiaSemana &atendDia, D
 		TurnoIES* const turno = oferta->turno;
 		Calendario* const calendario = demanda->getCalendario();
 
-		HorarioAula* const horario = turno->getHorarioDiaCorrespondente(calendario, hBase, dia);
+		HorarioAula* const horario = turno->getHorarioDiaOuCorrespondente(calendario, hBase, dia);
 		if(!horario)
 		{
 			stringstream msg;

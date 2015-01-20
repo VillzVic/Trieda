@@ -111,12 +111,17 @@ bool TurnoIES::possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *h
 }
 
 // Procura o horarioDia no calendario, ou um igual exceto pelo id.
-HorarioAula* TurnoIES::getHorarioDiaCorrespondente( Calendario* const calendario, HorarioAula* const h, int dia )
+HorarioAula* TurnoIES::getHorarioDiaOuCorrespondente(Calendario* const calendario, HorarioAula* const h, int dia)
 {	
+	return getHorarioDiaOuCorrespondente(calendario, h->getInicio(), dia);
+}
+
+HorarioAula* TurnoIES::getHorarioDiaOuCorrespondente(Calendario* const calendario, DateTime dti, int dia)
+{
 	auto itMapDia = mapDiaDateTime.find(dia);
 	if ( itMapDia != mapDiaDateTime.end() )
 	{
-		auto itMapDateTime = itMapDia->second.find( h->getInicio() );
+		auto itMapDateTime = itMapDia->second.find(dti);
 		if ( itMapDateTime != itMapDia->second.end() )
 		{ 		
 			for (auto itHor = itMapDateTime->second.cbegin(); itHor != itMapDateTime->second.cend(); itHor++)
@@ -130,13 +135,13 @@ HorarioAula* TurnoIES::getHorarioDiaCorrespondente( Calendario* const calendario
 }
 
 // Procura o horarioDia no calendario, ou um igual exceto pelo id.
-bool TurnoIES::possuiHorarioDiaOuCorrespondente( Calendario* const calendario, HorarioAula* const h, int dia )
+bool TurnoIES::possuiHorarioDiaOuCorrespondente(Calendario* const calendario, DateTime dti, int dia)
 {	
-	return (getHorarioDiaCorrespondente(calendario, h, dia) != nullptr);
+	return (getHorarioDiaOuCorrespondente(calendario, dti, dia) != nullptr);
 }
 
 // retorna horarios disponiveis no dia
-void TurnoIES::retornaHorariosDisponiveisNoDia( int dia, GGroup<HorarioAula*, LessPtr<HorarioAula>> &horarios) const
+void TurnoIES::retornaHorariosDisponiveisNoDia(int dia, GGroup<HorarioAula*, LessPtr<HorarioAula>> &horarios) const
 {
 	auto finderDia = mapDiaDateTime.find(dia);
 	if (finderDia != mapDiaDateTime.end())

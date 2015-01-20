@@ -16,6 +16,8 @@ int mainMIPPuro( CmdLine *cmd, ProblemData* data, ProblemDataLoader* dataLoader,
 	int status = 0;
 	try
 	{
+		data->estatisticasDemandasEscola();
+
 		initSolution( solution, data );
 
 		Solver * solver = new SolverMIPUnico( data, solution, dataLoader );

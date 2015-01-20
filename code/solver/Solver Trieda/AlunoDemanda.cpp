@@ -52,7 +52,7 @@ bool AlunoDemanda::podeNoHorario(HorarioAula* const h, int dia) const
 	TurnoIES* const turnoAlDem = demanda->getTurnoIES();
 	Calendario* const calendAlDem = demanda->getCalendario();
 
-	return turnoAlDem->possuiHorarioDiaOuCorrespondente(calendAlDem, h, dia);
+	return turnoAlDem->possuiHorarioDiaOuCorrespondente(calendAlDem, h->getInicio(), dia);
 }
 
 std::ostream & operator << (

@@ -296,23 +296,26 @@ bool Calendario::possuiHorarioDia( HorarioAula *h, int dia )
 }
 
 // Procura o horarioDia no calendario, ou um igual exceto pelo id.
-HorarioAula* Calendario::possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia )
+HorarioAula* Calendario::possuiHorarioDiaOuCorrespondente(int duracao, DateTime dti, int dia)
 {		
-	if ( this->getTempoAula() != h->getCalendario()->getTempoAula() ) 
-	{
+	if ( this->getTempoAula() != duracao )
 		return false;
-	}
 
-	std::map< int/*dia*/, std::map< DateTime, HorarioAula* > >::iterator itMapDia = this->mapDiaDateTime.find(dia);
+	auto itMapDia = this->mapDiaDateTime.find(dia);
 	if ( itMapDia != this->mapDiaDateTime.end() )
 	{
-		std::map< DateTime, HorarioAula* >::iterator itMapDateTime = itMapDia->second.find( h->getInicio() );
+		auto itMapDateTime = itMapDia->second.find(dti);
 		if ( itMapDateTime != itMapDia->second.end() )
 		{ 
 			return itMapDateTime->second;
 		}
 	}
-	return NULL;
+	return nullptr;
+}
+// Procura o horarioDia no calendario, ou um igual exceto pelo id.
+HorarioAula* Calendario::possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia )
+{		
+	return this->possuiHorarioDiaOuCorrespondente(h->getTempoAula(), h->getInicio(), dia);
 }
 
 // Procura os horarioDias entre hi e hf no calendario, ou iguais exceto pelo id.

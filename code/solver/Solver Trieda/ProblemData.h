@@ -626,6 +626,44 @@ public:
 
    void setTurnoPrincipalAlunos();
 
+
+
+   // -------------------------------------------------------------------
+   // Ordenacao de prioridades para ESCOLA
+
+   void getProfsIntersecMapeados(Disciplina* const disciplina, std::unordered_map<TurnoIES*, std::unordered_map<Calendario*, 
+			std::unordered_map<Professor*, std::map<int, std::set<DateTime> >>>> &profsIntersec);
+
+   void getDemandasMapeadas(std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+			std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> &mapDiscTurnoCalend);
+   void getDemandasIntersecDisponib(
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+		std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> const & mapDiscTurnoCalend,
+	std::unordered_map<Disciplina*, std::map<Professor*, 
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> &mapDiscIntersec,
+	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> &mapProfDiaDiscIntersec,
+	std::map<string, std::unordered_map<Disciplina*, std::set<AlunoDemanda*>>> &alDemSemIntersec);
+   void orderIntersecDisponibDemandas(
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+		std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> const &mapDiscDemandaTurnoCalend,
+	std::unordered_map<Disciplina*, std::map<Professor*, 
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> const &mapDiscIntersec,
+	std::map<int, std::unordered_set<Disciplina*>> &orderDemandas);
+   void printOrderedIntersecDisponibDemandas(
+	std::map<int, std::unordered_set<Disciplina*>> const &orderDemandas,
+	std::map<string, std::unordered_map<Disciplina*, std::set<AlunoDemanda*>>> const &alDemSemIntersec);	
+   void printFullIntersecDisponibDemandas(
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+		std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> const & mapDiscTurnoCalend,
+	std::unordered_map<Disciplina*, std::map<Professor*, 
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> const &mapDiscIntersec);	
+   void printProfDiaDisponibDiscs(
+	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> const &mapProfDiaDiscIntersec);
+   void estatisticasDemandasEscola();
+
+   // -------------------------------------------------------------------
+
+
    private:
    
 		int modoOtimizacao;

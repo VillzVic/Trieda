@@ -1,6 +1,9 @@
 #ifndef _DISCIPLINA_H_
 #define _DISCIPLINA_H_
 
+#include <unordered_map>
+#include <unordered_set>
+
 #include "ofbase.h"
 #include "GGroup.h"
 #include "TipoDisciplina.h"
@@ -50,6 +53,8 @@ public:
    void addProfHabilit(Professor* p);
    int getNroProfRealHabilit() const;
    bool existeProfRealNoHorarioDia(int dia, HorarioAula* const ha) const;
+   bool getProfRealNoHorarioDia(int dia, HorarioAula* const ha, std::unordered_set<Professor*> &profs) const;
+   void getProfsIntersec( std::map<int, std::map<DateTime, std::unordered_set<Professor*> >> &profsIntersec);
 
    void clearHors();
    void clearDivCreds();

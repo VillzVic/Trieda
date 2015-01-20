@@ -2986,7 +2986,7 @@ void SolucaoHeur::criarAulaOutput_(AtendimentoSala &atendSala, TurmaHeur* const 
 		for(auto itHor = aula->horarios.begin(); itHor != aula->horarios.end(); ++itHor)
 		{			
 			HorarioAula* const h = *itHor;		
-			HorarioAula* const horario = turno->getHorarioDiaCorrespondente(calendario, h, dia);
+			HorarioAula* const horario = turno->getHorarioDiaOuCorrespondente(calendario, h, dia);
 			if(!horario)
 			{
 				stringstream msg;

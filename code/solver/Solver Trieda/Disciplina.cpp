@@ -896,9 +896,41 @@ bool Disciplina::existeProfRealNoHorarioDia(int dia, HorarioAula* const ha) cons
 	return false;
 }
 
+bool Disciplina::getProfRealNoHorarioDia(int dia, HorarioAula* const ha, std::unordered_set<Professor*> &profs) const
+{
+	profs.clear();
+	for (auto pit = profsHabilit.cbegin(); pit != profsHabilit.cend(); pit++)
+	{
+		if ((*pit)->possuiHorariosNoDia(ha, ha, dia))
+			profs.insert(*pit);
+	}
+	return (profs.size() > 0);
+}
+
 int Disciplina::getNroProfRealHabilit() const
 {
 	return profsHabilit.size();
+}
+
+void Disciplina::getProfsIntersec(std::map<int, std::map<DateTime, std::unordered_set<Professor*> >> &profsIntersec)
+{
+	for (auto itHor = this->horarios.begin(); itHor != this->horarios.end(); itHor++)
+	{
+		HorarioAula* const ha = itHor->horario_aula;
+				
+		for (auto itDia = ha->dias_semana.begin(); itDia != ha->dias_semana.end(); itDia++)
+		{
+			int dia = *itDia;
+
+			std::unordered_set<Professor*> profsNoDiaHa;
+			this->getProfRealNoHorarioDia(dia, ha, profsNoDiaHa);
+
+			for (auto itProf = profsNoDiaHa.begin(); itProf != profsNoDiaHa.end(); itProf++)
+			{
+				profsIntersec[dia][ha->getInicio()].insert(*itProf);
+			}
+		}
+	}
 }
 
 double Disciplina::getTempoCredSemanaLetiva()
