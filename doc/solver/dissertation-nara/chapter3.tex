@@ -168,13 +168,19 @@ Every linear program has an associated dual problem. The value of \textit{any} d
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Integrality gap}
 
-Linear programming relaxation is thus a standard technique for designing approximation algorithms for hard optimization problems. Since such relaxation removes variables' integrality constraints, the optimal value for the relaxed maximization problem is necessarily greater than or equal to the optimal value for the original problem. Integrality gap is the maximum ratio between the solution quality of the integer program and of its relaxation. It essentially represents the inherent limits of a particular linear relaxation in approximating an integer program.
+Linear programming relaxation is thus a standard technique for designing approximation algorithms for optimization problems. Since such relaxation removes variables' integrality constraints, the optimal value for the relaxed maximization problem is necessarily greater than or equal to the optimal value for the original problem. The integrality gap is the maximum ratio between the solution quality of the integer program and of its relaxation. It essentially represents the inherent limits of a particular linear relaxation in approximating an integer program. Thus, the more the integral solution is improved, the smaller becomes the integrality gap.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Branch and Bound}
 
-Introduces branch and bound concept.
+Branch and bound is an implicit enumeration method for feasible solutions of combinatorial problems. Complete enumeration is inefficient and not applicable for real optimization problems, but using some knowledge on partition strategies of the problem it is possible to make intelligent decisions on whether it is necessary to explore a set of new potential solutions or about which set of potential solutions is more promising.
+
+The \q{branch} word refers to the partitioning process of the problem and the \q{bound} refers to the decision of not exploring some set of possible new solutions (branch), avoiding exhaustive search. The bounding decisions use information of dual bounds to construct evidences of optimality and thus to eliminate branches that have proved to be unsuccessful.
+
+Basically, for an integer linear program, the problem is decomposed and organized as a tree where each node is a subset of the solution space and a branch on that node splits the subset into mutually exclusive subsubsets. Each resulting subsubset in the partition is represented by a child of the original node. An algorithm based on linear programming is then used for calculating a dual bound on the cost of any solution in a given subset.
+
+For further information about the branch and bound process and its strategies, see \cite{Wolsey98} and \cite{Papa98}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
