@@ -43,7 +43,7 @@ Following are listed the goals, ordered by priority, considered at this work whe
 \item{Maximizing demand satisfaction}
 
 \begin{align*}
-   \mbox{g1 = MIN  } \sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
+   \mbox{g1 = MIN  } \sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a}
 \end{align*}
 
 %%%%%
@@ -52,19 +52,18 @@ Following are listed the goals, ordered by priority, considered at this work whe
 \begin{align*}
   \mbox{g2 = MIN  } \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp}
 	\\
-	\sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a} \le g1
+	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 \end{align*}
 
 Where the additional constraint restricts the solution space to the maximum demand achieved at previous step.
-\fixme{na verdade, o que eu faco realmente eh fixar a variavel, e nao acrescentar um branch geral assim.}
 
 %%%%%
-\item{Minimizing gaps in professor's timetable}
+\item{Minimizing real professor displacement}
 
 \begin{align*}
-   \mbox{g3 = MIN  } \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
+  \mbox{g3 = MIN  } \sum\limits_{t \in T} \sum\limits_{p \in P} desloc_{p,t}
 	\\
-	\sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a} \le g1
+	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 	\\
 	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
 \end{align*}
@@ -72,16 +71,33 @@ Where the additional constraint restricts the solution space to the maximum dema
 Where the additional constraint restricts the solution space to the minimum virtual professor usage achieved at previous step.
 
 %%%%%
-\item{Minimizing usage of further slack variables}
+\item{Minimizing gaps in professor's timetable}
 
 \begin{align*}
-   \mbox{g4 = MIN  } \sum\limits_{d \in D} \sum\limits_{t \in T} \sum\limits_{i \in I_{d}} (fkp_{d,i,k} + fkm_{d,i,k})
+   \mbox{g4 = MIN  } \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
 	\\
-	\sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a} \le g1
+	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 	\\
 	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
 	\\
-	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f} \le g3
+	\sum\limits_{t \in T}\sum\limits_{p \in P} desloc_{p,t} \le g3
+\end{align*}
+
+Where the additional constraint restricts the solution space to the minimum real professor displacement achieved at previous step.
+
+%%%%%
+\item{Minimizing usage of further slack variables}
+
+\begin{align*}
+   \mbox{g5 = MIN  } \sum\limits_{d \in D} \sum\limits_{t \in T} \sum\limits_{i \in I_{d}} (fkp_{d,i,k} + fkm_{d,i,k})
+	\\
+	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
+	\\
+	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
+	\\
+	\sum\limits_{t \in T}\sum\limits_{p \in P} desloc_{p,t} \le g3
+	\\
+	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f} \le g4
 \end{align*}
 
 
@@ -89,7 +105,7 @@ Where the additional constraint restricts the solution space to the minimum amou
 
 \end{enumerate}
 
-The final solution is the one with cost equal to $g4$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
+The final solution is the one with cost equal to $g5$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
 
 
 \begin{figure}[h]
@@ -97,6 +113,8 @@ The final solution is the one with cost equal to $g4$, achieved at last stage. I
 \centering
 \caption{Solution spaces are limited and encapsulated after each goal optimization step.}
 \end{figure}
+
+\fixme{atualizar etapas na figura}
 
 
 %%%%%%%%%%%%%%
@@ -160,19 +178,6 @@ Introduces polishing concept.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Problem split}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Tactical mode with or without professor assignment}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Operational mode with or without fixed assigned times}
-\mynotes{tem sentido falar algo da tentativa de dividir os modulos?}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Root relaxation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,6 +193,9 @@ Introduces polishing concept.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Single time slot variable vs grouping time slot variable}
 
+
+
+As in all combinatorial scheduling models, the problem grows more complex as the number of side constraints increases.\fixme{Colocar essa frase no lugar adequado!}
 
 
 
