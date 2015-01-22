@@ -61,6 +61,7 @@ private:
 	  MIP_MARRETA
    };	  
 
+   static std::string getOutPutFileTypeToString(OutPutFileType type);
 
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
    bool haDemanda(Disciplina* const disc);
@@ -215,6 +216,7 @@ private:
 	int criarRestricaoMinCredsDiaAluno_Marreta();
 	int criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1();
 	int criarRestricaoHorInicialDiaAluno_MarretaCaso1e2();
+	int criarRestricaoHorFinalDiaAluno_MarretaCaso1();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso1e2();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2();
 	int criarVariavelDiaLongoAluno_MarretaCaso2();
@@ -326,7 +328,6 @@ private:
 	int readSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r, int fase );	
 	std::string getEquivFileName( int campusId, int prioridade );
-	void writeSolBin( int campusId, int prioridade, int r, int type, double *xSol );
 	void writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
    void readSolTxtAux( char *fileName, double *xSol );
 	int writeGapTxt( int campusId, int prioridade, int r, int type, double gap );
@@ -342,7 +343,14 @@ private:
 	void clearStrutures();
 	void printLog( string msg );
 
+	void getIdxN(int* idx);
+
 	int solveMIPUnico( int campusId, int prioridade, int r );
+	int solveMIPUnico_v2(int campusId, int prioridade, int r);
+
+	void fixaVariaveisPVZero(double * const xS);
+	void liberaVariaveisPV(double * const xS);
+
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	void zeraObjSolucao(int &nBdsObj, int* idxN);
 	void zeraAtendGaranteSolucao(int &nBds, double* valsOrig, int* idxs, BOUNDTYPE* bds);
@@ -359,15 +367,23 @@ private:
 	bool fixaSolMaxAtendMarreta(double* const xS);
 	bool fixaSolMaxAtend(double* const xS);
 	bool fixaSolMinProfVirt(double* const xS);
+	bool fixaSolMinProfReal(double* const xS);
 	bool fixaSolMinTurmas(double* const xS);
+	bool fixaSolMinTurmasNovo(double* const xS);
 	bool fixaSolMinDeslocProf(double* const xS);
 	bool fixaSolMinGapProf(double* const xS);
+	bool fixaSolAtendida(double* const xS);
+
+	bool chgObjMaxAtendMarreta();
+
+	void printNaoAtendimentos(double* const xS);
+	void printAtendsVirtuais(double* const xS);
 
 	void getXSol(double *xS);
 	bool optimize();
 	bool isOptimized(OPTSTAT status);
 	bool infeasible(OPTSTAT status);
-	void checkFeasibility(OPTSTAT status);
+	bool checkFeasibility(OPTSTAT status);
 	
 	int addConstrGapProf();
 	int copyInitialSolutionGapProf();

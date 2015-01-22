@@ -17,6 +17,9 @@ using namespace std;
 
 bool RODAR_OPERACIONAL = false;
 
+bool ABORDAGEM_PV_NO_FINAL = true;
+bool ABORDAGEM_PV_NO_FINAL_FIXAR_SOL_REAL = true;
+
 bool GAP_ALUNO_SO_PARA_MARRETA = true;
 
 const bool MIN_FD_JUNTO_COM_PROF_VIRT = true;
@@ -146,8 +149,9 @@ void MIPUnico::solveMainEscola( int campusId, int prioridade, int r,
 
 	corrigeNroTurmas( prioridade, campusId );
 	
-	solveMIPUnico( campusId, prioridade, r );
-	
+	if(ABORDAGEM_PV_NO_FINAL) solveMIPUnico_v2( campusId, prioridade, r );
+	else solveMIPUnico( campusId, prioridade, r );
+
 	carregaVariaveisSolucao( campusId, prioridade, r );
 		
 	problemData->preencheMapsTurmasTurnosIES();
@@ -881,6 +885,41 @@ void MIPUnico::addVariaveisTatico()
 	cout << "\n\n" << nroAtualTurmas - nroAntigoTurmas << " novas turmas.\n\n";
 }
 
+std::string MIPUnico::getOutPutFileTypeToString(MIPUnico::OutPutFileType type)
+{
+	std::string solName;
+
+	switch (type)
+	{
+		case (MIP_GARANTE_SOL):
+			solName = "GaranteSol";
+			break;
+		case (MIP_MAX_ATEND):
+			solName = "MaxAtend";
+			break;
+		case (MIP_MIN_VIRT):
+			solName = "MinVirt";
+			break;
+		case (MIP_MIN_TURMAS_COMPART):
+			solName = "MinTurmasCompart";
+			break;
+		case (MIP_MIN_DESLOC_PROF):
+			solName = "MinDeslocProf";
+			break;
+		case (MIP_MIN_GAP_PROF):
+			solName = "MinGapProf";
+			break;
+		case (MIP_MARRETA):
+			solName = "Marreta";
+			break;
+		default:
+			if (type != MIP_GENERAL)
+				CentroDados::printError("MIPUnico::getOutPutFileTypeToString()","Etapa de tipo nao identificado.");
+			break;
+	}
+	return solName;
+}
+
 std::string MIPUnico::getCorrigeNrTurmasFileName( int campusId, int prioridade, int r)
 {
 	std::string solName;
@@ -1159,58 +1198,6 @@ std::string MIPUnico::getEquivFileName( int campusId, int prioridade )
    return solName;
 }
 
-void MIPUnico::writeSolBin( int campusId, int prioridade, int r, int type, double *xSol )
-{
-	if (!CentroDados::getPrintLogs())
-		return;
-	
-	char solName[1024]="\0";
-
-	switch (type)
-	{
-		case (MIP_GENERAL):
-			strcpy( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );			
-			break;
-		case (MIP_GARANTE_SOL):
-			strcpy( solName, "garanteSol" );
-			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
-			break;
-		case (MIP_MAX_ATEND):
-			strcpy( solName, "maxAtend" );
-			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
-			break;
-		case (MIP_MIN_VIRT):
-			strcpy( solName, "minVirt" );
-			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
-			break;
-		case (MIP_MIN_GAP_PROF):
-			strcpy( solName, "minGapProf" );
-			strcat( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
-			break;
-	}
-
-	// WRITES SOLUTION
-		
-	FILE * fout = fopen( solName, "wb" );
-	if ( fout == NULL )
-	{
-		std::cout << "\nErro em MIPUnico::writeSolBin( int campusId, int prioridade, int r, int type ):"
-				<< "\nArquivo " << solName << " nao pode ser aberto.\n";
-	}
-	else
-	{
-		int nCols = lp->getNumCols();
-
-		fwrite( &nCols, sizeof( int ), 1, fout );
-		for ( int i = 0; i < lp->getNumCols(); i++ )
-		{
-			fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
-		}
-
-		fclose( fout );
-	}
-}
-
 void MIPUnico::readSolTxtAux( char *fileName, double *xSol )
 {		
 	ifstream fin( fileName, ios_base::in );
@@ -1271,39 +1258,38 @@ void MIPUnico::readSolTxtAux( char *fileName, double *xSol )
 
 void MIPUnico::writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase )
 {
-
 	char solName[1024]="\0";
 
 	switch (type)
 	{
-		case (MIP_GENERAL):
-			strcpy( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );			
-			break;
 		case (MIP_GARANTE_SOL):
 			strcpy( solName, "garanteSol" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MAX_ATEND):
 			strcpy( solName, "maxAtend" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MIN_VIRT):
 			strcpy( solName, "minVirt" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MIN_TURMAS_COMPART):
 			strcpy( solName, "minTurmasCompart" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
+			break;
+		case (MIP_MIN_DESLOC_PROF):
+			strcpy( solName, "minDeslocProf" );
 			break;
 		case (MIP_MIN_GAP_PROF):
 			strcpy( solName, "minGapProf" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MARRETA):
 			strcpy( solName, "marreta" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
+			break;
+		default:
+			if (type != MIP_GENERAL)
+				CentroDados::printError("MIPUnico::writeSolTxt()","Etapa de tipo nao identificado.");
 			break;
 	}
+			
+	strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 
 	// WRITES SOLUTION
 		
@@ -1332,38 +1318,38 @@ void MIPUnico::writeSolTxt( int campusId, int prioridade, int r, int type, doubl
 
 int MIPUnico::readSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase )
 {
-   char solName[1024]="\0";
+    char solName[1024]="\0";
 
 	switch (type)
 	{
-		case (MIP_GENERAL):
-			strcpy( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );			
-			break;
 		case (MIP_GARANTE_SOL):
 			strcpy( solName, "garanteSol" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MAX_ATEND):
 			strcpy( solName, "maxAtend" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MIN_VIRT):
 			strcpy( solName, "minVirt" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MIN_TURMAS_COMPART):
 			strcpy( solName, "minTurmasCompart" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
+			break;
+		case (MIP_MIN_DESLOC_PROF):
+			strcpy( solName, "minDeslocProf" );
 			break;
 		case (MIP_MIN_GAP_PROF):
 			strcpy( solName, "minGapProf" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 			break;
 		case (MIP_MARRETA):
 			strcpy( solName, "marreta" );
-			strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
-			break;			
+			break;
+		default:
+			if (type != MIP_GENERAL)
+				CentroDados::printError("MIPUnico::readSolTxt()","Etapa de tipo nao identificado.");
+			break;
 	}
+			
+	strcat( solName, getSolucaoTaticoFileName( campusId, prioridade, r, fase ).c_str() );
 
 	// READS SOLUTION
 		
@@ -1448,6 +1434,9 @@ int MIPUnico::writeGapTxt( int campusId, int prioridade, int r, int type, double
 			break;
 		case (MIP_MIN_TURMAS_COMPART):
 			step = "Min Turmas Compartilhadas";
+			break;
+		case (MIP_MIN_DESLOC_PROF):
+			step = "Min Desloc Prof";
 			break;
 		case (MIP_MIN_GAP_PROF):
 			step = "Min Gaps Profs";
@@ -1933,8 +1922,9 @@ int MIPUnico::solveMIPUnico(int campusId, int prioridade, int r)
 		
 		solveMinProfVirt( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 		
-		solveMinTurmas( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );		
-		
+		solveMinTurmas( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );	
+		fixaSolMinTurmas(xSol_);
+				
 		solveMinDeslocProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 		
 		solveMinGapProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
@@ -1947,6 +1937,138 @@ int MIPUnico::solveMIPUnico(int campusId, int prioridade, int r)
    return status;
 }
 
+int MIPUnico::solveMIPUnico_v2(int campusId, int prioridade, int r)
+{	
+	std::cout<<"\nSolving...\n"; fflush(NULL);
+	bool status=true;
+	bool CARREGA_SOL_PARCIAL = * this->CARREGA_SOLUCAO;
+	
+	verificaCarregaSolucao(campusId, prioridade, r);
+
+    int varNum = 0;
+    int constNum = 0;
+   
+    criaNewLp(campusId, prioridade, r);
+   
+    setOptLogFile(mipFile,optLogFileName);
+	
+	clearStrutures();
+	
+	criaNewLp(campusId, prioridade, r);
+
+	// Variable creation
+	varNum = criaVariaveisTatico( campusId, prioridade, r );
+		
+	if ( ! (*this->CARREGA_SOLUCAO) )
+	{
+		// Constraint creation
+		constNum = criaRestricoesTatico( campusId, prioridade, r );
+					 			
+		if (xSol_) delete [] xSol_;
+
+	    xSol_ = new double[lp->getNumCols()];
+		
+		solveGaranteSolucao( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+		
+		solveMaxAtendMarreta( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+		
+		fixaVariaveisPVZero( xSol_ );
+
+		solveMaxAtend( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+				
+		solveMinTurmas( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );		
+		fixaSolMinTurmasNovo(xSol_);
+
+		solveMinDeslocProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+		
+		solveMinGapProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+		
+		liberaVariaveisPV( xSol_ );
+		
+		fixaSolMinProfReal( xSol_ );
+
+		if (ABORDAGEM_PV_NO_FINAL_FIXAR_SOL_REAL)
+			fixaSolAtendida( xSol_ );
+
+		solveMaxAtend( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+
+		printAtendsVirtuais(xSol_);
+
+		status=solveGeneral( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+	}
+
+	std::cout<<"\n------------------------------Fim do Tatico Integrado -----------------------------\n"; fflush(NULL);
+
+   return status;
+}
+
+void MIPUnico::fixaVariaveisPVZero(double * const xS)
+{
+    int nBds = 0;
+	int *idxs = new int[lp->getNumCols()*2];
+	double *valsOrig = new double[lp->getNumCols()*2];
+	double *vals = new double[lp->getNumCols()*2];
+	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
+
+	auto vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		VariableMIPUnico v = vit->first;
+				
+		int value = (int) (xS[vit->second] + 0.5);
+
+		if (v.getType() == VariableMIPUnico::V_PROF_TURMA)
+		if (v.getProfessor()->eVirtual() && value < 0.1)
+		{
+			valsOrig[nBds] = value;
+			idxs[nBds] = vit->second;
+			vals[nBds] = 0.0;
+			bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+			nBds++;
+		}
+	}
+
+	lp->chgBds(nBds,idxs,bds,vals);
+
+	delete [] valsOrig;
+	delete [] idxs;
+	delete [] vals;
+	delete [] bds;
+}
+
+void MIPUnico::liberaVariaveisPV(double * const xS)
+{
+	// todo: soltar exatemente o que foi inicialmente liberado
+
+    int nBds = 0;
+	int *idxs = new int[lp->getNumCols()*2];
+	double *vals = new double[lp->getNumCols()*2];
+	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
+
+	auto vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		VariableMIPUnico v = vit->first;
+				
+		int value = (int) (xS[vit->second] + 0.5);
+
+		if (v.getType() == VariableMIPUnico::V_PROF_TURMA)
+		if (v.getProfessor()->eVirtual() && value < 0.1)
+		{
+			idxs[nBds] = vit->second;
+			vals[nBds] = 1.0;
+			bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+			nBds++;
+		}
+	}
+
+	lp->chgBds(nBds,idxs,bds,vals);
+
+	delete [] idxs;
+	delete [] vals;
+	delete [] bds;
+}
+
 void MIPUnico::copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico)
 {
 	for (auto itVar=solVarsTatInt.begin(); itVar!=solVarsTatInt.end(); itVar++)
@@ -1957,6 +2079,14 @@ void MIPUnico::copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIP
 		{
 			solMipUnico.insert(*itVar);
 		}
+	}
+}
+
+void MIPUnico::getIdxN(int* idxN)
+{
+	for ( auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
+	{
+		idxN[vit->second] = vit->second;
 	}
 }
 
@@ -2093,6 +2223,8 @@ void MIPUnico::zeraAtendGaranteSolucao(int &nBds, double* valsOrig, int* idxs, B
 	delete[] vals;
 }
 
+// -------------------------------
+
 int MIPUnico::solveMaxAtendMarreta( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
 {
 	stringstream ss;
@@ -2103,54 +2235,23 @@ int MIPUnico::solveMaxAtendMarreta( int campusId, int prioridade, int r, bool& C
 		
 	// -------------------------------------------------------------------
 	// Salvando função objetivo original
-
 	double *objN = new double[lp->getNumCols()];
 	lp->getObj(0,lp->getNumCols()-1,objN);
-
-	
+		
 	// -------------------------------------------------------------------
 	// Lp name
-
     char lpName[1024];
     strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
-
-
+	
 	// -------------------------------------------------------------------
-	// FUNÇÃO OBJETIVO SOMENTE COM AS FOLGAS DE DEMANDA 
+	// FUNÇÃO OBJETIVO SOMENTE COM AS FOLGAS DE DEMANDA
+	int *idxN = new int[lp->getNumCols()];	
+	getIdxN(idxN);
 
-	int *idxN = new int[lp->getNumCols()];
-	int *idxs = new int[lp->getNumCols()*2];
-	double *vals = new double[lp->getNumCols()*2];
-	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
-	int nBds = 0;
+	chgObjMaxAtendMarreta();
 	
-	#pragma region Modifica FO
-    nBds = 0;
-	for ( auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
-	{
-		idxN[vit->second] = vit->second;
+	// -------------------------------------------------------------------
 
-		VariableMIPUnico v = vit->first;
-			
-		if ( v.getType() == VariableMIPUnico::V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA )
-		{            
-			idxs[nBds] = vit->second;
-			vals[nBds] = 1.0;
-			nBds++;
-		}
-		else
-		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 0.0;
-			nBds++;
-		}
-	}	
-    lp->chgObj(nBds,idxs,vals);
-    lp->updateLP();
-	#pragma endregion
-	
-	// ------------------------------------------------------------------------------------
-			
 	std::string lpName2;
 	lpName2 += "maxAtendMarreta_";
 	lpName2 += string(lpName);
@@ -2215,7 +2316,6 @@ int MIPUnico::solveMaxAtendMarreta( int campusId, int prioridade, int r, bool& C
 	// ------------------------------------------------------------------------------------
 	// Volta com a função objetivo original	
 	lp->chgObj(lp->getNumCols(),idxN,objN);
-
 	lp->updateLP();
 	
 	// ------------------------------------------------------------------------------------
@@ -2225,13 +2325,49 @@ int MIPUnico::solveMaxAtendMarreta( int campusId, int prioridade, int r, bool& C
  
 	lp->updateLP();
 
-	delete[] idxs;
-	delete[] vals;
-	delete[] bds;
 	delete[] idxN;
 	delete[] objN;
 	
 	return cpyStatus;
+}
+
+bool MIPUnico::chgObjMaxAtendMarreta()
+{
+	int *idxs = new int[lp->getNumCols()];
+	double *vals = new double[lp->getNumCols()];
+	int nBds = 0;
+	
+	for ( auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++ )
+	{
+		VariableMIPUnico v = vit->first;
+			
+		if ( v.getType() == VariableMIPUnico::V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA )
+		{            
+			idxs[nBds] = vit->second;
+			vals[nBds] = 1.0;
+			nBds++;
+		}
+		else if (v.getType() == VariableMIPUnico::V_PROF_TURMA &&
+				 v.getProfessor()->eVirtual())
+		{
+			idxs[nBds] = vit->second;
+			vals[nBds] = 0.00001;
+			nBds++;
+		}
+		else
+		{
+			idxs[nBds] = vit->second;
+			vals[nBds] = 0.0;
+			nBds++;
+		}
+	}	
+    bool chged = lp->chgObj(nBds,idxs,vals);
+    lp->updateLP();
+
+	delete[] idxs;
+	delete[] vals;
+	
+	return chged;
 }
 
 bool MIPUnico::fixaSolMaxAtendMarreta(double* const xS)
@@ -2262,6 +2398,8 @@ bool MIPUnico::fixaSolMaxAtendMarreta(double* const xS)
 	return chged;
 }
 
+// -------------------------------
+
 int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
 {
 	stringstream ss;
@@ -2270,6 +2408,9 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 	printLog( ss.str() );
 	std::cout << ss.str(); fflush(NULL);
 		
+	static int fase=0;
+	fase++;
+
 	// -------------------------------------------------------------------
 	// Salvando função objetivo original
 
@@ -2369,14 +2510,14 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, fase );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
 		else
 		{
-			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, 0 );			
+			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, fase );			
 			lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
 		}
 	}
@@ -2412,11 +2553,14 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 			getXSol(xS);
 		}
 
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, fase );
 	}      
 	
 	fflush(NULL);
 		
+	// ------------------------------------------------------------------------------------
+	printNaoAtendimentos(xS);
+
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA
 	fixaSolMaxAtend(xS);
@@ -2501,6 +2645,34 @@ bool MIPUnico::fixaSolMaxAtend(double* const xS)
 
 	return chged;
 }
+
+void MIPUnico::printNaoAtendimentos(double* const xS)
+{
+	if (!CentroDados::getPrintLogs())
+		return;
+
+	static int counter=0;
+	counter++;
+	stringstream fileName;
+	fileName << "naoAtends" << counter << ".log";
+
+	std::ofstream out(fileName.str(), ios::out);
+	out << "Nao atendimentos da primeira fase";
+	out << "\nDisciplina \t - \t Aluno\n";
+	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
+	{
+		VariableMIPUnico v = vit->first;
+
+		if (v.getType() != VariableMIPUnico::V_SLACK_DEMANDA_ALUNO || xS[vit->second] < 0.1)
+			continue;
+		
+		out << "\n" << v.getDisciplina()->getCodigo() << " (" << v.getDisciplina()->getId() << ")  -  " 
+			<< v.getAluno()->getNomeAluno() << " (" << v.getAluno()->getAlunoId() << ")";
+	}
+	out.close();
+}
+
+// -------------------------------
 
 int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
 {
@@ -2624,6 +2796,8 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 	
 	fflush(NULL);
 		
+	// ------------------------------------------------------------------------------------
+	printAtendsVirtuais(xS);
 
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
@@ -2734,6 +2908,66 @@ bool MIPUnico::fixaSolMinProfVirt(double* const xS)
 
 	return chged;
 }
+
+bool MIPUnico::fixaSolMinProfReal(double* const xS)
+{	
+	bool chged = true;
+
+	OPT_ROW rowp( 1000, OPT_ROW::GREATER, 0, "C_MIN_PROF_REAL_" );
+	
+	int nrMinCredProfreal=0;
+	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
+	{
+		VariableMIPUnico v = vit->first;
+		
+		// y
+		if (v.getType() == VariableMIPUnico::V_PROF_TURMA)
+		if (!v.getProfessor()->eVirtual())
+		{
+			int numCred = v.getDisciplina()->getTotalCreditos();
+
+			rowp.insert(vit->second, numCred);
+
+			if (xS[vit->second] > 0.1) // atendido com prof real
+			{
+				nrMinCredProfreal += numCred;
+			}
+		}
+	}
+	
+	if (rowp.getnnz() > 0)
+	{
+		rowp.setRhs(nrMinCredProfreal);
+		chged = lp->addRow(rowp);
+		lp->updateLP();
+	}
+	
+	return chged;
+}
+
+void MIPUnico::printAtendsVirtuais(double* const xS)
+{
+	if (!CentroDados::getPrintLogs())
+		return;
+
+	std::ofstream out("atendsVirtuais.log", ios::out);
+	out << "Atendimentos feitos por professores virtuais";
+	out << "\nDisciplina\n";
+	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
+	{
+		VariableMIPUnico v = vit->first;
+
+		if (v.getType() == VariableMIPUnico::V_PROF_TURMA)
+		if (v.getProfessor()->eVirtual())
+		if (xS[vit->second] > 0.1)
+		{
+			out << "\n" << v.getDisciplina()->getCodigo() << " (" << v.getDisciplina()->getId() << ")";
+		}
+	}
+	out.close();
+}
+
+// -------------------------------
 
 int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
 {
@@ -2849,11 +3083,6 @@ int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA
 	
 	fflush(NULL);
 		
-
-	// ------------------------------------------------------------------------------------
-	// FIXA SOLUÇÃO OBTIDA
-	fixaSolMinTurmas(xS);
-	
 	// ------------------------------------------------------------------------------------
 	// Volta com a função objetivo original	
 	lp->chgObj(lp->getNumCols(),idxN,objN);
@@ -2874,6 +3103,61 @@ int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA
 	delete[] objN;
 	
 	return cpyStatus;
+}
+
+bool MIPUnico::fixaSolMinTurmasNovo(double* const xS)
+{
+	bool chged = true;
+
+	std::map<Disciplina*, std::set<int>> mapDiscCompart_Vars;
+	std::map<Disciplina*, int> mapDiscCompart_NrTurmas;
+
+	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
+	{
+		VariableMIPUnico v = vit->first;
+		
+		if (v.getType() == VariableMIPUnico::V_PROF_TURMA)	// y_{p,i,d}
+		if (!v.getProfessor()->eVirtual())					// prof real
+		if (v.getDisciplina()->getMaxAlunosT() > 1)			// disc possivelmente compartilhada
+		{
+			mapDiscCompart_Vars[v.getDisciplina()].insert(vit->second);
+
+			if (xS[vit->second] > 0.1)						// turma aberta
+			{
+				auto finderDisc = mapDiscCompart_NrTurmas.find(v.getDisciplina());
+				if (finderDisc == mapDiscCompart_NrTurmas.end())
+					finderDisc = mapDiscCompart_NrTurmas.insert(pair<Disciplina*, int> (v.getDisciplina(), 0)).first;
+				(finderDisc->second)++;
+			}
+		}
+	}
+
+	for (auto itDisc = mapDiscCompart_Vars.begin(); itDisc != mapDiscCompart_Vars.end(); itDisc++)
+	{
+		stringstream constr;
+		constr << "C_MAX_TURMAS_COMPARTILH_PROF_REAL_";
+		constr << "(Disc" << itDisc->first->getId() << ")_";
+		
+		int rhs=0;
+		auto finderDisc = mapDiscCompart_NrTurmas.find(itDisc->first);
+		if (finderDisc != mapDiscCompart_NrTurmas.end())
+			rhs = finderDisc->second;
+
+		int nnz = itDisc->second.size();
+		OPT_ROW rowp( nnz, OPT_ROW::LESS, rhs, (char*) constr.str().c_str() );
+		for (auto itVarY = itDisc->second.begin(); itVarY != itDisc->second.end(); itVarY++)
+		{
+			rowp.insert(*itVarY, 1.0);
+		}
+
+		if (rowp.getnnz() > 0)
+		{
+			chged &= lp->addRow(rowp);
+			lp->updateLP();
+		}
+	}
+
+	return chged;
 }
 
 bool MIPUnico::fixaSolMinTurmas(double* const xS)
@@ -2909,6 +3193,8 @@ bool MIPUnico::fixaSolMinTurmas(double* const xS)
 
 	return chged;
 }
+
+// -------------------------------
 
 int MIPUnico::solveMinDeslocProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
 {
@@ -2960,6 +3246,10 @@ int MIPUnico::solveMinDeslocProf( int campusId, int prioridade, int r, bool& CAR
 
 			coef = problemData->calculaTempoEntreCampusUnidades(
 				campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
+		}
+		else if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
+		{
+			coef = 0.00001 * vit->first.getDisciplina()->getTotalCreditos();
 		}
 
 		idxs[nBds] = vit->second;
@@ -3120,6 +3410,8 @@ bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
 
 	return chged;
 }
+
+// -------------------------------
 
 int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
 {
@@ -3294,6 +3586,45 @@ bool MIPUnico::fixaSolMinGapProf(double* const xS)
 	return chged;
 }
 
+// -------------------------------
+
+bool MIPUnico::fixaSolAtendida(double* const xS)
+{
+	int *idxs = new int[lp->getNumCols()*2];
+	double *vals = new double[lp->getNumCols()*2];
+	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
+
+    int nBds = 0;
+	auto vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		VariableMIPUnico v = vit->first;
+		
+		int value = (int) (xS[vit->second] + 0.5);
+
+		// Filtra aulas atendidas
+		if (value == 0) continue;
+
+		// Filtra somente variaveis v e k com profs reais
+		if ( (v.getType() != VariableMIPUnico::V_ALUNO_CREDITOS) &&
+			!(v.getType() == VariableMIPUnico::V_PROF_AULA && !v.getProfessor()->eVirtual()) )
+			 continue;
+
+		idxs[nBds] = vit->second;
+		vals[nBds] = value;
+		bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+		nBds++;
+	}
+
+    bool chged = lp->chgBds(nBds,idxs,bds,vals);
+
+	delete[] idxs;
+	delete[] vals;
+	delete[] bds;
+
+	return chged;
+}
+
 int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
 {		
 	bool optStatus=false;
@@ -3387,7 +3718,9 @@ bool MIPUnico::isOptimized(OPTSTAT status)
 	if (status == OPTSTAT_MIPOPTIMAL || status == OPTSTAT_LPOPTIMAL || status == OPTSTAT_FEASIBLE)
 		return true;
 	
-	checkFeasibility(status);
+	if (checkFeasibility(status))
+		CentroDados::printWarning("MIPUnico::isOptimized()","Status de otimizacao desconhecido!");
+
 	return false;
 }
 
@@ -3398,14 +3731,16 @@ bool MIPUnico::infeasible(OPTSTAT status)
 	return false;
 }
 
-void MIPUnico::checkFeasibility(OPTSTAT status)
+bool MIPUnico::checkFeasibility(OPTSTAT status)
 {
 	if (infeasible(status))
 	{
 		stringstream ss;
 		ss <<"Error! Model is infeasible." << std::endl;
 		CentroDados::printError("bool MIPUnico::checkFeasibility()",ss.str());
+		return false;
 	}
+	return true;
 }
 
 int MIPUnico::addConstrGapProf()
@@ -13606,6 +13941,7 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_Marreta()
 	int restricoes = 0;	
 	criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1();
 	restricoes += criarRestricaoHorInicialDiaAluno_MarretaCaso1e2();
+	restricoes += criarRestricaoHorFinalDiaAluno_MarretaCaso1();
 	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso1e2();
 	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2();
 	return restricoes;
@@ -13693,6 +14029,55 @@ int MIPUnico::criarRestricaoHorInicialDiaAluno_MarretaCaso1e2()
 				stringstream ss;
 				ss << "Restricao nao adicionada! " << row.getName();
 				CentroDados::printError("int MIPUnico::criarRestricaoHorInicialDiaAluno_MarretaCaso1e2()", ss.str());
+				continue;
+			}
+			restricoes++;
+		}
+	}
+	return restricoes;
+}
+
+int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1()
+{
+	int restricoes = 0;	
+	if (!MARRETA_EQUIV_FORC_DISTRIB)
+		return restricoes;
+		
+	for(auto itAluno = varsAlunoDiaInicioFim.cbegin(); itAluno != varsAlunoDiaInicioFim.cend(); ++itAluno)
+	{
+		Aluno* const aluno = itAluno->first;
+				
+		// Equiv forçada => indica marreta de distribuição dos creditos
+		if (!aluno->possuiEquivForcada())
+			continue;
+		// Marreta 2 (medicina)
+		if (aluno->ehFormando())
+			continue;
+		// Sobra a marreta 1 (31o tempo)
+
+		for(auto itDia = itAluno->second.cbegin(); itDia != itAluno->second.cend(); ++itDia)
+		{
+			const int dia = itDia->first;
+			
+			stringstream ss;
+			ss << "C_ALUNO_HOR_FINAL_MARRETA_(_Aluno" << aluno->getAlunoId() << "_Dia" << dia << ")";
+			char name[ 1024 ];
+			sprintf( name, "%s", ss.str().c_str() );
+
+			auto itDtf = itDia->second.crbegin(); // ultimo horario
+
+			int colFim = itDtf->second.second;
+			
+			OPT_ROW row( 1, OPT_ROW::LESS, 1.0, name );
+
+			row.insert(colFim,1);
+
+			bool added=lp->addRow( row );
+			if (!added)
+			{
+				stringstream ss;
+				ss << "Restricao nao adicionada! " << row.getName();
+				CentroDados::printError("int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1()", ss.str());
 				continue;
 			}
 			restricoes++;

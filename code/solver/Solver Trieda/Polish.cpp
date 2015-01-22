@@ -1702,6 +1702,8 @@ void Polish::initLogFile()
    stringstream ss;
    ss << originalLogFileName_ << "Polish" << id;
    
+ //  std::string MIPUnico::getOutPutFileTypeToString(type_);
+
    setOptLogFile(polishFile_,ss.str());
 }
 
