@@ -4,20 +4,19 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This chapter describes a method for solving the problem which is purely based on integer linear programming (ILP).
+This chapter describes the current method for solving the problem, which is purely based on integer linear programming (ILP).
 
-As mentioned by \cite{Haroldo2012}, since exact methods, which try to find proven optimal solutions, can demand unrealistic amounts of processing time on most timetabling variants, the development of heuristics which are effective in practice received much attention from researches.
+Solving methods can be classified as exact or non-exact methods. Exact methods try to find proven optimal solutions, but can demand unrealistic amounts of processing time whether problem size increases. Non-exact methods, basically heuristics, are generally alternatives for searching for good enough solutions in a reasonable amount of time. Development of heuristics was a consequence of the lack for many years of efficient software tools for solution of integer programming models. They have been shown to be effective in practice and have thus received much attention from researches, as mentioned by \cite{Haroldo2012}. Since the early 90's though, advances in technology have allowed mathematical programming tools development, contributing then towards the usage of exact methods.
 
-At \cite{Birbas2009}: The lack of efficient software tools for the solution of IP models some years back has forced researchers away from suggesting standard IP solution techniques. Since the early 90's though, this obstacle has been removed and mathematical programming tools are contributing towards the effort of automating the timetabling process for high schools and for universities.
+Section ~\ref{sec:IP} introduces theory and main concepts of integer linear programming, which are fundamental in understanding the developed solving method. Further and more complete explanations about integer programming can be found at \cite{Wolsey98} and \cite{Papa98}.
 
-Section ~\ref{IP} introduces the main concepts of integer linear programming, which are fundamental in understanding the developed solving method. Further and more complete explanations about integer programming can be found at \cite{Wolsey98}.
-
+Section ~\ref{sec:mathForm} introduces the mathematical model developed for the problem.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Integer programming}
-\label{IP}
+\label{sec:IP}
 
-A mathematical optimization problem consists of a set of equations which together define feasible solutions for a problem and an objective function that eliminates symmetries between these solutions and guides the search for the best solution.
+A mathematical optimization problem consists of a set of inequations which together define feasible solutions for a problem and an objective function that eliminates symmetries between these solutions and guides the search for the best solution.
 
 When both objective function and constraints are linear, then it is called \textit{Linear Programming (LP)}.
 
@@ -196,12 +195,13 @@ This work was developed using \textit{Gurobi Optimizer version 6.0} for solving 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    TATIC MODULE     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    MATH FORMULATION     %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{IP - Assignment Formulation}
+\section{IP - Assignment Formulation for the Timetabling Problem}
+\label{sec:mathForm}
 
-The process of formulating an integer program can be organized in three steps:
+The general process of formulating an integer program can be organized in three steps:
 
 \begin{enumerate}
 \item Define what appear to be the necessary variables.
@@ -211,6 +211,7 @@ The process of formulating an integer program can be organized in three steps:
 
 Usually the need of auxiliary variables arises while formulating constraints, which gives an iterative feature to the process until a consistent model is reached.
 
+Next subsections introduce the notation used in the mathematical model, which includes data sets, general data and model variables, and the formulation, which includes a multi-objective function and all constraints.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -222,12 +223,12 @@ Usually the need of auxiliary variables arises while formulating constraints, wh
 \begin{itemize}
 \item $Al$ - Set of students. Elements of $Al$ are called $a$.
 \item $C$ - Set of majors. Elements of $C$ are called $c$.
-\item $CP$ - Set of campi. Elements of $CP$ are called $cp$.
 \item $D$ - Set of courses. Elements of $D$ are called $d$.
 \item $D_{a}$ - Set of courses required by student $a$.
 \item $H_{t}$ - Set of time slots of day $t$. Elements of $H_{t}$ are called $h$.
 \item $I_{d}$ - Set of sections of a course $d$. Elements of $I_{d}$ are called $i$.
 \item $O$ - Set of majors offers. Elements of $O$ are called $oft$.
+\item $U$ - Set of blocks. Elements of $U$ are called $u$.
 \item $S_{u}$ - Set of classrooms of block $u$. Elements of $S_{u}$ are called $s$.
 \item $T$ - Set of weekdays. Elements of $T$ are called $t$.
 \item $U$ - Set of blocks. Elements of $U$ are called $u$.
@@ -266,7 +267,7 @@ Usually the need of auxiliary variables arises while formulating constraints, wh
 \item $m_{d,i,k}$ - binary variable, indicates if a credits split rule $k$ was chosen for section $i$ of course $d$.
 \item $s_{i,d,a}$ - binary variable, indicates if student $a$ is assigned to section $i$ of course $d$.
 \item $k_{p,i,d,u,h,t}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ at block $u$ at time slot $h$ and day $t$.
-\item $y_{p,i,d,cp}$ - binary variable, indicates if professor $p$ is assigned to section $i$ of course $d$ of campus $cp$.
+\item $y_{p,i,d}$ - binary variable, indicates if professor $p$ is assigned to section $i$ of course $d$.
 \item $hip_{p,t,f}$ - integer variable, indicates the time in minutes of the first time slot assigned to professor $p$ at session $f$ of day $t$. For example, if the first class assigned to $p$ on $t=Monday$ and $f=morning$ starts at 9:30 am, then $hip_{p,t,f}=9\cdot 60 + 30 = 570$.
 \item $hfp_{p,t,f}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to professor $p$ at session $f$ of day $t$.
 \item $fpgap_{p,t,f}$ - integer slack variable, indicates the gap in session $f$ of day $t$ of professor $p$'s schedule.
@@ -301,7 +302,7 @@ $$
       + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
       \\
       &
-      + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} y_{pv,i,d,cp}
+      + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} y_{pv,i,d}
 \end{array}
 $$
 
@@ -334,7 +335,7 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 
 \subsubsection{Ensures single classroom per course section}
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s}  \leq  z_{i,d,cp}  \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s}  \leq  z_{i,d}  \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \end{eqnarray}
@@ -343,8 +344,7 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 \begin{eqnarray}
 \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,s,t,hi,hf}  \leq  1  \nonumber \qquad 
 \\
-\forall cp \in CP \quad
-\forall u \in U_{cp} \quad
+\forall u \in U \quad
 \forall s \in S_{u} \quad
 \forall t \in T \quad
 \forall h \in H \quad (hi,hf)\text{ overlaps }h
@@ -367,17 +367,15 @@ nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limi
 
 \subsubsection{Links variables x and variable z, while ensures course section's total number of credits}
 \begin{eqnarray}
-\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot x_{i,d,s,t,hi,hf} = nCreds_{d} \cdot z_{i,d,cp} \nonumber \qquad
+\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot x_{i,d,s,t,hi,hf} = nCreds_{d} \cdot z_{i,d} \nonumber \qquad
 \forall i \in I_{d} \quad
 \forall d \in D \quad
-\forall cp \in CP
 \end{eqnarray}
 
 \subsubsection{Avoids classes overlapping at student timetable}
 \begin{eqnarray}
-\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\mbox{ overlaps }h}} v_{a,i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\mbox{ overlaps }h}} v_{a,i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
 \\
-\forall cp \in CP \quad
 \forall a \in A \quad
 \forall t \in T \quad
 \forall h \in H_{d}
@@ -400,11 +398,10 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 
 \subsubsection{Single lesson for each course section per day}
 \begin{eqnarray}
-\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
-\forall t \in T \quad
-\forall cp \in CP 
+\forall t \in T 
 \end{eqnarray}
 
 
@@ -425,10 +422,9 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 
 \paragraph{Credits split rule for each course section}
 \begin{eqnarray}
-\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}}
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}}
  NCH_{d,hi,hf} \cdot x_{i,d,u,s,hi,hf,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fkp_{d,i,t} - fkm_{d,i,t} \nonumber \qquad 
 \\
-\forall cp \in CP \quad
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall t \in T
@@ -457,41 +453,37 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \paragraph{Assigns professor to class (sets variable k)}
 % Part 1
 \begin{eqnarray}
-\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le k_{p,i,d,cp,t,dti} + ( 1 - y_{p,i,d,cp} ) \nonumber \qquad
+\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le k_{p,i,d,t,dti} + ( 1 - y_{p,i,d} ) \nonumber \qquad
 \\
 \forall i \in I \quad
 \forall d \in D \quad
-\forall cp \in CP \quad
 \forall p \in P \quad
 \forall t \in T \quad
 \forall dti \in Dt
 \end{eqnarray}
 % Part 2
 \begin{eqnarray}
-\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le \sum\limits_{p} k_{p,i,d,cp,t,dti} \nonumber \qquad
+\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s} x_{i,d,s,t,hi,hf} \le \sum\limits_{p} k_{p,i,d,t,dti} \nonumber \qquad
 \\
 \forall i \in I \quad
 \forall d \in D \quad
-\forall cp \in CP \quad
 \forall t \in T \quad
 \forall dti \in Dt
 \end{eqnarray}
 	
 \paragraph{Assigns professor to class (sets variable y)}
 \begin{eqnarray}
-\sum\limits_{t} \sum\limits_{h} k_{p,i,d,cp,t,h} = nCreds_{d} \cdot y_{p,i,d,cp} \nonumber \qquad
+\sum\limits_{t} \sum\limits_{h} k_{p,i,d,t,h} = nCreds_{d} \cdot y_{p,i,d} \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D \quad
-\forall cp \in CP \quad
 \forall p \in P
 \end{eqnarray}	
 	
 \paragraph{Assigns a single professor to each course section}
 \begin{eqnarray}
-\sum\limits_{p} y_{p,i,d,cp} = z_{i,d,cp} \nonumber \qquad
+\sum\limits_{p} y_{p,i,d} = z_{i,d} \nonumber \qquad
 \forall i \in I \quad
-\forall d \in D \quad
-\forall cp \in CP
+\forall d \in D
 \end{eqnarray}	
 
 
@@ -583,10 +575,9 @@ Next, gaps in professor timetable are controlled. The usage of the slack variabl
 
 \paragraph{Sets if student $a$ has classes at day $t$ (variable $at_{a,t}$)}
 \begin{eqnarray}
-M \cdot at_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
+M \cdot at_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
 \forall a \in A \quad
-\forall t \in T \quad
-\forall cp \in CP
+\forall t \in T
 \end{eqnarray}
 
 \paragraph{Sets beginning time of classes for student $a$ at day $t$ (variable $begin_{a,t,h}$)}
