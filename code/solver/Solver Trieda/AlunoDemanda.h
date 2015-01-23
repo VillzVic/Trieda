@@ -6,6 +6,7 @@
 
 class Aluno;
 class HorarioAula;
+class DateTime;
 
 class AlunoDemanda :
    public OFBase
@@ -40,7 +41,7 @@ public:
    Campus* getCampus() const { return this->getOferta()->campus; }
    Curso* getCurso() const { return this->demanda->oferta->curso; }
 
-   bool podeNoHorario(HorarioAula* const h, int dia) const;
+   bool podeNoHorario(DateTime dti, int dia) const;
 
    bool operator < ( const AlunoDemanda & var ) const
    {

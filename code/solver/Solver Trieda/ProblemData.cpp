@@ -3091,17 +3091,15 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoC
 
 	Disciplina *disc = this->refDisciplinas[disciplinaId];
 
-	std::map< int, std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > >::iterator
-		it1 = mapDisciplinaAlunosDemanda.find( campusId );
+	auto it1 = mapDisciplinaAlunosDemanda.find( campusId );
 	if ( it1 != mapDisciplinaAlunosDemanda.end() )
 	{
-		std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> > *map2 = &it1->second;
-		std::map< Disciplina*, std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >, LessPtr<Disciplina> >::iterator
-			it2 = map2->find( disc );
+		auto *map2 = &it1->second;
+		auto it2 = map2->find( disc );
 		if ( it2 != map2->end() )
 		{
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > *map3 = &it2->second;
-			std::map< int, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> >::iterator it3 = map3->begin();
+			auto *map3 = &it2->second;
+			auto it3 = map3->begin();
 			for ( ; it3 != map3->end(); it3++ )
 			{
 				if ( it3->first > prioridade ) continue;
@@ -3110,22 +3108,6 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoC
 			}			
 		}		
 	}
-	
-	/*
-	ITERA_GGROUP_LESSPTR ( itAl, this->alunos, Aluno )
-	{
-		if ( (*itAl)->getOferta()->getCampusId() != campusId )
-			continue;
-
-		ITERA_GGROUP_LESSPTR ( itAlDem, (*itAl)->demandas, AlunoDemanda )
-		{
-			if ( (*itAlDem)->demanda->getDisciplinaId() == disciplinaId &&				
-				(*itAlDem)->getPrioridade() <= prioridade )
-			{
-				alunosDemanda.add( *itAlDem );
-			}
-		}
-	}*/
 
 	return alunosDemanda;
 }

@@ -4743,7 +4743,7 @@ int Operacional::criaVariavelProfessorAulaHorario( void )
 				DateTime dt = h->getInicio();
 				Calendario *c = h->getCalendario();
 
-				if ( alDem->podeNoHorario(h,dia) )
+				if ( alDem->podeNoHorario(h->getInicio(),dia) )
 				if ( c->getTempoAula() == discAula->getTempoCredSemanaLetiva() )
 				if ( h->dias_semana.find( dia ) != h->dias_semana.end() )
 					mapDiscTurmaDiaDtCalendTurnoHorAula[discAula][turma][*itAula][dt][c][turno->getId()] = h;

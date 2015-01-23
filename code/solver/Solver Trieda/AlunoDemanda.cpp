@@ -47,12 +47,12 @@ void AlunoDemanda::le_arvore( ItemAlunoDemanda & elem )
    this->setExigeEquivalenciaForcada( elem.exigeEquivalenciaForcada() );
 }
 
-bool AlunoDemanda::podeNoHorario(HorarioAula* const h, int dia) const
+bool AlunoDemanda::podeNoHorario(DateTime dti, int dia) const
 { 
 	TurnoIES* const turnoAlDem = demanda->getTurnoIES();
 	Calendario* const calendAlDem = demanda->getCalendario();
 
-	return turnoAlDem->possuiHorarioDiaOuCorrespondente(calendAlDem, h->getInicio(), dia);
+	return turnoAlDem->possuiHorarioDiaOuCorrespondente(calendAlDem, dti, dia);
 }
 
 std::ostream & operator << (

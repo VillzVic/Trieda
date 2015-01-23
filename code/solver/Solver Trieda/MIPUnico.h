@@ -64,9 +64,20 @@ private:
    static std::string getOutPutFileTypeToString(OutPutFileType type);
 
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
-   bool haDemanda(Disciplina* const disc);
+   bool haDemanda(Disciplina* const disc) const;
+   bool haDemandaNaoAtendida(Disciplina* const disc);
+   bool demandaTodaAtendidaPorReal(Disciplina* const disc);
+   bool existeTurmaAtendida(Campus* const campus, Disciplina* const disc, int turma) const;
    bool haDemandaPossivelNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
-   bool haProfPossivelNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
+   bool permitirAlunoDiscNoHorDia(AlunoDemanda* const alDem, int dia, DateTime dti) const;
+   bool permitirAlunoNaTurma(Aluno* const aluno, Disciplina* const disciplina, int turma) const;
+   bool permitirTurma(Campus* const campus, Disciplina* const disciplina, int turma);
+   bool haProfHabilitNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
+   bool alunoHorVazioNoDia(Aluno* const aluno, int dia, DateTime dti) const;
+   bool alunoAlocNaTurma(Aluno* const aluno, Disciplina* const disciplina, int turma) const;
+   int alunoAlocDisc(Aluno* const aluno, Disciplina* const disc) const;
+   bool alunoAlocDiscNoHorDia(Aluno* const aluno, Disciplina* const disc, int dia, DateTime dti) const;
+   bool profAlocNaTurma(Professor* const prof, Campus* const campus, Disciplina* const disciplina, int turma) const;
 
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
@@ -320,14 +331,11 @@ private:
 	void imprimeTodasVars(int p);
 	void confereCorretude( int campusId, int prioridade );
 	void corrigeNroTurmas( int prioridade, int campusId );
-	void calculaNroFolgas( int prioridade, int campusId );
 	std::string getCorrigeNrTurmasFileName( int campusId, int prioridade, int r);
-	std::string getAumentaTurmasFileName( int campusId, int prioridade, int r);
 	std::string getTaticoLpFileName( int campusId, int prioridade, int r );
-	std::string getSolBinFileName( int campusId, int prioridade, int r );	
 	int readSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
-	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r, int fase );	
-	std::string getEquivFileName( int campusId, int prioridade );
+	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r );	
+	std::string getEtapaName(int campusId, int prioridade, int r);
 	void writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
    void readSolTxtAux( char *fileName, double *xSol );
 	int writeGapTxt( int campusId, int prioridade, int r, int type, double gap );
@@ -336,18 +344,28 @@ private:
 	void addVariaveisTatico();
 	void initCredsSala();
 	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
+	void deleteVariablesSol();
 	void clearVariablesMaps();
+	void clearMapsSolution();
+	void clearStrutures();
+	void resetXSol();
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
+	bool carregaVariaveisSolucaoFromFile(int campusId, int prioridade, int r, MIPUnico::OutPutFileType type);
+	void openSolucaoFile(FILE* &fout, int campusId, int prioridade, int r);
 	void verificaCarregaSolucao( int campusId, int prioridade, int r );
 	void criaNewLp( int campusId, int prioridade, int r );
-	void clearStrutures();
 	void printLog( string msg );
 
 	void getIdxN(int* idx);
 
 	int solveMIPUnico( int campusId, int prioridade, int r );
+	int solveMIPUnico_duplo(int campusId, int prioridade, int r);
 	int solveMIPUnico_v2(int campusId, int prioridade, int r);
+	int solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaReal(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaVirtual(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
 
+	void fixaSolucaoReal();
 	void fixaVariaveisPVZero(double * const xS);
 	void liberaVariaveisPV(double * const xS);
 
@@ -391,11 +409,7 @@ private:
 	int copyInitialSolutionDivCred();
 	int addConstrMinDesloc();
 	int copyInitialSolutionMinDesloc();
-
-	bool SolVarsFound( VariableTatico v );
-	bool criaVariavelTaticoInt( VariableMIPUnico *v, bool &fixar, int prioridade );
-	GGroup< VariableTatico *, LessPtr<VariableTatico> > retornaAulasEmVarX( int turma, Disciplina* disciplina, int campusId );
-	
+		
 	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > vars_v;
 	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
 
@@ -404,21 +418,12 @@ private:
 
 	
 	unordered_map< Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> > > solAlocProfTurma;
-	unordered_map< Campus*, unordered_map< Disciplina*, unordered_map< int, unordered_set<Professor*> > > > solAlocTurmaProf;
-	
-
-	// map com o nro de folgas de demanda para o campus atual e prioridade no máximo P atual.
-	std::map< Disciplina*, int, LessPtr< Disciplina > > mapDiscNroFolgasDemandas;
-	inline int haFolgaDeAtendimento( Disciplina *disciplina ) { return this->mapDiscNroFolgasDemandas[disciplina]; }
-	
-	void atualizarDemandasEquiv( int campusId, int prioridade );
-
-	std::map< Trio< int, Disciplina *, int >, bool > mapPermitirAbertura;
-
+	unordered_map< Campus*, unordered_map< Disciplina*, unordered_map< int, unordered_set<Professor*> > > > solAlocTurmaProf;	
+	unordered_map<Aluno*, unordered_map<Disciplina*, std::pair<int, unordered_map<int, set<DateTime>> >>> solAlocAlunoDiscTurmaDiaDti_;
+	unordered_map<Aluno*, unordered_map<int, set<DateTime>>> solAlocAlunoDiaDti_;
+		
 	std::map<Disciplina*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Disciplina> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
-	int getNroMaxAlunoDemanda(Disciplina* const disc);
-	
-	
+		
    /* 
 		****************************************************************************************************************
    */
@@ -445,10 +450,10 @@ private:
 	static const double pesoDivCred;
 
 	// Professores	
+	static bool permiteCriarPV;
 	static const int MaxUnidProfDia_;
 	static const bool filtroPVHorCompl_;
 	static const bool minimizarCustoProf;
-	static const bool permiteCriarPV;
 	static const double pesoGapProf;
 	static const double pesoCredPV;
 	static const double pesoDeslocProf;

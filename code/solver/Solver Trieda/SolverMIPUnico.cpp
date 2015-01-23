@@ -211,7 +211,7 @@ int SolverMIPUnico::solveOpSemTatico()
 	relacionaAlunosDemandas();
 			
 	// -------------------------------------------------
-	writeOutputTatico();
+	//writeOutputTatico();
 	
 	// -------------------------------------------------
 	preencheAtendTaticoProbData();
