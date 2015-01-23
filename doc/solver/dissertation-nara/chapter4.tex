@@ -61,7 +61,7 @@ Where the additional constraint restricts the solution space to the maximum dema
 \item{Minimizing real professor displacement}
 
 \begin{align*}
-  \mbox{g3 = MIN  } \sum\limits_{t \in T} \sum\limits_{p \in P} desloc_{p,t}
+  \mbox{g3 = MIN  } \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2}
 	\\
 	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 	\\
@@ -80,7 +80,7 @@ Where the additional constraint restricts the solution space to the minimum virt
 	\\
 	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
 	\\
-	\sum\limits_{t \in T}\sum\limits_{p \in P} desloc_{p,t} \le g3
+	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2} \le g3
 \end{align*}
 
 Where the additional constraint restricts the solution space to the minimum real professor displacement achieved at previous step.
@@ -95,7 +95,7 @@ Where the additional constraint restricts the solution space to the minimum real
 	\\
 	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
 	\\
-	\sum\limits_{t \in T}\sum\limits_{p \in P} desloc_{p,t} \le g3
+	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2} \le g3
 	\\
 	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f} \le g4
 \end{align*}
@@ -136,6 +136,9 @@ $$
       + \epsilon \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
       \\
       &
+			+ \sigma \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2}
+			\\
+			&
       + \theta \cdot \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp}
 \end{array}
 $$
