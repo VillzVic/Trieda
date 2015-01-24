@@ -29,8 +29,8 @@ const bool CONSTR_GAP_PROF_SEPARADO = true;
 
 const bool MARRETA_EQUIV_FORC_DISTRIB = true;
 const int NRO_CREDS_MARRETA1 = 6;
-const int NRO_CREDS_MARRETA2 = 0;			// era 7 para versão 1
-const int NRO_CREDS_DIA_LONGO = 5;			// era 12 para versão 1
+const int NRO_CREDS_MARRETA2 = 0;
+const int NRO_CREDS_TARDE_LONGA = 5;
 
 
 // -----------------------------------------------------------------------------------------------
@@ -13488,16 +13488,16 @@ int MIPUnico::criaRestricaoRedCargaHorAnteriorProfessor()
 int MIPUnico::criarRestricaoMinCredsDiaAluno_Marreta()
 {
 	int restricoes = 0;	
-	criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1();
-	restricoes += criarRestricaoHorInicialDiaAluno_MarretaCaso1e2();
-	restricoes += criarRestricaoHorFinalDiaAluno_MarretaCaso1();
+	criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1e2();
+	//restricoes += criarRestricaoHorInicialDiaAluno_MarretaCaso1e2();
+	restricoes += criarRestricaoHorFinalDiaAluno_MarretaCaso1_novo();
 	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso1e2();
 	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2();
 	return restricoes;
 }
 
 // fcad_{a,t}
-int MIPUnico::criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1()
+int MIPUnico::criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1e2()
 {
 	int numVars = 0;	
 	if (!MARRETA_EQUIV_FORC_DISTRIB)
@@ -13634,6 +13634,73 @@ int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1()
 	}
 	return restricoes;
 }
+int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1_novo()
+{
+	int restricoes = 0;	
+	if (!MARRETA_EQUIV_FORC_DISTRIB)
+		return restricoes;
+		
+	// percorre v_{}
+	for(auto itAluno = vars_aluno_aula.cbegin(); itAluno != vars_aluno_aula.cend(); ++itAluno)
+	{
+		Aluno* const aluno = itAluno->first;
+				
+		// Equiv forçada => indica marreta de distribuição dos creditos
+		if (!aluno->possuiEquivForcada())
+			continue;
+		// Marreta 2 (medicina)
+		if (aluno->ehFormando())
+			continue;
+		// Sobra a marreta 1 (31o tempo)
+
+		DateTime dt31;
+		if (!aluno->get31Tempo(dt31)) continue;
+
+		stringstream ss;
+		ss << "C_ALUNO_HOR_FINAL_MARRETA_(_Aluno" << aluno->getAlunoId() << ")";
+		char name[ 1024 ];
+		sprintf( name, "%s", ss.str().c_str() );
+
+		OPT_ROW row( 100, OPT_ROW::LESS, 1.0, name );
+
+		for(auto itDia = itAluno->second.cbegin(); itDia != itAluno->second.cend(); ++itDia)
+		{
+			const int dia = itDia->first;			
+
+			auto itDtf = itDia->second.find(dt31); // procura 31o horario
+			if (itDtf == itDia->second.end()) continue;
+			
+			// Variaveis v no ultimo horario do dia
+			for(auto itCp = itDtf->second.cbegin(); itCp != itDtf->second.cend(); ++itCp)
+			{
+				for(auto itDisc = itCp->second.cbegin(); itDisc != itCp->second.cend(); ++itDisc)
+				{
+					for(auto itTurma = itDisc->second.cbegin(); itTurma != itDisc->second.cend(); ++itTurma)
+					{
+						for(auto itVars = itDisc->second.cbegin(); itVars != itDisc->second.cend(); ++itVars)
+						{
+							int colFim = (*itVars).first;			
+							row.insert(colFim,1);				
+						}
+					}
+				}
+			}
+		}
+
+		if (row.getnnz() == 0) continue;
+
+		bool added=lp->addRow( row );
+		if (!added)
+		{
+			stringstream ss;
+			ss << "Restricao nao adicionada! " << row.getName();
+			CentroDados::printError("int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1_v2()", ss.str());
+			continue;
+		}
+		restricoes++;
+	}
+	return restricoes;
+}
 
 int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso1e2()
 {
@@ -13739,8 +13806,8 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2()
 		return restricoes;
 
 	criarVariavelDiaLongoAluno_MarretaCaso2();
-	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2_1();
-	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2_2();	
+	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2_TardeUsada();
+	restricoes += criarRestricaoMinCredsDiaAluno_MarretaCaso2_UnicaTarde();	
 	return restricoes;
 }
 
@@ -13869,7 +13936,7 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()
 			auto vit = vHashTatico.find(var);
 			if(vit != vHashTatico.end())
 			{
-				row.insert( vit->second, - NRO_CREDS_DIA_LONGO );
+				row.insert( vit->second, - NRO_CREDS_TARDE_LONGA );
 			}
 
 			// -------------------------------------
@@ -13892,7 +13959,104 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()
 	return restricoes;
 }
 
-int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_2()
+int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_TardeUsada()
+{
+	int restricoes = 0;	
+	if (!MARRETA_EQUIV_FORC_DISTRIB)
+		return restricoes;
+			
+	for(auto itAluno = vars_aluno_aula.cbegin(); itAluno != vars_aluno_aula.cend(); ++itAluno)
+	{
+		Aluno* const aluno = itAluno->first;
+				
+		// Formando => caso 2 de distribuição dos creditos
+		if (!aluno->ehFormando())
+			continue;
+		// Equiv forçada => distribuição dos creditos
+		if (!aluno->possuiEquivForcada())
+			continue;
+
+		for(auto itDia = itAluno->second.cbegin(); itDia != itAluno->second.cend(); ++itDia)
+		{
+			const int dia = itDia->first;
+			
+			// -------------------------------------
+			// Sets the constraint
+
+			stringstream ss;
+			ss << "C_ALUNO_MIN_CREDS_DIA_MARRETA_LONG_DAY_USED_(_Aluno" << aluno->getAlunoId() << "_Dia" << dia << ")";
+			char name[ 1024 ];
+			sprintf( name, "%s", ss.str().c_str() );
+
+			OPT_ROW row( 50, OPT_ROW::LESS, 0, name );
+
+			// -------------------------------------
+			// Insere variaveis v_{a,i,d,s,t,hi,hf}
+
+			for(auto itDti = itDia->second.cbegin(); itDti != itDia->second.cend(); ++itDti)
+			{				
+				for(auto itCp = itDti->second.cbegin(); itCp != itDti->second.cend(); ++itCp)
+				{
+					for(auto itDisc = itCp->second.cbegin(); itDisc != itCp->second.cend(); ++itDisc)
+					{
+						// Equiv forçada + formando => concentra os creditos em 1 tarde somente
+						if (!aluno->getAlunoDemanda(itDisc->first->getId())->getExigeEquivalenciaForcada())
+							continue;
+
+						for(auto itTurma = itDisc->second.cbegin(); itTurma != itDisc->second.cend(); ++itTurma)
+						{
+							for(auto itVars = itTurma->second.cbegin(); itVars != itTurma->second.cend(); ++itVars)
+							{
+								const int colV = itVars->first;								
+								const VariableMIPUnico var = itVars->second;			
+									
+								HorarioAula *hf = var.getHorarioAulaFinal();
+								HorarioAula *hi = var.getHorarioAulaInicial();
+								Calendario *calendario = hi->getCalendario();
+
+								int nCreds = calendario->retornaNroCreditosEntreHorarios(hi,hf);
+
+								row.insert( colV, nCreds );
+							}
+						}
+					}
+				}
+			}
+			
+			// ------------------------------------
+			// Dia longo
+			VariableMIPUnico var;
+			var.reset();
+			var.setType( VariableMIPUnico::V_LONGO_DIA_ALUNO );	// l_{a,t}
+			var.setAluno(aluno);
+			var.setDia(dia);
+			auto vit = vHashTatico.find(var);
+			if(vit != vHashTatico.end())
+			{
+				row.insert( vit->second, - NRO_CREDS_TARDE_LONGA );
+			}
+
+			// -------------------------------------
+			// Insere restrição
+			if ( row.getnnz() )
+			{
+				bool added=lp->addRow( row );
+				if (!added)
+				{
+					stringstream ss;
+					ss << "Restricao nao adicionada! " << row.getName();
+					CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()", ss.str());
+					continue;
+				}
+				restricoes++;
+			}
+		}
+	}
+
+	return restricoes;
+}
+
+int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_UnicaTarde()
 {
 	int restricoes = 0;	
 	if (!MARRETA_EQUIV_FORC_DISTRIB)
@@ -13914,7 +14078,7 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_2()
 			
 		char name[ 1024 ];
 		sprintf( name, "%s", ss.str().c_str() );
-		OPT_ROW row( 5, OPT_ROW::EQUAL, 1, name );
+		OPT_ROW row( 5, OPT_ROW::LESS, 1, name );
 
 		for(auto itDia = itAluno->second.cbegin(); itDia != itAluno->second.cend(); ++itDia)
 		{
@@ -13950,55 +14114,5 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_2()
 		}
 	}
 
-	return restricoes;
-}
-
-int MIPUnico::criarRestricaoHorInicialDiaAluno_MarretaCaso2_3()
-{
-	// Não usada mais. Modelagem antiga de gap. Foi substituída por criarRestricaoHorInicialDiaAluno_MarretaCaso1e2
-
-	int restricoes = 0;	
-	if (!MARRETA_EQUIV_FORC_DISTRIB)
-		return restricoes;
-		
-	for(auto itAluno = varsAlunoDiaHiHf.cbegin(); itAluno != varsAlunoDiaHiHf.cend(); ++itAluno)
-	{
-		Aluno* const aluno = itAluno->first;
-				
-		// Formando => caso 2 de distribuição dos creditos
-		if (!aluno->ehFormando())
-			continue;
-		// Equiv forçada => distribuição dos creditos
-		if (!aluno->possuiEquivForcada())
-			continue;
-					
-		for(auto itDia = itAluno->second.cbegin(); itDia != itAluno->second.cend(); ++itDia)
-		{
-			const int dia = itDia->first;
-			
-			stringstream ss;
-			ss << "C_ALUNO_HOR_INICIAL_MARRETA_(_Aluno" << aluno->getAlunoId() << "_Dia" << dia << ")";
-			char name[ 1024 ];
-			sprintf( name, "%s", ss.str().c_str() );
-
-			int colHia = itDia->second.first;
-			double lb = lp->getLB(colHia);
-
-			double rhs = lb;
-			OPT_ROW row( 50, OPT_ROW::EQUAL, rhs, name );
-
-			row.insert(colHia,1);
-
-			bool added=lp->addRow( row );
-			if (!added)
-			{
-				stringstream ss;
-				ss << "Restricao nao adicionada! " << row.getName();
-				CentroDados::printError("int MIPUnico::criarRestricaoHorInicialDiaAluno_MarretaCaso2_3()", ss.str());
-				continue;
-			}
-			restricoes++;
-		}
-	}
 	return restricoes;
 }

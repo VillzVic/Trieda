@@ -1,5 +1,6 @@
 #include "TurnoIES.h"
 #include "Calendario.h"
+#include "CentroDados.h"
 
 
 TurnoIES::TurnoIES( void )
@@ -165,4 +166,26 @@ void TurnoIES::retornaHorariosDisponiveisNoDia(int dia, std::map<DateTime,std::s
 	{
 		horarios = &finderDia->second;
 	}
+}
+
+bool TurnoIES::get31Tempo(Calendario* const calendario, DateTime dti)
+{
+	auto itDia = mapDiaDateTime.cbegin();
+	
+	bool found=false;
+	auto ptLastDti = itDia->second.rbegin();
+	while(!found && ptLastDti != itDia->second.rend())
+	{
+		for ( auto itHor=ptLastDti->second.cbegin(); itHor!=ptLastDti->second.cend(); itHor++ )
+		{
+			if ((*itHor)->getCalendario() == calendario)
+			{
+				dti = ptLastDti->first;
+				return true;
+			}
+		}
+		ptLastDti++;
+	}
+	CentroDados::printError("TurnoIES::get31Tempo","31o DateTime nao encontrado!!!");
+	return false;
 }

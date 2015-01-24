@@ -225,15 +225,16 @@ private:
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 	int criarRestricaoMinCredsDiaAluno_Marreta();
-	int criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1();
+	int criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1e2();
 	int criarRestricaoHorInicialDiaAluno_MarretaCaso1e2();
 	int criarRestricaoHorFinalDiaAluno_MarretaCaso1();
+	int criarRestricaoHorFinalDiaAluno_MarretaCaso1_novo();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso1e2();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2();
 	int criarVariavelDiaLongoAluno_MarretaCaso2();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_1();
-	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_2();
-	int criarRestricaoHorInicialDiaAluno_MarretaCaso2_3();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_TardeUsada();
+	int criarRestricaoMinCredsDiaAluno_MarretaCaso2_UnicaTarde();
 	
    /* 
 		****************************************************************************************************************
@@ -248,7 +249,7 @@ private:
 		set< pair<int /*col*/,VariableMIPUnico> >, LessPtr<HorarioAula> >, LessPtr<Unidade> > >, LessPtr<Professor> > vars_prof_aula3;	// k_{p,i,d,u,t,hi}
 	
 	map<Professor*, map<int /*dia*/, map<Unidade*, int /*col*/>>> vars_prof_dia_unid;
-	map<Professor*, map<int /*dia*/, map<Unidade*, map<Unidade*,int /*col*/>>>> vars_prof_desloc;	
+	map<Professor*, map<int /*dia*/, map<Unidade*, map<Unidade*,int /*col*/>>>> vars_prof_desloc;										// desloc_{p,t,u1,u2}
 
 	map< Aluno*, map< int /*dia*/, map<DateTime /*dti*/, map< Campus*, map< Disciplina*, map< int /*turma*/,
 		set< pair<int /*col*/, VariableMIPUnico> > >, LessPtr<Disciplina> >, LessPtr<Campus> > > >, LessPtr<Aluno> > vars_aluno_aula;		// v_{a,i,d,s,t,hi,hf}

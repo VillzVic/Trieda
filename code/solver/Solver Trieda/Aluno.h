@@ -131,6 +131,8 @@ public:
    bool estaEmContraTurno(Disciplina* const disciplina);
    bool ehContraTurno(TurnoIES* turno);
 
+   bool get31Tempo(DateTime &dt);	// caso marreta 1
+
    bool chEhIgualDisponibSemanaLetiva(bool ignoraContraTurno=true);
 
    void le_arvore( ItemAluno & elem );

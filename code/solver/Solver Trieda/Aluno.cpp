@@ -696,6 +696,23 @@ bool Aluno::ehContraTurno(TurnoIES* turno)
 	return (turno == turnoPrincipal_);
 }
 
+bool Aluno::get31Tempo(DateTime &dt)
+{
+	if (!this->possuiEquivForcada()) return false; // nao eh caso de marreta
+	if (this->ehFormando()) return false;			 // nao eh caso de marreta 1
+
+	for (auto itAlDem = demandas.begin(); itAlDem != demandas.end(); itAlDem++)
+	{
+		if ((*itAlDem)->getExigeEquivalenciaForcada())
+		{
+			if( turnoPrincipal_->get31Tempo(itAlDem->demanda->getCalendario(), dt) )
+				return true;
+		}
+	}
+	CentroDados::printError("Aluno::get31Tempo","31o DateTime nao encontrado!!!");
+	return false;
+}
+
 bool Aluno::chEhIgualDisponibSemanaLetiva(bool ignoraContraTurno)
 {
 	// Método usado no caso de escola.

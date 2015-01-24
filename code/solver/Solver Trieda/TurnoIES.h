@@ -35,6 +35,8 @@ public:
    HorarioAula* getHorarioDiaOuCorrespondente(Calendario* const calendario, DateTime dti, int dia);
    HorarioAula* getHorarioDiaOuCorrespondente(Calendario* const calendario, HorarioAula* const h, int dia);
    
+   bool get31Tempo(Calendario* const calendario, DateTime dti);
+
    // numero de horarios na semana
    int nrHorariosSemana;
 
