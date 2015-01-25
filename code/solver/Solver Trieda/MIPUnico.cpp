@@ -2118,25 +2118,30 @@ bool MIPUnico::chgObjMaxAtendMarreta()
 	{
 		VariableMIPUnico v = vit->first;
 			
+		double coef = 0.0;
+
 		if ( v.getType() == VariableMIPUnico::V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA )
 		{            
-			idxs[nBds] = vit->second;
-			vals[nBds] = 1.0;
-			nBds++;
+			coef = 1.0;
+		}
+		else if (v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO)
+		{
+			if (v.getAluno()->ehFormando())				// Aluno de medicina
+			{
+				AlunoDemanda* const ad = v.getAluno()->getAlunoDemanda(v.getDisciplina()->getId());
+				if (ad->getExigeEquivalenciaForcada())	// Caso de 5 tempos da medicina
+					coef = 1.0;
+			}
 		}
 		else if (v.getType() == VariableMIPUnico::V_PROF_TURMA &&
 				 v.getProfessor()->eVirtual())
 		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 0.00001;
-			nBds++;
+			coef = 0.00001;
 		}
-		else
-		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 0.0;
-			nBds++;
-		}
+
+		idxs[nBds] = vit->second;
+		vals[nBds] = coef;
+		nBds++;
 	}	
     bool chged = lp->chgObj(nBds,idxs,vals);
     lp->updateLP();
@@ -2163,6 +2168,21 @@ bool MIPUnico::fixaSolMaxAtendMarreta(double* const xS)
 			vals[nBds] = xS[vit->second];
 			bds[nBds] = BOUNDTYPE::BOUND_UPPER;
 			nBds++;
+		}
+		else if (v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO)
+		{
+			if (xS[vit->second] == 0)					// Atendido
+			if (v.getAluno()->ehFormando())				// Aluno de medicina
+			{
+				AlunoDemanda* const ad = v.getAluno()->getAlunoDemanda(v.getDisciplina()->getId());
+				if (ad->getExigeEquivalenciaForcada())	// Caso de 5 tempos da medicina
+				{
+					idxs[nBds] = vit->second;
+					vals[nBds] = xS[vit->second];
+					bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+					nBds++;	
+				}
+			}
 		}
 	}
     
@@ -13003,18 +13023,24 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 
 							if ( sobrepoem(1, h1, 1, h2) )
 								continue;
-							
+
+							HorarioAula* hOrig=nullptr;
+							HorarioAula* hDest=nullptr;
 							Unidade* unidadeOrig=nullptr;
 							Unidade* unidadeDest=nullptr;
 							if ( h1->getInicio() < h2->getInicio() ) // v1 é origem
 							{								
 								unidadeOrig = unidade1;
 								unidadeDest = unidade2;
+								hOrig = h1;
+								hDest = h2;
 							}
 							else									// v1 é destino
 							{								
 								unidadeOrig = unidade2;
 								unidadeDest = unidade1;
+								hOrig = h2;
+								hDest = h1;
 							}
 							
 							Campus* campusOrig = problemData->refCampus[ unidadeOrig->getIdCampus() ];
@@ -13034,6 +13060,13 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 							if ( tempo_minimo <= tempo_interv )
 								continue;
 							
+							std::cout<< "\n--------\nH1 = " << h1->getInicio() << "  H2 = " << h2->getInicio();
+							std::cout<< "\nOrigem = " << (h1->getInicio() < h2->getInicio() ? "1":"2") 
+								<< "  destino = " << (h1->getInicio() > h2->getInicio() ? "1":"2");
+							std::cout<< "\nfimOrig = " << fimOrig << "  inicioDest = " << inicioDest;							
+							std::cout<< "\nunidadeOrig = " << unidadeOrig->getId() << "  unidadeDest = " << unidadeDest->getId();
+
+
 							ConstraintMIPUnico c;
 							c.reset();
 							c.setType( ConstraintMIPUnico::C_TEMPO_DESLOC_PROF );
@@ -13043,6 +13076,8 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 							c.setUnidadeDest(unidadeDest);
 							c.setDateTimeFinal(fimOrig);			// fim da aula na origem						
 							c.setDateTimeInicial(inicioDest);		// inicio da aula no destino
+
+							std::cout<< "\n" << c.toString(etapa);
 
 							auto cit = cHashTatico.find(c);
 							if ( cit == cHashTatico.end() )
@@ -13656,6 +13691,8 @@ int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1_novo()
 		DateTime dt31;
 		if (!aluno->get31Tempo(dt31)) continue;
 
+		std::cout << "\n31o = " << dt31.hourMinToStr();
+
 		stringstream ss;
 		ss << "C_ALUNO_HOR_FINAL_MARRETA_(_Aluno" << aluno->getAlunoId() << ")";
 		char name[ 1024 ];
@@ -13677,7 +13714,7 @@ int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1_novo()
 				{
 					for(auto itTurma = itDisc->second.cbegin(); itTurma != itDisc->second.cend(); ++itTurma)
 					{
-						for(auto itVars = itDisc->second.cbegin(); itVars != itDisc->second.cend(); ++itVars)
+						for(auto itVars = itTurma->second.cbegin(); itVars != itTurma->second.cend(); ++itVars)
 						{
 							int colFim = (*itVars).first;			
 							row.insert(colFim,1);				

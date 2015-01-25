@@ -168,7 +168,7 @@ void TurnoIES::retornaHorariosDisponiveisNoDia(int dia, std::map<DateTime,std::s
 	}
 }
 
-bool TurnoIES::get31Tempo(Calendario* const calendario, DateTime dti)
+bool TurnoIES::get31Tempo(Calendario* const calendario, DateTime &dti)
 {
 	auto itDia = mapDiaDateTime.cbegin();
 	
