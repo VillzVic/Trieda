@@ -220,6 +220,7 @@ private:
 	int criaRestricaoTempoDeslocProfessor();
 	int criaRestricaoMax1DeslocProfessor();
 	int criaRestricaoMinDeslocProfessor();
+	int criaRestricaoMaxDeslocLongoProfessor();
 	int criaRestricaoUnidUsadaProf();
 	int criaRestricaoNrMaxUnidDiaProf();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
@@ -228,7 +229,6 @@ private:
 	int criarVariavelFolgaMinCredsDiaAluno_MarretaCaso1e2();
 	int criarRestricaoHorInicialDiaAluno_MarretaCaso1e2();
 	int criarRestricaoHorFinalDiaAluno_MarretaCaso1();
-	int criarRestricaoHorFinalDiaAluno_MarretaCaso1_novo();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso1e2();
 	int criarRestricaoMinCredsDiaAluno_MarretaCaso2();
 	int criarVariavelDiaLongoAluno_MarretaCaso2();
@@ -395,6 +395,7 @@ private:
 	bool fixaSolAtendida(double* const xS);
 
 	bool chgObjMaxAtendMarreta();
+	bool chgObjMaxAtend();
 
 	void printNaoAtendimentos(double* const xS);
 	void printAtendsVirtuais(double* const xS);
@@ -409,8 +410,6 @@ private:
 	int copyInitialSolutionGapProf();
 	int addConstrDivCred(int campusId);
 	int copyInitialSolutionDivCred();
-	int addConstrMinDesloc();
-	int copyInitialSolutionMinDesloc();
 		
 	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > vars_v;
 	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
@@ -453,6 +452,7 @@ private:
 
 	// Professores	
 	static bool permiteCriarPV;
+	static const bool limitarNrUnidsProfDia_;
 	static const int MaxUnidProfDia_;
 	static const bool filtroPVHorCompl_;
 	static const bool minimizarCustoProf;
@@ -460,7 +460,7 @@ private:
 	static const double pesoCredPV;
 	static const double pesoDeslocProf;
 	static const double pesoCHAntProf;
-	
+	static const bool limitar1DeslocSoUnidLonge_;
 
 	// Alunos
 	static const double pesoFD;
