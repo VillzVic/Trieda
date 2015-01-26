@@ -360,6 +360,7 @@ private:
 	void getIdxN(int* idx);
 
 	int solveMIPUnico( int campusId, int prioridade, int r );
+	int solveMIPUnico_unico(int campusId, int prioridade, int r);
 	int solveMIPUnico_duplo(int campusId, int prioridade, int r);
 	int solveMIPUnico_v2(int campusId, int prioridade, int r);
 	int solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);

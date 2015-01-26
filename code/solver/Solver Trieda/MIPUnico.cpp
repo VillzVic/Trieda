@@ -18,6 +18,7 @@ using namespace std;
 bool RODAR_OPERACIONAL = false;
 
 bool ABORDAGEM_PV_NO_FINAL = true;
+bool ETAPA_UNICA = true;
 
 bool GAP_ALUNO_SO_PARA_MARRETA = true;
 
@@ -149,7 +150,10 @@ void MIPUnico::solveMainEscola( int campusId, int prioridade, int r,
 	preencheMapDiscAlunosDemanda( campusId, prioridade, r );
 
 	if (ABORDAGEM_PV_NO_FINAL)
-		solveMIPUnico_duplo(campusId, prioridade, r);
+	{
+		if (ETAPA_UNICA) solveMIPUnico_unico(campusId, prioridade, r);
+		else solveMIPUnico_duplo(campusId, prioridade, r);
+	}
 	else
 		solveMIPUnico( campusId, prioridade, r );
 			
@@ -1554,6 +1558,7 @@ void MIPUnico::clearVariablesMaps()
 	vars_prof_aula2.clear();
 	vars_prof_aula3.clear();
 	vars_prof_dia_unid.clear();
+	vars_prof_desloc.clear();
 	vars_aluno_aula.clear();
 	vars_prof_dia_fase_dt.clear();
 	vars_aluno_dia_dt.clear();
@@ -1570,14 +1575,8 @@ void MIPUnico::clearVariablesMaps()
 
 void MIPUnico::clearStrutures()
 {
-    if ( vHashTatico.size() > 0 )
-    {
-		clearVariablesMaps();
-    }
-    if ( cHashTatico.size() > 0 )
-    {
-	   cHashTatico.clear();
-    }
+	clearVariablesMaps();
+    cHashTatico.clear();
 }
 
 void MIPUnico::getIdxN(int* idxN)
@@ -1650,6 +1649,16 @@ int MIPUnico::solveMIPUnico(int campusId, int prioridade, int r)
    return status;
 }
 
+int MIPUnico::solveMIPUnico_unico(int campusId, int prioridade, int r)
+{
+	bool status=1;
+
+	MIPUnico::permiteCriarPV = true;
+	status &= solveMIPUnico_v2(campusId, prioridade, r);
+
+	return status;
+}
+
 int MIPUnico::solveMIPUnico_duplo(int campusId, int prioridade, int r)
 {
 	bool status=1;
@@ -1700,10 +1709,18 @@ int MIPUnico::solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARR
 	resetXSol();
 
 	int status=0;
-	if (!MIPUnico::permiteCriarPV)
+	if (ETAPA_UNICA)
+	{
 		status=solveMIPUnicoEtapaReal(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
-	else
 		status=solveMIPUnicoEtapaVirtual(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+	}
+	else // etapa dupla
+	{
+		if (!MIPUnico::permiteCriarPV)
+			status=solveMIPUnicoEtapaReal(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+		else
+			status=solveMIPUnicoEtapaVirtual(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+	}
 
 	return status;
 }
@@ -13060,12 +13077,18 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 							if ( tempo_minimo <= tempo_interv )
 								continue;
 							
+							bool db=false;
+							if (professor->getId()==7545 && dia==6 && 
+								((unidadeOrig->getId()==365 && unidadeDest->getId()==366) || (unidadeOrig->getId()==366 && unidadeDest->getId()==365))) 
+								db=true;
+							if (db)
+							{
 							std::cout<< "\n--------\nH1 = " << h1->getInicio() << "  H2 = " << h2->getInicio();
 							std::cout<< "\nOrigem = " << (h1->getInicio() < h2->getInicio() ? "1":"2") 
 								<< "  destino = " << (h1->getInicio() > h2->getInicio() ? "1":"2");
 							std::cout<< "\nfimOrig = " << fimOrig << "  inicioDest = " << inicioDest;							
 							std::cout<< "\nunidadeOrig = " << unidadeOrig->getId() << "  unidadeDest = " << unidadeDest->getId();
-
+							}
 
 							ConstraintMIPUnico c;
 							c.reset();
@@ -13077,7 +13100,7 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 							c.setDateTimeFinal(fimOrig);			// fim da aula na origem						
 							c.setDateTimeInicial(inicioDest);		// inicio da aula no destino
 
-							std::cout<< "\n" << c.toString(etapa);
+							if(db) std::cout<< "\n" << c.toString(etapa);
 
 							auto cit = cHashTatico.find(c);
 							if ( cit == cHashTatico.end() )
@@ -13087,34 +13110,63 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 								int nnz = itHor1->second.size() + itHor2->second.size();
 								OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
 
+								if(db) std::cout<< "\nNew 1: ";
 								for( auto itVar1 = itHor1->second.cbegin(); itVar1 != itHor1->second.cend(); itVar1++ )
 								{
 									row.insert( itVar1->first, 1.0 );
+									if(db) std::cout<< "\n" << itVar1->second.toString() << " id " << itVar1->first;
+
+									if (itVar1->second.getDateTimeInicial() != h1->getInicio())
+										cout << "\nErro! " << itVar1->second.toString() << " mapeada errada! " << c.toString(etapa); fflush(0);
 								}
+								if(db) std::cout<< "\nNew 2: ";
 								for( auto itVar2 = itHor2->second.cbegin(); itVar2 != itHor2->second.cend(); itVar2++ )
 								{	
 									row.insert( itVar2->first, 1.0 );
+									if(db) std::cout<< "\n" << itVar2->second.toString() << " id " << itVar2->first;
+									
+									if (itVar2->second.getDateTimeInicial() != h2->getInicio())
+										cout << "\nErro! " << itVar2->second.toString() << " mapeada errada! " << c.toString(etapa); fflush(0);
 								}
 								lp->addRow( row );
 				  
+								if(db) std::cout<< "\nConstr id: " << lp->getNumRows();
+
 								cHashTatico[ c ] = lp->getNumRows();
 								restricoes++;								
 							}
 							else
 							{
+								ConstraintMIPUnico constr = cit->first;
+								string cons = constr.toString(etapa);
+								if(db) std::cout<< "\nExist Constr id: " << cons << " " << cit->second;
+								if(db) std::cout<< "\nExisting 1: ";
 								for( auto itVar1 = itHor1->second.cbegin(); itVar1 != itHor1->second.cend(); itVar1++ )
 								{
 									lp->chgCoef( cit->second, itVar1->first, 1.0 );
+									if(db) std::cout<< "\n" << itVar1->second.toString() << " id " << itVar1->first;
+									
+									if (itVar1->second.getDateTimeInicial() != h1->getInicio())
+										cout << "\nErro! " << itVar1->second.toString() << " mapeada errada! " << c.toString(etapa); fflush(0);
 								}
+								if(db) std::cout<< "\nExisting 2: ";
 								for( auto itVar2 = itHor2->second.cbegin(); itVar2 != itHor2->second.cend(); itVar2++ )
 								{	
 									lp->chgCoef( cit->second, itVar2->first, 1.0 );
+									if(db) std::cout<< "\n" << itVar2->second.toString() << " id " << itVar2->first;
+									
+									if (itVar2->second.getDateTimeInicial() != h2->getInicio())
+										cout << "\nErro! " << itVar2->second.toString() << " mapeada errada! " << c.toString(etapa); fflush(0);
 								}							
 							}
 						}
 					}
 				}
 			}
+
+			lp->updateLP();
+			if (professor->getId()==7545 && dia==6)
+				lp->writeProbLP("lpTesteProf7545Dia6");
 	   }
    }
    
