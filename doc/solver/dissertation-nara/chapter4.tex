@@ -170,6 +170,98 @@ Introduces polishing concept.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Polishing method developed for the problem}
 
+\begin{algorithm}
+  \caption{Polishing method
+    \label{alg:polishing}}
+  \begin{algorithmic}[1]
+    \Require{$lp$ model and any initial feasible solution $xSol$}
+    \Statex
+    \Function{Polish}{$xSol$, $percIni$, $maxTime$, $maxTimeNoImprov$}
+		
+			\State $init()$
+      \Let{$perc$}{$percIni$}
+      \State $setParams(timeIter)$
+			\Let{$okIter$}{$true$}
+      \While{$okIter$}
+          \State $fixVars()$
+					\State $optimize()$
+					\State $double objN, gap$
+					\State $getSolution(objN, gap)$
+					\State $setMelhora(objN)$
+					\State $updatePercAndTimeIter(objN, gap)$
+					\State $checkTimeWithoutImprov(objN)$
+					\State $updateObj(objN)$
+					\State $checkTimeLimit()$
+					\State $unfixVars()$
+      \EndWhile
+     \State \Return{$xSol$}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+		  	  
+
+\begin{algorithm}
+  \caption{Fixing Variables' Values
+    \label{alg:fixVars}}
+  \begin{algorithmic}[1]
+    \Require{$lp$ model and a feasible solution $xSol$}
+    \Procedure{fixVars}{$xSol$, $perc$}
+			\State $fixUnidsTatico()$
+			\State $clearVarsToFixType1()$
+			\State $decideVarsToFixByPhase()$
+			\State $fixVarsType1()$
+			\State $fixVarsProfType1()$
+      \State \Return{$xSol$}
+    \EndProcedure
+	\Statex	
+  \Algphase{Fixing Blocks}
+    \Require{$lp$ model and a feasible solution $xSol$}
+    \Procedure{fixUnidsTatico}{$lp$, $xSol$, $percUnid$}
+			 \State
+			 \Forall{variable $x \in lp$ such that the associated block is fixed}
+				\Let{$LB_{x}$}{$xSol[x]$}
+				\Let{$UB_{x}$}{$xSol[x]$} 
+			 \EndFor
+    \EndProcedure
+	\Statex
+  \Algphase{Decide which variable to fix}
+    \Require{$lp$ model, a feasible solution $xSol$ and a percentage $perc$ of classes to be fixed}
+    \Function{decideVarsToFixByPhase}{$lp$, $xSol$, $perc$}
+			\Let{$F$}{$\emptyset$}
+			\Forall{variable $z \in lp$}
+					\If{rand() \ge perc}
+						\Let{$F$}{$z$}
+					\EndIf
+			\EndFor
+			\Return F
+    \EndFunction
+	\Statex
+	\Algphase{Fix variables of lessons}
+    \Require{$lp$ model, a feasible solution $xSol$ and a set $F$ of classes to be fixed}
+    \Procedure{fixVarsType1}{$lp$, $xSol$, $F$}
+			\State
+			 \Forall{variable $x \in F$}
+				\Let{$LB_{x}$}{$xSol[x]$}
+				\Let{$UB_{x}$}{$xSol[x]$} 
+			 \EndFor
+    \EndProcedure	
+	\Statex
+	\Algphase{Fix variables of professors}
+    \Require{$lp$ model and a feasible solution $xSol$}
+    \Procedure{fixVarsProfType1}{$lp$, $xSol$, $perc$}
+			\Forall{variable $y \in lp$}
+					\If{rand() \ge perc}
+						\Let{$LB_{y}$}{$xSol[y]$}
+						\Let{$UB_{y}$}{$xSol[y]$} 
+					\EndIf
+			\EndFor
+    \EndProcedure	
+  \end{algorithmic}	
+\end{algorithm}
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Comparing different approaches}
 

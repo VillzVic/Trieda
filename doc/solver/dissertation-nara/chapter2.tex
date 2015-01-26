@@ -176,7 +176,7 @@ Every course has a total number of credits per week, with all the credits necess
 
 Every course has a set of time slots to which it can be assigned. These time slots can belong to different timetables, as long they have the same duration.
 
-Every course can be assigned to a specific set of classrooms where it can be held. When a course has practical credits (see section ~\ref{constroneroom} and ~\ref{constrptcourse}), it is possible that these must be held in special classrooms (laboratories). If there is no specific classroom associations, it is assumed that the course can be held in any classroom.
+Every course can be assigned to a specific set of classrooms where it can be held. If there is no specific classroom associations, it is assumed that the course can be held in any classroom.
 
 
 %%%%%%%%%%%
@@ -294,13 +294,13 @@ Each classroom has a mandatory register called "room capacity" which indicates t
 \paragraph{Same classroom for each course section}
 \label{constroneroom}
 
-For each course section, all the credits of the course must be taught at the same classroom. The only exception is when the course has theoretical and practical credits, with the practical credits being held in a different room (laboratory room). In this case, the theoretical credits must be taught at one single classroom and the practical credits at one single laboratory.
+For each course section, all the credits of the course must be taught at the same classroom.
 
 
 \paragraph{One professor for each course section}
 \label{constroneprof}
 
-For each course section, all the credits of the course must be taught by the same professor. The only exception is when the course has theoretical and practical credits, with the practical credits being held in a different room (laboratory room). In this case, the professor teaching the theoretical credits can be different from that teaching the practical credits.
+For each course section, all the credits of the course must be taught by the same professor.
 
 
 \paragraph{Capability for teaching courses}
@@ -365,47 +365,17 @@ Breaking times between time slots of a calender should be ignored. For example, 
 Whenever a professor is assigned to any pair of classes at the same day, which take place at different blocks or campi, the minimum transportation time spent between both spots must be considered.
 
 
-\paragraph{Practical and theoretical credits for a course}
-\label{constrptcourse}
+\paragraph{Course}
+\label{constrcourse}
 
 Each course (see ~\ref{defcourse}) has attributes which determine:
 
 \begin{enumerate}
-\item the number of theoretical credits;
-\item the number of practical credits;
-\item if the practical credits require labs;
-\item the maximum number of students in a theoretical class;
-\item the maximum number of students in a practical class;
+\item the number of credits;
+\item the maximum number of students in a class;
 \end{enumerate}
 
-Therefore, every satisfied demand for a course that has practical and theoretical credits must respect the above items and every student attending to a course must be assigned to the total number of credits.
-
-
-\paragraph{Practical and theoretical course's sections}
-\label{constrptrelation}
-
-It is common for laboratories (usually for practical credits) to have smaller capacity than normal classrooms (usually for theoretical credits).
-
-Suppose that the course ``Introduction to Algorithms'' has both types of credits and requires a lab for the practical credits.  For a demand of $50$ students to this course to be completely satisfied, at least two rooms are necessarily needed: one classroom for theoretical credits and one lab for practical credits. Lets say the classroom handles $50$ students and the lab handles $30$ students. Consider the following cases.
-\begin{enumerate}
-\item If a class at the lab has exactly the same students as a class at the classroom, then it has at most $30$ students, which means the classroom has a maximum of $60\%$ of its total capacity used. Besides, for all students to be assigned, at least $2$ sections would have to be created for both credit types, each one with $25$ students on average.
-\item If a class at the lab do not need to have exactly the same students as a class at the classroom, then there is the possibility of assigning all the $50$ students to the same class for the theoretical credits at the classroom, using $100\%$ of its capacity. For the practical credits, $2$ sub-sections would have to be created, each one with $25$ students on average. In this case, every student attends to the same theoretical lessons, but possibly to different practical lessons.
-\end{enumerate}
-
-Splitting a demand for a course with both credit types allows efficient resources usage without affecting demand fulfillment. In other words, the costs are reduced and the income is kept.
-
-In real world, what is seen in educational institutions for courses with practical and theoretical credits are the possible relationships:
-\begin{itemize}
-\item 1 x 1 relationship: each theoretical section is associated with $1$ practical subsection, and vice-verse.
-\item 1 x N relationship: each theoretical section can be associated with $N$ practical subsections, and each practical subsection i associated with $1$ theoretical section.
-\item M x N relationship: each theoretical subsection can be associated with $n$ practical subsections, and each practical subsection can be associated with $M$ theoretical subsections.
-\end{itemize}
-
-Note that 1 x 1 relationship is a special case of 1 x N, which in turn is a special case of M x N.
-
-The default is lessons assignments for both subsection types to be quite independent, except for students. Unless the opposite is specified, they can have different professors assignments and there is no connection between their assigned days and time slots.
-
-The 1 x N relationship is also considered and described in \cite{Murray2007}, where it is called \textit{parent--child} relationship. There, subsections are called \textit{subparts} and the hole course is called \textit{instructional offering}. Also, there it is allowed for a course to have more than two types of credits. They exemplify a course with the ''Lecture`` parent subpart (theoretical credits) and ''Recitation`` and ''Laboratory`` children subparts (two kinds of practical credits). This is out of scope for this work, where it is considered only 2 types of credit, either theoretical or practical credit.
+Therefore, every satisfied demand for a course must respect the above items and every student attending to a course must be assigned to the total number of credits.
 
 
 \paragraph{Minimizing Virtual Professors Usage}
@@ -456,8 +426,6 @@ The first $3$ rules are said to be general, while the fourth is a specific rule.
 Credits split rules are optional, but when present they are hard constraints in the sense of number of split days and number of credits per day. The way days alternate is violable. If there is a course with $m$ credits but no m-credits split rule, then m-credits course split is free.
 
 Whenever there is a specific credit split rule for a course, it must be respected, even if other generic split rules exist for the same number of credits.
-
-If a course has practical and theoretical credits, with the practical part requiring a lab, then split credit rules should be respected for each subsection. In other words, for such a course with $n$ practical credits and $m$ theoretical credits, practical subsections should follow n-credits split rules and theoretical subsections should follow m-credits split rules.
 
 Although the system does not make it mandatory for a course to have associated credits split rules, in actual solutions, this is an important issue and widely applied.
 

@@ -264,8 +264,8 @@ Next subsections introduce the notation used in the mathematical model, which in
 \item $z_{i,d}$ - binary variable, indicates if section $i$ of course $d$ is offered. 
 \item $o_{i,d,s}$ - binary variable, indicates if section $i$ of course $d$ is offered at classroom $s$. 
 \item $fd_{d,a}$ - binary slack variable, indicates if student $a$ has his request for course $d$ not satisfied.
-\item $fkm_{d,i,t}$ - slack variable for inferior limit for credits split rule constraint. 
-\item $fkp_{d,i,t}$ - slack variable for superior limit for credits split rule constraint.
+\item $fkm_{d,i,t}$ - integer slack variable for inferior limit for credits split rule constraint. 
+\item $fkp_{d,i,t}$ - integer slack variable for superior limit for credits split rule constraint.
 \item $m_{d,i,k}$ - binary variable, indicates if a credits split rule $k$ was chosen for section $i$ of course $d$.
 \item $s_{i,d,a}$ - binary variable, indicates if student $a$ is assigned to section $i$ of course $d$.
 \item $k_{p,i,d,u,h,t}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ at block $u$ at time slot $h$ and day $t$.
@@ -326,7 +326,7 @@ $$
 \forall s \in S \quad
 \forall t \in T \quad 
 \forall hi \in H \quad 
-\forall hf \in H
+\forall hf \in H \nonumber
 \end{eqnarray}
 
 \subsubsection{Assigns the classroom of a section to variable 'o'}
@@ -336,7 +336,7 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall u \in U \quad
-\forall s \in S_{u} \quad
+\forall s \in S_{u} \nonumber
 \end{eqnarray}
 
 \subsubsection{Ensures single classroom per course section}
@@ -353,7 +353,7 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 \forall u \in U \quad
 \forall s \in S_{u} \quad
 \forall t \in T \quad
-\forall h \in H \quad (hi,hf)\text{ overlaps }h
+\forall h \in H \quad (hi,hf)\text{ overlaps }h \nonumber
 \end{eqnarray}
 
 \subsubsection{Tries to satisfy each student requirement}
@@ -384,22 +384,7 @@ nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limi
 \\
 \forall a \in A \quad
 \forall t \in T \quad
-\forall h \in H_{d}
-\end{eqnarray}
-
-\subsubsection{Ensures student assignment to practical and theoretical credits}
-\mbox{If practical and theoretical course sections have MxN relationship:}
-\begin{eqnarray}
-\sum\limits_{i \in I_{dp}} s_{i,dp,a} = \sum\limits_{ i \in I_{dt} } s_{i,dt,a} \nonumber \qquad 
-\forall a \in Al \quad
-\forall (dp,dt) \in D_{a} \quad
-\end{eqnarray}
-\mbox{If practical and theoretical course sections have 1x1 relationship:}
-\begin{eqnarray}
-s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad 
-\forall a \in Al \quad
-\forall i \in I_{d} \quad
-\forall (dp,dt) \in D_{a} \quad
+\forall h \in H_{d} \nonumber
 \end{eqnarray}
 
 \subsubsection{Single lesson for each course section per day}
@@ -433,7 +418,7 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \\
 \forall d \in D \quad
 \forall i \in I_{d} \quad
-\forall t \in T
+\forall t \in T \nonumber
 \end{eqnarray}
 
 \paragraph{Single credits split rule for each course section}
@@ -441,167 +426,6 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \sum\limits_{k \in K_{d}} m_{d,i,k} = z_{i,d} \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d}
-\end{eqnarray}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 					PROFESSORS ASSIGNMENT
-\subsubsection{Professors assignment}
-
-\paragraph{No overlapping in professor's timetable}
-\begin{eqnarray}
-\sum_{ \substack {dti,dtf \in Dt \\ dt \in [dti,dtf)} } \sum\limits_{i} \sum\limits_{d} \sum\limits_{u \in U} k_{p,i,d,u,t,dti,dtf} \le 1 \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall dt \in Dt
-\end{eqnarray}
-
-\paragraph{Assigns professor to class (sets variable k)}
-% Part 1
-\begin{eqnarray}
-\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s\in S_{u}} x_{i,d,s,t,hi,hf} \le k_{p,i,d,u,t,dti} + ( 1 - y_{p,i,d} ) \nonumber \qquad
-\\
-\forall i \in I \quad
-\forall d \in D \quad
-\forall u \in U \quad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall dti \in Dt
-\end{eqnarray}
-% Part 2
-\begin{eqnarray}
-\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s\in S} x_{i,d,s,t,hi,hf} \le \sum\limits_{u\in U} \sum\limits_{p} k_{p,i,d,u,t,dti} \nonumber \qquad
-\\
-\forall i \in I \quad
-\forall d \in D \quad
-\forall t \in T \quad
-\forall dti \in Dt
-\end{eqnarray}
-	
-\paragraph{Assigns professor to class (sets variable y)}
-\begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{t} \sum\limits_{h} k_{p,i,d,u,t,h} = nCreds_{d} \cdot y_{p,i,d} \nonumber \qquad
-\forall i \in I \quad
-\forall d \in D \quad
-\forall p \in P
-\end{eqnarray}	
-	
-\paragraph{Assigns a single professor to each course section}
-\begin{eqnarray}
-\sum\limits_{p} y_{p,i,d} = z_{i,d} \nonumber \qquad
-\forall i \in I \quad
-\forall d \in D
-\end{eqnarray}	
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%						PROFESSOR DISPLACEMENT
-\subsubsection{Professor's displacement}
-\label{constrProfessorDisplac}
-
-\paragraph{Ensures enough time for displacement between blocks in the same day}
-\begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} k_{p,i,d,u1,t,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u2,t,h2} \le 1 \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall u1 \in U \quad
-\forall u2 \in U \quad
-\forall h1 \in H \quad
-\forall h2 \in H \quad
-\mbox{s.t. time between ending of h1 and beginning of h2 is less than displacement time between u1 and u2}
-\end{eqnarray}	
-
-\paragraph{Ensures the maximum of 1 displacement for each professor in the same day}
-\begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} k_{p,i,d,u1,t,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u2,t,h2} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u3,t,h3} \le 2 \nonumber \qquad
-\\
-\\
-\forall p \in P \quad
-\forall t \in T \quad
-\forall u2 \in U \quad
-\forall h2 \in H \quad
-\mbox{s.t. }u1 \neq u2 \qquad u3 \neq u2 \qquad h1<h2 \qquad h3>h2
-\end{eqnarray}
-
-\paragraph{Identifies if the professor teaches in a block at the day}
-\begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{h} k_{p,i,d,u,t,h} \le MaxNrCredsDay_{p,t} \cdot uu_{p,t,u} \nonumber \qquad
-\\
-\\
-\forall p \in P \quad
-\forall t \in T \quad
-\forall u \in U \quad
-\end{eqnarray}
-
-\paragraph{Constraints the maximum number of blocks assigned to the professor at the day}
-\begin{eqnarray}
-\sum\limits_{u \in U} uu_{p,t,u} \le 2 \nonumber \qquad
-\\
-\\
-\forall p \in P \quad
-\forall t \in T \quad
-\end{eqnarray}
-
-\paragraph{Identifies displacements in the day of the professor}
-\begin{eqnarray}
-uu_{p,t,u1} + uu_{p,t,u2} \le 1 + desloc_{p,t,u1,u2} \nonumber \qquad
-\\
-\\
-\forall p \in P \quad
-\forall t \in T \quad
-\forall u1 \in U \quad
-\forall u2 \in U \quad \mbox{s.t. }u1 \neq u2
-\end{eqnarray}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%						GAPS IN PROFESSOR'S TIMETABLE									% 							 
-\subsubsection{Professor's gaps avoidance}
-\label{constrProfessorGap}
-
-Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when it has conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section ~\ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
-
-\paragraph{Sets variable $hip_{p,t,f}$}
-\begin{eqnarray}
-hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{k \in K_{dti<dt}} k_{p,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dt \in Dt_{f}
-\end{eqnarray}
-\begin{eqnarray}
-hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{k} k_{p,t,dti} ) \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dti \in Dt_{f}
-\end{eqnarray}
-
-\paragraph{Sets variable $hfp_{p,t,f}$}
-\begin{eqnarray}
-hfp_{p,t,f} \geq \sum\limits_{k} m(dt) \cdot k_{p,t,dtf} \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dtf \in Dt_{f}
-\end{eqnarray}
-\begin{eqnarray}
-hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) \nonumber \qquad
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
-\forall dt \in Dt_{f}
-\end{eqnarray}
-
-Next, gaps in professor timetable are controlled. The usage of the slack variable $fpgap_{p,t,f}$ indicates the amount of idle time in session $f$ of day $t$ for professor $p$. The reduce of professors idle time is achieved through minimization of these slack variables in objective function.
-
-\paragraph{Prohibits gap in each session of day in professor timetable}
-\begin{eqnarray}
-\sum\limits_{k \in K_{h \in H_{f}}} duration_{h} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
-\\
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad
 \end{eqnarray}
 
 
@@ -654,11 +478,170 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 \begin{eqnarray}
 \sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi+,hf} = 
 \sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi-,hf} - end_{a,t,hi-} + begin_{a,t,hi+} \nonumber \qquad
+\\
 \forall a \in A \quad
 \forall t \in T \quad
-\forall hi+ \in H \quad hi- \in H \mbox{ s.t. hi- + 1 = hi+}
+\forall hi+ \in H \quad hi- \in H \mbox{ s.t. hi- + 1 = hi+} \nonumber
 \end{eqnarray}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 					PROFESSORS ASSIGNMENT
+\subsubsection{Professors assignment}
+
+\paragraph{No overlapping in professor's timetable}
+\begin{eqnarray}
+\sum_{ \substack {dti,dtf \in Dt \\ dt \in [dti,dtf)} } \sum\limits_{i} \sum\limits_{d} \sum\limits_{u \in U} k_{p,i,d,u,t,dti,dtf} \le 1 \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dt \in Dt
+\end{eqnarray}
+
+\paragraph{Assigns professor to class (sets variable k)}
+% Part 1
+\begin{eqnarray}
+\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s\in S_{u}} x_{i,d,s,t,hi,hf} \le k_{p,i,d,u,t,dti} + ( 1 - y_{p,i,d} ) \nonumber \qquad
+\\
+\forall i \in I \quad
+\forall d \in D \quad
+\forall u \in U \quad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall dti \in Dt \nonumber
+\end{eqnarray}
+% Part 2
+\begin{eqnarray}
+\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s\in S} x_{i,d,s,t,hi,hf} \le \sum\limits_{u\in U} \sum\limits_{p} k_{p,i,d,u,t,dti} \nonumber \qquad
+\\
+\forall i \in I \quad
+\forall d \in D \quad
+\forall t \in T \quad
+\forall dti \in Dt \nonumber
+\end{eqnarray}
+	
+\paragraph{Assigns professor to class (sets variable y)}
+\begin{eqnarray}
+\sum\limits_{u \in U} \sum\limits_{t} \sum\limits_{h} k_{p,i,d,u,t,h} = nCreds_{d} \cdot y_{p,i,d} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall p \in P
+\end{eqnarray}	
+	
+\paragraph{Assigns a single professor to each course section}
+\begin{eqnarray}
+\sum\limits_{p} y_{p,i,d} = z_{i,d} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D
+\end{eqnarray}	
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%						PROFESSOR DISPLACEMENT
+\subsubsection{Professor's displacement}
+\label{constrProfessorDisplac}
+
+\paragraph{Ensures enough time for displacement between blocks in the same day}
+\begin{eqnarray}
+\sum\limits_{i} \sum\limits_{d} k_{p,i,d,u1,t,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u2,t,h2} \le 1 \nonumber
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall u1 \in U \quad
+\forall u2 \in U \quad
+\forall h1 \in H \quad
+\forall h2 \in H \nonumber
+\end{eqnarray}	
+\textit{s.t. time between ending of h1 and beginning of h2 is less than displacement time between u1 and u2}.
+
+\paragraph{Ensures the maximum of 1 displacement for each professor in the same day}
+\begin{eqnarray}
+\sum\limits_{i} \sum\limits_{d} k_{p,i,d,u1,t,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u2,t,h2} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u3,t,h3} \le 2 \nonumber
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall u2 \in U \quad
+\forall h2 \in H \nonumber
+\\
+\mbox{s.t. }u1 \neq u2 \qquad u3 \neq u2 \qquad h1<h2 \qquad h3>h2 \nonumber
+\end{eqnarray}
+
+\paragraph{Identifies if the professor teaches in a block at the day}
+\begin{eqnarray}
+\sum\limits_{i} \sum\limits_{d} \sum\limits_{h} k_{p,i,d,u,t,h} \le MaxNrCredsDay_{p,t} \cdot uu_{p,t,u} \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall u \in U \quad \nonumber
+\end{eqnarray}
+
+\paragraph{Constraints the maximum number of blocks assigned to the professor at the day}
+\begin{eqnarray}
+\sum\limits_{u \in U} uu_{p,t,u} \le 2 \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall t \in T \quad \nonumber
+\end{eqnarray}
+
+\paragraph{Identifies displacements in the day of the professor}
+\begin{eqnarray}
+uu_{p,t,u1} + uu_{p,t,u2} \le 1 + desloc_{p,t,u1,u2} \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall u1 \in U \quad
+\forall u2 \in U \quad \mbox{s.t. }u1 \neq u2 \nonumber
+\end{eqnarray}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%						GAPS IN PROFESSOR'S TIMETABLE									% 							 
+\subsubsection{Professor's gaps avoidance}
+\label{constrProfessorGap}
+
+Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when it has conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section ~\ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
+
+\paragraph{Sets variable $hip_{p,t,f}$}
+\begin{eqnarray}
+hip_{p,t,f} \geq m(dt) \cdot ( 1 - \sum\limits_{k \in K_{dti<dt}} k_{p,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dt \in Dt_{f}
+\end{eqnarray}
+\begin{eqnarray}
+hip_{p,t,f} \leq m(dt) + M \cdot ( 1 - \sum\limits_{k} k_{p,t,dti} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dti \in Dt_{f}
+\end{eqnarray}
+
+\paragraph{Sets variable $hfp_{p,t,f}$}
+\begin{eqnarray}
+hfp_{p,t,f} \geq \sum\limits_{k} m(dt) \cdot k_{p,t,dtf} \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dtf \in Dt_{f}
+\end{eqnarray}
+\begin{eqnarray}
+hfp_{p,t,f} \leq m(dt) + M \cdot ( \sum\limits_{k \in K_{dtf>dt}} k_{p,t,dtf} ) \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad
+\forall dt \in Dt_{f}
+\end{eqnarray}
+
+Next, gaps in professor timetable are controlled. The usage of the slack variable $fpgap_{p,t,f}$ indicates the amount of idle time in session $f$ of day $t$ for professor $p$. The reduce of professors idle time is achieved through minimization of these slack variables in objective function.
+
+\paragraph{Prohibits gap in each session of day in professor timetable}
+\begin{eqnarray}
+\sum\limits_{k \in K_{h \in H_{f}}} duration_{h} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad \nonumber
+\end{eqnarray}
 
 
 

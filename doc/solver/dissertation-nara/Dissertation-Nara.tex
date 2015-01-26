@@ -34,6 +34,16 @@
 \usepackage[justification=centering]{caption}
 \usepackage[none]{hyphenat}
 
+\usepackage{algorithmic}
+\usepackage{algpseudocode}
+\newcommand*\Let[2]{\State #1 $\gets$ #2}
+\usepackage[noend]{algpseudocode}
+\newcommand\Algphase[1]{%
+\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
+\Statex\hspace*{-\algorithmicindent}\textbf{#1}%
+\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
+}
+
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subfigure}
