@@ -4517,8 +4517,8 @@ void ProblemData::imprimeAlocacoesGerais( int campusId, int prioridade, int roda
 	stringstream rowName;
 	rowName << "Cp" << campusId << "_P" << prioridade << "_R" << rodada << "_" << MIP;
 
-	Indicadores::printTaticoIndicadores( rowName.str(), totalAtendimentosSemDivPT_P1, totalAtendimentosSemDivPT_P2,
-			totalCreditos, totalCreditosPagos, totalTurmas, totalCusto, totalReceita, runtimess.str() );
+	//Indicadores::printTaticoIndicadores( rowName.str(), totalAtendimentosSemDivPT_P1, totalAtendimentosSemDivPT_P2,
+	//		totalCreditos, totalCreditosPagos, totalTurmas, totalCusto, totalReceita, runtimess.str() );
 
 }
 

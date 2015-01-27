@@ -3078,47 +3078,13 @@ int MIPUnico::solveMinDeslocProf( int campusId, int prioridade, int r, bool& CAR
     strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
 	
 	// -------------------------------------------------------------------
+	int *idxN = new int[lp->getNumCols()];	
+	getIdxN(idxN);
+
 	// FUNÇÃO OBJETIVO SOMENTE COM AS VARIAVEIS DE DESLOC DE PROFS
-
-	int *idxN = new int[lp->getNumCols()];
-	int *idxs = new int[lp->getNumCols()*2];
-	double *vals = new double[lp->getNumCols()*2];
-	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
-	int nBds = 0;
-
-	#pragma region Modifica FO
-    nBds = 0;
-	auto vit = vHashTatico.begin();
-	for ( ; vit != vHashTatico.end(); vit++ )
-	{
-		idxN[vit->second] = vit->second;
-
-		VariableMIPUnico v = vit->first;
-			
-		double coef = 0.0;		
-		if ( v.getType() == VariableMIPUnico::V_PROF_DESLOC )
-		{     
-			Campus *campusDest = problemData->refCampus[v.getUnidade2()->getIdCampus()];
-			Campus *campusOrig = problemData->refCampus[v.getUnidade1()->getIdCampus()];
-
-			coef = problemData->calculaTempoEntreCampusUnidades(
-				campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
-		}
-		else if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
-		{
-			coef = 0.00001 * vit->first.getDisciplina()->getTotalCreditos();
-		}
-
-		idxs[nBds] = vit->second;
-		vals[nBds] = coef;
-		nBds++;
-	}
-	
-    lp->chgObj(nBds,idxs,vals);
-    lp->updateLP();
-	#pragma endregion
+	chgObjMinDeslocProf();
 		
-	// ------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------
 			
 	std::string lpName2;
 	lpName2 += "minDeslocProf_";
@@ -3193,13 +3159,53 @@ int MIPUnico::solveMinDeslocProf( int campusId, int prioridade, int r, bool& CAR
  
 	lp->updateLP();
 
-	delete[] idxs;
-	delete[] vals;
-	delete[] bds;
 	delete[] idxN;
 	delete[] objN;
 	
 	return cpyStatus;
+}
+
+bool MIPUnico::chgObjMinDeslocProf()
+{
+	int *idxs = new int[lp->getNumCols()];
+	double *vals = new double[lp->getNumCols()];
+	int nBds = 0;
+
+    nBds = 0;
+	auto vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		VariableMIPUnico v = vit->first;
+			
+		double coef = 0.0;		
+		if ( v.getType() == VariableMIPUnico::V_PROF_DESLOC )
+		{     
+			Campus *campusDest = problemData->refCampus[v.getUnidade2()->getIdCampus()];
+			Campus *campusOrig = problemData->refCampus[v.getUnidade1()->getIdCampus()];
+
+			int tempoMin = problemData->calculaTempoEntreCampusUnidades(
+				campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
+			
+			if (tempoMin >= MIPUnico::maxTempoDeslocCurto_) 
+				coef = tempoMin;
+		}
+		else if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
+		{
+			coef = 0.0001 * vit->first.getDisciplina()->getTotalCreditos();
+		}
+
+		idxs[nBds] = vit->second;
+		vals[nBds] = coef;
+		nBds++;
+	}
+	
+    bool chged = lp->chgObj(nBds,idxs,vals);
+    lp->updateLP();
+	
+	delete[] idxs;
+	delete[] vals;
+
+	return chged;
 }
 
 bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
@@ -3221,9 +3227,9 @@ bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
 		}
 	}
 
-	// Todas variaveis desloc_{p,t,u1,u2)
-	auto itProf = solProfDiaDeslocUsado.cbegin();
-	for (; itProf != solProfDiaDeslocUsado.cend(); itProf++)
+	// Todas variaveis desloc_{p,t,u1,u2)	
+	for (auto itProf = solProfDiaDeslocUsado.cbegin();
+		itProf != solProfDiaDeslocUsado.cend(); itProf++)
 	{
 		int pid=itProf->first->getId();
 
@@ -3233,13 +3239,13 @@ bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
 			int dia = itDia->first;
 
 			stringstream ssnome;
-			ssnome << "C_MIN_DESLOC_PROF_(Prof" << pid << "" << dia << ")";
+			ssnome << "C_FIXA_SOL_MAX_DESLOC_PROF_(Prof" << pid << "" << dia << ")";
 			char nome[100];
 			sprintf( nome, "%s", ssnome.str().c_str() ); 
 
 			int sumdesloc = 0;
 
-			OPT_ROW row( 100, OPT_ROW::LESS, sumdesloc, nome );
+			OPT_ROW row( itDia->second.size(), OPT_ROW::LESS, sumdesloc, nome );
 
 			// Soma o custo das variaveis usadas
 			auto itVar = itDia->second.cbegin();
@@ -3263,6 +3269,51 @@ bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
 			chged &= lp->addRow(row);
 			lp->updateLP();
 		}
+	}
+
+	// Todas variaveis desloc_{p,t,u1,u2)	
+	for (auto itProf = solProfDiaDeslocUsado.cbegin();
+		itProf != solProfDiaDeslocUsado.cend(); itProf++)
+	{
+		int pid=itProf->first->getId();
+
+		stringstream ssnome;
+		ssnome << "C_FIXA_SOL_MAX_DESLOC_LONGO_SEMANA_PROF_(Prof" << pid << ")";
+		char nome[100];
+		sprintf( nome, "%s", ssnome.str().c_str() ); 
+
+		int nrDeslocLongo = 0;
+		OPT_ROW row( 100, OPT_ROW::LESS, nrDeslocLongo, nome );
+
+		auto itDia = itProf->second.cbegin();
+		for (; itDia != itProf->second.cend(); itDia++)
+		{
+			int dia = itDia->first;
+
+			// Soma o custo das variaveis usadas
+			auto itVar = itDia->second.cbegin();
+			for(; itVar != itDia->second.cend(); itVar++)
+			{						
+				Campus *campusDest = problemData->refCampus[itVar->first.getUnidade2()->getIdCampus()];
+				Campus *campusOrig = problemData->refCampus[itVar->first.getUnidade1()->getIdCampus()];
+
+				double tempoDesloc = problemData->calculaTempoEntreCampusUnidades(
+					campusDest, campusOrig, itVar->first.getUnidade2(), itVar->first.getUnidade1() );
+
+				if (tempoDesloc >= MIPUnico::maxTempoDeslocCurto_)
+				{					
+					double value = itVar->second.second;
+					nrDeslocLongo += value;
+
+					// insere desloc_{p,t,u1,u2) com o custo associado
+					row.insert(itVar->second.first, 1);
+				}
+			}
+		}
+
+		row.setRhs(nrDeslocLongo);
+		chged &= lp->addRow(row);
+		lp->updateLP();
 	}
 
 	return chged;
@@ -3295,39 +3346,13 @@ int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREG
     strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
 	
 	// -------------------------------------------------------------------
-	// FUNÇÃO OBJETIVO SOMENTE COM AS VARIAVEIS DE FOLGA DE GAP DE PROFS
-
 	int *idxN = new int[lp->getNumCols()];
-	int *idxs = new int[lp->getNumCols()*2];
-	double *vals = new double[lp->getNumCols()*2];
-	BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
-	int nBds = 0;
-
-	#pragma region Modifica FO
-    nBds = 0;
-	auto vit = vHashTatico.begin();
-	for ( ; vit != vHashTatico.end(); vit++ )
-	{
-		idxN[vit->second] = vit->second;
-
-		VariableMIPUnico v = vit->first;
-			
-		double coef = 0.0;		
-		if ( v.getType() == VariableMIPUnico::V_FOLGA_GAP_PROF )
-		{     
-			coef = 1.0;
-		}
-
-		idxs[nBds] = vit->second;
-		vals[nBds] = coef;
-		nBds++;
-	}
+	getIdxN(idxN);
 	
-    lp->chgObj(nBds,idxs,vals);
-    lp->updateLP();
-	#pragma endregion
+	// FUNÇÃO OBJETIVO SOMENTE COM AS VARIAVEIS DE FOLGA DE GAP DE PROFS
+	chgObjMinGapProf();
 		
-	// ------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------
 			
 	std::string lpName2;
 	lpName2 += "minGapProf_";
@@ -3402,13 +3427,52 @@ int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREG
  
 	lp->updateLP();
 
-	delete[] idxs;
-	delete[] vals;
-	delete[] bds;
 	delete[] idxN;
 	delete[] objN;
 	
 	return cpyStatus;
+}
+
+bool MIPUnico::chgObjMinGapProf()
+{
+	int *idxs = new int[lp->getNumCols()];
+	double *vals = new double[lp->getNumCols()];
+	int nBds = 0;
+
+	auto vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		VariableMIPUnico v = vit->first;
+			
+		double coef = 0.0;		
+		if ( v.getType() == VariableMIPUnico::V_FOLGA_GAP_PROF )
+		{     
+			coef = 1.0;
+		}
+		if ( v.getType() == VariableMIPUnico::V_PROF_DESLOC )
+		{     
+			Campus *campusDest = problemData->refCampus[v.getUnidade2()->getIdCampus()];
+			Campus *campusOrig = problemData->refCampus[v.getUnidade1()->getIdCampus()];
+
+			int tempoMin = problemData->calculaTempoEntreCampusUnidades(
+				campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
+			
+			if (tempoMin < MIPUnico::maxTempoDeslocCurto_) 
+				coef = tempoMin * 0.01;
+		}
+
+		idxs[nBds] = vit->second;
+		vals[nBds] = coef;
+		nBds++;
+	}
+	
+    bool chged = lp->chgObj(nBds,idxs,vals);
+    lp->updateLP();
+	
+	delete[] idxs;
+	delete[] vals;
+
+	return chged;
 }
 
 bool MIPUnico::fixaSolMinGapProf(double* const xS)

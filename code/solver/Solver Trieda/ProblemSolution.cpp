@@ -1056,10 +1056,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 	int nroTotalProfsUsados = nroTotalProfsReaisUsados + nroTotalProfsVirtuaisUsados;
 
 	int nroCredsProfsUsados = nroCredsProfsReais + nroCredsProfsVirtuais;
-		
-	Indicadores::printSeparator(3);
-	Indicadores::printIndicador( "\n\t\t\tFINAL: Professores virtuais individualizados\n");
-
+	
+	Indicadores::printSeparator(1);
 	Indicadores::printIndicador( "\nNumero total de professores usados: ", nroTotalProfsUsados );
 	Indicadores::printIndicador( "\nNumero de professores virtuais usados: ", nroTotalProfsVirtuaisUsados );	
 	Indicadores::printIndicador( "\nNumero de professores reais usados: ", nroTotalProfsReaisUsados );	

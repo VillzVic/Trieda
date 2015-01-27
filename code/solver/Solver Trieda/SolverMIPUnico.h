@@ -63,6 +63,10 @@ private:
    bool associaProfATurmaMapAulas(Campus* const cp, Disciplina* const d, int const turma, Professor* const p);
    bool existeProfVirt(Campus* const cp, Disciplina* const d, int const turma) const;
 
+   void contabilizaGapProfReal_();
+   void mapSolutionProfReal_();
+   void countGapProfReal_();
+
    void getAulas(Campus* const cp, Disciplina* const d, int const turma,
 		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*> >> * &ptMapSala);
 
@@ -131,6 +135,11 @@ private:
    typedef unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> MapSalaDiaHors;
    
    typedef unordered_map<int, unordered_set<HorarioAula*>> MapDiaHors;
+
+   // ------------ 
+   typedef unordered_map<Professor*, map<int, map<DateTime, pair<DateTime,Unidade*> >>> MapProfDiaDtiDtfUnid;
+
+   MapProfDiaDtiDtfUnid solProfRealAloc_;
 
    // ------------ 
 

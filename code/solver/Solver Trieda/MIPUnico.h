@@ -396,6 +396,8 @@ private:
 
 	bool chgObjMaxAtendMarreta();
 	bool chgObjMaxAtend();
+	bool chgObjMinDeslocProf();
+	bool chgObjMinGapProf();
 
 	void printNaoAtendimentos(double* const xS);
 	void printAtendsVirtuais(double* const xS);

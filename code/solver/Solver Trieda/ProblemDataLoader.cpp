@@ -651,7 +651,7 @@ void ProblemDataLoader::printInputDataLog()
 
 	Indicadores::printSeparator(1);
 	Indicadores::printIndicador( ssProfs.str() );
-
+	Indicadores::printSeparator(4);
 	// ----------------------------------------------------------------------------------------------------------
 
 }

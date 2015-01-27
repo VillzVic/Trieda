@@ -22,6 +22,7 @@
 #include "ProblemSolution.h"
 #include "ConstraintOp.h"
 #include "AlocacaoProfVirtual.h"
+#include "Indicadores.h"
 
 using namespace std;
 
@@ -223,6 +224,7 @@ int SolverMIPUnico::solveOpSemTatico()
 	if (!RODAR_OPERACIONAL_)
 	{
 		extractSolution_();
+		contabilizaGapProfReal_();
 		criarOutputFinal_(problemSolution);
 		problemSolution->computaMotivos(true,true);
 		writeOutputOp_();
@@ -1821,6 +1823,113 @@ bool SolverMIPUnico::existeProfVirt(Campus* const cp, Disciplina* const d, int c
 		}
 	}
 	return false;
+}
+
+void SolverMIPUnico::contabilizaGapProfReal_()
+{
+	mapSolutionProfReal_();
+	countGapProfReal_();
+}
+
+void SolverMIPUnico::mapSolutionProfReal_()
+{
+	for(auto itCampus = solAulas_.cbegin(); itCampus != solAulas_.cend(); ++itCampus)
+	{
+		Campus* const campus = itCampus->first;
+		
+		for(auto itDisc = itCampus->second.cbegin(); itDisc != itCampus->second.cend(); ++itDisc)
+		{
+			Disciplina* const disciplina = itDisc->first;
+		
+			for(auto itTurmas = itDisc->second.cbegin(); itTurmas != itDisc->second.cend(); ++itTurmas)
+			{		
+				const int turmaId = itTurmas->first;
+				
+				for(auto itProf = itTurmas->second.cbegin(); itProf != itTurmas->second.cend(); ++itProf)
+				{
+					Professor* const professor = itProf->first;					
+					if (professor->eVirtual()) continue;
+
+					auto ptSolProf = & solProfRealAloc_[professor];
+
+					for(auto itSala = itProf->second.cbegin(); itSala != itProf->second.cend(); ++itSala)
+					{
+						Sala* const sala = itSala->first;
+						int unidadeId = sala->getIdUnidade();
+						Unidade* const unid = problemData->refUnidade[unidadeId];
+
+						for(auto itAulas = itSala->second.cbegin(); itAulas != itSala->second.cend(); ++itAulas)
+						{
+							int dia = itAulas->first;
+
+							auto ptSolProfDia = &(*ptSolProf)[dia];
+
+							for(auto itHor = itAulas->second.cbegin(); itHor != itAulas->second.cend(); ++itHor)
+							{
+								HorarioAula* const h = *itHor;
+								
+								std::pair<DateTime,Unidade*> parDtfUnid (h->getFinal(), unid);
+								bool added = ptSolProfDia->insert(
+									pair<DateTime, pair<DateTime,Unidade*>> (h->getInicio(), parDtfUnid)).second;
+
+								if (!added) CentroDados::printError("SolverMIPUnico::mapSolutionProfReal_()",
+									"Aula de prof nao adicionada!");
+							}
+						}
+					}
+				}
+			}
+		}
+	}	
+}
+
+void SolverMIPUnico::countGapProfReal_()
+{
+	int nrTotalGap = 0;
+	int nrGapIgnoraDesloc = 0;
+
+	for(auto itProf = solProfRealAloc_.cbegin(); itProf != solProfRealAloc_.cend(); ++itProf)
+	{
+		Professor* const professor = itProf->first;					
+		if (professor->eVirtual()) continue;		
+
+		cout << "\nProf" << professor->getId();
+
+		for(auto itDia = itProf->second.cbegin(); itDia != itProf->second.cend(); ++itDia)
+		{
+			cout << "\n\tDia" << itDia->first;
+
+			for(auto itDti = itDia->second.cbegin(); *itDti != *itDia->second.crbegin(); ++itDti)
+			{
+				DateTime dti = itDti->first;
+				DateTime dtf = itDti->second.first;
+				Unidade* const unid = itDti->second.second;
+				int faseDoDia = CentroDados::getFaseDoDia(dti);
+
+				auto itNextDti = std::next(itDti);
+				DateTime nextDti = itNextDti->first;
+				Unidade* const nextUnid = itNextDti->second.second;
+				int nextFaseDoDia = CentroDados::getFaseDoDia(nextDti);				
+				
+				cout << "\n\t\tDtf " << dtf.hourMinToStr() << "   NextDti " << nextDti.hourMinToStr();
+
+				if (faseDoDia != nextFaseDoDia) continue;
+
+				int difMin = (nextDti - dtf).getDateMinutes();
+				int nr = difMin / 50;
+
+				cout << "\n\t\tDif = " << difMin << "   nr = " << nr;
+
+				nrTotalGap += nr;
+				if (unid == nextUnid)
+					nrGapIgnoraDesloc += nr;
+			}
+		}
+	}
+
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador("\nNumero total de gaps de professores: ", nrTotalGap);
+	Indicadores::printIndicador("\nNumero total de gaps de professores ignorando deslocamentos: ", nrGapIgnoraDesloc);
 }
 
 void SolverMIPUnico::getAulas(Campus* const cp, Disciplina* const d, int const turma,
