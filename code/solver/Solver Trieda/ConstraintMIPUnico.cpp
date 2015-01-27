@@ -392,6 +392,9 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_MAX_UNIDS_DIA_PROF"; break;		
 	  case C_MAX_DESLOC_LONGO_PROF:
         ss << "C_MAX_DESLOC_LONGO_PROF"; break;
+	  case C_MAX_DESLOC_LONGO_SEMANA_PROF:
+        ss << "C_MAX_DESLOC_LONGO_SEMANA_PROF"; break;
+		
 
 	  case C_CARGA_HOR_ANTERIOR:
         ss << "C_CARGA_HOR_ANTERIOR"; break;	
@@ -437,7 +440,7 @@ std::string ConstraintMIPUnico::toString( int etapa )
 
    if ( u != nullptr )
    {
-      ss << "_Unid" << u->getId();
+      ss << "_Unid" << u->getId() << "_" << u->getCodigo();
    }
 
    if ( c != nullptr )
@@ -572,17 +575,17 @@ std::string ConstraintMIPUnico::toString( int etapa )
 
    if ( u_orig )
    {
-      ss << "_uOrig" << u_orig->getId();
+      ss << "_uOrig" << u_orig->getId() << "_" << u_orig->getCodigo();
    }
      
    if ( u_atual )
    {
-      ss << "_uAtual" << u_atual->getId();
+      ss << "_uAtual" << u_atual->getId() << "_" << u_atual->getCodigo();
    }
 
    if ( u_dest )
    {
-      ss << "_uDest" << u_dest->getId();
+      ss << "_uDest" << u_dest->getId() << "_" << u_dest->getCodigo();
    }
 
    if ( h_orig )

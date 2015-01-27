@@ -142,8 +142,6 @@ private:
    int criaRestricaoTaticoAlunoDiscPraticaTeorica_1xN( int campusId );
    int criaRestricaoTaticoDivisaoCredito_hash( int campusId );
    int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
-   int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
-   int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
    int criaRestricaoTaticoAlunoHorario( int campusId );					// Restricao 1.2.12
    int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
    int criaRestricaoTaticoDiaUsadoPeloAluno();
@@ -221,6 +219,7 @@ private:
 	int criaRestricaoMax1DeslocProfessor();
 	int criaRestricaoMinDeslocProfessor();
 	int criaRestricaoMaxDeslocLongoProfessor();
+	int criaRestricaoMaxDeslocLongoSemanaProfessor();
 	int criaRestricaoUnidUsadaProf();
 	int criaRestricaoNrMaxUnidDiaProf();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
@@ -357,6 +356,7 @@ private:
 	void criaNewLp( int campusId, int prioridade, int r );
 	void printLog( string msg );
 
+	void setGurobiVarsPrior();
 	void getIdxN(int* idx);
 
 	int solveMIPUnico( int campusId, int prioridade, int r );
@@ -461,7 +461,10 @@ private:
 	static const double pesoDeslocProf;
 	static const double pesoCHAntProf;
 	static const bool limitar1DeslocSoUnidLonge_;
-
+	static const bool limitarDeslocUnidLongeSemana_;
+	static const int maxDeslocUnidLongeSemana_;	
+	static const int maxTempoDeslocCurto_;
+	
 	// Alunos
 	static const double pesoFD;
 	static const int pesoGapAluno;

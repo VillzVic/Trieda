@@ -340,17 +340,17 @@ std::string VariableMIPUnico::toString() const
    
    if ( u != nullptr )
    {
-      str << "_Unid" << u->getId();
+	   str << "_Unid" << u->getId() << "_" << u->getCodigo();
    }
    
    if ( u1 != nullptr )
    {
-      str << "_1Unid" << u1->getId();
+      str << "_1Unid" << u1->getId() << "_" << u1->getCodigo();
    }
    
    if ( u2 != nullptr )
    {
-      str << "_2Unid" << u2->getId();
+      str << "_2Unid" << u2->getId() << "_" << u2->getCodigo();
    }
 
    if ( s != nullptr )

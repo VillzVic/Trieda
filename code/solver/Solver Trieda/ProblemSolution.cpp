@@ -492,10 +492,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 	// ------------------------------------------------------------------------------------------
 	// Indicadores
 
-	int nroCredsProfsVirtuais=0;
 	int nroCredsProfsReais=0;
 	double chProfsReal=0;
-	double chProfsVirt=0;
 	
 	// ------------------------------------------------------------------------------------------
 	// Inicializa zerados os creditos já alocados aos alunos
@@ -888,12 +886,7 @@ void ProblemSolution::constroiMapsDaSolucao()
 									this->quantChProfs[ profId ] = tempoDoCredito;
 								}
 							
-								if ( profVirtual )
-								{
-									nroCredsProfsVirtuais++;
-									chProfsVirt += tempoDoCredito;
-								}
-								else
+								if ( !profVirtual )
 								{
 									nroCredsProfsReais++;
 									chProfsReal += tempoDoCredito;
@@ -962,20 +955,21 @@ void ProblemSolution::constroiMapsDaSolucao()
 	int nPV_semHabReal = 0;
 	GGroup<ProfessorVirtualOutput*> pvo_discSemProfHab;
 	GGroup<ProfessorVirtualOutput*> pvo_totais;
-
+	int nroCredsProfsVirtuais = 0;
+	double chProfsVirt=0;
+	
 	for ( auto itMapCp = mapSolTurmaProfVirtualDiaAula.begin(); itMapCp != mapSolTurmaProfVirtualDiaAula.end(); itMapCp++ )
 	{
 		for ( auto itMapDisc = itMapCp->second.begin(); itMapDisc != itMapCp->second.end(); itMapDisc++ )
 		{
 			Disciplina *disc = itMapDisc->first;
 			if ( disc->getId() < 0 )
-			{
 				nTurmasVirtP += itMapDisc->second.size();
-			}
 			else
-			{
 				nTurmasVirtT += itMapDisc->second.size();
-			}		
+
+			nroCredsProfsVirtuais += disc->getTotalCreditos() * itMapDisc->second.size();
+			chProfsVirt += (disc->getTotalCreditos() * itMapDisc->second.size()) * disc->getTempoCredSemanaLetiva();
 
 			bool semProfRealHab = (disc->getNroProfRealHabilit() == 0);
 
@@ -1018,6 +1012,10 @@ void ProblemSolution::constroiMapsDaSolucao()
 			for ( ; itDisc != itCp->second.end(); itDisc++ )
 			{
 				Disciplina *disc = itDisc->first;
+				
+				nroCredsProfsVirtuais += disc->getTotalCreditos() * itDisc->second.size();
+				chProfsVirt += (disc->getTotalCreditos() * itDisc->second.size()) * disc->getTempoCredSemanaLetiva();
+
 				if ( disc->getNroProfRealHabilit() == 0 )
 				{
 					auto itTurma = itDisc->second.begin();
@@ -1026,8 +1024,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 						if ( disc->getId() < 0 )
 							nTurmasVirtP++;
 						else
-							nTurmasVirtT++;
-						
+							nTurmasVirtT++;					
+
 						pvoId_totais.add( itTurma->second );
 
 						// Calcula nro de profs virtuais usados para turmas de disciplinas sem prof real habilitado
