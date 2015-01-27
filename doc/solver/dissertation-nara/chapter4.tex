@@ -276,16 +276,16 @@ Introduces polishing concept.
       \State chooseAndSetFreeUnidades()
     \EndProcedure
 	\Statex
-	\Algphase{Fix variables of professors}
+	\Algphase{Choose and set free blocks for the next iteration}
     \Require{$lp$ model}
     \Procedure{chooseAndSetFreeUnidades}{}
 			\State clearFreeUnidade()
-			\State decideTypeOfUnidToFree()
-			\If {type of fixing blocks is per cluster}
+			\Let{useCluster}{true or false, chosen randomly with 50\% of chance of true}
+			\If{useCluster} % type of fixing blocks is per cluster
 				\State chooseClusterAndSetFreeUnidade()
 			\EndIf
 			\State chooseRandAndSetFreeUnidade()
-    \EndProcedure	    
+    \EndProcedure
   \end{algorithmic}
 \end{algorithm}
 
