@@ -366,7 +366,12 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_PROF_HOR_FIN_UB"; break;	
       case C_PROF_GAP:
         ss << "C_PROF_GAP"; break;	
-
+		
+	  case C_PROF_DIA_FASE_USADA:
+        ss << "C_PROF_DIA_FASE_USADA"; break;
+	  case C_PROF_DIA_USADO:
+        ss << "C_PROF_DIA_USADO"; break;
+		
       case C_ALUNO_HOR_INIC_LB:
         ss << "C_ALUNO_HOR_INIC_LB"; break;
       case C_ALUNO_HOR_INIC_UB:

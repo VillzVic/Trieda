@@ -52,6 +52,8 @@ public:
 	  V_HF_ALUNOS,							// hfa_{a,t}
 	  V_FOLGA_GAP_ALUNOS,					// fagap_{a,t}
 	  V_FOLGA_GAP_PROF,						// fpgap_{p,t}
+	  V_PROF_FASE_DIA_USADA,				// ptf_{p,t,f}
+	  V_PROF_DIA_USADO,						// pt_{p,t}
 	  
 	  V_FOLGA_MIN_CRED_DIA_ALUNO,			// fcad_{a,t}
 	  V_F_CARGA_HOR_ANT_PROF,				// fch_{p}

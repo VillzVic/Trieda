@@ -283,6 +283,10 @@ std::string VariableMIPUnico::toString() const
        str <<"hip"; break;
     case V_HF_PROFESSORES:
        str <<"hfp"; break;
+    case V_PROF_FASE_DIA_USADA:
+       str <<"ptf"; break;
+    case V_PROF_DIA_USADO:
+       str <<"pt"; break;	   
     case V_HI_ALUNOS:
        str <<"hia"; break;
     case V_HF_ALUNOS:

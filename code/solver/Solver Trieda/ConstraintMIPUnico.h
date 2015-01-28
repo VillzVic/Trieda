@@ -74,7 +74,10 @@ public:
       C_PROF_HOR_FIN_LB,
 	  C_PROF_HOR_FIN_UB,
 	  C_PROF_GAP,
-	  
+
+	  C_PROF_DIA_FASE_USADA,
+	  C_PROF_DIA_USADO,
+
       C_ALUNO_HOR_INIC_LB,
 	  C_ALUNO_HOR_INIC_UB,
       C_ALUNO_HOR_FIN_LB,

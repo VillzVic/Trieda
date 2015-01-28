@@ -56,8 +56,9 @@ private:
 	  MIP_MAX_ATEND,
 	  MIP_MIN_VIRT,
 	  MIP_MIN_TURMAS_COMPART,
-	  MIP_MIN_GAP_PROF,
+	  MIP_MIN_FASE_DIA_PROF,
 	  MIP_MIN_DESLOC_PROF,
+	  MIP_MIN_GAP_PROF,
 	  MIP_MARRETA
    };	  
 
@@ -119,7 +120,8 @@ private:
 
    int criarVariavelFolgaMinCredsDiaAluno();												// fcad_{a,t}
    int criaVariavelFolgaCargaHorariaAnteriorProfessor();									// fch_{p}
-   
+   int criaVariaveisProfUsaFaseDiaAPartirDeK(void);											// ptf_{p,t,f}
+   int criaVariaveisProfDiaUsadoAPartirDeK(void);											// pt_{p,t}
 
    bool checkValidCol(int col) const;
 
@@ -222,6 +224,8 @@ private:
 	int criaRestricaoMaxDeslocLongoSemanaProfessor();
 	int criaRestricaoUnidUsadaProf();
 	int criaRestricaoNrMaxUnidDiaProf();
+	int criaRestricaoProfDiaFaseUsada();
+	int criaRestricaoProfDiaUsado();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 	int criarRestricaoMinCredsDiaAluno_Marreta();
@@ -262,6 +266,12 @@ private:
 	// vars inteiras que indicam o primeiro hip e o último hfp horário da fase do dia (M/T/N) usados pelo professor
 	// Prof -> Dia -> FaseDoDia -> (col. nr. hip/ col. nr. hfp)
 	unordered_map<Professor*, unordered_map<int, unordered_map<int, pair<int,int>>>> varsProfDiaFaseHiHf;							// hip_{p,t,f} e hfp_{p,t,f}
+
+	// variaveis binarias que indicam se o professor usou a fase do dia
+	// Prof -> Dia -> FaseDoDia -> (col. nr)
+	unordered_map<Professor*, unordered_map<int, unordered_map<int, int>>> varsProfDiaFaseUsada;							// ptf_{p,t,f}
+	// Prof -> Dia -> (col. nr)
+	unordered_map<Professor*, unordered_map<int, int>> varsProfDiaUsado;													// pt_{p,t}
 
 	// vars inteiras que indicam o primeiro hia e o último hfa horário do dia usados pelo aluno
 	// Aluno -> Dia -> (col. nr. hia/ col. nr. hfa)
@@ -380,10 +390,13 @@ private:
 	int solveMaxAtendCalourosFormandos( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
-	int solveMinDeslocProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );	
+	int solveMinDeslocProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int solveMinFasesDoDiaProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
+	int optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+
 	bool fixaSolMaxAtendMarreta(double* const xS);
 	bool fixaSolMaxAtend(double* const xS);
 	bool fixaSolMinProfVirt(double* const xS);
@@ -391,12 +404,16 @@ private:
 	bool fixaSolMinTurmas(double* const xS);
 	bool fixaSolMinTurmasNovo(double* const xS);
 	bool fixaSolMinDeslocProf(double* const xS);
+	bool fixaSolMaxFasesDoDiaProf(double* const xS);
+	bool fixaSolMaxDiasProf(double* const xS);
 	bool fixaSolMinGapProf(double* const xS);
 	bool fixaSolAtendida(double* const xS);
 
 	bool chgObjMaxAtendMarreta();
 	bool chgObjMaxAtend();
+	bool chgObjMinTurmas();
 	bool chgObjMinDeslocProf();
+	bool chgObjMinFasesDoDiaProf();
 	bool chgObjMinGapProf();
 
 	void printNaoAtendimentos(double* const xS);
@@ -410,6 +427,8 @@ private:
 	
 	int addConstrGapProf();
 	int copyInitialSolutionGapProf();
+	int addConstrFasesDoDiaProf();
+	int copyInitialSolutionProfDiaFaseUsada();
 	int addConstrDivCred(int campusId);
 	int copyInitialSolutionDivCred();
 		
@@ -446,7 +465,8 @@ private:
 	static const int timeLimitGeneralSemMelhora;
 	static const int timeLimitMinDeslocProf_;
 	static const int timeLimitMinDeslocProfSemMelhora_;
-	
+	static const int timeLimitMinFaseDiaProf_;
+	static const int timeLimitMinFaseDiaProfSemMelhora_;
 
 	// Disciplinas
 	static const int consideraDivCredDisc;
@@ -466,7 +486,9 @@ private:
 	static const bool limitarDeslocUnidLongeSemana_;
 	static const int maxDeslocUnidLongeSemana_;	
 	static const int maxTempoDeslocCurto_;
-	
+	static const bool minimizarProfFaseDoDiaUsada_;
+	static const bool minimizarProfDiaUsado_;	
+
 	// Alunos
 	static const double pesoFD;
 	static const int pesoGapAluno;
