@@ -7776,11 +7776,11 @@ int Operacional::criaRestricaoSalaHorario()
 		   cit = cHashOp.find(c);
 		   if ( cit == cHashOp.end() )
 		   {
-			   cHashOp[ c ] = lp->getNumRows();
-
 			   sprintf( name, "%s", c.toString().c_str() );
 			   OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 			   row.insert( vit->second, 1.0 );
+
+			   cHashOp[ c ] = lp->getNumRows();
 			   lp->addRow( row );
 			   restricoes++;
 		   }
@@ -7851,11 +7851,11 @@ int Operacional::criaRestricaoProfessorHorario()
 		   cit = cHashOp.find(c);
 		   if ( cit == cHashOp.end() )
 		   {
-			   cHashOp[ c ] = lp->getNumRows();
-
 			   sprintf( name, "%s", c.toString().c_str() );
 			   OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 			   row.insert( vit->second, 1.0 );
+
+			   cHashOp[ c ] = lp->getNumRows();
 			   lp->addRow( row );
 			   restricoes++;
 		   }
@@ -8061,8 +8061,8 @@ int Operacional::criaRestricaoAlunoHorario( void )
 										OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
 										row.insert( varId, 1.0 );
-										cHashOp[ c ] = lp->getNumRows();
 
+										cHashOp[ c ] = lp->getNumRows();
 										lp->addRow( row );
 										restricoes++;
 									}  
@@ -8132,8 +8132,8 @@ int Operacional::criaRestricaoAlocAula()
          OPT_ROW row( nnz, OPT_ROW::EQUAL , 1.0, name );
 
          row.insert( vit->second, 1.0 );
-         cHashOp[ c ] = lp->getNumRows();
 
+         cHashOp[ c ] = lp->getNumRows();
          lp->addRow( row );
          restricoes++;
       }
@@ -8252,7 +8252,6 @@ int Operacional::criaRestricaoAtendimentoCompleto( void )
 					}
 
 					cHashOp[ c ] = lp->getNumRows();
-
 					lp->addRow( row );
 					restricoes++;					
 				}

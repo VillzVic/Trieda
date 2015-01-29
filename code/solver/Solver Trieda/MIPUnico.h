@@ -218,7 +218,7 @@ private:
 
 	int criarRestricaoMinCredsDiaAluno();
 	int criaRestricaoTempoDeslocProfessor();
-	int criaRestricaoMax1DeslocProfessor();
+	int criaRestricaoMax1DeslocProfessor_v2();
 	int criaRestricaoMinDeslocProfessor();
 	int criaRestricaoMaxDeslocLongoProfessor();
 	int criaRestricaoMaxDeslocLongoSemanaProfessor();
@@ -395,7 +395,8 @@ private:
 	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
-	int optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int optimizeMinTurmas(int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS);
+	int optimizeMinDeslocProf(int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS);
 
 	bool fixaSolMaxAtendMarreta(double* const xS);
 	bool fixaSolMaxAtend(double* const xS);

@@ -1758,7 +1758,7 @@ int MIPUnico::solveMIPUnico_v2(int campusId, int prioridade, int r)
 		
 	criaVariaveisTatico( campusId, prioridade, r );
 	
-	setGurobiVarsPrior();
+	//setGurobiVarsPrior();
 
 	if ( ! (*this->CARREGA_SOLUCAO) )
 	{
@@ -2519,9 +2519,10 @@ bool MIPUnico::fixaSolMaxAtend(double* const xS)
 	
 	if (row.getnnz() > 0)
 	{
-		cHashTatico[ c ] = lp->getNumRows();
 		row.setRhs(nrMaxCredNaoAtend);
-		chged = lp->addRow(row);
+
+		cHashTatico[ c ] = lp->getNumRows();
+		lp->addRow(row);
 		lp->updateLP();
 	}
 
@@ -2867,7 +2868,7 @@ int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA
 	// ------------------------------------------------------------------------------------
 	// Lp name
     char lpName[1024];
-    strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
+    strcpy( lpName, getTaticoLpFileName(campusId, prioridade, r).c_str() );
 	
 	// ------------------------------------------------------------------------------------
 	int *idxN = new int[lp->getNumCols()];
@@ -2876,71 +2877,21 @@ int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA
 	// FUNÇÃO OBJETIVO SOMENTE COM AS VARIAVEIS DE ABERTURA COM COMPARTILHAMENTO
 	chgObjMinTurmas();
 		
-	// ------------------------------------------------------------------------------------
-				
-	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);				
+	// ------------------------------------------------------------------------------------				
+	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
 	lp->updateLP();
 
-	if ( CARREGA_SOL_PARCIAL )
-	{
-		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_TURMAS_COMPART, xS, 0 );
-		if ( !statusReadBin )
-		{
-			CARREGA_SOL_PARCIAL=false;
-		}
-		else{
-			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_TURMAS_COMPART, xS, 0 );
-		}
-	}
-	if ( !CARREGA_SOL_PARCIAL )
-	{
-		// GENERATES SOLUTION 		 
-		
-		bool polishing = true;
-		if ( polishing )
-		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
-			polishing = pol->polish(xS, MIPUnico::timeLimitMinTurmas, 90, MIPUnico::timeLimitMinTurmasSemMelhora);
-			delete pol;
-		}
-		if (!polishing)
-		{
-			lp->setNumIntSols(100000000);
-			lp->setTimeLimit(MIPUnico::timeLimitMinTurmas);
-			lp->setPreSolveIntensity(OPT_LEVEL2);
-			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
-			lp->setMIPEmphasis(1);
-			lp->setSymetry(-1);
-			lp->setCuts(2);
-			lp->setHeurFrequency(0.8);
-
-			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-			cb_data.timeLimit = MIPUnico::timeLimitMinTurmasSemMelhora;
-			cb_data.gapMax = 40;
-			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-			#endif
-			
-			optimize();	
-			getXSol(xS);
-		}
-
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_TURMAS_COMPART, xS, 0 );
-	}      
-	
-	fflush(NULL);
+	optimizeMinTurmas(campusId, prioridade, r, CARREGA_SOL_PARCIAL, xS);
 		
 	// ------------------------------------------------------------------------------------
 	// Volta com a função objetivo original	
 	lp->chgObj(lp->getNumCols(),idxN,objN);
-
 	lp->updateLP();
 	
 	// ------------------------------------------------------------------------------------
 	// Copia solução
 	bool cpyStatus = lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
-	std::cout << "\ncopyMIPStartSol = " << cpyStatus;
- 
+	std::cout << "\ncopyMIPStartSol = " << cpyStatus; 
 	lp->updateLP();
 
 	delete[] idxN;
@@ -3031,6 +2982,8 @@ int MIPUnico::optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARR
 	}      
 	
 	fflush(0);
+
+	return 1;
 }
 
 bool MIPUnico::fixaSolMinTurmasNovo(double* const xS)
@@ -3135,24 +3088,24 @@ int MIPUnico::solveMinDeslocProf( int campusId, int prioridade, int r, bool& CAR
 	printLog( ss.str() );
 	std::cout << ss.str(); fflush(NULL);
 			
-	// -------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------
 	// Salvando função objetivo original
 	double *objN = new double[lp->getNumCols()];
 	lp->getObj(0,lp->getNumCols()-1,objN);
 		
-	// -------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------
 	// Lp name
     char lpName[1024];
     strcpy( lpName, getTaticoLpFileName( campusId, prioridade, r ).c_str() );
 	
-	// -------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------
 	int *idxN = new int[lp->getNumCols()];	
 	getIdxN(idxN);
 
 	// FUNÇÃO OBJETIVO SOMENTE COM AS VARIAVEIS DE DESLOC DE PROFS
 	chgObjMinDeslocProf();
 		
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------
 			
 	std::string lpName2;
 	lpName2 += "minDeslocProf_";
@@ -3160,55 +3113,12 @@ int MIPUnico::solveMinDeslocProf( int campusId, int prioridade, int r, bool& CAR
 
 	if (CentroDados::getPrintLogs())
 		lp->writeProbLP( lpName2.c_str() );
+	// ------------------------------------------------------------------------------------
 	
 	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);				
 	lp->updateLP();
 
-	if ( CARREGA_SOL_PARCIAL )
-	{
-		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
-		if ( !statusReadBin )
-		{
-			CARREGA_SOL_PARCIAL=false;
-		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
-	}
-	if ( !CARREGA_SOL_PARCIAL )
-	{		
-		bool polishing = true;
-		if ( polishing )
-		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
-			polishing = pol->polish(xS, MIPUnico::timeLimitMinDeslocProf_, 90, MIPUnico::timeLimitMinDeslocProfSemMelhora_);
-			delete pol;			
-		}
-		if (!polishing)
-		{
-			lp->setNumIntSols(100000000);
-			lp->setTimeLimit(MIPUnico::timeLimitMinDeslocProf_);
-			lp->setPreSolveIntensity(OPT_LEVEL2);
-			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
-			lp->setMIPEmphasis(1);
-			lp->setSymetry(-1);
-			lp->setCuts(2);
-			lp->setHeurFrequency(0.8);
-
-			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-			cb_data.timeLimit = MIPUnico::timeLimitMinDeslocProfSemMelhora_;
-			cb_data.gapMax = 40;
-			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-			#endif
-						
-			optimize();	
-			getXSol(xS);
-		}
-		
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
-	}      
-	
-	fflush(NULL);
-		
+	optimizeMinDeslocProf(campusId, prioridade, r, CARREGA_SOL_PARCIAL, xS);	
 
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA
@@ -3261,6 +3171,10 @@ bool MIPUnico::chgObjMinDeslocProf()
 		{
 			coef = 0.0001 * vit->first.getDisciplina()->getTotalCreditos();
 		}
+		else if ( v.getType() == VariableMIPUnico::V_PROF_UNID )
+		{
+			coef = 10;
+		}
 
 		idxs[nBds] = vit->second;
 		vals[nBds] = coef;
@@ -3276,22 +3190,78 @@ bool MIPUnico::chgObjMinDeslocProf()
 	return chged;
 }
 
+int MIPUnico::optimizeMinDeslocProf(int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS)
+{
+	if ( CARREGA_SOL_PARCIAL )
+	{
+		// procura e carrega solucao parcial
+		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
+		if ( !statusReadBin )
+		{
+			CARREGA_SOL_PARCIAL=false;
+		}
+		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
+	}
+	if ( !CARREGA_SOL_PARCIAL )
+	{		
+		bool polishing = true;
+		if ( polishing )
+		{  		
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
+			polishing = pol->polish(xS, MIPUnico::timeLimitMinDeslocProf_, 90, MIPUnico::timeLimitMinDeslocProfSemMelhora_);
+			delete pol;			
+		}
+		if (!polishing)
+		{
+			lp->setNumIntSols(100000000);
+			lp->setTimeLimit(MIPUnico::timeLimitMinDeslocProf_);
+			lp->setPreSolveIntensity(OPT_LEVEL2);
+			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
+			lp->setMIPEmphasis(1);
+			lp->setSymetry(-1);
+			lp->setCuts(2);
+			lp->setHeurFrequency(0.8);
+
+			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+			cb_data.timeLimit = MIPUnico::timeLimitMinDeslocProfSemMelhora_;
+			cb_data.gapMax = 40;
+			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+			#endif
+						
+			optimize();	
+			getXSol(xS);
+		}
+		
+		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
+	}
+	
+	fflush(0);
+	return 1;
+}
+
 bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
 {
 	bool chged = true;
-
+	
+	map<Professor*, std::set< pair<int,double> >> solProfDiaUnidUsada;
 	map<Professor*, map<int, map<VariableMIPUnico, pair<int,double>>>> solProfDiaDeslocUsado;
 	auto vit = vHashTatico.begin();
 	for ( ; vit != vHashTatico.end(); vit++ )
 	{
 		VariableMIPUnico v = vit->first;
 
-		if ( v.getType() != VariableMIPUnico::V_PROF_DESLOC ) continue;
-		
+		if ( v.getType() == VariableMIPUnico::V_PROF_DESLOC )		
 		if ( !v.getProfessor()->eVirtual() )
 		{
 			solProfDiaDeslocUsado[v.getProfessor()][v.getDia()][v]
 				= make_pair<int,double>(vit->second, xS[vit->second]);
+		}
+
+		if ( v.getType() == VariableMIPUnico::V_PROF_UNID )
+		if ( !v.getProfessor()->eVirtual() )
+		{
+			double value = (int) (xS[vit->second] + 0.5);
+			solProfDiaUnidUsada[v.getProfessor()].insert( make_pair<int,double>(vit->second, value) );
 		}
 	}
 
@@ -3335,7 +3305,6 @@ bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
 			row.setRhs(sumdesloc);
 
 			chged &= lp->addRow(row);
-			lp->updateLP();
 		}
 	}
 
@@ -3381,8 +3350,37 @@ bool MIPUnico::fixaSolMinDeslocProf(double* const xS)
 
 		row.setRhs(nrDeslocLongo);
 		chged &= lp->addRow(row);
-		lp->updateLP();
 	}
+
+	// Todas variaveis uu_{p,t,u)
+	for (auto itProf = solProfDiaUnidUsada.cbegin();
+		itProf != solProfDiaUnidUsada.cend(); itProf++)
+	{
+		int pid = itProf->first->getId();
+
+		stringstream ssnome;
+		ssnome << "C_FIXA_SOL_MAX_UNID_DIA_SEMANA_PROF_(Prof" << pid << ")";
+		char nome[100];
+		sprintf( nome, "%s", ssnome.str().c_str() ); 
+
+		int nrUnidDia = 0;
+		OPT_ROW row( 30, OPT_ROW::LESS, nrUnidDia, nome );
+
+		auto itVar = itProf->second.cbegin();
+		for (; itVar != itProf->second.cend(); itVar++)
+		{		
+			int col = itVar->first;
+			double value = itVar->second;
+			nrUnidDia += value;
+
+			row.insert(col, 1);
+		}
+
+		row.setRhs(nrUnidDia);
+		chged &= lp->addRow(row);
+	}
+
+	lp->updateLP();
 
 	return chged;
 }
@@ -7106,8 +7104,14 @@ int MIPUnico::criaRestricoesTatico( int campusId, int prioridade, int r )
 	CPUTimer timer;
 	double dif = 0.0;
 	int numRestAnterior = 0;
-	
-	
+		
+	timer.start();
+	restricoes += criaRestricaoMax1DeslocProfessor_v2();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	std::cout << "numRest criaRestricaoMax1DeslocProfessor: " << (restricoes - numRestAnterior) <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+
 	timer.start();
 	restricoes += criaRestricaoProfDescansoMinimo( campusId );
 	timer.stop();
@@ -7350,13 +7354,6 @@ int MIPUnico::criaRestricoesTatico( int campusId, int prioridade, int r )
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	std::cout << "numRest criaRestricaoTempoDeslocProfessor: " << (restricoes - numRestAnterior) <<" "<<dif <<" sec" << std::endl;
-	numRestAnterior = restricoes;
-
-	timer.start();
-	restricoes += criaRestricaoMax1DeslocProfessor();
-	timer.stop();
-	dif = timer.getCronoCurrSecs();
-	std::cout << "numRest criaRestricaoMax1DeslocProfessor: " << (restricoes - numRestAnterior) <<" "<<dif <<" sec" << std::endl;
 	numRestAnterior = restricoes;
 
 	timer.start();
@@ -10201,8 +10198,6 @@ int MIPUnico::criaRestricaoTaticoAlocMinAluno( int campusId )
 			OPT_ROW row( nnz, OPT_ROW::GREATER, init_rhs , name );
 		
 			row.insert( vit->second, coef );
-			cHashTatico[ c ] = lp->getNumRows();
-			
 			if( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO ) // fd_{d,a}
 			{
 				int nCreds = v.getDisciplina()->getTotalCreditos();				
@@ -10212,6 +10207,8 @@ int MIPUnico::criaRestricaoTaticoAlocMinAluno( int campusId )
 				else
 					itMap->second += nCreds;
 			}
+			
+			cHashTatico[ c ] = lp->getNumRows();
 			
 			lp->addRow( row );
 			restricoes++;
@@ -11002,8 +10999,7 @@ int MIPUnico::criaRestricaoProfTurma()
 	VariableMIPUnico v;	
     ConstraintMIPUnico c;
     ConstraintMIPUnicoHash::iterator cit;
-
-
+	
 	// Percorrendo variaveis k
 	// Unidade
 	auto itVarsUnid = vars_prof_aula1.begin();
@@ -11113,7 +11109,7 @@ int MIPUnico::criaRestricaoProfTurma()
 			}
 		}
 	}
-	
+
 	return restricoes;
 }
 
@@ -11602,6 +11598,7 @@ int MIPUnico::criarRestricaoProfHiUB_( Professor* const prof, const int dia, con
 		// Insere var hip
 		rowHi.insert(colHi,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHi);
 		numRestr++;
 	}
@@ -11658,6 +11655,7 @@ int MIPUnico::criarRestricaoProfHiLB_( Professor* const prof, const int dia, con
 		// Insere var hfi
 		rowHi.insert(colHi,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHi);
 		numRestr++;
 	}
@@ -11708,6 +11706,7 @@ int MIPUnico::criarRestricaoProfHfLB_( Professor* const prof, const int dia, con
 		// Insere var hfp
 		rowHf.insert(colHf,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHf);
 		numRestr++;
 	}
@@ -11758,6 +11757,7 @@ int MIPUnico::criarRestricaoProfHfUB_( Professor* const prof, const int dia, con
 		// Insere var hfp
 		rowHf.insert(colHf,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHf);
 		numRestr++;
 	}
@@ -11834,6 +11834,7 @@ int MIPUnico::criarRestricaoProfGapMTN_( Professor* const prof, const int dia, c
 		}
 	}
 
+	cHashTatico[ cons ] = lp->getNumRows();
 	lp->addRow(row);
 	numRestr++;
 
@@ -12198,6 +12199,7 @@ int MIPUnico::criarRestricaoAlunoHiUB_( Aluno* const aluno, const int dia,
 		// Insere var hia
 		rowHi.insert(colHi,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHi);
 		numRestr++;
 	}
@@ -12253,6 +12255,7 @@ int MIPUnico::criarRestricaoAlunoHiLB_( Aluno* const aluno, const int dia,
 		// Insere var hia
 		rowHi.insert(colHi,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHi);
 		numRestr++;
 	}
@@ -12302,6 +12305,7 @@ int MIPUnico::criarRestricaoAlunoHfLB_( Aluno* const aluno, const int dia,
 		// Insere var hfa
 		rowHf.insert(colHf,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHf);
 		numRestr++;
 	}
@@ -12351,6 +12355,7 @@ int MIPUnico::criarRestricaoAlunoHfUB_( Aluno* const aluno, const int dia,
 		// Insere var hfa
 		rowHf.insert(colHf,1.0);
 					
+		cHashTatico[ cons ] = lp->getNumRows();
 		lp->addRow(rowHf);
 		numRestr++;
 	}
@@ -12419,6 +12424,7 @@ int MIPUnico::criarRestricaoAlunoGap_( Aluno* const aluno, const int dia,
 		}
 	}
 
+	cHashTatico[ cons ] = lp->getNumRows();
 	lp->addRow(row);
 	numRestr++;
 
@@ -12595,11 +12601,9 @@ int MIPUnico::criarRestricaoAlunoDiaImpedeGap_( Aluno* const aluno, const int di
 		
 		// -----------------
 		// Insere restrição
-		bool added=lp->addRow(row);
-		if (added){
-			cHashTatico[ cons ] = lp->getNumRows();
-			constr++;
-		}
+		cHashTatico[ cons ] = lp->getNumRows();
+		lp->addRow(row);
+		constr++;
 	}
 
 	return constr;
@@ -12674,11 +12678,9 @@ int MIPUnico::criarRestricaoAlunoDiaInicio_( Aluno* const aluno, const int dia,
 			}
 		}
 
-		bool added=lp->addRow(row);
-		if (added){
-			cHashTatico[ cons ] = lp->getNumRows();
-			constr++;
-		}
+		cHashTatico[ cons ] = lp->getNumRows();
+		lp->addRow(row);
+		constr++;
 	}
 
 	return constr;
@@ -12749,11 +12751,9 @@ int MIPUnico::criarRestricaoAlunoDiaFim_( Aluno* const aluno, const int dia,
 			}
 		}
 
-		bool added=lp->addRow(row);
-		if (added){
-			cHashTatico[ cons ] = lp->getNumRows();
-			constr++;
-		}
+		cHashTatico[ cons ] = lp->getNumRows();
+		lp->addRow(row);
+		constr++;
 	}
 
 	return constr;
@@ -12792,11 +12792,9 @@ int MIPUnico::criarRestricaoAlunoDiaInicioUnico_( Aluno* const aluno, const int 
 		row.insert(colInicio,1.0);				
 	}
 
-	bool added=lp->addRow(row);
-	if (added){
-		cHashTatico[ cons ] = lp->getNumRows();
-		constr++;
-	}
+	cHashTatico[ cons ] = lp->getNumRows();
+	lp->addRow(row);
+	constr++;
 
 	return constr;
 }
@@ -12833,11 +12831,9 @@ int MIPUnico::criarRestricaoAlunoDiaFimUnico_( Aluno* const aluno, const int dia
 		row.insert(colFim,1.0);				
 	}
 
-	bool added=lp->addRow(row);
-	if (added){
-		cHashTatico[ cons ] = lp->getNumRows();
-		constr++;
-	}
+	cHashTatico[ cons ] = lp->getNumRows();
+	lp->addRow(row);
+	constr++;
 
 	return constr;
 }
@@ -12898,8 +12894,8 @@ int MIPUnico::criaRestricaoTaticoDiaUsadoPeloAluno()
 			OPT_ROW row( nnz, OPT_ROW::GREATER, 0.0, name );
 
 			row.insert( vit->second, coef );
-			cHashTatico[ c ] = lp->getNumRows();
 
+			cHashTatico[ c ] = lp->getNumRows();
 			lp->addRow( row );
 			restricoes++;
 		}
@@ -13150,9 +13146,9 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 								{
 									row.insert( *itVar, 1.0 );
 								}
-								lp->addRow( row );
-				  
+
 								cHashTatico[ c ] = lp->getNumRows();
+								lp->addRow( row ); 
 								restricoes++;								
 							}
 							else CentroDados::printError("MIPUnico::criaRestricaoTempoDeslocProfessor()","Restricao ja existe!");
@@ -13173,14 +13169,17 @@ int MIPUnico::criaRestricaoTempoDeslocProfessor()
 
 	tal que u1!=u2 e u3!=u2; h1<h2 e h3>h2.
 */
-int MIPUnico::criaRestricaoMax1DeslocProfessor()
+
+int MIPUnico::criaRestricaoMax1DeslocProfessor_v2()
 {
    int restricoes = 0;
    char name[ 200 ];
 
    if (!problemData->parametros->minimizar_desloc_prof)
 	   return restricoes;
-   
+						
+   std::map<ConstraintMIPUnico, std::set<int> > mapConstrVars;
+
    for( auto itProf = vars_prof_aula3.cbegin(); itProf != vars_prof_aula3.cend(); itProf++ )
    {
 	   Professor * professor = itProf->first;
@@ -13222,7 +13221,7 @@ int MIPUnico::criaRestricaoMax1DeslocProfessor()
 									campusOrig, campusAtual, unidadeOrig, unidadeAtual );
 							if (tempo_minimo < MIPUnico::maxTempoDeslocCurto_) continue; // unidades proximas
 						}
-
+						
 						// Horario na unidade atual
 						for( auto itHorAtual = itUnidAtual->second.cbegin(); itHorAtual != itUnidAtual->second.cend(); itHorAtual++ )
 						{			
@@ -13264,7 +13263,7 @@ int MIPUnico::criaRestricaoMax1DeslocProfessor()
 								for( auto itHorDest = mapHorsDest.cbegin(); itHorDest != mapHorsDest.cend(); itHorDest++ )
 								{							
 									HorarioAula* hDest = itHorDest->first;
-
+																		
 									ConstraintMIPUnico c;
 									c.reset();
 									c.setType( ConstraintMIPUnico::C_NR_DESLOC_PROF );
@@ -13276,47 +13275,65 @@ int MIPUnico::criaRestricaoMax1DeslocProfessor()
 									c.setHorarioAulaOrig(hOrig);
 									c.setHorarioAulaAtual(hAtual);		
 									c.setHorarioAulaDest(hDest);
-
-									auto cit = cHashTatico.find(c);
-									if ( cit == cHashTatico.end() )
-									{				
-										sprintf( name, "%s", c.toString(etapa).c_str() );
-
-										int nnz = itHorOrig->second.size() + itHorDest->second.size();
-										OPT_ROW row( nnz, OPT_ROW::LESS, 2.0, name );
-
-										for( auto itVarAtual = itHorAtual->second.cbegin(); itVarAtual != itHorAtual->second.cend(); itVarAtual++ )
-										{
-											row.insert( itVarAtual->first, 1.0 );
-										}
-										for( auto itVarOrig = itHorOrig->second.cbegin(); itVarOrig != itHorOrig->second.cend(); itVarOrig++ )
-										{
-											row.insert( itVarOrig->first, 1.0 );
-										}
-										for( auto itVarDest = itHorDest->second.cbegin(); itVarDest != itHorDest->second.cend(); itVarDest++ )
-										{	
-											row.insert( itVarDest->first, 1.0 );
-										}
-										lp->addRow( row );
-				  
-										cHashTatico[ c ] = lp->getNumRows();
-										restricoes++;								
-									}
-									else
+									
+									
+									// -----------------------------------------------
+									// Teste									
+									for( auto itVarAtual = itHorAtual->second.cbegin(); itVarAtual != itHorAtual->second.cend(); itVarAtual++ )
 									{
-										for( auto itVarAtual = itHorAtual->second.cbegin(); itVarAtual != itHorAtual->second.cend(); itVarAtual++ )
-										{
-											lp->chgCoef( cit->second, itVarAtual->first, 1.0 );
-										}
-										for( auto itVarOrig = itHorOrig->second.cbegin(); itVarOrig != itHorOrig->second.cend(); itVarOrig++ )
-										{
-											lp->chgCoef( cit->second, itVarOrig->first, 1.0 );
-										}
-										for( auto itVarDest = itHorDest->second.cbegin(); itVarDest != itHorDest->second.cend(); itVarDest++ )
-										{	
-											lp->chgCoef( cit->second, itVarDest->first, 1.0 );
-										}				
+										mapConstrVars[c].insert(itVarAtual->first);
 									}
+									for( auto itVarOrig = itHorOrig->second.cbegin(); itVarOrig != itHorOrig->second.cend(); itVarOrig++ )
+									{
+										mapConstrVars[c].insert(itVarOrig->first);
+									}
+									for( auto itVarDest = itHorDest->second.cbegin(); itVarDest != itHorDest->second.cend(); itVarDest++ )
+									{	
+										mapConstrVars[c].insert(itVarDest->first);
+									}
+									// -----------------------------------------------
+
+
+									//auto cit = cHashTatico.find(c);
+									//if ( cit == cHashTatico.end() )
+									//{				
+									//	sprintf( name, "%s", c.toString(etapa).c_str() );
+
+									//	int nnz = itHorOrig->second.size() + itHorDest->second.size();
+									//	OPT_ROW row( nnz, OPT_ROW::LESS, 2.0, name );
+
+									//	for( auto itVarAtual = itHorAtual->second.cbegin(); itVarAtual != itHorAtual->second.cend(); itVarAtual++ )
+									//	{
+									//		row.insert( itVarAtual->first, 1.0 );
+									//	}
+									//	for( auto itVarOrig = itHorOrig->second.cbegin(); itVarOrig != itHorOrig->second.cend(); itVarOrig++ )
+									//	{
+									//		row.insert( itVarOrig->first, 1.0 );
+									//	}
+									//	for( auto itVarDest = itHorDest->second.cbegin(); itVarDest != itHorDest->second.cend(); itVarDest++ )
+									//	{	
+									//		row.insert( itVarDest->first, 1.0 );
+									//	}
+									//	lp->addRow( row );
+				  
+									//	cHashTatico[ c ] = lp->getNumRows();
+									//	restricoes++;								
+									//}
+									//else
+									//{
+									//	for( auto itVarAtual = itHorAtual->second.cbegin(); itVarAtual != itHorAtual->second.cend(); itVarAtual++ )
+									//	{
+									//		lp->chgCoef( cit->second, itVarAtual->first, 1.0 );
+									//	}
+									//	for( auto itVarOrig = itHorOrig->second.cbegin(); itVarOrig != itHorOrig->second.cend(); itVarOrig++ )
+									//	{
+									//		lp->chgCoef( cit->second, itVarOrig->first, 1.0 );
+									//	}
+									//	for( auto itVarDest = itHorDest->second.cbegin(); itVarDest != itHorDest->second.cend(); itVarDest++ )
+									//	{	
+									//		lp->chgCoef( cit->second, itVarDest->first, 1.0 );
+									//	}				
+									//}
 								}
 							}
 						}
@@ -13326,8 +13343,29 @@ int MIPUnico::criaRestricaoMax1DeslocProfessor()
 	   }
    }
    
+
+   for (auto it = mapConstrVars.cbegin(); it != mapConstrVars.cend(); it++)
+   {
+	    ConstraintMIPUnico c = it->first;
+
+  		sprintf( name, "%s", c.toString(etapa).c_str() );
+
+		int nnz = it->second.size();
+		OPT_ROW row( nnz, OPT_ROW::LESS, 2.0, name );
+
+		for( auto itVarAtual = it->second.cbegin(); itVarAtual != it->second.cend(); itVarAtual++ )
+		{
+			row.insert( *itVarAtual, 1.0 );
+		}
+
+		cHashTatico[ c ] = lp->getNumRows();
+		lp->addRow( row );
+		restricoes++;
+   }
+
    return restricoes;
 }
+
 
 /*
 	Para todo prof p, dia t, unidade u1, unidade u2, tal que u1!=u2
@@ -13406,9 +13444,9 @@ int MIPUnico::criaRestricaoMinDeslocProfessor()
 						int colDesloc = finderDeslocU2->second;				
 						row.insert( colDesloc, -1.0 );
 								
-						lp->addRow( row );
-				  
+
 						cHashTatico[ c ] = lp->getNumRows();
+						lp->addRow( row );
 						restricoes++;								
 					}
 				}
@@ -13481,9 +13519,9 @@ int MIPUnico::criaRestricaoMaxDeslocLongoProfessor()
 						row.insert( colDesloc, 1.0 );					
 					}
 				}
-
-				lp->addRow( row );				  
+		  
 				cHashTatico[ c ] = lp->getNumRows();
+				lp->addRow( row );		
 				restricoes++;
 			}
 	   }
@@ -13555,8 +13593,8 @@ int MIPUnico::criaRestricaoMaxDeslocLongoSemanaProfessor()
 				}
 			}
 
-			lp->addRow( row );				  
 			cHashTatico[ c ] = lp->getNumRows();
+			lp->addRow( row );				  
 			restricoes++;
 	   }
    }
@@ -13619,8 +13657,8 @@ int MIPUnico::criaRestricaoUnidUsadaProf()
 					}
 				}
 
-				lp->addRow(row);
 				cHashTatico[ c ] = lp->getNumRows();
+				lp->addRow(row);
 				restricoes++;
 			}
 		}
@@ -13666,8 +13704,8 @@ int MIPUnico::criaRestricaoNrMaxUnidDiaProf()
 				row.insert(itUnid->second,1.0);
 			}
 
-			lp->addRow(row);
 			cHashTatico[ c ] = lp->getNumRows();
+			lp->addRow(row);
 			restricoes++;
 		}
 	}
@@ -13990,15 +14028,9 @@ int MIPUnico::criarRestricaoHorInicialDiaAluno_MarretaCaso1e2()
 			OPT_ROW row( 1, OPT_ROW::EQUAL, 1.0, name );
 
 			row.insert(colInicio,1);
+			
+			lp->addRow( row );
 
-			bool added=lp->addRow( row );
-			if (!added)
-			{
-				stringstream ss;
-				ss << "Restricao nao adicionada! " << row.getName();
-				CentroDados::printError("int MIPUnico::criarRestricaoHorInicialDiaAluno_MarretaCaso1e2()", ss.str());
-				continue;
-			}
 			restricoes++;
 		}
 	}
@@ -14062,14 +14094,8 @@ int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1()
 
 		if (row.getnnz() == 0) continue;
 
-		bool added=lp->addRow( row );
-		if (!added)
-		{
-			stringstream ss;
-			ss << "Restricao nao adicionada! " << row.getName();
-			CentroDados::printError("int MIPUnico::criarRestricaoHorFinalDiaAluno_MarretaCaso1()", ss.str());
-			continue;
-		}
+		lp->addRow( row );
+		
 		restricoes++;
 	}
 	return restricoes;
@@ -14156,14 +14182,8 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso1e2()
 			// Insere restrição
 			if ( row.getnnz() )
 			{
-				bool added=lp->addRow( row );
-				if (!added)
-				{
-					stringstream ss;
-					ss << "Restricao nao adicionada! " << row.getName();
-					CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso1e2()", ss.str());
-					continue;
-				}
+				lp->addRow( row );
+				
 				restricoes++;
 			}
 		}
@@ -14315,14 +14335,8 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()
 			// Insere restrição
 			if ( row.getnnz() )
 			{
-				bool added=lp->addRow( row );
-				if (!added)
-				{
-					stringstream ss;
-					ss << "Restricao nao adicionada! " << row.getName();
-					CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()", ss.str());
-					continue;
-				}
+				lp->addRow( row );
+				
 				restricoes++;
 			}
 		}
@@ -14412,14 +14426,8 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_TardeUsada()
 			// Insere restrição
 			if ( row.getnnz() )
 			{
-				bool added=lp->addRow( row );
-				if (!added)
-				{
-					stringstream ss;
-					ss << "Restricao nao adicionada! " << row.getName();
-					CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_1()", ss.str());
-					continue;
-				}
+				lp->addRow( row );
+				
 				restricoes++;
 			}
 		}
@@ -14474,14 +14482,8 @@ int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_UnicaTarde()
 		// Insere restrição
 		if ( row.getnnz() )
 		{
-			bool added=lp->addRow( row );
-			if (!added)
-			{
-				stringstream ss;
-				ss << "Restricao nao adicionada! " << row.getName();
-				CentroDados::printError("int MIPUnico::criarRestricaoMinCredsDiaAluno_MarretaCaso2_2()", ss.str());
-				continue;
-			}
+			lp->addRow( row );
+			
 			restricoes++;
 		}
 	}
