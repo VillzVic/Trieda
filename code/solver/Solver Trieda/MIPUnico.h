@@ -226,6 +226,7 @@ private:
 	int criaRestricaoNrMaxUnidDiaProf();
 	int criaRestricaoProfDiaFaseUsada();
 	int criaRestricaoProfDiaUsado();
+	int criaRestricaoProfBuracoEntreFases();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 	int criarRestricaoMinCredsDiaAluno_Marreta();
@@ -347,6 +348,7 @@ private:
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r );	
 	std::string getEtapaName(int campusId, int prioridade, int r);
 	void writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
+	void writeSolTxtCode( int campusId, int prioridade, int r, int type, double *xSol, int fase );
    void readSolTxtAux( char *fileName, double *xSol );
 	int writeGapTxt( int campusId, int prioridade, int r, int type, double gap );
 
@@ -374,12 +376,17 @@ private:
 	int solveMIPUnico_duplo(int campusId, int prioridade, int r);
 	int solveMIPUnico_v2(int campusId, int prioridade, int r);
 	int solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
-	int solveMIPUnicoEtapaReal(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
-	int solveMIPUnicoEtapaVirtual(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaReal(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaReal_2(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaReal_ProfPrior(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapasQualidadeReal(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaVirtual(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 
 	void fixaSolucaoReal();
 	void fixaVariaveisPVZero(double * const xS);
 	void liberaVariaveisPV(double * const xS);
+	void fixaVariaveisProfNaoImportanteZero(double * const xS);
+	void liberaVariaveisProfNaoImportanteZero(double * const xS);
 
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	void zeraObjSolucao(int &nBdsObj, int* idxN);
@@ -403,8 +410,17 @@ private:
 	bool fixaSolMinProfVirt(double* const xS);
 	bool fixaSolMinProfReal(double* const xS);
 	bool fixaSolMinTurmas(double* const xS);
-	bool fixaSolMinTurmasNovo(double* const xS);
+	bool fixaSolMinTurmasAbordPvFinal(double* const xS);
 	bool fixaSolMinDeslocProf(double* const xS);
+	void mapSolMinDeslocProf(double* const xS,
+		map<Professor*, map<int, map<VariableMIPUnico, pair<int,double>>>> &solProfDiaDeslocUsado,
+		map<Professor*, std::set< pair<int,double> >> &solProfDiaUnidUsada);
+	bool fixaSolMinSumDeslocProf(
+		map<Professor*, map<int, map<VariableMIPUnico, pair<int,double>>>> const &solProfDiaDeslocUsado);
+	bool fixaSolMinDiaDeslocProf(
+		map<Professor*, map<int, map<VariableMIPUnico, pair<int,double>>>> const &solProfDiaDeslocUsado);
+	bool fixaSolMinUnidDiaProf(
+		map<Professor*, std::set< pair<int,double> >> const &solProfDiaUnidUsada);
 	bool fixaSolMaxFasesDoDiaProf(double* const xS);
 	bool fixaSolMaxDiasProf(double* const xS);
 	bool fixaSolMinGapProf(double* const xS);
@@ -420,6 +436,7 @@ private:
 	void printNaoAtendimentos(double* const xS);
 	void printAtendsVirtuais(double* const xS);
 
+	bool priorProf(Professor* const professor);
 	void getXSol(double *xS);
 	bool optimize();
 	bool isOptimized(OPTSTAT status);
@@ -488,7 +505,12 @@ private:
 	static const int maxDeslocUnidLongeSemana_;	
 	static const int maxTempoDeslocCurto_;
 	static const bool minimizarProfFaseDoDiaUsada_;
-	static const bool minimizarProfDiaUsado_;	
+	static const bool minimizarProfDiaUsado_;
+	static const bool priorProfImportante_;
+	static int priorProfLevel_;
+	static const bool priorProfImportante_v2_;
+	static const bool minimizarGapProfEntreFases_;
+	static const int MaxGapEntreFase_;
 
 	// Alunos
 	static const double pesoFD;

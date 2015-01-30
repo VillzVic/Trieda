@@ -70,7 +70,7 @@ public:
    HorarioAula* getUltimoHorarioDisponivelDia( int dia );
 
    int getNroCredsCadastroDisc() const { return nroCredsCadastroDisc_; }
-   
+   int getNrCredDispFaseDia(int dia, int fase) const;
    int getMaxCredsDia(int dia) const;
    
    bool possuiMagisterioEm( Disciplina* disciplina );

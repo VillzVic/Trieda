@@ -229,6 +229,7 @@ public:
 
    // Variable name
    std::string toString() const;
+   std::string toCodeString() const;
 
 private:
    VariableType type;

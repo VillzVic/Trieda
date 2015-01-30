@@ -371,7 +371,7 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_PROF_DIA_FASE_USADA"; break;
 	  case C_PROF_DIA_USADO:
         ss << "C_PROF_DIA_USADO"; break;
-		
+				
       case C_ALUNO_HOR_INIC_LB:
         ss << "C_ALUNO_HOR_INIC_LB"; break;
       case C_ALUNO_HOR_INIC_UB:
@@ -399,7 +399,8 @@ std::string ConstraintMIPUnico::toString( int etapa )
         ss << "C_MAX_DESLOC_LONGO_PROF"; break;
 	  case C_MAX_DESLOC_LONGO_SEMANA_PROF:
         ss << "C_MAX_DESLOC_LONGO_SEMANA_PROF"; break;
-		
+	  case C_PROF_GAP_ENTRE_FASE:
+        ss << "C_PROF_GAP_ENTRE_FASE"; break;		
 
 	  case C_CARGA_HOR_ANTERIOR:
         ss << "C_CARGA_HOR_ANTERIOR"; break;	

@@ -104,6 +104,8 @@ public:
 	// fase do dia (1=Manha, 2=Tarde, 3=Noite)
 	static int getFaseDoDia(DateTime dt);
 
+	static bool stringContem(std::string str, std::string contem);
+
 private:
 
 	// Dados do Problema: acessiveis de qualquer lugar

@@ -1,4 +1,5 @@
 #include "Professor.h"
+#include "CentroDados.h"
 
 Professor::Professor( bool eVirtual )
 	: is_virtual(eVirtual), nroCredsCadastroDisc_(0)
@@ -314,6 +315,22 @@ bool Professor::possuiHorariosNoDia( HorarioAula *const hi, HorarioAula *const h
 	 }
 
 	 return false;
+}
+
+int Professor::getNrCredDispFaseDia(int dia, int fase) const
+{
+	int n = 0;
+	auto finderDia = mapDiaDtiDtf.find(dia);
+	if (finderDia != mapDiaDtiDtf.end())
+	{
+		auto itDt = finderDia->second.cbegin();
+		for (; itDt != finderDia->second.cend(); itDt++)
+		{
+			if (fase == CentroDados::getFaseDoDia(itDt->first))
+				n++;
+		}
+	}
+	return n;
 }
 
 int Professor::getMaxCredsDia(int dia) const

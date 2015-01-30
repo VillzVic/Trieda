@@ -1227,10 +1227,10 @@ void Polish::increaseTime()
 	if (allFree())
 		timeIter_ = getLeftTime();		// next iteration will be the last one
 	else if (perc_ > 0 && perc_ < 30){
-		if(timeIter_ > 350) timeIter_ = 350 + (100-getPercUnidCurrentFixed());
+		if(timeIter_ > 350) timeIter_ = 350 + (100-getPercUnidCurrentFixed())*0.5;
 	}
 	else if (perc_ < 40){
-		if(timeIter_ > 250) timeIter_ = 250 + (100-getPercUnidCurrentFixed())*0.6;
+		if(timeIter_ > 250) timeIter_ = 250;
 	}
 	else if (perc_ >= 40){
 		if(timeIter_ > 180) timeIter_ = 180;
