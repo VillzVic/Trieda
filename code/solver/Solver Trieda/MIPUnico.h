@@ -227,6 +227,7 @@ private:
 	int criaRestricaoProfDiaFaseUsada();
 	int criaRestricaoProfDiaUsado();
 	int criaRestricaoProfBuracoEntreFases();
+	int criaRestricaoProfMinCredsDiaUsado();
 	int criaRestricaoRedCargaHorAnteriorProfessor();
 
 	int criarRestricaoMinCredsDiaAluno_Marreta();
@@ -266,13 +267,13 @@ private:
 	
 	// vars inteiras que indicam o primeiro hip e o último hfp horário da fase do dia (M/T/N) usados pelo professor
 	// Prof -> Dia -> FaseDoDia -> (col. nr. hip/ col. nr. hfp)
-	unordered_map<Professor*, unordered_map<int, unordered_map<int, pair<int,int>>>> varsProfDiaFaseHiHf;							// hip_{p,t,f} e hfp_{p,t,f}
+	unordered_map<Professor*, map<int, map<int, pair<int,int>>>> varsProfDiaFaseHiHf;							// hip_{p,t,f} e hfp_{p,t,f}
 
 	// variaveis binarias que indicam se o professor usou a fase do dia
 	// Prof -> Dia -> FaseDoDia -> (col. nr)
-	unordered_map<Professor*, unordered_map<int, unordered_map<int, int>>> varsProfDiaFaseUsada;							// ptf_{p,t,f}
+	unordered_map<Professor*, map<int, map<int, int>>> varsProfDiaFaseUsada;									// ptf_{p,t,f}
 	// Prof -> Dia -> (col. nr)
-	unordered_map<Professor*, unordered_map<int, int>> varsProfDiaUsado;													// pt_{p,t}
+	unordered_map<Professor*, map<int, int>> varsProfDiaUsado;													// pt_{p,t}
 
 	// vars inteiras que indicam o primeiro hia e o último hfa horário do dia usados pelo aluno
 	// Aluno -> Dia -> (col. nr. hia/ col. nr. hfa)
@@ -347,10 +348,10 @@ private:
 	int readSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r );	
 	std::string getEtapaName(int campusId, int prioridade, int r);
+	void getPrefixFileName(int type, std::string & prefix);
+	void getSolEtapaFileName(int campusId, int prioridade, int r, int type, std::string & fileName, bool byCode=false);
 	void writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol, int fase );
-	void writeSolTxtCode( int campusId, int prioridade, int r, int type, double *xSol, int fase );
-   void readSolTxtAux( char *fileName, double *xSol );
-	int writeGapTxt( int campusId, int prioridade, int r, int type, double gap );
+	bool getSolFilePt( int campusId, int prioridade, int r, int type, ifstream & fin, bool byCode=false );
 
 	void sincronizaSolucao( int campusAtualId, int prioridade, int r );
 	void addVariaveisTatico();
@@ -387,6 +388,7 @@ private:
 	void liberaVariaveisPV(double * const xS);
 	void fixaVariaveisProfNaoImportanteZero(double * const xS);
 	void liberaVariaveisProfNaoImportanteZero(double * const xS);
+	void fixaVariaveisProfImportanteAtend(double * const xS);
 
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	void zeraObjSolucao(int &nBdsObj, int* idxN);
@@ -511,6 +513,9 @@ private:
 	static const bool priorProfImportante_v2_;
 	static const bool minimizarGapProfEntreFases_;
 	static const int MaxGapEntreFase_;
+	static const int minCredDispFaseMinGapProf_;
+
+	static const bool fixarSolucaoProfPrior1_;
 
 	// Alunos
 	static const double pesoFD;

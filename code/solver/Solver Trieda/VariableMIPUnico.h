@@ -230,6 +230,7 @@ public:
    // Variable name
    std::string toString() const;
    std::string toCodeString() const;
+   std::string getPrefix() const;
 
 private:
    VariableType type;

@@ -1,3 +1,9 @@
+#include <algorithm>
+#include <string>
+#include <iostream>
+#include <cctype>
+#include <locale>
+
 #include "VariableMIPUnico.h"
 #include "HashUtil.h"
 
@@ -221,222 +227,147 @@ bool VariableMIPUnico::operator == ( const VariableMIPUnico & var ) const
 
 std::string VariableMIPUnico::toCodeString() const
 {
-   std::stringstream str( "" );
-   std::string output;
-   
-   switch( type )
-   {
-	 case V_ERROR:
-        str << "?"; break;	
-	 case V_ALUNO_CREDITOS:
-        str << "v"; break;     
-	 case V_CREDITOS:
-        str << "x"; break;     
-	 case V_OFERECIMENTO:
-        str << "o"; break;     
-	 case V_ALOCA_ALUNO_TURMA_DISC:
-        str << "s"; break; 
-     case V_DIAS_CONSECUTIVOS:
-        str << "c"; break;
-     case V_SLACK_DEMANDA_ALUNO:
-        str << "fd"; break;
-	 case V_COMBINACAO_DIVISAO_CREDITO:
-        str << "m"; break;
-     case V_SLACK_COMBINACAO_DIVISAO_CREDITO_M:
-        str << "fkm"; break;
-     case V_SLACK_COMBINACAO_DIVISAO_CREDITO_P:
-        str << "fkp"; break;
-     case V_ABERTURA_COMPATIVEL:
-		str <<"zc"; break;
-  	 case V_TURMA_ATEND_CURSO:
-		str <<"b"; break;			
-  	 case V_ALUNO_DIA:
-		str <<"du"; break;		
-  	 case V_SLACK_ABERT_SEQ_TURMA:
-		str <<"ft"; break;
-  	 case V_SLACK_COMPARTILHAMENTO:
-		str <<"fc"; break;
-  	 case V_SLACK_PRIOR_INF:
-		str <<"fpi"; break;
-  	 case V_SLACK_PRIOR_SUP:
-		str <<"fps"; break;
-	 case V_ABERTURA:
-		str <<"z"; break;
-	 case V_ALUNOS_MESMA_TURMA_PRAT:
-		str <<"ss"; break;
-	 case V_FOLGA_ALUNO_MIN_ATEND1:
-		str <<"fmd1"; break;
-	 case V_FOLGA_ALUNO_MIN_ATEND2:
-		str <<"fmd2"; break;
-	 case V_FOLGA_ALUNO_MIN_ATEND3:
-		str <<"fmd3"; break;
-	 case V_SALA:
-		str <<"u"; break;
-	 case V_PROF_TURMA:
-		str <<"y"; break;
-	 case V_PROF_AULA:
-		str <<"k"; break;
-	 case V_PROF_UNID:
-		str <<"uu"; break;		
-	 case V_PROF_DESLOC:
-		str <<"desloc"; break;		
-    case V_HI_PROFESSORES:
-       str <<"hip"; break;
-    case V_HF_PROFESSORES:
-       str <<"hfp"; break;
-    case V_PROF_FASE_DIA_USADA:
-       str <<"ptf"; break;
-    case V_PROF_DIA_USADO:
-       str <<"pt"; break;	   
-    case V_HI_ALUNOS:
-       str <<"hia"; break;
-    case V_HF_ALUNOS:
-       str <<"hfa"; break;
-    case V_FOLGA_GAP_ALUNOS:
-       str <<"fagap"; break;
-    case V_FOLGA_GAP_PROF:
-       str <<"fpgap"; break;
-    case V_FOLGA_MIN_CRED_DIA_ALUNO:
-       str <<"fcad"; break;
-    case V_F_CARGA_HOR_ANT_PROF:
-       str <<"fch"; break;
-	   	   
-	case V_LONGO_DIA_ALUNO:
-       str <<"l"; break;
-	case V_FOLGA_MIN_CRED_DIA_ALUNO_MARRETA:
-       str <<"fcadm"; break;	   
-	   	      
-	case V_INICIO_ALUNOS:
-       str <<"inicio"; break;	   	      
-	case V_FIM_ALUNOS:
-       str <<"fim"; break;	   
-	   	      
-    default:
-        str << "!";
-   }
+	std::stringstream str;
+	str << getPrefix();
 
    str << "_{";
    
    if ( professor_ )
-   {
-	   str << "_P" << professor_->getNome();
-   }
-   
+	   str << "_P" << professor_->getCpf();
    if ( aluno )
-   {
-	   str << "_A" << aluno->getNomeAluno();
-   }
-   
+	   str << "_A" << aluno->getNomeAluno();   
    if ( i >= 0 )
-   {
       str << "_I" << i;
-   }
-
-   if ( d != nullptr )
-   {
-	   str << "_D" << d->getCodigo();
-   }
-   
-   if ( u != nullptr )
-   {
-	   str << "_U" << u->getCodigo();
-   }
-   
-   if ( u1 != nullptr )
-   {
+   if ( d )
+	   str << "_D" << d->getCodigo();   
+   if ( u )
+	   str << "_U" << u->getCodigo();   
+   if ( u1 )
       str << "_1U" << u1->getCodigo();
-   }
-   
-   if ( u2 != nullptr )
-   {
+   if ( u2 )
       str << "_2U" << u2->getCodigo();
-   }
-
-   if ( s != nullptr )
-   {
+   if ( s )
 	   str << "_S" << s->getCodigo();
-   }
-
-   if ( tps && s == nullptr )
-   {
+   if ( tps && !s )
 	   str << "_S" << tps->salas.begin()->second->getCodigo();
-   }
-
    if ( t >= 0 )
-   {
       str << "_T" << t;
-   }
-   
    if ( k >= 0 )
-   {
       str << "_DC" << k;
-   }
-
-   if ( horarioAulaI )
-   {
+   if ( horarioAulaI && dateTimeI == DateTime() )
       str << "_Hi" << horarioAulaI->getInicio().getHour() << "_" << horarioAulaI->getInicio().getMinute();
-   }
-
-   if ( horarioAulaF )
-   {
+   if ( horarioAulaF && dateTimeF == DateTime() )
       str << "_Hf" << horarioAulaF->getInicio().getHour() << "_" << horarioAulaF->getInicio().getMinute();
-   }
-
    if ( dateTimeI != DateTime() )
-   {
       str << "_Dti" << dateTimeI.getHour() << "_" << dateTimeI.getMinute();
-   }
-
    if ( dateTimeF != DateTime() )
-   {
       str << "_Dtf" << dateTimeF.getHour() << "_" << dateTimeF.getMinute();
-   }
-
    if ( turma1 >= 0 )
-   {
       str << "_T1." << turma1;
-   }
-
-   if ( disc1 != nullptr )
-   {
-      str << "_D1." << disc1->getId();
-   }
-   
+   if ( disc1 )
+      str << "_D1." << disc1->getId();   
    if ( turma2 >= 0 )
-   {
       str << "_T2." << turma2;
-   }
-
-   if ( disc2 != nullptr )
-   {
+   if ( disc2 )
       str << "_D2." << disc2->getId();
-   }
-
-   if ( alunoDemanda != nullptr )
-   {
+   if ( alunoDemanda )
       str << "_AD." << alunoDemanda->getId();
-   }
-      
-   if ( parAlunos.first != nullptr && parAlunos.second != nullptr )
-   {
-	   str << "_(a" << parAlunos.first->getAlunoId() << ",a" << parAlunos.second->getAlunoId()<<")";
-   }
-      
+   if ( parAlunos.first && parAlunos.second )
+	   str << "_(a" << parAlunos.first->getAlunoId() << ",a" << parAlunos.second->getAlunoId()<<")";      
    if ( faseDoDia_ >= 0 )
-   {
       str << "_Fase" << faseDoDia_;
-   }
 
    str << "}";
+
+   std::string output;
    str >> output;
+
+   output.erase(std::remove_if(output.begin(), output.end(), std::isspace), output.end());
 
    return output;
 }
 
 std::string VariableMIPUnico::toString() const
 {
-   std::stringstream str( "" );
+	std::stringstream str;
+	str << getPrefix();
+
+	str << "_{";
+   
+   if ( professor_ )
+	   str << "_Prof" << professor_->getId();
+   if ( aluno )
+	   str << "_Aluno" << aluno->getAlunoId();   
+   if ( b )
+      str << "_Bc" << b->getId();
+   if ( i >= 0 )
+      str << "_Turma" << i;
+   if ( d )
+      str << "_Disc" << d->getId();
+   if ( u )
+	   str << "_Unid" << u->getId() << "_" << u->getCodigo();
+   if ( u1 )
+      str << "_1Unid" << u1->getId() << "_" << u1->getCodigo();   
+   if ( u2 )
+      str << "_2Unid" << u2->getId() << "_" << u2->getCodigo();
+   if ( s )
+      str << "_Sala" << s->getId();
+   if ( tps )
+      str << "_Tps" << tps->getId() << "Sl" << tps->salas.begin()->first;
+   if ( t >= 0 )
+      str << "_Dia" << t;
+   if ( j >= 0 )
+      str << "_Sbc" << j;
+   if ( c )
+      str << "_Curso" << c->getId();
+   if ( c_incompat )
+      str << "_CursoIncomp" << c_incompat->getId();
+   if ( parCursos.first && parCursos.second )
+	   str << "_(c" << parCursos.first->getId() << ",c" << parCursos.second->getId()<<")";
+   if ( cp )
+      str << "_Cp" << cp->getId();
+   if ( o )
+      str << "_Of" << o->getId();   
+   if ( parOft.first && parOft.second )
+	   str << "_(Of" << parOft.first->getId() << ",Of" << parOft.second->getId()<<")";
+   if ( k >= 0 )
+      str << "_DivCred" << k;
+   if ( horarioAulaI )
+      str << "_Hi" << horarioAulaI->getId();
+   if ( horarioAulaF )
+      str << "_Hf" << horarioAulaF->getId();
+   if ( dateTimeI != DateTime() )
+      str << "_Dti" << dateTimeI.getHour() << "_" << dateTimeI.getMinute();
+   if ( dateTimeF != DateTime() )
+      str << "_Dtf" << dateTimeF.getHour() << "_" << dateTimeF.getMinute();
+   if ( turma1 >= 0 )
+      str << "_Turma1." << turma1;
+   if ( disc1 )
+      str << "_Disc1." << disc1->getId();   
+   if ( turma2 >= 0 )
+      str << "_Turma2." << turma2;
+   if ( disc2 )
+      str << "_Disc2." << disc2->getId();
+   if ( alunoDemanda )
+      str << "_AlDem." << alunoDemanda->getId();      
+   if ( parAlunos.first && parAlunos.second )
+	   str << "_(a" << parAlunos.first->getAlunoId() << ",a" << parAlunos.second->getAlunoId()<<")";
+   if ( periodo >= 0 )
+      str << "_Per" << periodo;   
+   if ( faseDoDia_ >= 0 )
+      str << "_Fase" << faseDoDia_;
+
+   str << "}";
+
    std::string output;
+   str >> output;
+
+   return output;
+}
+
+std::string VariableMIPUnico::getPrefix() const
+{
+   std::stringstream str;
    
    switch( type )
    {
@@ -525,170 +456,9 @@ std::string VariableMIPUnico::toString() const
 	case V_FIM_ALUNOS:
        str <<"fim"; break;	   
 	   	      
-
     default:
         str << "!";
    }
 
-   str << "_{";
-   
-   if ( professor_ )
-   {
-	   str << "_Prof" << professor_->getId();
-   }
-   
-   if ( aluno )
-   {
-	   str << "_Aluno" << aluno->getAlunoId();
-   }
-   
-   if ( b != nullptr )
-   {
-      str << "_Bc" << b->getId();
-   }
-
-   if ( i >= 0 )
-   {
-      str << "_Turma" << i;
-   }
-
-   if ( d != nullptr )
-   {
-      str << "_Disc" << d->getId();
-   }
-   
-   if ( u != nullptr )
-   {
-	   str << "_Unid" << u->getId() << "_" << u->getCodigo();
-   }
-   
-   if ( u1 != nullptr )
-   {
-      str << "_1Unid" << u1->getId() << "_" << u1->getCodigo();
-   }
-   
-   if ( u2 != nullptr )
-   {
-      str << "_2Unid" << u2->getId() << "_" << u2->getCodigo();
-   }
-
-   if ( s != nullptr )
-   {
-      str << "_Sala" << s->getId();
-   }
-
-   if ( tps )
-   {
-      str << "_Tps" << tps->getId() << "Sl" << tps->salas.begin()->first;
-   }
-
-   if ( t >= 0 )
-   {
-      str << "_Dia" << t;
-   }
-
-   if ( j >= 0 )
-   {
-      str << "_Sbc" << j;
-   }
-
-   if ( c )
-   {
-      str << "_Curso" << c->getId();
-   }
-
-   if ( c_incompat )
-   {
-      str << "_CursoIncomp" << c_incompat->getId();
-   }
-
-   if ( parCursos.first != nullptr && parCursos.second != nullptr )
-   {
-	   str << "_(c" << parCursos.first->getId() << ",c" << parCursos.second->getId()<<")";
-   }
-
-   if ( cp )
-   {
-      str << "_Cp" << cp->getId();
-   }
-
-   if ( o )
-   {
-      str << "_Of" << o->getId();
-   }
-   
-   if ( parOft.first != nullptr && parOft.second != nullptr )
-   {
-	   str << "_(Of" << parOft.first->getId() << ",Of" << parOft.second->getId()<<")";
-   }
-
-   if ( k >= 0 )
-   {
-      str << "_DivCred" << k;
-   }
-
-   if ( horarioAulaI )
-   {
-      str << "_Hi" << horarioAulaI->getId();
-   }
-
-   if ( horarioAulaF )
-   {
-      str << "_Hf" << horarioAulaF->getId();
-   }
-
-   if ( dateTimeI != DateTime() )
-   {
-      str << "_Dti" << dateTimeI.getHour() << "_" << dateTimeI.getMinute();
-   }
-
-   if ( dateTimeF != DateTime() )
-   {
-      str << "_Dtf" << dateTimeF.getHour() << "_" << dateTimeF.getMinute();
-   }
-
-   if ( turma1 >= 0 )
-   {
-      str << "_Turma1." << turma1;
-   }
-
-   if ( disc1 != nullptr )
-   {
-      str << "_Disc1." << disc1->getId();
-   }
-   
-   if ( turma2 >= 0 )
-   {
-      str << "_Turma2." << turma2;
-   }
-
-   if ( disc2 != nullptr )
-   {
-      str << "_Disc2." << disc2->getId();
-   }
-
-   if ( alunoDemanda != nullptr )
-   {
-      str << "_AlDem." << alunoDemanda->getId();
-   }
-      
-   if ( parAlunos.first != nullptr && parAlunos.second != nullptr )
-   {
-	   str << "_(a" << parAlunos.first->getAlunoId() << ",a" << parAlunos.second->getAlunoId()<<")";
-   }
-
-   if ( periodo >= 0 )
-   {
-      str << "_Per" << periodo;
-   }
-   
-   if ( faseDoDia_ >= 0 )
-   {
-      str << "_Fase" << faseDoDia_;
-   }
-
-   str << "}";
-   str >> output;
-
-   return output;
+   return str.str();
 }
