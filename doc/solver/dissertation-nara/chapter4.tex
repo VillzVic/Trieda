@@ -177,79 +177,79 @@ Introduces polishing concept.
     \Require{$lp$ model and any initial feasible solution $solIni$}
 		\Ensure{A final feasible solution $sol$ for the $lp$ model at least as good as the initial solution $solIni$}
     \Statex
-    \Function{Polish}{$sol$, $percIni$, $maxTime$, $maxTimeNoImprov$}		
-			\State $init()$
-      \Let{$sol$}{$solIni$}
-			\Let{$perc$}{$percIni$}
-      \State \textsc{setParams}$(timeIter)$
+    \Function{Polish}{$solIni$, $percIni$, $maxTime$, $maxTimeNoImprov$}		
+			\State \textsc{init}$()$
 			\Let{$okIter$}{$true$}
       \While{$okIter$}
-          \State \textsc{fixVars}$(lp, sol, perc)$
+          \State \textsc{fixVars}$()$
 					\State \textsc{optimize}$()$
-					\State $double$ $objN$, $gap$
-					\State \textsc{getSolution}$(objN, gap)$
-					\State \textsc{setMelhora}$(objN)$
-					\State \textsc{updatePercAndTimeIter}$(objN, gap)$
-					\State \textsc{checkTimeWithoutImprov}$(objN)$
-					\State \textsc{updateObj}$(objN)$
-					\State \textsc{checkTimeLimit}$()$
+					\State \textsc{updatePercAndTimeIter}$()$
+					\State \textsc{checkRunTimeLimit}$()$
 					\State \textsc{unfixVars}$()$
       \EndWhile
      \State \Return{$sol$}
     \EndFunction
+	\Statex	
+  \Algphase{Initialization}
+    \Procedure{init}{$lp$, $solIni$, $percIni$}
+				\Let{$sol$}{$solIni$}
+				\Let{$perc$}{$percIni$}
+				\Let{$timeIter$}{70}
+    \EndProcedure
   \end{algorithmic}
-\end{algorithm}
-		  	  
-
+\end{algorithm}		
+		
 \begin{algorithm}
   \caption{Fixing variables' values
     \label{alg:fixVars}}
   \begin{algorithmic}[1]
-    \Require{$lp$ model and a feasible solution $sol$}
-    \Procedure{fixVars}{$lp$, $sol$, $perc$}
-			\State \textsc{fixUnidsTatico}$(lp, sol, percUnid)$
-			\Let {$F$}{\textsc{decideVarsToFixByPhase}$(lp, sol, perc)$}
-			\State \textsc{fixVarsType1}$(lp, sol, F)$
-			\State \textsc{fixVarsProfType1}$(lp, sol, perc)$
+    \Require{$lp$ model, a feasible solution $sol$ and the percentage $perc$ of classes variables to fix}
+		\Ensure{A resultant lp model with a random subset of its variables with fixed bounds and therefore easier to solve}
+    \Procedure{fixVars}{}
+			\State \textsc{fixBlocks}$()$
+			\Let {$F$}{\textsc{decideVarsToFix}$()$}
+			\State \textsc{fixVarsBounds}$()$
+			\State \textsc{fixVarsProfBounds}$()$
     \EndProcedure
 	\Statex	
   \Algphase{Fixing blocks}
-    \Require{$lp$ model, a feasible solution $sol$ and a set $FU$ of fixed blocks}
-    \Procedure{fixUnidsTatico}{$lp$, $sol$, $FU$}
-			 \For{each variable $x_{u} \in lp$ such that $u \in FU$}
-				\Let{$LB_{x}$}{$sol[x]$}
-				\Let{$UB_{x}$}{$sol[x]$} 
+    \Require{$lp$ model, a feasible solution $sol$ and a set $FB$ of fixed blocks}
+    \Procedure{fixBlocks}{}
+			 \For{each variable $x_{u} \in lp$ such that $u \in FB$}
+				\Let{$lowerbound_{x}$}{$sol[x]$}
+				\Let{$upperbound_{x}$}{$sol[x]$} 
 			 \EndFor
     \EndProcedure
 	\Statex
   \Algphase{Decide which variable to fix}
     \Require{$lp$ model, a feasible solution $sol$ and a percentage $perc$ of classes to be fixed}
-    \Function{decideVarsToFixByPhase}{$lp$, $sol$, $perc$}
+		\Ensure{Returns a subset $F$ of classes to be fixed}
+    \Function{decideVarsToFix}{}
 			\Let{$F$}{$\emptyset$}
 			\For{each variable $z \in lp$}
 					\If{$rand() \ge perc$}
-						\Let{$F$}{$z$}
+						\Let{$F$}{class represented by $z$}
 					\EndIf
 			\EndFor
 			\Return F
     \EndFunction
 	\Statex
-	\Algphase{Fix variables of lessons}
+	\Algphase{Fix bounds of variables of lessons}
     \Require{$lp$ model, a feasible solution $sol$ and a set $F$ of classes to be fixed}
-    \Procedure{fixVarsType1}{$lp$, $sol$, $F$}
-			 \For{each variable $x \in F$}
-				\Let{$LB_{x}$}{$sol[x]$}
-				\Let{$UB_{x}$}{$sol[x]$} 
+    \Procedure{fixVarsBounds}{}
+			 \For{each variable $x \in lp$ such that class of $x$ is in $F$}
+				\Let{$lowerbound_{x}$}{$sol[x]$}
+				\Let{$upperbound_{x}$}{$sol[x]$} 
 			 \EndFor
     \EndProcedure	
 	\Statex
-	\Algphase{Fix variables of professors}
+	\Algphase{Fix bounds of variables of professors}
     \Require{$lp$ model and a feasible solution $sol$}
-    \Procedure{fixVarsProfType1}{$lp$, $sol$, $perc$}
+    \Procedure{fixVarsProfBounds}{}
 			\For{each variable $y \in lp$}
 					\If{$rand() \ge perc$}
-						\Let{$LB_{y}$}{$sol[y]$}
-						\Let{$UB_{y}$}{$sol[y]$} 
+						\Let{$lowerbound_{y}$}{$sol[y]$}
+						\Let{$lowerbound_{y}$}{$sol[y]$} 
 					\EndIf
 			\EndFor
     \EndProcedure	
@@ -258,34 +258,40 @@ Introduces polishing concept.
 
 
 \begin{algorithm}
-  \caption{Unfixing variables' values
-    \label{alg:unfixVars}}
+  \caption{Optimize
+    \label{alg:optimize}}
   \begin{algorithmic}[1]
-    \Require{$lp$ model}
-    \Procedure{unfixVars}{$lp$}
-			\For{each variable $var\in lp$ that was fixed}
-					\Let{$LB_{var}$}{\textit{original lower bound of var}}
-					\Let{$UB_{var}$}{\textit{original upper bound of var}}
-			\EndFor
+    \Require{$lp$ model, a feasible solution $sol$ to $lp$}
+		\Ensure{A final updated feasible solution $sol$ for the $lp$ model at least as good as the initial solution}
+    \Procedure{optimize}{}
+			\State set optimization time limit equal to $timeIter$
+			\State set $sol$ as a start solution to $lp$	
+			\State optimize $lp$
+			\Let{$runtime$}{run time spent at the optimization}
+			\Let{$timeLeft$}{\abs{timeIter - runtime}}
+			\If{optimization succeeded}
+				\Let{$sol$}{new best solution found}
+			\EndIf
     \EndProcedure	
   \end{algorithmic}	
-\end{algorithm}
+\end{algorithm}		
+
 
 \begin{algorithm}
   \caption{Update percentage of fixed variables, fixed blocks and maximum time per iteration
     \label{alg:updatePercAndTimeIter}}
   \begin{algorithmic}[1]
     \Require{$lp$ model}
-    \Procedure{updatePercAndTimeIter}{$lp$, $objN$, $gap$}
+    \Procedure{updatePercAndTimeIter}{}
 			\If{\textsc{allFree}$()$}
 				\Let{$okIter$}{$false$}
 				\Return
 			\EndIf
 			\State \textsc{updateIterSemMelhora}$()$
 	    \If {\textit{lp was solved until optimal or gap is small enough}}
-			  \State \textsc{updatePercAndTimeIterSmallGap}$(objN)$
+			  \State \textsc{updatePercAndTimeIterSmallGap}$()$
 			\Else
-				\State \textsc{updatePercAndTimeIterBigGap}$(objN)$
+				\State \textsc{updatePercAndTimeIterBigGap}$()$
 			\EndIf
 	    \If{\textsc{allFree}$()$}
 				\Let{$timeIter$}{\textsc{getLeftTime$()$}}
@@ -293,22 +299,19 @@ Introduces polishing concept.
     \EndProcedure	
 		\Statex
 		\Algphase{Update percentage of fixed variables, fixed blocks and maximum time per iteration for small gap case}
-			\Require{$lp$ model, value $objN$ of objective function for the solution obtained at current polishing iteration}
-			\Procedure{updatePercAndTimeIterSmallGap}{$lp$, $objN$}
+			\Procedure{updatePercAndTimeIterSmallGap}{}
 				\If{\textsc{allFree}$()$}
 				\Let{okIter}{false}
 				\EndIf
-				\State \textsc{adjustPercOrUnid}()
+				\State \textsc{adjustPercOrBlock}()
 				\State \textsc{adjustTime}()
 			\EndProcedure
 		\Statex
 		\Algphase{Update percentage of fixed variables, fixed blocks and maximum time per iteration for big gap case}
-			\Require{$lp$ model}
-			\Procedure{updatePercAndTimeIterBigGap}{$lp$}
+			\Procedure{updatePercAndTimeIterBigGap}{}
 				\If{solution was not improved at the current iteration}
 					\Let{$acresm$}{0, if all blocks are currently free; or 10 otherwise}
-					\State \textsc{setNextRandFreeUnidade}$(acresm)$
-					\State \textsc{checkDecreaseDueToIterSemMelhora}()
+					\State \textsc{setNextRandFreeBlocks}$(acresm)$
 					\State \textsc{adjustTime}()
 				\EndIf
 			\EndProcedure			
@@ -318,28 +321,27 @@ Introduces polishing concept.
 
 \begin{algorithm}
   \caption{Set free and fixed blocks for the next iteration
-    \label{alg:setNextRandFreeUnidade}}
+    \label{alg:setNextRandFreeBlocks}}
   \begin{algorithmic}[1]
     \Require{$lp$ model}
     \Statex
-    \Procedure{setNextRandFreeUnidade}{$adjustPercUnid$}
-			\Let{$percUnidFixed$}{$percUnidFixed + adjustPercUnid$} \Comment{update percentage of fixed blocks for next iteration}
+    \Procedure{setNextRandFreeBlocks}{$percAdjust$}
+			\Let{$percBlockFixed$}{$percBlockFixed + percAdjust$} 	%\Comment{update percentage of fixed blocks for next iteration}
       \If{there is enough consecutive iterations with fixed blocks}
       	\State free all blocks for the next iteration
       	\Return
       \EndIf
-      \State \textsc{chooseAndSetFreeUnidades}()
+      \State \textsc{chooseAndSetFreeBlocks}()
     \EndProcedure
 	  \Statex
 	  \Algphase{Choose and set free blocks for the next iteration}
-    \Require{$lp$ model}
-    \Procedure{chooseAndSetFreeUnidades}{}
+    \Procedure{chooseAndSetFreeBlocks}{}
 			\State reset free blocks
 			\Let{useCluster}{true or false, randomly chosen with $50\%$ of chance of true}
-			\If{useCluster} \Comment{type of fixing blocks is per cluster}
+			\If{useCluster} 																					%\Comment{type of fixing blocks is per cluster}
 				\State choose a cluster of blocks and set it free
 			\EndIf
-			\While{number of free blocks $<$ $percUnidFixed$}
+			\While{number of free blocks $<$ $(100-percBlockFixed)\cdot$ \textit{total of blocks}}
 			\State choose randomly a block and set it free
 			\EndWhile
     \EndProcedure
@@ -352,35 +354,33 @@ Introduces polishing concept.
     \label{alg:adjustTime}}
   \begin{algorithmic}[1]
     \Require{$lp$ model}
-    \Procedure{adjustTime}{$lp$}
-			\If {\textbf{not} $improved$ \textbf{and} $timeLimitReached()$}
-				\State \textsc{increaseTime}()			\Comment{time limit reached  increases time limit}
+    \Procedure{adjustTime}{}
+			\If {solution was not improved at the current iteration \textbf{and} time limit for the iteration was reached}
+				\State \textsc{increaseTime}()													%\Comment{time limit reached  increases time limit}
 			\EndIf
-			\If {$improved$}
-				\State \textsc{decreaseTime}()			\Comment{Adjust time limit in case it is too high}
+			\If {solution was improved at the current iteration}
+				\State \textsc{decreaseTime}()													%\Comment{Adjust time limit in case it is too high}
 			\EndIf
     \EndProcedure	
 	  \Statex
 	  \Algphase{Increase time}
-    \Require{$lp$ model}
     \Procedure{increaseTime}{}
-			\Let{$incremTime$}{10}				\Comment{increases the time limit by a fixed amount}
-			\Let{$incremTime$}{$incremTime + (100-perc)\cdot 0.2$}		\Comment{increases the time limit the more perc is close to 0}
-			\Let{$incremTime$}{$incremTime + $ (\textit{percentage of free blocks})$\cdot 0.2$}	\Comment{increases the time limit the more blocks are free}
+			\Let{$incremTime$}{10}																		%	\Comment{increases the time limit by a fixed amount}
+			\Let{$incremTime$}{$incremTime + (100-perc)\cdot 0.2$}		%\Comment{increases the time limit the more perc is close to 0}
+			\Let{$incremTime$}{$incremTime + (100-percBlockFixed)\cdot 0.2$}	%\Comment{increases the time limit the more blocks are free}
 			\Let{$timeIter$}{$timeIter + incremTime$}
 			\If{$timeIter > MaxTimeImposedPerIteration$}
-				\Let{$timeIter$}{$MaxTimeImposedPerIteration$} \Comment{possibly forces a reduction of $timeIter$, whether a maximum time per iteration is imposed.}
+				\Let{$timeIter$}{$MaxTimeImposedPerIteration$} 					%\Comment{possibly forces a reduction of $timeIter$, whether a maximum time per iteration is imposed.}
 			\EndIf
     \EndProcedure	
 	  \Statex
 	  \Algphase{Decrease time}
-    \Require{$lp$ model}
     \Procedure{decreaseTime}{}
 			\If{\textsc{allFree}$()$}
-				\Let{$timeIter$}{$getLeftTime()$}		\Comment{next iteration will be the last one}
+				\Let{$timeIter$}{$getLeftTime()$}												%\Comment{next iteration will be the last one}
 			\Else
 				\Let{$minExcess$}{$max(0.5\cdot timeIter, 50)$}
-				\If{$timeLeft > minExcess$} 				\Comment{Adjust time limit in case it is too high}
+				\If{$timeLeft > minExcess$} 														%\Comment{Adjust time limit in case it is too high}
 					\Let{$timeIter$}{$runtime+minExcess$}
 				\EndIf
 			\EndIf
@@ -391,36 +391,79 @@ Introduces polishing concept.
 
 \begin{algorithm}
   \caption{Adjust percentage of fixed variables or fixed blocks
-    \label{alg:adjustPercOrUnid}}
+    \label{alg:adjustPercOrBlock}}
   \begin{algorithmic}[1]
     \Require{$lp$ model}
-    \Procedure{adjustPercOrUnid}{$lp$}
-			\If{$optimal$ \textbf{and} $timeLeft > 0.7\cdot timeIter$}
-				\State \textsc{decreasePercOrFreeUnid}$(5)$		\Comment{decrease the fixed portion if it was easy (fast) to solve}
+    \Procedure{adjustPercOrBlock}{}
+			\If{$optimal$ \textbf{and} $timeLeft > 0.7\cdot timeIter$}	%\Comment{decrease the fixed portion if it was easy (fast) to solve}
+				\State \textsc{decreasePercOrFreeBlock}$(5)$	
 			\Else 
-				\If{\textbf{not} improved}
-					\State \textsc{decreasePercOrFreeUnid}$(10)$		\Comment{decrease the fixed portion if no improvement was made}		
+				\If{\textbf{not} $improved$}																%\Comment{decrease the fixed portion if no improvement was made}	
+					\State \textsc{decreasePercOrFreeBlock}$(10)$		
 				\EndIf	
 			\EndIf
     \EndProcedure	
 	  \Statex
-	  \Algphase{Decrease percentage or free blocks}
-    \Require{$lp$ model}
-    \Procedure{decreasePercOrFreeUnid}{$percToSubtract$}
+	  \Algphase{Decrease percentage of fixed variables or free blocks}
+    \Procedure{decreasePercOrFreeBlock}{$percToSubtract$}
 			\If{$percToSubtract \le 0$}
 				\Return
 			\EndIf
-			\If{\textsc{checkDecreaseDueToIterSemMelhora}$()$}
-				\Return
-			\EndIf
-			\If{\textbf{not} allUnidadesAreFree()}
-				\State \textsc{setNextRandFreeUnidade}$(-10)$
+			\If{there is any block currently fixed}
+				\State \textsc{setNextRandFreeBlock}$(-10)$
 				\Return
 			\EndIf
 			\State \textsc{decreasePerc}$(percToSubtract)$
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
+
+\begin{algorithm}
+  \caption{Check run time
+    \label{alg:checktime}}
+  \begin{algorithmic}[1]
+    \Require{$lp$ model}
+    \Procedure{checkRunTimeLimit}{}
+			\State \textsc{checkTotalRunTime}()
+			\State \textsc{checkTimeWithoutImprov}()
+    \EndProcedure		
+		\Statex
+	  \Algphase{Check total run time}
+    \Procedure{checkTotalRunTime}{}
+			\If{total run time $\ge$ maxTime} % maximum run time allowed for polishing
+					\Let{$okIter$}{$false$}
+			\EndIf
+    \EndProcedure	
+		\Statex
+	  \Algphase{Check run time since last improvement}
+    \Procedure{checkTimeWithoutImprov}{}
+			\If{no improvement was made at the current iteration}
+				\If{run time since last improvement $>$ maxTimeNoImprov} % maximum run time allowed without improvement
+					\Let{$okIter$}{$false$}
+				\EndIf
+			\Else
+				\State reset time without improvement 
+			\EndIf		
+		\EndProcedure	
+  \end{algorithmic}	
+\end{algorithm}
+
+
+\begin{algorithm}
+  \caption{Unfixing variables' values
+    \label{alg:unfixVars}}
+  \begin{algorithmic}[1]
+    \Require{$lp$ model}
+    \Procedure{unfixVars}{}
+			\For{each variable $var\in lp$ that was fixed}
+					\Let{$lowerbound_{var}$}{\textit{original lower bound of var}}
+					\Let{$upperbound_{var}$}{\textit{original upper bound of var}}
+			\EndFor
+    \EndProcedure	
+  \end{algorithmic}	
+\end{algorithm}
+
 
 
 
