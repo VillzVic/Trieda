@@ -85,7 +85,7 @@ const int MIPUnico::MaxGapEntreFase_ = 170;
 const int MIPUnico::minCredDispFaseMinGapProf_ = 3;
 
 // Solução geral
-const bool MIPUnico::fixarSolucaoProfPrior1_ = true;
+const bool MIPUnico::fixarSolucaoProfPrior1_ = false;
 
 // Alunos
 const double MIPUnico::pesoFD = 100;
@@ -2460,6 +2460,7 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA
 	fixaSolMaxAtend(xS);
+	fixaSolMaxAtendReal(xS);
 
 	// ------------------------------------------------------------------------------------
 	// Volta com a função objetivo original	
@@ -2600,6 +2601,56 @@ bool MIPUnico::fixaSolMaxAtend(double* const xS)
 		cHashTatico[ c ] = lp->getNumRows();
 		lp->addRow(row);
 		lp->updateLP();
+	}
+
+	return chged;
+}
+
+bool MIPUnico::fixaSolMaxAtendReal(double* const xS)
+{
+	if (!MIPUnico::priorProfImportante_v2_) return false;
+
+	// ------------------------------------------------------------------------------------	
+	
+	map<Professor*, set< pair<int,double> >> mapProfVars;
+
+	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
+	{
+		VariableMIPUnico v = vit->first;
+
+		if (v.getType() != VariableMIPUnico::V_PROF_TURMA) continue;
+		if (v.getProfessor()->eVirtual()) continue;
+		if (!priorProf(v.getProfessor())) continue;
+
+		int numCred = v.getDisciplina()->getTotalCreditos();
+
+		pair<int,double> par(vit->second, numCred);
+		mapProfVars[v.getProfessor()].insert(par);
+	}
+	
+	bool chged = true;
+	
+	for (auto pit = mapProfVars.cbegin(); pit != mapProfVars.cend(); pit++)
+	{
+		int nnz = pit->second.size();
+		stringstream name;
+		name << "C_FIX_SOL_MIN_ATEND_(Prof" << pit->first->getId() << ")";
+		OPT_ROW row( nnz, OPT_ROW::GREATER, 0, (char*) name.str().c_str() );
+		
+		int nrCredsAtend=0;
+		for (auto vit = pit->second.cbegin(); vit != pit->second.cend(); vit++)
+		{
+			row.insert(vit->first, vit->second);
+			int value = (int) (xS[vit->first] + 0.5);
+			nrCredsAtend += value * vit->second;
+		}
+
+		if (row.getnnz() > 0)
+		{
+			row.setRhs(nrCredsAtend);
+			chged &= lp->addRow(row);
+			lp->updateLP();
+		}
 	}
 
 	return chged;

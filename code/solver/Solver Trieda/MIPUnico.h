@@ -409,6 +409,7 @@ private:
 
 	bool fixaSolMaxAtendMarreta(double* const xS);
 	bool fixaSolMaxAtend(double* const xS);
+	bool fixaSolMaxAtendReal(double* const xS);
 	bool fixaSolMinProfVirt(double* const xS);
 	bool fixaSolMinProfReal(double* const xS);
 	bool fixaSolMinTurmas(double* const xS);
