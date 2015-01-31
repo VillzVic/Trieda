@@ -34,27 +34,35 @@
 \usepackage[justification=centering]{caption}
 \usepackage[none]{hyphenat}
 
-\usepackage{algorithmic}
-\usepackage{algpseudocode}
-\newcommand*\Let[2]{\State #1 $\gets$ #2}
-\usepackage[noend]{algpseudocode}
-\newcommand\Algphase[1]{%
-\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
-\Statex\hspace*{-\algorithmicindent}\textbf{#1}%
-\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
-}
-
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subfigure}
 \usepackage{float}
  
- %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{algorithmic,eqparbox,array}
+\usepackage{algpseudocode}
+\newcommand*\Let[2]{\State #1 $\gets$ #2}
+\usepackage[noend]{algpseudocode}
+\usepackage{xhfill}
+\newcommand\Algphase[1]{%
+\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\xdotfill{0.4pt}%
+\Statex\hspace*{-\algorithmicindent}\textbf{#1}%
+\vspace*{-.7\baselineskip}\Statex\hspace*{\dimexpr-\algorithmicindent-2pt\relax}\rule{\textwidth}{0.4pt}%
+}
+\renewcommand\algorithmiccomment[1]{%
+  \hfill\#\ \eqparbox{COMMENT}{#1}%
+}
+\newcommand\LONGCOMMENT[1]{%
+  \hfill\#\ \begin{minipage}[t]{\eqboxwidth{COMMENT}}#1\strut\end{minipage}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{xargs}                      % Use more than one optional parameter in a new commands
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \newcommandx{\fixme}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
 \newcommandx{\mynotes}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
- %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\q}[1]{``#1''}
 
