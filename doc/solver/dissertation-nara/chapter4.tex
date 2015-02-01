@@ -162,22 +162,37 @@ Through preemptive goal programming it is easier to understand the best solution
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Polishing Method}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Definition}
+For real-world school timetabling, where problem size is not small, solving the hole MIP introduced at section ~\ref{sec:mathForm} of chapter ~\ref{chap:mipformulation} at once with a MIP Solver like Gurobi or Cplex has been shown to be ineffective and unworkable. Tests made with an ordinary size school \fixme{falar o tamanho da escola testada} have shown that generic MIP Solvers find it already very difficult to converge to a good integer solution. For bigger schools, both the linear relaxation and the branch and bound phase are \textit{very} hard and have proven themselves impossible to be solved by current MIP solvers.
 
-Introduces polishing concept.
+An auxiliary method was then developed for helping convergence while solving the MIP. It is described at next sections and referred here as a \q{polishing method}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The general idea}
+
+Given a $lp$ model and an initial feasible solution $s$, the idea of a polishing method is iteratively to solve models $lp'$ similar but easier than the original model, such that any feasible solution for $lp'$ is also a feasible solution for $lp$ and the solution at the end of each iteration is always at least as good as at the beginning. In another words, it is generated a sequence of feasible solutions with monotonically (but not strictly) increasing quality.
+
+Suppose that a solution $s \in \mathbb{Z}^n$ is feasible to $lp$. Let us split the set of $n$ integer variables into 2 subsets, such that $n=p+q, p \ge 0, q\ge 0$, $s_p \in \mathbb{Z}^p$, $s_q \in \mathbb{Z}^q$ and thus $s = s_p \cup s_q$. The basic principle is that optimizing a linear program $lp' = lp \cap s_p$ generates a feasible solution $s'$ to $lp'$ which is also feasible to $lp$ and at least as good as $s$. All variables and constraints of the original problem are still present in the new problem, but cuts were added, which limit the solution space based on $s_p$, resulting in a more restricted solution space. The smaller is the solution space, the easier is the solver convergence.
+
+The aim of cutting the solution space here is not to eliminate non-promising search-space regions, but to search in a smaller and treatable space. There is then no guarantee that the actual optimal solution $s*$ for $lp$ is in or out the eliminated region, but it is ensured that the optimal solution $s'*$ for $lp'$ is equal or better than the previously known solution $s$. It is thus not interesting to keep these cuts after solving $lp'$. Instead, the idea is to restore the original problem and add others cuts, now based on the new solution $s'$. Doing that iteratively, we create a guide for the solver.
+
+So, what solution space of $lp'$ looks like? At each polishing iteration, the limitation of the search-space takes place through the tightening of a subset of variables bounds based on the initial solution $s$. Suppose the trivial example where the solution space is equal to the cube $c = [0, 4]^3 \in \mathbb{Z}^3$ and the feasible solution $s \in \mathbb{Z}^3$ is $s = \{s_1=3,s_2=2,s_3=0\}$. A possible limitation based on $s$ would be to tighten the interval bounds of the first dimension to the value of $s_1$, such that the resulting solution space is $c' = [3, 3][0, 4][0, 4]$. Such tightening clearly eliminates one dimension of the search-space and keeps the feasible solution $s$. Consequently, optimizing over $c'$ can not lead to a worse solution, because in the worst-case scenario the best solution is $s$ itself.
+
+Because at the beginning of the polishing process the solution is supposedly a very poor quality one and the search-space is a wide unexplored space, the percentage of variables with tightened bounds starts high (lets say around 90\%) and drops as the limited search-space is potentially exhausted and solution improvement stagnates. If at the end of the polishing this percentage reaches 0\%, then the considered linear program is the original one and its optimization ends the process. If an optimal solution is found at the 0\% stage, then it is surely an optimal solution for the original problem. For too hard linear programs though, it is unlikely that the polishing reaches this last stage, and the process is then interrupted by time limit. Generally speaking, nothing can be said about optimality for a solution found before the 0\% stage.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Polishing method developed for the problem}
+\subsection{The polishing algorithm developed for the problem}
 
 \begin{algorithm}
   \caption{Polishing method
-    \label{alg:polishing}}
+    \label{alg:polishing}} 
   \begin{algorithmic}[1]
-    \Require{$lp$ model and any initial feasible solution $solIni$}
+    \Require{$lp$ model, any initial feasible solution $solIni$, the maximum run time $maxTime$ for the hole polishing method and the maximum run time $maxTimeNoImprov$ of polishing without improvement}
 		\Ensure{A final feasible solution $sol$ for the $lp$ model at least as good as the initial solution $solIni$}
     \Statex
-    \Function{Polish}{$solIni$, $percIni$, $maxTime$, $maxTimeNoImprov$}		
+    \Function{Polish}{$solIni$, $maxTime$, $maxTimeNoImprov$}		
 			\State \textsc{init}$()$
 			\Let{$okIter$}{$true$}
       \While{$okIter$}
@@ -191,9 +206,9 @@ Introduces polishing concept.
     \EndFunction
 	\Statex	
   \Algphase{Initialization}
-    \Procedure{init}{$lp$, $solIni$, $percIni$}
+    \Procedure{init}{$lp$, $solIni$}
 				\Let{$sol$}{$solIni$}
-				\Let{$perc$}{$percIni$}
+				\Let{$perc$}{$90$}
 				\Let{$timeIter$}{70}
     \EndProcedure
   \end{algorithmic}
