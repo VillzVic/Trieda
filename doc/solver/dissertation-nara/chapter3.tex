@@ -279,6 +279,9 @@ Next subsections introduce the notation used in the mathematical model, which in
 \item $at_{a,t}$ - binary variable, indicates if student $a$ has classes at day $t$.
 \item $uu_{p,t,u}$ - binary variable, indicates if professor $p$ has classes at day $t$ in block $u$.
 \item $desloc_{p,t,u1,u2}$ - binary variable, indicates whether professor $p$ has classes at day $t$ in block $u1$ and in block $u2$. In practice, it identifies that at least one displacement is made between the both blocks in the day.
+\item $ptf_{p,t,f}$ - binary variable, indicates if professor $p$ has classes at session $f$ of day $t$.
+\item $pt_{p,t}$ - binary variable, indicates if professor $p$ has classes at day $t$.
+
 
 \end{itemize}
 
@@ -309,6 +312,13 @@ $$
       \\
       &
       + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} y_{pv,i,d}
+      \\
+      &
+      + \sum\limits_{p \in P} \sum\limits_{t \in T} pt_{p,t}
+      \\
+      &
+      + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} ptf_{p,t,f}
+      
 \end{array}
 $$
 
@@ -591,6 +601,44 @@ uu_{p,t,u1} + uu_{p,t,u2} \le 1 + desloc_{p,t,u1,u2} \nonumber \qquad
 \forall u1 \in U \quad
 \forall u2 \in U \quad \mbox{s.t. }u1 \neq u2 \nonumber
 \end{eqnarray}
+
+
+\paragraph{Limits the maximum of 2 big displacements for each professor along the week}
+\begin{eqnarray}
+\sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum_{\substack {u2 \in U \\ \norm{u1 u2} \ge 50}} desloc_{p,t,u1,u2} \le 2 \nonumber \qquad
+\\
+\forall p \in P \quad \nonumber
+\end{eqnarray}
+
+
+\paragraph{Sets if a session of day is assigned for the professor}
+\begin{eqnarray}
+bigM \cdot ptf_{p,t,f} \ge \sum\limits_{d \in D}\sum\limits_{i \in I_{d}}\sum\limits_{u \in U}\sum\limits_{h \in H_{f}} k_{p,i,d,u,t,h} \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall T \in T \quad
+\forall f \in F \nonumber
+\end{eqnarray}
+
+\paragraph{Sets the number of days of the week assigned to each professor}
+\begin{eqnarray}
+bigM \cdot pt_{p,t} \ge \sum\limits_{f \in F} ptf_{p,t,f} \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall t \in T \nonumber
+\end{eqnarray}
+
+\paragraph{Prohibits big gaps between assigned sessions of the day}
+\begin{eqnarray}
+hip_{p,t,f} - hfp_{p,t,f-1} \le (MaxGapBetweenSessions + bigM \cdot(2 - ptf_{p,t,f} - ptf_{p,t,f-1}))  \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad \nonumber
+\end{eqnarray}
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
