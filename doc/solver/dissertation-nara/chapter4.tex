@@ -187,9 +187,12 @@ Because at the beginning of the polishing process the solution is supposedly a v
 
 Following a detailed pseudo-algorithm for the polishing method developed for the school timetabling problem is described. The main algorithm, specified at ~\ref{alg:polishing}, contains the general steps of the polishing process.
 
+The essential requirements for using the polishing method are a linear program and a feasible initial solution. In addition, run time limits are used as stopping criteria: a total maximum execution time for the method ($maxTime$); and a maximum execution time since the last solution improvement occurrence ($maxTimeNoImprov$).
+
+The algorithm starts at line ~\ref{polish:ln:init} with some initialization, defined at ~\ref{alg:init}. The current solution $sol$ is set with the initial solution, the percentage $perc$ of variables with fixed bounds is initialized with 90\%, the MIP optimization time limit $timeIter$ is initialized with 70 seconds and, in the case of several blocks which share teaching resources, blocks may be clustered to assist further bounds tightening. The polishing process begins at line ~\ref{polish:ln:iter}, where at each iteration a new optimization cycle takes place. Every cycle has 4 main steps: variables bounds tightening (line ~\ref{polish:ln:fix}), optimization of the tightened linear program (line ~\ref{polish:ln:opt}), update of percentage of fixed variables and of time limit for each optimization (line ~\ref{polish:ln:perc}), and variables bounds release (line ~\ref{polish:ln:unfix}). At line ~\ref{polish:ln:runtime} the polishing run time limit is checked.
 
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \caption{Polishing method
     \label{alg:polishing}} 
   \begin{algorithmic}[1]
@@ -197,28 +200,32 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 		\Ensure{A final feasible solution $sol$ for the $lp$ model at least as good as the initial solution $solIni$}
     \Statex
     \Function{Polish}{$solIni$, $maxTime$, $maxTimeNoImprov$}		
-			\State \textsc{init}$()$
+			\State \textsc{init}$()$																	\label{polish:ln:init}
 			\Let{$okIter$}{$true$}
-      \While{$okIter$}
-          \State \textsc{fixVars}$()$
-					\State \textsc{optimize}$()$
-					\State \textsc{updatePercAndTimeIter}$()$
-					\State \textsc{checkRunTimeLimit}$()$
-					\State \textsc{unfixVars}$()$
+      \While{$okIter$}																					\label{polish:ln:iter}
+          \State \textsc{fixVars}$()$														\label{polish:ln:fix}
+					\State \textsc{optimize}$()$													\label{polish:ln:opt}
+					\State \textsc{updatePercAndTimeIter}$()$							\label{polish:ln:perc}
+					\State \textsc{unfixVars}$()$													\label{polish:ln:unfix}
+					\State \textsc{checkRunTimeLimit}$()$									\label{polish:ln:runtime}
       \EndWhile
      \State \Return{$sol$}
     \EndFunction
 	\Statex	
   \Algphase{Initialization}
-    \Procedure{init}{$lp$, $solIni$}
+    \Procedure{init}{$lp$, $solIni$}														\label{alg:init}
 				\Let{$sol$}{$solIni$}
 				\Let{$perc$}{$90$}
 				\Let{$timeIter$}{70}
+				\State cluster blocks according to teaching staff sharing
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}		
 		
-\begin{algorithm}
+		
+		
+		
+\begin{algorithm}[H]
   \caption{Fixing variables' values
     \label{alg:fixVars}}
   \begin{algorithmic}[1]
@@ -276,7 +283,7 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 \end{algorithm}
 
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \caption{Optimize
     \label{alg:optimize}}
   \begin{algorithmic}[1]
@@ -296,7 +303,7 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 \end{algorithm}		
 
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \caption{Update percentage of fixed variables, fixed blocks and maximum time per iteration
     \label{alg:updatePercAndTimeIter}}
   \begin{algorithmic}[1]
@@ -338,7 +345,7 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 \end{algorithm}
 
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \caption{Set free and fixed blocks for the next iteration
     \label{alg:setNextRandFreeBlocks}}
   \begin{algorithmic}[1]
@@ -368,7 +375,7 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 \end{algorithm}
 
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \caption{Adjust time
     \label{alg:adjustTime}}
   \begin{algorithmic}[1]
@@ -408,7 +415,7 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 \end{algorithm}
 
 
-\begin{algorithm}
+\begin{algorithm}[H]
   \caption{Adjust percentage of fixed variables or fixed blocks
     \label{alg:adjustPercOrBlock}}
   \begin{algorithmic}[1]
@@ -438,7 +445,22 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 \end{algorithm}
 
 
-\begin{algorithm}
+\begin{algorithm}[H]
+  \caption{Unfixing variables' values
+    \label{alg:unfixVars}}
+  \begin{algorithmic}[1]
+    \Require{$lp$ model}
+    \Procedure{unfixVars}{}
+			\For{each variable $var\in lp$ that was fixed}
+					\Let{$lowerbound_{var}$}{\textit{original lower bound of var}}
+					\Let{$upperbound_{var}$}{\textit{original upper bound of var}}
+			\EndFor
+    \EndProcedure	
+  \end{algorithmic}	
+\end{algorithm}
+
+
+\begin{algorithm}[H]
   \caption{Check run time
     \label{alg:checktime}}
   \begin{algorithmic}[1]
@@ -469,24 +491,11 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 \end{algorithm}
 
 
-\begin{algorithm}
-  \caption{Unfixing variables' values
-    \label{alg:unfixVars}}
-  \begin{algorithmic}[1]
-    \Require{$lp$ model}
-    \Procedure{unfixVars}{}
-			\For{each variable $var\in lp$ that was fixed}
-					\Let{$lowerbound_{var}$}{\textit{original lower bound of var}}
-					\Let{$upperbound_{var}$}{\textit{original upper bound of var}}
-			\EndFor
-    \EndProcedure	
-  \end{algorithmic}	
-\end{algorithm}
-
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Comparing different approaches}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
