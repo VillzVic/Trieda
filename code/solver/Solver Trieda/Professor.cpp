@@ -207,7 +207,11 @@ HorarioAula* Professor::getUltimoHorarioDisponivelDia( int dia )
 	}
 	return false;
  }
-
+ 
+ int Professor::getImportancia() const
+ {
+	return getValorCredito();
+ }
 
 GGroup< HorarioDia*,LessPtr<HorarioDia> > Professor::getHorariosAnterioresDisponivelDia( DateTime inicio, int dia )
 {

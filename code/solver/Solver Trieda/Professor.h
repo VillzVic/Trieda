@@ -75,6 +75,8 @@ public:
    
    bool possuiMagisterioEm( Disciplina* disciplina );
    
+   int getImportancia() const;
+
    GGroup< HorarioDia*,LessPtr<HorarioDia> > getHorariosAnterioresDisponivelDia( DateTime inicio, int dia );
    GGroup< HorarioDia*,LessPtr<HorarioDia> > getHorariosPosterioresDisponivelDia( DateTime inicio, int dia );
    

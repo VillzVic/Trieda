@@ -912,6 +912,18 @@ int Disciplina::getNroProfRealHabilit() const
 	return profsHabilit.size();
 }
 
+int Disciplina::getNroProfRealImportHabilit(int importancia, bool ouMenor) const
+{
+	int nr=0;
+	for (auto itProf = this->profsHabilit.cbegin(); itProf != this->profsHabilit.cend(); itProf++)
+	{
+		if ((*itProf)->getImportancia() == importancia ||
+			((*itProf)->getImportancia() < importancia && ouMenor))
+			nr++;
+	}
+	return nr;
+}
+
 void Disciplina::getProfsIntersec(std::map<int, std::map<DateTime, std::unordered_set<Professor*> >> &profsIntersec)
 {
 	for (auto itHor = this->horarios.begin(); itHor != this->horarios.end(); itHor++)

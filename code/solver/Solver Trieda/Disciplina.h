@@ -52,6 +52,7 @@ public:
    std::set<Professor*> profsHabilit;
    void addProfHabilit(Professor* p);
    int getNroProfRealHabilit() const;
+   int getNroProfRealImportHabilit(int importancia, bool ouMenor=false) const;
    bool existeProfRealNoHorarioDia(int dia, HorarioAula* const ha) const;
    bool getProfRealNoHorarioDia(int dia, HorarioAula* const ha, std::unordered_set<Professor*> &profs) const;
    void getProfsIntersec( std::map<int, std::map<DateTime, std::unordered_set<Professor*> >> &profsIntersec);

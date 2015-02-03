@@ -1893,11 +1893,11 @@ void SolverMIPUnico::countGapProfReal_()
 		Professor* const professor = itProf->first;					
 		if (professor->eVirtual()) continue;		
 
-		cout << "\nProf" << professor->getId();
+	//	cout << "\nProf" << professor->getId();
 
 		for(auto itDia = itProf->second.cbegin(); itDia != itProf->second.cend(); ++itDia)
 		{
-			cout << "\n\tDia" << itDia->first;
+		//	cout << "\n\tDia" << itDia->first;
 
 			for(auto itDti = itDia->second.cbegin(); *itDti != *itDia->second.crbegin(); ++itDti)
 			{
@@ -1911,14 +1911,14 @@ void SolverMIPUnico::countGapProfReal_()
 				Unidade* const nextUnid = itNextDti->second.second;
 				int nextFaseDoDia = CentroDados::getFaseDoDia(nextDti);				
 				
-				cout << "\n\t\tDtf " << dtf.hourMinToStr() << "   NextDti " << nextDti.hourMinToStr();
+			//	cout << "\n\t\tDtf " << dtf.hourMinToStr() << "   NextDti " << nextDti.hourMinToStr();
 
 				if (faseDoDia != nextFaseDoDia) continue;
 
 				int difMin = (nextDti - dtf).getDateMinutes();
 				int nr = difMin / 50;
 
-				cout << "\n\t\tDif = " << difMin << "   nr = " << nr;
+			//	cout << "\n\t\tDif = " << difMin << "   nr = " << nr;
 
 				nrTotalGap += nr;
 				if (unid == nextUnid)

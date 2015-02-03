@@ -20,7 +20,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
-	tryBranch_(false), okIter_(true), fixTypeAnt_(-1),
+	tryBranch_(false), okIter_(true), fixTypeAnt_(-1), useFixationByUnid_(true),
 	k_(3)
 {
 	originalLogFileName_ = originalLogFile;
@@ -33,7 +33,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string origin
 	fixarVarsTatProf_(true),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
-	tryBranch_(false), okIter_(true), fixTypeAnt_(-1),
+	tryBranch_(false), okIter_(true), fixTypeAnt_(-1), useFixationByUnid_(true),
 	k_(3)
 {
 	originalLogFileName_ = originalLogFile;
@@ -74,9 +74,11 @@ void Polish::init()
 	
 	// Fix type
 	if (module_==Polish::TATICO)
-		fixType_ = 1;	
-	if (module_==Polish::OPERACIONAL)
-		fixType_ = 2;
+	{
+		fixType_ = 1;
+		//fixType_ = 4;
+		//useFixationByUnid_=false;
+	}
 
 	// Constants
 	tempoIni_ = 70;
@@ -104,9 +106,13 @@ void Polish::init()
     }
 
 	mapVariables();
+	
+	getAllProfessors();
+
 	loadUnidades();
 	setAllFreeUnidade();
 	clusterUnidadesByProfs();
+
 }
 
 void Polish::mapVariables()
@@ -160,6 +166,32 @@ void Polish::loadUnidades()
 		}
 	}
 }
+
+int Polish::getSolValue(int col)
+{
+	return (int) (xSol_[col] + 0.5);
+}
+
+// -------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+// Cluster professors
+
+void Polish::getAllProfessors()
+{
+	if (fixType_ != 4) return;
+
+    for ( auto vit = vHashTatY_.begin(); vit != vHashTatY_.end(); vit++)
+    {
+		if ( vit->first.getType() == VariableMIPUnico::V_PROF_TURMA )
+		{			
+			if (!vit->first.getProfessor()->eVirtual())
+			{
+				professors_.insert(vit->first.getProfessor());
+			}
+		}		
+    }
+}
+
 
 // -------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------
@@ -375,6 +407,10 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
     while (okIter_)
     {     
 		fixVars();
+		
+		//stringstream ss;
+		//ss << "polishFixed" << i;
+		//lp_->writeProbLP((char*) ss.str().c_str());
 
 		logIter( perc_, timeIter_ );
 
@@ -397,6 +433,11 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		checkTimeLimit();
 	  
 		unfixBounds();
+
+		//stringstream ss2;
+		//ss2 << "polishFree" << i;
+		//lp_->writeProbLP((char*) ss2.str().c_str());
+
 		i++;
     }
 	
@@ -418,8 +459,6 @@ void Polish::fixVars()
 {
 	if (module_ == Polish::TATICO)
 	    fixVarsTatico();
-	if (module_ == Polish::OPERACIONAL)
-	    fixVarsOp();
 }
 
 void Polish::fixVarsTatico()
@@ -438,17 +477,30 @@ void Polish::fixVarsTatico()
 	{
 		fixVarsType3Tatico();
 	}
-}
-
-void Polish::fixVarsOp()
-{
-	fixVarsType2Op();
+	else if (fixType_==4)
+	{
+		unordered_set<Professor*> fixedProfs;
+		decideVarsToFixVarsType4(fixedProfs);
+		fixVarsType4Prof(fixedProfs);
+	}
 }
 
 void Polish::clearVarsToFixType1()
 {
 	paraFixarUm_.clear();
 	paraFixarZero_.clear();
+}
+
+bool Polish::ehMarreta(VariableMIPUnico v)
+{
+	if ( v.getType() == VariableMIPUnico::V_ALUNO_CREDITOS )
+	{
+		if (CentroDados::stringContem(v.getDisciplina()->getCodigo(), "EDF"))
+			return true;
+		if (v.getAluno()->ehFormando() || v.getAluno()->possuiEquivForcada())
+			return true;
+	}
+	return false;
 }
 
 void Polish::decideVarsToFixMarreta()
@@ -462,7 +514,7 @@ void Polish::decideVarsToFixMarreta()
     {
 		if ( vit->first.getType() == VariableMIPUnico::V_ALUNO_CREDITOS )
 		{			
-			if (vit->first.getAluno()->possuiEquivForcada())
+			if (ehMarreta(vit->first))
 			if (rand() % 100 >= perc_)
 				continue;
 
@@ -692,39 +744,39 @@ void Polish::fixVarsType3Tatico()
 	 fixVarsType3();
 }
 
-void Polish::fixVarsType2Op()
+void Polish::decideVarsToFixVarsType4(unordered_set<Professor*> &fixedProfs)
 {
-    int nBds = 0;
-    for ( auto vit = vHashOp_.begin(); vit != vHashOp_.end(); vit++ )
-    {
-        if ( vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR )
-        {
-			if ( rand() % 100 >= perc_  )
-			{
-				continue;
-			}
+	if (fixType_ != 4) return;
 
-			if ( xSol_[vit->second] > 0.1 )
-			{
-				idxs_[nBds] = vit->second;
-				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
-				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
-				nBds++;
-				idxs_[nBds] = vit->second;
-				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
-				bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
-				nBds++;
-			}
-			else
-			{
-				idxs_[nBds] = vit->second;
-				vals_[nBds] = 0.0;
-				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
-				nBds++;
-			}
-        }
+    for ( auto pit = professors_.begin(); pit != professors_.end(); pit++)
+    {		
+		if ( rand() % 100 >= perc_  )
+			continue;
+
+		fixedProfs.insert(*pit);
     }
+}
 
+void Polish::fixVarsType4Prof(unordered_set<Professor*> const &fixedProfs)
+{
+	if (fixType_ != 4) return;
+	
+    int nBds = 0;
+    for (auto vit = vHashTatY_.begin(); vit != vHashTatY_.end(); vit++)
+    {
+		if ( vit->first.getType() != VariableMIPUnico::V_PROF_TURMA ) 
+			continue;
+		if ( fixedProfs.find(vit->first.getProfessor()) == fixedProfs.end() )
+			continue;
+
+		int value = getSolValue(vit->second);
+		BOUNDTYPE btype = (value==0? BOUNDTYPE::BOUND_UPPER : BOUNDTYPE::BOUND_LOWER);
+
+		idxs_[nBds] = vit->second;
+		vals_[nBds] = value;
+		bds_[nBds] = btype;
+		nBds++;
+    }
     lp_->chgBds(nBds,idxs_,bds_,vals_);
     lp_->updateLP();
 }
@@ -987,6 +1039,8 @@ void Polish::decideTypeOfUnidToFree()
 
 void Polish::setNextRandFreeUnidade(int adjustPercUnid)
 {
+	if (!useFixationByUnid_) return;
+
 	static int counter=0;
 	counter++;
 
@@ -1119,8 +1173,9 @@ void Polish::updatePercAndTimeIter(double objN, double gap)
 		  return;
 	  }
 	  
+	  int tempFixType = fixTypeAnt_;
 	  fixTypeAnt_ = fixType_;
-	  if (fixType_==3) fixType_ = 1;
+	  if (fixTypeAnt_==3) fixType_ = tempFixType;
 
 	  updateIterSemMelhora();
 	  
@@ -1341,9 +1396,6 @@ void Polish::chgFixType()
 {
 	if (module_==Polish::TATICO)
 		fixType_ = (fixType_ == 1 ? 2:1);	// alternate fixType
-	
-	if (module_==Polish::OPERACIONAL)
-		fixType_ = 2;
 }
 
 void Polish::checkTimeWithoutImprov(double objN)
@@ -1408,8 +1460,6 @@ void Polish::unfixBounds()
 {
 	if (module_ == Polish::TATICO)
 		unfixBoundsTatico();
-	if (module_ == Polish::OPERACIONAL)
-		unfixBoundsOp();
 }
 
 void Polish::unfixBoundsTatHash(VariableMIPUnicoHash const & hashVar)
@@ -1444,29 +1494,6 @@ void Polish::unfixBoundsTatico()
 		//unfixBoundsTatHash(vHashTatK_);
 		unfixBoundsTatHash(vHashTatY_);
 	}
-}
-
-void Polish::unfixBoundsOp()
-{
-      // Volta bounds
-      int nBds = 0;
-      for ( auto vit = vHashOp_.begin(); vit != vHashOp_.end(); vit++ )
-      {
-		 if ( vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR || 
-			  vit->first.getType() == VariableOp::V_FOLGA_DEMANDA )
-         {
-            idxs_[nBds] = vit->second;
-            vals_[nBds] = ubVars_[vit->second];
-            bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
-            nBds++;
-            idxs_[nBds] = vit->second;
-            vals_[nBds] = lbVars_[vit->second];
-            bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
-            nBds++;
-         }         
-      }	  
-      lp_->chgBds(nBds,idxs_,bds_,vals_);
-      lp_->updateLP();
 }
 
 void Polish::logIter(double perc_, double timeIter_)

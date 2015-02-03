@@ -61,6 +61,12 @@ private:
 	void mapVariablesTat();
 	void loadUnidades();
 
+	// Solution
+	int getSolValue(int col);
+
+	// Professors
+	void getAllProfessors();
+
 	// Clustering unidades per professor
 	void clusterUnidadesByProfs();
 	void mapProfUnidFromVariables();
@@ -76,10 +82,10 @@ private:
 	// Fix variables
 	void fixVars();
 	void fixVarsTatico();
-	void fixVarsOp();
-
+	
 	// Fix variable type 1
 	void clearVarsToFixType1();
+	bool ehMarreta(VariableMIPUnico v);
 	void decideVarsToFixMarreta();
 	void decideVarsToFixOther();
 	void decideVarsToFixByPhase();
@@ -89,11 +95,14 @@ private:
 
 	// Fix variable type 2
 	void fixVarsType2Tatico();
-	void fixVarsType2Op();
-
+	
 	// Fix variable type 3
 	void fixVarsType3Tatico();
 	void fixVarsType3();
+
+	// Fix variable type 4
+	void decideVarsToFixVarsType4(unordered_set<Professor*> &fixedProfs);
+	void fixVarsType4Prof(unordered_set<Professor*> const &fixedProfs);
 
 	// Setting unidades to fix or to free
 	void fixUnidsTatico();
@@ -253,7 +262,8 @@ private:
 	   int maxIterSemMelhora_; 
 	   bool fixarVarsTatProf_;
 	   double minOptValue_;
-	   
+	   bool useFixationByUnid_;
+
 	   // Solution
 	   double *xSol_;
 	   
@@ -272,13 +282,17 @@ private:
 
 	   // Hash which associates the column number with the VariableOp object.
 	   VariableOpHash const vHashOp_;
-	   
+
 	   // Unidades
 	   set<Unidade*> unidades_;
 	   map<int,set<Unidade*>> unidClustersByProfs_;
 	   map<int,set<Professor*>> clusterIdxProfs_;
 	   map<Professor*, set<Unidade*>> profUnidcluster_;
 	   map<Unidade*, set<Professor*>> unidProfs_;
+	   
+	   // Professors
+	   unordered_set<Professor*> professors_;
+
 
 	   MODULE const module_;
 	   int const phase_;
