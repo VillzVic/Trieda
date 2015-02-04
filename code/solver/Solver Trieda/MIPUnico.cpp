@@ -77,9 +77,10 @@ const int MIPUnico::maxDeslocUnidLongeSemana_ = 2;
 const int MIPUnico::maxTempoDeslocCurto_ = 50;
 const bool MIPUnico::minimizarProfFaseDoDiaUsada_ = true;
 const bool MIPUnico::minimizarProfDiaUsado_ = true;
-const bool MIPUnico::priorProfImportante_ = false;
 int MIPUnico::priorProfLevel_ = 0;
+const bool MIPUnico::priorProfImportante_ = false;
 const bool MIPUnico::priorProfImportante_v2_ = true;
+const bool MIPUnico::priorProfImportante_v3_ = false;
 const bool MIPUnico::minimizarGapProfEntreFases_ = true;
 const int MIPUnico::MaxGapEntreFase_ = 170;
 const int MIPUnico::minCredDispFaseMinGapProf_ = 3;
@@ -1671,6 +1672,26 @@ int MIPUnico::solveMIPUnico_duplo(int campusId, int prioridade, int r)
 	return status;
 }
 
+int MIPUnico::solveMIPUnico_triplo(int campusId, int prioridade, int r)
+{
+	bool status=1;
+
+	MIPUnico::permiteCriarPV = false;
+
+	MIPUnico::priorProfLevel_ = 1;
+	status = solveMIPUnico_v2(campusId, prioridade, r);
+	
+	MIPUnico::priorProfLevel_ = 2;
+	status &= solveMIPUnico_v2(campusId, prioridade, r);
+
+	MIPUnico::permiteCriarPV = true;
+
+	MIPUnico::priorProfLevel_ = CentroDados::allPriorProfLevels_;
+	status &= solveMIPUnico_v2(campusId, prioridade, r);
+
+	return status;
+}
+
 int MIPUnico::solveMIPUnico_v2(int campusId, int prioridade, int r)
 {	
 	std::cout<<"\nSolving...\n"; fflush(NULL);
@@ -1685,8 +1706,6 @@ int MIPUnico::solveMIPUnico_v2(int campusId, int prioridade, int r)
 	
 	clearStrutures();
 	
-	criaNewLp(campusId, prioridade, r);
-		
 	criaVariaveisTatico( campusId, prioridade, r );
 	
 	//setGurobiVarsPrior();
@@ -1723,6 +1742,8 @@ int MIPUnico::solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARR
 		{
 			if (MIPUnico::priorProfImportante_v2_) 
 				status=solveMIPUnicoEtapaReal_2(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+			else if (MIPUnico::priorProfImportante_v3_) 
+				status=solveMIPUnicoEtapaReal_3(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
 			else 
 				status=solveMIPUnicoEtapaReal(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
 		}
@@ -1737,7 +1758,7 @@ int MIPUnico::solveMIPUnicoEtapaReal_2(int campusId, int prioridade, int r, bool
 {	
 	if (!MIPUnico::priorProfImportante_v2_) return 0;
 
-	MIPUnico::priorProfLevel_ = 0;			// considera todos os professores
+	MIPUnico::priorProfLevel_ = CentroDados::allPriorProfLevels_;			// considera todos os professores
 
 	solveGaranteSolucao( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );		
 	solveMaxAtendMarreta( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
@@ -1753,7 +1774,7 @@ int MIPUnico::solveMIPUnicoEtapaReal_2(int campusId, int prioridade, int r, bool
 	MIPUnico::priorProfLevel_ = 2;			// considera somente os professores de prioridade 2
 	solveMIPUnicoEtapaReal_ProfPrior( campusId, prioridade, r, CARREGA_SOL_PARCIAL );
 
-	MIPUnico::priorProfLevel_ = 0;			// considera todos os professores
+	MIPUnico::priorProfLevel_ = CentroDados::allPriorProfLevels_;			// considera todos os professores
 
 	liberaVariaveisPV( xSol_ );		
 	fixaSolMinProfReal( xSol_ );
@@ -1810,28 +1831,24 @@ int MIPUnico::solveMIPUnicoEtapasQualidadeReal(int campusId, int prioridade, int
 		stat &= solveMinGapProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );	
 	}
 
-	MIPUnico::priorProfLevel_ = 0;
+	MIPUnico::priorProfLevel_ = CentroDados::allPriorProfLevels_;
 
 	return stat;
 }
 
 int MIPUnico::solveMIPUnicoEtapaReal_3(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL)
 {	
-	MIPUnico::priorProfLevel_ = 0;
-
-	solveGaranteSolucao( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );		
-	solveMaxAtendMarreta( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
-		
-	fixaVariaveisPVZero( xSol_ );		
-
+	if (MIPUnico::priorProfLevel_ == 1)
+	{
+		solveGaranteSolucao( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );		
+		solveMaxAtendMarreta( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+	}
+	
 	solveMaxAtend( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 	solveMinTurmas( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 	solveMinDeslocProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );		
 	solveMinFasesDoDiaProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 	solveMinGapProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );	
-		
-	liberaVariaveisPV( xSol_ );		
-	fixaSolMinProfReal( xSol_ );
 	
 	return 1;
 }
@@ -2244,56 +2261,12 @@ int MIPUnico::solveMaxAtendMarreta( int campusId, int prioridade, int r, bool& C
 
 	if (CentroDados::getPrintLogs())
 		lp->writeProbLP( lpName2.c_str() );
+	// ------------------------------------------------------------------------------------
 	
-	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
-					
+	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);					
 	lp->updateLP();			
 
-	if ( CARREGA_SOL_PARCIAL )
-	{
-		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
-		if ( !statusReadBin )
-		{
-			CARREGA_SOL_PARCIAL=false;
-		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
-	}
-	if ( !CARREGA_SOL_PARCIAL )
-	{
-		// GENERATES SOLUTION 		 
-		
-		bool polishing = false;
-		if ( polishing )
-		{  
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MARRETA);
-			polishing = pol->polish(xS, MIPUnico::timeLimitMaxAtend, 90, MIPUnico::timeLimitMaxAtendSemMelhora);
-			delete pol;
-		}
-		if (!polishing)
-		{
-			lp->setNumIntSols(100000000);
-			lp->setTimeLimit(MIPUnico::timeLimitMaxAtend);
-			lp->setPreSolveIntensity(OPT_LEVEL2);
-			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
-			lp->setMIPEmphasis(1);
-			lp->setSymetry(-1);
-			lp->setCuts(2);
-			lp->setHeurFrequency(0.8);
-
-			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-			cb_data.timeLimit = MIPUnico::timeLimitMaxAtendSemMelhora;
-			cb_data.gapMax = 40;
-			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-			#endif
-						
-			optimize();	
-			getXSol(xS);
-		}
-
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
-	}      
-		
+	optimizeMaxAtendMarreta(campusId, prioridade, r, CARREGA_SOL_PARCIAL, xS);		
 
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA
@@ -2368,6 +2341,55 @@ bool MIPUnico::chgObjMaxAtendMarreta()
 	delete[] vals;
 	
 	return chged;
+}
+
+int MIPUnico::optimizeMaxAtendMarreta( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
+{
+	if ( CARREGA_SOL_PARCIAL )
+	{
+		// procura e carrega solucao parcial
+		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
+		if ( !statusReadBin )
+		{
+			CARREGA_SOL_PARCIAL=false;
+		}
+		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
+	}
+	if ( !CARREGA_SOL_PARCIAL )
+	{
+		// GENERATES SOLUTION 		 
+		
+		bool polishing = false;
+		if ( polishing )
+		{  
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MARRETA);
+			polishing = pol->polish(xS, MIPUnico::timeLimitMaxAtend, 90, MIPUnico::timeLimitMaxAtendSemMelhora);
+			delete pol;
+		}
+		if (!polishing)
+		{
+			lp->setNumIntSols(100000000);
+			lp->setTimeLimit(MIPUnico::timeLimitMaxAtend);
+			lp->setPreSolveIntensity(OPT_LEVEL2);
+			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
+			lp->setMIPEmphasis(1);
+			lp->setSymetry(-1);
+			lp->setCuts(2);
+			lp->setHeurFrequency(0.8);
+
+			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+			cb_data.timeLimit = MIPUnico::timeLimitMaxAtendSemMelhora;
+			cb_data.gapMax = 40;
+			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+			#endif
+						
+			optimize();	
+			getXSol(xS);
+		}
+
+		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
+	}
+	return 1;
 }
 
 bool MIPUnico::fixaSolMaxAtendMarreta(double* const xS)
@@ -2521,9 +2543,9 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA
+	fixaSolVariaveisAtend(xS);
 	fixaSolMaxAtend(xS);
-	fixaSolMaxAtendReal(xS);
-
+	
 	// ------------------------------------------------------------------------------------
 	// Volta com a função objetivo original	
 	lp->chgObj(lp->getNumCols(),idxN,objN);
@@ -2559,9 +2581,9 @@ bool MIPUnico::chgObjMaxAtend()
 		{          
 			int coef = vit->first.getDisciplina()->getTotalCreditos();					
 
-			if (considerarPriorProf()) 
+			if (considerarPriorProf() && !priorProfLivre()) 
 			{
-				int nr = vit->first.getDisciplina()->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_, true);
+				int nr = vit->first.getDisciplina()->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_);
 				coef = (nr>0 ? vit->first.getDisciplina()->getTotalCreditos() : 0);
 			}
 							
@@ -2581,7 +2603,7 @@ bool MIPUnico::chgObjMaxAtend()
 	#pragma endregion
 
 	#pragma region Modifica FO com pequeno adicional para guiar a redução de prof virt
-	bool considerarAdicional=false;
+	bool considerarAdicional=true;
 	if (considerarAdicional && MIPUnico::permiteCriarPV)
 	{
 		double coefPV = 0.00001;
@@ -2705,10 +2727,7 @@ bool MIPUnico::fixaSolMaxAtend(double* const xS)
 {
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
-
-	// teste
-	fixaSolVariaveisAtend(xS);
-
+	
 	bool chged = true;
 		
 	ConstraintMIPUnico c;
@@ -2740,56 +2759,6 @@ bool MIPUnico::fixaSolMaxAtend(double* const xS)
 		cHashTatico[ c ] = lp->getNumRows();
 		lp->addRow(row);
 		lp->updateLP();
-	}
-
-	return chged;
-}
-
-bool MIPUnico::fixaSolMaxAtendReal(double* const xS)
-{
-	if (!MIPUnico::priorProfImportante_v2_) return false;
-
-	// ------------------------------------------------------------------------------------	
-	
-	map<Professor*, set< pair<int,double> >> mapProfVars;
-
-	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
-	{
-		VariableMIPUnico v = vit->first;
-
-		if (v.getType() != VariableMIPUnico::V_PROF_TURMA) continue;
-		if (v.getProfessor()->eVirtual()) continue;
-		if (!priorProf(v.getProfessor())) continue;
-
-		int numCred = v.getDisciplina()->getTotalCreditos();
-
-		pair<int,double> par(vit->second, numCred);
-		mapProfVars[v.getProfessor()].insert(par);
-	}
-	
-	bool chged = true;
-	
-	for (auto pit = mapProfVars.cbegin(); pit != mapProfVars.cend(); pit++)
-	{
-		int nnz = pit->second.size();
-		stringstream name;
-		name << "C_FIX_SOL_MIN_ATEND_(Prof" << pit->first->getId() << ")";
-		OPT_ROW row( nnz, OPT_ROW::GREATER, 0, (char*) name.str().c_str() );
-		
-		int nrCredsAtend=0;
-		for (auto vit = pit->second.cbegin(); vit != pit->second.cend(); vit++)
-		{
-			row.insert(vit->first, vit->second);
-			int value = (int) (xS[vit->first] + 0.5);
-			nrCredsAtend += value * vit->second;
-		}
-
-		if (row.getnnz() > 0)
-		{
-			row.setRhs(nrCredsAtend);
-			chged &= lp->addRow(row);
-			lp->updateLP();
-		}
 	}
 
 	return chged;
@@ -2927,10 +2896,44 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 
 	if (CentroDados::getPrintLogs())
 		lp->writeProbLP( lpName2.c_str() );
+	// ------------------------------------------------------------------------------------
 	
 	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);				
 	lp->updateLP();
 
+	optimizeMinProfVirt( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xS );
+		
+	// ------------------------------------------------------------------------------------
+	printAtendsVirtuais(xS);
+
+	// ------------------------------------------------------------------------------------
+	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
+	fixaSolMinProfVirt(xS);
+	
+	// ------------------------------------------------------------------------------------
+	// Volta com a função objetivo original	
+	lp->chgObj(lp->getNumCols(),idxN,objN);
+
+	lp->updateLP();
+	
+	// ------------------------------------------------------------------------------------
+	// Copia solução
+	bool cpyStatus = lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
+	std::cout << "\ncopyMIPStartSol = " << cpyStatus;
+ 
+	lp->updateLP();
+
+	delete[] idxs;
+	delete[] vals;
+	delete[] bds;
+	delete[] idxN;
+	delete[] objN;
+	
+	return cpyStatus;
+}
+
+int MIPUnico::optimizeMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
+{
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
@@ -2977,37 +2980,9 @@ int MIPUnico::solveMinProfVirt( int campusId, int prioridade, int r, bool& CARRE
 		}
 
 		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
-	}      
-	
+	}	
 	fflush(NULL);
-		
-	// ------------------------------------------------------------------------------------
-	printAtendsVirtuais(xS);
-
-	// ------------------------------------------------------------------------------------
-	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
-	fixaSolMinProfVirt(xS);
-	
-	// ------------------------------------------------------------------------------------
-	// Volta com a função objetivo original	
-	lp->chgObj(lp->getNumCols(),idxN,objN);
-
-	lp->updateLP();
-	
-	// ------------------------------------------------------------------------------------
-	// Copia solução
-	bool cpyStatus = lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
-	std::cout << "\ncopyMIPStartSol = " << cpyStatus;
- 
-	lp->updateLP();
-
-	delete[] idxs;
-	delete[] vals;
-	delete[] bds;
-	delete[] idxN;
-	delete[] objN;
-	
-	return cpyStatus;
+	return 1;
 }
 
 bool MIPUnico::fixaSolMinProfVirt(double* const xS)
@@ -3179,6 +3154,14 @@ int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA
 	// FUNÇÃO OBJETIVO SOMENTE COM AS VARIAVEIS DE ABERTURA COM COMPARTILHAMENTO
 	chgObjMinTurmas();
 		
+	// -------------------------------------------------------------------		
+	std::string lpName2;
+	lpName2 += "minTurmas_";
+	lpName2 += string(lpName);
+
+	if (CentroDados::getPrintLogs())
+		lp->writeProbLP( lpName2.c_str() );
+
 	// ------------------------------------------------------------------------------------				
 	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
 	lp->updateLP();
@@ -3195,6 +3178,8 @@ int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA
 		fixaSolMinTurmasAbordPvFinal(xS);
 	else
 		fixaSolMinTurmas(xS);
+
+	fixaSolMaxAtendReal(xS);
 
 	// ------------------------------------------------------------------------------------
 	// Copia solução
@@ -3220,10 +3205,15 @@ bool MIPUnico::chgObjMinTurmas()
 		VariableMIPUnico v = vit->first;
 
 		double coef = 0.0;		
-		if ( v.getType() == VariableMIPUnico::V_ABERTURA )
-		{     
-			if (v.getDisciplina()->getMaxAlunosT() > 1)
-				coef = 1.0;
+		if (v.getType() == VariableMIPUnico::V_ABERTURA)
+		if (v.getDisciplina()->getMaxAlunosT() > 1)
+		{
+			coef = 1.0;
+			if (considerarPriorProf()) 
+			{
+				int nr = v.getDisciplina()->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_);
+				coef = (nr>0 ? 1 : 0);
+			}
 		}
 
 		idxs[nBds] = vit->second;
@@ -3258,7 +3248,7 @@ int MIPUnico::optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARR
 	{
 		// GENERATES SOLUTION 		 
 		
-		bool polishing = true;
+		bool polishing = false;
 		if ( polishing )
 		{  		
 			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
@@ -3292,6 +3282,56 @@ int MIPUnico::optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARR
 	fflush(0);
 
 	return 1;
+}
+
+bool MIPUnico::fixaSolMaxAtendReal(double* const xS)
+{
+	if (!MIPUnico::priorProfImportante_v2_) return false;
+
+	// ------------------------------------------------------------------------------------	
+	
+	map<Professor*, set< pair<int,double> >> mapProfVars;
+
+	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
+	{
+		VariableMIPUnico v = vit->first;
+
+		if (v.getType() != VariableMIPUnico::V_PROF_TURMA) continue;
+		if (v.getProfessor()->eVirtual()) continue;
+		if (!priorProf(v.getProfessor())) continue;
+
+		int numCred = v.getDisciplina()->getTotalCreditos();
+
+		pair<int,double> par(vit->second, numCred);
+		mapProfVars[v.getProfessor()].insert(par);
+	}
+	
+	bool chged = true;
+	
+	for (auto pit = mapProfVars.cbegin(); pit != mapProfVars.cend(); pit++)
+	{
+		int nnz = pit->second.size();
+		stringstream name;
+		name << "C_FIX_SOL_MIN_ATEND_(Prof" << pit->first->getId() << ")";
+		OPT_ROW row( nnz, OPT_ROW::GREATER, 0, (char*) name.str().c_str() );
+		
+		int nrCredsAtend=0;
+		for (auto vit = pit->second.cbegin(); vit != pit->second.cend(); vit++)
+		{
+			row.insert(vit->first, vit->second);
+			int value = (int) (xS[vit->first] + 0.5);
+			nrCredsAtend += value * vit->second;
+		}
+
+		if (row.getnnz() > 0)
+		{
+			row.setRhs(nrCredsAtend);
+			chged &= lp->addRow(row);
+			lp->updateLP();
+		}
+	}
+
+	return chged;
 }
 
 bool MIPUnico::fixaSolMinTurmasAbordPvFinal(double* const xS)
@@ -3481,10 +3521,6 @@ bool MIPUnico::chgObjMinDeslocProf()
 				 priorProf(v.getProfessor()) )
 		{
 			coef = 10;
-		}
-		else if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
-		{
-			coef = 0.0001 * vit->first.getDisciplina()->getTotalCreditos();
 		}
 
 		idxs[nBds] = vit->second;
@@ -3774,55 +3810,12 @@ int MIPUnico::solveMinFasesDoDiaProf( int campusId, int prioridade, int r, bool&
 
 	if (CentroDados::getPrintLogs())
 		lp->writeProbLP( lpName2.c_str() );
+	// --------------------------------------------------------------------
 	
 	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);				
 	lp->updateLP();
 
-	if ( CARREGA_SOL_PARCIAL )
-	{
-		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
-		if ( !statusReadBin )
-		{
-			CARREGA_SOL_PARCIAL=false;
-		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
-	}
-	if ( !CARREGA_SOL_PARCIAL )
-	{		
-		bool polishing = true;
-		if ( polishing )
-		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
-			polishing = pol->polish(xS, MIPUnico::timeLimitMinFaseDiaProf_, 90, MIPUnico::timeLimitMinFaseDiaProfSemMelhora_);
-			delete pol;			
-		}
-		if (!polishing)
-		{
-			lp->setNumIntSols(100000000);
-			lp->setTimeLimit(MIPUnico::timeLimitMinFaseDiaProf_);
-			lp->setPreSolveIntensity(OPT_LEVEL2);
-			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
-			lp->setMIPEmphasis(1);
-			lp->setSymetry(-1);
-			lp->setCuts(2);
-			lp->setHeurFrequency(0.8);
-
-			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-			cb_data.timeLimit = MIPUnico::timeLimitMinFaseDiaProfSemMelhora_;
-			cb_data.gapMax = 40;
-			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-			#endif
-						
-			optimize();	
-			getXSol(xS);
-		}
-		
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
-	}      
-	
-	fflush(NULL);
-		
+	optimizeMinFasesDoDiaProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xS );		
 
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
@@ -3884,6 +3877,54 @@ bool MIPUnico::chgObjMinFasesDoDiaProf()
 	delete[] vals;
 
 	return chged;
+}
+
+int MIPUnico::optimizeMinFasesDoDiaProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
+{
+	if ( CARREGA_SOL_PARCIAL )
+	{
+		// procura e carrega solucao parcial
+		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
+		if ( !statusReadBin )
+		{
+			CARREGA_SOL_PARCIAL=false;
+		}
+		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
+	}
+	if ( !CARREGA_SOL_PARCIAL )
+	{		
+		bool polishing = true;
+		if ( polishing )
+		{  		
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
+			polishing = pol->polish(xS, MIPUnico::timeLimitMinFaseDiaProf_, 90, MIPUnico::timeLimitMinFaseDiaProfSemMelhora_);
+			delete pol;			
+		}
+		if (!polishing)
+		{
+			lp->setNumIntSols(100000000);
+			lp->setTimeLimit(MIPUnico::timeLimitMinFaseDiaProf_);
+			lp->setPreSolveIntensity(OPT_LEVEL2);
+			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
+			lp->setMIPEmphasis(1);
+			lp->setSymetry(-1);
+			lp->setCuts(2);
+			lp->setHeurFrequency(0.8);
+
+			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+			cb_data.timeLimit = MIPUnico::timeLimitMinFaseDiaProfSemMelhora_;
+			cb_data.gapMax = 40;
+			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+			#endif
+						
+			optimize();	
+			getXSol(xS);
+		}
+		
+		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
+	}	
+	fflush(NULL);
+	return 1;
 }
 
 bool MIPUnico::fixaSolMaxFasesDoDiaProf(double* const xS)
@@ -4020,55 +4061,12 @@ int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREG
 
 	if (CentroDados::getPrintLogs())
 		lp->writeProbLP( lpName2.c_str() );
+	// --------------------------------------------------------------------
 	
 	lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);				
 	lp->updateLP();
 
-	if ( CARREGA_SOL_PARCIAL )
-	{
-		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
-		if ( !statusReadBin )
-		{
-			CARREGA_SOL_PARCIAL=false;
-		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
-	}
-	if ( !CARREGA_SOL_PARCIAL )
-	{		
-		bool polishing = true;
-		if ( polishing )
-		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MIN_GAP);
-			polishing = pol->polish(xS, MIPUnico::timeLimitMinGapProf, 90, MIPUnico::timeLimitMinGapProfSemMelhora);
-			delete pol;			
-		}
-		if (!polishing)
-		{
-			lp->setNumIntSols(100000000);
-			lp->setTimeLimit(MIPUnico::timeLimitMinGapProf);
-			lp->setPreSolveIntensity(OPT_LEVEL2);
-			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
-			lp->setMIPEmphasis(1);
-			lp->setSymetry(-1);
-			lp->setCuts(2);
-			lp->setHeurFrequency(0.8);
-
-			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
-			cb_data.timeLimit = MIPUnico::timeLimitMinGapProfSemMelhora;
-			cb_data.gapMax = 40;
-			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
-			#endif
-						
-			optimize();	
-			getXSol(xS);
-		}
-		
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
-	}      
-	
-	fflush(NULL);
-		
+	optimizeMinGapProf( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xS );		
 
 	// ------------------------------------------------------------------------------------
 	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
@@ -4135,6 +4133,54 @@ bool MIPUnico::chgObjMinGapProf()
 	delete[] vals;
 
 	return chged;
+}
+
+int MIPUnico::optimizeMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
+{
+	if ( CARREGA_SOL_PARCIAL )
+	{
+		// procura e carrega solucao parcial
+		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
+		if ( !statusReadBin )
+		{
+			CARREGA_SOL_PARCIAL=false;
+		}
+		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
+	}
+	if ( !CARREGA_SOL_PARCIAL )
+	{		
+		bool polishing = true;
+		if ( polishing )
+		{  		
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MIN_GAP);
+			polishing = pol->polish(xS, MIPUnico::timeLimitMinGapProf, 90, MIPUnico::timeLimitMinGapProfSemMelhora);
+			delete pol;			
+		}
+		if (!polishing)
+		{
+			lp->setNumIntSols(100000000);
+			lp->setTimeLimit(MIPUnico::timeLimitMinGapProf);
+			lp->setPreSolveIntensity(OPT_LEVEL2);
+			lp->setMIPStartAlg(METHOD_BARRIERANDCROSSOVER);
+			lp->setMIPEmphasis(1);
+			lp->setSymetry(-1);
+			lp->setCuts(2);
+			lp->setHeurFrequency(0.8);
+
+			#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+			cb_data.timeLimit = MIPUnico::timeLimitMinGapProfSemMelhora;
+			cb_data.gapMax = 40;
+			lp->setCallbackFunc( &timeWithoutChangeCallback, &cb_data );
+			#endif
+						
+			optimize();	
+			getXSol(xS);
+		}
+		
+		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
+	}
+	fflush(NULL);
+	return 1;
 }
 
 bool MIPUnico::fixaSolMinGapProf(double* const xS)
@@ -4280,20 +4326,30 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 	return optStatus;
 }
 
+bool MIPUnico::priorProfLivre()
+{
+	if (!considerarPriorProf()) return true;
+
+	return (MIPUnico::priorProfLevel_ == CentroDados::allPriorProfLevels_);
+}
+
 bool MIPUnico::considerarPriorProf()
 {
-	if (!MIPUnico::priorProfImportante_ && !MIPUnico::priorProfImportante_v2_)
+	if (!MIPUnico::priorProfImportante_ && 
+		!MIPUnico::priorProfImportante_v2_ && 
+		!MIPUnico::priorProfImportante_v3_)
 		return false;
 	return true;
 }
 
-bool MIPUnico::priorProf(Professor* const professor)
+bool MIPUnico::priorProf(Professor* const professor, bool ouMenor)
 {
-	if (!MIPUnico::priorProfImportante_ && !MIPUnico::priorProfImportante_v2_)
+	if (!considerarPriorProf())
 		return true;
-	if (MIPUnico::priorProfLevel_==0)
+	if (MIPUnico::priorProfLevel_ == CentroDados::allPriorProfLevels_)
 		return true;
-	return (professor->getImportancia() == MIPUnico::priorProfLevel_);
+	return (professor->getImportancia() == MIPUnico::priorProfLevel_ ||
+		   (professor->getImportancia() < MIPUnico::priorProfLevel_ && ouMenor));
 }
 
 void MIPUnico::getXSol(double *xS)
@@ -5292,6 +5348,10 @@ int MIPUnico::criaVariavelTaticoCreditos( int campusId, int P )
 		Disciplina *disciplina = ( *it_disciplina );		
 				
 		if ( !haDemanda(disciplina) )
+			continue;
+
+		if (MIPUnico::priorProfImportante_v3_ && !priorProfLivre())
+		if (!disciplina->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_, true))
 			continue;
 
 		ITERA_GGROUP_LESSPTR( it_hor, disciplina->horarios, Horario )
@@ -6672,6 +6732,67 @@ int MIPUnico::criaVariavelProfTurmaAPartirDeZ()
 	return numVars;
 }
 
+int MIPUnico::criaVariavelProfTurmaAPartirDeK()
+{
+	int numVars = 0;	
+
+	auto itUnid = vars_prof_aula1.cbegin();
+	for ( ; itUnid != vars_prof_aula1.cend(); itUnid++)
+	{		
+		int cpId = itUnid->first->getIdCampus();
+		Campus * const campus = problemData->refCampus[cpId];
+
+		auto itDisc = itUnid->second.cbegin();
+		for ( ; itDisc != itUnid->second.cend(); itDisc++)
+		{		
+			Disciplina * const disciplina = itDisc->first;
+			
+			auto itTurma = itDisc->second.cbegin();
+			for ( ; itTurma != itDisc->second.cend(); itTurma++)
+			{
+				int const turma = itTurma->first;
+
+				for ( auto itProf = itTurma->second.cbegin(); itProf != itTurma->second.cend(); itProf++ )
+				{
+					Professor * const professor = itProf->first;
+									
+					VariableMIPUnico v;
+					v.reset();
+					v.setType( VariableMIPUnico::V_PROF_TURMA );
+					v.setTurma( turma );            // i
+					v.setDisciplina( disciplina );  // d
+					v.setCampus( campus );			// cp
+					v.setProfessor( professor );	// p
+												
+					if ( vHashTatico.find( v ) == vHashTatico.end() )
+					{
+						int const colNr = lp->getNumCols();
+						vHashTatico[v] = colNr;
+						vars_prof_turma[campus][disciplina][turma][professor] = make_pair(colNr,v);
+
+						double lowerBound = 0.0;
+						double upperBound = 1.0;
+						double coef = 0;
+																			
+						if ( professor->eVirtual() )
+							coef = MIPUnico::pesoCredPV * disciplina->getTotalCreditos();
+						if ( MIPUnico::minimizarCustoProf )
+							coef = professor->getValorCredito() * disciplina->getTotalCreditos();
+
+						OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str());
+
+						lp->newCol( col );
+						numVars++;
+					}
+				}
+			}
+		}
+    }
+
+	return numVars;
+}
+
+
 // k_{p,i,d,u,t,h}
 int MIPUnico::criaVariavelProfAulaAPartirDeX()
 {
@@ -6686,8 +6807,11 @@ int MIPUnico::criaVariavelProfAulaAPartirDeX()
 			for ( auto itProf = itCp->first->professores.begin();
 					itProf != itCp->first->professores.end(); itProf++ )
 			{
-				if ( itProf->possuiMagisterioEm( itDisc->first ) )
-					mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itProf );
+				if (!itProf->possuiMagisterioEm(itDisc->first)) continue;
+
+				if (!priorProf(*itProf,true) && MIPUnico::priorProfImportante_v3_) continue;
+
+				mapCpDiscProfReaisPVUnico[itCp->first][itDisc->first].insert( *itProf );
 			}
 
 			if ( MIPUnico::permiteCriarPV )

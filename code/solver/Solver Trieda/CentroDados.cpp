@@ -14,6 +14,9 @@ std::ofstream* CentroDados::fOutError = nullptr;
 static CPUTimer timerTemp;
 CPUTimer CentroDados::timer = timerTemp;
 
+const int CentroDados::allPriorProfLevels_ = 0;
+
+
 CentroDados::CentroDados(void)
 {
 }

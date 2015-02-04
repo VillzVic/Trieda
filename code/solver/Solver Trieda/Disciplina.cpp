@@ -914,6 +914,9 @@ int Disciplina::getNroProfRealHabilit() const
 
 int Disciplina::getNroProfRealImportHabilit(int importancia, bool ouMenor) const
 {
+	if (importancia == CentroDados::allPriorProfLevels_)
+		return this->profsHabilit.size();
+
 	int nr=0;
 	for (auto itProf = this->profsHabilit.cbegin(); itProf != this->profsHabilit.cend(); itProf++)
 	{

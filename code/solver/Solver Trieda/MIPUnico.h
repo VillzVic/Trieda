@@ -108,6 +108,7 @@ private:
    int criaVariavelTaticoAlunosMesmaTurmaPratica( int campusId, int P );					// ss_{a1,a2,dp}
    int criaVariavelTaticoFolgaMinimoDemandaPorAluno( int campusId, int P_ATUAL );			// fmd_{a}
    int criaVariavelProfTurmaAPartirDeZ();													// y_{p,i,d,cp}
+   int criaVariavelProfTurmaAPartirDeK();
    int criaVariavelProfAulaAPartirDeX();													// k_{p,i,d,cp,t,h}
    int criaVariaveisHiHfProfFaseDoDiaAPartirDeK(void);										// hip_{p,t,f} e hfp_{p,t,f}
    int criaVariaveisHiHfAlunoDiaAPartirDeV(void);											// hia_{a,t} e hfa_{a,t}
@@ -378,6 +379,8 @@ private:
 	int solveMIPUnico( int campusId, int prioridade, int r );
 	int solveMIPUnico_unico(int campusId, int prioridade, int r);
 	int solveMIPUnico_duplo(int campusId, int prioridade, int r);
+	int solveMIPUnico_triplo(int campusId, int prioridade, int r);
+
 	int solveMIPUnico_v2(int campusId, int prioridade, int r);
 	int solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
 	int solveMIPUnicoEtapaReal(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
@@ -408,9 +411,13 @@ private:
 	int solveMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	
+	int optimizeMaxAtendMarreta( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int optimizeMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int optimizeMinProfVirt( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	int optimizeMinTurmas(int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS);
 	int optimizeMinDeslocProf(int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS);
+	int optimizeMinFasesDoDiaProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
+	int optimizeMinGapProf( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 
 	bool fixaSolMaxAtendMarreta(double* const xS);
 	bool fixaSolMaxAtendMarretaConstr(double* const xS);
@@ -446,8 +453,9 @@ private:
 	void printNaoAtendimentos(double* const xS);
 	void printAtendsVirtuais(double* const xS);
 
+	bool priorProfLivre();
 	bool considerarPriorProf();
-	bool priorProf(Professor* const professor);
+	bool priorProf(Professor* const professor, bool ouMenor=false);
 	void getXSol(double *xS);
 	bool optimize();
 	bool isOptimized(OPTSTAT status);
@@ -517,9 +525,10 @@ private:
 	static const int maxTempoDeslocCurto_;
 	static const bool minimizarProfFaseDoDiaUsada_;
 	static const bool minimizarProfDiaUsado_;
-	static const bool priorProfImportante_;
 	static int priorProfLevel_;
+	static const bool priorProfImportante_;
 	static const bool priorProfImportante_v2_;
+	static const bool priorProfImportante_v3_;
 	static const bool minimizarGapProfEntreFases_;
 	static const int MaxGapEntreFase_;
 	static const int minCredDispFaseMinGapProf_;

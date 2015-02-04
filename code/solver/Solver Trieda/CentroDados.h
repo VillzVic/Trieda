@@ -106,6 +106,10 @@ public:
 
 	static bool stringContem(std::string str, std::string contem);
 
+
+	// ------------------------------------------------------------------------------------------------------------
+	static const int allPriorProfLevels_;
+
 private:
 
 	// Dados do Problema: acessiveis de qualquer lugar

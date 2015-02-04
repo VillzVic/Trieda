@@ -267,6 +267,8 @@ private:
 	   // Solution
 	   double *xSol_;
 	   
+	   std::set<int> fixedCols_;
+
 	   // Identify classes to fix
 	   std::set<std::pair<int,Disciplina*> > paraFixarUm_;
 	   std::set<std::pair<int,Disciplina*> > paraFixarZero_;
