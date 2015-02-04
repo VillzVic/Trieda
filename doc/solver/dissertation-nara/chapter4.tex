@@ -189,7 +189,7 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 
 The essential requirements for using the polishing method are a linear program and a feasible initial solution. In addition, run time limits are used as stopping criteria: a total maximum execution time for the method ($maxTime$); and a maximum execution time since the last solution improvement occurrence ($maxTimeNoImprov$).
 
-The algorithm starts at line ~\ref{polish:ln:init} with some initialization, defined at ~\ref{alg:init}. The current solution $sol$ is set with the initial solution, the percentage $perc$ of variables with fixed bounds is initialized with 90\%, the MIP optimization time limit $timeIter$ is initialized with 70 seconds and, in the case of several blocks which share teaching resources, blocks may be clustered to assist further bounds tightening. The polishing process begins at line ~\ref{polish:ln:iter}, where at each iteration a new optimization cycle takes place. Every cycle has 4 main steps: variables bounds tightening (line ~\ref{polish:ln:fix}), optimization of the tightened linear program (line ~\ref{polish:ln:opt}), update of percentage of fixed variables and of time limit for each optimization (line ~\ref{polish:ln:perc}), and variables bounds release (line ~\ref{polish:ln:unfix}). At line ~\ref{polish:ln:runtime} the polishing run time limit is checked.
+The algorithm starts at line ~\ref{polish:ln:init} with some initialization, defined at ~\ref{alg:init}. The current solution $sol$ is set with the initial solution, the percentage $perc$ of variables with fixed bounds is initialized with 90\%, the MIP optimization time limit $timeIter$ is initialized with 70 seconds and, in the case of several blocks which share teaching resources, blocks may be clustered to assist further bounds tightening. The polishing process begins at line ~\ref{polish:ln:iter}, where at each iteration a new optimization cycle takes place. Every cycle has 4 main steps: variables bounds tightening (line ~\ref{polish:ln:fix}), optimization of the tightened linear program (line ~\ref{polish:ln:opt}), update of percentage of fixed variables and of time limit for each optimization (line ~\ref{polish:ln:perc}), and variables bounds release (line ~\ref{polish:ln:unfix}). At line ~\ref{polish:ln:runtime} the polishing run time limit is checked. All these steps have their respective algorithms detailed ahead.
 
 
 \begin{algorithm}[H]
@@ -223,19 +223,19 @@ The algorithm starts at line ~\ref{polish:ln:init} with some initialization, def
 \end{algorithm}		
 		
 		
-		
+Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Different approaches were tested and those which best succeed are shown below. The main algorithm requires the original linear program, a feasible solution and the percentage of fixation; and ensures a resultant linear program for which a subset of variables have tightened bounds and where the subset size is proportional to the fixation percentage. Three different types of fixation are implemented: fixing all lessons of a subset of blocks (line ~\ref{fixVars:blocks}), fixing lessons of random classes (line ~\ref{fixVars:lessons}) and fixing random assignments of professors to classes (line ~\ref{fixVars:profs}).
+
 		
 \begin{algorithm}[H]
   \caption{Fixing variables' values
     \label{alg:fixVars}}
   \begin{algorithmic}[1]
-    \Require{$lp$ model, a feasible solution $sol$ and the percentage $perc$ of classes variables to fix}
-		\Ensure{A resultant lp model with a random subset of its variables with fixed bounds and therefore easier to solve}
+    \Require{$lp$ model, a feasible solution $sol$ and the percentage $perc$ of fixation}
+		\Ensure{A resultant $lp$ model with a random subset of its variables with fixed bounds and therefore easier to solve}
     \Procedure{fixVars}{}
-			\State \textsc{fixBlocks}$()$
-			\Let {$F$}{\textsc{decideVarsToFix}$()$}
-			\State \textsc{fixVarsBounds}$()$
-			\State \textsc{fixVarsProfBounds}$()$
+			\State \textsc{fixBlocks}$()$																\label{fixVars:blocks}
+			\State \textsc{fixVarsClassesBounds}$()$										\label{fixVars:lessons}
+			\State \textsc{fixVarsProfBounds}$()$												\label{fixVars:profs}
     \EndProcedure
 	\Statex	
   \Algphase{Fixing blocks}
@@ -247,27 +247,21 @@ The algorithm starts at line ~\ref{polish:ln:init} with some initialization, def
 			 \EndFor
     \EndProcedure
 	\Statex
-  \Algphase{Decide which variable to fix}
+  \Algphase{Decide which classes to fix and fix correspondent lessons bounds}
     \Require{$lp$ model, a feasible solution $sol$ and a percentage $perc$ of classes to be fixed}
-		\Ensure{Returns a subset $F$ of classes to be fixed}
-    \Function{decideVarsToFix}{}
+		\Ensure{A subset of lessons variables with tightened bounds}
+    \Procedure{fixVarsClassesBounds}{}
 			\Let{$F$}{$\emptyset$}
 			\For{each variable $z \in lp$}
 					\If{$rand() \ge perc$}
 						\Let{$F$}{class represented by $z$}
 					\EndIf
 			\EndFor
-			\Return F
-    \EndFunction
-	\Statex
-	\Algphase{Fix bounds of variables of lessons}
-    \Require{$lp$ model, a feasible solution $sol$ and a set $F$ of classes to be fixed}
-    \Procedure{fixVarsBounds}{}
-			 \For{each variable $x \in lp$ such that class of $x$ is in $F$}
-				\Let{$lowerbound_{x}$}{$sol[x]$}
-				\Let{$upperbound_{x}$}{$sol[x]$} 
-			 \EndFor
-    \EndProcedure	
+			\For{each variable $x \in lp$ such that class of $x$ is in $F$}
+					\Let{$lowerbound_{x}$}{$sol[x]$}
+					\Let{$upperbound_{x}$}{$sol[x]$} 
+			\EndFor
+    \EndProcedure
 	\Statex
 	\Algphase{Fix bounds of variables of professors}
     \Require{$lp$ model and a feasible solution $sol$}
