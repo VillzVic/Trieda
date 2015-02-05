@@ -191,7 +191,6 @@ The essential requirements for using the polishing method are a linear program a
 
 The algorithm starts at line ~\ref{polish:ln:init} with some initialization, defined at ~\ref{alg:init}. The current solution $sol$ is set with the initial solution, the percentage $perc$ of variables with fixed bounds is initialized with 90\%, the MIP optimization time limit $timeIter$ is initialized with 70 seconds and, in the case of several blocks which share teaching resources, blocks may be clustered to assist further bounds tightening. The polishing process begins at line ~\ref{polish:ln:iter}, where at each iteration a new optimization cycle takes place. Every cycle has 4 main steps: variables bounds tightening (line ~\ref{polish:ln:fix}), optimization of the tightened linear program (line ~\ref{polish:ln:opt}), update of percentage of fixed variables and of time limit for each optimization (line ~\ref{polish:ln:perc}), and variables bounds release (line ~\ref{polish:ln:unfix}). At line ~\ref{polish:ln:runtime} the polishing run time limit is checked. All these steps have their respective algorithms detailed ahead.
 
-
 \begin{algorithm}[H]
   \caption{Polishing method
     \label{alg:polishing}} 
@@ -222,9 +221,8 @@ The algorithm starts at line ~\ref{polish:ln:init} with some initialization, def
   \end{algorithmic}
 \end{algorithm}		
 		
-		
-Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Different approaches were tested and those which best succeed are shown below. The main algorithm requires the original linear program, a feasible solution and the percentage of fixation; and ensures a resultant linear program for which a subset of variables have tightened bounds and where the subset size is proportional to the fixation percentage. Three different types of fixation are implemented: fixing all lessons of a subset of blocks (line ~\ref{fixVars:blocks}), fixing lessons of random classes (line ~\ref{fixVars:lessons}) and fixing random assignments of professors to classes (line ~\ref{fixVars:profs}).
-
+% --------------------------------------
+Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Different approaches were tested and those which best succeed are shown below. The main algorithm requires the original linear program, a feasible solution and the percentage of fixation; and ensures a resultant linear program for which a subset of variables have tightened bounds and where the subset size is proportional to the fixation percentage. Three different types of fixation were implemented: fixing all lessons of a subset of blocks (line ~\ref{fixVars:blocks}), fixing lessons of random classes (line ~\ref{fixVars:lessons}) and fixing random assignments of professors to classes (line ~\ref{fixVars:profs}). The procedure for fixation of lessons per block, detailed at line ~\ref{alg:fixBlocks}, requires the set $FB$ of blocks that should be completely fixed at the current iteration, besides a feasible solution for the $lp$. Then, every potential lesson that belongs to a fixed block has the lower and upper bounds of its corresponding variable $x$ tightened according to its value at the current solution $sol[x]$. The procedure for fixation of random classes, detailed at line ~\ref{alg:fixLessons}, requires a percentage value $perc$ that indicates how much of the current solution should be fixed. Such amount of classes is then randomly selected and stored in the set $FC$ (lines ~\ref{alg:fixLessons1}-~\ref{alg:fixLessons2}). Following, analogously to blocks fixation, every lesson variable $x$ for which the class belongs to $FC$ has its lower and upper bounds tightened according to its value at the current solution $sol[x]$ (lines ~\ref{alg:fixLessons3}-~\ref{alg:fixLessons4}). Lastly, the procedure for fixation of random professors assignments, detailed at line ~\ref{alg:fixProfs}, likewise requires the solution fixation percentage, selects the corresponding amount of variables $y$ responsible for assigning professors to classes and tights their bounds.
 		
 \begin{algorithm}[H]
   \caption{Fixing variables' values
@@ -240,33 +238,33 @@ Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Dif
 	\Statex	
   \Algphase{Fixing blocks}
     \Require{$lp$ model, a feasible solution $sol$ and a set $FB$ of fixed blocks}
-    \Procedure{fixBlocks}{}
+    \Procedure{fixBlocks}{}																				\label{alg:fixBlocks}
 			 \For{each variable $x_{u} \in lp$ such that $u \in FB$}
 				\Let{$lowerbound_{x}$}{$sol[x]$}
 				\Let{$upperbound_{x}$}{$sol[x]$} 
 			 \EndFor
     \EndProcedure
 	\Statex
-  \Algphase{Decide which classes to fix and fix correspondent lessons bounds}
-    \Require{$lp$ model, a feasible solution $sol$ and a percentage $perc$ of classes to be fixed}
+  \Algphase{Decide which classes to fix and fix the corresponding lessons bounds}
+    \Require{$lp$ model, a feasible solution $sol$ and the percentage $perc$ of fixation}
 		\Ensure{A subset of lessons variables with tightened bounds}
-    \Procedure{fixVarsClassesBounds}{}
-			\Let{$F$}{$\emptyset$}
-			\For{each variable $z \in lp$}
+    \Procedure{fixVarsClassesBounds}{}															\label{alg:fixLessons}
+			\Let{$FC$}{$\emptyset$}
+			\For{each variable $z \in lp$}																\label{alg:fixLessons1}
 					\If{$rand() \ge perc$}
-						\Let{$F$}{class represented by $z$}
+						\Let{$FC$}{class represented by $z$}										\label{alg:fixLessons2}
 					\EndIf
 			\EndFor
-			\For{each variable $x \in lp$ such that class of $x$ is in $F$}
+			\For{each variable $x \in lp$ such that class of $x$ is in $FC$}	\label{alg:fixLessons3}
 					\Let{$lowerbound_{x}$}{$sol[x]$}
-					\Let{$upperbound_{x}$}{$sol[x]$} 
+					\Let{$upperbound_{x}$}{$sol[x]$} 															\label{alg:fixLessons4}
 			\EndFor
     \EndProcedure
 	\Statex
 	\Algphase{Fix bounds of variables of professors}
-    \Require{$lp$ model and a feasible solution $sol$}
-    \Procedure{fixVarsProfBounds}{}
-			\For{each variable $y \in lp$}
+    \Require{$lp$ model, a feasible solution $sol$ and the percentage $perc$ of fixation}
+    \Procedure{fixVarsProfBounds}{}																	\label{alg:fixProfs}
+			\For{each variable $y \in lp$}	
 					\If{$rand() \ge perc$}
 						\Let{$lowerbound_{y}$}{$sol[y]$}
 						\Let{$lowerbound_{y}$}{$sol[y]$} 
@@ -276,6 +274,8 @@ Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Dif
   \end{algorithmic}	
 \end{algorithm}
 
+% --------------------------------------
+Algorithm ~\ref{alg:optimize} describes the steps around a request for optimization. It requires a linear program $lp$ and a feasible solution $sol$, and ensures a final updated solution $sol$ at least as good as the initial one. The linear program considered here is the one resulting from the variables bounds tightening step. The procedure sets the time limit $timeIter$ for the optimization, sets $sol$ as an initial solution and optimizes the model using a MIP solver. When optimization ends, run time is recorded at $runtime$ and the extra time, i.e., the difference between time limit and run time, is recorded at $timeLeft$. These values may later be used for updating $timeIter$ with a more appropriate value. Finally, if optimization succeeded, the current solution $sol$ is updated with the new solution.
 
 \begin{algorithm}[H]
   \caption{Optimize
@@ -296,6 +296,9 @@ Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Dif
   \end{algorithmic}	
 \end{algorithm}		
 
+% --------------------------------------
+Algorithm ~\ref{alg:updatePercAndTimeIter} is responsible for taking actions, whether there is a need, on percentage of solution fixation or on optimization time limit. Such actions are based on the last optimization behavior and result. At line ~\ref{update:allfree} it is checked if the linear program is completely free, i.e., if it is the original $lp$. If so, then the current iteration is the last one and there is nothing last to be updated. Otherwise, actions differ according to whether the $lp$ was solved to guaranteed optimality (line ~\ref{update:smallgap}) or not (line ~\ref{update:biggap}). If a proved optimal solution was found, it suggests that the $lp$ was not hard, and actions may be decrease the portion of the problem that is fixed (line ~\ref{smallgap:percblock}) and adjust optimization time limit (line ~\ref{smallgap:time}). On the other hand, if optimality was not reached, it suggests that the $lp$ may be too hard. Thus, in case of solution has not been improved when compared to the previous iteration (line ~\ref{biggap:noimprove}), efforts to facilitate the problem are made, such as updating the set of fixed blocks (line ~\ref{biggap:nextblock}) and adjusting time limit (line ~\ref{biggap:time}).
+
 
 \begin{algorithm}[H]
   \caption{Update percentage of fixed variables, fixed blocks and maximum time per iteration
@@ -303,41 +306,38 @@ Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Dif
   \begin{algorithmic}[1]
     \Require{$lp$ model}
     \Procedure{updatePercAndTimeIter}{}
-			\If{\textsc{allFree}$()$}
+			\If{\textsc{allFree}$()$}																						\label{update:allfree}
 				\Let{$okIter$}{$false$}
 				\Return
 			\EndIf
-			\State \textsc{updateIterSemMelhora}$()$
 	    \If {\textit{lp was solved until optimal or gap is small enough}}
-			  \State \textsc{updatePercAndTimeIterSmallGap}$()$
+			  \State \textsc{updatePercAndTimeIterSmallGap}$()$									\label{update:smallgap}
 			\Else
-				\State \textsc{updatePercAndTimeIterBigGap}$()$
+				\State \textsc{updatePercAndTimeIterBigGap}$()$										\label{update:biggap}
 			\EndIf
 	    \If{\textsc{allFree}$()$}
-				\Let{$timeIter$}{\textsc{getLeftTime$()$}}
+				\Let{$timeIter$}{\textsc{getLeftTime$()$}}												\label{update:timeleft}
 			\EndIf
     \EndProcedure	
 		\Statex
 		\Algphase{Update percentage of fixed variables, fixed blocks and maximum time per iteration for small gap case}
-			\Procedure{updatePercAndTimeIterSmallGap}{}
-				\If{\textsc{allFree}$()$}
-				\Let{okIter}{false}
-				\EndIf
-				\State \textsc{adjustPercOrBlock}()
-				\State \textsc{adjustTime}()
+			\Procedure{updatePercAndTimeIterSmallGap}{}													\label{alg:smallgap}
+				\State \textsc{adjustPercOrBlock}()																\label{smallgap:percblock}
+				\State \textsc{adjustTime}()																			\label{smallgap:time}
 			\EndProcedure
 		\Statex
 		\Algphase{Update percentage of fixed variables, fixed blocks and maximum time per iteration for big gap case}
-			\Procedure{updatePercAndTimeIterBigGap}{}
-				\If{solution was not improved at the current iteration}
-					\Let{$acresm$}{0, if all blocks are currently free; or 10 otherwise}
-					\State \textsc{setNextRandFreeBlocks}$(acresm)$
-					\State \textsc{adjustTime}()
+			\Procedure{updatePercAndTimeIterBigGap}{}																	\label{alg:biggap}
+				\If{solution was not improved at the current iteration}									\label{biggap:noimprove}
+					\Let{$acresm$}{0, if all blocks are currently free; or 10 otherwise}	
+					\State \textsc{setNextRandFreeBlocks}$(acresm)$												\label{biggap:nextblock}
+					\State \textsc{adjustTime}()																					\label{biggap:time}
 				\EndIf
 			\EndProcedure			
   \end{algorithmic}	
 \end{algorithm}
 
+% --------------------------------------
 
 \begin{algorithm}[H]
   \caption{Set free and fixed blocks for the next iteration
