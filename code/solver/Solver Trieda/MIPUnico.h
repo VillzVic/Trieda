@@ -443,6 +443,8 @@ private:
 	bool fixaSolMinGapProf(double* const xS);
 	bool fixaSolAtendida(double* const xS);
 
+	double getCoefObjMaxAtend(VariableMIPUnico v);
+
 	bool chgObjMaxAtendMarreta();
 	bool chgObjMaxAtend();
 	bool chgObjMinTurmas();
@@ -456,6 +458,9 @@ private:
 	bool priorProfLivre();
 	bool considerarPriorProf();
 	bool priorProf(Professor* const professor, bool ouMenor=false);
+	bool priorDisc(Disciplina* const disciplina, bool ouMenor);
+	bool ehMarreta(Disciplina *disciplina);
+
 	void getXSol(double *xS);
 	bool optimize();
 	bool isOptimized(OPTSTAT status);

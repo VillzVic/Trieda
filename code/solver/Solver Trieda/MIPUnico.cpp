@@ -170,8 +170,12 @@ void MIPUnico::solveMainEscola( int campusId, int prioridade, int r,
 
 	if (ABORDAGEM_PV_NO_FINAL)
 	{
-		if (ETAPA_UNICA) solveMIPUnico_unico(campusId, prioridade, r);
-		else solveMIPUnico_duplo(campusId, prioridade, r);
+		if (ETAPA_UNICA) 
+			solveMIPUnico_unico(campusId, prioridade, r);
+		else if (!priorProfImportante_v3_) 
+			solveMIPUnico_duplo(campusId, prioridade, r);
+		else 
+			solveMIPUnico_triplo(campusId, prioridade, r);
 	}
 	else
 		solveMIPUnico( campusId, prioridade, r );
@@ -2565,6 +2569,21 @@ int MIPUnico::solveMaxAtend( int campusId, int prioridade, int r, bool& CARREGA_
 	return cpyStatus;
 }
 
+double MIPUnico::getCoefObjMaxAtend(VariableMIPUnico v)
+{
+	if ( v.getType() != VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
+		return 0;
+          
+	double coef = v.getDisciplina()->getTotalCreditos();		
+	if (considerarPriorProf() && !priorProfLivre()) 
+	{
+		int nr = v.getDisciplina()->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_);
+		coef = (nr>0 ? v.getDisciplina()->getTotalCreditos() : 0);
+	}
+
+	return coef;
+}
+
 bool MIPUnico::chgObjMaxAtend()
 {
 	int *idxs = new int[lp->getNumCols()];
@@ -2577,26 +2596,11 @@ bool MIPUnico::chgObjMaxAtend()
 	{
 		VariableMIPUnico v = vit->first;
 			
-		if ( v.getType() == VariableMIPUnico::V_SLACK_DEMANDA_ALUNO )
-		{          
-			int coef = vit->first.getDisciplina()->getTotalCreditos();					
+		double coef = getCoefObjMaxAtend(v);
 
-			if (considerarPriorProf() && !priorProfLivre()) 
-			{
-				int nr = vit->first.getDisciplina()->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_);
-				coef = (nr>0 ? vit->first.getDisciplina()->getTotalCreditos() : 0);
-			}
-							
-			idxs[nBds] = vit->second;
-			vals[nBds] = coef;
-			nBds++;
-		}
-		else
-		{
-			idxs[nBds] = vit->second;
-			vals[nBds] = 0.0;
-			nBds++;
-		}
+		idxs[nBds] = vit->second;
+		vals[nBds] = coef;
+		nBds++;
 	}	
     bool chged = lp->chgObj(nBds,idxs,vals);
     lp->updateLP();
@@ -2729,13 +2733,12 @@ bool MIPUnico::fixaSolMaxAtend(double* const xS)
 	// FIXA SOLUÇÃO OBTIDA ANTERIORMENTE
 	
 	bool chged = true;
-		
-	ConstraintMIPUnico c;
-	c.reset();
-	c.setType( ConstraintMIPUnico::C_GARANTE_MIN_ATEND );
-
+	
+	stringstream constr;
+	constr << "C_FIX_SOL_MIN_ATEND_PRIORPROF" << MIPUnico::priorProfLevel_;
+	
 	int nnz = problemData->alunosDemanda.size();
-	OPT_ROW row( nnz, OPT_ROW::LESS, 0, (char*) c.toString(etapa).c_str() );
+	OPT_ROW row( nnz, OPT_ROW::LESS, 0, (char*) constr.str().c_str() );
 		
 	int nrMaxCredNaoAtend=0;
 	for (auto vit = vHashTatico.begin(); vit != vHashTatico.end(); vit++)
@@ -2744,19 +2747,19 @@ bool MIPUnico::fixaSolMaxAtend(double* const xS)
 
 		if (v.getType() != VariableMIPUnico::V_SLACK_DEMANDA_ALUNO) continue;
 	
-		int numCred = vit->first.getDisciplina()->getTotalCreditos();
+		double coef = getCoefObjMaxAtend(v);
+		if (!coef) continue;
 
-		row.insert(vit->second, numCred);
+		row.insert(vit->second, coef);
 
 		if (xS[vit->second] > 0.1)
-			nrMaxCredNaoAtend += numCred;
+			nrMaxCredNaoAtend += coef;
 	}
 	
 	if (row.getnnz() > 0)
 	{
 		row.setRhs(nrMaxCredNaoAtend);
 
-		cHashTatico[ c ] = lp->getNumRows();
 		lp->addRow(row);
 		lp->updateLP();
 	}
@@ -3026,14 +3029,14 @@ bool MIPUnico::fixaSolMinProfVirt(double* const xS)
 		lp->updateLP();
 	}
 
-	ConstraintMIPUnico c;
-	c.reset();
-	c.setType( ConstraintMIPUnico::C_GARANTE_MIN_ATEND );
-	auto cit = cHashTatico.find(c);
-	if (cit != cHashTatico.end())
-	{
-		lp->chgRHS(cit->second, nrCredNaoAtend);
-	}
+	//ConstraintMIPUnico c;
+	//c.reset();
+	//c.setType( ConstraintMIPUnico::C_GARANTE_MIN_ATEND );
+	//auto cit = cHashTatico.find(c);
+	//if (cit != cHashTatico.end())
+	//{
+	//	lp->chgRHS(cit->second, nrCredNaoAtend);
+	//}
 	
 	//#pragma region Fixa solução por variavel
  //   nBds = 0;
@@ -3248,11 +3251,11 @@ int MIPUnico::optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARR
 	{
 		// GENERATES SOLUTION 		 
 		
-		bool polishing = false;
+		bool polishing = true;
 		if ( polishing )
 		{  		
 			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
-			polishing = pol->polish(xS, MIPUnico::timeLimitMinTurmas, 90, MIPUnico::timeLimitMinTurmasSemMelhora);
+			polishing = pol->polish(xS, MIPUnico::timeLimitMinTurmas, 70, MIPUnico::timeLimitMinTurmasSemMelhora);
 			delete pol;
 		}
 		if (!polishing)
@@ -4352,6 +4355,34 @@ bool MIPUnico::priorProf(Professor* const professor, bool ouMenor)
 		   (professor->getImportancia() < MIPUnico::priorProfLevel_ && ouMenor));
 }
 
+bool MIPUnico::priorDisc(Disciplina* const disciplina, bool ouMenor)
+{
+	if (!considerarPriorProf())
+		return true;
+	if (MIPUnico::priorProfLevel_ == CentroDados::allPriorProfLevels_)
+		return true;
+
+	bool existeProfPriorNaDisc = true;
+	if (considerarPriorProf() && !priorProfLivre() && !ehMarreta(disciplina)) 
+	{
+		int nr = disciplina->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_, ouMenor);
+		if (nr == 0)
+			existeProfPriorNaDisc = false;
+	}
+
+	return existeProfPriorNaDisc;
+}
+
+bool MIPUnico::ehMarreta(Disciplina *disciplina)
+{
+	if (CentroDados::stringContem(disciplina->getCodigo(), "EDF"))
+		return true;
+	
+	// ToDo: caso de marretas do Pensi não considerado!
+
+	return false;
+}
+
 void MIPUnico::getXSol(double *xS)
 {
 	if (optimized_)
@@ -4971,17 +5002,8 @@ int MIPUnico::criaVariaveisTatico( int campusId, int P, int r )
 	dif = timer.getCronoCurrSecs();
 	std::cout << "numVars \"fmd\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
 	numVarsAnterior = num_vars;
-		
+	
 
-	timer.start();
-	std::cout << "Criando \"y\": ";fflush(NULL);
-	num_vars += this->criaVariavelProfTurmaAPartirDeZ();				// y_{p,i,d,cp}
-	timer.stop();
-	dif = timer.getCronoCurrSecs();
-	std::cout << "numVars \"y\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
-	numVarsAnterior = num_vars;
-	
-	
 	timer.start();
 	std::cout << "Criando \"k\": ";fflush(NULL);
 	num_vars += this->criaVariavelProfAulaAPartirDeX();				// k_{p,i,d,cp,t,hi}
@@ -4989,8 +5011,17 @@ int MIPUnico::criaVariaveisTatico( int campusId, int P, int r )
 	dif = timer.getCronoCurrSecs();
 	std::cout << "numVars \"k\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
 	numVarsAnterior = num_vars;
-
 	
+
+	timer.start();
+	std::cout << "Criando \"y\": ";fflush(NULL);
+	num_vars += this->criaVariavelProfTurmaAPartirDeK();				// y_{p,i,d,cp}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	std::cout << "numVars \"y\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
+	numVarsAnterior = num_vars;
+	
+		
 	timer.start();
 	std::cout << "Criando \"uu\": ";fflush(NULL);
 	num_vars += this->criaVariavelUnidUsadaProfAPartirDeK();		// uu_{p,t,u}
@@ -5350,8 +5381,7 @@ int MIPUnico::criaVariavelTaticoCreditos( int campusId, int P )
 		if ( !haDemanda(disciplina) )
 			continue;
 
-		if (MIPUnico::priorProfImportante_v3_ && !priorProfLivre())
-		if (!disciplina->getNroProfRealImportHabilit(MIPUnico::priorProfLevel_, true))
+		if ( MIPUnico::priorProfImportante_v3_ && priorDisc(disciplina, true) )
 			continue;
 
 		ITERA_GGROUP_LESSPTR( it_hor, disciplina->horarios, Horario )
@@ -6634,7 +6664,7 @@ int MIPUnico::criaVariavelTaticoFolgaMinimoDemandaPorAluno( int campusId, int P_
 	return numVars;
 }
 
-// y_{p,i,d,cp}
+// y_{p,i,d,cp}: desativada!
 int MIPUnico::criaVariavelProfTurmaAPartirDeZ()
 {
 	int numVars = 0;
@@ -6732,6 +6762,7 @@ int MIPUnico::criaVariavelProfTurmaAPartirDeZ()
 	return numVars;
 }
 
+// y_{p,i,d,cp}
 int MIPUnico::criaVariavelProfTurmaAPartirDeK()
 {
 	int numVars = 0;	
@@ -14396,8 +14427,7 @@ int MIPUnico::criaRestricaoProfBuracoEntreFases()
 
 	int nnz;
 	char name[ 1024 ];
-	int bigM = 1000;
-
+	
 	// Todas variaveis hip e hfp
 	auto itVarsProf = varsProfDiaFaseHiHf.begin();
 	for ( ; itVarsProf != varsProfDiaFaseHiHf.end(); itVarsProf++ )
@@ -14460,7 +14490,12 @@ int MIPUnico::criaRestricaoProfBuracoEntreFases()
 				// Colunas hip e hfp
 				int colHip = itVarsFase->second.first;
 				int colHfpAnt = itVarsFaseAnt->second.second;
-								
+							
+				//double dif = (lp->getUB(colHip) - lp->getLB(colHfpAnt));
+				//double bigM = (dif - MIPUnico::MaxGapEntreFase_) / 2;
+				//bigM = (int) (bigM + 1);
+				int bigM = 800;
+
 				auto cit = cHashTatico.find(c);
 				if(cit == cHashTatico.end())
 				{

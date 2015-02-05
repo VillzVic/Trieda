@@ -17,7 +17,7 @@ bool SO_USAR_WORST_CLUSTER=true;
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashTatico_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
 	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(8),
-	fixarVarsTatProf_(true),
+	fixarVarsTatProf_(true), perc_(0), tempoIni_(80),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
 	tryBranch_(false), okIter_(true), fixTypeAnt_(-1), useFixationByUnid_(true),
@@ -30,7 +30,7 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashOp_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
 	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(8),
-	fixarVarsTatProf_(true),
+	fixarVarsTatProf_(true), perc_(0), tempoIni_(80),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
 	tryBranch_(false), okIter_(true), fixTypeAnt_(-1), useFixationByUnid_(true),
@@ -79,15 +79,10 @@ void Polish::init()
 		//fixType_ = 4;
 		//useFixationByUnid_=false;
 	}
-
-	// Constants
-	tempoIni_ = 70;
-
+		
 	// Init values
 	timeIter_ = tempoIni_;
-	perc_ = 0;
-    objAtual_ = 999999999999.9;
-	
+    
 	idxs_ = new int[lp_->getNumCols()*2];
 	vals_ = new double[lp_->getNumCols()*2];
 	bds_ = new BOUNDTYPE[lp_->getNumCols()*2];
@@ -392,7 +387,10 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
     perc_ = percIni;
 	maxTime_ = maxTime;
 	maxTempoSemMelhora_ = maxTempoSemMelhora;
-	
+
+	const double alpha = 2;
+	timeIter_ += (90 - perc_) * alpha;
+
 	if( !needsPolish() )
 	{
 		okIter_ = false;
@@ -1170,6 +1168,11 @@ void Polish::updatePercAndTimeIter(double objN, double gap)
 	  {
 		  printLog("All free: The End!");
 		  okIter_ = false;
+
+		stringstream ss2;
+		ss2 << "polishFree";
+		lp_->writeProbLP((char*) ss2.str().c_str());
+
 		  return;
 	  }
 	  
@@ -1554,10 +1557,11 @@ void Polish::chgLpRootRelax()
 
 void Polish::setParams(double timeIter_)
 {
-	//lp_->setPrePasses(nrPrePasses_);
+	lp_->setIntEps(1e-7);
+	//lp_->setRhsEps(1e-4);
   	lp_->setNumIntSols(10000000);
     lp_->setTimeLimit( timeIter_ );
-    lp_->setMIPRelTol( 0.1 );
+    lp_->setMIPRelTol(1e-4);
     lp_->setMIPEmphasis( 1 );					// 1 = find better solutions
     lp_->setHeurFrequency( heurFreq_ );
 	lp_->setCuts(2);
@@ -1635,7 +1639,7 @@ void Polish::checkFeasibility()
 	if (infeasible())
 	{
 		stringstream ss;
-		ss <<"Error! Model is infeasible. Aborting..." << std::endl;
+		ss <<"Error! Model is infeasible!" << std::endl;
 		printLog(ss.str());
 		CentroDados::printError("bool Polish::checkFeasibility()",ss.str());
 		lp_->writeProbLP("infeasibleModelPolish");
