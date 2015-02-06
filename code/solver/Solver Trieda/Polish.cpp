@@ -404,14 +404,10 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	int i=0;
     while (okIter_)
     {     
-		fixVars();
-		
-		//stringstream ss;
-		//ss << "polishFixed" << i;
-		//lp_->writeProbLP((char*) ss.str().c_str());
-
 		logIter( perc_, timeIter_ );
 
+		fixVars();
+		
 		if(tryBranch_)
 			mainLocalBranching();
 
@@ -431,11 +427,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		checkTimeLimit();
 	  
 		unfixBounds();
-
-		//stringstream ss2;
-		//ss2 << "polishFree" << i;
-		//lp_->writeProbLP((char*) ss2.str().c_str());
-
+		
 		i++;
     }
 	
@@ -1168,11 +1160,6 @@ void Polish::updatePercAndTimeIter(double objN, double gap)
 	  {
 		  printLog("All free: The End!");
 		  okIter_ = false;
-
-		stringstream ss2;
-		ss2 << "polishFree";
-		lp_->writeProbLP((char*) ss2.str().c_str());
-
 		  return;
 	  }
 	  

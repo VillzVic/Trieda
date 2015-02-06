@@ -378,16 +378,16 @@ private:
 
 	int solveMIPUnico( int campusId, int prioridade, int r );
 	int solveMIPUnico_unico(int campusId, int prioridade, int r);
-	int solveMIPUnico_duplo(int campusId, int prioridade, int r);
-	int solveMIPUnico_triplo(int campusId, int prioridade, int r);
+	int solveMIPUnico_pduplo(int campusId, int prioridade, int r);
+	int solveMIPUnico_ptriplo(int campusId, int prioridade, int r);
 
 	int solveMIPUnico_v2(int campusId, int prioridade, int r);
-	int solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);
-	int solveMIPUnicoEtapaReal(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);	
+	int solveMIPUnicoEtapaReal_Off(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaReal_1(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 	int solveMIPUnicoEtapaReal_2(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
-	int solveMIPUnicoEtapaReal_ProfPrior(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
-	int solveMIPUnicoEtapasQualidadeReal(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 	int solveMIPUnicoEtapaReal_3(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaReal_ProfPrior(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 	int solveMIPUnicoEtapaVirtual(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 	
 	void fixaSolucaoReal();
@@ -493,6 +493,15 @@ private:
    */
 	
 	// Constantes e parâmetros
+
+	enum PRIOR_PROF_TYPE
+	{
+		PriorTypeOff,	// Sem prior de profs	= um único modelo contendo indiferentemente todos os professores reais
+		PriorType1,	// Prior 1 > Prior 2	= etapa de maximizar demanda é única, com um único modelo contendo ambas prioridades
+		PriorType2,	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um único modelo contendo ambas prioridades
+		PriorType3	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um modelo para cada prioridade
+	};
+
 	    
 	// Gurobi
 	static const int timeLimitMaxAtend;
@@ -531,9 +540,7 @@ private:
 	static const bool minimizarProfFaseDoDiaUsada_;
 	static const bool minimizarProfDiaUsado_;
 	static int priorProfLevel_;
-	static const bool priorProfImportante_;
-	static const bool priorProfImportante_v2_;
-	static const bool priorProfImportante_v3_;
+	static const PRIOR_PROF_TYPE priorProfImportante_;
 	static const bool minimizarGapProfEntreFases_;
 	static const int MaxGapEntreFase_;
 	static const int minCredDispFaseMinGapProf_;
