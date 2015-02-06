@@ -189,7 +189,7 @@ Following a detailed pseudo-algorithm for the polishing method developed for the
 
 The essential requirements for using the polishing method are a linear program and a feasible initial solution. In addition, run time limits are used as stopping criteria: a total maximum execution time for the method ($maxTime$); and a maximum execution time since the last solution improvement occurrence ($maxTimeNoImprov$).
 
-The algorithm starts at line ~\ref{polish:ln:init} with some initialization, defined at ~\ref{alg:init}. The current solution $sol$ is set with the initial solution, the percentage $perc$ of variables with fixed bounds is initialized with 90\%, the MIP optimization time limit $timeIter$ is initialized with 70 seconds and, in the case of several blocks which share teaching resources, blocks may be clustered to assist further bounds tightening. The polishing process begins at line ~\ref{polish:ln:iter}, where at each iteration a new optimization cycle takes place. Every cycle has 4 main steps: variables bounds tightening (line ~\ref{polish:ln:fix}), optimization of the tightened linear program (line ~\ref{polish:ln:opt}), update of percentage of fixed variables and of time limit for each optimization (line ~\ref{polish:ln:perc}), and variables bounds release (line ~\ref{polish:ln:unfix}). At line ~\ref{polish:ln:runtime} the polishing run time limit is checked. All these steps have their respective algorithms detailed ahead.
+The algorithm starts at line ~\ref{polish:ln:init} with some initialization, defined at ~\ref{alg:init}. The current solution $sol$ is set with the initial solution, the percentage $perc$ of variables with fixed bounds is initialized with 90\%, the MIP optimization time limit $timeIter$ is initialized with 70 seconds, all blocks are set free and, in the case of several blocks which share teaching resources, blocks may be clustered to assist further bounds tightening. The polishing process begins at line ~\ref{polish:ln:iter}, where at each iteration a new optimization cycle takes place. Every cycle has 4 main steps: variables bounds tightening (line ~\ref{polish:ln:fix}), optimization of the tightened linear program (line ~\ref{polish:ln:opt}), update of percentage of fixed variables and of time limit for each optimization (line ~\ref{polish:ln:perc}), and variables bounds release (line ~\ref{polish:ln:unfix}). At line ~\ref{polish:ln:runtime} the polishing run time limit is checked. All these steps have their respective algorithms detailed ahead.
 
 \begin{algorithm}[H]
   \caption{Polishing method
@@ -216,6 +216,7 @@ The algorithm starts at line ~\ref{polish:ln:init} with some initialization, def
 				\Let{$sol$}{$solIni$}
 				\Let{$perc$}{$90$}
 				\Let{$timeIter$}{70}
+				\State set all blocks free
 				\State cluster blocks according to teaching staff sharing
     \EndProcedure
   \end{algorithmic}
@@ -297,7 +298,7 @@ Algorithm ~\ref{alg:optimize} describes the steps around a request for optimizat
 \end{algorithm}		
 
 % --------------------------------------
-Algorithm ~\ref{alg:updatePercAndTimeIter} is responsible for taking actions, whether there is a need, on percentage of solution fixation or on optimization time limit. Such actions are based on the last optimization behavior and result. At line ~\ref{update:allfree} it is checked if the linear program is completely free, i.e., if it is the original $lp$. If so, then the current iteration is the last one and there is nothing last to be updated. Otherwise, actions differ according to whether the $lp$ was solved to guaranteed optimality (line ~\ref{update:smallgap}) or not (line ~\ref{update:biggap}). If a proved optimal solution was found, it suggests that the $lp$ was not hard, and actions may be decrease the portion of the problem that is fixed (line ~\ref{smallgap:percblock}) and adjust optimization time limit (line ~\ref{smallgap:time}). On the other hand, if optimality was not reached, it suggests that the $lp$ may be too hard. Thus, in case of solution has not been improved when compared to the previous iteration (line ~\ref{biggap:noimprove}), efforts to facilitate the problem are made, such as updating the set of fixed blocks (line ~\ref{biggap:nextblock}) and adjusting time limit (line ~\ref{biggap:time}).
+Algorithm ~\ref{alg:updatePercAndTimeIter} is responsible for taking actions, whether there is a need, on percentage of solution fixation or on optimization time limit. Such actions are based on the last optimization performance. At line ~\ref{update:allfree} it is checked if the linear program is completely free, i.e., if it is the original $lp$. If so, then the current iteration is the last one and there is nothing last to be updated. Otherwise, actions differ according to whether the $lp$ was solved to guaranteed optimality (line ~\ref{update:smallgap}) or not (line ~\ref{update:biggap}). If a proved optimal solution was found, it suggests that the $lp$ was not hard, and actions may be decrease the portion of the problem that is fixed (line ~\ref{smallgap:percblock}) and adjust optimization time limit (line ~\ref{smallgap:time}). On the other hand, if optimality was not reached, it suggests that the $lp$ may be too hard. Thus, in case of solution has not been improved when compared to the previous iteration (line ~\ref{biggap:noimprove}), efforts to facilitate the problem are made, such as updating the set of fixed blocks (line ~\ref{biggap:nextblock}) and adjusting time limit (line ~\ref{biggap:time}).
 
 
 \begin{algorithm}[H]
@@ -314,9 +315,6 @@ Algorithm ~\ref{alg:updatePercAndTimeIter} is responsible for taking actions, wh
 			  \State \textsc{updatePercAndTimeIterSmallGap}$()$									\label{update:smallgap}
 			\Else
 				\State \textsc{updatePercAndTimeIterBigGap}$()$										\label{update:biggap}
-			\EndIf
-	    \If{\textsc{allFree}$()$}
-				\Let{$timeIter$}{\textsc{getLeftTime$()$}}												\label{update:timeleft}
 			\EndIf
     \EndProcedure	
 		\Statex
@@ -337,77 +335,85 @@ Algorithm ~\ref{alg:updatePercAndTimeIter} is responsible for taking actions, wh
   \end{algorithmic}	
 \end{algorithm}
 
+
 % --------------------------------------
+Algorithm ~\ref{alg:setNextRandFreeBlocks} is a procedure to adjust the set of blocks that will be free or fixed at next iteration. It requires an incremental value $percAdjust$ to the percentage of fixed blocks, which can be negative if the aim is to hamper the problem, null if no change of percentage is aimed, or positive if the aim to facilitate the problem. Such percentage ($percBlockFixed$) is updated at line ~\ref{nextblock:perc}. At line ~\ref{nextblock:enoughit} the number of consecutive iterations with fixed blocks is verified and, if it is sufficient, all blocks are set free for the next iteration. The concept of what is sufficient is subjective, but tests have worked well with a maximum of 4 consecutive iterations. Otherwise, blocks to set free at next iteration are chosen by a routine at line ~\ref{nextblock:choose}. Such routine resets the current set of free blocks, and decides randomly at line ~\ref{choose:setcluster} whether the type of block fixation will be by cluster or not. If so, a cluster of blocks is selected at line ~\ref{choose:cluster} and every block of the cluster is set free. Then, the number of fixed blocks is checked and, while it doesn't reach at least the percentage $percBlockFixed$, blocks are set free randomly.
 
 \begin{algorithm}[H]
   \caption{Set free and fixed blocks for the next iteration
     \label{alg:setNextRandFreeBlocks}}
   \begin{algorithmic}[1]
-    \Require{$lp$ model}
+    \Require{an incremental $percAdjust$ of the fixed blocks percentage}
+		\Ensure{an updated set of fixed or free blocks for next iteration}
     \Statex
     \Procedure{setNextRandFreeBlocks}{$percAdjust$}
-			\Let{$percBlockFixed$}{$percBlockFixed + percAdjust$} 	%\Comment{update percentage of fixed blocks for next iteration}
-      \If{there is enough consecutive iterations with fixed blocks}
+			\Let{$percBlockFixed$}{$percBlockFixed + percAdjust$} 		\label{nextblock:perc} %\Comment{update percentage of fixed blocks for next iteration}
+      \If{there is enough consecutive iterations with fixed blocks}	\label{nextblock:enoughit}
       	\State free all blocks for the next iteration
       	\Return
       \EndIf
-      \State \textsc{chooseAndSetFreeBlocks}()
+      \State \textsc{chooseAndSetFreeBlocks}()												\label{nextblock:choose}
     \EndProcedure
 	  \Statex
 	  \Algphase{Choose and set free blocks for the next iteration}
     \Procedure{chooseAndSetFreeBlocks}{}
-			\State reset free blocks
-			\Let{useCluster}{true or false, randomly chosen with $50\%$ of chance of true}
+			\State reset set of free blocks
+			\Let{useCluster}{true or false, randomly chosen with $50\%$ of chance of true}						\label{choose:setcluster}
 			\If{useCluster} 																					%\Comment{type of fixing blocks is per cluster}
-				\State choose a cluster of blocks and set it free
+				\State choose a cluster of blocks and set it free																				\label{choose:cluster}
 			\EndIf
-			\While{number of free blocks $<$ $(100-percBlockFixed)\cdot$ \textit{total of blocks}}
+			\While{number of free blocks $<$ $(100-percBlockFixed)\cdot$ \textit{total of blocks}}		\label{choose:free}
 			\State choose randomly a block and set it free
 			\EndWhile
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
 
+% --------------------------------------
+Algorithm ~\ref{alg:adjustTime} adjusts optimization time limit for the next iteration according to the current iteration performance. If the linear program was set completely free for next iteration, which means it is the original problem, then it will be the last optimization, and therefore all remaining time for polishing is set. If solution was not improved and time limit was reached before proving optimality, then it suggests that time limit may be too low and its increasing is proceeded at line ~\ref{time:increase}. Otherwise, if solution was improved, then time limit is checked at line ~\ref{time:decrease}. The increasing of time, described at line ~\ref{alg:increase}, is proportional to the current percentage of fixed variables and blocks. Just as a precaution so that time limit does not increase too much, an upper bound for it may be forced at line ~\ref{increase:max}. The decreasing of time, described at line ~\ref{alg:decrease}, occurs whether the current time limit has been shown to be much higher than necessary, which is measured by comparing the difference between the run time and the time limit ($timeLeft$) and the extra time required for the sake of precaution ($minExcess$).
+
 
 \begin{algorithm}[H]
   \caption{Adjust time
     \label{alg:adjustTime}}
   \begin{algorithmic}[1]
-    \Require{$lp$ model}
+    \Require{values of performance of the current iteration optimization}
+		\Ensure{optimization time limit adjusted for next iteration}
     \Procedure{adjustTime}{}
+			\If{\textsc{allFree}$()$}
+				\Let{$timeIter$}{$getRemainingTime()$}												\label{time:lastit} %\Comment{next iteration will be the last one}
+				\Return
+			\EndIf
 			\If {solution was not improved at the current iteration \textbf{and} time limit for the iteration was reached}
-				\State \textsc{increaseTime}()													%\Comment{time limit reached  increases time limit}
+				\State \textsc{increaseTime}()													\label{time:increase} %\Comment{time limit reached  increases time limit}
 			\EndIf
 			\If {solution was improved at the current iteration}
-				\State \textsc{decreaseTime}()													%\Comment{Adjust time limit in case it is too high}
+				\State \textsc{decreaseTime}()													\label{time:decrease} %\Comment{Adjust time limit in case it is too high}
 			\EndIf
     \EndProcedure	
 	  \Statex
 	  \Algphase{Increase time}
-    \Procedure{increaseTime}{}
+    \Procedure{increaseTime}{}																	\label{alg:increase}
 			\Let{$incremTime$}{10}																		%	\Comment{increases the time limit by a fixed amount}
 			\Let{$incremTime$}{$incremTime + (100-perc)\cdot 0.2$}		%\Comment{increases the time limit the more perc is close to 0}
 			\Let{$incremTime$}{$incremTime + (100-percBlockFixed)\cdot 0.2$}	%\Comment{increases the time limit the more blocks are free}
 			\Let{$timeIter$}{$timeIter + incremTime$}
-			\If{$timeIter > MaxTimeImposedPerIteration$}
+			\If{$timeIter > MaxTimeImposedPerIteration$}							\label{increase:max}
 				\Let{$timeIter$}{$MaxTimeImposedPerIteration$} 					%\Comment{possibly forces a reduction of $timeIter$, whether a maximum time per iteration is imposed.}
 			\EndIf
     \EndProcedure	
 	  \Statex
 	  \Algphase{Decrease time}
-    \Procedure{decreaseTime}{}
-			\If{\textsc{allFree}$()$}
-				\Let{$timeIter$}{$getLeftTime()$}												%\Comment{next iteration will be the last one}
-			\Else
+    \Procedure{decreaseTime}{}																	\label{alg:decrease}
 				\Let{$minExcess$}{$max(0.5\cdot timeIter, 50)$}
-				\If{$timeLeft > minExcess$} 														%\Comment{Adjust time limit in case it is too high}
+				\If{$timeLeft > minExcess$} 														\label{decrease:excess} %\Comment{Adjust time limit in case it is too high}
 					\Let{$timeIter$}{$runtime+minExcess$}
 				\EndIf
-			\EndIf
     \EndProcedure			
   \end{algorithmic}
 \end{algorithm}
 
+% --------------------------------------
 
 \begin{algorithm}[H]
   \caption{Adjust percentage of fixed variables or fixed blocks
@@ -438,6 +444,7 @@ Algorithm ~\ref{alg:updatePercAndTimeIter} is responsible for taking actions, wh
   \end{algorithmic}
 \end{algorithm}
 
+% --------------------------------------
 
 \begin{algorithm}[H]
   \caption{Unfixing variables' values
@@ -453,6 +460,7 @@ Algorithm ~\ref{alg:updatePercAndTimeIter} is responsible for taking actions, wh
   \end{algorithmic}	
 \end{algorithm}
 
+% --------------------------------------
 
 \begin{algorithm}[H]
   \caption{Check run time
