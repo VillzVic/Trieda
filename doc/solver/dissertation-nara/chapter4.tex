@@ -187,7 +187,7 @@ Because at the beginning of the polishing process the solution is supposedly a v
 
 Following a detailed pseudo-algorithm for the polishing method developed for the school timetabling problem is described. The main algorithm, specified at ~\ref{alg:polishing}, contains the general steps of the polishing process.
 
-The essential requirements for using the polishing method are a linear program and a feasible initial solution. In addition, run time limits are used as stopping criteria: a total maximum execution time for the method ($maxTime$); and a maximum execution time since the last solution improvement occurrence ($maxTimeNoImprov$).
+The essential requirements for using the polishing method are a linear program and a feasible initial solution. In addition, in case a proved optimal solution is not achieved, run time limits are used as stopping criteria: a total maximum execution time for the method ($maxTime$), and a maximum execution time since the last solution improvement occurrence ($maxTimeNoImprov$).
 
 The algorithm starts at line ~\ref{polish:ln:init} with some initialization, defined at ~\ref{alg:init}. The current solution $sol$ is set with the initial solution, the percentage $perc$ of variables with fixed bounds is initialized with 90\%, the MIP optimization time limit $timeIter$ is initialized with 70 seconds, all blocks are set free and, in the case of several blocks which share teaching resources, blocks may be clustered to assist further bounds tightening. The polishing process begins at line ~\ref{polish:ln:iter}, where at each iteration a new optimization cycle takes place. Every cycle has 4 main steps: variables bounds tightening (line ~\ref{polish:ln:fix}), optimization of the tightened linear program (line ~\ref{polish:ln:opt}), update of percentage of fixed variables and of time limit for each optimization (line ~\ref{polish:ln:perc}), and variables bounds release (line ~\ref{polish:ln:unfix}). At line ~\ref{polish:ln:runtime} the polishing run time limit is checked. All these steps have their respective algorithms detailed ahead.
 
@@ -276,7 +276,7 @@ Algorithm ~\ref{alg:fixVars} describes the step of tighten variables ranges. Dif
 \end{algorithm}
 
 % --------------------------------------
-Algorithm ~\ref{alg:optimize} describes the steps around a request for optimization. It requires a linear program $lp$ and a feasible solution $sol$, and ensures a final updated solution $sol$ at least as good as the initial one. The linear program considered here is the one resulting from the variables bounds tightening step. The procedure sets the time limit $timeIter$ for the optimization, sets $sol$ as an initial solution and optimizes the model using a MIP solver. When optimization ends, run time is recorded at $runtime$ and the extra time, i.e., the difference between time limit and run time, is recorded at $timeLeft$. These values may later be used for updating $timeIter$ with a more appropriate value. Finally, if optimization succeeded, the current solution $sol$ is updated with the new solution.
+Algorithm ~\ref{alg:optimize} describes the steps around a request for optimization. It requires a linear program $lp$ and a feasible solution $sol$, and ensures a final updated solution $sol$ at least as good as the initial one. The linear program considered here is the one resulting from the variables bounds tightening step. The procedure sets the time limit $timeIter$ for the optimization, sets $sol$ as an initial solution and optimizes the model using a MIP solver. When optimization ends, run time is recorded at $runtime$ and the extra time, i.e., the difference between time limit and run time, is recorded at $timeLeft$. These values may later be used for updating $timeIter$ with a more appropriate value. Finally, if optimization succeeded, the current solution $sol$ is updated with the new solution and elapsed time since last solution improvement is updated.
 
 \begin{algorithm}[H]
   \caption{Optimize
@@ -292,6 +292,11 @@ Algorithm ~\ref{alg:optimize} describes the steps around a request for optimizat
 			\Let{$timeLeft$}{\abs{timeIter - runtime}}
 			\If{optimization succeeded}
 				\Let{$sol$}{new best solution found}
+				\If {solution was not improved}
+					\State update elapsed time without improvement
+				\Else
+					\State reset elapsed time without improvement
+				\EndIf
 			\EndIf
     \EndProcedure	
   \end{algorithmic}	
@@ -414,37 +419,41 @@ Algorithm ~\ref{alg:adjustTime} adjusts optimization time limit for the next ite
 \end{algorithm}
 
 % --------------------------------------
+Algorithm ~\ref{alg:adjustPercOrBlock} is responsible for adjusting the percentage of solution that is fixed. The decrease of fixed solution amount can take place in 2 situations: either optimality was very fast achieved (line ~\ref{perc:easy}) or optimality was achieved but solution was not improved at all (line ~\ref{perc:decrease}). The first one is not really necessary --- it is basically just an attempt to speed up the method. The second one is essential, because it is the natural way of decreasing fixation, which means getting closer to the actual linear program. The idea is that the search-space size should be enlarged whenever the optimal solution value equals the current best solution value, since it suggests that search-spaces with the current size may have been exhausted or would make small contributions. The subroutine for decreasing solution fixation, called \textsc{decreasePercOrFreeBlock} and described at ~\ref{alg:decreaseperc}, requires a value that might be subtracted of the fixation percentage. It can actually either decide to change and enlarge the set of free blocks (line ~\ref{decreaseperc:anyblock}) or indeed subtract the percentage $perc$ of solution fixation (line ~\ref{decreaseperc:decrease}). The principle is that decreasing the value $perc$ is an \q{one way street}, i.e., we can never backtrack and increase $perc$, while on the other hand the number of fixed blocks can vary according to the difficulty faced when solving $lp$. Thus, the actual decreasing of the value $perc$ takes place only when all blocks are free at the current iteration.
+
 
 \begin{algorithm}[H]
   \caption{Adjust percentage of fixed variables or fixed blocks
     \label{alg:adjustPercOrBlock}}
   \begin{algorithmic}[1]
-    \Require{$lp$ model}
+		\Require{values of performance of the current iteration optimization}
     \Procedure{adjustPercOrBlock}{}
-			\If{$optimal$ \textbf{and} $timeLeft > 0.7\cdot timeIter$}	%\Comment{decrease the fixed portion if it was easy (fast) to solve}
+			\If{$optimal$ \textbf{and} $timeLeft > 0.7\cdot timeIter$} \label{perc:easy} %\Comment{decrease the fixed portion if it was easy (fast) to solve}
 				\State \textsc{decreasePercOrFreeBlock}$(5)$	
 			\Else 
-				\If{\textbf{not} $improved$}																%\Comment{decrease the fixed portion if no improvement was made}	
+				\If{$optimal$ \textbf{and} \textbf{not} $improved$}	  	\label{perc:decrease}	%\Comment{decrease the fixed portion if no improvement was made}	
 					\State \textsc{decreasePercOrFreeBlock}$(10)$		
 				\EndIf	
 			\EndIf
     \EndProcedure	
 	  \Statex
 	  \Algphase{Decrease percentage of fixed variables or free blocks}
-    \Procedure{decreasePercOrFreeBlock}{$percToSubtract$}
+		\Require{a value to be subtracted of the fixation percentage}
+    \Procedure{decreasePercOrFreeBlock}{$percToSubtract$}				\label{alg:decreaseperc}
 			\If{$percToSubtract \le 0$}
 				\Return
 			\EndIf
-			\If{there is any block currently fixed}
+			\If{there is any block currently fixed}										\label{decreaseperc:anyblock}
 				\State \textsc{setNextRandFreeBlock}$(-10)$
 				\Return
 			\EndIf
-			\State \textsc{decreasePerc}$(percToSubtract)$
+			\Let{$perc$}{$perc$ - $percToSubtract$}										\label{decreaseperc:decrease}
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
 
 % --------------------------------------
+Before ending any polishing iteration it is mandatory that every tightening of variable bounds is undone. Algorithm ~\ref{alg:unfixVars} is responsible for such untightening, so that the resulting linear program is the same one of the beginning of the iteration.
 
 \begin{algorithm}[H]
   \caption{Unfixing variables' values
@@ -461,6 +470,7 @@ Algorithm ~\ref{alg:adjustTime} adjusts optimization time limit for the next ite
 \end{algorithm}
 
 % --------------------------------------
+The last thing to be checked at each iteration is polishing running time. As previously stated, in case a proved optimal solution is not achieved, 2 possible stopping criteria are used: total running time and elapsed time since last solution improvement. Both cases are tested at algorithm ~\ref{alg:checktime} and, if any of these conditions is reached, $okIter$ is set to false, which causes further interruption of the method.
 
 \begin{algorithm}[H]
   \caption{Check run time
@@ -482,11 +492,9 @@ Algorithm ~\ref{alg:adjustTime} adjusts optimization time limit for the next ite
 	  \Algphase{Check run time since last improvement}
     \Procedure{checkTimeWithoutImprov}{}
 			\If{no improvement was made at the current iteration}
-				\If{run time since last improvement $>$ maxTimeNoImprov} % maximum run time allowed without improvement
+				\If{elapsed time since last improvement $>$ maxTimeNoImprov} % maximum run time allowed without improvement
 					\Let{$okIter$}{$false$}
 				\EndIf
-			\Else
-				\State reset time without improvement 
 			\EndIf		
 		\EndProcedure	
   \end{algorithmic}	
