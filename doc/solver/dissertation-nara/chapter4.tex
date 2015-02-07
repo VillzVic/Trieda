@@ -11,7 +11,7 @@ Just as in any other kind of problem, the feasibility of a linear model for a ti
 
 In real life it is useless for an educational institution to have a solution that satisfies all demands of students for courses, but which does not respect some important quality requirements. Bearing this in mind, in addition to the feasibility issue, the model presented at this work, unlike most authors, does not consider demand satisfaction as a hard constraint. Essential quality requirements are modeled as hard constraints though, and demand satisfaction is treated as the highest priority objective, followed by some further goals.
 
-While it is not easy to embody quality into the modeling process, it can be even more difficult to quantify it. A \textbf{multi-objective function} unifies disparate goals of the model in a single weighted sum of preferences. Such approach, although simpler, depends on very subjective choice of weights and is not always consistently reliable, specially when objectives are mutually conflicting.
+A \textbf{multi-objective function} unifies disparate goals of the model in a single weighted sum of preferences. Such approach, although simpler, depends on very subjective choice of weights and is not always consistently reliable, specially if involving trade-off, when objectives are mutually conflicting. It can be very difficult to quantify quality.
 
 An alternative approach is using a priority line for the different goals. According to the institution preferences, one optimizes the problem in a sequence of steps, where each step is responsible for a goal, from the most to the least important. For each step a different and specific objective function is used and the feasible solution space is subject to features of the best solution found at the previous step. Such approach is known as \textbf{preemptive goal programming} and is following detailed.
 
@@ -40,22 +40,22 @@ Following are listed the goals, ordered by priority, considered at this work whe
 \begin{enumerate}
 
 %%%%%
-\item{Maximizing demand satisfaction}
+\item{Maximizing demand satisfied by real professors}
 
 \begin{align*}
    \mbox{g1 = MIN  } \sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a}
 \end{align*}
 
 %%%%%
-\item{Minimizing virtual professor usage}
+\item{Minimizing the number of lessons, in case of courses that can have classes merged}
 
 \begin{align*}
-  \mbox{g2 = MIN  } \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp}
+  \mbox{g2 = MIN  } \sum\limits_{i \in I_{d}} \sum\limits_{d \in Dm} z_{i,d}
 	\\
 	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 \end{align*}
 
-Where the additional constraint restricts the solution space to the maximum demand achieved at previous step.
+Where the additional constraint restricts the search-space to solutions where the satisfied demand is no less than the value $g1$ achieved at previous step.
 
 %%%%%
 \item{Minimizing real professor displacement}
@@ -65,10 +65,10 @@ Where the additional constraint restricts the solution space to the maximum dema
 	\\
 	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 	\\
-	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
+	\sum\limits_{i \in I_{d}} \sum\limits_{d \in Dm} z_{i,d} \le g2
 \end{align*}
 
-Where the additional constraint restricts the solution space to the minimum virtual professor usage achieved at previous step.
+Where the additional constraint restricts the number of sharable classes to be no more than the minimal value $g2$ achieved at previous step.
 
 %%%%%
 \item{Minimizing gaps in professor's timetable}
@@ -78,7 +78,7 @@ Where the additional constraint restricts the solution space to the minimum virt
 	\\
 	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 	\\
-	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
+	\sum\limits_{i \in I_{d}} \sum\limits_{d \in Dm} z_{i,d} \le g2
 	\\
 	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2} \le g3
 \end{align*}
@@ -93,20 +93,19 @@ Where the additional constraint restricts the solution space to the minimum real
 	\\
 	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
 	\\
-	\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp} \le g2
+	\sum\limits_{i \in I_{d}} \sum\limits_{d \in Dm} z_{i,d} \le g2
 	\\
 	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2} \le g3
 	\\
 	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f} \le g4
 \end{align*}
 
-
 Where the additional constraint restricts the solution space to the minimum amount of gaps in professors' timetable achieved at previous step.
 
 \end{enumerate}
 
-The final solution is the one with cost equal to $g5$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
 
+The final solution is the one with cost equal to $g5$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
 
 \begin{figure}[h]
 \includegraphics[scale=0.6]{figures/goalProgSpace.png}
@@ -115,6 +114,49 @@ The final solution is the one with cost equal to $g5$, achieved at last stage. I
 \end{figure}
 
 \fixme{atualizar etapas na figura}
+
+
+%%%%%
+\myparagraph{Maximizing remaining demand satisfaction through the best use of virtual resources}
+
+Supposing that the best solution found until this moment has been fixed and thus prevented from being modified, then the last thing to do is to satisfy the maximum of remaining demands with virtual resources. 
+
+Since virtual teaching resources have neither quality nor overlapping constraints, they are very easy assignments and could even be done as a post-processing. Still, we chose to make use of mathematical programming to do it, for 2 reasons: first, the model formulation and implementation is just the same one we have been using, except that current real solution must be fixed and virtual resources allowed; second, we can take advantage of mathematical programming to easily remove some symmetry around virtual resources usage.
+
+It is very common for professors to restrict their available teaching time. Suppose the Biology professor, Glen Hansard, is only available on Tuesdays and Fridays, and the Geography professor, Freddie Mercury, is only available on Wednesdays and Fridays. Due to the global lack of teaching resources, a virtual professor must be assigned to the Biology and Geography lessons of class $C1$. For purposes of simplification, consider that both Biology and Geography courses have 1 credit each. Class $C1$'s timetable must have at least 2 empty time slots then, otherwise its demand would be greater than it can support. Finally, suppose that assignments of other courses attended by $C1$ could be rearranged so that we have the following possibilities:
+\begin{enumerate}
+\item an empty time slot on Tuesday and on Wednesday, or
+\item an empty time slot on Monday and on Wednesday.
+\end{enumerate}
+
+Now, the decision to be made is to which time slot assign the Biology and the Geography virtual lessons. Are they equally good? Possible solutions are:
+\begin{enumerate}
+\item assign Biology to Tuesday and Geography to Wednesday, or
+\item assign Geography to Tuesday and Biology to Wednesday, or
+\item assign Biology to Monday and Geography to Wednesday, or
+\item assign Geography to Monday and Biology to Wednesday.
+\end{enumerate}
+
+The difference is that, in case of a meeting with virtual teaching resource, assigning the course lesson to a time slot at which no capable professor has registered availability implies either hiring a new professor for teaching the course or negotiating with the current capable professors their availabilities. On the other hand, assigning the course lesson to a time slot at which a capable professor has registered availability necessarily implies hiring a new professor, since if a capable professor is already registered at that time slot and still the lesson is being taught by a virtual resource, it means either that the professor was assigned to another class at that moment or that he has been blocked by some quality constraint.
+
+
+So, to simplify notation, we define $KV_{d}$ as being a set containing all variables $k$ of virtual professor for course $d$. Such set can be split into two subsets according to professors availabilities, let us say $KVPA_{d}$ and its complement $\overline{KVPA}_{d}$, so that $KVPA_{d} \cup \overline{KVPA}_{d} = KV_d$, where $KVPA_{d}$ is the subset of all variables $k$ of virtual professor for course $d$ and for a time slot at which some real capable professor has registered availability.
+
+Then, what we aim is satisfy the remaining demand using virtual teaching resources, while giving preference to those assignments that reduce the certainty of having to hire new professors and guaranteeing the current solution. This last goal is achieved by:
+
+\begin{align*}
+   \mbox{g6 = MIN  }
+		\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a}
+		+
+		\\
+		0.00001 \cdot \sum\limits_{k \in KVPA_{d}} k_{pv,i,d,u,t,h}
+		\\
+		\mbox{\textit{subjected to assignments made in the best}}
+		\\
+		\mbox{\textit{solution found when considering real resources}}
+\end{align*}
+
+
 
 
 %%%%%%%%%%%%%%
