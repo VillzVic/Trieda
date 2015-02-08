@@ -5,6 +5,35 @@ This chapter describes and compares different strategies and approaches used and
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Phases of problem solving}
+
+In section ~\ref{sec:mathForm} the complete linear program used as basic foundation for solving the problem was introduced. From practice, though, arose the need of split the problem into some phases.
+
+The first partition is related to virtual teaching resources. Since virtual professors should be used only when there is no real professor available, it makes sense to consider virtual resources apart from the initial problem, that is, first to solve a model with only real resources and then solving a second model that allows virtual resources only for those demands not satisfied at first stage. The only obstacle to such partition is whether gaps in student's timetable are directly prohibit by the model (see constraints ~\ref{constrStudentGap}). In this scenario, by partitioning the problem, any case of non-satisfied demand with a real professor will generate an empty time slot at an extremity of a day, but never between allocated classes. The problem is that this could easily prevent satisfaction of other demands when professor availability is restricted, which is very common. 
+
+As a simple example, suppose that due to a lack of teaching resource a demand of some class for Mathematics lessons will inevitably be non-satisfied with a real professor. The History professor, Norah Jones, can only teach at 08:00 on Monday morning. If lessons have one-hour duration, and if due to professors limited availability no other course can be assigned at 9:00 am on Monday, but only later, then either an one-hour gap will be generated from 9:00 to 10:00 am and later filled in by a Math lesson with a virtual resource, or Prof. Jones will be prevented for teaching to the History lesson to the class, so that a gap is not created. In case of students' gaps constraints are being considered, necessarily only the second option would last, which is actually not interesting, since a History demand would be not satisfied due to inconsistency of input data for Mathematics teaching resource. This small example gives us a glimpse of how important is input data consistency and how aspects not obviously related at first sight are actually connected.
+
+Thus, splitting the problem into real and virtual resources phases is advised only when students' gaps constraints have not been included in the linear program. Fortunately, if student's available timetable fits exactly his courses demands, there is no need of such constraints!
+
+
+%%%%%%%
+\subsection{Real teaching resource}
+
+As was indicated while introducing the concept of professor at session ~\ref{defprof}, professors might have different importance levels, which means that a professor can have his assignments prioritized over others. Such distinction emerged from practice, when analyzing some possible solutions to the timetabling problem of a Brazilian school. What happens is that, as discussed in section ~\ref{sec:accuracy}, actual timetabling for educational institutions is a political just as much as a scheduling problem. It might be acceptable if the timetable of a fresh professor of the school does not end up as compact as it would be desired, but it is unacceptable that timetable of an old professor of the school, considered as a loyal employee, does not respect a minimum and high quality level.
+
+
+\subsubsection{First Priority}
+
+\subsubsection{Second Priority}
+
+
+%%%%%%%
+\subsection{Virtual teaching resource}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Goal programming}
 
 Just as in any other kind of problem, the feasibility of a linear model for a timetabling problem depends utterly on data set. In general, there is no guarantee that all demanded requirements can be satisfied with the specified available resources, even because usually there are several and conflicting objectives. Therefore, specially in a commercial solver, it is important to treat some idealistic hard constraints as highest priority soft constraints, otherwise the solver could frequently generate an infeasible model.
@@ -35,7 +64,7 @@ G\"{u}enalay and Sahin use goal programming at \cite{Guenalay2006} to satisfy in
 %%%%%%%%%%%%%%
 \subsubsection{Preemptive Goal Programming}
 
-Following are listed the goals, ordered by priority, considered at this work when using preemptive goal programming. For each step there is a specific objective function and the respective feasible solution space is additionally constrained by the solution of the previous phase. We draw attention to the ease of changing priorities order and adding or removing goals; and to the nonexistence of coefficients multiplying variables at each objective function.
+Following are listed the goals, ordered by priority, considered at this work for real resource phase when using preemptive goal programming. For each step there is a specific objective function and the respective feasible solution space is additionally constrained by the solution of the previous phase. We draw attention to the ease of changing priorities order and adding or removing goals; and to the nonexistence of coefficients multiplying variables at each objective function.
 
 \begin{enumerate}
 
@@ -105,9 +134,9 @@ Where the additional constraint restricts the solution space to the minimum amou
 \end{enumerate}
 
 
-The final solution is the one with cost equal to $g5$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
+The final solution for the real resource phase is the one with cost equal to $g5$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \includegraphics[scale=0.6]{figures/goalProgSpace.png}
 \centering
 \caption{Solution spaces are limited and encapsulated after each goal optimization step.}
@@ -124,31 +153,33 @@ Supposing that the best solution found until this moment has been fixed and thus
 Since virtual teaching resources have neither quality nor overlapping constraints, they are very easy assignments and could even be done as a post-processing. Still, we chose to make use of mathematical programming to do it, for 2 reasons: first, the model formulation and implementation is just the same one we have been using, except that current real solution must be fixed and virtual resources allowed; second, we can take advantage of mathematical programming to easily remove some symmetry around virtual resources usage.
 
 It is very common for professors to restrict their available teaching time. Suppose the Biology professor, Glen Hansard, is only available on Tuesdays and Fridays, and the Geography professor, Freddie Mercury, is only available on Wednesdays and Fridays. Due to the global lack of teaching resources, a virtual professor must be assigned to the Biology and Geography lessons of class $C1$. For purposes of simplification, consider that both Biology and Geography courses have 1 credit each. Class $C1$'s timetable must have at least 2 empty time slots then, otherwise its demand would be greater than it can support. Finally, suppose that assignments of other courses attended by $C1$ could be rearranged so that we have the following possibilities:
-\begin{enumerate}
-\item an empty time slot on Tuesday and on Wednesday, or
-\item an empty time slot on Monday and on Wednesday.
-\end{enumerate}
+\begin{itemize}
+\item an empty time slot on Monday and on Wednesday, or
+\item an empty time slot on Tuesday and on Wednesday.
+\end{itemize}
 
 Now, the decision to be made is to which time slot assign the Biology and the Geography virtual lessons. Are they equally good? Possible solutions are:
 \begin{enumerate}
-\item assign Biology to Tuesday and Geography to Wednesday, or
-\item assign Geography to Tuesday and Biology to Wednesday, or
-\item assign Biology to Monday and Geography to Wednesday, or
-\item assign Geography to Monday and Biology to Wednesday.
+\item assign Biology to Monday and Geography to Wednesday, or \label{bmgw}
+\item assign Biology to Tuesday and Geography to Wednesday, or \label{btgw}
+\item assign Geography to Monday and Biology to Wednesday. \label{gmbw}
+\item assign Geography to Tuesday and Biology to Wednesday, or \label{gtbw}
 \end{enumerate}
 
 The difference is that, in case of a meeting with virtual teaching resource, assigning the course lesson to a time slot at which no capable professor has registered availability implies either hiring a new professor for teaching the course or negotiating with the current capable professors their availabilities. On the other hand, assigning the course lesson to a time slot at which a capable professor has registered availability necessarily implies hiring a new professor, since if a capable professor is already registered at that time slot and still the lesson is being taught by a virtual resource, it means either that the professor was assigned to another class at that moment or that he has been blocked by some quality constraint.
 
+Bearing this in mind, best options for virtual assignment in the previous example are ~\ref{gmbw} and ~\ref{gtbw}, because neither Prof. Hansard is available on Wednesday nor Prof. Mercury is available on Monday and Tuesday, the intermediate option is ~\ref{bmgw}, and the worst option is ~\ref{btgw}, since days chosen for courses classes are exactly the days respectively already available for both professors.
 
-So, to simplify notation, we define $KV_{d}$ as being a set containing all variables $k$ of virtual professor for course $d$. Such set can be split into two subsets according to professors availabilities, let us say $KVPA_{d}$ and its complement $\overline{KVPA}_{d}$, so that $KVPA_{d} \cup \overline{KVPA}_{d} = KV_d$, where $KVPA_{d}$ is the subset of all variables $k$ of virtual professor for course $d$ and for a time slot at which some real capable professor has registered availability.
+\paragraph{Objective function for virtual resource phase}
 
-Then, what we aim is satisfy the remaining demand using virtual teaching resources, while giving preference to those assignments that reduce the certainty of having to hire new professors and guaranteeing the current solution. This last goal is achieved by:
+To simplify notation, we define $KV_{d}$ as being a set containing all variables $k$ of virtual professor for course $d$. Such set can be split into two subsets according to professors availabilities, let us say $KVPA_{d}$ and its complement $\overline{KVPA}_{d}$, so that $KVPA_{d} \cup \overline{KVPA}_{d} = KV_d$, where $KVPA_{d}$ is the subset of all variables $k$ of virtual professor for course $d$ and for a time slot at which some real capable professor has registered availability.
+
+Then, what we aim is to satisfy the remaining demand using virtual teaching resources, while giving preference to those assignments that reduce the certainty of having to hire new professors and guaranteeing the current solution. Since virtual resource phase is much simpler and we do not have conflicting goals, an unified objective function works just fine and is enough. This last goal is achieved by:
 
 \begin{align*}
    \mbox{g6 = MIN  }
 		\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a}
-		+
-		\\
+		+		
 		0.00001 \cdot \sum\limits_{k \in KVPA_{d}} k_{pv,i,d,u,t,h}
 		\\
 		\mbox{\textit{subjected to assignments made in the best}}
@@ -163,7 +194,7 @@ Then, what we aim is satisfy the remaining demand using virtual teaching resourc
 \subsubsection{Nonpreemptive Goal Programming}
 \fixme{or Multi-objective function? no final nao tem mta diferenca!}
 
-Following there is the unified objective function considered at this work. Although here it is even easier than at goal programming to change priorities order and adding or removing goals, there is the necessity of choosing coefficients for variables at objective function.
+Following there is the unified objective function considered at this work for the real resource phase. Although here it is even easier than at goal programming to change priorities order and adding or removing goals, there is the necessity of choosing coefficients for variables at objective function.
 
 $$
 \begin{array}{rl}
@@ -181,10 +212,9 @@ $$
 			+ \sigma \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2}
 			\\
 			&
-      + \theta \cdot \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{cp \in CP} y_{pv,i,d,cp}
+      + \theta \cdot \sum\limits_{i \in I_{d}} \sum\limits_{d \in Dm} z_{i,d}
 \end{array}
 $$
-
 
 An unified objective function is more appropriate when goals have not a strict priority order, in the sense that their combinations can produce solutions that are Pareto efficient.
 

@@ -501,10 +501,12 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 % 					PROFESSORS ASSIGNMENT
 \subsubsection{Professors assignment}
 
+The following constraints, responsible for assigning professors to classes, involve both real professors and the virtual teaching resource $pv$.
+
 \paragraph{No overlapping in professor's timetable}
 \begin{eqnarray}
 \sum_{ \substack {dti,dtf \in Dt \\ dt \in [dti,dtf)} } \sum\limits_{i} \sum\limits_{d} \sum\limits_{u \in U} k_{p,i,d,u,t,dti,dtf} \le 1 \nonumber \qquad
-\forall p \in P \quad
+\forall p \in P \cup \{pv\} \quad
 \forall t \in T \quad
 \forall dt \in Dt
 \end{eqnarray}
@@ -517,13 +519,13 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 \forall i \in I \quad
 \forall d \in D \quad
 \forall u \in U \quad
-\forall p \in P \quad
+\forall p \in P \cup \{pv\} \quad
 \forall t \in T \quad
 \forall dti \in Dt \nonumber
 \end{eqnarray}
 % Part 2
 \begin{eqnarray}
-\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s\in S} x_{i,d,s,t,hi,hf} \le \sum\limits_{u\in U} \sum\limits_{p} k_{p,i,d,u,t,dti} \nonumber \qquad
+\sum_{ \substack {hi,hf \in H \\ dti \in [hi,hf)} } \sum\limits_{s\in S} x_{i,d,s,t,hi,hf} \le \sum\limits_{u\in U} \sum\limits_{p \in P \cup \{pv\}} k_{p,i,d,u,t,dti} \nonumber \qquad
 \\
 \forall i \in I \quad
 \forall d \in D \quad
@@ -536,12 +538,12 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 \sum\limits_{u \in U} \sum\limits_{t} \sum\limits_{h} k_{p,i,d,u,t,h} = nCreds_{d} \cdot y_{p,i,d} \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D \quad
-\forall p \in P
+\forall p \in P \cup \{pv\}
 \end{eqnarray}	
 	
 \paragraph{Assigns a single professor to each course section}
 \begin{eqnarray}
-\sum\limits_{p} y_{p,i,d} = z_{i,d} \nonumber \qquad
+\sum\limits_{p\in P \cup \{pv\}} y_{p,i,d} = z_{i,d} \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D
 \end{eqnarray}	
@@ -551,6 +553,9 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 %						PROFESSOR DISPLACEMENT
 \subsubsection{Professor's displacement}
 \label{constrProfessorDisplac}
+
+Here quality constraints related to displacement of real professors along the week and in a day are considered.
+
 
 \paragraph{Ensures enough time for displacement between blocks in the same day}
 \begin{eqnarray}
@@ -589,7 +594,6 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 \paragraph{Constraints the maximum number of blocks assigned to the professor at the day}
 \begin{eqnarray}
 \sum\limits_{u \in U} uu_{p,t,u} \le 2 \nonumber \qquad
-\\
 \forall p \in P \quad
 \forall t \in T \quad \nonumber
 \end{eqnarray}
@@ -608,38 +612,8 @@ uu_{p,t,u1} + uu_{p,t,u2} \le 1 + desloc_{p,t,u1,u2} \nonumber \qquad
 \paragraph{Limits the maximum of 2 big displacements for each professor along the week}
 \begin{eqnarray}
 \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum_{\substack {u2 \in U \\ \norm{u1 u2} \ge 50}} desloc_{p,t,u1,u2} \le 2 \nonumber \qquad
-\\
 \forall p \in P \quad \nonumber
 \end{eqnarray}
-
-
-\paragraph{Sets if a session of day is assigned for the professor}
-\begin{eqnarray}
-bigM \cdot ptf_{p,t,f} \ge \sum\limits_{d \in D}\sum\limits_{i \in I_{d}}\sum\limits_{u \in U}\sum\limits_{h \in H_{f}} k_{p,i,d,u,t,h} \nonumber \qquad
-\\
-\forall p \in P \quad
-\forall T \in T \quad
-\forall f \in F \nonumber
-\end{eqnarray}
-
-\paragraph{Sets the number of days of the week assigned to each professor}
-\begin{eqnarray}
-bigM \cdot pt_{p,t} \ge \sum\limits_{f \in F} ptf_{p,t,f} \nonumber \qquad
-\\
-\forall p \in P \quad
-\forall t \in T \nonumber
-\end{eqnarray}
-
-\paragraph{Prohibits big gaps between assigned sessions of the day}
-\begin{eqnarray}
-hip_{p,t,f} - hfp_{p,t,f-1} \le (MaxGapBetweenSessions + bigM \cdot(2 - ptf_{p,t,f} - ptf_{p,t,f-1}))  \nonumber \qquad
-\\
-\forall p \in P \quad
-\forall t \in T \quad
-\forall f \in F \quad \nonumber
-\end{eqnarray}
-
-
 
 
 
@@ -648,7 +622,7 @@ hip_{p,t,f} - hfp_{p,t,f-1} \le (MaxGapBetweenSessions + bigM \cdot(2 - ptf_{p,t
 \subsubsection{Professor's gaps avoidance}
 \label{constrProfessorGap}
 
-Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when it has conflicting goals. The same is valid for analog constraints responsible for controlling gaps in students timetables, as one can see at section ~\ref{constrStudentGap}. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
+Next, variables $hip_{p,t,f}$ and $hfp_{p,t,f}$ are set. We draw attention to the fact of these variables being strictly set, i.e., less and greater inequality constraints are used per variable, resulting in an implicit equality constraint. Consequently, they do not depend on an objective function, which is important when it has conflicting goals. \fixme{Exemplify!} \fixme{exception when the professor is not assigned at the day}
 
 \paragraph{Sets variable $hip_{p,t,f}$}
 \begin{eqnarray}
@@ -687,6 +661,41 @@ Next, gaps in professor timetable are controlled. The usage of the slack variabl
 \paragraph{Prohibits gap in each session of day in professor timetable}
 \begin{eqnarray}
 \sum\limits_{k \in K_{h \in H_{f}}} duration_{h} \cdot k_{p,t,h} + delta_{f,t} + fpgap_{p,t,f} \geq hfp_{p,t,f} - hip_{p,t,f} \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall t \in T \quad
+\forall f \in F \quad \nonumber
+\end{eqnarray}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%						COMPACTING PROFESSOR'S TIMETABLE							% 							 
+\subsubsection{Professor's timetable compactness}
+\label{constrProfCompact}
+
+Besides constraints introduced at ~\ref{constrProfessorGap}, specific for avoiding gaps in each session of a professor's day, here further quality constraints related to compactness of real professors' timetable along the week and in a day are considered.
+
+
+\paragraph{Sets if a session of day is assigned for the professor}
+\begin{eqnarray}
+bigM \cdot ptf_{p,t,f} \ge \sum\limits_{d \in D}\sum\limits_{i \in I_{d}}\sum\limits_{u \in U}\sum\limits_{h \in H_{f}} k_{p,i,d,u,t,h} \nonumber \qquad
+\\
+\forall p \in P \quad
+\forall T \in T \quad
+\forall f \in F \nonumber
+\end{eqnarray}
+
+\paragraph{Sets the number of days of the week assigned to each professor}
+\begin{eqnarray}
+bigM \cdot pt_{p,t} \ge \sum\limits_{f \in F} ptf_{p,t,f} \nonumber \qquad
+\forall p \in P \quad
+\forall t \in T \nonumber
+\end{eqnarray}
+
+\paragraph{Prohibits big gaps between assigned sessions of the day}
+\begin{eqnarray}
+hip_{p,t,f} - hfp_{p,t,f-1} \le (MaxGapBetweenSessions + bigM \cdot(2 - ptf_{p,t,f} - ptf_{p,t,f-1}))  \nonumber \qquad
 \\
 \forall p \in P \quad
 \forall t \in T \quad
