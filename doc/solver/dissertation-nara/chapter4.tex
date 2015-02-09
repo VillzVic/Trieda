@@ -19,17 +19,23 @@ Thus, splitting the problem into real and virtual resources phases is advised on
 %%%%%%%
 \subsection{Real teaching resource}
 
-As was indicated while introducing the concept of professor at session ~\ref{defprof}, professors might have different importance levels, which means that a professor can have his assignments prioritized over others. Such distinction emerged from practice, when analyzing some possible solutions to the timetabling problem of a Brazilian school. What happens is that, as discussed in section ~\ref{sec:accuracy}, actual timetabling for educational institutions is a political just as much as a scheduling problem. It might be acceptable if the timetable of a fresh professor of the school does not end up as compact as it would be desired, but it is unacceptable that timetable of an old professor of the school, considered as a loyal employee, does not respect a minimum and high quality level.
+As was indicated while introducing the concept of professor at section ~\ref{defprof}, professors might have different importance levels, which means that a professor can have his assignments prioritized over others. Such distinction emerged from practice, when analyzing some possible solutions to the timetabling problem of a Brazilian school. What happens is that, as discussed in section ~\ref{sec:accuracy}, actual timetabling for educational institutions is a political just as much as a scheduling problem. It might be acceptable if the timetable of a fresh professor of the school does not end up as compact as it would be desired, but it is unacceptable that timetable of an old professor of the school, considered as a loyal employee, does not respect a minimum and high quality level.
 
+Real teaching resources should then receive different treatment depending on their priorities.
 
-\subsubsection{First Priority}
+\paragraph{First Priority}
 
-\subsubsection{Second Priority}
+We consider, as the first phase of the problem solving process, the solving of a linear program containing only real and first priority professors. This avoids that particularities and restrictions on lower-priority professors interfere with higher-priority professors assignments.
+
+\paragraph{Second Priority}
+
+As the second phase of the problem solving process we solve a linear program containing only real professors, with all priority levels, but ensuring timetable quality for first priority professors reached at solution of the first phase.
 
 
 %%%%%%%
 \subsection{Virtual teaching resource}
 
+After solving the problem using all real resources available, whether there is any non-satisfied demand, it is time to consider virtual teaching resources. The best solution found with real resources at previous phase is fixed and virtual professors are used only to satisfy the remaining demands, filling in empty time slots in students timetables.
 
 
 
