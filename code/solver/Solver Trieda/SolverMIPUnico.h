@@ -2,14 +2,30 @@
 #define _SOLVER_MIP_UNICO_H_
 
 #include "Solver.h"
+#include <map>
+#include <set>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
 
-#include "VariableOp.h"
-#include "VariableTatico.h"
+#include "VariableMIPUnico.h"
 
 class ProblemDataLoader;
 class ProblemSolution;
 class ProblemData;
-class VariableMIPUnico;
+class Aluno;
+class AlunoDemanda;
+class Campus;
+class Disciplina;
+class Professor;
+class HorarioAula;
+class Demanda;
+class Sala;
+class Unidade;
+class AtendimentoCampus;
+class AtendimentoSala;
+class AtendimentoDiaSemana;
+class DateTime;
 
 class SolverMIPUnico : public Solver
 {
@@ -21,12 +37,10 @@ public:
    void getSolution( ProblemSolution * ){};
 
    int solve();
-   int solveOpComTatico();
    int solveOpSemTatico();
    int solveEscolaTat();
    void solveCampusP1Escola();
    void solveCampusP2Escola();
-   int solveEscolaOp();
 
    void preencheAtendTaticoProbSol();
    bool preencheAtendTaticoProbData();
@@ -88,9 +102,7 @@ private:
    void criarOutProfsVirtuais_(ProblemSolution* const solution) const;
 
 	void clear();
-	void clearSolutionTat();
-	void clearSolutionOp();
-
+	
     // The linear problem   
 	#ifdef SOLVER_CPLEX 
 	   OPT_CPLEX *lp;
@@ -104,10 +116,7 @@ private:
    ProblemSolution * problemSolution;
    ProblemDataLoader * problemDataLoader;
    
-   // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
-   GGroup< VariableTatico *, LessPtr<VariableTatico> > solVarsTatico;
-   GGroup< VariableTatico *, LessPtr<VariableTatico> > vars_xh;
-   GGroup< VariableOp *, LessPtr<VariableOp> > solVarsOp;
+   // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores      
    
    std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> solMipUnico_;
    std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> solMipUnicoX_;
@@ -154,11 +163,7 @@ private:
 
    int campusAtualId;
    
-   std::map<int, std::vector<string> > alDemNaoAtend_output;
-
-
-   
-	static const bool RODAR_OPERACIONAL_;
+   std::map<int, std::vector<string> > alDemNaoAtend_output;  
    
 };
 

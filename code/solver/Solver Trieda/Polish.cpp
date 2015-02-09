@@ -435,6 +435,8 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	ss << "\n\nNumber of performed iterations: " << i;
 	printLog(ss.str());
 		
+	lp_->setCallbackFunc( NULL, NULL );
+
 	closeLogFile();
 	restoreOriginalLogFile();
 	
@@ -1179,7 +1181,9 @@ void Polish::updatePercAndTimeIter(double objN, double gap)
 	  }
 	  
 	  if (allFree())
-		  timeIter_ = getLeftTime();
+	  {
+		  setAllFreeConfig();
+	  }
 }
 
 void Polish::updatePercAndTimeIterSmallGap( double objN )
@@ -1311,6 +1315,18 @@ bool Polish::allFree()
 	return (perc_ <= 0 && allUnidadesAreFree());
 }
 
+void Polish::setAllFreeConfig()
+{
+	timeIter_ = getLeftTime();
+	lp_->setMIPEmphasis(2);
+
+	#if defined SOLVER_GUROBI && defined USAR_CALLBACK
+	cbData_.timeLimit = getLastTimeWithoutImprov();
+	cbData_.gapMax = 10;
+	lp_->setCallbackFunc( &MIPcallback, &cbData_ );
+	#endif
+}
+
 bool Polish::globalOptimal(double objN)
 {
 	// Obj acchieved a known minimal possible value
@@ -1388,36 +1404,51 @@ void Polish::chgFixType()
 		fixType_ = (fixType_ == 1 ? 2:1);	// alternate fixType
 }
 
+double Polish::getTimeWithoutImprov()
+{
+	tempoSemMelhora_.stop();
+	double tempoAtual = tempoSemMelhora_.getCronoTotalSecs();
+	tempoSemMelhora_.start();
+
+	return tempoAtual;
+}
+
+void Polish::resetTimeWithoutImprov()
+{
+	tempoSemMelhora_.stop();
+	tempoSemMelhora_.reset();
+	tempoSemMelhora_.start();
+}
+
+double Polish::getLastTimeWithoutImprov()
+{
+	return maxTempoSemMelhora_ - getTimeWithoutImprov();
+}
+
 void Polish::checkTimeWithoutImprov(double objN)
 {
 	if ( fabs(objN-objAtual_) < 0.0001 )
 	{
 		/* no improvement */
-		tempoSemMelhora_.stop();
-		double tempoAtual = tempoSemMelhora_.getCronoTotalSecs();
-		tempoSemMelhora_.start();
-		if ( tempoAtual >= maxTempoSemMelhora_ )
+
+		if (getLastTimeWithoutImprov() <= 0)
 		{
 			/* if there is too much time without any improvement, then quit */
 			okIter_ = false;
 			tempoSemMelhora_.stop();
 			tempoPol_.stop();
-			cout << "Abort by timeWithoutChange. Limit of time without improvement" << tempoAtual << ", BestObj " << objN;
+			cout << "Abort by timeWithoutChange. Limit of time without improvement" 
+				<< getTimeWithoutImprov() << ", BestObj " << objN;
 			if (polishFile_)
 			{
 				stringstream ss;
 				ss << "Abort by timeWithoutChange. Limit of time without improvement" 
-					<< tempoAtual << ", BestObj " << objN;
+					<< getTimeWithoutImprov() << ", BestObj " << objN;
 				printLog(ss.str());
 			}
 		}
 	}
-	else
-	{
-		tempoSemMelhora_.stop();
-		tempoSemMelhora_.reset();
-		tempoSemMelhora_.start();		
-	}
+	else resetTimeWithoutImprov();
 }
 
 void Polish::updateObj(double objN)

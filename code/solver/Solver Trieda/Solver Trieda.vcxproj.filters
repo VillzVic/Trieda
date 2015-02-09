@@ -170,9 +170,6 @@
     <ClCompile Include="HeurNuno\ParametrosHeuristica.cpp">
       <Filter>HeuristicaNuno</Filter>
     </ClCompile>
-    <ClCompile Include="VariableTatico.cpp">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClCompile>
     <ClCompile Include="Operacional.cpp">
       <Filter>Puro MIP\MIP-Operacional</Filter>
     </ClCompile>
@@ -326,6 +323,12 @@
     </ClCompile>
     <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
       <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="MIPUnicoParametros.cpp">
+      <Filter>Puro MIP</Filter>
+    </ClCompile>
+    <ClCompile Include="MIPCallback.cpp">
+      <Filter>Puro MIP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -500,9 +503,6 @@
     <ClInclude Include="HeurNuno\ParametrosHeuristica.h">
       <Filter>HeuristicaNuno</Filter>
     </ClInclude>
-    <ClInclude Include="VariableTatico.h">
-      <Filter>Puro MIP\MIPs antigos</Filter>
-    </ClInclude>
     <ClInclude Include="Operacional.h">
       <Filter>Puro MIP\MIP-Operacional</Filter>
     </ClInclude>
@@ -666,6 +666,12 @@
     <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
       <Filter>OPT_LP</Filter>
     </ClInclude>
+    <ClInclude Include="MIPUnicoParametros.h">
+      <Filter>Puro MIP</Filter>
+    </ClInclude>
+    <ClInclude Include="MIPCallback.h">
+      <Filter>Puro MIP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HeuristicaNuno">
@@ -697,9 +703,6 @@
     </Filter>
     <Filter Include="Puro MIP\MIP-Unico">
       <UniqueIdentifier>{b5560ea1-acd3-4923-867e-d0c347e8f7ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Puro MIP\MIPs antigos">
-      <UniqueIdentifier>{28889c34-6cc6-444a-ab23-a4e02a6fbf6c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Puro MIP\MIP-Operacional">
       <UniqueIdentifier>{db73764b-0c90-4ca6-bdd5-94c3942e0a5d}</UniqueIdentifier>

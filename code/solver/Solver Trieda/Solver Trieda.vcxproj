@@ -756,7 +756,9 @@
     <ClCompile Include="Magisterio.cpp" />
     <ClCompile Include="MainHeuristicaIES.cpp" />
     <ClCompile Include="MainMIPPuro.cpp" />
+    <ClCompile Include="MIPCallback.cpp" />
     <ClCompile Include="MIPUnico.cpp" />
+    <ClCompile Include="MIPUnicoParametros.cpp" />
     <ClCompile Include="NaoAtendimento.cpp" />
     <ClCompile Include="NivelDificuldade.cpp" />
     <ClCompile Include="NivelDificuldadeHorario.cpp" />
@@ -813,10 +815,6 @@
     <ClCompile Include="ProfessorVirtualOutput.cpp" />
     <ClCompile Include="RestricaoViolada.cpp" />
     <ClCompile Include="TRIEDA-OutputXSD.cpp" />
-    <ClCompile Include="VariableTatico.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlocacaoProfVirtual.h" />
@@ -889,7 +887,9 @@
     <ClInclude Include="Magisterio.h" />
     <ClInclude Include="MainHeuristicaIES.h" />
     <ClInclude Include="MainMIPPuro.h" />
+    <ClInclude Include="MIPCallback.h" />
     <ClInclude Include="MIPUnico.h" />
+    <ClInclude Include="MIPUnicoParametros.h" />
     <ClInclude Include="NaoAtendimento.h" />
     <ClInclude Include="NivelDificuldade.h" />
     <ClInclude Include="NivelDificuldadeHorario.h" />
@@ -947,10 +947,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Aula.h" />
-    <ClInclude Include="VariableTatico.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

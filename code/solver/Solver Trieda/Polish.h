@@ -17,8 +17,10 @@
 #endif
 
 #ifdef SOLVER_GUROBI
+#include "MIPCallback.h"
 #include "opt_gurobi.h"
 #endif
+
 
 class Polish
 {
@@ -148,6 +150,7 @@ private:
 	void decreaseTime();
 	void adjustOkIter(double objN);
 	bool allFree();
+	void setAllFreeConfig();
 	bool globalOptimal(double objN);
 	void resetIterSemMelhoraConsec();
 	void resetIterSemMelhora();
@@ -155,6 +158,9 @@ private:
 	bool checkDecreaseDueToIterSemMelhora();
 	void checkEndDueToIterSemMelhora();
 	void chgFixType();
+	double getTimeWithoutImprov();
+	void resetTimeWithoutImprov();
+	double getLastTimeWithoutImprov();
 	void checkTimeWithoutImprov(double objN);
 	void updateObj(double objN);
 	void checkTimeLimit();
@@ -212,9 +218,10 @@ private:
 	#ifdef SOLVER_CPLEX 
 	   OPT_CPLEX *lp_;
 	#elif SOLVER_GUROBI 
-	   OPT_GUROBI* lp_;
+	   OPT_GUROBI* lp_;	
+	   CBData cbData_;
 	#endif
-	   
+
 	   // Variables
 	   bool okIter_;
 	   double timeIter_;

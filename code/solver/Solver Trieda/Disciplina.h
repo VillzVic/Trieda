@@ -113,6 +113,7 @@ public:
    int getNroCredsRegraDiv( int k, int dia );
    bool temParPratTeor() const { return tem_par_prat_teor; }
    bool possuiRegraCred() const;
+   bool possuiRegraCredComMultiDias() const;
 
    bool possuiHorariosNoDia( HorarioAula *hi, HorarioAula *hf, int dia );
    bool possuiHorariosOuCorrespondentesNoTurno( TurnoIES* turnoIES );

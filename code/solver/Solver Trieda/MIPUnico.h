@@ -14,7 +14,6 @@
 
 class ProblemData;
 class ProblemSolution;
-class VariableTatico;
 
 
 #define PRINT_cria_variaveis
@@ -24,9 +23,7 @@ class MIPUnico : public Solver
 {
 public:
 	
-	MIPUnico( ProblemData * aProblemData, 
-				GGroup<VariableTatico *, LessPtr<VariableTatico>> *aSolVarsTatico, 
-				GGroup<VariableTatico *, LessPtr<VariableTatico>> *avars_xh,
+	MIPUnico( ProblemData * aProblemData,
 				bool *endCARREGA_SOLUCAO, bool equiv, int permitirNovasTurmas );
 
 	virtual ~MIPUnico();
@@ -356,8 +353,6 @@ private:
 	void writeSolTxtByCode( int campusId, int prioridade, int r, int type, double *xSol, int fase );
 	bool getSolFilePt( int campusId, int prioridade, int r, int type, ifstream & fin, bool byCode=false );
 
-	void sincronizaSolucao( int campusAtualId, int prioridade, int r );
-	void addVariaveisTatico();
 	void initCredsSala();
 	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
 	void deleteVariablesSol();
@@ -474,13 +469,8 @@ private:
 	int addConstrDivCred(int campusId);
 	int copyInitialSolutionDivCred();
 		
-	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > vars_v;
-	GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
-
-	GGroup< VariableTatico *, LessPtr<VariableTatico> > *solVarsTatico;
-	GGroup< VariableTatico *, LessPtr<VariableTatico> > *vars_xh;
-
-	
+	std::set< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
+		
 	unordered_map< Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> > > solAlocProfTurma;
 	unordered_map< Campus*, unordered_map< Disciplina*, unordered_map< int, unordered_set<Professor*> > > > solAlocTurmaProf;	
 	unordered_map<Aluno*, unordered_map<Disciplina*, std::pair<int, unordered_map<int, set<DateTime>> >>> solAlocAlunoDiscTurmaDiaDti_;
@@ -492,68 +482,6 @@ private:
 		****************************************************************************************************************
    */
 	
-	// Constantes e parâmetros
-
-	enum PRIOR_PROF_TYPE
-	{
-		PriorTypeOff,	// Sem prior de profs	= um único modelo contendo indiferentemente todos os professores reais
-		PriorType1,	// Prior 1 > Prior 2	= etapa de maximizar demanda é única, com um único modelo contendo ambas prioridades
-		PriorType2,	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um único modelo contendo ambas prioridades
-		PriorType3	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um modelo para cada prioridade
-	};
-
-	    
-	// Gurobi
-	static const int timeLimitMaxAtend;
-	static const int timeLimitMaxAtendSemMelhora;
-	static const int timeLimitMinProfVirt;
-	static const int timeLimitMinProfVirtSemMelhora;
-	static const int timeLimitMinTurmas;
-	static const int timeLimitMinTurmasSemMelhora;
-	static const int timeLimitMinGapProf;
-	static const int timeLimitMinGapProfSemMelhora;
-	static const int timeLimitGeneral;
-	static const int timeLimitGeneralSemMelhora;
-	static const int timeLimitMinDeslocProf_;
-	static const int timeLimitMinDeslocProfSemMelhora_;
-	static const int timeLimitMinFaseDiaProf_;
-	static const int timeLimitMinFaseDiaProfSemMelhora_;
-
-	// Disciplinas
-	static const int consideraDivCredDisc;
-	static const double pesoDivCred;
-
-	// Professores	
-	static bool permiteCriarPV;
-	static const bool limitarNrUnidsProfDia_;
-	static const int MaxUnidProfDia_;
-	static const bool filtroPVHorCompl_;
-	static const bool minimizarCustoProf;
-	static const double pesoGapProf;
-	static const double pesoCredPV;
-	static const double pesoDeslocProf;
-	static const double pesoCHAntProf;
-	static const bool limitar1DeslocSoUnidLonge_;
-	static const bool limitarDeslocUnidLongeSemana_;
-	static const int maxDeslocUnidLongeSemana_;	
-	static const int maxTempoDeslocCurto_;
-	static const bool minimizarProfFaseDoDiaUsada_;
-	static const bool minimizarProfDiaUsado_;
-	static int priorProfLevel_;
-	static const PRIOR_PROF_TYPE priorProfImportante_;
-	static const bool minimizarGapProfEntreFases_;
-	static const int MaxGapEntreFase_;
-	static const int minCredDispFaseMinGapProf_;
-
-	static const bool fixarSolucaoProfPrior1_;
-
-	// Alunos
-	static const double pesoFD;
-	static const int pesoGapAluno;
-	static const int pesoMinCredDiaAluno;
-	static const int desvioMinCredDiaAluno;		// desvio máximo do nr médio de créditos por dia do aluno, sem que haja penalização 
-	static const int considerarMinCredDiaAluno;
-	static const bool ignorarGapAlunoContraTurno_;
 
 	// log file name
 	string optLogFileName;

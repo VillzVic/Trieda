@@ -1,6 +1,7 @@
 #include "Disciplina.h"
 #include "CentroDados.h"
 #include "Professor.h"
+#include "MIPUnicoParametros.h"
 
 
 Disciplina::Disciplina(void)
@@ -881,6 +882,27 @@ bool Disciplina::possuiRegraCred() const
 	return false;
 }
 
+bool Disciplina::possuiRegraCredComMultiDias() const
+{
+	if (this->getTotalCreditos() <= 1) return false;
+
+	if (combinacao_divisao_creditos.size() > 0 ||
+		divisao_creditos.size() > 0)
+	{
+		auto itK = this->combinacao_divisao_creditos.cbegin();
+		for (; itK != this->combinacao_divisao_creditos.cend(); itK++)
+		{
+			int n=0;			
+			for (auto itDia = itK->cbegin(); itDia != itK->cend(); itDia++)
+			{
+				if (itDia->second > 0) n++;
+			}
+			if (n>1) return true;
+		}		
+	}
+	return false;
+}
+
 void Disciplina::addProfHabilit(Professor* p)
 { 
 	profsHabilit.insert(p); 
@@ -914,7 +936,7 @@ int Disciplina::getNroProfRealHabilit() const
 
 int Disciplina::getNroProfRealImportHabilit(int importancia, bool ouMenor) const
 {
-	if (importancia == CentroDados::allPriorProfLevels_)
+	if (importancia == MIPUnicoParametros::allPriorProfLevels_)
 		return this->profsHabilit.size();
 
 	int nr=0;

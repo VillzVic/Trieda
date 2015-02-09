@@ -14,20 +14,16 @@
 #include "AtendimentoTurno.h"
 #include "MIPUnico.h"
 #include "CentroDados.h"
-#include "Operacional.h"
 
 #include "ErrorHandler.h"
 #include "ProblemDataLoader.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
-#include "ConstraintOp.h"
 #include "AlocacaoProfVirtual.h"
 #include "Indicadores.h"
 
 using namespace std;
 
-
-const bool SolverMIPUnico::RODAR_OPERACIONAL_ = false;
 
 
 /*  ----------------------------------------------------------------------------------------------------------
@@ -73,13 +69,11 @@ SolverMIPUnico::~SolverMIPUnico()
 
 void SolverMIPUnico::clear()
 {
-	if (!SolverMIPUnico::RODAR_OPERACIONAL_)
+	for (auto vit=solMipUnico_.begin(); vit!=solMipUnico_.end(); vit++)
 	{
-		for (auto vit=solMipUnico_.begin(); vit!=solMipUnico_.end(); vit++)
-		{
-			if (*vit) delete *vit;
-		}
+		if (*vit) delete *vit;
 	}
+
 	solMipUnico_.clear();
 }
 
@@ -96,14 +90,9 @@ int SolverMIPUnico::solve()
    {
 	  std::cout<<"\n------------------------------Operacional------------------------------\n";
 	  
-	  // OPERACIONAL COM TÁTICO
-      if ( problemData->atendimentosTatico != nullptr
-            && problemData->atendimentosTatico->size() > 0 )
-      {
-		  status = solveOpComTatico();
-      }
 	  // OPERACIONAL SEM TÁTICO
-      else
+      if ( problemData->atendimentosTatico == nullptr ||
+           problemData->atendimentosTatico->size() == 0 )
       {
 		  status = solveOpSemTatico();
       }
@@ -125,17 +114,6 @@ int SolverMIPUnico::solve()
    std::cout << "\n\nTotal Run Time = " << runtimess.str() << endl << endl;
    
    return status;
-}
-
-int SolverMIPUnico::solveOpComTatico()
-{ 
-	int status=true;
-
-	preencheAtendTaticoProbSol();
-
-	status = status && solveEscolaOp();
-	
-	return status;
 }
 
 void SolverMIPUnico::preencheAtendTaticoProbSol()
@@ -210,9 +188,6 @@ int SolverMIPUnico::solveOpSemTatico()
 			
 	// -------------------------------------------------
 	relacionaAlunosDemandas();
-			
-	// -------------------------------------------------
-	//writeOutputTatico();
 	
 	// -------------------------------------------------
 	preencheAtendTaticoProbData();
@@ -221,24 +196,12 @@ int SolverMIPUnico::solveOpSemTatico()
 	clearAtendTaticoProbSol();
 	
 	// -------------------------------------------------
-	if (!RODAR_OPERACIONAL_)
-	{
-		extractSolution_();
-		contabilizaGapProfReal_();
-		criarOutputFinal_(problemSolution);
-		problemSolution->computaMotivos(true,true);
-		writeOutputOp_();
-
-		return status;
-	}
-
-	// -------------------------------------------------
-	// Criando as aulas que serão utilizadas para resolver o modelo operacional
-	problemDataLoader->criaAulas();
-
-	// -----------------------
-	status = status && solveEscolaOp();
-	
+	extractSolution_();
+	contabilizaGapProfReal_();
+	criarOutputFinal_(problemSolution);
+	problemSolution->computaMotivos(true,true);
+	writeOutputOp_();
+		
 	return status;
 }
 
@@ -329,15 +292,13 @@ int SolverMIPUnico::solveEscolaTat()
 		this->campusAtualId = campusId;
 		
 		solveCampusP1Escola();
-		solveCampusP2Escola();
 		
-		problemData->confereExcessoP2( campusId );		
 		problemData->listSlackDemandaAluno.clear();
-		mudaCjtSalaParaSala();
-		getSolutionTaticoPorAlunoComHorario();
-
 	}
 	
+	mudaCjtSalaParaSala();
+	getSolutionTaticoPorAlunoComHorario();
+
 	return (status);
 }
 
@@ -372,7 +333,7 @@ void SolverMIPUnico::solveCampusP1Escola()
 	
 	int NOVAS_TURMAS = 1;
 	bool EQUIV=true;
-	MIPUnico * solverEscola = new MIPUnico( this->problemData, &(this->solVarsTatico), &(this->vars_xh),
+	MIPUnico * solverEscola = new MIPUnico( this->problemData,
 											&this->CARREGA_SOLUCAO, EQUIV, NOVAS_TURMAS );
 	solverEscola->solveMainEscola( this->campusAtualId, P, r, solMipUnico_ );
 	delete solverEscola;	
@@ -395,7 +356,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 		{
 			// Só inserção de alunos
 			MIPUnico * solverEscola = new MIPUnico( 
-				this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 0 );
+				this->problemData, &this->CARREGA_SOLUCAO, true, 0 );
 			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}
@@ -404,7 +365,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 		{
 			// Permite novas turmas
 			MIPUnico * solverEscola = new MIPUnico( 
-				this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true, 3 );
+				this->problemData, &this->CARREGA_SOLUCAO, true, 3 );
 			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}
@@ -545,47 +506,16 @@ void SolverMIPUnico::mudaCjtSalaParaSala()
 	
 	if ( problemData->parametros->otimizarPor == "ALUNO" )
 	{
-		ITERA_GGROUP_LESSPTR( it_Vars_x, vars_xh, VariableTatico )
+		for (auto itVar=solMipUnico_.cbegin(); itVar!=solMipUnico_.cend(); itVar++)
 		{
-			if ( ( *it_Vars_x )->getSubCjtSala()->salas.size() > 0 )
+			if ((*itVar)->getType() != VariableMIPUnico::V_CREDITOS) continue;
+			
+			if ( (*itVar)->getSubCjtSala()->salas.size() > 0 )
 			{
-				Sala *auxSala = (( *it_Vars_x )->getSubCjtSala()->salas.begin())->second;
-				( *it_Vars_x )->setSala(auxSala);
-			}
+				Sala *auxSala = ((*itVar)->getSubCjtSala()->salas.begin())->second;
+				(*itVar)->setSala(auxSala);
+			}			
 		}
-
-		//std::cout<<"\nSolucao:";
-		//
-		// Imprimindo as variáveis x_{i,d,u,s,hi,hf,t} convertidas.
-		//std::cout << "\n\n\n";
-		//std::cout << "x\t\ti\td\tu\ts\t\thi\thf\tt\n\n";
-		//
-		//ITERA_GGROUP_LESSPTR( it_Vars_x, vars_xh, VariableTatico )
-		//{
-		//	if ( ( *it_Vars_x )->getSala() == NULL )
-		//	{
-		//		printf( "\nOPA. Variavel x (x_i(%d)_d(%d)_u(%d)_tps(%d)_t(%d))nao convertida.\n\n",
-		//				( *it_Vars_x )->getTurma(),
-		//				( *it_Vars_x )->getDisciplina()->getId(),
-		//				( *it_Vars_x )->getUnidade()->getId(),
-		//				( *it_Vars_x )->getSubCjtSala()->getId(),
-		//				( *it_Vars_x )->getHorarioAulaInicial()->getId(),
-		//				( *it_Vars_x )->getHorarioAulaFinal()->getId(),
-		//				( *it_Vars_x )->getDia() );
-
-		//		exit( 1 );
-		//	}
-
-		//	std::cout << (*it_Vars_x)->getValue() << "\t\t"
-		//			<< ( *it_Vars_x )->getTurma() << "\t"
-		//			<< ( *it_Vars_x )->getDisciplina()->getCodigo() << "\t"
-		//			<< ( *it_Vars_x )->getUnidade()->getCodigo() << "\t"
-		//			<< ( *it_Vars_x )->getSala()->getCodigo() << "\t"
-		//			<< ( *it_Vars_x )->getHorarioAulaInicial()->getId() << "\t"
-		//			<< ( *it_Vars_x )->getHorarioAulaFinal()->getId() << "\t"
-		//			<< ( *it_Vars_x )->getDia() << "\n\n";
-		//	fflush(NULL);
-		//}
 	}
 }
 
@@ -605,19 +535,21 @@ void SolverMIPUnico::getSolutionTaticoPorAlunoComHorario()
    int at_Tatico_Counter = 0;
 
    // Iterando sobre as variáveis do tipo x.
-   ITERA_GGROUP_LESSPTR( it_Vars_x, vars_xh, VariableTatico )
+   for (auto itVar=solMipUnico_.begin(); itVar!=solMipUnico_.end(); itVar++)
    {
-	  int dia = ( *it_Vars_x )->getDia();
-	  Disciplina *d = ( *it_Vars_x )->getDisciplina();
-	  int turma = ( *it_Vars_x )->getTurma();
-	  HorarioAula *hi = ( *it_Vars_x )->getHorarioAulaInicial();
-	  HorarioAula *hf = ( *it_Vars_x )->getHorarioAulaFinal();
+	   if ((*itVar)->getType() != VariableMIPUnico::V_CREDITOS) continue;
+
+	  int dia = ( *itVar )->getDia();
+	  Disciplina *d = ( *itVar )->getDisciplina();
+	  int turma = ( *itVar )->getTurma();
+	  HorarioAula *hi = ( *itVar )->getHorarioAulaInicial();
+	  HorarioAula *hf = ( *itVar )->getHorarioAulaFinal();
   	  int nCreds = hi->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
-	  Sala *sala = ( *it_Vars_x )->getSala();
-      Unidade * unidade = ( *it_Vars_x )->getUnidade();
+	  Sala *sala = ( *itVar )->getSala();
+      Unidade * unidade = ( *itVar )->getUnidade();
 	  
       // Descobrindo qual Campus a variável x em questão pertence.
-      Campus * campus = problemData->refCampus[ ( *it_Vars_x )->getUnidade()->getIdCampus() ];
+      Campus * campus = problemData->refCampus[ ( *itVar )->getUnidade()->getIdCampus() ];
 	
       bool novo_Campus = true;
       ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
@@ -1380,33 +1312,6 @@ void SolverMIPUnico::getSolutionTaticoPorAlunoComHorario()
       }
    }
 
-   clearSolutionTat();
-}
-
-int SolverMIPUnico::solveEscolaOp()
-{
-	int status=true;
-
-	Operacional * solverOp = new Operacional( this->problemData, &this->CARREGA_SOLUCAO, &(this->solVarsOp), this->problemSolution );
-	status = status && solverOp->solveOperacionalEtapas();
-	delete solverOp;
-	
-	clearSolutionOp();
-
-	this->problemSolution->computaMotivos(true,true);
-
-	return status;
-}
-
-void SolverMIPUnico::clearSolutionTat()
-{
-	solVarsTatico.deleteElements();
-	vars_xh.clear();
-}
-
-void SolverMIPUnico::clearSolutionOp()
-{
-	solVarsOp.deleteElements();
 }
 
 void SolverMIPUnico::writeOutputTatico()
