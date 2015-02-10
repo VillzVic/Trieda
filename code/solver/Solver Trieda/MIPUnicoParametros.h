@@ -20,7 +20,19 @@ public:
 		PriorType2,	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um único modelo contendo ambas prioridades
 		PriorType3	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um modelo para cada prioridade
 	};
-
+	
+   enum OutPutFileType
+   {
+	  MIP_GENERAL,
+	  MIP_GARANTE_SOL,
+	  MIP_MAX_ATEND,
+	  MIP_MIN_VIRT,
+	  MIP_MIN_TURMAS_COMPART,
+	  MIP_MIN_FASE_DIA_PROF,
+	  MIP_MIN_DESLOC_PROF,
+	  MIP_MIN_GAP_PROF,
+	  MIP_MARRETA
+   };
 	    
 	// Gurobi
 	static const int timeLimitMaxAtend;

@@ -1,13 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="CentroDados.cpp" />
-    <ClCompile Include="Indicadores.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="ProblemData.cpp" />
-    <ClCompile Include="ProblemDataLoader.cpp" />
-    <ClCompile Include="TRIEDA-InputXSD.cpp" />
-    <ClCompile Include="TRIEDA-OutputXSD.cpp" />
     <ClCompile Include="Aluno.cpp">
       <Filter>Domínio</Filter>
     </ClCompile>
@@ -79,9 +72,6 @@
     </ClCompile>
     <ClCompile Include="ConstraintMIPUnico.cpp">
       <Filter>Puro MIP\MIP-Unico</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstraintOp.cpp">
-      <Filter>Puro MIP\MIP-Operacional</Filter>
     </ClCompile>
     <ClCompile Include="Curriculo.cpp">
       <Filter>Domínio</Filter>
@@ -169,12 +159,6 @@
     </ClCompile>
     <ClCompile Include="HeurNuno\ParametrosHeuristica.cpp">
       <Filter>HeuristicaNuno</Filter>
-    </ClCompile>
-    <ClCompile Include="Operacional.cpp">
-      <Filter>Puro MIP\MIP-Operacional</Filter>
-    </ClCompile>
-    <ClCompile Include="VariableOp.cpp">
-      <Filter>Puro MIP\MIP-Operacional</Filter>
     </ClCompile>
     <ClCompile Include="Unidade.cpp">
       <Filter>Domínio</Filter>
@@ -287,13 +271,9 @@
     <ClCompile Include="NaoAtendimento.cpp">
       <Filter>Output</Filter>
     </ClCompile>
-    <ClCompile Include="Aula.cpp">
-      <Filter>Puro MIP</Filter>
-    </ClCompile>
     <ClCompile Include="Solver.cpp">
       <Filter>Puro MIP</Filter>
     </ClCompile>
-    <ClCompile Include="CmdLine.cpp" />
     <ClCompile Include="MainMIPPuro.cpp">
       <Filter>Puro MIP</Filter>
     </ClCompile>
@@ -324,20 +304,41 @@
     <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
       <Filter>OPT_LP</Filter>
     </ClCompile>
-    <ClCompile Include="MIPUnicoParametros.cpp">
-      <Filter>Puro MIP</Filter>
-    </ClCompile>
     <ClCompile Include="MIPCallback.cpp">
       <Filter>Puro MIP</Filter>
     </ClCompile>
+    <ClCompile Include="MIPUnicoParametros.cpp">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClCompile>
+    <ClCompile Include="Aula.cpp">
+      <Filter>Domínio</Filter>
+    </ClCompile>
+    <ClCompile Include="CentroDados.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="CmdLine.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="Indicadores.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="ProblemData.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="ProblemDataLoader.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="TRIEDA-InputXSD.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="TRIEDA-OutputXSD.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CentroDados.h" />
-    <ClInclude Include="Indicadores.h" />
-    <ClInclude Include="ProblemData.h" />
-    <ClInclude Include="ProblemDataLoader.h" />
-    <ClInclude Include="TRIEDA-InputXSD.h" />
-    <ClInclude Include="TRIEDA-OutputXSD.h" />
     <ClInclude Include="Aluno.h">
       <Filter>Domínio</Filter>
     </ClInclude>
@@ -409,9 +410,6 @@
     </ClInclude>
     <ClInclude Include="ConstraintMIPUnico.h">
       <Filter>Puro MIP\MIP-Unico</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstraintOp.h">
-      <Filter>Puro MIP\MIP-Operacional</Filter>
     </ClInclude>
     <ClInclude Include="Curriculo.h">
       <Filter>Domínio</Filter>
@@ -502,12 +500,6 @@
     </ClInclude>
     <ClInclude Include="HeurNuno\ParametrosHeuristica.h">
       <Filter>HeuristicaNuno</Filter>
-    </ClInclude>
-    <ClInclude Include="Operacional.h">
-      <Filter>Puro MIP\MIP-Operacional</Filter>
-    </ClInclude>
-    <ClInclude Include="VariableOp.h">
-      <Filter>Puro MIP\MIP-Operacional</Filter>
     </ClInclude>
     <ClInclude Include="Unidade.h">
       <Filter>Domínio</Filter>
@@ -629,13 +621,9 @@
     <ClInclude Include="NaoAtendimento.h">
       <Filter>Output</Filter>
     </ClInclude>
-    <ClInclude Include="Aula.h">
-      <Filter>Puro MIP</Filter>
-    </ClInclude>
     <ClInclude Include="Solver.h">
       <Filter>Puro MIP</Filter>
     </ClInclude>
-    <ClInclude Include="cmdLine.h" />
     <ClInclude Include="MainMIPPuro.h">
       <Filter>Puro MIP</Filter>
     </ClInclude>
@@ -666,11 +654,35 @@
     <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
       <Filter>OPT_LP</Filter>
     </ClInclude>
-    <ClInclude Include="MIPUnicoParametros.h">
-      <Filter>Puro MIP</Filter>
-    </ClInclude>
     <ClInclude Include="MIPCallback.h">
       <Filter>Puro MIP</Filter>
+    </ClInclude>
+    <ClInclude Include="MIPUnicoParametros.h">
+      <Filter>Puro MIP\MIP-Unico</Filter>
+    </ClInclude>
+    <ClInclude Include="Aula.h">
+      <Filter>Domínio</Filter>
+    </ClInclude>
+    <ClInclude Include="CentroDados.h">
+      <Filter>Geral</Filter>
+    </ClInclude>
+    <ClInclude Include="cmdLine.h">
+      <Filter>Geral</Filter>
+    </ClInclude>
+    <ClInclude Include="Indicadores.h">
+      <Filter>Geral</Filter>
+    </ClInclude>
+    <ClInclude Include="ProblemData.h">
+      <Filter>Geral</Filter>
+    </ClInclude>
+    <ClInclude Include="ProblemDataLoader.h">
+      <Filter>Geral</Filter>
+    </ClInclude>
+    <ClInclude Include="TRIEDA-InputXSD.h">
+      <Filter>Geral</Filter>
+    </ClInclude>
+    <ClInclude Include="TRIEDA-OutputXSD.h">
+      <Filter>Geral</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -704,8 +716,8 @@
     <Filter Include="Puro MIP\MIP-Unico">
       <UniqueIdentifier>{b5560ea1-acd3-4923-867e-d0c347e8f7ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Puro MIP\MIP-Operacional">
-      <UniqueIdentifier>{db73764b-0c90-4ca6-bdd5-94c3942e0a5d}</UniqueIdentifier>
+    <Filter Include="Geral">
+      <UniqueIdentifier>{44e31dec-762d-452d-a516-41038dc435a2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

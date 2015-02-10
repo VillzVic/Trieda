@@ -50,7 +50,7 @@ int __stdcall
 			if ( runtime - mydata->runtime >= mydata->timeLimit )
 			{
 				/* if there is too much time without any improvement, then quit */
-				std::cout << "Abort by polishCallback. TimeLimit " << mydata->timeLimit 
+				std::cout << "Abort by MIPcallback. TimeLimit " << mydata->timeLimit 
 					<< ", Runtime " << runtime << ", Objbst " << objbst << ", Bound " << bestBound
 					<< ", gapMax " << mydata->gapMax << std::endl; fflush(NULL);
 			

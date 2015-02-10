@@ -92,18 +92,7 @@ public:
 	   return runtime;
    };
 
-
-   int getTimeLimit( int v )
-   {
-		return OptimizTimeLimit[v];
-   };
-
-   int getMaxTimeNoImprov( int v )
-   {
-		return OptimizMaxTimeNoImprov[v];
-   };
-
-
+   
 	#ifdef SOLVER_GUROBI
 	 callback_data cb_data;
 	#endif
@@ -111,11 +100,7 @@ public:
 protected:
    // A reference to the problem's input data.
    ProblemData * problemData;
-
-   std::map< int, int > OptimizTimeLimit;
    
-   std::map< int, int > OptimizMaxTimeNoImprov;
-
    //CPUTimer solverTimer;
    clock_t solverRunTime;
    int clockStart;
@@ -136,9 +121,6 @@ protected:
 	  TAT_INT_N = 39
    };
    
-   void OptimizTimeLimitInit();
-   void OptimizMaxTimeNoImprovInit();
-
    std::string toString( int step );
 
 };

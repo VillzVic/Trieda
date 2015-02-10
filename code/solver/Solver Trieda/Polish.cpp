@@ -8,6 +8,7 @@
 #include <random>
 
 #include "CentroDados.h"
+#include "MIPUnicoParametros.h"
 
 using std::stringstream;
 
@@ -27,18 +28,6 @@ Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string 
 	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
 }
 
-Polish::Polish( OPT_GUROBI * &lp, VariableOpHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
-	: lp_(lp), vHashOp_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(8),
-	fixarVarsTatProf_(true), perc_(0), tempoIni_(80),
-	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::OPERACIONAL), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
-	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
-	tryBranch_(false), okIter_(true), fixTypeAnt_(-1), useFixationByUnid_(true),
-	k_(3)
-{
-	originalLogFileName_ = originalLogFile;
-	hasOrigFile_ = (strcmp(originalLogFile.c_str(), "") == 0) ? false: true;
-}
 
 Polish::~Polish()
 {
@@ -497,7 +486,7 @@ bool Polish::ehMarreta(VariableMIPUnico v)
 
 void Polish::decideVarsToFixMarreta()
 {
-	if (phase_ != Polish::PH_MARRETA) return;
+	if (phase_ != MIPUnicoParametros::MIP_MARRETA) return;
 	if (perc_ <= 0) return;
 
     // Seleciona turmas e disciplinas para fixar    
@@ -523,13 +512,16 @@ void Polish::decideVarsToFixMarreta()
 			nBds++;
 		}
     }
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();
+	if (nBds)
+	{
+	    lp_->chgBds(nBds,idxs_,bds_,vals_);
+		lp_->updateLP();
+	}
 }
 
 void Polish::decideVarsToFixOther()
 {
-	if (phase_ == Polish::PH_MARRETA) return;
+	if (phase_ == MIPUnicoParametros::MIP_MARRETA) return;
 	if (perc_ <= 0) return;
 
     // Seleciona turmas e disciplinas para fixar    
@@ -540,20 +532,22 @@ void Polish::decideVarsToFixOther()
 		{
 			if ( rand() % 100 >= perc_  )
 				continue;
+			
+			int value = (int)(xSol_[vit->second]+0.5);
 
-			if (xSol_[vit->second] > 0.1 )
+			if (value == 1 )
 			{
 				idxs_[nBds] = vit->second;
-				vals_[nBds] = (int)(xSol_[vit->second]+0.5);
+				vals_[nBds] = value;
 				bds_[nBds] = BOUNDTYPE::BOUND_LOWER;
 				nBds++;
 				std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
 				paraFixarUm_.insert(auxPair);
 			}
-			else
+			else if (value == 0 )
 			{
 				idxs_[nBds] = vit->second;
-				vals_[nBds] = 0.0;
+				vals_[nBds] = value;
 				bds_[nBds] = BOUNDTYPE::BOUND_UPPER;
 				nBds++;
 				std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
@@ -561,13 +555,16 @@ void Polish::decideVarsToFixOther()
 			}
 		}
     }
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();
+	if (nBds)
+	{
+    //lp_->chgBds(nBds,idxs_,bds_,vals_);
+    //lp_->updateLP();
+	}
 }
 
 void Polish::decideVarsToFixByPhase()
 {
-	if (phase_ == Polish::PH_MARRETA)
+	if (phase_ == MIPUnicoParametros::MIP_MARRETA)
 		decideVarsToFixMarreta();
 	else
 		decideVarsToFixOther();
@@ -618,8 +615,11 @@ void Polish::fixVarsProfType1()
 
 		vit++;
     }
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();
+	if (nBds)
+	{
+		lp_->chgBds(nBds,idxs_,bds_,vals_);
+		lp_->updateLP();
+	}
 }
 
 void Polish::fixVarsType1()
@@ -651,9 +651,11 @@ void Polish::fixVarsType1()
 			}
         }
     }
-
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();	
+	if (nBds)
+	{
+	    lp_->chgBds(nBds,idxs_,bds_,vals_);
+		lp_->updateLP();
+	}
 }
 
 void Polish::fixVarsType2Tatico()
@@ -691,9 +693,11 @@ void Polish::fixVarsType2Tatico()
 			}
         }
     }
-
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();
+	if (nBds)
+	{
+	    lp_->chgBds(nBds,idxs_,bds_,vals_);
+		lp_->updateLP();
+	}
 }
 
 void Polish::fixVarsType3()
@@ -719,9 +723,11 @@ void Polish::fixVarsType3()
 			nBds++;
         }
     }
-
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();
+	if (nBds)
+	{
+	    lp_->chgBds(nBds,idxs_,bds_,vals_);
+		lp_->updateLP();
+	}
 }
 
 void Polish::fixVarsType3Tatico()
@@ -769,8 +775,11 @@ void Polish::fixVarsType4Prof(unordered_set<Professor*> const &fixedProfs)
 		bds_[nBds] = btype;
 		nBds++;
     }
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();
+	if (nBds)
+	{
+	    lp_->chgBds(nBds,idxs_,bds_,vals_);
+		lp_->updateLP();
+	}
 }
 
 void Polish::fixUnidsTatico()
@@ -813,8 +822,11 @@ void Polish::fixVarsDifUnidade()
 			}
 		}		
     }
-    lp_->chgBds(nBds,idxs_,bds_,vals_);
-    lp_->updateLP();
+	if (nBds)
+	{
+	    lp_->chgBds(nBds,idxs_,bds_,vals_);
+		lp_->updateLP();
+	}
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -876,9 +888,9 @@ int Polish::getFOValueClusterUnidade_MinGapProf(int idxCluster)
 
 int Polish::getFOValueClusterUnidade(int idxCluster)
 {
-	if (phase_==Polish::PH_MIN_PV)
+	if (phase_== MIPUnicoParametros::MIP_MIN_VIRT)
 		return getFOValueClusterUnidade_MinPV(idxCluster);
-	if (phase_==Polish::PH_MIN_GAP)
+	if (phase_== MIPUnicoParametros::MIP_MIN_GAP_PROF)
 		return getFOValueClusterUnidade_MinGapProf(idxCluster);
 	return 0;
 }
@@ -951,7 +963,7 @@ void Polish::chooseClusterFreeUnidade()
 	// Atualizar ordenação de clusterIdxToBeChosen_
 	reorderClusterIdxToBeChosen();
 	
-	if (phase_==Polish::PH_MIN_GAP || SO_USAR_WORST_CLUSTER)
+	if (phase_== MIPUnicoParametros::MIP_MIN_GAP_PROF || SO_USAR_WORST_CLUSTER)
 		chooseWorstClusterFreeUnidade();
 	else
 		chooseRandClusterFreeUnidade();
@@ -1223,7 +1235,7 @@ void Polish::adjustPercOrUnid()
 			decreasePercOrFreeUnid(5);			// decrease the fixed portion if it was easy (fast) to solve
 		else if(!melhorou_)
 		{
-			if (nrIterSemMelhora_ > 1)
+			if (nrIterSemMelhora_ > 1 || perc_ <= 35)
 				decreasePercOrFreeUnid(10);			// decrease the fixed portion if no improvement was made		
 		}
 	}
@@ -1505,7 +1517,7 @@ void Polish::unfixBoundsTatHash(VariableMIPUnicoHash const & hashVar)
 void Polish::unfixBoundsTatico()
 {
 	// Volta bounds
-	if ( phase_ == Polish::PH_MARRETA )
+	if ( phase_ == MIPUnicoParametros::MIP_MARRETA )
 		unfixBoundsTatHash(vHashTatV_);	
 	
 	unfixBoundsTatHash(vHashTatX_);	  

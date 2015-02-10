@@ -10,7 +10,6 @@
 #include "CPUTimerWin.h"
 
 #include "VariableMIPUnico.h"
-#include "VariableOp.h"
 
 #ifdef SOLVER_CPLEX
 #include "opt_cplex.h"
@@ -27,11 +26,9 @@ class Polish
 public:
 
 	#ifdef SOLVER_CPLEX
-		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
-		Polish( OPT_CPLEX * &lp, VariableOpHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
+		Polish( OPT_CPLEX * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );		
 	#elif SOLVER_GUROBI 
-		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
-		Polish( OPT_GUROBI * &lp, VariableOpHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );
+		Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const &, string originalLogFile, int phase, double maxFOAddValue=0 );		
 	#endif
 
 	~Polish();
@@ -43,16 +40,7 @@ public:
 		TATICO = 1,
 		OPERACIONAL = 2
 	};
-
-	enum PHASE
-	{
-		PH_MARRETA = 0,
-		PH_MAX_ATEND = 1,
-		PH_MIN_PV = 2,
-		PH_MIN_GAP = 3,
-		PH_OTHER = 4
-	};
-
+	
 private:
 	
 	// ---------------------------------------------------------------------------------
@@ -288,10 +276,7 @@ private:
 	   VariableMIPUnicoHash vHashTatK_;
 	   VariableMIPUnicoHash vHashTatY_;
 	   VariableMIPUnicoHash vHashTatFolgaProfGap_;
-
-	   // Hash which associates the column number with the VariableOp object.
-	   VariableOpHash const vHashOp_;
-
+	   	   
 	   // Unidades
 	   set<Unidade*> unidades_;
 	   map<int,set<Unidade*>> unidClustersByProfs_;

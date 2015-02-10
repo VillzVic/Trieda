@@ -35,31 +35,11 @@ public:
 		std::set<VariableMIPUnico *, LessPtr<VariableMIPUnico>> &solMipUnico );
 	void copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico);
 
-   enum Etapas
-   {
-	  Etapa1 = 1,
-	  Etapa2 = 2,				
-	  Etapa3 = 3,				
-	  Etapa4 = 4,
-	  Etapa5 = 5
-   };
 
 private:
 
-   enum OutPutFileType
-   {
-	  MIP_GENERAL,
-	  MIP_GARANTE_SOL,
-	  MIP_MAX_ATEND,
-	  MIP_MIN_VIRT,
-	  MIP_MIN_TURMAS_COMPART,
-	  MIP_MIN_FASE_DIA_PROF,
-	  MIP_MIN_DESLOC_PROF,
-	  MIP_MIN_GAP_PROF,
-	  MIP_MARRETA
-   };	  
 
-   static std::string getOutPutFileTypeToString(OutPutFileType type);
+   static std::string getOutPutFileTypeToString(int type);
 
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
    bool haDemanda(Disciplina* const disc) const;
@@ -361,7 +341,7 @@ private:
 	void clearStrutures();
 	void resetXSol();
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
-	bool carregaVariaveisSolucaoFromFile(int campusId, int prioridade, int r, MIPUnico::OutPutFileType type);
+	bool carregaVariaveisSolucaoFromFile(int campusId, int prioridade, int r, int type);
 	void openSolucaoFile(FILE* &fout, int campusId, int prioridade, int r);
 	void verificaCarregaSolucao( int campusId, int prioridade, int r );
 	void criaNewLp( int campusId, int prioridade, int r );

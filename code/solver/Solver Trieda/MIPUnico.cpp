@@ -2,14 +2,13 @@
 
 #include "MIPUnico.h"
 #include "MIPUnicoParametros.h"
+#include "Polish.h"
 
 #include "CentroDados.h"
-
 #include "ProblemData.h"
 #include "ProblemSolution.h"
 #include "Util.h"
 
-#include "Polish.h"
 
 using namespace std;
 
@@ -716,38 +715,38 @@ void MIPUnico::corrigeNroTurmas( int prioridade, int campusId )
 #endif
 }
 
-std::string MIPUnico::getOutPutFileTypeToString(MIPUnico::OutPutFileType type)
+std::string MIPUnico::getOutPutFileTypeToString(int type)
 {
 	std::string solName;
 
 	switch (type)
 	{
-		case (MIP_GARANTE_SOL):
+		case (MIPUnicoParametros::MIP_GARANTE_SOL):
 			solName = "GaranteSol";
 			break;
-		case (MIP_MAX_ATEND):
+		case (MIPUnicoParametros::MIP_MAX_ATEND):
 			solName = "MaxAtend";
 			break;
-		case (MIP_MIN_VIRT):
+		case (MIPUnicoParametros::MIP_MIN_VIRT):
 			solName = "MinVirt";
 			break;
-		case (MIP_MIN_TURMAS_COMPART):
+		case (MIPUnicoParametros::MIP_MIN_TURMAS_COMPART):
 			solName = "MinTurmasCompart";
 			break;
-		case (MIP_MIN_DESLOC_PROF):
+		case (MIPUnicoParametros::MIP_MIN_DESLOC_PROF):
 			solName = "MinDeslocProf";
 			break;
-		case (MIP_MIN_FASE_DIA_PROF):
+		case (MIPUnicoParametros::MIP_MIN_FASE_DIA_PROF):
 			solName = "MinFaseDiaProf";
 			break;			
-		case (MIP_MIN_GAP_PROF):
+		case (MIPUnicoParametros::MIP_MIN_GAP_PROF):
 			solName = "MinGapProf";
 			break;
-		case (MIP_MARRETA):
+		case (MIPUnicoParametros::MIP_MARRETA):
 			solName = "Marreta";
 			break;
 		default:
-			if (type != MIP_GENERAL)
+			if (type != MIPUnicoParametros::MIP_GENERAL)
 				CentroDados::printError("MIPUnico::getOutPutFileTypeToString()","Etapa de tipo nao identificado.");
 			break;
 	}
@@ -817,32 +816,32 @@ void MIPUnico::getPrefixFileName(int type, std::string & prefix)
 	prefix = "";
 	switch (type)
 	{
-		case (MIP_GARANTE_SOL):
+		case (MIPUnicoParametros::MIP_GARANTE_SOL):
 			prefix = "garanteSol";
 			break;
-		case (MIP_MAX_ATEND):
+		case (MIPUnicoParametros::MIP_MAX_ATEND):
 			prefix = "maxAtend";
 			break;
-		case (MIP_MIN_VIRT):
+		case (MIPUnicoParametros::MIP_MIN_VIRT):
 			prefix = "minVirt";
 			break;
-		case (MIP_MIN_TURMAS_COMPART):
+		case (MIPUnicoParametros::MIP_MIN_TURMAS_COMPART):
 			prefix = "minTurmasCompart";
 			break;
-		case (MIP_MIN_DESLOC_PROF):
+		case (MIPUnicoParametros::MIP_MIN_DESLOC_PROF):
 			prefix = "minDeslocProf";
 			break;
-		case (MIP_MIN_FASE_DIA_PROF):
+		case (MIPUnicoParametros::MIP_MIN_FASE_DIA_PROF):
 			prefix = "minFaseDiaProf";
 			break;			
-		case (MIP_MIN_GAP_PROF):
+		case (MIPUnicoParametros::MIP_MIN_GAP_PROF):
 			prefix = "minGapProf";
 			break;
-		case (MIP_MARRETA):
+		case (MIPUnicoParametros::MIP_MARRETA):
 			prefix = "marreta";
 			break;
 		default:
-			if (type != MIP_GENERAL)
+			if (type != MIPUnicoParametros::MIP_GENERAL)
 				CentroDados::printError("MIPUnico::getPrefixFileName()","Etapa de tipo nao identificado.");
 			break;
 	}	
@@ -1060,7 +1059,7 @@ void MIPUnico::carregaVariaveisSolucao( int campusAtualId, int prioridade, int r
 
     lp->updateLP();  
 	
-	carregaVariaveisSolucaoFromFile(campusAtualId, prioridade, r, OutPutFileType::MIP_GENERAL);
+	carregaVariaveisSolucaoFromFile(campusAtualId, prioridade, r, MIPUnicoParametros::MIP_GENERAL);
 	   
     deleteVariablesSol();
 
@@ -1213,7 +1212,7 @@ void MIPUnico::carregaVariaveisSolucao( int campusAtualId, int prioridade, int r
     return;
 }
 
-bool MIPUnico::carregaVariaveisSolucaoFromFile( int campusId, int prioridade, int r, MIPUnico::OutPutFileType type )
+bool MIPUnico::carregaVariaveisSolucaoFromFile( int campusId, int prioridade, int r, int type )
 {
 	if ( *(this->CARREGA_SOLUCAO) )
 	{
@@ -1693,7 +1692,11 @@ int MIPUnico::solveMIPUnicoEtapaReal_3(int campusId, int prioridade, int r, bool
 		solveGaranteSolucao( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );		
 		solveMaxAtendMarreta( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 	}
-	else fixaSolucaoReal();
+	else
+	{
+		fixaSolucaoReal();
+		solveGaranteSolucao( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+	}
 
 	solveMaxAtend( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
 	solveMinTurmas( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
@@ -1983,11 +1986,11 @@ int MIPUnico::solveGaranteSolucao( int campusId, int prioridade, int r, bool& CA
 	lp->setNumIntSols(1);
 	lp->updateLP();
 
-	//std::string lpName1;
-	//lpName1 += "garanteSol_";
-	//lpName1 += string(lpName);		
-	//if (CentroDados::getPrintLogs())
-	//	lp->writeProbLP( lpName1.c_str() );
+	std::string lpName1;
+	lpName1 += "garanteSol_";
+	lpName1 += string(lpName);		
+	if (CentroDados::getPrintLogs())
+		lp->writeProbLP( lpName1.c_str() );
 
 	optimize();	
 	getXSol(xS);
@@ -2209,12 +2212,12 @@ int MIPUnico::optimizeMaxAtendMarreta( int campusId, int prioridade, int r, bool
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_MARRETA, xS, 0 );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
+		else writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MARRETA, xS, 0 );
 	}
 	if ( !CARREGA_SOL_PARCIAL )
 	{
@@ -2223,7 +2226,7 @@ int MIPUnico::optimizeMaxAtendMarreta( int campusId, int prioridade, int r, bool
 		bool polishing = false;
 		if ( polishing )
 		{  
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MARRETA);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_MARRETA);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitMaxAtend, 90, MIPUnicoParametros::timeLimitMaxAtendSemMelhora);
 			delete pol;
 		}
@@ -2248,7 +2251,7 @@ int MIPUnico::optimizeMaxAtendMarreta( int campusId, int prioridade, int r, bool
 			getXSol(xS);
 		}
 
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MARRETA, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MARRETA, xS, 0 );
 	}
 	return 1;
 }
@@ -2504,14 +2507,14 @@ int MIPUnico::optimizeMaxAtend( int campusId, int prioridade, int r, bool& CARRE
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, fase );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_MAX_ATEND, xS, fase );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
 		else
 		{
-			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, fase );
+			writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MAX_ATEND, xS, fase );
 		}
 	}
 	if ( !CARREGA_SOL_PARCIAL )
@@ -2521,7 +2524,7 @@ int MIPUnico::optimizeMaxAtend( int campusId, int prioridade, int r, bool& CARRE
 		bool polishing = true;
 		if (polishing)
 		{  
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MAX_ATEND);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_MAX_ATEND);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitMaxAtend, 90, MIPUnicoParametros::timeLimitMaxAtendSemMelhora);
 			delete pol;
 		}
@@ -2546,7 +2549,7 @@ int MIPUnico::optimizeMaxAtend( int campusId, int prioridade, int r, bool& CARRE
 			getXSol(xS);
 		}
 
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MAX_ATEND, xS, fase );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MAX_ATEND, xS, fase );
 	}   
 	fflush(0);
 
@@ -2794,13 +2797,13 @@ int MIPUnico::optimizeMinProfVirt( int campusId, int prioridade, int r, bool& CA
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_VIRT, xS, 0 );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
 		else{
-			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+			writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_VIRT, xS, 0 );
 			//CARREGA_SOL_PARCIAL=false;
 		}
 	}
@@ -2811,7 +2814,7 @@ int MIPUnico::optimizeMinProfVirt( int campusId, int prioridade, int r, bool& CA
 		bool polishing = true;
 		if ( polishing )
 		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MIN_PV);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_MIN_VIRT);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitMinProfVirt, 90, MIPUnicoParametros::timeLimitMinProfVirtSemMelhora);
 			delete pol;			
 		}
@@ -2836,7 +2839,7 @@ int MIPUnico::optimizeMinProfVirt( int campusId, int prioridade, int r, bool& CA
 			getXSol(xS);
 		}
 
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_VIRT, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_VIRT, xS, 0 );
 	}	
 	fflush(NULL);
 	return 1;
@@ -3092,13 +3095,13 @@ int MIPUnico::optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARR
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_TURMAS_COMPART, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_TURMAS_COMPART, xS, 0 );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
 		else{
-			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_TURMAS_COMPART, xS, 0 );
+			writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_TURMAS_COMPART, xS, 0 );
 		}
 	}
 	if ( !CARREGA_SOL_PARCIAL )
@@ -3108,7 +3111,7 @@ int MIPUnico::optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARR
 		bool polishing = true;
 		if ( polishing )
 		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_MIN_TURMAS_COMPART);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitMinTurmas, 70, MIPUnicoParametros::timeLimitMinTurmasSemMelhora);
 			delete pol;
 		}
@@ -3133,7 +3136,7 @@ int MIPUnico::optimizeMinTurmas( int campusId, int prioridade, int r, bool& CARR
 			getXSol(xS);
 		}
 
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_TURMAS_COMPART, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_TURMAS_COMPART, xS, 0 );
 	}      
 	
 	fflush(0);
@@ -3399,14 +3402,14 @@ int MIPUnico::optimizeMinDeslocProf(int campusId, int prioridade, int r, bool& C
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_DESLOC_PROF, xS, 0 );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
 		else
 		{
-			writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
+			writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_DESLOC_PROF, xS, 0 );
 		}
 	}
 	if ( !CARREGA_SOL_PARCIAL )
@@ -3414,7 +3417,7 @@ int MIPUnico::optimizeMinDeslocProf(int campusId, int prioridade, int r, bool& C
 		bool polishing = true;
 		if ( polishing )
 		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_MIN_DESLOC_PROF);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitMinDeslocProf_, 80, MIPUnicoParametros::timeLimitMinDeslocProfSemMelhora_);
 			delete pol;			
 		}
@@ -3439,7 +3442,7 @@ int MIPUnico::optimizeMinDeslocProf(int campusId, int prioridade, int r, bool& C
 			getXSol(xS);
 		}
 		
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_DESLOC_PROF, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_DESLOC_PROF, xS, 0 );
 	}
 	
 	fflush(0);
@@ -3741,19 +3744,19 @@ int MIPUnico::optimizeMinFasesDoDiaProf( int campusId, int prioridade, int r, bo
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_FASE_DIA_PROF, xS, 0 );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
+		else writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_FASE_DIA_PROF, xS, 0 );
 	}
 	if ( !CARREGA_SOL_PARCIAL )
 	{		
 		bool polishing = true;
 		if ( polishing )
 		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_MIN_FASE_DIA_PROF);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitMinFaseDiaProf_, 80, MIPUnicoParametros::timeLimitMinFaseDiaProfSemMelhora_);
 			delete pol;			
 		}
@@ -3778,7 +3781,7 @@ int MIPUnico::optimizeMinFasesDoDiaProf( int campusId, int prioridade, int r, bo
 			getXSol(xS);
 		}
 		
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_FASE_DIA_PROF, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_FASE_DIA_PROF, xS, 0 );
 	}	
 	fflush(NULL);
 	return 1;
@@ -3997,19 +4000,19 @@ int MIPUnico::optimizeMinGapProf( int campusId, int prioridade, int r, bool& CAR
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_GAP_PROF, xS, 0 );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
+		else writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_GAP_PROF, xS, 0 );
 	}
 	if ( !CARREGA_SOL_PARCIAL )
 	{		
 		bool polishing = true;
 		if ( polishing )
 		{  		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_MIN_GAP);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_MIN_GAP_PROF);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitMinGapProf, 80, MIPUnicoParametros::timeLimitMinGapProfSemMelhora);
 			delete pol;			
 		}
@@ -4034,7 +4037,7 @@ int MIPUnico::optimizeMinGapProf( int campusId, int prioridade, int r, bool& CAR
 			getXSol(xS);
 		}
 		
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_MIN_GAP_PROF, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_MIN_GAP_PROF, xS, 0 );
 	}
 	fflush(NULL);
 	return 1;
@@ -4135,12 +4138,12 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 	if ( CARREGA_SOL_PARCIAL )
 	{
 		// procura e carrega solucao parcial
-		int statusReadBin = readSolTxt(campusId, prioridade, r, OutPutFileType::MIP_GENERAL, xS, 0 );
+		int statusReadBin = readSolTxt(campusId, prioridade, r, MIPUnicoParametros::MIP_GENERAL, xS, 0 );
 		if ( !statusReadBin )
 		{
 			CARREGA_SOL_PARCIAL=false;
 		}
-		else writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_GENERAL, xS, 0 );
+		else writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_GENERAL, xS, 0 );
 	}
 	if ( !CARREGA_SOL_PARCIAL )
 	{
@@ -4148,7 +4151,7 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 		bool polishing=true;
 		if ( polishing )
 		{		
-			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, Polish::PH_OTHER);
+			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, MIPUnicoParametros::MIP_GENERAL);
 			polishing = pol->polish(xS, MIPUnicoParametros::timeLimitGeneral, 90, MIPUnicoParametros::timeLimitGeneralSemMelhora);
 			optStatus = polishing;
 			delete pol;
@@ -4175,7 +4178,7 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 			getXSol(xS);
 		}
 
-		writeSolTxt( campusId, prioridade, r, OutPutFileType::MIP_GENERAL, xS, 0 );
+		writeSolTxt( campusId, prioridade, r, MIPUnicoParametros::MIP_GENERAL, xS, 0 );
 	}
 	
 	fflush(0);

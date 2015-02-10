@@ -784,20 +784,12 @@
     <ClCompile Include="$(CODELIB)\CPUTimerWin.cpp" />
     <ClCompile Include="$(CODELIB)\DateTime.cpp" />
     <ClCompile Include="$(CODELIB)\ErrorHandler.cpp" />
-    <ClCompile Include="ConstraintOp.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Solver.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="VariableMIPUnico.cpp" />
-    <ClCompile Include="VariableOp.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Aula.cpp" />
     <ClCompile Include="AtendimentoCampus.cpp" />
     <ClCompile Include="AtendimentoDiaSemana.cpp" />
@@ -807,10 +799,6 @@
     <ClCompile Include="AtendimentoTatico.cpp" />
     <ClCompile Include="AtendimentoTurno.cpp" />
     <ClCompile Include="AtendimentoUnidade.cpp" />
-    <ClCompile Include="Operacional.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="ProblemSolution.cpp" />
     <ClCompile Include="ProfessorVirtualOutput.cpp" />
     <ClCompile Include="RestricaoViolada.cpp" />
@@ -919,10 +907,6 @@
     <ClInclude Include="AtendimentoTatico.h" />
     <ClInclude Include="AtendimentoTurno.h" />
     <ClInclude Include="AtendimentoUnidade.h" />
-    <ClInclude Include="Operacional.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="ProblemSolution.h" />
     <ClInclude Include="ProfessorVirtualOutput.h" />
     <ClInclude Include="RestricaoViolada.h" />
@@ -932,20 +916,12 @@
     <ClInclude Include="$(CODELIB)\DateTime.h" />
     <ClInclude Include="$(CODELIB)\codelib\ErrorHandler.h" />
     <ClInclude Include="$(CODELIB)\GGroup.h" />
-    <ClInclude Include="ConstraintOp.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Solver.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Util.h" />
     <ClInclude Include="VariableMIPUnico.h" />
-    <ClInclude Include="VariableOp.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Aula.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -6,85 +6,12 @@ Solver::Solver(ProblemData *aProblemData)
 {
    problemData = aProblemData;
    
-   OptimizTimeLimitInit();
-   OptimizMaxTimeNoImprovInit();
-
-    clockStart = clock();
+   clockStart = clock();
 }
 
 Solver::~Solver()
 {
    problemData = NULL;
-
-}
-
-
-void Solver::OptimizTimeLimitInit()
-{
-	int one_hour=3600;
-#ifdef TESTE
-	OptimizTimeLimit[OP] = (int) one_hour * 0.02;
-	OptimizTimeLimit[OP1] = (int) one_hour * 0.02;
-	OptimizTimeLimit[OP2] = (int) one_hour * 0.02;
-	OptimizTimeLimit[OP3] = (int) one_hour * 0.02;
-	OptimizTimeLimit[TAT_INT] = (int) one_hour * 0.02;
-	OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.02;
-	OptimizTimeLimit[TAT_INT2] = (int) one_hour * 0.02;
-	OptimizTimeLimit[TAT_INT3] = (int) one_hour * 0.02;
-	OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 0.02;
-	OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 0.02;
-	OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 0.02;
-#else	   
-	OptimizTimeLimit[OP] = (int) one_hour * 2;
-	OptimizTimeLimit[OP1] = (int) one_hour * 1;
-	OptimizTimeLimit[OP2] = (int) one_hour * 2;
-	OptimizTimeLimit[OP3] = (int) one_hour * 2;
-	OptimizTimeLimit[TAT_INT] = (int) one_hour * 2;
-	OptimizTimeLimit[TAT_INT1] = (int) one_hour * 0.1;
-	OptimizTimeLimit[TAT_INT2] = (int) one_hour * 3;
-	OptimizTimeLimit[TAT_INT3] = (int) one_hour * 2;
-	OptimizTimeLimit[TAT_INT_M] = (int) one_hour * 2.5;
-	OptimizTimeLimit[TAT_INT_T] = (int) one_hour * 1.0;
-	OptimizTimeLimit[TAT_INT_N] = (int) one_hour * 4.0;
-#endif
-}
-
-
-
-
-void Solver::OptimizMaxTimeNoImprovInit()
-{
-	int one_hour=3600;
-	   
-#ifdef SOLVER_GUROBI
-
-#ifdef TESTE
-	OptimizMaxTimeNoImprov[OP] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[OP1] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[OP2] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[OP3] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT1] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT3] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT_M] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT_T] = (int) one_hour * 0.02;
-	OptimizMaxTimeNoImprov[TAT_INT_N] = (int) one_hour * 0.02;
-#else
-	OptimizMaxTimeNoImprov[OP] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[OP2] = (int) one_hour * 0.6;
-	OptimizMaxTimeNoImprov[OP3] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT1] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT2] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT3] = (int) one_hour * 0.5;	
-	OptimizMaxTimeNoImprov[TAT_INT_M] = (int) one_hour * 1.0;
-	OptimizMaxTimeNoImprov[TAT_INT_T] = (int) one_hour * 0.5;
-	OptimizMaxTimeNoImprov[TAT_INT_N] = (int) one_hour * 1.0;
-#endif
-
-#endif
 
 }
 
