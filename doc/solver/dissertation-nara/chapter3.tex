@@ -246,7 +246,7 @@ Next subsections introduce the notation used in the mathematical model, which in
 \item $nCreds_{d}$ - Total of credits of course $d$.
 \item $duration_{h}$ - Total of minutes of time slot $h$.
 \item $duration_{hi,hf}$ - Total of minutes from the beginning of time slot $hi$ to the end of time slot $hf$.
-\item $M$ - big $M$.
+\item $M$ - called \q{big M}, it is a large enough value that depends on the constraint it is applied to.
 \item $N_{d,k,t}$ - number of credits for course $d$ at day $t$ of credits split rule $k$.
 \item $NCH_{d,hi,hf}$ - number of credits for course $d$ from time slot $hi$ to time slot $hf$.
 \item $MinSize$ - minimum number of students required for offering a class.
@@ -255,6 +255,7 @@ Next subsections introduce the notation used in the mathematical model, which in
 \item $MinCredsDia_{a,t}$ - minimum number of credits expected for student $a$ at day $t$.
 \item $MaxNrCredsDay_{p,t}$ - maximum number of credits available at day $t$ of professor $p$.
 \item $Time_{u1,u2}$ - minimum number of minutes necessary for moving between blocks $u1 \in U$ and $u2 \in U$.
+\item $MaxGapBetweenSessions$ - maximum idle interval between 2 consecutive day sessions that a professor is assigned to. It is used to avoid situations like a professor being assigned to a class early in the morning and then another just late in the afternoon, with a big idle inbetween interval. A reasonable value is around 170 minutes.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -679,7 +680,7 @@ Besides constraints introduced at ~\ref{constrProfessorGap}, specific for avoidi
 
 \paragraph{Sets if a session of day is assigned for the professor}
 \begin{eqnarray}
-bigM \cdot ptf_{p,t,f} \ge \sum\limits_{d \in D}\sum\limits_{i \in I_{d}}\sum\limits_{u \in U}\sum\limits_{h \in H_{f}} k_{p,i,d,u,t,h} \nonumber \qquad
+M \cdot ptf_{p,t,f} \ge \sum\limits_{d \in D}\sum\limits_{i \in I_{d}}\sum\limits_{u \in U}\sum\limits_{h \in H_{f}} k_{p,i,d,u,t,h} \nonumber \qquad
 \\
 \forall p \in P \quad
 \forall T \in T \quad
@@ -688,14 +689,14 @@ bigM \cdot ptf_{p,t,f} \ge \sum\limits_{d \in D}\sum\limits_{i \in I_{d}}\sum\li
 
 \paragraph{Sets the number of days of the week assigned to each professor}
 \begin{eqnarray}
-bigM \cdot pt_{p,t} \ge \sum\limits_{f \in F} ptf_{p,t,f} \nonumber \qquad
+M \cdot pt_{p,t} \ge \sum\limits_{f \in F} ptf_{p,t,f} \nonumber \qquad
 \forall p \in P \quad
 \forall t \in T \nonumber
 \end{eqnarray}
 
 \paragraph{Prohibits big gaps between assigned sessions of the day}
 \begin{eqnarray}
-hip_{p,t,f} - hfp_{p,t,f-1} \le (MaxGapBetweenSessions + bigM \cdot(2 - ptf_{p,t,f} - ptf_{p,t,f-1}))  \nonumber \qquad
+hip_{p,t,f} - hfp_{p,t,f-1} \le (MaxGapBetweenSessions + M \cdot(2 - ptf_{p,t,f} - ptf_{p,t,f-1}))  \nonumber \qquad
 \\
 \forall p \in P \quad
 \forall t \in T \quad
