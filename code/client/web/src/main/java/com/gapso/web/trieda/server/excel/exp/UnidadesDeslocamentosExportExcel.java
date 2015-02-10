@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +115,7 @@ public class UnidadesDeslocamentosExportExcel
 		if ( this.getFilter() == null
 			|| this.getFilter().getCampusDTO() == null )
 		{
-			List< Campus > campi = Campus.findAll( this.instituicaoEnsino );
+			List< Campus > campi = Campus.findByCenario(this.instituicaoEnsino, this.getCenario());
 			campusDTOList = new ArrayList< CampusDTO >( campi.size() );
 			for ( Campus campus : campi )
 			{
@@ -138,6 +140,12 @@ public class UnidadesDeslocamentosExportExcel
 					this.instituicaoEnsino, campus );
 				
 				List< Unidade > unidades = Unidade.findByCampus(instituicaoEnsino, campus);
+				Collections.sort(unidades, new Comparator<Unidade>() {
+					@Override
+					public int compare(Unidade o1, Unidade o2) {
+						return o1.getCodigo().compareTo(o2.getCodigo());
+					}
+				});
 					
 				Map<TriedaPar<Integer, Integer>, Integer> deslocamentosRowColumnMap =
 					criaDeslocamentoRowColumnMap(deslocamentos, unidades, row);
@@ -207,8 +215,8 @@ public class UnidadesDeslocamentosExportExcel
 		setCell(row-1,2,sheet,cellStyles[ExcelCellStyleReference.HEADER.ordinal()],"Tempo de Deslocamento");
 		for (Unidade unidade : unidades)
 		{
-			setCell(origensRow,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getNome());
-			setCell(row-1,destinoColumn,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getNome());
+			setCell(origensRow,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getCodigo());
+			setCell(row-1,destinoColumn,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],unidade.getCodigo());
 			origensRow++;
 			destinoColumn++;
 		}

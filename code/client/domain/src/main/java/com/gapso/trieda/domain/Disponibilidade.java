@@ -2,8 +2,13 @@ package com.gapso.trieda.domain;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -18,7 +23,9 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.misc.DisponibilidadeGenerica;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.trieda.misc.TriedaDomainUtil;
 
 @Configurable
 @MappedSuperclass
@@ -301,5 +308,81 @@ public abstract class Disponibilidade
     		}
     	}
     	return false;
+    }
+    
+    public static List<DisponibilidadeGenerica> geraDisponibilidadesCompactadasPorDiaSemana(List<Disponibilidade> disponibilidadesOriginais) {
+    	List<DisponibilidadeGenerica> disponibilidadesCompactadas = new ArrayList<DisponibilidadeGenerica>();
+    	
+    	Map<Semanas, List<TriedaPar<Date, Date>>> diaSemToHiHfsMap = new HashMap<Semanas, List<TriedaPar<Date, Date>>>();
+    	for (Disponibilidade dispOrig : disponibilidadesOriginais) {
+    		for (Semanas diaSem : dispOrig.getDiasSemana()) {
+    			List<TriedaPar<Date, Date>> hiHfsDoDiaSem = diaSemToHiHfsMap.get(diaSem);
+    			if (hiHfsDoDiaSem == null) {
+    				hiHfsDoDiaSem = new ArrayList<TriedaPar<Date,Date>>();
+    				diaSemToHiHfsMap.put(diaSem, hiHfsDoDiaSem);
+    			}
+    			hiHfsDoDiaSem.add(TriedaPar.create(dispOrig.getHorarioInicio(), dispOrig.getHorarioFim()));
+    		}
+    	}
+    	
+    	for (Entry<Semanas, List<TriedaPar<Date, Date>>> entry : diaSemToHiHfsMap.entrySet()) {
+    		Semanas diaSem = entry.getKey();
+    		List<TriedaPar<Date, Date>> novosIntervalos = new ArrayList<TriedaPar<Date, Date>>();
+    		
+    		// ordena as disponibilidades do dia da semana
+    		List<TriedaPar<Date, Date>> intervalosOrdenados = new ArrayList<TriedaPar<Date, Date>>(entry.getValue());
+    		Collections.sort(intervalosOrdenados, new Comparator<TriedaPar<Date, Date>>() {
+				public int compare(TriedaPar<Date, Date> o1, TriedaPar<Date, Date> o2) {
+					if (o1 == null)
+	                    return -1;
+	                if (o2 == null)
+	                    return 1;
+	                
+	                Calendar o1HI = TriedaDomainUtil.dateToCalendar(o1.getPrimeiro());
+	                Calendar o1HF = TriedaDomainUtil.dateToCalendar(o1.getSegundo());
+	                
+	                Calendar o2HI = TriedaDomainUtil.dateToCalendar(o2.getPrimeiro());
+	                Calendar o2HF = TriedaDomainUtil.dateToCalendar(o2.getSegundo());
+
+	                int res = o1HI.compareTo(o2HI);
+	                if (res == 0)
+	                {
+	                    res = o1HF.compareTo(o2HF);
+	                }
+	                return res;
+				}
+    		});
+    		
+    		// compacta as disponibilidades do dia da semana
+    		for (TriedaPar<Date, Date> intervalo : intervalosOrdenados) {
+                if (novosIntervalos.isEmpty()) {
+                    novosIntervalos.add(intervalo);
+                } else {
+                	TriedaPar<Date, Date> ultIntervalo = novosIntervalos.get(novosIntervalos.size()-1);
+                    if (TriedaDomainUtil.estahContido(ultIntervalo, intervalo)) {
+                        novosIntervalos.remove(ultIntervalo);
+                        novosIntervalos.add(intervalo);
+                    } else if (TriedaDomainUtil.estahContido(intervalo, ultIntervalo)) {
+                        // não faz nada
+                    } else {
+                    	Calendar hf_ultInterv = TriedaDomainUtil.dateToCalendar(ultIntervalo.getSegundo());
+                        Calendar hi_Interv = TriedaDomainUtil.dateToCalendar(intervalo.getPrimeiro());
+                        if (hf_ultInterv.compareTo(hi_Interv) < 0) {//(hf_ultInterv < hi_Interv)
+                            novosIntervalos.add(intervalo);
+                        } else {
+                            novosIntervalos.remove(ultIntervalo);
+                            novosIntervalos.add(TriedaPar.create(ultIntervalo.getPrimeiro(), intervalo.getSegundo()));
+                        }
+                    }
+                }
+            }
+    		
+    		// coletas as novas disponibilidades
+    		for (TriedaPar<Date, Date> intervalo : novosIntervalos) {
+    			disponibilidadesCompactadas.add(new DisponibilidadeGenerica(diaSem, intervalo));
+    		}
+    	}
+    	
+    	return disponibilidadesCompactadas;
     }
 }

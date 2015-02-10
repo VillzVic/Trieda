@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.misc.DisponibilidadeGenerica;
 import com.gapso.trieda.misc.TriedaDomainUtil;
 
 @Configurable
@@ -146,5 +148,16 @@ public class DisponibilidadeProfessor extends Disponibilidade implements Seriali
 			disponibilidades.add(dispProf);
 		}
 		return professorMapDisponibilidade;
+	}
+	
+	public static Map<Professor, List<DisponibilidadeGenerica>> transformaEmDisponibilidadesCompactas(Map<Professor, List<Disponibilidade>> professoresMapDisponibilidade) {
+		Map<Professor, List<DisponibilidadeGenerica>> dispCompactasMap = new HashMap<Professor, List<DisponibilidadeGenerica>>();
+		for (Entry<Professor, List<Disponibilidade>> entry : professoresMapDisponibilidade.entrySet()) {
+			Professor professor = entry.getKey();
+			List<Disponibilidade> disponibilidadesOriginais = entry.getValue();
+			List<DisponibilidadeGenerica> disponibilidadesCompactas = Disponibilidade.geraDisponibilidadesCompactadasPorDiaSemana(disponibilidadesOriginais);
+			dispCompactasMap.put(professor, disponibilidadesCompactas);
+		}
+		return dispCompactasMap;
 	}
 }

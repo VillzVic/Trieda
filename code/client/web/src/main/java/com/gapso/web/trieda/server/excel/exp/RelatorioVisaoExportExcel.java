@@ -313,6 +313,8 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		int col = 2;
 
 		// agrupa as aulas por dia da semana e coleta disciplinas
+		horarioInicioAula.clear();
+		horarioFimAula.clear();
 		Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
 		for(AtendimentoRelatorioDTO aula : aulas){
 			List<AtendimentoRelatorioDTO> aulasDoDia = colunaGradeHorariaToAulasMap.get(aula.getSemana());
@@ -461,6 +463,8 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		int initialRow = row;
 		int col = 2;
 	
+		horarioInicioAula.clear();
+		horarioFimAula.clear();
 		Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
 		for(AtendimentoRelatorioDTO aula : aulas){
 			// agrupa as aulas por dia da semana e coleta disciplinas
@@ -781,10 +785,11 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		Map<Disciplina, String> disciplinaToSiglaMap = new HashMap<Disciplina, String>();
 		Set<String> disciplinasSiglas = new HashSet<String>();
 		for (Disciplina disciplina : disList) {
-			String disSigla = disciplina.getCodigo();
-			if (disSigla.contains("_")) {
-				disSigla = disSigla.split("_")[0];
-			}
+			String disSigla = TriedaUtil.getSiglaDisciplinaParaEscola(disciplina.getCodigo());
+//			String disSigla = disciplina.getCodigo();
+//			if (disSigla.contains("_")) {
+//				disSigla = disSigla.split("_")[0];
+//			}
 			disciplinasSiglas.add(disSigla);
 			disciplinaToSiglaMap.put(disciplina, disSigla);
 		}

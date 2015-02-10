@@ -54,6 +54,7 @@ import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
+import com.gapso.trieda.misc.DisponibilidadeGenerica;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunoDemanda;
@@ -236,11 +237,17 @@ public class SolverInput
 
 	private void preencheMapHorarios() {
 		// busca as disponibilidades para cada entidade
-		Map<Campus, List<Disponibilidade>> campusMapDisponibilidade = DisponibilidadeCampus.findDisponibilidadesPorCampus(cenario);
-		Map<Unidade, List<Disponibilidade>> unidadeMapDisponibilidade = DisponibilidadeUnidade.findDisponibilidadesPorUnidade(cenario);
-		Map<Sala, List<Disponibilidade>> salaMapDisponibilidade = DisponibilidadeSala.findDisponibilidadesPorAmbiente(cenario);
-		Map<Professor, List<Disponibilidade>> professorMapDisponibilidade = DisponibilidadeProfessor.findDisponibilidadesPorProfessor(cenario);
-		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisponibilidade = DisponibilidadeDisciplina.findDisponibilidadesPorDisciplina(cenario);
+		Map<Campus, List<Disponibilidade>> campusMapDisp = DisponibilidadeCampus.findDisponibilidadesPorCampus(cenario);
+		Map<Unidade, List<Disponibilidade>> unidadeMapDisp = DisponibilidadeUnidade.findDisponibilidadesPorUnidade(cenario);
+		Map<Sala, List<Disponibilidade>> salaMapDisp = DisponibilidadeSala.findDisponibilidadesPorAmbiente(cenario);
+		Map<Professor, List<Disponibilidade>> professorMapDisp = DisponibilidadeProfessor.findDisponibilidadesPorProfessor(cenario);
+		Map<Disciplina, List<Disponibilidade>> disciplinaMapDisp = DisponibilidadeDisciplina.findDisponibilidadesPorDisciplina(cenario);
+		
+		Map<Campus, List<DisponibilidadeGenerica>> campusMapDisponibilidade = DisponibilidadeCampus.transformaEmDisponibilidadesCompactas(campusMapDisp);
+		Map<Unidade, List<DisponibilidadeGenerica>> unidadeMapDisponibilidade = DisponibilidadeUnidade.transformaEmDisponibilidadesCompactas(unidadeMapDisp);
+		Map<Sala, List<DisponibilidadeGenerica>> salaMapDisponibilidade = DisponibilidadeSala.transformaEmDisponibilidadesCompactas(salaMapDisp);
+		Map<Professor, List<DisponibilidadeGenerica>> professorMapDisponibilidade = DisponibilidadeProfessor.transformaEmDisponibilidadesCompactas(professorMapDisp);
+		Map<Disciplina, List<DisponibilidadeGenerica>> disciplinaMapDisponibilidade = DisponibilidadeDisciplina.transformaEmDisponibilidadesCompactas(disciplinaMapDisp);
 		
 		this.horariosCampus = new HashMap< Campus, Set< HorarioDisponivelCenario > >();
 		this.horariosUnidades = new HashMap< Unidade, Set< HorarioDisponivelCenario > >();
@@ -261,7 +268,7 @@ public class SolverInput
 					this.horariosCampus.put(campus, horariosCampus);
 				}
 				// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade do campus
-				if (Disponibilidade.ehCompativelCom(hdc, campusMapDisponibilidade.get(campus))) {
+				if (DisponibilidadeGenerica.ehCompativelCom(hdc, campusMapDisponibilidade.get(campus))) {
 					horariosCampus.add(hdc);
 					
 					for (Unidade unidade : campus.getUnidades()) {
@@ -271,7 +278,7 @@ public class SolverInput
 							this.horariosUnidades.put(unidade, horariosUnidade); 
 						}
 						// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade da unidade
-						if (Disponibilidade.ehCompativelCom(hdc, unidadeMapDisponibilidade.get(unidade))) {
+						if (DisponibilidadeGenerica.ehCompativelCom(hdc, unidadeMapDisponibilidade.get(unidade))) {
 							horariosUnidade.add(hdc);
 							
 							for (Sala sala : unidade.getSalas()) {
@@ -281,7 +288,7 @@ public class SolverInput
 									this.horariosSalas.put(sala, horariosSala); 
 								}
 								// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade da sala
-								if (Disponibilidade.ehCompativelCom(hdc, salaMapDisponibilidade.get(sala))) {
+								if (DisponibilidadeGenerica.ehCompativelCom(hdc, salaMapDisponibilidade.get(sala))) {
 									horariosSala.add(hdc);
 								}
 							}
@@ -297,7 +304,7 @@ public class SolverInput
 					this.horariosDisciplinas.put(disciplina, horarios); 
 				}
 				// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade da disciplina
-				if (Disponibilidade.ehCompativelCom(hdc, disciplinaMapDisponibilidade.get(disciplina))) {
+				if (DisponibilidadeGenerica.ehCompativelCom(hdc, disciplinaMapDisponibilidade.get(disciplina))) {
 					// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
 					if (disciplina.getSemanasLetivas().isEmpty() || disciplina.getSemanasLetivas().contains(semanaLetivaDeHDC)) {
 						horarios.add(hdc);
@@ -312,7 +319,7 @@ public class SolverInput
 					this.horariosProfessores.put(professor, horarios); 
 				}
 				// verifica se o par (diaSemana,horario) é compatível com a informação de disponibilidade do professor
-				if (Disponibilidade.ehCompativelCom(hdc, professorMapDisponibilidade.get(professor))) {
+				if (DisponibilidadeGenerica.ehCompativelCom(hdc, professorMapDisponibilidade.get(professor))) {
 					horarios.add(hdc);
 				}
 			}

@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-
 import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.dnd.DragSource;
@@ -33,13 +31,13 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
-import com.gapso.trieda.domain.Disciplina;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -676,10 +674,11 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		Set<String> disciplinasSiglas = new HashSet<String>();
 		
 		for(AtendimentoRelatorioDTO a : this.atendimentoDTO){
-			String disSigla = a.getDisciplinaOriginalCodigo();
-			if (disSigla.contains("_")) {
-				disSigla = disSigla.split("_")[0];
-			}
+			String disSigla = TriedaUtil.getSiglaDisciplinaParaEscola(a.getDisciplinaOriginalCodigo());
+//			String disSigla = a.getDisciplinaOriginalCodigo();
+//			if (disSigla.contains("_")) {
+//				disSigla = disSigla.split("_")[0];
+//			}
 			disciplinasSiglas.add(disSigla);
 			disciplinaIdToSiglaMap.put(a.getDisciplinaId(), disSigla);
 		}

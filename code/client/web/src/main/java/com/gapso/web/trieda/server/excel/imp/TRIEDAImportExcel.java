@@ -66,6 +66,7 @@ public class TRIEDAImportExcel
 			importers.add( new SemanaLetivaHorariosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CampiImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new UnidadesImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
+			importers.add( new UnidadesDeslocamentoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new SalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new DisponibilidadesSalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new DisciplinasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
@@ -74,6 +75,7 @@ public class TRIEDAImportExcel
 			importers.add( new CursosImportExcel( this.cenario, i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CursoAreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CurriculosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino, true ) );
+			importers.add( new DisponibilidadesDisciplinasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new DisciplinasSalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new EquivalenciasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new OfertasCursosCampiImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );

@@ -18,6 +18,7 @@ public enum ExcelInformationType
 	PROFESSORES( "Professores" ),
 	DISPONIBILIDADES_PROFESSORES( "Disponibilidades Professores" ),
 	DISPONIBILIDADES_SALAS( "Disponibilidades Ambientes" ),
+	DISPONIBILIDADES_DISCIPLINAS( "Disponibilidades Disciplinas" ),
 	CAMPI_TRABALHO( "Campi de Trabalho" ),
 	RELATORIO_VISAO_SALA( "Relatorio Visao Ambiente" ),
 	RELATORIO_VISAO_CURSO( "Relatorio Visao Curso" ),

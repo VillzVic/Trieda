@@ -13,7 +13,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
@@ -23,6 +22,7 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.services.CurriculoDomainService;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -43,6 +43,8 @@ public class CurriculosImportExcel
 
 	private List< String > headerColumnsNames;
 	private boolean updateDisciplinaHorario;
+	
+	private CurriculoDomainService curriculoDomainService = new CurriculoDomainService();
 
 	public CurriculosImportExcel(
 			Cenario cenario, TriedaI18nConstants i18nConstants,
@@ -618,109 +620,60 @@ public class CurriculosImportExcel
 				SEMANA_LETIVA_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
-
-	@Transactional
-	protected void updateDataBase( String sheetName,
-		List< CurriculosImportExcelBean > sheetContent )
-	{
-		// ATUALIZA CURRICULOS
-
+	
+	protected void updateDataBase( String sheetName, List< CurriculosImportExcelBean > sheetContent ) {
 		// [ CodCurriculo -> Curriculo ]
-		Map< String, Curriculo > curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(
-			Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
-
+		Map< String, Curriculo > curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
 		// [ CodCurriculo -> CurriculosImportExcelBean ]
-		Map< String, CurriculosImportExcelBean > curriculosExcelMap
-			= CurriculosImportExcelBean.buildCurriculoCodigoToImportExcelBeanMap( sheetContent ); 
+		Map< String, CurriculosImportExcelBean > curriculosExcelMap = CurriculosImportExcelBean.buildCurriculoCodigoToImportExcelBeanMap( sheetContent ); 
 		
-		Map<Disciplina, Set<SemanaLetiva>> disciplinaMapSemanasLetivas = new HashMap<Disciplina, Set<SemanaLetiva>>();
-		
+		Set<Curriculo> curriculosParaAtualizar = new HashSet<Curriculo>();
+		Set<Curriculo> curriculosParaInserir = new HashSet<Curriculo>();
 		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
-		for ( String codigoCurriculo : curriculosExcelMap.keySet() )
-		{
+		for ( String codigoCurriculo : curriculosExcelMap.keySet() ) {
 			Curriculo curriculoBD = curriculosBDMap.get( codigoCurriculo );
-
-			CurriculosImportExcelBean curriculoExcel
-				= curriculosExcelMap.get( codigoCurriculo );
-
-			if ( curriculoBD != null )
-			{
+			CurriculosImportExcelBean curriculoExcel = curriculosExcelMap.get( codigoCurriculo );
+			if ( curriculoBD != null ) {
 				// Update
 				curriculoBD.setDescricao( curriculoExcel.getDescricaoStr() );
 				curriculoBD.setCurso( curriculoExcel.getCurso() );
-
-				curriculoBD.merge();
-			}
-			else
-			{
+				curriculosParaAtualizar.add(curriculoBD);
+			} else {
 				// Insert
 				Curriculo newCurriculo = new Curriculo();
-
 				newCurriculo.setCenario( getCenario() );
 				newCurriculo.setCodigo( curriculoExcel.getCodigoStr() );
 				newCurriculo.setDescricao( curriculoExcel.getDescricaoStr() );
 				newCurriculo.setCurso( curriculoExcel.getCurso() );
 				newCurriculo.setSemanaLetiva( curriculoExcel.getSemanaLetiva() );
-
-				newCurriculo.persist();
-
-				Curriculo.entityManager().refresh( newCurriculo );
+				curriculosParaInserir.add(newCurriculo);
 				curriculosBDMap.put( newCurriculo.getCodigo(), newCurriculo );
 			}
-			
 			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" curriculos"); count = 0;}
 		}
 
 		// ATUALIZA CURRICULOS-DISCIPLINAS
 		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
-
 		// [ CodCurso - CodCurriculo - Periodo - CodDisciplina -> CurriculoDisciplina ]
-		Map< String, CurriculoDisciplina > curriculosDisciplinasBDMap
-			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
-				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
-
+		Set<CurriculoDisciplina> curriculosDiscParaInserir = new HashSet<CurriculoDisciplina>();
+		Map< String, CurriculoDisciplina > curriculosDisciplinasBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 		count = 0; total=sheetContent.size(); System.out.println("CurriculoDisciplina "+total);
-		for ( CurriculosImportExcelBean curriculoExcel : sheetContent )
-		{
-			CurriculoDisciplina curriculoDisciplinaBD
-				= curriculosDisciplinasBDMap.get( curriculoExcel.getNaturalKeyString() );
-
-			if ( curriculoDisciplinaBD == null )
-			{
+		for ( CurriculosImportExcelBean curriculoExcel : sheetContent ) {
+			CurriculoDisciplina curriculoDisciplinaBD = curriculosDisciplinasBDMap.get( curriculoExcel.getNaturalKeyString() );
+			if ( curriculoDisciplinaBD == null ) {
 				// Insert
 				CurriculoDisciplina newCurriculoDisciplina = new CurriculoDisciplina();
-
 				newCurriculoDisciplina.setPeriodo( curriculoExcel.getPeriodo() );
 				newCurriculoDisciplina.setDisciplina( curriculoExcel.getDisciplina() );
 				newCurriculoDisciplina.setCurriculo( curriculosBDMap.get( curriculoExcel.getCodigoStr() ) );
-
-				if ( newCurriculoDisciplina.getPeriodo() != null
-					&& newCurriculoDisciplina.getDisciplina() != null
-					&& newCurriculoDisciplina.getCurriculo() != null )
-				{
-					newCurriculoDisciplina.persist();
-
-					curriculosDisciplinasBDMap.put(
-						curriculoExcel.getNaturalKeyString(), newCurriculoDisciplina );
-					if (disciplinaMapSemanasLetivas.get(newCurriculoDisciplina.getDisciplina()) == null)
-					{
-						Set<SemanaLetiva> semanasLetivas = new HashSet<SemanaLetiva>();
-						semanasLetivas.add(newCurriculoDisciplina.getCurriculo().getSemanaLetiva());
-						disciplinaMapSemanasLetivas.put(newCurriculoDisciplina.getDisciplina(), semanasLetivas);
-					}
-					else
-					{
-						disciplinaMapSemanasLetivas.get(newCurriculoDisciplina.getDisciplina()).add(newCurriculoDisciplina.getCurriculo().getSemanaLetiva());
-					}
+				if ( newCurriculoDisciplina.getPeriodo() != null && newCurriculoDisciplina.getDisciplina() != null && newCurriculoDisciplina.getCurriculo() != null ) {
+					curriculosDiscParaInserir.add(newCurriculoDisciplina);
 				}
 			}
-			
 			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" CurriculosDisciplina"); count = 0;}
 		}
-		if (!curriculosDisciplinasBDMap.isEmpty() && updateDisciplinaHorario)
-		{
-			Disciplina.atualizaDisponibilidadesDisciplinas(disciplinaMapSemanasLetivas, getCenario());
-		}
+		
+		curriculoDomainService.updateDataBaseFromExcel(curriculosParaAtualizar, curriculosParaInserir, curriculosDiscParaInserir, updateDisciplinaHorario, cenario);
 	}
 
 	private void resolveHeaderColumnNames()

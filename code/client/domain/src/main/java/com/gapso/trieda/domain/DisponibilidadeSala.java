@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +23,8 @@ import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gapso.trieda.misc.DisponibilidadeGenerica;
 
 @Configurable
 @Entity
@@ -127,5 +130,16 @@ public class DisponibilidadeSala  extends Disponibilidade implements Serializabl
 			disponibilidades.add(dispSal);
 		}
 		return salaMapDisponibilidade;
+	}
+	
+	public static Map<Sala, List<DisponibilidadeGenerica>> transformaEmDisponibilidadesCompactas(Map<Sala, List<Disponibilidade>> salasMapDisponibilidade) {
+		Map<Sala, List<DisponibilidadeGenerica>> dispCompactasMap = new HashMap<Sala, List<DisponibilidadeGenerica>>();
+		for (Entry<Sala, List<Disponibilidade>> entry : salasMapDisponibilidade.entrySet()) {
+			Sala sala = entry.getKey();
+			List<Disponibilidade> disponibilidadesOriginais = entry.getValue();
+			List<DisponibilidadeGenerica> disponibilidadesCompactas = Disponibilidade.geraDisponibilidadesCompactadasPorDiaSemana(disponibilidadesOriginais);
+			dispCompactasMap.put(sala, disponibilidadesCompactas);
+		}
+		return dispCompactasMap;
 	}
 }

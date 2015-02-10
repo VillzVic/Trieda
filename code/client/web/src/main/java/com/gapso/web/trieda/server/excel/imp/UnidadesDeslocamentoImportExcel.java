@@ -2,6 +2,8 @@ package com.gapso.web.trieda.server.excel.imp;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,18 +67,25 @@ public class UnidadesDeslocamentoImportExcel
 		List< Campus > campi = Campus.findByCenario(instituicaoEnsino, getCenario());
 		for (Campus campus : campi)
 		{
-			for (Unidade unidade : campus.getUnidades())
+			List<Unidade> unidadesDoCampus = new ArrayList<Unidade>(campus.getUnidades());
+			Collections.sort(unidadesDoCampus, new Comparator<Unidade>() {
+				@Override
+				public int compare(Unidade o1, Unidade o2) {
+					return o1.getCodigo().compareTo(o2.getCodigo());
+				}
+			});
+			for (Unidade unidade : unidadesDoCampus)
 			{
 				if (campusToHeaderMap.get(campus) == null)
 				{
 					List<String> newHeader = new ArrayList<String>();
 					newHeader.add(TEMPO_COLUMN_NAME);
-					newHeader.add(unidade.getNome());
+					newHeader.add(unidade.getCodigo());
 					campusToHeaderMap.put(campus, newHeader);
 				}
 				else
 				{
-					campusToHeaderMap.get(campus).add(unidade.getNome());
+					campusToHeaderMap.get(campus).add(unidade.getCodigo());
 				}
 			}
 		}
@@ -371,14 +380,29 @@ public class UnidadesDeslocamentoImportExcel
 		
 	}
 
-	private void checkOrigensDestinos(
-			List<UnidadesDeslocamentoImportExcelBean> sheetContent) {
+	private void checkOrigensDestinos(List<UnidadesDeslocamentoImportExcelBean> sheetContent) {
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+		
+		int count = 0;
+		for (UnidadesDeslocamentoImportExcelBean bean : sheetContent) {
+			String unidadeOrigem = bean.getUnidadeOrigemStr();
+			int posNaListaUnidadeOrigem = count;
+			if (posNaListaUnidadeOrigem < bean.getUnidadesDestinos().size()) {
+				String unidadeDestino = bean.getUnidadesDestinos().get(posNaListaUnidadeOrigem);
+				if (!unidadeOrigem.equals(unidadeDestino)) {
+					rowsWithErrors.add(bean.getRow());
+				}
+			} else {
+				// TODO: coletar erro
+			}
+			count++;
+		}
 
-		Map<Campus, List<UnidadesDeslocamentoImportExcelBean>> campusToUnidadeNomeMap = 
+		/*Map<Campus, List<UnidadesDeslocamentoImportExcelBean>> campusToUnidadeNomeMap = 
 				new HashMap<Campus, List<UnidadesDeslocamentoImportExcelBean>>();
 		
 		
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		
 		for (UnidadesDeslocamentoImportExcelBean bean : sheetContent )
 		{
 			if (campusToUnidadeNomeMap.get(bean.getUnidadeOrigem().getCampus()) == null)
@@ -406,7 +430,7 @@ public class UnidadesDeslocamentoImportExcel
 					}
 				}
 			}
-		}
+		}*/
 		if ( !rowsWithErrors.isEmpty() )
 		{
 			getErrors().add( getI18nMessages().excelErroLogicoDeslocamentoAssimetrico(
@@ -477,7 +501,7 @@ public class UnidadesDeslocamentoImportExcel
 	private void updateDataBase( String sheetName,
 		List< UnidadesDeslocamentoImportExcelBean > sheetContent )
 	{
-		List<DeslocamentoUnidade> deslocamentos = DeslocamentoUnidade.findAll(instituicaoEnsino);
+		List<DeslocamentoUnidade> deslocamentos = DeslocamentoUnidade.findAll(instituicaoEnsino, this.cenario);
 		
 		for (DeslocamentoUnidade deslocamento : deslocamentos)
 		{

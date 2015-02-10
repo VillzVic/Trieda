@@ -1,8 +1,11 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -516,6 +519,31 @@ public class ProfessorVirtual
 		q.setMaxResults(1);
 
         return (ProfessorVirtual)q.getSingleResult();
+	}
+	
+	public static Map<String,ProfessorVirtual> criaProfessoresVirtuaisPadrao(Map<String, Set<Disciplina>> profVirtualIdToDisciplinasMap, Cenario cenario, InstituicaoEnsino instituicaoEnsino) {
+		List<TipoContrato> tiposContratos = TipoContrato.findByCenario(instituicaoEnsino, cenario);
+		List<Titulacao> titulacoes = Titulacao.findByCenario(instituicaoEnsino, cenario);
+		
+		Map<String,ProfessorVirtual> idToProfessorVirtualMap = new HashMap<String, ProfessorVirtual>();
+		for (Entry<String, Set<Disciplina>> entry : profVirtualIdToDisciplinasMap.entrySet()) {
+			ProfessorVirtual pv = new ProfessorVirtual();
+			
+			pv.setInstituicaoEnsino(instituicaoEnsino);
+			pv.setCenario(cenario);
+			pv.setCargaHorariaMax(99);
+			pv.setCargaHorariaMin(0);
+			pv.setTipoContrato(tiposContratos.get(0));
+			pv.setTitulacao(titulacoes.get(0));
+			for (Disciplina disciplina : entry.getValue()) {
+				pv.getDisciplinas().add(disciplina);
+			}
+
+			pv.persist();
+			
+			idToProfessorVirtualMap.put(entry.getKey(),pv);
+		}
+		return idToProfessorVirtualMap;
 	}
 
 	public ProfessorVirtual clone(CenarioClone novoCenario) {

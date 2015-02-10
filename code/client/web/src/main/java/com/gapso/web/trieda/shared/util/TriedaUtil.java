@@ -272,4 +272,36 @@ public class TriedaUtil
 
         return sen;
 	}
+	
+	static public String getSiglaDisciplinaParaEscola(String codigoDisciplina) {
+		String disCodigoArray[] = codigoDisciplina.split("_");
+		if (disCodigoArray.length > 0) {
+			for (int i = 0; i < disCodigoArray.length; i++) {
+				String sigla = ehSiglaDiscDeEscola(disCodigoArray[i]); 
+				if (sigla != null) {
+					return sigla;
+				}
+			}
+		}
+		return codigoDisciplina;
+	}
+	
+	static private String ehSiglaDiscDeEscola(String value) {
+		if (value != null) {
+			if (value.contains("ART")) return "ART";
+			if (value.contains("BIO")) return "BIO";
+			if (value.contains("EDF")) return "EDF";
+			if (value.contains("ESP")) return "ESP";
+			if (value.contains("FSO")) return "FSO";
+			if (value.contains("FIS")) return "FIS";
+			if (value.contains("GEO")) return "GEO";
+			if (value.contains("HIS")) return "HIS";
+			if (value.contains("HV")) return "HV";
+			if (value.contains("ING")) return "ING";
+			if (value.contains("MAT")) return "MAT";
+			if (value.contains("POR")) return "POR";
+			if (value.contains("QUI")) return "QUI";
+		}
+		return null;
+	}
 }

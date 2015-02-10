@@ -12,6 +12,7 @@ public class UnidadesDeslocamentoImportExcelBean extends AbstractImportExcelBean
 {
 	private String unidadeOrigemStr;
 	private Map<String, String> unidadeDestinoStrToTempoStrMap = new HashMap<String, String>();
+	private List<String> unidadesDestino = new ArrayList<String>();
 	
 	private Unidade unidadeOrigem;
 	private Map<Unidade, Integer> unidadeDestinoToTempoMap = new HashMap<Unidade, Integer>();
@@ -58,9 +59,14 @@ public class UnidadesDeslocamentoImportExcelBean extends AbstractImportExcelBean
 		return this.unidadeDestinoStrToTempoStrMap;
 	}
 	
+	public List<String> getUnidadesDestinos() {
+		return this.unidadesDestino;
+	}
+	
 	public void addUnidadeDestinoStr( String unidade, String tempo )
 	{
 		this.unidadeDestinoStrToTempoStrMap.put(unidade, tempo);
+		this.unidadesDestino.add(unidade);
 	}
 	
 	public void setUnidadeOrigem( Unidade unidadeOrigem )
