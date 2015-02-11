@@ -20,15 +20,23 @@ int mainMIPPuro( CmdLine *cmd, ProblemData* data, ProblemDataLoader* dataLoader,
 		ProbDataAnalyzer::estatisticasDemandasEscola();
 
 		initSolution( solution, data );
+		
+		ProblemSolution * probSolInic;
+		cmd->loadInputSolucaoInicial(probSolInic);
 
-		Solver * solver = new SolverMIPUnico( data, solution, dataLoader );
+		Solver * solver = new SolverMIPUnico(data, solution, dataLoader, probSolInic);
 
 		status = solver->solve();
 
-		if ( solver )
+		if (solver)
 		{
 			delete solver;
 			solver = nullptr;
+		}
+		if (probSolInic)
+		{
+			delete probSolInic;
+			probSolInic = nullptr;
 		}
 	}
 	catch( std::exception & e )

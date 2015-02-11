@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "CentroDados.h"
+#include "ProblemSolution.h"
 #include "HeurNuno\HeuristicaNuno.h"
 #include "HeurNuno\\ParametrosHeuristica.h"
 
@@ -125,7 +126,7 @@ void CmdLine::setTipoSolver()
    bool execHeur = checkExecHeuristica();
 
    int idx;
-   load = loadSolucaoInicial(idx);
+   load = checkLoadSolucaoInicial(idx);
    
    if ( load && execHeur )
 	   tipoSolver_ = TipoSolver::LOAD_AND_EXEC_HEUR;
@@ -415,7 +416,7 @@ bool CmdLine::checkRelaxMinAlunos()
 }
 
 // tenta carregar solução inicial caso tenha sido inserida
-bool CmdLine::loadSolucaoInicial( int &idx )
+bool CmdLine::checkLoadSolucaoInicial( int &idx )
 {
 	if (!checkExecHeuristica())
 		return false;
@@ -434,9 +435,27 @@ bool CmdLine::loadSolucaoInicial( int &idx )
 	++idx;
 	if(idx >= argc_ )
 	{
-		HeuristicaNuno::warning("CmdLine::loadSolucaoInicial", "Path nao inserido depois de load");
+		HeuristicaNuno::warning("CmdLine::checkLoadSolucaoInicial", "Path nao inserido depois de load");
 		return false;
 	}
 
+	return true;
+}
+
+
+// tenta carregar solução inicial caso tenha sido inserida
+bool CmdLine::loadInputSolucaoInicial(ProblemSolution* &solucao)
+{	
+	solucao = nullptr;
+	
+	char fullPath[ 2048 ];
+	this->getInputWithPath(fullPath);
+
+	solucao = ProblemSolution::lerSolucao(fullPath);
+	if(solucao == nullptr)
+	{
+		cout << "\nNenhuma solucao encontrada em anexo.";
+		return false;
+	}
 	return true;
 }

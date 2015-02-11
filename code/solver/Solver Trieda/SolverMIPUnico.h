@@ -31,7 +31,7 @@ class SolverMIPUnico : public Solver
 {
 public:
 	
-   SolverMIPUnico( ProblemData *, ProblemSolution *, ProblemDataLoader * );
+   SolverMIPUnico(ProblemData *, ProblemSolution *, ProblemDataLoader *, ProblemSolution * const init = nullptr);
    virtual ~SolverMIPUnico();
    
    void getSolution( ProblemSolution * ){};
@@ -115,6 +115,7 @@ private:
    
    ProblemSolution * problemSolution;
    ProblemDataLoader * problemDataLoader;
+   ProblemSolution * const probSolInicial;
    
    // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores      
    

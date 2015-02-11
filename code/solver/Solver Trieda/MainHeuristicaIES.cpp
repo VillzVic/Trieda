@@ -61,7 +61,7 @@ int mainHeur( CmdLine *cmd, ProblemData* data, ProblemSolution* &solution )
    {
 	   cout << "<< Searching for partial solution appended to input..." << endl; fflush(0);
 
-	   loadInputSolucaoInicial(cmd,solution);
+	   cmd->loadInputSolucaoInicial(solution);
 	   if(solution)
 	   {
 		   cout << ">>> Solução inicial anexada ao input carregada com sucesso!" << endl; fflush(0);
@@ -137,7 +137,7 @@ int mainHeur( CmdLine *cmd, ProblemData* data, ProblemSolution* &solution )
 bool loadSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao)
 {	
 	int idx;
-	bool load = cmd->loadSolucaoInicial(idx);
+	bool load = cmd->checkLoadSolucaoInicial(idx);
 
 	// ler solução (modoTatico = false!)
 	if ( load )
@@ -165,25 +165,6 @@ bool loadSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao)
 	return false;
 }
 
-// ----------------------------------------------------------------------------------------------
-
-// tenta carregar solução inicial caso tenha sido inserida
-bool loadInputSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao)
-{	
-	solucao = nullptr;
-	HeuristicaNuno::logMsg("tentar ler solucao anexada ao fim do input...", 0);
-
-	char fullPath[ 2048 ];
-	cmd->getInputWithPath(fullPath);
-
-	solucao = ProblemSolution::lerSolucao(fullPath);
-	if(solucao == nullptr)
-	{
-		HeuristicaNuno::logMsg("nenhuma solucao encontrada em anexo.", 0);
-		return false;
-	}
-	return true;
-}
 // ----------------------------------------------------------------------------------------------
 
 // run heuristica

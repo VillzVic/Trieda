@@ -23,22 +23,27 @@ class MIPUnico : public Solver
 {
 public:
 	
-	MIPUnico( ProblemData * aProblemData,
-				bool *endCARREGA_SOLUCAO, bool equiv, int permitirNovasTurmas );
+	MIPUnico( ProblemData * aProblemData, 
+		ProblemSolution * const probSolInicial,
+			bool *endCARREGA_SOLUCAO, bool equiv, int permitirNovasTurmas );
 
 	virtual ~MIPUnico();
 
 
 	int solve();
-    void getSolution( ProblemSolution * );
+    
+	void getSolution( ProblemSolution * );
+	
 	void solveMainEscola( int campusId, int prioridade, int r, 
-		std::set<VariableMIPUnico *, LessPtr<VariableMIPUnico>> &solMipUnico );
-	void copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico);
+		std::set<VariableMIPUnico *, LessPtr<VariableMIPUnico>> &solMipUnico);
 
+	void copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico);
 
 private:
 
-
+   void printCabecalho(int campusId, int prioridade, int r);
+   void solveStrategy(int campusId, int prioridade, int r);
+	
    static std::string getOutPutFileTypeToString(int type);
 
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
@@ -55,6 +60,7 @@ private:
    bool alunoAlocNaTurma(Aluno* const aluno, Disciplina* const disciplina, int turma) const;
    int alunoAlocDisc(Aluno* const aluno, Disciplina* const disc) const;
    bool alunoAlocDiscNoHorDia(Aluno* const aluno, Disciplina* const disc, int dia, DateTime dti) const;
+   bool alunoAlocIncompNaDisc(Aluno* const aluno, Disciplina* const disc) const;
    bool profAlocNaTurma(Professor* const prof, Campus* const campus, Disciplina* const disciplina, int turma) const;
 
    /********************************************************************
@@ -84,8 +90,7 @@ private:
    int criaVariavelTaticoAbertura( int campusId, int prior, int r );						// z_{i,d,cp}
    int criaVariavelTaticoAlunosMesmaTurmaPratica( int campusId, int P );					// ss_{a1,a2,dp}
    int criaVariavelTaticoFolgaMinimoDemandaPorAluno( int campusId, int P_ATUAL );			// fmd_{a}
-   int criaVariavelProfTurmaAPartirDeZ();													// y_{p,i,d,cp}
-   int criaVariavelProfTurmaAPartirDeK();
+   int criaVariavelProfTurmaAPartirDeK();													// y_{p,i,d,cp}
    int criaVariavelProfAulaAPartirDeX();													// k_{p,i,d,cp,t,h}
    int criaVariaveisHiHfProfFaseDoDiaAPartirDeK(void);										// hip_{p,t,f} e hfp_{p,t,f}
    int criaVariaveisHiHfAlunoDiaAPartirDeV(void);											// hia_{a,t} e hfa_{a,t}
@@ -340,6 +345,9 @@ private:
 	void clearMapsSolution();
 	void clearStrutures();
 	void resetXSol();
+	void addSolAlocProfTurma(Professor* const p, Campus * const cp, Disciplina * const d, int turma);
+	void addSolAlocAlunoTurma(Aluno* const a, Disciplina * const d, int turma, int dia, DateTime dti);
+	void carregaSolucaoInicialFixada();
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
 	bool carregaVariaveisSolucaoFromFile(int campusId, int prioridade, int r, int type);
 	void openSolucaoFile(FILE* &fout, int campusId, int prioridade, int r);
@@ -451,8 +459,8 @@ private:
 		
 	std::set< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
 		
-	unordered_map< Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> > > solAlocProfTurma;
-	unordered_map< Campus*, unordered_map< Disciplina*, unordered_map< int, unordered_set<Professor*> > > > solAlocTurmaProf;	
+	unordered_map< Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> > > solAlocProfTurma_;
+	unordered_map< Campus*, unordered_map< Disciplina*, unordered_map< int, unordered_set<Professor*> > > > solAlocTurmaProf_;	
 	unordered_map<Aluno*, unordered_map<Disciplina*, std::pair<int, unordered_map<int, set<DateTime>> >>> solAlocAlunoDiscTurmaDiaDti_;
 	unordered_map<Aluno*, unordered_map<int, set<DateTime>>> solAlocAlunoDiaDti_;
 		
@@ -462,6 +470,8 @@ private:
 		****************************************************************************************************************
    */
 	
+	ProblemSolution * const probSolInicial;
+
 
 	// log file name
 	string optLogFileName;

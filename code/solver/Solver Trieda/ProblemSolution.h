@@ -2,6 +2,9 @@
 #define _PROBLEM_SOLUTION_H_
 
 #include <iostream>
+#include <unordered_map>
+#include <unordered_set>
+
 #include "GGroup.h"
 #include "ProblemData.h"
 
@@ -20,61 +23,67 @@ class AlunoSolution;
 class ProblemSolution
 {
 public:
-   ProblemSolution( bool = true );
-   virtual ~ProblemSolution(); 
+	ProblemSolution( bool = true );
+    virtual ~ProblemSolution(); 
 
-   void resetProblemSolution();
-   AtendimentoCampus* getAddAtendCampus(int id_cp);
+    void resetProblemSolution();
+    AtendimentoCampus* getAddAtendCampus(int id_cp);
 
-   RestricaoVioladaGroup * getFolgas() const { return this->folgas; }
-   GGroup< AtendimentoCampus * > * atendimento_campus;
+    RestricaoVioladaGroup * getFolgas() const { return this->folgas; }
+    GGroup< AtendimentoCampus * > * atendimento_campus;
 
-   GGroup< ProfessorVirtualOutput * > * professores_virtuais;
-   GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > * alunosDemanda;
-   GGroup< NaoAtendimento *, LessPtr< NaoAtendimento > > * nao_atendimentos;
-   bool modoOtmTatico;
-   int getIdAtendimentos() { return this->idsAtendimentos++; }
+    GGroup< ProfessorVirtualOutput * > * professores_virtuais;
+    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > * alunosDemanda;
+    GGroup< NaoAtendimento *, LessPtr< NaoAtendimento > > * nao_atendimentos;
+    bool modoOtmTatico;
+    int getIdAtendimentos() { return this->idsAtendimentos++; }
 
-   void setCenarioId( int value ) { this->cenarioId = value; }
-   int getCenarioId() const { return this->cenarioId; }
+    void setCenarioId( int value ) { this->cenarioId = value; }
+    int getCenarioId() const { return this->cenarioId; }
 
-   ProfessorVirtualOutput* getProfVirtualOutput( int id );
+    ProfessorVirtualOutput* getProfVirtualOutput( int id );
    
-   void constroiMapsDaSolucao();
-   void clearMapsDaSolucao();
+	void getMapsDaSolucao(
+		unordered_map<Sala*, unordered_map<Disciplina*, unordered_map<int, 
+			std::pair<Professor*, unordered_set<Aluno*>> >>> & solTurmaProfAlunos,
+		unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int,
+			unordered_map<int, set<DateTime>> >>> & solCpDiscTurmaDiaDti );
 
-   map< Sala*, vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > >, LessPtr<Sala> >
+    void constroiMapsDaSolucao();
+    void clearMapsDaSolucao();
+
+    map< Sala*, vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > >, LessPtr<Sala> >
 	   procuraCombinacaoLivreEmSalas( Disciplina *disciplina, TurnoIES* turno, int campusId );
 
-   vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > >
+    vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > >
 	   procuraCombinacaoLivreNaSala( Disciplina *disciplina, TurnoIES* turno, Sala* sala );
 
-   void procuraOpcoesSemChoque( 
+    void procuraOpcoesSemChoque( 
 		const map< int /*opcao*/, map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > > &sem_choques, 
 		const map< TurnoIES*, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>>, LessPtr<TurnoIES> > &mapAlsDemNaoAtend, 
 		map< int /*opção*/, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> > &mapOpcaoAlunosSemChoque );
 
-   void verificaPossivelNovaTurma( NaoAtendimento *naoAtend, Disciplina *disc, AlunoDemanda *ad, int campusId,
+    void verificaPossivelNovaTurma( NaoAtendimento *naoAtend, Disciplina *disc, AlunoDemanda *ad, int campusId,
 	   const map< TurnoIES*, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>>, LessPtr<TurnoIES> > &mapAlsDemNaoAtend );
 
-   void verificaNrDiscSimultVirtual();
-   void verificaNaoAtendimentosTaticos();
-   void verificaUsoDeProfsVirtuais();
-   void computaMotivos( bool motivoNaoAtend, bool motivoUsoPV );
-   void imprimeIndicadores();
+    void verificaNrDiscSimultVirtual();
+    void verificaNaoAtendimentosTaticos();
+    void verificaUsoDeProfsVirtuais();
+    void computaMotivos( bool motivoNaoAtend, bool motivoUsoPV );
+    void imprimeIndicadores();
 
-   int retornaTurmaDiscAluno( AlunoDemanda* alunoDemanda, bool teorica );
+    int retornaTurmaDiscAluno( AlunoDemanda* alunoDemanda, bool teorica );
 
    
-   /* Referencia o objeto AlunoSolution correpondente ao aluno. Caso ainda não exista, cria.
-    * Retorna true se o objeto foi criado, ou false caso já existia.
-   **/
-   bool getAlunoSolution( Aluno* aluno, AlunoSolution *& alunoSolution );
+    /* Referencia o objeto AlunoSolution correpondente ao aluno. Caso ainda não exista, cria.
+     * Retorna true se o objeto foi criado, ou false caso já existia.
+    **/
+    bool getAlunoSolution( Aluno* aluno, AlunoSolution *& alunoSolution );
 
-   /* Retorna pointer para o AlunoSolution do aluno procurado.
-	  Caso não exista, retorna nullptr.
-   **/
-   AlunoSolution* getAlunoSolution( Aluno* aluno );
+    /* Retorna pointer para o AlunoSolution do aluno procurado.
+	   Caso não exista, retorna nullptr.
+    **/
+    AlunoSolution* getAlunoSolution( Aluno* aluno );
 
    
 	// -------------------------------

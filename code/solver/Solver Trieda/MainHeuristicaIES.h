@@ -9,7 +9,6 @@
 
 int mainHeur( CmdLine *cmd, ProblemData* data, ProblemSolution* &solution );
 bool runHeuristica(ProblemSolution* &solucaoHeurExt);
-bool loadSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao );
-bool loadInputSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao);
+bool loadSolucaoInicial( CmdLine *cmd, ProblemSolution* &solucao);
 
 #endif

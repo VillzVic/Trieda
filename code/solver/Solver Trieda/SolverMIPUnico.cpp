@@ -35,13 +35,11 @@ using namespace std;
 	----------------------------------------------------------------------------------------------------------
 */
 
-SolverMIPUnico::SolverMIPUnico( ProblemData * aProblemData,
-  ProblemSolution * _ProblemSolution, ProblemDataLoader * _problemDataLoader )
-   : Solver( aProblemData )
-{
-   problemSolution = _ProblemSolution;
-   problemDataLoader = _problemDataLoader;
-   
+SolverMIPUnico::SolverMIPUnico(ProblemData * aProblemData, ProblemSolution * _ProblemSolution,
+  ProblemDataLoader * _problemDataLoader, ProblemSolution * const aProbSolInic)
+   : Solver(aProblemData), 
+   problemSolution(_ProblemSolution), problemDataLoader(_problemDataLoader), probSolInicial(aProbSolInic)
+{   
    try
    {
 #ifdef SOLVER_CPLEX
@@ -54,7 +52,6 @@ SolverMIPUnico::SolverMIPUnico( ProblemData * aProblemData,
    catch(...)
    {
    }
-
 }
 
 SolverMIPUnico::~SolverMIPUnico()
@@ -333,7 +330,7 @@ void SolverMIPUnico::solveCampusP1Escola()
 	
 	int NOVAS_TURMAS = 1;
 	bool EQUIV=true;
-	MIPUnico * solverEscola = new MIPUnico( this->problemData,
+	MIPUnico * solverEscola = new MIPUnico( this->problemData, probSolInicial,
 											&this->CARREGA_SOLUCAO, EQUIV, NOVAS_TURMAS );
 	solverEscola->solveMainEscola( this->campusAtualId, P, r, solMipUnico_ );
 	delete solverEscola;	
@@ -356,7 +353,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 		{
 			// Só inserção de alunos
 			MIPUnico * solverEscola = new MIPUnico( 
-				this->problemData, &this->CARREGA_SOLUCAO, true, 0 );
+				this->problemData, probSolInicial, &this->CARREGA_SOLUCAO, true, 0 );
 			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}
@@ -365,7 +362,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 		{
 			// Permite novas turmas
 			MIPUnico * solverEscola = new MIPUnico( 
-				this->problemData, &this->CARREGA_SOLUCAO, true, 3 );
+				this->problemData, probSolInicial, &this->CARREGA_SOLUCAO, true, 3 );
 			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}

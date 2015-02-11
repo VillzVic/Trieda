@@ -482,6 +482,205 @@ AlunoSolution* ProblemSolution::getAlunoSolution( Aluno* aluno )
 	return alunoSolution;
 }
 
+void ProblemSolution::getMapsDaSolucao(
+	unordered_map<Sala*, unordered_map<Disciplina*, unordered_map<int, 
+			std::pair<Professor*, unordered_set<Aluno*>> >>> & solTurmaProfAlunos,
+	unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int,
+			unordered_map<int, set<DateTime>> >>> & solCpDiscTurmaDiaDti )
+{	
+	ProblemData *problemData = CentroDados::getProblemData();
+	
+	if ( !this->atendimento_campus )
+		return;
+
+	ITERA_GGROUP( it_At_Campus, ( *this->atendimento_campus ), AtendimentoCampus )
+	{
+		// Campus do atendimento	   
+		Campus *campus = it_At_Campus->campus;
+		int campusId = campus->getId();
+	   
+		if ( !it_At_Campus->atendimentos_unidades )
+			continue;
+		
+		auto ptCpSol = & solCpDiscTurmaDiaDti[campus];
+
+		ITERA_GGROUP_LESSPTR( it_At_Unidade,
+			( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+		{
+			// Unidade do atendimento
+			Unidade *unidade = problemData->refUnidade[ it_At_Unidade->getId() ];
+	   				
+			if ( !it_At_Unidade->atendimentos_salas )
+				continue;
+
+			ITERA_GGROUP_LESSPTR( it_At_Sala,
+				( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+			{
+				// Sala do atendimento
+				Sala *sala = problemData->refSala[ it_At_Sala->getId() ];
+			   				
+				if ( !it_At_Sala->atendimentos_dias_semana )
+					continue;
+
+				auto ptSalaSolTurma = & solTurmaProfAlunos[sala];
+
+				ITERA_GGROUP_LESSPTR( it_At_DiaSemana, 
+					( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+				{
+					// Dia da semana do atendimento
+					int dia = it_At_DiaSemana->getDiaSemana();
+			    			   				
+					if ( !it_At_DiaSemana->atendimentos_turno )
+						continue;
+
+					ITERA_GGROUP_LESSPTR( it_At_Turno,
+						( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
+					{	
+						// Turno do atendimento
+						TurnoIES* turno = it_At_Turno->turno;
+
+						if ( !it_At_Turno->atendimentos_horarios_aula )
+							continue;
+							
+						ITERA_GGROUP_LESSPTR( it_At_Hor_Aula,
+							( *it_At_Turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+						{
+							// Horario do atendimento
+							HorarioAula* horAula = it_At_Hor_Aula->horario_aula;
+
+							// Valida horario-dia alocado na sala						   		    
+							if ( !sala->possuiHorariosNoDia( horAula, horAula, dia ) )
+							{
+								stringstream msg;
+								msg << "Solucao usa horario invalido " << horAula->getInicio().hourMinToStr()
+									<< " no dia " << dia << " na sala " << sala->getCodigo();
+								CentroDados::printWarning( "void ProblemSolution::getMapsDaSolucao()", msg.str() );
+								continue;
+							}
+
+							// Tipo de Credito
+							bool ehTeorica = it_At_Hor_Aula->getCreditoTeorico();
+						   
+							// Professor usado
+							int profId = it_At_Hor_Aula->getProfessorId();
+							bool profVirtual = it_At_Hor_Aula->profVirtual();
+
+							// Não trato alocação com prof virtual
+							if ( profVirtual )
+								continue;
+
+							#pragma region Procura o objeto Professor
+							Professor *profReal = nullptr;
+							if ( !profVirtual )
+							{
+								profReal = problemData->findProfessor(profId);
+								if ( !profReal )
+								{
+									stringstream msg;
+									msg << "Professor real id " << profId << " nao encontrado.";
+									CentroDados::printWarning( "void ProblemSolution::getMapsDaSolucao()", msg.str() );
+									continue;
+								}
+								
+								// Valida horario-dia alocado no professor
+								if ( !profReal->possuiHorariosNoDia(horAula, horAula, dia) )
+								{
+									stringstream msg;
+									msg << "Solucao usa horario invalido " << horAula->getInicio().hourMinToStr()
+										<< " no dia " << dia << " no professor " << profReal->getNome();
+									CentroDados::printWarning( "void ProblemSolution::getMapsDaSolucao()", msg.str() );
+									continue;
+								}
+							}
+							#pragma endregion
+													   						   
+							if ( !it_At_Hor_Aula->atendimentos_ofertas )
+								continue;
+
+							// Atendimentos por Oferta
+							ITERA_GGROUP_LESSPTR( it_At_Oft,
+								( *it_At_Hor_Aula->atendimentos_ofertas ), AtendimentoOferta )
+							{
+								int turma = it_At_Oft->getTurma();										
+								GGroup<int /*alDem*/> *alDemAtend = & it_At_Oft->alunosDemandasAtendidas;
+								string strOfertaId = it_At_Oft->getOfertaCursoCampiId();
+								int ofertaId = atoi(strOfertaId.c_str());
+								Oferta *oferta = problemData->refOfertas[ofertaId];
+
+								#pragma region Procura disciplina real (caso de equivalência e/ou prática-teórica)
+
+								int discOrigId = it_At_Oft->getDisciplinaId();
+								int discRealId = it_At_Oft->getDisciplinaSubstitutaId();
+
+								// Se não houve substituição por equivalência, a original é igual à real
+								if ( discRealId == NULL )
+									discRealId = discOrigId;
+
+								Disciplina* discOrig = problemData->refDisciplinas[discOrigId];
+								Disciplina* discReal = problemData->refDisciplinas[discRealId];
+								
+								if (!ehTeorica)
+								{
+									Disciplina* discTemp;
+									int discTempId = -discRealId;
+									discTemp = problemData->getDisciplinaTeorPrat(discReal);
+									if ( discTemp != NULL )
+									{
+										discReal = discTemp;
+										discRealId = discTempId;
+									}
+								}
+
+								// Valida horario-dia alocado na disciplina						   		    
+								if ( !discReal->possuiHorariosNoDia(horAula, horAula, dia) )
+								{
+									stringstream msg;
+									msg << "Solucao usa horario invalido " << horAula->getInicio().hourMinToStr()
+										<< " no dia " << dia << " para a turma " << turma 
+										<< " da disciplina " << discReal->getCodigo();
+									CentroDados::printWarning( "void ProblemSolution::constroiMapsDaSolucao()", msg.str() );
+									continue;
+								} 
+
+								// Valida equivalência
+ 								bool usouEquiv = discReal != discOrig;
+								if ( usouEquiv )												
+								if ( !problemData->ehSubstituivel(discOrig->getId(), discReal->getId(), oferta->curso) )
+								{
+									stringstream msg;
+									msg << "Solucao usa equivalencia invalida " << discReal->getCodigo()
+										<< " -> " << discOrig->getCodigo()
+										<< " para a turma " << turma << " com alunos do curso " << oferta->curso->getCodigo();
+									CentroDados::printWarning( "void ProblemSolution::constroiMapsDaSolucao()", msg.str() );
+									continue;
+								} 
+								#pragma endregion
+								
+
+								(*ptCpSol)[discReal][turma][dia].insert(horAula->getInicio());
+
+								(*ptSalaSolTurma)[discReal][turma].first = profReal;																
+								auto ptTurmaSol = & (*ptSalaSolTurma)[discReal][turma];
+
+								ITERA_GGROUP_N_PT( itAlDem, *alDemAtend, int )
+								{
+									AlunoDemanda *alunoDemandaTeor = problemData->retornaAlunoDemanda( *itAlDem );
+									if ( alunoDemandaTeor )
+									{
+										Aluno *aluno = alunoDemandaTeor->getAluno();
+										(*ptTurmaSol).second.insert(aluno);
+									}
+								}
+							}					
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 
 void ProblemSolution::constroiMapsDaSolucao()
 {

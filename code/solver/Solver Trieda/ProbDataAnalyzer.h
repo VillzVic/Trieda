@@ -86,10 +86,13 @@ public:
    static void calculaUnidsComumParProf(
 		std::unordered_map<int, std::unordered_set<Professor*>> const & mapUnidIdProfs,
 		std::unordered_map<Professor*, std::unordered_map<Professor*, std::unordered_set<int>>> &parProfUnidsComuns);
+   static int getMaxNrProfsComuns(
+		std::unordered_map<int, std::unordered_map<int, std::unordered_set<Professor*>>> const &parUnidProfsComuns);
    static void printGraphviz(
 		std::unordered_map<int, std::unordered_map<int, std::unordered_set<Professor*>>> const &parUnidProfsComuns);
    static void printGraphviz(
 		std::unordered_map<Professor*, std::unordered_map<Professor*, std::unordered_set<int>>> const &parProfUnidsComuns);
+   static int getColorIdx(int maximum, int value);
 
    static void printOrderedIntersecDisponibDemandas(
 	std::map<int, std::unordered_set<Disciplina*>> const &orderDemandas);	

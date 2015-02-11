@@ -1,17 +1,26 @@
 #include "ProbDataAnalyzer.h"
 #include "ProblemData.h"
+#include "CentroDados.h"
 
 #include <iostream>
 #include <fstream>
 
-const string COLOR[] = {"#0000ff",		// 0
-						"#ff0000",		// 1
-						"#ffff00",		// 2
-						"#00ff00",		// 3
-						"#000000",		// 4
-						"#00ffff",		// 5
-						"#ffffff",		// 6
-						"#ff00ff" };	// 7
+const string PEACH			= "#ffdab9";
+const string LIGHTSALMON	= "#ffa07a";
+const string SALMON			= "#fa8072";
+const string CRIMSON		= "#dc143c";
+const string RED			= "#ff0000";
+const string DARKRED		= "#8b0000";
+const string BLACK			= "#000000";
+
+const int NrColors = 7;
+const string COLOR[] = {PEACH,		// 0
+						LIGHTSALMON,// 1
+						SALMON,		// 2
+						CRIMSON,	// 3
+						RED,		// 4
+						DARKRED,	// 5
+						BLACK };	// 6
 
 
 ProblemData* ProbDataAnalyzer::problemData_ = nullptr;
@@ -513,6 +522,23 @@ void ProbDataAnalyzer::calculaUnidsComumParProf(
 	}
 }
 
+int ProbDataAnalyzer::getMaxNrProfsComuns(
+	std::unordered_map<int, std::unordered_map<int, std::unordered_set<Professor*>>> const &parUnidProfsComuns)
+{
+	int maximum = 0;
+	for (auto itUnid1 = parUnidProfsComuns.cbegin();
+		itUnid1 != parUnidProfsComuns.cend(); itUnid1++)
+	{
+		for (auto itUnid2 = itUnid1->second.cbegin();
+			itUnid2 != itUnid1->second.cend(); itUnid2++)
+		{		
+			int nrProfs = itUnid2->second.size();
+			if (nrProfs > maximum) maximum = nrProfs;
+		}
+	}
+	return maximum;
+}
+
 void ProbDataAnalyzer::printGraphviz(
 	std::unordered_map<int, std::unordered_map<int, std::unordered_set<Professor*>>> const &parUnidProfsComuns)
 {
@@ -524,6 +550,8 @@ void ProbDataAnalyzer::printGraphviz(
 	std::ofstream out(sName.str(),ios::out);
 	if (!out) return;
 	
+	int maxNrProfs = getMaxNrProfsComuns(parUnidProfsComuns);
+
 	out << "graph G {";
 	for (auto itUnid1 = parUnidProfsComuns.cbegin();
 		itUnid1 != parUnidProfsComuns.cend(); itUnid1++)
@@ -542,7 +570,7 @@ void ProbDataAnalyzer::printGraphviz(
 			int nrProfs = itUnid2->second.size();
 
 			out << " [ label = \"" << nrProfs << "\""
-				<< " color=\"" << COLOR[0] << "\" ];";
+				<< " color=\"" << COLOR[getColorIdx(maxNrProfs,nrProfs)] << "\" ];";
 		}
 	}
 	out << std::endl << "}";
@@ -584,6 +612,18 @@ void ProbDataAnalyzer::printGraphviz(
 	out << std::endl << "}";
 	out.flush();
 	out.close();
+}
+
+int ProbDataAnalyzer::getColorIdx(int maximum, int value)
+{
+	double delta = (double) maximum / NrColors;
+	
+	double pos = (double) value / delta;
+	int idx = (int) pos; // parte inteira
+	
+	if (idx == pos) idx--;
+		
+	return idx;
 }
 
 // ---------------------------
@@ -931,6 +971,9 @@ void ProbDataAnalyzer::printUnidadesDisponMapeados(
 
 void ProbDataAnalyzer::estatisticasDemandasEscola()
 {
+	if (!CentroDados::getPrintLogs())
+		return;
+
 	// ---------------------
 	// Agrupa aluno-demanda
 	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 

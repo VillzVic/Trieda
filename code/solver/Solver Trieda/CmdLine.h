@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <string>
 
+class ProblemSolution;
+
 class CmdLine
 {
 public:
@@ -28,7 +30,8 @@ public:
 	bool checkLigarMinAlunosInterno();
 	bool checkSoMudarSalas();
 	bool checkRelaxMinAlunos();
-	bool loadSolucaoInicial(int &idx);
+	bool checkLoadSolucaoInicial(int &idx);
+	bool loadInputSolucaoInicial(ProblemSolution* &solucao);
 
 	int getArgc() const { return argc_; }
 	char** getArgv() const { return argv_; }
