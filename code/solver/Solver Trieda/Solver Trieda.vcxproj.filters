@@ -292,18 +292,6 @@
     <ClCompile Include="HeurNuno\MIPAlocarAlunoVar.cpp">
       <Filter>HeuristicaNuno\Estruturas</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_col.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_gurobi.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_lp.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
     <ClCompile Include="MIPCallback.cpp">
       <Filter>Puro MIP</Filter>
     </ClCompile>
@@ -335,6 +323,21 @@
       <Filter>Geral</Filter>
     </ClCompile>
     <ClCompile Include="TRIEDA-OutputXSD.cpp">
+      <Filter>Geral</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_col.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_gurobi.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_lp.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Libraries\OPT_LP\source\opt_row.cpp">
+      <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="ProbDataAnalyzer.cpp">
       <Filter>Geral</Filter>
     </ClCompile>
   </ItemGroup>
@@ -642,18 +645,6 @@
     <ClInclude Include="HeurNuno\MIPAlocarAlunoVar.h">
       <Filter>HeuristicaNuno\Estruturas</Filter>
     </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_col.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_gurobi.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_lp.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
     <ClInclude Include="MIPCallback.h">
       <Filter>Puro MIP</Filter>
     </ClInclude>
@@ -682,6 +673,21 @@
       <Filter>Geral</Filter>
     </ClInclude>
     <ClInclude Include="TRIEDA-OutputXSD.h">
+      <Filter>Geral</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_col.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_gurobi.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_lp.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Libraries\OPT_LP\include\opt_row.h">
+      <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="ProbDataAnalyzer.h">
       <Filter>Geral</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,7 +2,7 @@
 #include "CentroDados.h"
 #include "Professor.h"
 #include "MIPUnicoParametros.h"
-
+#include "ConjuntoSala.h"
 
 Disciplina::Disciplina(void)
 {
@@ -901,6 +901,16 @@ bool Disciplina::possuiRegraCredComMultiDias() const
 		}		
 	}
 	return false;
+}
+
+void Disciplina::getUnidsAssociadas(std::unordered_set<int> &unids) const
+{
+	for (auto it = cjtSalasAssociados.cbegin(); it != cjtSalasAssociados.cend(); it++)
+	{
+		ConjuntoSala * const cjtSala = it->second;
+		int unidId = cjtSala->getSala()->getIdUnidade();
+		unids.insert(unidId);
+	}
 }
 
 void Disciplina::addProfHabilit(Professor* p)

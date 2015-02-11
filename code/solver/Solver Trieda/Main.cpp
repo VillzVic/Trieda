@@ -14,6 +14,7 @@
 #include "ProblemSolution.h"
 #include "ProblemData.h"
 #include "ProblemDataLoader.h"
+#include "ProbDataAnalyzer.h"
 #include "CentroDados.h"
 #include "Indicadores.h"
 #include "CmdLine.h"
@@ -97,7 +98,8 @@ int main( int argc, char** argv )
    // Inicializa problem-data
    ProblemData* data = new ProblemData( argv[1], inputId );
    CentroDados::setProblemData(data);
-      
+   ProbDataAnalyzer::setProblemData(data);
+
    // -----------------------------------------------------------
    // Inicializa arquivos de indicadores do solver
    Indicadores::setIndicadorFileName( argv[1], inputId );

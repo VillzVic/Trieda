@@ -6,6 +6,7 @@
 #include "CmdLine.h"
 #include "ProblemSolution.h"
 #include "ProblemData.h"
+#include "ProbDataAnalyzer.h"
 
 #include "ErrorHandler.h"
 
@@ -16,7 +17,7 @@ int mainMIPPuro( CmdLine *cmd, ProblemData* data, ProblemDataLoader* dataLoader,
 	int status = 0;
 	try
 	{
-		data->estatisticasDemandasEscola();
+		ProbDataAnalyzer::estatisticasDemandasEscola();
 
 		initSolution( solution, data );
 
@@ -51,15 +52,11 @@ int mainMIPPuro( CmdLine *cmd, ProblemData* data, ProblemDataLoader* dataLoader,
 
 void initSolution( ProblemSolution*& solution, ProblemData* data )
 {
-	if ( !solution )
-	{
-		solution = new ProblemSolution( data->parametros->modo_otimizacao == "TATICO" );
-		solution->setCenarioId( data->getCenarioId() );
-	}
-	else
-	{
+	if (solution){
 		delete solution;
-		solution = new ProblemSolution( data->parametros->modo_otimizacao == "TATICO" );
-		solution->setCenarioId( data->getCenarioId() );
-	}	
+		solution = nullptr;
+	}
+
+	solution = new ProblemSolution( data->parametros->modo_otimizacao == "TATICO" );
+	solution->setCenarioId( data->getCenarioId() );
 }

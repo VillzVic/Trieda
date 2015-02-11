@@ -1408,15 +1408,15 @@ void MIPUnico::setGurobiVarsPrior()
 void MIPUnico::makeLazyConstr()
 {
 	int nr = 0;
-	auto cit = cHashTatico.begin();
-	for (; cit != cHashTatico.end(); cit++)
-	{
-		if (cit->first.getType() != ConstraintMIPUnico::C_NR_DESLOC_PROF) continue;
-		
-		 if (lp->setLazyConstraint(cit->second, 2))
-			nr++;
-	}
-	lp->updateLP();
+	//auto cit = cHashTatico.begin();
+	//for (; cit != cHashTatico.end(); cit++)
+	//{
+	//	if (cit->first.getType() != ConstraintMIPUnico::C_NR_DESLOC_PROF) continue;
+	//	
+	//	 if (lp->setLazyConstraint(cit->second, 2))
+	//		nr++;
+	//}
+	//lp->updateLP();
 
 	stringstream ss;
 	ss << "\n" << nr << " lazy constraints\n";

@@ -47,6 +47,8 @@ public:
    GGroup< Disciplina *, LessPtr< Disciplina > > discIncompativeis;
    
    std::map< int, ConjuntoSala* > cjtSalasAssociados; // map[cjtSalaId] = cjtSala
+
+   void getUnidsAssociadas(std::unordered_set<int> &unids) const;
       
    // Guarda os professor reais que possuem habilitação para ministrar a disciplina.
    std::set<Professor*> profsHabilit;
