@@ -1,7 +1,7 @@
 #include "MIPUnicoParametros.h"
 
 #include "ParametrosPlanejamento.h"
-
+#include "CentroDados.h"
 
 // -----------------------------------------------------------------------------------------------
 
@@ -74,3 +74,42 @@ const bool MIPUnicoParametros::ignorarGapAlunoContraTurno_ = true;
 
 // Disciplinas
 const double MIPUnicoParametros::pesoDivCred = 0.01;
+
+
+std::string MIPUnicoParametros::getOutPutFileTypeToString(int type)
+{
+	std::string solName = "";
+
+	switch (type)
+	{
+		case (MIPUnicoParametros::MIP_GARANTE_SOL):
+			solName = "GaranteSol";
+			break;
+		case (MIPUnicoParametros::MIP_MAX_ATEND):
+			solName = "MaxAtend";
+			break;
+		case (MIPUnicoParametros::MIP_MIN_VIRT):
+			solName = "MinVirt";
+			break;
+		case (MIPUnicoParametros::MIP_MIN_TURMAS_COMPART):
+			solName = "MinTurmasCompart";
+			break;
+		case (MIPUnicoParametros::MIP_MIN_DESLOC_PROF):
+			solName = "MinDeslocProf";
+			break;
+		case (MIPUnicoParametros::MIP_MIN_FASE_DIA_PROF):
+			solName = "MinFaseDiaProf";
+			break;			
+		case (MIPUnicoParametros::MIP_MIN_GAP_PROF):
+			solName = "MinGapProf";
+			break;
+		case (MIPUnicoParametros::MIP_MARRETA):
+			solName = "Marreta";
+			break;
+		default:
+			if (type != MIPUnicoParametros::MIP_GENERAL)
+				CentroDados::printError("MIPUnicoParametros::getOutPutFileTypeToString()","Etapa de tipo nao identificado.");
+			break;
+	}
+	return solName;
+}

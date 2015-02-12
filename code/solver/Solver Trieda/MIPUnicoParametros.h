@@ -1,6 +1,7 @@
 #ifndef _MIPUNICO_PARAMETROS_H_
 #define _MIPUNICO_PARAMETROS_H_
 
+#include <string>
 
 class MIPUnicoParametros
 {
@@ -9,7 +10,6 @@ public:
 	~MIPUnicoParametros(void);
 
 	virtual void foo () = 0;	// abstract
-
 	
 	// Constantes e parâmetros
 
@@ -88,7 +88,9 @@ public:
 	static const int considerarMinCredDiaAluno;
 	static const bool ignorarGapAlunoContraTurno_;
 
-
+	
+    static std::string getOutPutFileTypeToString(int type);
+	
 };
 
 #endif

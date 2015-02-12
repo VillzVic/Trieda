@@ -44,8 +44,6 @@ private:
    void printCabecalho(int campusId, int prioridade, int r);
    void solveStrategy(int campusId, int prioridade, int r);
 	
-   static std::string getOutPutFileTypeToString(int type);
-
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
    bool haDemanda(Disciplina* const disc) const;
    bool haDemandaNaoAtendida(Disciplina* const disc);
@@ -62,6 +60,7 @@ private:
    bool alunoAlocDiscNoHorDia(Aluno* const aluno, Disciplina* const disc, int dia, DateTime dti) const;
    bool alunoAlocIncompNaDisc(Aluno* const aluno, Disciplina* const disc) const;
    bool profAlocNaTurma(Professor* const prof, Campus* const campus, Disciplina* const disciplina, int turma) const;
+   bool getProfAlocNaTurma(Professor* &professor, Campus* const campus, Disciplina* const disciplina, int turma) const;
 
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
@@ -285,6 +284,14 @@ private:
    /* 
 		****************************************************************************************************************
    */
+	
+	std::map<Disciplina*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Disciplina> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
+	
+   // Hash which associates the column number with the VariableTatico object.
+   VariableMIPUnicoHash vHashTatico;
+
+   // Hash which associates the row number with the ConstraintTatico object.
+   ConstraintMIPUnicoHash cHashTatico;
 
 	static int idCounter;
 
@@ -297,33 +304,24 @@ private:
 	   OPT_GUROBI* lp;
 	#endif
 	   
-	bool optimized_;
-    double *xSol_;
-   
-   // Hash which associates the column number with the VariableTatico object.
-   VariableMIPUnicoHash vHashTatico;
 
-   // Hash which associates the row number with the ConstraintTatico object.
-   ConstraintMIPUnicoHash cHashTatico;
+    bool *CARREGA_SOLUCAO;
+    bool USAR_EQUIVALENCIA;
+    int ITERACAO;
 
-
-   bool *CARREGA_SOLUCAO;
-   bool USAR_EQUIVALENCIA;
-   bool PERMITIR_NOVAS_TURMAS;
-   bool CRIAR_VARS_FIXADAS;
-   int ITERACAO;
-   bool PERMITIR_REALOCAR_ALUNO;
-
-   int etapa;
+    int etapa;
 
 	void updateOptLogFileName(int campusId, int prioridade, int r);
     void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 	bool violaInsercao( Aluno* aluno, GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > aulasX );
+
+	void imprimeGrades(int campusId, int prioridade);
 	void imprimeGradeHorAlunos( int campusId, int prioridade );
 	void imprimeGradeHorAlunosPorDemanda( int campusId, int prioridade );
 	void imprimeTurmaProf( int campusId, int prioridade );
 	void imprimeProfTurmas( int campusId, int prioridade );
 	void imprimeTodasVars(int p);
+
 	void confereCorretude( int campusId, int prioridade );
 	void corrigeNroTurmas( int prioridade, int campusId );
 	std::string getCorrigeNrTurmasFileName( int campusId, int prioridade, int r);
@@ -338,7 +336,6 @@ private:
 	void writeSolTxtByCode( int campusId, int prioridade, int r, int type, double *xSol, int fase );
 	bool getSolFilePt( int campusId, int prioridade, int r, int type, ifstream & fin, bool byCode=false );
 
-	void initCredsSala();
 	void setOptLogFile(std::ofstream &file, string name, bool clear=true);
 	void deleteVariablesSol();
 	void clearVariablesMaps();
@@ -379,6 +376,10 @@ private:
 	void fixaVariaveisProfNaoImportanteZero(double * const xS);
 	void liberaVariaveisProfNaoImportanteZero(double * const xS);
 	void fixaVariaveisProfImportanteAtend(double * const xS);
+
+	int getTimeLimit(int fase);
+	int getTimeLimitNoImprov(int fase);
+	int polishAndOptimize( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS, int fase );
 
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	void zeraObjSolucao(int &nBdsObj, int* idxN);
@@ -457,21 +458,28 @@ private:
 	int addConstrDivCred(int campusId);
 	int copyInitialSolutionDivCred();
 		
-	std::set< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
-		
-	unordered_map< Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> > > solAlocProfTurma_;
-	unordered_map< Campus*, unordered_map< Disciplina*, unordered_map< int, unordered_set<Professor*> > > > solAlocTurmaProf_;	
-	unordered_map<Aluno*, unordered_map<Disciplina*, std::pair<int, unordered_map<int, set<DateTime>> >>> solAlocAlunoDiscTurmaDiaDti_;
-	unordered_map<Aluno*, unordered_map<int, set<DateTime>>> solAlocAlunoDiaDti_;
-		
-	std::map<Disciplina*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Disciplina> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
-		
+
    /* 
-		****************************************************************************************************************
+		*******************************************************************************************
+											SOLUTION
    */
 	
+	bool optimized_;
+    double *xSol_;
+   
+	std::set< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
+		
+	unordered_map<Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> >> solAlocProfTurma_;
+	unordered_map<Campus*, unordered_map< Disciplina*, unordered_map<int, Professor*> >> solAlocTurmaProf_;	
+	unordered_map<Aluno*, unordered_map<Disciplina*, std::pair<int, unordered_map<int, set<DateTime>> >>> solAlocAlunoDiscTurmaDiaDti_;
+	unordered_map<Aluno*, unordered_map<int, set<DateTime>>> solAlocAlunoDiaDti_;
+			
 	ProblemSolution * const probSolInicial;
-
+	
+   /* 
+		*******************************************************************************************
+   */
+	
 
 	// log file name
 	string optLogFileName;

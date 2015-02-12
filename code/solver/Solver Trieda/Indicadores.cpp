@@ -9,6 +9,7 @@ using std::stringstream;
 
 // tatico columns sizes
 int cs[] = { 27, 12, 15, 13, 10, 12, 10, 10, 10 };
+int cse[] = { 27, 12, 15, 13, 10 };
 
 std::string Indicadores::indicadorName_("");
 bool Indicadores::printTaticoHeader_ = true;
@@ -86,6 +87,34 @@ void Indicadores::printTaticoIndicadores( std::string rowName, int totalAtendsSe
 		<< std::left << setw(cs[6]) << totalReceita
 		<< std::left << setw(cs[7]) << ( totalReceita != 0 ? (double) 100*totalCusto/totalReceita : 0 )
 		<< std::left << setw(cs[8]) << runtime;
+	Indicadores::printIndicador( row.str() );
+}
+
+void Indicadores::printEscolaHeader()
+{
+	printTaticoHeader_=false;
+
+	std::stringstream header;
+	header << std::left << setw(cse[0]) << "\n\nPhase"
+		<< std::left << setw(cse[1]) << "FO value"
+		<< std::left << setw(cse[2]) << "Gap"
+		<< std::left << setw(cse[3]) << "IsOptimal"
+		<< std::left << setw(cse[4]) << "Runtime\n\n";
+
+	Indicadores::printIndicador( header.str() );
+}
+
+void Indicadores::printEscolaIndicadores(std::string rowName, double value, double gap, bool opt, std::string runtime)
+{
+	if ( firstTimePrintTaticoHeader() )
+		printEscolaHeader();
+	
+	std::stringstream row;
+	row << std::endl << std::left << setw(cse[0]) << rowName
+		<< std::left << setw(cse[1]) << value
+		<< std::left << setw(cse[2]) << gap
+		<< std::left << setw(cse[3]) << opt
+		<< std::left << setw(cse[4]) << runtime;
 	Indicadores::printIndicador( row.str() );
 }
 

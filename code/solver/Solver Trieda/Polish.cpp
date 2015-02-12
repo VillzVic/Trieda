@@ -1763,7 +1763,8 @@ void Polish::initLogFile()
    stringstream ss;
    ss << originalLogFileName_ << "Polish" << id;
    
- //  std::string MIPUnico::getOutPutFileTypeToString(type_);
+   std::string phaseName = MIPUnicoParametros::getOutPutFileTypeToString(phase_);
+   ss << phaseName;
 
    setOptLogFile(polishFile_,ss.str());
 }

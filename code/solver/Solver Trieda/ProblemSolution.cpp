@@ -565,10 +565,6 @@ void ProblemSolution::getMapsDaSolucao(
 							int profId = it_At_Hor_Aula->getProfessorId();
 							bool profVirtual = it_At_Hor_Aula->profVirtual();
 
-							// Não trato alocação com prof virtual
-							if ( profVirtual )
-								continue;
-
 							#pragma region Procura o objeto Professor
 							Professor *profReal = nullptr;
 							if ( !profVirtual )
@@ -659,7 +655,7 @@ void ProblemSolution::getMapsDaSolucao(
 
 								(*ptCpSol)[discReal][turma][dia].insert(horAula->getInicio());
 
-								(*ptSalaSolTurma)[discReal][turma].first = profReal;																
+								(*ptSalaSolTurma)[discReal][turma].first = profReal;	// se for virtual, prof é null!															
 								auto ptTurmaSol = & (*ptSalaSolTurma)[discReal][turma];
 
 								ITERA_GGROUP_N_PT( itAlDem, *alDemAtend, int )

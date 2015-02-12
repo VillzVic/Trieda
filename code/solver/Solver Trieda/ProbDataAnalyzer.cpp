@@ -391,8 +391,8 @@ void ProbDataAnalyzer::getCompartilhProfUnid(
 	std::unordered_map<Professor*, std::unordered_map<Professor*, std::unordered_set<int>>> parProfUnidsComuns;
 	calculaUnidsComumParProf(mapUnidIdProfs, parProfUnidsComuns);
 
-	printGraphviz(parUnidProfsComuns);
-	printGraphviz(parProfUnidsComuns);
+	printGraphviz(mapUnidIdProfs,parUnidProfsComuns);
+	//printGraphviz(parProfUnidsComuns);
 }
 
 void ProbDataAnalyzer::getMapProfUnids(
@@ -539,7 +539,16 @@ int ProbDataAnalyzer::getMaxNrProfsComuns(
 	return maximum;
 }
 
+int ProbDataAnalyzer::getNrProfsNaUnid(
+	std::unordered_map<int, std::unordered_set<Professor*>> const & mapUnidIdProfs, int unidId)
+{
+	auto finderU1 = mapUnidIdProfs.find(unidId);
+	if (finderU1 == mapUnidIdProfs.end()) return 0;
+	return finderU1->second.size();
+}
+
 void ProbDataAnalyzer::printGraphviz(
+	std::unordered_map<int, std::unordered_set<Professor*>> const & mapUnidIdProfs,
 	std::unordered_map<int, std::unordered_map<int, std::unordered_set<Professor*>>> const &parUnidProfsComuns)
 {
 	stringstream sName;
@@ -550,6 +559,8 @@ void ProbDataAnalyzer::printGraphviz(
 	std::ofstream out(sName.str(),ios::out);
 	if (!out) return;
 	
+	bool const digraph=true;
+
 	int maxNrProfs = getMaxNrProfsComuns(parUnidProfsComuns);
 
 	out << "graph G {";
@@ -558,19 +569,29 @@ void ProbDataAnalyzer::printGraphviz(
 	{
 		int const unid1 = itUnid1->first;
 
+		int const totalProfsU1 = getNrProfsNaUnid(mapUnidIdProfs,unid1);
+
 		for (auto itUnid2 = itUnid1->second.cbegin();
 			itUnid2 != itUnid1->second.cend(); itUnid2++)
 		{
 			int const unid2 = itUnid2->first;
+			int const nrProfs = itUnid2->second.size();
+			int max = 0;
 
-			if (unid1 >= unid2) continue; // relacao <--> nao repete
-
-			out << std::endl << "u" << unid1 << " -- " << "u" << unid2;
-		
-			int nrProfs = itUnid2->second.size();
+			if (!digraph)
+			{
+				if (unid1 >= unid2) continue; // relacao <--> nao repete
+				out << std::endl << "u" << unid1 << " -- " << "u" << unid2;
+				max = maxNrProfs;
+			}
+			else
+			{
+				out << std::endl << "u" << unid1 << " -> " << "u" << unid2;
+				max = totalProfsU1;
+			}
 
 			out << " [ label = \"" << nrProfs << "\""
-				<< " color=\"" << COLOR[getColorIdx(maxNrProfs,nrProfs)] << "\" ];";
+				<< " color=\"" << COLOR[getColorIdx(max,nrProfs)] << "\" ];";
 		}
 	}
 	out << std::endl << "}";

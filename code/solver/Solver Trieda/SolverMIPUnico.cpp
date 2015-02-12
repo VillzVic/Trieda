@@ -473,23 +473,22 @@ void SolverMIPUnico::relacionaAlunosDemandas()
       quantidadeAlunosAtendidosDemanda[ demanda ] += at_oferta->getQuantidade();
    }
 
+
    // Preenchendo alunosDemanda com cada demanda atendida de cada aluno
-	ITERA_GGROUP_LESSPTR( it_alunosDemanda, problemData->alunosDemanda, AlunoDemanda )
+	auto itCp = solTurmaAlunosAloc_.cbegin();
+	for (; itCp != solTurmaAlunosAloc_.cend(); itCp++)
 	{
-		AlunoDemanda * aluno_demanda = ( *it_alunosDemanda );
-
-		Disciplina * disc = aluno_demanda->demanda->disciplina;
-		int alunoId = aluno_demanda->getAlunoId();
-
-		Aluno* a = problemData->retornaAluno( alunoId );
-
-		GGroup< Trio<int, int, Disciplina*> > campusTurmaDiscAluno = problemData->mapAluno_CampusTurmaDisc[a];
-		for ( GGroup< Trio<int, int, Disciplina*> >::iterator it_at_aluno = campusTurmaDiscAluno.begin();
-				it_at_aluno != campusTurmaDiscAluno.end(); it_at_aluno++ )
+		auto itDisc = itCp->second.cbegin();
+		for (; itDisc != itCp->second.cend(); itDisc++)
 		{
-			if ( (*it_at_aluno).third->getId() == disc->getId() )
+			auto itTurma = itDisc->second.cbegin();
+			for (; itTurma != itDisc->second.cend(); itTurma++)
 			{
-				this->problemSolution->alunosDemanda->add( aluno_demanda );
+				for (auto itAlDem = itTurma->second.cbegin(); 
+					itAlDem != itTurma->second.cend(); itAlDem++)
+				{
+					problemSolution->alunosDemanda->add( *itAlDem );
+				}
 			}
 		}
 	}

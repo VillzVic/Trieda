@@ -88,7 +88,10 @@ public:
 		std::unordered_map<Professor*, std::unordered_map<Professor*, std::unordered_set<int>>> &parProfUnidsComuns);
    static int getMaxNrProfsComuns(
 		std::unordered_map<int, std::unordered_map<int, std::unordered_set<Professor*>>> const &parUnidProfsComuns);
+   static int getNrProfsNaUnid(
+		std::unordered_map<int, std::unordered_set<Professor*>> const & mapUnidIdProfs, int unidId);
    static void printGraphviz(
+	   std::unordered_map<int, std::unordered_set<Professor*>> const & mapUnidIdProfs,
 		std::unordered_map<int, std::unordered_map<int, std::unordered_set<Professor*>>> const &parUnidProfsComuns);
    static void printGraphviz(
 		std::unordered_map<Professor*, std::unordered_map<Professor*, std::unordered_set<int>>> const &parProfUnidsComuns);

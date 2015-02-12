@@ -30,10 +30,13 @@ public:
 	/*
 	*	Inicializa o arquivo de saída com eventual cabeçalho/identificacao.
 	*/
-	static void printTaticoHeader();
+	static void printTaticoHeader();	
 	static void printTaticoIndicadores( std::string rowName, int totalAtendsSemDivPT_P1, int totalAtendsSemDivPT_P2, int totalCreditos, 
 		int totalCreditosPagos, int totalTurmas, int totalCusto, int totalReceita, std::string runtime );
-	
+
+	static void printEscolaHeader();
+	static void printEscolaIndicadores(std::string rowName, double value, double gap, bool opt, std::string runtime);
+
 
 	/*
 	*	Retorna o nome do arquivo de saída
