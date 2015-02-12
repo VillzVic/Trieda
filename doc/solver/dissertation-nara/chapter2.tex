@@ -165,6 +165,14 @@ The main role of the concept of shift is to define at which time slots a student
 
 
 %%%%%%%%%%%
+% Session of a day
+\paragraph{Session of a day}
+\label{defsession}
+
+Sessions of the day are the commonly known concept for Morning, Afternoon or Night. The concept of sessions of day is necessary only to assist in obtaining compact timetables for professors. 
+
+
+%%%%%%%%%%%
 \paragraph{Course}
 \label{defcourse}
 
@@ -429,7 +437,7 @@ INF332 (4 credits) & 2 & 2 & & & & & \\
 
 The first $3$ rules are said to be general, while the fourth is a specific rule. The first rule says that 4-credits courses should be split into lessons of $2$ credits each along $2$ weekdays preferably non-consecutive. Similarly, 6-credits courses should be split into lessons of $2$ credits each along $3$ weekdays; or into lessons of $3$ credits each along $2$ weekdays. At last, the course $INF332$ should be split into $2$ days, preferably consecutive, and each day with 2-credits lessons.
 
-Credits split rules are optional, but when present they are hard constraints in the sense of number of split days and number of credits per day. The way days alternate is violable. If there is a course with $m$ credits but no m-credits split rule, then m-credits course split is free.
+If there is a course with $m$ credits but no m-credits split rule, then m-credits course split is free. Credits split rules are then optional, but when present they are hard constraints.
 
 Whenever there is a specific credit split rule for a course, it must be respected, even if other generic split rules exist for the same number of credits.
 

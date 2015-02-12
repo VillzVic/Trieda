@@ -226,7 +226,8 @@ Next subsections introduce the notation used in the mathematical model, which in
 \item $D$ - Set of courses. Elements of $D$ are called $d$.
 \item $Dm$ - Set of courses for which lessons are shareable between different classes, that is, lessons can be \textit{merged}. Elements of $D$ are called $d$.
 \item $D_{a}$ - Set of courses required by student $a$.
-\item $H_{t}$ - Set of time slots of day $t$. Elements of $H_{t}$ are called $h$.
+\item $H$ - Set of time slots. Elements of $H$ are called $h$.
+\item $H_{f}$ - Set of time slots of session of day $f$. Elements are called $h$.
 \item $I_{d}$ - Set of sections of a course $d$. Elements of $I_{d}$ are called $i$.
 \item $O$ - Set of majors offers. Elements of $O$ are called $oft$.
 \item $U$ - Set of blocks. Elements of $U$ are called $u$.
@@ -267,8 +268,6 @@ Next subsections introduce the notation used in the mathematical model, which in
 \item $z_{i,d}$ - binary variable, indicates if section $i$ of course $d$ is offered. 
 \item $o_{i,d,s}$ - binary variable, indicates if section $i$ of course $d$ is offered at classroom $s$. 
 \item $fd_{d,a}$ - binary slack variable, indicates if student $a$ has his request for course $d$ not satisfied.
-\item $fkm_{d,i,t}$ - integer slack variable for inferior limit for credits split rule constraint. 
-\item $fkp_{d,i,t}$ - integer slack variable for superior limit for credits split rule constraint.
 \item $m_{d,i,k}$ - binary variable, indicates if a credits split rule $k$ was chosen for section $i$ of course $d$.
 \item $s_{i,d,a}$ - binary variable, indicates if student $a$ is assigned to section $i$ of course $d$.
 \item $k_{p,i,d,u,h,t}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ at block $u$ at time slot $h$ and day $t$.
@@ -300,9 +299,6 @@ $$
 \begin{array}{rl}
    \mbox{MIN} &
 			\sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
-      \\
-      &
-       + \sum\limits_{d \in D} \sum\limits_{t \in T} \sum\limits_{i \in I_{d}} (fkp_{d,i,k} + fkm_{d,i,k})
       \\
       &
        + \sum\limits_{a \in A} \sum\limits_{t \in T} fcad_{a,t}
@@ -414,7 +410,7 @@ nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limi
 
 \subsubsection{Try to ensure the expected number of credits for each student per day}
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hi} \sum\limits_{hf} nCreds_{d} \cdot v_{a,i,d,s,t,hi,hf} + fcad_{a,t} \ge MinCredsDia_{a,t} \nonumber \qquad
+\sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{s\in S} \sum\limits_{hi\in H} \sum\limits_{hf\in H} nCreds_{d} \cdot v_{a,i,d,s,t,hi,hf} + fcad_{a,t} \ge MinCredsDia_{a,t} \nonumber \qquad
 \forall a \in A \quad
 \forall t \in T
 \end{eqnarray}
@@ -427,7 +423,7 @@ nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limi
 \paragraph{Credits split rule for each course section}
 \begin{eqnarray}
 \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}}
- NCH_{d,hi,hf} \cdot x_{i,d,u,s,hi,hf,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fkp_{d,i,t} - fkm_{d,i,t} \nonumber \qquad 
+ NCH_{d,hi,hf} \cdot x_{i,d,u,s,hi,hf,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} \nonumber \qquad 
 \\
 \forall d \in D \quad
 \forall i \in I_{d} \quad
@@ -472,14 +468,14 @@ end_{a,t,h} = \sum\limits_{v} v_{a,t,hi} - \sum\limits_{h'\ge h} end_{a,t,h'} + 
 
 \paragraph{Uniqueness of student's last class of the day}
 \begin{eqnarray}
-\sum\limits_{h} end_{a,t,h} = at_{a,t} \nonumber \qquad
+\sum\limits_{h\in H} end_{a,t,h} = at_{a,t} \nonumber \qquad
 \forall a \in A \quad
 \forall t \in T
 \end{eqnarray}
 
 \paragraph{Uniqueness of student's first class of the day}
 \begin{eqnarray}
-\sum\limits_{h} begin_{a,t,h} = at_{a,t} \nonumber \qquad
+\sum\limits_{h\in H} begin_{a,t,h} = at_{a,t} \nonumber \qquad
 \forall a \in A \quad
 \forall t \in T
 \end{eqnarray}
@@ -489,8 +485,8 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 
 \paragraph{Prohibits gap in student timetable}
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi+,hf} = 
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{s} \sum\limits_{hf} v_{a,i,d,s,t,hi-,hf} - end_{a,t,hi-} + begin_{a,t,hi+} \nonumber \qquad
+\sum\limits_{i\in I_{d}} \sum\limits_{d\in D} \sum\limits_{s\in S} \sum\limits_{hf\in H} v_{a,i,d,s,t,hi+,hf} = 
+\sum\limits_{i\in I_{d}} \sum\limits_{d\in D} \sum\limits_{s\in S} \sum\limits_{hf\in H} v_{a,i,d,s,t,hi-,hf} - end_{a,t,hi-} + begin_{a,t,hi+} \nonumber \qquad
 \\
 \forall a \in A \quad
 \forall t \in T \quad
@@ -506,7 +502,7 @@ The following constraints, responsible for assigning professors to classes, invo
 
 \paragraph{No overlapping in professor's timetable}
 \begin{eqnarray}
-\sum_{ \substack {dti,dtf \in Dt \\ dt \in [dti,dtf)} } \sum\limits_{i} \sum\limits_{d} \sum\limits_{u \in U} k_{p,i,d,u,t,dti,dtf} \le 1 \nonumber \qquad
+\sum_{ \substack {dti,dtf \in Dt \\ dt \in [dti,dtf)} } \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{u \in U} k_{p,i,d,u,t,dti,dtf} \le 1 \nonumber \qquad
 \forall p \in P \cup \{pv\} \quad
 \forall t \in T \quad
 \forall dt \in Dt
@@ -536,7 +532,7 @@ The following constraints, responsible for assigning professors to classes, invo
 	
 \paragraph{Assigns professor to class (sets variable y)}
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{t} \sum\limits_{h} k_{p,i,d,u,t,h} = nCreds_{d} \cdot y_{p,i,d} \nonumber \qquad
+\sum\limits_{u \in U} \sum\limits_{t \in T} \sum\limits_{h \in H} k_{p,i,d,u,t,h} = nCreds_{d} \cdot y_{p,i,d} \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D \quad
 \forall p \in P \cup \{pv\}
@@ -560,7 +556,7 @@ Here quality constraints related to displacement of real professors along the we
 
 \paragraph{Ensures enough time for displacement between blocks in the same day}
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} k_{p,i,d,u1,t,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u2,t,h2} \le 1 \nonumber
+\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} k_{p,i,d,u1,t,h1} + \sum\limits_{i\in I_{d}} \sum\limits_{d \in D} k_{p,i,d,u2,t,h2} \le 1 \nonumber
 \\
 \forall p \in P \quad
 \forall t \in T \quad
@@ -573,7 +569,7 @@ Here quality constraints related to displacement of real professors along the we
 
 \paragraph{Ensures the maximum of 1 displacement for each professor in the same day}
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} k_{p,i,d,u1,t,h1} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u2,t,h2} + \sum\limits_{i} \sum\limits_{d} k_{p,i,d,u3,t,h3} \le 2 \nonumber
+\sum\limits_{i\in I_{d}} \sum\limits_{d \in D} k_{p,i,d,u1,t,h1} + \sum\limits_{i\in I_{d}} \sum\limits_{d \in D} k_{p,i,d,u2,t,h2} + \sum\limits_{i\in I_{d}} \sum\limits_{d \in D} k_{p,i,d,u3,t,h3} \le 2 \nonumber
 \\
 \forall p \in P \quad
 \forall t \in T \quad
@@ -585,7 +581,7 @@ Here quality constraints related to displacement of real professors along the we
 
 \paragraph{Identifies if the professor teaches in a block at the day}
 \begin{eqnarray}
-\sum\limits_{i} \sum\limits_{d} \sum\limits_{h} k_{p,i,d,u,t,h} \le MaxNrCredsDay_{p,t} \cdot uu_{p,t,u} \nonumber \qquad
+\sum\limits_{i\in I_{d}} \sum\limits_{d \in D} \sum\limits_{h \in H} k_{p,i,d,u,t,h} \le MaxNrCredsDay_{p,t} \cdot uu_{p,t,u} \nonumber \qquad
 \\
 \forall p \in P \quad
 \forall t \in T \quad

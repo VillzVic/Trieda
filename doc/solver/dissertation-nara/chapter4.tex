@@ -184,29 +184,10 @@ Where the additional constraint restricts the solution space to the minimum real
 
 Where the additional constraint restricts the solution space to the minimum amount of gaps in real professors' timetable achieved at previous step.
 
-%%%%%
-\item{Minimizing usage of further slack variables}
-
-\begin{align*}
-   \mbox{g6 = MIN  } \sum\limits_{d \in D} \sum\limits_{t \in T} \sum\limits_{i \in I_{d}} (fkp_{d,i,k} + fkm_{d,i,k})
-	\\
-	\sum\limits_{a \in A}\sum\limits_{d \in D} fd_{d,a} \le g1
-	\\
-	\sum\limits_{i \in I_{d}} \sum\limits_{d \in Dm} z_{i,d} \le g2
-	\\
-	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2} \le g3
-	\\
-	\sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f} \le g4
-	\\
-	 \sum\limits_{p \in P} \sum\limits_{t \in T} ( pt_{p,t} + \sum\limits_{f \in F} ptf_{p,t,f}) \le g5
-\end{align*}
-
-Where the additional constraint restricts the solution space to the minimum number of days and sessions of days used in real professors' timetable achieved at previous step.
-
 \end{enumerate}
 
 
-The final solution for the real resource phase is the one with cost equal to $g6$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
+The final solution for the real resource phase is the one with cost equal to $g5$, achieved at last stage. If an optimal solution is achieved for all steps, then at the end of the last step we guarantee that the final solution found is the best one with respect to the order of priorities.
 
 \begin{figure}[H]
 \includegraphics[scale=0.6]{figures/goalProgSpace.png}
@@ -229,10 +210,6 @@ $$
 \begin{array}{rl}
    \mbox{MIN} &
 			\lambda \cdot \sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
-      \\
-      &
-      + \omega \cdot \sum\limits_{d \in D} 
-\sum\limits_{t \in T} \sum\limits_{i \in I_{d}} (fkp_{d,i,k} + fkm_{d,i,k})
       \\
       &
       + \epsilon \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
