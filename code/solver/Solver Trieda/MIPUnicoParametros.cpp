@@ -76,7 +76,7 @@ const bool MIPUnicoParametros::ignorarGapAlunoContraTurno_ = true;
 const double MIPUnicoParametros::pesoDivCred = 0.01;
 
 
-std::string MIPUnicoParametros::getOutPutFileTypeToString(int type)
+std::string MIPUnicoParametros::getGoalToString(int type)
 {
 	std::string solName = "";
 
@@ -108,7 +108,7 @@ std::string MIPUnicoParametros::getOutPutFileTypeToString(int type)
 			break;
 		default:
 			if (type != MIPUnicoParametros::MIP_GENERAL)
-				CentroDados::printError("MIPUnicoParametros::getOutPutFileTypeToString()","Etapa de tipo nao identificado.");
+				CentroDados::printError("MIPUnicoParametros::getGoalToString()","Etapa de tipo nao identificado.");
 			break;
 	}
 	return solName;

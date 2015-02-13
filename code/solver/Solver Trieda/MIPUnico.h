@@ -11,7 +11,9 @@
 #include "Solver.h"
 #include "VariableMIPUnico.h"
 #include "ConstraintMIPUnico.h"
+#include "SolutionMIPUnico.h"
 
+class GoalStatus;
 class ProblemData;
 class ProblemSolution;
 
@@ -46,21 +48,7 @@ private:
 	
    void preencheMapDiscAlunosDemanda( int campusId, int P, int r );
    bool haDemanda(Disciplina* const disc) const;
-   bool haDemandaNaoAtendida(Disciplina* const disc);
-   bool demandaTodaAtendidaPorReal(Disciplina* const disc);
-   bool existeTurmaAtendida(Campus* const campus, Disciplina* const disc, int turma) const;
-   bool haDemandaPossivelNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
-   bool permitirAlunoDiscNoHorDia(AlunoDemanda* const alDem, int dia, DateTime dti) const;
-   bool permitirAlunoNaTurma(Aluno* const aluno, Disciplina* const disciplina, int turma) const;
-   bool permitirTurma(Campus* const campus, Disciplina* const disciplina, int turma);
    bool haProfHabilitNoDiaHor(Disciplina* const disc, int dia, HorarioAula* const ha);
-   bool alunoHorVazioNoDia(Aluno* const aluno, int dia, DateTime dti) const;
-   bool alunoAlocNaTurma(Aluno* const aluno, Disciplina* const disciplina, int turma) const;
-   int alunoAlocDisc(Aluno* const aluno, Disciplina* const disc) const;
-   bool alunoAlocDiscNoHorDia(Aluno* const aluno, Disciplina* const disc, int dia, DateTime dti) const;
-   bool alunoAlocIncompNaDisc(Aluno* const aluno, Disciplina* const disc) const;
-   bool profAlocNaTurma(Professor* const prof, Campus* const campus, Disciplina* const disciplina, int turma) const;
-   bool getProfAlocNaTurma(Professor* &professor, Campus* const campus, Disciplina* const disciplina, int turma) const;
 
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
@@ -285,7 +273,7 @@ private:
 		****************************************************************************************************************
    */
 	
-	std::map<Disciplina*, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>>, LessPtr<Disciplina> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
+	std::map<Disciplina*, std::set<AlunoDemanda*>> mapDiscAlunosDemanda; // para auxilio na criação das variaveis
 	
    // Hash which associates the column number with the VariableTatico object.
    VariableMIPUnicoHash vHashTatico;
@@ -318,8 +306,6 @@ private:
 	void imprimeGrades(int campusId, int prioridade);
 	void imprimeGradeHorAlunos( int campusId, int prioridade );
 	void imprimeGradeHorAlunosPorDemanda( int campusId, int prioridade );
-	void imprimeTurmaProf( int campusId, int prioridade );
-	void imprimeProfTurmas( int campusId, int prioridade );
 	void imprimeTodasVars(int p);
 
 	void confereCorretude( int campusId, int prioridade );
@@ -379,6 +365,7 @@ private:
 
 	int getTimeLimit(int fase);
 	int getTimeLimitNoImprov(int fase);
+	GoalStatus* getAddNewGoal(int fase);
 	int polishAndOptimize( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS, int fase );
 
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
@@ -445,8 +432,7 @@ private:
 	bool priorDisc(Disciplina* const disciplina, bool ouMenor);
 	bool ehMarreta(Disciplina *disciplina);
 
-	void getXSol(double *xS);
-	bool optimize();
+	bool optimize(GoalStatus* const goal, double* const xS);
 	bool isOptimized(OPTSTAT status);
 	bool infeasible(OPTSTAT status);
 	bool checkFeasibility(OPTSTAT status);
@@ -459,27 +445,20 @@ private:
 	int copyInitialSolutionDivCred();
 		
 
+
    /* 
 		*******************************************************************************************
-											SOLUTION
    */
-	
+
 	bool optimized_;
     double *xSol_;
-   
+
 	std::set< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
 		
-	unordered_map<Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> >> solAlocProfTurma_;
-	unordered_map<Campus*, unordered_map< Disciplina*, unordered_map<int, Professor*> >> solAlocTurmaProf_;	
-	unordered_map<Aluno*, unordered_map<Disciplina*, std::pair<int, unordered_map<int, set<DateTime>> >>> solAlocAlunoDiscTurmaDiaDti_;
-	unordered_map<Aluno*, unordered_map<int, set<DateTime>>> solAlocAlunoDiaDti_;
-			
 	ProblemSolution * const probSolInicial;
 	
-   /* 
-		*******************************************************************************************
-   */
-	
+	SolutionMIPUnico * solMIPUnico_;
+
 
 	// log file name
 	string optLogFileName;

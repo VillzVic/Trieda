@@ -9,6 +9,8 @@
 
 #include "CentroDados.h"
 #include "MIPUnicoParametros.h"
+#include "GoalStatus.h"
+#include "Utilidade.h"
 
 using std::stringstream;
 
@@ -16,7 +18,8 @@ bool SO_USAR_WORST_CLUSTER=true;
 
 
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
-	: lp_(lp), vHashTatico_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0), maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9),
+	: lp_(lp), vHashTatico_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0),
+	maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9), gapAtual_(999999999999.9),
 	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(8),
 	fixarVarsTatProf_(true), perc_(0), tempoIni_(80),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
@@ -365,7 +368,7 @@ void Polish::addCluster(set<Unidade*> const & cluster)
 // ---------------------------------------------------------------------------------------------
 // Main polish
 
-bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemMelhora)
+bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemMelhora, GoalStatus* const goal)
 {
 	bool polishing=true;
     
@@ -402,12 +405,12 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 
 		optimize();
 
-		double objN, gap;
-		getSolution(objN, gap);
+		double objN;
+		getSolution(objN);
 	  
 		setMelhora(objN);
 
-		updatePercAndTimeIter(objN, gap);
+		updatePercAndTimeIter(objN);
 
 		checkTimeWithoutImprov(objN);
 	  
@@ -419,6 +422,8 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 		
 		i++;
     }
+
+	updateGoal(goal);
 	
 	stringstream ss;
 	ss << "\n\nNumber of performed iterations: " << i;
@@ -430,6 +435,18 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	restoreOriginalLogFile();
 	
     return polishing;
+}
+
+void Polish::updateGoal(GoalStatus* const goal)
+{
+	goal->setValue(objAtual_);
+	goal->setGap(gapAtual_);
+
+	double tempoAtual = getTotalElapsedTime();
+	goal->setRunTime(tempoAtual);
+	
+	bool opt = (allFree() && optimal());
+	goal->setIsOpt(opt);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -476,7 +493,7 @@ bool Polish::ehMarreta(VariableMIPUnico v)
 {
 	if ( v.getType() == VariableMIPUnico::V_ALUNO_CREDITOS )
 	{
-		if (CentroDados::stringContem(v.getDisciplina()->getCodigo(), "EDF"))
+		if (Utilidade::stringContem(v.getDisciplina()->getCodigo(), "EDF"))
 			return true;
 		if (v.getAluno()->ehFormando() || v.getAluno()->possuiEquivForcada())
 			return true;
@@ -1141,15 +1158,15 @@ void Polish::optimize()
 	checkFeasibility();
 }
 
-void Polish::getSolution(double &objN, double &gap)
+void Polish::getSolution(double &objN)
 {
     objN = objAtual_;
-	gap = 100;
+	gapAtual_ = 100;
 	if (optimized())
 	{
 		lp_->getX( xSol_ );
 		objN = lp_->getObjVal();
-		gap = lp_->getMIPGap() * 100;
+		gapAtual_ = lp_->getMIPGap() * 100;
 	}
 }
 
@@ -1168,7 +1185,7 @@ void Polish::setMelhora( double objN )
 	}
 }
 
-void Polish::updatePercAndTimeIter(double objN, double gap)
+void Polish::updatePercAndTimeIter(double objN)
 {			  	  	  
 	  if (allFree())
 	  {
@@ -1183,13 +1200,13 @@ void Polish::updatePercAndTimeIter(double objN, double gap)
 
 	  updateIterSemMelhora();
 	  
-	  if (optimal() || gap <= 1.0)		// TINY GAP
+	  if (optimal() || gapAtual_ <= 1.0)		// TINY GAP
 	  {
 		  updatePercAndTimeIterSmallGap( objN );
 	  }
-	  else									// BIG GAP
+	  else								// BIG GAP
 	  {
-		  updatePercAndTimeIterBigGap( objN );
+		  updatePercAndTimeIterBigGap();
 	  }
 	  
 	  if (allFree())
@@ -1207,7 +1224,7 @@ void Polish::updatePercAndTimeIterSmallGap( double objN )
 	adjustTime();
 }
 
-void Polish::updatePercAndTimeIterBigGap( double objN )
+void Polish::updatePercAndTimeIterBigGap()
 {
 	if (!melhorou_)
 	{
@@ -1705,18 +1722,19 @@ bool Polish::needsPolish()
 	
 	optimize();
 	
-	double objN, gap;
-	getSolution(objN, gap);
+	double objN;
+	getSolution(objN);
 
 	if (optimized())
 	{
-		if ( gap < 2.0 )
+		updateObj(objN);
+		if ( gapAtual_ < 1.0 )
 		{
-			cout << "\n\nPolish desnecessario, gap =" << gap << std::endl;
+			cout << "\n\nPolish desnecessario, gap =" << gapAtual_ << std::endl;
 			if(polishFile_)
 			{
 				stringstream ss;
-				ss <<"Polish desnecessario, gap = " << gap << std::endl;
+				ss <<"Polish desnecessario, gap = " << gapAtual_ << std::endl;
 				printLog(ss.str());
 			}
 			return false;
@@ -1763,7 +1781,7 @@ void Polish::initLogFile()
    stringstream ss;
    ss << originalLogFileName_ << "Polish" << id;
    
-   std::string phaseName = MIPUnicoParametros::getOutPutFileTypeToString(phase_);
+   std::string phaseName = MIPUnicoParametros::getGoalToString(phase_);
    ss << phaseName;
 
    setOptLogFile(polishFile_,ss.str());
@@ -1912,8 +1930,8 @@ void Polish::doLocalBranch()
 
 	optimizeLB();
 		
-	double objN, gap;
-	getSolution(objN, gap);
+	double objN;
+	getSolution(objN);
 
 	melhorouLB_ = fabs(objN - bestObjLB_) > 0.0001;
 

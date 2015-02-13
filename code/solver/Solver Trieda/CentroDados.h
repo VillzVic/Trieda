@@ -2,6 +2,7 @@
 #define _CENTRO_DADOS_
 
 #include <fstream>
+#include <string>
 #include <ctime>
 #include "CPUTimerWin.h"
 
@@ -104,7 +105,8 @@ public:
 	// fase do dia (1=Manha, 2=Tarde, 3=Noite)
 	static int getFaseDoDia(DateTime dt);
 
-	static bool stringContem(std::string str, std::string contem);
+    static std::string inputIdToString();
+    static std::string getInputFileName();
 
 
 

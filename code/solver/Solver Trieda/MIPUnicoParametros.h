@@ -89,7 +89,7 @@ public:
 	static const bool ignorarGapAlunoContraTurno_;
 
 	
-    static std::string getOutPutFileTypeToString(int type);
+    static std::string getGoalToString(int type);
 	
 };
 

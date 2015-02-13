@@ -283,9 +283,6 @@
     <ClCompile Include="HeurNuno\TurmasIncHorarioDia.cpp">
       <Filter>HeuristicaNuno\Útil</Filter>
     </ClCompile>
-    <ClCompile Include="Util.cpp">
-      <Filter>Util</Filter>
-    </ClCompile>
     <ClCompile Include="Polish.cpp">
       <Filter>Puro MIP</Filter>
     </ClCompile>
@@ -339,6 +336,15 @@
     </ClCompile>
     <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
       <Filter>OPT_LP</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalStatus.cpp">
+      <Filter>Puro MIP</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilidade.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="SolutionMIPUnico.cpp">
+      <Filter>Puro MIP\MIP-Unico</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -636,9 +642,6 @@
     <ClInclude Include="HeurNuno\Node.h">
       <Filter>HeuristicaNuno</Filter>
     </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>Util</Filter>
-    </ClInclude>
     <ClInclude Include="Polish.h">
       <Filter>Puro MIP</Filter>
     </ClInclude>
@@ -689,6 +692,15 @@
     </ClInclude>
     <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
       <Filter>OPT_LP</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalStatus.h">
+      <Filter>Puro MIP</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilidade.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionMIPUnico.h">
+      <Filter>Puro MIP\MIP-Unico</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

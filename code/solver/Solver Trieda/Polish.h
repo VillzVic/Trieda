@@ -20,6 +20,7 @@
 #include "opt_gurobi.h"
 #endif
 
+class GoalStatus;
 
 class Polish
 {
@@ -33,7 +34,7 @@ public:
 
 	~Polish();
 
-	bool polish(double* xSol, double maxTime, int percIni, double maxTempoSemMelhora);
+	bool polish(double* xSol, double maxTime, int percIni, double maxTempoSemMelhora, GoalStatus* const goal);
 
 	enum MODULE
 	{
@@ -44,6 +45,8 @@ public:
 private:
 	
 	// ---------------------------------------------------------------------------------
+	
+	void updateGoal(GoalStatus* const goal);
 
 	// Initializing
 	void init();
@@ -125,11 +128,11 @@ private:
 	bool thereIsFreeUnid();
 
 	void optimize();
-	void getSolution(double &objN, double &gap);
+	void getSolution(double &objN);
 	void setMelhora(double objN);
-	void updatePercAndTimeIter(double objN, double gap);
+	void updatePercAndTimeIter(double objN);
 	void updatePercAndTimeIterSmallGap(double objN);
-	void updatePercAndTimeIterBigGap(double objN);
+	void updatePercAndTimeIterBigGap();
 	void adjustPercOrUnid();
 	void decreasePercOrFreeUnid(int percToSubtract);
 	void decreasePerc(int percToSubtract);
@@ -216,6 +219,7 @@ private:
 	   int perc_;
 	   int status_;
 	   double objAtual_;
+	   double gapAtual_;
 	   bool melhorou_;
 	   double melhora_;
 	   double runtime_;

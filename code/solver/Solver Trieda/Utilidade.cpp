@@ -1,15 +1,25 @@
-#include "Util.h"
+#include "Utilidade.h"
 
 #include "HorarioAula.h"
 #include "DateTime.h"
 #include "Calendario.h"
 #include "Aula.h"
 
+#include <sstream>
+
+using std::string;
+using std::stringstream;
+
+Utilidade::Utilidade()
+{}
+
+Utilidade::~Utilidade()
+{}
 
 // Considering 2 different lessons which begin at h1 and has nCreds1 and at h2 and has nCreds2,
 // returns at "fim1" the end of the chronologically first one
 // and at "inicio2" the beginning of the chronologically second one.
-void getFim1Inicio2(HorarioAula *const h1, int nCreds1, HorarioAula *const h2, int nCreds2, DateTime &fim1, DateTime &inicio2)
+void Utilidade::getFim1Inicio2(HorarioAula *const h1, int nCreds1, HorarioAula *const h2, int nCreds2, DateTime &fim1, DateTime &inicio2)
 {					
 	DateTime dti1 = h1->getInicio();
 	DateTime dti2 = h2->getInicio();
@@ -32,14 +42,14 @@ void getFim1Inicio2(HorarioAula *const h1, int nCreds1, HorarioAula *const h2, i
 }
 
 // Returns the minutes between dti and dt2
-int minutosIntervalo( DateTime dt1, DateTime dt2 )
+int Utilidade::minutosIntervalo( DateTime dt1, DateTime dt2 )
 {
    DateTime back = ( dt1 - dt2 );
    int minutes = ( back.getHour() * 60 + back.getMinute() );
    return minutes;
 }
 
-bool sobrepoem(Aula * const aula1, HorarioAula* const h1, Aula * const aula2, HorarioAula* const h2)
+bool Utilidade::sobrepoem(Aula * const aula1, HorarioAula* const h1, Aula * const aula2, HorarioAula* const h2)
 {
 	int nCreds1 = aula1->getTotalCreditos();
 	int nCreds2 = aula2->getTotalCreditos();					
@@ -55,7 +65,7 @@ bool sobrepoem(Aula * const aula1, HorarioAula* const h1, Aula * const aula2, Ho
 	return false;
 }
 
-bool sobrepoem(int nCreds1, HorarioAula* const h1, int nCreds2, HorarioAula* const h2)
+bool Utilidade::sobrepoem(int nCreds1, HorarioAula* const h1, int nCreds2, HorarioAula* const h2)
 {
 	DateTime fim1;
 	DateTime inicio2;					
@@ -67,4 +77,21 @@ bool sobrepoem(int nCreds1, HorarioAula* const h1, int nCreds2, HorarioAula* con
 	}
 
 	return false;
+}
+
+std::string Utilidade::getTimeStr(int timeSec)
+{
+   int hour = (int) (timeSec / 3600);				// h
+   int min = (int) ((int) timeSec % 3600) / 60;		// min
+   int sec = timeSec - (min*60 + hour*60*60);		// sec
+
+   std::stringstream runtime;
+   runtime << hour << "h" << min << "'" << sec << "''";
+   return runtime.str();
+}
+
+bool Utilidade::stringContem(std::string str, std::string contem)
+{
+	std::size_t found = str.find(contem);
+	return (found != std::string::npos); 
 }

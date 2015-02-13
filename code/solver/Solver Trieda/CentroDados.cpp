@@ -343,9 +343,12 @@ int CentroDados::getFaseDoDia(DateTime dt)
 	return problemData->getFaseDoDia(dt);
 }
 
-bool CentroDados::stringContem(std::string str, std::string contem)
+std::string CentroDados::inputIdToString()
 {
-	
-	std::size_t found = str.find(contem);
-	return (found != std::string::npos); 
+	return getProblemData()->inputIdToString();
+}
+
+std::string CentroDados::getInputFileName()
+{ 
+	return getProblemData()->getInputFileName();
 }

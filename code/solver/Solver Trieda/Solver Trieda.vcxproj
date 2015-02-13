@@ -700,6 +700,7 @@
     <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_lp.cpp" />
     <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp" />
     <ClCompile Include="Equivalencia.cpp" />
+    <ClCompile Include="GoalStatus.cpp" />
     <ClCompile Include="HeurNuno\AbridorTurmas.cpp" />
     <ClCompile Include="HeurNuno\AlunoHeur.cpp" />
     <ClCompile Include="HeurNuno\AulaHeur.cpp" />
@@ -773,6 +774,7 @@
     </ClCompile>
     <ClCompile Include="Professor.cpp" />
     <ClCompile Include="Sala.cpp" />
+    <ClCompile Include="SolutionMIPUnico.cpp" />
     <ClCompile Include="SolverMIPUnico.cpp" />
     <ClCompile Include="TipoContrato.cpp" />
     <ClCompile Include="TipoCurso.cpp" />
@@ -789,7 +791,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Utilidade.cpp" />
     <ClCompile Include="VariableMIPUnico.cpp" />
     <ClCompile Include="Aula.cpp" />
     <ClCompile Include="AtendimentoCampus.cpp" />
@@ -839,6 +841,7 @@
     <ClInclude Include="DivisaoCreditos.h" />
     <ClInclude Include="Equivalencia.h" />
     <ClInclude Include="Fixacao.h" />
+    <ClInclude Include="GoalStatus.h" />
     <ClInclude Include="HeurNuno\AbridorTurmas.h" />
     <ClInclude Include="HeurNuno\AlunoHeur.h" />
     <ClInclude Include="HeurNuno\AulaHeur.h" />
@@ -891,6 +894,7 @@
     <ClInclude Include="ProblemDataLoader.h" />
     <ClInclude Include="Professor.h" />
     <ClInclude Include="Sala.h" />
+    <ClInclude Include="SolutionMIPUnico.h" />
     <ClInclude Include="SolverMIPUnico.h" />
     <ClInclude Include="TipoContrato.h" />
     <ClInclude Include="TipoCurso.h" />
@@ -922,7 +926,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica64|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseHeuristica32|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Util.h" />
+    <ClInclude Include="Utilidade.h" />
     <ClInclude Include="VariableMIPUnico.h" />
     <ClInclude Include="Aula.h" />
   </ItemGroup>
