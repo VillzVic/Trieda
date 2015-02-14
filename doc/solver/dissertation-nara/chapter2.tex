@@ -46,6 +46,12 @@ Interaction between the user interface and the solver is made by XML files. Once
 A very common requirement in logistic and planning systems is to allow the user to make manual changes in a solution. TRIEDA allows user to manually create new classes or modify existing classes, as long the result does not violate basic and necessary operational constraints.
 
 
+\subsection{Initial solution}
+\label{subsec:initsolution}
+
+Another very common situation is that small modifications take place in problem data, resulting in a slightly different scenario. Most frequent changes in input data are related to professors availability, which have been shown to be quite fluctuating. Supposing one has a solution for an initial scenario, and some small and local changes take place in data, it seems senseless or a waste to generate a new solution from scratch, specially if scenario is big and solving it takes a long time. Bearing this in mind, a really useful functionality is to provide the solver with an initial feasible solution and the portion of such initial solution that should be fixed.
+
+
 \subsection{Non--satisfaction reasons}
 \label{subsec:reasons}
 
@@ -198,11 +204,11 @@ A \textit{curriculum} is the set of all courses token by a student at a specific
 \paragraph{Campus, Block and Classroom}
 \label{defclassroom}
 
-The basic physical structure of a university is formed by:
+The basic physical structure of a school consists of:
 \begin{itemize}
 \item \textit{Classroom}: room where classes can be held.
-\item \textit{Block}: set of classrooms, usually of the same building.
-\item \textit{Campus}: each campus has a set of blocks, besides other features.
+\item \textit{Block}: a block represents a school unit. Every block has a set of classrooms, between which displacement time is insignificant and is thus considered zero, a set of professors available for teaching in that block, and a set of students demands of that block. Usually each student has classes in only one block, but this is not a rule. Distinct blocks can share teaching staff resources, which makes it necessary to limit some assignments depending on the time necessary for the professor to move between blocks.
+\item \textit{Campus}: a campus is the higher-level structure of the problem and gathers all resources and demands information, such as blocks, professors and students requests.
 \end{itemize}
 
 
@@ -225,7 +231,7 @@ For instance, a set of $40$ students associated with the ``COMP-AFT'' offer dema
 \paragraph{Student--Demand}
 \label{defstdem}
 
-A student--demand is an individual request of a student for a course. It is made of a student and a demand.
+A student--demand is an individual request of a student for a course. It consists of a student and a demand.
 
 
 %%%%%%%%%%%

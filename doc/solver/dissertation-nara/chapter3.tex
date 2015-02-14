@@ -262,6 +262,8 @@ Next subsections introduce the notation used in the mathematical model, which in
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Variables}
 
+All possible variables used in the model are following described. The need of some of them depends on considering or not some constraints, in the sense that the more restrictions and requirements exist, the more auxiliary variables are need.
+
 \begin{itemize}
 \item $v_{a,i,d,s,t,hi,hf}$ - binary variable, indicates if student $a$ is assigned to a class of section $i$ of course $d$, at classroom $s$, from time slot $hi$ to time slot $hf$ of day $t$. 
 \item $x_{i,d,u,s,hi,hf,t}$ - binary variable, indicates if section $i$ of course $d$ is assigned to classroom $s$ from time slot $hi$ to time slot $hf$ of day $t$. 
@@ -295,28 +297,31 @@ Next subsections introduce the notation used in the mathematical model, which in
 
 
 \subsubsection{Objective function}
+
+The following general objective function includes all possible minimization goals, with their subjective weights to be decided according to the scenario or the user preferences. Further alternatives of how to handle disparate goals are discussed at section ~\ref{sec:goal}.
+
 $$
 \begin{array}{rl}
    \mbox{MIN} &
-			\sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
+			\lambda \cdot \sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
       \\
       &
-       + \sum\limits_{a \in A} \sum\limits_{t \in T} fcad_{a,t}
+       + \beta \cdot \sum\limits_{a \in A} \sum\limits_{t \in T} fcad_{a,t}
       \\
       &      
-      + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
+      + \epsilon \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} fpgap_{p,t,f}
 			\\
 			&
-			+ \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2}
+			+ \sigma \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{u1 \in U} \sum\limits_{u2 \in U} Time_{u1,u2} \cdot desloc_{p,t,u1,u2}
       \\
       &
-      + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} y_{pv,i,d}
+      + \gamma \cdot \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} y_{pv,i,d}
       \\
       &
-      + \sum\limits_{p \in P} \sum\limits_{t \in T} pt_{p,t}
+      + \alpha \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} pt_{p,t}
       \\
       &
-      + \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} ptf_{p,t,f}
+      + \alpha \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} \sum\limits_{f \in F} ptf_{p,t,f}
       
 \end{array}
 $$
@@ -350,7 +355,7 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 
 \subsubsection{Ensures single classroom per course section}
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s}  \leq  z_{i,d}  \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s} = z_{i,d}  \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \end{eqnarray}
@@ -442,6 +447,8 @@ nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limi
 % 				GAPS IN STUDENT'S TIMETABLE
 \subsubsection{Student's gaps prohibition}
 \label{constrStudentGap}
+
+Following, auxiliary variables necessary for preventing gaps in student's timetable are consistently set.
 
 \paragraph{Sets if student $a$ has classes at day $t$ (variable $at_{a,t}$)}
 \begin{eqnarray}

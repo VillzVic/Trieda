@@ -15,21 +15,27 @@ As a simple example, suppose that due to a lack of teaching resource a demand of
 
 Thus, splitting the problem into real and virtual resources phases is advised only when students' gaps constraints have not been included in the linear program. Fortunately, if student's available timetable fits exactly his courses demands, there is no need of such constraints!
 
+The second partition refers to professors priorities.
+
+Next subsections detail the problem partition supposing that students' gaps constraints are dispensable.
 
 %%%%%%%
 \subsection{Real teaching resource}
 
 As was indicated while introducing the concept of professor at section ~\ref{defprof}, professors might have different importance levels, which means that a professor can have his assignments prioritized over others. Such distinction emerged from practice, when analyzing some possible solutions to the timetabling problem of a Brazilian school. What happens is that, as discussed in section ~\ref{sec:accuracy}, actual timetabling for educational institutions is a political just as much as a scheduling problem. It might be acceptable if the timetable of a fresh professor of the school does not end up as compact as it would be desired, but it is unacceptable that timetable of an old professor of the school, considered as a loyal employee, does not respect a minimum and high quality level.
 
-Real teaching resources should then receive different treatment depending on their priorities.
+Real teaching resources should then receive different treatment depending on their priorities. The best approach depends on how much higher priority features can be sacrificed so that overall features are satisfied. Given that, we suggest 2 possible approaches:
 
-\paragraph{First Priority}
-
+\paragraph{Split}
+If professors priorities are strictly important, one should avoid as much as possible that lower-priority professors requirements interfere with higher ones, even if it implies that the overall solution has lower quality \textit{in some goal}.
+\begin{enumerate}
+\item \textbf{First Priority}
 We consider, as the first phase of the problem solving process, the solving of a linear program containing only real and first priority professors. This avoids that particularities and restrictions on lower-priority professors interfere with higher-priority professors assignments.
-
-\paragraph{Second Priority}
-
+\item \textbf{Second Priority}
 In the second phase of the problem solving process we solve a linear program containing only real professors, with all priority levels, but ensuring timetable quality for first priority professors reached at solution of the first phase.
+\end{enumerate}
+\paragraph{Merged}
+If professors priorities are not strictly important, the best may be to consider all real professors in a single phase, but with goal weights that vary according to professor priority. This means, for example, it may worth to not satisfy a request for a higher-priority professor whether it implies in satisfying some request for 2 lower-priority professors. Such approach is simpler and generally faster, but depends on subjective weights choices and can result in solutions that are harder to analyze.
 
 
 %%%%%%%
@@ -85,6 +91,7 @@ Then, what we aim is to satisfy the remaining demand using virtual teaching reso
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Goal programming}
+\label{sec:goal}
 
 Just as in any other kind of problem, the feasibility of a linear model for a timetabling problem depends utterly on input data set. In general, there is no guarantee that all demanded requirements can be satisfied with the specified available resources, even because usually there are several and conflicting objectives. Therefore, specially in a commercial solver, it is important to treat some idealistic hard constraints as highest priority soft constraints, otherwise the solver could frequently generate an infeasible model.
 
