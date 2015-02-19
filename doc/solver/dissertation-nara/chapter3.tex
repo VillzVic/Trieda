@@ -220,24 +220,32 @@ Next subsections introduce the notation used in the mathematical model, which in
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Sets}
 
+The basic sets used to describe the problem are:
+
 \begin{itemize}
-\item $Al$ - Set of students. Elements of $Al$ are called $a$.
-\item $C$ - Set of majors. Elements of $C$ are called $c$.
-\item $D$ - Set of courses. Elements of $D$ are called $d$.
-\item $Dm$ - Set of courses for which lessons are shareable between different classes, that is, lessons can be \textit{merged}. Elements of $D$ are called $d$.
-\item $D_{a}$ - Set of courses required by student $a$.
-\item $H$ - Set of time slots. Elements of $H$ are called $h$.
-\item $H_{f}$ - Set of time slots of session of day $f$. Elements are called $h$.
-\item $I_{d}$ - Set of sections of a course $d$. Elements of $I_{d}$ are called $i$.
-\item $O$ - Set of majors offers. Elements of $O$ are called $oft$.
-\item $U$ - Set of blocks. Elements of $U$ are called $u$.
-\item $S_{u}$ - Set of classrooms of block $u$. Elements of $S_{u}$ are called $s$.
-\item $T$ - Set of weekdays. Elements of $T$ are called $t$.
-\item $U$ - Set of blocks. Elements of $U$ are called $u$.
-\item $SL$ - Set of calenders. Elements of $SL$ are called $sl$.
+\item $A$ - Set of all students. Elements of $A$ are called $a$.
+\item $D$ - Set of all courses. Elements of $D$ are called $d$.
+\item $I$ - Set of all course sections. Elements of $I$ are called $i$.
+\item $H$ - Set of all time slots. Elements of $H$ are called $h$.
+\item $Dt$ - Set of times of a day. Possible times are initial or ending moments of time slots. Elements of $Dt$ are generally called $dt$, or $dti$ for initial moments and $dtf$ for ending moments.
+\item $F$ - Set of all sessions of a day. Elements of $F$ are called $f$.
+\item $T$ - Set of all weekdays. Elements of $T$ are called $t$.
+\item $U$ - Set of all blocks. Elements of $U$ are called $u$.
+\item $S$ - Set of all classrooms. Elements of $S$ are called $s$.
 \item $P$ - Set of all professors. Elements of $P$ are called $p$.
-\item $P_{prior}$ - Set of all professors with some priority $prior$. Elements of $P$ are called $p$.
 \end{itemize}
+
+From the previous basic sets we define the following derived sets:
+
+\begin{itemize}
+\item $Dm \subseteq D$ - Set of courses for which lessons are shareable between different classes, that is, lessons can be \textit{merged}.
+\item $D_{a} \subseteq D$ - Set of courses required by student $a \in A$.
+\item $H_{f} \subseteq H$ - Set of time slots of session of day $f \in F$.
+\item $I_{d} \subseteq I$ - Set of sections of a course $d \in D$.
+\item $S_{u} \subseteq S$ - Set of classrooms of block $u \in U$.
+\item $P_{prior} \subseteq P$ - Set of all professors with priority level $prior$.
+\end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Model Data}
@@ -266,13 +274,13 @@ All possible variables used in the model are following described. The need of so
 
 \begin{itemize}
 \item $v_{a,i,d,s,t,hi,hf}$ - binary variable, indicates if student $a$ is assigned to a class of section $i$ of course $d$, at classroom $s$, from time slot $hi$ to time slot $hf$ of day $t$. 
-\item $x_{i,d,u,s,hi,hf,t}$ - binary variable, indicates if section $i$ of course $d$ is assigned to classroom $s$ from time slot $hi$ to time slot $hf$ of day $t$. 
+\item $x_{i,d,u,s,t,hi,hf}$ - binary variable, indicates if section $i$ of course $d$ is assigned to classroom $s$ from time slot $hi$ to time slot $hf$ of day $t$. 
 \item $z_{i,d}$ - binary variable, indicates if section $i$ of course $d$ is offered. 
 \item $o_{i,d,s}$ - binary variable, indicates if section $i$ of course $d$ is offered at classroom $s$. 
 \item $fd_{d,a}$ - binary slack variable, indicates if student $a$ has his request for course $d$ not satisfied.
 \item $m_{d,i,k}$ - binary variable, indicates if a credits split rule $k$ was chosen for section $i$ of course $d$.
 \item $s_{i,d,a}$ - binary variable, indicates if student $a$ is assigned to section $i$ of course $d$.
-\item $k_{p,i,d,u,h,t}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ at block $u$ at time slot $h$ and day $t$.
+\item $k_{p,i,d,u,t,h}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ at block $u$ at day $t$ and time slot $h$.
 \item $y_{p,i,d}$ - binary variable, indicates if professor $p$ is assigned to section $i$ of course $d$.
 \item $hip_{p,t,f}$ - integer variable, indicates the time in minutes of the first time slot assigned to professor $p$ at session $f$ of day $t$. For example, if the first class assigned to $p$ on $t=Monday$ and $f=morning$ starts at 9:30 am, then $hip_{p,t,f}=9\cdot 60 + 30 = 570$.
 \item $hfp_{p,t,f}$ - integer variable, indicates the time in minutes of the end of the last time slot assigned to professor $p$ at session $f$ of day $t$.
@@ -303,7 +311,7 @@ The following general objective function includes all possible minimization goal
 $$
 \begin{array}{rl}
    \mbox{MIN} &
-			\lambda \cdot \sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
+			\lambda \cdot \sum\limits_{a \in A}\sum\limits_{d \in D_{a}} \cdot fd_{d,a}
       \\
       &
        + \beta \cdot \sum\limits_{a \in A} \sum\limits_{t \in T} fcad_{a,t}
@@ -335,7 +343,7 @@ $$
 \begin{eqnarray}
 \sum\limits_{a \in A} v_{a,i,d,s,t,hi,hf}  \le Cap_{s} \cdot x_{i,d,s,t,hi,hf} \nonumber \qquad 
 \\
-\forall d \in D \quad
+\forall d \in D_{a} \quad
 \forall i \in I_{d} \quad 
 \forall s \in S \quad
 \forall t \in T \quad 
@@ -373,7 +381,7 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 \subsubsection{Tries to satisfy each student requirement}
 \begin{eqnarray}
 \sum\limits_{i \in I_{d}} s_{i,d,a} + fd_{d,a} = 1  \nonumber \qquad 
-\forall a \in Al \quad
+\forall a \in A \quad
 \forall d \in D_{a}
 \end{eqnarray}
 
@@ -403,7 +411,7 @@ nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limi
 
 \subsubsection{Single lesson for each course section per day}
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,s,hi,hf,t}  \leq  1  \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} x_{i,d,s,t,hi,hf}  \leq  1  \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall t \in T 
@@ -428,7 +436,7 @@ nCreds_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limi
 \paragraph{Credits split rule for each course section}
 \begin{eqnarray}
 \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}}
- NCH_{d,hi,hf} \cdot x_{i,d,u,s,hi,hf,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} \nonumber \qquad 
+ NCH_{d,hi,hf} \cdot x_{i,d,u,s,t,hi,hf} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} \nonumber \qquad 
 \\
 \forall d \in D \quad
 \forall i \in I_{d} \quad
@@ -452,25 +460,27 @@ Following, auxiliary variables necessary for preventing gaps in student's timeta
 
 \paragraph{Sets if student $a$ has classes at day $t$ (variable $at_{a,t}$)}
 \begin{eqnarray}
-M \cdot at_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,hi,hf,t} \nonumber \qquad 
+M \cdot at_{a,t} \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}} v_{a,i,d,u,s,t,hi,hf} \nonumber \qquad 
 \forall a \in A \quad
 \forall t \in T
 \end{eqnarray}
 
 \paragraph{Sets beginning time of classes for student $a$ at day $t$ (variable $begin_{a,t,h}$)}
 \begin{eqnarray}
-begin_{a,t,h} = \sum\limits_{v} v_{a,t,hi} - \sum\limits_{h'\le h} begin_{a,t,h'} + \sum\limits_{h'\le h} end_{a,t,h'} \nonumber \qquad
+begin_{a,t,h} = \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hf \in H_{d}} v_{a,i,d,u,s,t,h,hf} - \sum\limits_{h'\le h} begin_{a,t,h'} + \sum\limits_{h'\le h} end_{a,t,h'} \nonumber
+\\
 \forall a \in A \quad
 \forall t \in T \quad
-\forall h \in H
+\forall h \in H \nonumber
 \end{eqnarray}
 
 \paragraph{Sets ending time of classes for student $a$ at day $t$ (variable $end_{a,t,h}$)}
 \begin{eqnarray}
-end_{a,t,h} = \sum\limits_{v} v_{a,t,hi} - \sum\limits_{h'\ge h} end_{a,t,h'} + \sum\limits_{h'\ge h} begin_{a,t,h'} \nonumber \qquad
+end_{a,t,h} = \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} v_{a,i,d,u,s,t,hi,h} - \sum\limits_{h'\ge h} end_{a,t,h'} + \sum\limits_{h'\ge h} begin_{a,t,h'} \nonumber
+\\
 \forall a \in A \quad
 \forall t \in T \quad
-\forall h \in H
+\forall h \in H \nonumber
 \end{eqnarray}
 
 \paragraph{Uniqueness of student's last class of the day}
@@ -492,8 +502,8 @@ Next, gaps in student timetable are prevented. Unlike professors similar restric
 
 \paragraph{Prohibits gap in student timetable}
 \begin{eqnarray}
-\sum\limits_{i\in I_{d}} \sum\limits_{d\in D} \sum\limits_{s\in S} \sum\limits_{hf\in H} v_{a,i,d,s,t,hi+,hf} = 
-\sum\limits_{i\in I_{d}} \sum\limits_{d\in D} \sum\limits_{s\in S} \sum\limits_{hf\in H} v_{a,i,d,s,t,hi-,hf} - end_{a,t,hi-} + begin_{a,t,hi+} \nonumber \qquad
+\sum\limits_{i\in I_{d}} \sum\limits_{d\in D_{a}} \sum\limits_{s\in S} \sum\limits_{hf\in H} v_{a,i,d,s,t,hi+,hf} = 
+\sum\limits_{i\in I_{d}} \sum\limits_{d\in D_{a}} \sum\limits_{s\in S} \sum\limits_{hf\in H} v_{a,i,d,s,t,hi-,hf} - end_{a,t,hi-} + begin_{a,t,hi+} \nonumber \qquad
 \\
 \forall a \in A \quad
 \forall t \in T \quad
