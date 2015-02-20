@@ -4,7 +4,9 @@
 // -----------------------------------------------------------------------------------------------
 
 GoalStatus::GoalStatus(int id, std::string name)
-	: id_(id), rowName_(name), value_(-1), gap_(-1), opt_(false), runtime_(-1)
+	: id_(id), rowName_(name), value_(-1), gap_(-1), opt_(false), runtime_(-1), 
+	percFixedFinal_(0), stopCriteria_(GoalStatus::Unknown),
+	objValueAtend_(-1), objValueNrTurmas_(-1), objValueDesloc_(-1), objValueFasesDias_(-1), objValueGap_(-1)
 {
 }
 
@@ -23,6 +25,10 @@ bool GoalStatus::operator != (GoalStatus const & right) const
 {
 	return !(*this == right);
 }
+
+	
+// --------------------------------------------------------------
+// General
 
 int GoalStatus::getId() const
 {
@@ -68,4 +74,91 @@ void GoalStatus::setRunTime(int v)
 int GoalStatus::getRunTime() const
 {
 	return runtime_;
+}
+
+void GoalStatus::setPercFixedFinal(int v)
+{
+	percFixedFinal_ = v;
+}
+int GoalStatus::getPercFixedFinal() const
+{
+	return percFixedFinal_;
+}
+
+void GoalStatus::setStopCriteria(int v)
+{
+	stopCriteria_ = v;
+}
+int GoalStatus::getStopCriteria() const
+{
+	return stopCriteria_;
+}
+std::string GoalStatus::getStopCriteriaStr() const
+{
+	switch(stopCriteria_)
+	{
+	case GoalStatus::Unknown:
+		return "Unknown";
+	case GoalStatus::TimeLimit:
+		return "TimeLimit";
+	case GoalStatus::TimeNoImprov:
+		return "TimeNoImprov";
+	case GoalStatus::AllFree:
+		return "AllFree";
+	case GoalStatus::GlobalOpt:
+		return "GlobalOpt";		
+	case GoalStatus::NoNeedOfPolish:
+		return "NoNeedOfPolish";
+	default:
+		return "Error";
+	}	
+}
+
+	
+// --------------------------------------------------------------
+// Value for each goal
+	
+void GoalStatus::setValueAtend(double v)
+{
+	objValueAtend_ = v;
+}
+double GoalStatus::getValueAtend() const
+{
+	return objValueAtend_;
+}
+
+void GoalStatus::setValueNrTurmas(double v)
+{
+	objValueNrTurmas_ = v;
+}
+double GoalStatus::getValueNrTurmas() const
+{
+	return objValueNrTurmas_;
+}
+
+void GoalStatus::setValueDesloc(double v)
+{
+	objValueDesloc_ = v;
+}	
+double GoalStatus::getValueDesloc() const
+{
+	return objValueDesloc_;
+}
+
+void GoalStatus::setValueFasesDias(double v)
+{
+	objValueFasesDias_ = v;
+}
+double GoalStatus::getValueFasesDias() const
+{
+	return objValueFasesDias_;
+}
+	
+void GoalStatus::setValueGap(double v)
+{
+	objValueGap_ = v;
+}
+double GoalStatus::getValueGap() const
+{
+	return objValueGap_;
 }

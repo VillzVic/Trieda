@@ -50,7 +50,9 @@ public:
 			unordered_map<int, set<DateTime>> >>> & solCpDiscTurmaDiaDti );
 
     void constroiMapsDaSolucao();
+	void preencheQuantChProfs();
     void clearMapsDaSolucao();
+	void gatherIndicadores();
 
     map< Sala*, vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > >, LessPtr<Sala> >
 	   procuraCombinacaoLivreEmSalas( Disciplina *disciplina, TurnoIES* turno, int campusId );
@@ -149,29 +151,31 @@ private:
 	// -------------------------------
 	// Map de aulas da solução por turma
 	map< int /*campusId*/, map< Disciplina*, map< int /*turma*/, std::pair< std::map<int /*dia*/, Aula*>,
-		GGroup<int /*alDem*/> > >, LessPtr<Disciplina> > > mapSolDiscTurmaDiaAula;
+		GGroup<int /*alDem*/> > >, LessPtr<Disciplina> > > mapSolDiscTurmaDiaAula_;
 
 	map< int /*campusId*/, map< Disciplina*, map< int /*turma*/, GGroup<Curso*> >, 
-		LessPtr<Disciplina> > > mapSolTurmaCursos;
+		LessPtr<Disciplina> > > mapSolTurmaCursos_;
 
 	// -------------------------------
 	// Maps de aulas da solução por aluno
 		
-	map< Aluno*, AlunoSolution*, LessPtr<Aluno> > mapAlunoSolution;
+	map< Aluno*, AlunoSolution*, LessPtr<Aluno> > mapAlunoSolution_;
 	
 	// -------------------------------
 	// Map de aulas da solução por sala
 	map< Sala*, map<int /*dia*/, std::map<DateTime /*dti*/, std::map<DateTime /*dtf*/, 
-		GGroup<HorarioAula*, LessPtr<HorarioAula>> > > >, LessPtr<Sala> > mapSalaDiaHorariosVagos;
+		GGroup<HorarioAula*, LessPtr<HorarioAula>> > > >, LessPtr<Sala> > mapSalaDiaHorariosVagos_;
 
 	// -------------------------------
 	// Maps de aulas da solução com professor
 	map< int /*campusId*/, map< Disciplina*, map< int /*turma*/, map< ProfessorVirtualOutput*, map< int /*dia*/, Aula* >, 
-		LessPtr<ProfessorVirtualOutput> > >, LessPtr<Disciplina> > > mapSolTurmaProfVirtualDiaAula;
-			
-	std::map< Professor*, std::map<int/*dia*/, vector<HorarioDia*>>, LessPtr<Professor> > mapSolProfRealDiaHorarios;
+		LessPtr<ProfessorVirtualOutput> > >, LessPtr<Disciplina> > > mapSolTurmaProfVirtualDiaAula_;
+	
+	map<int/*campusId*/, map<Disciplina*, map<int/*turma*/, int/*pvId*/>>> mapCpDiscTurmaPVId_;
 
-	std::map<int/*idProf*/, int/*qtd total de creditos alocados na semana*/> quantChProfs;
+	std::map< Professor*, std::map<int/*dia*/, vector<HorarioDia*>>, LessPtr<Professor> > mapSolProfRealDiaHorarios_;
+
+	std::map<int/*idProf*/, pair<int/*carga horaria alocada*/, int /*nro creds alocados*/>> quantChProfs_;
 
    // ler solucao de um arquivo
    static ProblemSolution* lerTexto(char* const buffer);

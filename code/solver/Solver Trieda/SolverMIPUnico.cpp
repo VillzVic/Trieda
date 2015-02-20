@@ -21,6 +21,8 @@
 #include "ProblemSolution.h"
 #include "AlocacaoProfVirtual.h"
 #include "Indicadores.h"
+#include "MIPUnicoParametros.h"
+#include "VariableMIPUnico.h"
 
 using namespace std;
 
@@ -38,7 +40,7 @@ using namespace std;
 SolverMIPUnico::SolverMIPUnico(ProblemData * aProblemData, ProblemSolution * _ProblemSolution,
   ProblemDataLoader * _problemDataLoader, ProblemSolution * const aProbSolInic)
    : Solver(aProblemData), 
-   problemSolution(_ProblemSolution), problemDataLoader(_problemDataLoader), probSolInicial(aProbSolInic)
+   problemSolution(_ProblemSolution), problemDataLoader(_problemDataLoader), probSolInicial_(aProbSolInic)
 {   
    try
    {
@@ -330,7 +332,7 @@ void SolverMIPUnico::solveCampusP1Escola()
 	
 	int NOVAS_TURMAS = 1;
 	bool EQUIV=true;
-	MIPUnico * solverEscola = new MIPUnico( this->problemData, probSolInicial,
+	MIPUnico * solverEscola = new MIPUnico( this->problemData, probSolInicial_,
 											&this->CARREGA_SOLUCAO, EQUIV, NOVAS_TURMAS );
 	solverEscola->solveMainEscola( this->campusAtualId, P, r, solMipUnico_ );
 	delete solverEscola;	
@@ -353,7 +355,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 		{
 			// Só inserção de alunos
 			MIPUnico * solverEscola = new MIPUnico( 
-				this->problemData, probSolInicial, &this->CARREGA_SOLUCAO, true, 0 );
+				this->problemData, probSolInicial_, &this->CARREGA_SOLUCAO, true, 0 );
 			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}
@@ -362,7 +364,7 @@ void SolverMIPUnico::solveCampusP2Escola()
 		{
 			// Permite novas turmas
 			MIPUnico * solverEscola = new MIPUnico( 
-				this->problemData, probSolInicial, &this->CARREGA_SOLUCAO, true, 3 );
+				this->problemData, probSolInicial_, &this->CARREGA_SOLUCAO, true, 3 );
 			solverEscola->solveMainEscola( this->campusAtualId, P, 1, solMipUnico_ );
 			delete solverEscola;
 		}
@@ -1729,7 +1731,7 @@ bool SolverMIPUnico::existeProfVirt(Campus* const cp, Disciplina* const d, int c
 void SolverMIPUnico::contabilizaGapProfReal_()
 {
 	mapSolutionProfReal_();
-	countGapProfReal_();
+	countGapDeslocProfReal_();
 }
 
 void SolverMIPUnico::mapSolutionProfReal_()
@@ -1784,22 +1786,19 @@ void SolverMIPUnico::mapSolutionProfReal_()
 	}	
 }
 
-void SolverMIPUnico::countGapProfReal_()
+void SolverMIPUnico::countGapDeslocProfReal_()
 {
 	int nrTotalGap = 0;
 	int nrGapIgnoraDesloc = 0;
-
+	int nrDeslocLongos = 0;
+	
 	for(auto itProf = solProfRealAloc_.cbegin(); itProf != solProfRealAloc_.cend(); ++itProf)
 	{
 		Professor* const professor = itProf->first;					
 		if (professor->eVirtual()) continue;		
 
-	//	cout << "\nProf" << professor->getId();
-
 		for(auto itDia = itProf->second.cbegin(); itDia != itProf->second.cend(); ++itDia)
 		{
-		//	cout << "\n\tDia" << itDia->first;
-
 			for(auto itDti = itDia->second.cbegin(); *itDti != *itDia->second.crbegin(); ++itDti)
 			{
 				DateTime dti = itDti->first;
@@ -1812,16 +1811,23 @@ void SolverMIPUnico::countGapProfReal_()
 				Unidade* const nextUnid = itNextDti->second.second;
 				int nextFaseDoDia = CentroDados::getFaseDoDia(nextDti);				
 				
-			//	cout << "\n\t\tDtf " << dtf.hourMinToStr() << "   NextDti " << nextDti.hourMinToStr();
+				if (unid != nextUnid) // check deslocamento longo no dia
+				{
+					Campus *nextCp = problemData->refCampus[nextUnid->getIdCampus()];
+					Campus *cp = problemData->refCampus[unid->getIdCampus()];
+					int tempoDesloc = problemData->calculaTempoEntreCampusUnidades(nextCp, cp, nextUnid, unid);
+					if (tempoDesloc > MIPUnicoParametros::maxTempoDeslocCurto_)
+						nrDeslocLongos++;
+				}
 
+				// Se é fase diferente, não é considerado gap
 				if (faseDoDia != nextFaseDoDia) continue;
 
 				int difMin = (nextDti - dtf).getDateMinutes();
 				int nr = difMin / 50;
-
-			//	cout << "\n\t\tDif = " << difMin << "   nr = " << nr;
-
+							
 				nrTotalGap += nr;
+				
 				if (unid == nextUnid)
 					nrGapIgnoraDesloc += nr;
 			}
@@ -1831,6 +1837,7 @@ void SolverMIPUnico::countGapProfReal_()
 	Indicadores::printSeparator(1);
 	Indicadores::printIndicador("\nNumero total de gaps de professores: ", nrTotalGap);
 	Indicadores::printIndicador("\nNumero total de gaps de professores ignorando deslocamentos: ", nrGapIgnoraDesloc);
+	Indicadores::printIndicador("\nNumero total de deslocamentos longos de professores: ", nrDeslocLongos);
 }
 
 void SolverMIPUnico::getAulas(Campus* const cp, Disciplina* const d, int const turma,

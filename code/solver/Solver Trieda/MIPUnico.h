@@ -11,22 +11,19 @@
 #include "Solver.h"
 #include "VariableMIPUnico.h"
 #include "ConstraintMIPUnico.h"
-#include "SolutionMIPUnico.h"
+
 
 class GoalStatus;
 class ProblemData;
 class ProblemSolution;
-
-
-#define PRINT_cria_variaveis
-#define PRINT_cria_restricoes
+class SolutionMIPUnico;
 
 class MIPUnico : public Solver
 {
 public:
 	
 	MIPUnico( ProblemData * aProblemData, 
-		ProblemSolution * const probSolInicial,
+		ProblemSolution * const aProbSolInicial,
 			bool *endCARREGA_SOLUCAO, bool equiv, int permitirNovasTurmas );
 
 	virtual ~MIPUnico();
@@ -37,9 +34,9 @@ public:
 	void getSolution( ProblemSolution * );
 	
 	void solveMainEscola( int campusId, int prioridade, int r, 
-		std::set<VariableMIPUnico *, LessPtr<VariableMIPUnico>> &solMipUnico);
+		std::set<VariableMIPUnico*> &solMipUnico);
 
-	void copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico);
+	void copyFinalSolution(std::set<VariableMIPUnico*> &solMipUnico);
 
 private:
 
@@ -287,8 +284,7 @@ private:
    
 	#ifdef SOLVER_CPLEX 
 	   OPT_CPLEX *lp;
-	#endif
-	#ifdef SOLVER_GUROBI 
+	#elif SOLVER_GUROBI 
 	   OPT_GUROBI* lp;
 	#endif
 	   
@@ -301,14 +297,13 @@ private:
 
 	void updateOptLogFileName(int campusId, int prioridade, int r);
     void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
-	bool violaInsercao( Aluno* aluno, GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > aulasX );
 
+	void imprimeGoals();
 	void imprimeGrades(int campusId, int prioridade);
 	void imprimeGradeHorAlunos( int campusId, int prioridade );
 	void imprimeGradeHorAlunosPorDemanda( int campusId, int prioridade );
 	void imprimeTodasVars(int p);
 
-	void confereCorretude( int campusId, int prioridade );
 	void corrigeNroTurmas( int prioridade, int campusId );
 	std::string getCorrigeNrTurmasFileName( int campusId, int prioridade, int r);
 	std::string getTaticoLpFileName( int campusId, int prioridade, int r );
@@ -330,6 +325,7 @@ private:
 	void resetXSol();
 	void addSolAlocProfTurma(Professor* const p, Campus * const cp, Disciplina * const d, int turma);
 	void addSolAlocAlunoTurma(Aluno* const a, Disciplina * const d, int turma, int dia, DateTime dti);
+	void addVarSol(VariableMIPUnico* const v);
 	void carregaSolucaoInicialFixada();
 	void carregaVariaveisSolucao( int campusAtualId, int prioridade, int r );
 	bool carregaVariaveisSolucaoFromFile(int campusId, int prioridade, int r, int type);
@@ -367,6 +363,7 @@ private:
 	int getTimeLimitNoImprov(int fase);
 	GoalStatus* getAddNewGoal(int fase);
 	int polishAndOptimize( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS, int fase );
+	void updateAllGoals(GoalStatus* const goal);
 
 	int solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS );
 	void zeraObjSolucao(int &nBdsObj, int* idxN);
@@ -415,6 +412,10 @@ private:
 	bool fixaSolAtendida(double* const xS);
 
 	double getCoefObjMaxAtend(VariableMIPUnico v);
+	double getCoefObjMinTurmas(VariableMIPUnico v);
+	double getCoefObjMinDeslocProf(VariableMIPUnico v);
+	double getCoefObjMinFasesDoDiaProf(VariableMIPUnico v);
+	double getCoefObjMinGapProf(VariableMIPUnico v);
 
 	bool chgObjMaxAtendMarreta();
 	bool chgObjMaxAtend();
@@ -427,7 +428,7 @@ private:
 	void printAtendsVirtuais(double* const xS);
 
 	bool priorProfLivre();
-	bool considerarPriorProf();
+	bool considerarDivisaoPriorProf();
 	bool priorProf(Professor* const professor, bool ouMenor=false);
 	bool priorDisc(Disciplina* const disciplina, bool ouMenor);
 	bool ehMarreta(Disciplina *disciplina);
@@ -453,9 +454,7 @@ private:
 	bool optimized_;
     double *xSol_;
 
-	std::set< VariableMIPUnico *, LessPtr<VariableMIPUnico> > solVarsTatInt;
-		
-	ProblemSolution * const probSolInicial;
+	ProblemSolution * const probSolInicial_;
 	
 	SolutionMIPUnico * solMIPUnico_;
 

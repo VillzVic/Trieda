@@ -172,7 +172,7 @@ vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > >
 	vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > > mapCombinacoesLivres;
 
 	std::map<int /*dia*/, std::map<DateTime /*dti*/, std::map<DateTime /*dtf*/, GGroup<HorarioAula*, LessPtr<HorarioAula> > > > > 
-		*map_dia_horarios_vagos = &mapSalaDiaHorariosVagos[sala];
+		*map_dia_horarios_vagos = &mapSalaDiaHorariosVagos_[sala];
 
 	if ( debug )
 	{
@@ -442,8 +442,8 @@ void ProblemSolution::procuraOpcoesSemChoque(
 int ProblemSolution::retornaTurmaDiscAluno( AlunoDemanda* alunoDemanda, bool teorica )
 {
 	int turma = -1;
-	auto itAluno = this->mapAlunoSolution.find( alunoDemanda->getAluno() );
-	if ( itAluno != this->mapAlunoSolution.end() )
+	auto itAluno = this->mapAlunoSolution_.find( alunoDemanda->getAluno() );
+	if ( itAluno != this->mapAlunoSolution_.end() )
 	{
 		AlunoSolution *alSol = itAluno->second;
 		turma = alSol->getTurma( alunoDemanda, teorica );
@@ -455,8 +455,8 @@ bool ProblemSolution::getAlunoSolution( Aluno* aluno, AlunoSolution *& alunoSolu
 {
 	bool ehNovo = false;
 
-	auto itFinderAluno = mapAlunoSolution.find(aluno);
-	if ( itFinderAluno != mapAlunoSolution.end() )
+	auto itFinderAluno = mapAlunoSolution_.find(aluno);
+	if ( itFinderAluno != mapAlunoSolution_.end() )
 	{
 		alunoSolution = itFinderAluno->second;
 	}
@@ -473,8 +473,8 @@ AlunoSolution* ProblemSolution::getAlunoSolution( Aluno* aluno )
 {
 	AlunoSolution* alunoSolution = nullptr;
 
-	auto itFinderAluno = mapAlunoSolution.find(aluno);
-	if ( itFinderAluno != mapAlunoSolution.end() )
+	auto itFinderAluno = mapAlunoSolution_.find(aluno);
+	if ( itFinderAluno != mapAlunoSolution_.end() )
 	{
 		alunoSolution = itFinderAluno->second;
 	}
@@ -683,13 +683,7 @@ void ProblemSolution::constroiMapsDaSolucao()
 	std::cout << "\nconstroiMapsDaSolucao..."; fflush(0);
 
 	ProblemData *problemData = CentroDados::getProblemData();
-		
-	// ------------------------------------------------------------------------------------------
-	// Indicadores
-
-	int nroCredsProfsReais=0;
-	double chProfsReal=0;
-	
+			
 	// ------------------------------------------------------------------------------------------
 	// Inicializa zerados os creditos já alocados aos alunos
 
@@ -702,9 +696,10 @@ void ProblemSolution::constroiMapsDaSolucao()
 	// ------------------------------------------------------------------------------------------
 	// Conjunto de aulas para cada turma criada
 
-	mapSolDiscTurmaDiaAula.clear();
-
-	map< int, map< Disciplina*, map<int, int> > > tempCpDiscTurmaPVId; // < campusId, < disc, <turma,pvId> > >
+	mapSolProfRealDiaHorarios_.clear();
+	mapSolDiscTurmaDiaAula_.clear();
+	mapSolTurmaProfVirtualDiaAula_.clear();
+	mapCpDiscTurmaPVId_.clear();
 
 	std::cout << " lendo atendimentos..."; fflush(0);
 
@@ -716,11 +711,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 		    Campus *campus = it_At_Campus->campus;
 		    int campusId = campus->getId();
 	   
-		    if ( it_At_Campus->atendimentos_unidades == nullptr )
-		    {
-			   std::cout << "\nProvavel erro! atendimentos_unidades null em ProblemSolution.\n";
-			   continue;
-		    }
+		    if (!it_At_Campus->atendimentos_unidades)
+			   continue; // error!
 
 			ITERA_GGROUP_LESSPTR( it_At_Unidade,
 				( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
@@ -728,11 +720,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 				// Unidade do atendimento
 				Unidade *unidade = problemData->refUnidade[ it_At_Unidade->getId() ];
 	   				
-			    if ( it_At_Unidade->atendimentos_salas == nullptr )
-			    {
-				   std::cout << "\nProvavel erro! atendimentos_salas null em ProblemSolution.\n";
-				   continue;
-			    }
+			    if (!it_At_Unidade->atendimentos_salas)
+				   continue; // error!
 
 				ITERA_GGROUP_LESSPTR( it_At_Sala,
 					( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
@@ -740,11 +729,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 					// Sala do atendimento
 					Sala *sala = problemData->refSala[ it_At_Sala->getId() ];
 			   				
-					if ( it_At_Sala->atendimentos_dias_semana == nullptr )
-					{
-					   std::cout << "\nProvavel erro! atendimentos_dias_semana null em ProblemSolution.\n";
-					   continue;
-					}
+					if (!it_At_Sala->atendimentos_dias_semana)
+					   continue; // error!
 
 					ITERA_GGROUP_LESSPTR( it_At_DiaSemana, 
 						( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
@@ -752,11 +738,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 						// Dia da semana do atendimento
 						int dia = it_At_DiaSemana->getDiaSemana();
 			    			   				
-						if ( it_At_DiaSemana->atendimentos_turno == nullptr )
-						{
-						   std::cout << "\nProvavel erro! atendimentos_turno null em ProblemSolution.\n";
-						   continue;
-						}
+						if (!it_At_DiaSemana->atendimentos_turno)
+						   continue; // error!
 
 						ITERA_GGROUP_LESSPTR( it_At_Turno,
 							( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
@@ -764,11 +747,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 							// Turno do atendimento
 							TurnoIES* turno = it_At_Turno->turno;
 
-							if ( it_At_Turno->atendimentos_horarios_aula == nullptr )
-							{
-							   std::cout << "\nProvavel erro! atendimentos_horarios_aula null em ProblemSolution.\n";
-							   continue;
-							}
+							if (!it_At_Turno->atendimentos_horarios_aula)
+							   continue; // error!
 							
 							ITERA_GGROUP_LESSPTR( it_At_Hor_Aula,
 								( *it_At_Turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
@@ -778,7 +758,7 @@ void ProblemSolution::constroiMapsDaSolucao()
 								HorarioAula* horAula = it_At_Hor_Aula->horario_aula;
 
 								// Valida horario-dia alocado na sala						   		    
-								if ( ! sala->possuiHorariosNoDia( horAula, horAula, dia ) )
+								if ( ! sala->possuiHorariosNoDia(horAula, horAula, dia) )
 								{
 									stringstream msg;
 									msg << "Solucao usa horario invalido " << horAula->getInicio().hourMinToStr()
@@ -836,267 +816,239 @@ void ProblemSolution::constroiMapsDaSolucao()
 
 								int tempoDoCredito = 0;
 						   						   
-								if ( it_At_Hor_Aula->atendimentos_ofertas != nullptr )
+								if (!it_At_Hor_Aula->atendimentos_ofertas)
+									continue;
+
+								// Atendimentos por Oferta
+								ITERA_GGROUP_LESSPTR( it_At_Oft,
+									( *it_At_Hor_Aula->atendimentos_ofertas ), AtendimentoOferta )
 								{
-									// Atendimentos por Oferta
-									ITERA_GGROUP_LESSPTR( it_At_Oft,
-										( *it_At_Hor_Aula->atendimentos_ofertas ), AtendimentoOferta )
-									{
-										int turma = it_At_Oft->getTurma();
-										int qtd = it_At_Oft->getQuantidade();														
-										GGroup<int /*alDem*/> *alDemAtend = & it_At_Oft->alunosDemandasAtendidas;
-										string strOfertaId = it_At_Oft->getOfertaCursoCampiId();
-										int ofertaId = atoi(strOfertaId.c_str());
-										Oferta *oferta = problemData->refOfertas[ofertaId];
+									int turma = it_At_Oft->getTurma();
+									int qtd = it_At_Oft->getQuantidade();														
+									GGroup<int /*alDem*/> *alDemAtend = & it_At_Oft->alunosDemandasAtendidas;
+									string strOfertaId = it_At_Oft->getOfertaCursoCampiId();
+									int ofertaId = atoi(strOfertaId.c_str());
+									Oferta *oferta = problemData->refOfertas[ofertaId];
 
-										#pragma region Procura disciplina real (caso de equivalência e/ou prática-teórica)
+									#pragma region Procura disciplina real (caso de equivalência e/ou prática-teórica)
 
-										int discOrigId = it_At_Oft->getDisciplinaId();
-										int discRealId = it_At_Oft->getDisciplinaSubstitutaId();
+									int discOrigId = it_At_Oft->getDisciplinaId();
+									int discRealId = it_At_Oft->getDisciplinaSubstitutaId();
 
-										// Se não houve substituição por equivalência, a original é igual à real
-										if ( discRealId == NULL )
-											discRealId = discOrigId;
+									// Se não houve substituição por equivalência, a original é igual à real
+									if ( discRealId == NULL )
+										discRealId = discOrigId;
 
-										Disciplina* discOrig = problemData->refDisciplinas[discOrigId];
-										Disciplina* discReal = problemData->refDisciplinas[discRealId];
+									Disciplina* discOrig = problemData->refDisciplinas[discOrigId];
+									Disciplina* discReal = problemData->refDisciplinas[discRealId];
 								
-										if (!ehTeorica)
+									if (!ehTeorica)
+									{
+										Disciplina* discTemp;
+										int discTempId = -discRealId;
+										discTemp = problemData->getDisciplinaTeorPrat(discReal);
+										if ( discTemp != NULL )
 										{
-											Disciplina* discTemp;
-											int discTempId = -discRealId;
-											discTemp = problemData->getDisciplinaTeorPrat(discReal);
-											if ( discTemp != NULL )
-											{
-												discReal = discTemp;
-												discRealId = discTempId;
-											}
+											discReal = discTemp;
+											discRealId = discTempId;
 										}
+									}
 
-										// Valida horario-dia alocado na disciplina						   		    
-										if ( ! discReal->possuiHorariosNoDia( horAula, horAula, dia ) )
+									// Valida horario-dia alocado na disciplina						   		    
+									if ( ! discReal->possuiHorariosNoDia( horAula, horAula, dia ) )
+									{
+										stringstream msg;
+										msg << "Solucao usa horario invalido " << horAula->getInicio().hourMinToStr()
+											<< " no dia " << dia << " para a turma " << turma 
+											<< " da disciplina " << discReal->getCodigo();
+										CentroDados::printError( "void ProblemSolution::constroiMapsDaSolucao()", msg.str() );
+									} 
+
+									// Valida equivalência
+ 									bool usouEquiv = discReal != discOrig;
+									if ( usouEquiv )
+									{																
+										if ( ! problemData->ehSubstituivel( discOrig->getId(), discReal->getId(), oferta->curso ) )
 										{
 											stringstream msg;
-											msg << "Solucao usa horario invalido " << horAula->getInicio().hourMinToStr()
-												<< " no dia " << dia << " para a turma " << turma 
-												<< " da disciplina " << discReal->getCodigo();
+											msg << "Solucao usa equivalencia invalida " << discReal->getCodigo()
+												<< " -> " << discOrig->getCodigo()
+												<< " para a turma " << turma << " com alunos do curso " << oferta->curso->getCodigo();
 											CentroDados::printError( "void ProblemSolution::constroiMapsDaSolucao()", msg.str() );
-										} 
-
-										// Valida equivalência
- 										bool usouEquiv = discReal != discOrig;
-										if ( usouEquiv )
-										{																
-											if ( ! problemData->ehSubstituivel( discOrig->getId(), discReal->getId(), oferta->curso ) )
-											{
-												stringstream msg;
-												msg << "Solucao usa equivalencia invalida " << discReal->getCodigo()
-													<< " -> " << discOrig->getCodigo()
-													<< " para a turma " << turma << " com alunos do curso " << oferta->curso->getCodigo();
-												CentroDados::printError( "void ProblemSolution::constroiMapsDaSolucao()", msg.str() );
-											}
-										} 
-										#pragma endregion
+										}
+									} 
+									#pragma endregion
 								
-										mapSolTurmaCursos[campusId][discReal][turma].add( oferta->curso );
+									mapSolTurmaCursos_[campusId][discReal][turma].add( oferta->curso );
 
-										tempoDoCredito = discReal->getTempoCredSemanaLetiva();
+									tempoDoCredito = discReal->getTempoCredSemanaLetiva();
 								
-										#pragma region Procura ou cria nova aula, e insere
+									#pragma region Procura ou cria nova aula, e insere
 
-										bool novaAula = true;
-										Aula *aula = nullptr;
+									bool novaAula = true;
+									Aula *aula = nullptr;
 
-										auto itFinderCp = mapSolDiscTurmaDiaAula.find( campusId );
-										if ( itFinderCp != mapSolDiscTurmaDiaAula.end() )
+									auto itFinderCp = mapSolDiscTurmaDiaAula_.find( campusId );
+									if ( itFinderCp != mapSolDiscTurmaDiaAula_.end() )
+									{
+										auto itFinderDisc = itFinderCp->second.find( discReal );
+										if ( itFinderDisc != itFinderCp->second.end() )
 										{
-											auto itFinderDisc = itFinderCp->second.find( discReal );
-											if ( itFinderDisc != itFinderCp->second.end() )
+											auto itFinderTurma = itFinderDisc->second.find( turma );
+											if ( itFinderTurma != itFinderDisc->second.end() )
 											{
-												auto itFinderTurma = itFinderDisc->second.find( turma );
-												if ( itFinderTurma != itFinderDisc->second.end() )
+												auto itFinderDia = itFinderTurma->second.first.find( dia );
+												if ( itFinderDia != itFinderTurma->second.first.end() )
 												{
-													auto itFinderDia = itFinderTurma->second.first.find( dia );
-													if ( itFinderDia != itFinderTurma->second.first.end() )
-													{
-														aula = itFinderDia->second;
-														novaAula = false;
-													}
+													aula = itFinderDia->second;
+													novaAula = false;
 												}
 											}
 										}
+									}
 								 
-										if( novaAula )
-										{
-											// Monta o objeto 'aula'
-											aula = new Aula();
+									if( novaAula )
+									{
+										// Monta o objeto 'aula'
+										aula = new Aula();
 									
-											int nCredTeor = ( ehTeorica? 1 : 0 );
-											int nCredPrat = ( ehTeorica? 0 : 1 );
+										int nCredTeor = ( ehTeorica? 1 : 0 );
+										int nCredPrat = ( ehTeorica? 0 : 1 );
 
-											aula->setTurma( turma );
-											aula->setDisciplina( discReal );
-											aula->setCampus( campus );
-											aula->setSala( sala );
-											aula->setUnidade( unidade );
-											aula->setDiaSemana( dia );
-											aula->setCreditosTeoricos( nCredTeor );
-											aula->setCreditosPraticos( nCredPrat );
+										aula->setTurma( turma );
+										aula->setDisciplina( discReal );
+										aula->setCampus( campus );
+										aula->setSala( sala );
+										aula->setUnidade( unidade );
+										aula->setDiaSemana( dia );
+										aula->setCreditosTeoricos( nCredTeor );
+										aula->setCreditosPraticos( nCredPrat );
 
-											HorarioAula *hi = horAula;
-											HorarioAula *hf = horAula;
-											aula->setHorarioAulaInicial( hi );	
-											aula->setHorarioAulaFinal( hf );	
+										HorarioAula *hi = horAula;
+										HorarioAula *hf = horAula;
+										aula->setHorarioAulaInicial( hi );	
+										aula->setHorarioAulaFinal( hf );	
 
-											DateTime *dti = problemData->horarioAulaDateTime[hi->getId()].first;
-											DateTime *dtf = problemData->horarioAulaDateTime[hf->getId()].first;
-											aula->setDateTimeInicial( dti );
-											aula->setDateTimeFinal( dtf );		
+										DateTime *dti = problemData->horarioAulaDateTime[hi->getId()].first;
+										DateTime *dtf = problemData->horarioAulaDateTime[hf->getId()].first;
+										aula->setDateTimeInicial( dti );
+										aula->setDateTimeFinal( dtf );		
 												
-											mapSolDiscTurmaDiaAula[campusId][discReal][turma].first[dia] = aula;
-											mapSolDiscTurmaDiaAula[campusId][discReal][turma].second.add( *alDemAtend );
+										mapSolDiscTurmaDiaAula_[campusId][discReal][turma].first[dia] = aula;
+										mapSolDiscTurmaDiaAula_[campusId][discReal][turma].second.add( *alDemAtend );
+									}
+									else
+									{		
+										HorarioAula *hi = aula->getHorarioAulaInicial();
+										HorarioAula *hf = aula->getHorarioAulaFinal();
+
+										bool temHorario = true;									
+										bool horAulaMenorQueHi = horAula->comparaMenor( *hi ); 
+										bool horAulaMaiorQueHf = hf->comparaMenor( *horAula ); 
+									
+										// Se horAula não está entre hi e hf, então horAula ainda não está sendo englobado na aula
+										if ( horAulaMenorQueHi || horAulaMaiorQueHf )
+											temHorario = false;
+									
+										if ( !temHorario )
+										{
+											if ( horAulaMenorQueHi )
+											{
+												hi = horAula;
+												aula->setHorarioAulaInicial( hi );
+												DateTime *dti = problemData->horarioAulaDateTime[hi->getId()].first;
+												aula->setDateTimeInicial( dti );
+											}
+											if ( horAulaMaiorQueHf )
+											{
+												hf = horAula;
+												aula->setHorarioAulaFinal( hf );
+												DateTime *dtf = problemData->horarioAulaDateTime[hf->getId()].first;
+												aula->setDateTimeFinal( dtf );
+											}
+
+											Calendario *calendario = hi->getCalendario();
+											int nCreds = calendario->retornaNroCreditosEntreHorarios(hi,hf);
+
+											if ( ehTeorica )
+												aula->setCreditosTeoricos( nCreds );
+											else
+												aula->setCreditosPraticos( nCreds );
+										}
+
+										mapSolDiscTurmaDiaAula_[campusId][discReal][turma].second.add( *alDemAtend );
+									}
+									#pragma endregion
+	
+									#pragma region Atualiza situação dos alunos da turma
+									// Adiciona a aula aos maps dos alunos da turma
+									ITERA_GGROUP_N_PT( itAlDem, *alDemAtend, int )
+									{
+										AlunoDemanda *alunoDemandaTeor = problemData->retornaAlunoDemanda( *itAlDem );
+										if ( alunoDemandaTeor != nullptr )
+										{
+											Aluno *aluno = alunoDemandaTeor->getAluno();
+
+											aluno->addNroCreditosJaAlocados(1);
+										
+											AlunoSolution *alunoSolution=nullptr;
+											bool novo = getAlunoSolution(aluno, alunoSolution);
+											alunoSolution->addNroCreditosJaAlocados(1);
+											alunoSolution->addChAtendida( tempoDoCredito );
+											alunoSolution->addDiaDiscAula( dia, discReal, aula );
+											alunoSolution->addTurma( alunoDemandaTeor, discReal, turma, campus );
+											if ( novo ) mapAlunoSolution_[aluno] = alunoSolution;
+										
+											#pragma region Valida equivalência forçada
+											if ( alunoDemandaTeor->getExigeEquivalenciaForcada() && !usouEquiv )
+											{
+												// Equivalencia NÃO usada							
+												if ( alunoDemandaTeor->demanda->disciplina->discEquivSubstitutas.size() > 0 )
+												{
+													stringstream msg;
+													msg << "Equivalencia forcada nao respeitada. Aluno " 
+														<< alunoDemandaTeor->getAlunoId() << " e Disciplina " << discReal->getId();
+													CentroDados::printError( "void ProblemData::confereCorretudeAlocacoes()", msg.str() );
+												}
+												else
+												{
+													stringstream msg;
+													msg << "Disciplina sem equivalentes encontradas, mas exige equivalencia forcada. Aluno "
+														<< alunoDemandaTeor->getAlunoId() << " e Disciplina " << discReal->getId();
+													CentroDados::printError( "void ProblemData::confereCorretudeAlocacoes()", msg.str() );							   
+												}
+											}
+											#pragma endregion
 										}
 										else
-										{		
-											HorarioAula *hi = aula->getHorarioAulaInicial();
-											HorarioAula *hf = aula->getHorarioAulaFinal();
-
-											bool temHorario = true;									
-											bool horAulaMenorQueHi = horAula->comparaMenor( *hi ); 
-											bool horAulaMaiorQueHf = hf->comparaMenor( *horAula ); 
-									
-											// Se horAula não está entre hi e hf, então horAula ainda não está sendo englobado na aula
-											if ( horAulaMenorQueHi || horAulaMaiorQueHf )
-												temHorario = false;
-									
-											if ( !temHorario )
-											{
-												if ( horAulaMenorQueHi )
-												{
-													hi = horAula;
-													aula->setHorarioAulaInicial( hi );
-													DateTime *dti = problemData->horarioAulaDateTime[hi->getId()].first;
-													aula->setDateTimeInicial( dti );
-												}
-												if ( horAulaMaiorQueHf )
-												{
-													hf = horAula;
-													aula->setHorarioAulaFinal( hf );
-													DateTime *dtf = problemData->horarioAulaDateTime[hf->getId()].first;
-													aula->setDateTimeFinal( dtf );
-												}
-
-												Calendario *calendario = hi->getCalendario();
-												int nCreds = calendario->retornaNroCreditosEntreHorarios(hi,hf);
-
-												if ( ehTeorica )
-													aula->setCreditosTeoricos( nCreds );
-												else
-													aula->setCreditosPraticos( nCreds );
-											}
-
-											mapSolDiscTurmaDiaAula[campusId][discReal][turma].second.add( *alDemAtend );
-										}
-										#pragma endregion
-	
-										#pragma region Atualiza situação dos alunos da turma
-										// Adiciona a aula aos maps dos alunos da turma
-										ITERA_GGROUP_N_PT( itAlDem, *alDemAtend, int )
 										{
-											AlunoDemanda *alunoDemandaTeor = problemData->retornaAlunoDemanda( *itAlDem );
-											if ( alunoDemandaTeor != nullptr )
-											{
-												Aluno *aluno = alunoDemandaTeor->getAluno();
-
-												aluno->addNroCreditosJaAlocados(1);
-										
-												AlunoSolution *alunoSolution=nullptr;
-												bool novo = getAlunoSolution(aluno, alunoSolution);
-												alunoSolution->addNroCreditosJaAlocados(1);
-												alunoSolution->addChAtendida( tempoDoCredito );
-												alunoSolution->addDiaDiscAula( dia, discReal, aula );
-												alunoSolution->addTurma( alunoDemandaTeor, discReal, turma, campus );
-												if ( novo ) mapAlunoSolution[aluno] = alunoSolution;
-										
-												#pragma region Valida equivalência forçada
-												if ( alunoDemandaTeor->getExigeEquivalenciaForcada() && !usouEquiv )
-												{
-													// Equivalencia NÃO usada							
-													if ( alunoDemandaTeor->demanda->disciplina->discEquivSubstitutas.size() > 0 )
-													{
-														stringstream msg;
-														msg << "Equivalencia forcada nao respeitada. Aluno " 
-															<< alunoDemandaTeor->getAlunoId() << " e Disciplina " << discReal->getId();
-														CentroDados::printError( "void ProblemData::confereCorretudeAlocacoes()", msg.str() );
-													}
-													else
-													{
-														stringstream msg;
-														msg << "Disciplina sem equivalentes encontradas, mas exige equivalencia forcada. Aluno "
-															<< alunoDemandaTeor->getAlunoId() << " e Disciplina " << discReal->getId();
-														CentroDados::printError( "void ProblemData::confereCorretudeAlocacoes()", msg.str() );							   
-													}
-												}
-												#pragma endregion
-											}
-											else
-											{
-												stringstream msg;
-												msg << "AlunoDemanda "<< *itAlDem << " nao encontrado";
-												CentroDados::printError( "void ProblemSolution::constroiMapsDaSolucao()", msg.str() );
-											}
+											stringstream msg;
+											msg << "AlunoDemanda "<< *itAlDem << " nao encontrado";
+											CentroDados::printError( "void ProblemSolution::constroiMapsDaSolucao()", msg.str() );
 										}
-										#pragma endregion
-
-										// Adiciona a aula ao map do professor
-										if ( profVirtual && profVirtualOut != nullptr )
-										{
-											mapSolTurmaProfVirtualDiaAula[campusId][discReal][turma][profVirtualOut][dia] = aula;
-										}
-
-										// temporario
-										if ( profVirtual )
-											tempCpDiscTurmaPVId[campusId][discReal][turma] = profId;
 									}
-								}
-								else
-								{									
-								   std::cout << "\nProvavel erro! atendimentos_ofertas null em ProblemSolution.\n";
-								}
+									#pragma endregion
 
+									// Adiciona a aula ao map do professor
+									if (profVirtual && profVirtualOut)
+									{
+										mapSolTurmaProfVirtualDiaAula_[campusId][discReal][turma][profVirtualOut][dia] = aula;
+									}
 
-								#pragma region Atualiza situação do professor
+									// temporario
+									if (profVirtual)
+										mapCpDiscTurmaPVId_[campusId][discReal][turma] = profId;
+								}
+																
 								// Adiciona horario-dia ocupado do professor
-								if ( !profVirtual && profReal != nullptr )
-									mapSolProfRealDiaHorarios[profReal][dia].push_back(hd);
-							
-								// Atualiza a carga horária semanal usada do professor
-								auto itProf = this->quantChProfs.find( profId );
-								if ( itProf != this->quantChProfs.end() )
-								{
-									itProf->second += tempoDoCredito;
-								}
-								else
-								{
-									this->quantChProfs[ profId ] = tempoDoCredito;
-								}
-							
-								if ( !profVirtual )
-								{
-									nroCredsProfsReais++;
-									chProfsReal += tempoDoCredito;
-								}
-								#pragma endregion
+								if (!profVirtual && profReal)
+									mapSolProfRealDiaHorarios_[profReal][dia].push_back(hd);
 							}
 						}
 					}
 				}
 			}
 		}
-	}
-	else
-	{
-		std::cout << "\nProvavel erro! atendimento_campus null em ProblemSolution.\n";
 	}
 
 	// ------------------------------------------------------------------------------------------
@@ -1110,25 +1062,106 @@ void ProblemSolution::constroiMapsDaSolucao()
 		{
 			ITERA_GGROUP_LESSPTR( itSala, itUnidade->salas, Sala )
 			{
-				mapSalaDiaHorariosVagos[ *itSala ] = (*itSala)->retornaHorariosAulaVagos();
+				mapSalaDiaHorariosVagos_[ *itSala ] = (*itSala)->retornaHorariosAulaVagos();
 			}
 		}
 	}
 
-	
-	// ------------------------------------------------------------------------------------------
-	#pragma region INDICADORES DE QUALIDADE DA SOLUÇÃO OPERACIONAL
-	
-	std::cout << " indicadores op..."; fflush(0);
+	preencheQuantChProfs();
 
-	// Calcula nro de turmas
-	int nTurmasT=0;
-	int nTurmasP=0;
+	gatherIndicadores();
 
-	// Calcula nro total de turmas
-	for ( auto itMapCp = mapSolDiscTurmaDiaAula.begin(); itMapCp != mapSolDiscTurmaDiaAula.end(); itMapCp++ )
+	std::cout << " fim!"; fflush(0);
+}
+
+void ProblemSolution::preencheQuantChProfs()
+{
+	for (auto itProf = mapSolProfRealDiaHorarios_.cbegin(); 
+		itProf != mapSolProfRealDiaHorarios_.cend(); itProf++)
+	{
+		auto ptMapCh = & quantChProfs_[itProf->first->getId()];
+		(*ptMapCh) = pair<int,int>(0,0);
+
+		for (auto itDia = itProf->second.cbegin();
+			itDia != itProf->second.cend(); itDia++)
+		{
+			map<DateTime,DateTime> inicioFim;
+			for (auto itHorDia = itDia->second.cbegin();
+				itHorDia != itDia->second.cend(); itHorDia++)
+			{
+				inicioFim[(*itHorDia)->getHorarioAula()->getInicio()]
+					= (*itHorDia)->getHorarioAula()->getFinal();
+			}
+
+			for (auto itDtiDtf = inicioFim.cbegin();
+				itDtiDtf != inicioFim.cend(); itDtiDtf++)
+			{
+				DateTime dti = itDtiDtf->first;
+				DateTime dtf = itDtiDtf->second;
+				DateTime diff = (dtf - dti);
+				(*ptMapCh).first += diff.getDateMinutes();
+			}
+			(*ptMapCh).second = inicioFim.size();
+		}
+	}
+}
+
+void ProblemSolution::clearMapsDaSolucao()
+{
+	std::cout << "\nclearMapsDaSolucao..."; fflush(0);
+
+	// ----------------------------------------------------------
+	// DELETA AULAS
+	for ( auto itMapCp = mapSolDiscTurmaDiaAula_.begin(); itMapCp != mapSolDiscTurmaDiaAula_.end(); itMapCp++ )
 	{
 		for ( auto itMapDisc = itMapCp->second.begin(); itMapDisc != itMapCp->second.end(); itMapDisc++ )
+		{
+			for ( auto itMapTurma = itMapDisc->second.begin(); itMapTurma != itMapDisc->second.end(); itMapTurma++ )
+			{
+				for ( auto itMapDia = itMapTurma->second.first.begin(); itMapDia != itMapTurma->second.first.end(); itMapDia++ )
+				{
+					if ( itMapDia->second != nullptr )
+						delete itMapDia->second;
+				}
+				itMapTurma->second.first.clear();
+				itMapTurma->second.second.clear();
+			}
+			itMapDisc->second.clear();
+		}
+		itMapCp->second.clear();
+	}
+	mapSolDiscTurmaDiaAula_.clear();
+	mapSalaDiaHorariosVagos_.clear();
+	mapSolProfRealDiaHorarios_.clear();
+	mapSolTurmaProfVirtualDiaAula_.clear();
+	quantChProfs_.clear();
+	mapSolTurmaCursos_.clear();
+		
+	std::cout << " limpando alunoSolution..."; fflush(0);
+
+	// ----------------------------------------------------------	
+	// DELETA ALUNO_SOLUTION
+	for ( auto itMap = mapAlunoSolution_.begin(); itMap != mapAlunoSolution_.end(); itMap++ )
+	{
+		if ( itMap->second != nullptr )
+			delete itMap->second;
+	}
+	mapAlunoSolution_.clear();
+	// ----------------------------------------------------------
+
+	std::cout << " limpo!"; fflush(0);
+}
+
+void ProblemSolution::gatherIndicadores()
+{	
+	std::cout << " indicadores op..."; fflush(0);
+	
+	// Calcula nro total de turmas
+	int nTurmasT=0;
+	int nTurmasP=0;
+	for ( auto itMapCp = mapSolDiscTurmaDiaAula_.cbegin(); itMapCp != mapSolDiscTurmaDiaAula_.cend(); itMapCp++ )
+	{
+		for ( auto itMapDisc = itMapCp->second.cbegin(); itMapDisc != itMapCp->second.cend(); itMapDisc++ )
 		{
 			if ( itMapDisc->first->getId() < 0 )
 			{
@@ -1153,9 +1186,9 @@ void ProblemSolution::constroiMapsDaSolucao()
 	int nroCredsProfsVirtuais = 0;
 	double chProfsVirt=0;
 	
-	for ( auto itMapCp = mapSolTurmaProfVirtualDiaAula.begin(); itMapCp != mapSolTurmaProfVirtualDiaAula.end(); itMapCp++ )
+	for ( auto itMapCp = mapSolTurmaProfVirtualDiaAula_.cbegin(); itMapCp != mapSolTurmaProfVirtualDiaAula_.cend(); itMapCp++ )
 	{
-		for ( auto itMapDisc = itMapCp->second.begin(); itMapDisc != itMapCp->second.end(); itMapDisc++ )
+		for ( auto itMapDisc = itMapCp->second.cbegin(); itMapDisc != itMapCp->second.cend(); itMapDisc++ )
 		{
 			Disciplina *disc = itMapDisc->first;
 			if ( disc->getId() < 0 )
@@ -1198,13 +1231,13 @@ void ProblemSolution::constroiMapsDaSolucao()
 	// --------------------------------------------------------
 	// Temporario: só para leitura de solução, quando mapSolTurmaProfVirtualDiaAula 
 	// não será preenchido por falta do prof virtual individualizado
-	if ( mapSolTurmaProfVirtualDiaAula.size() == 0 )
+	if ( mapSolTurmaProfVirtualDiaAula_.size() == 0 )
 	{		
-		auto itCp = tempCpDiscTurmaPVId.begin();
-		for ( ; itCp != tempCpDiscTurmaPVId.end(); itCp++ )
+		auto itCp = mapCpDiscTurmaPVId_.cbegin();
+		for ( ; itCp != mapCpDiscTurmaPVId_.cend(); itCp++ )
 		{
-			auto itDisc = itCp->second.begin();
-			for ( ; itDisc != itCp->second.end(); itDisc++ )
+			auto itDisc = itCp->second.cbegin();
+			for ( ; itDisc != itCp->second.cend(); itDisc++ )
 			{
 				Disciplina *disc = itDisc->first;
 				
@@ -1213,8 +1246,8 @@ void ProblemSolution::constroiMapsDaSolucao()
 
 				if ( disc->getNroProfRealHabilit() == 0 )
 				{
-					auto itTurma = itDisc->second.begin();
-					for ( ; itTurma != itDisc->second.end(); itTurma++ )
+					auto itTurma = itDisc->second.cbegin();
+					for ( ; itTurma != itDisc->second.cend(); itTurma++ )
 					{
 						if ( disc->getId() < 0 )
 							nTurmasVirtP++;
@@ -1241,13 +1274,23 @@ void ProblemSolution::constroiMapsDaSolucao()
 		nroTotalProfsVirtuaisUsados = pvoId_totais.size();
 	}
 	
+	// --------------------------------------------------------
+	// Reais
+	int nroCredsProfsReais=0;
+	double chProfsReal=0;
 
+	auto itProf = quantChProfs_.cbegin();
+	for (; itProf != quantChProfs_.cend(); itProf++)
+	{
+		chProfsReal += itProf->second.first;
+		nroCredsProfsReais += itProf->second.second;
+	}
 	// --------------------------------------------------------
 	
 	int nTurmasRealT = nTurmasT - nTurmasVirtT;
 	int nTurmasRealP = nTurmasP - nTurmasVirtP;
 
-	int nroTotalProfsReaisUsados = mapSolProfRealDiaHorarios.size();
+	int nroTotalProfsReaisUsados = mapSolProfRealDiaHorarios_.size();
 	int nroTotalProfsUsados = nroTotalProfsReaisUsados + nroTotalProfsVirtuaisUsados;
 
 	int nroCredsProfsUsados = nroCredsProfsReais + nroCredsProfsVirtuais;
@@ -1277,55 +1320,6 @@ void ProblemSolution::constroiMapsDaSolucao()
 	Indicadores::printIndicador( "\n\tNumero de professores virtuais usados: ", nPV_semHabReal );
 	Indicadores::printIndicador( "\n\tNumero de turmas teóricas atendidas por professores virtuais: ", nTurmasPV_semHabReal );
 	Indicadores::printIndicador( "\n\tNumero de créditos atendidos por professores virtuais: ", nCredsPV_semHabReal );
-	#pragma endregion
-
-	std::cout << " fim!"; fflush(0);
-}
-
-void ProblemSolution::clearMapsDaSolucao()
-{
-	std::cout << "\nclearMapsDaSolucao..."; fflush(0);
-
-	// ----------------------------------------------------------
-	// DELETA AULAS
-	for ( auto itMapCp = mapSolDiscTurmaDiaAula.begin(); itMapCp != mapSolDiscTurmaDiaAula.end(); itMapCp++ )
-	{
-		for ( auto itMapDisc = itMapCp->second.begin(); itMapDisc != itMapCp->second.end(); itMapDisc++ )
-		{
-			for ( auto itMapTurma = itMapDisc->second.begin(); itMapTurma != itMapDisc->second.end(); itMapTurma++ )
-			{
-				for ( auto itMapDia = itMapTurma->second.first.begin(); itMapDia != itMapTurma->second.first.end(); itMapDia++ )
-				{
-					if ( itMapDia->second != nullptr )
-						delete itMapDia->second;
-				}
-				itMapTurma->second.first.clear();
-				itMapTurma->second.second.clear();
-			}
-			itMapDisc->second.clear();
-		}
-		itMapCp->second.clear();
-	}
-	mapSolDiscTurmaDiaAula.clear();
-	mapSalaDiaHorariosVagos.clear();
-	mapSolProfRealDiaHorarios.clear();
-	mapSolTurmaProfVirtualDiaAula.clear();
-	quantChProfs.clear();
-	mapSolTurmaCursos.clear();
-		
-	std::cout << " limpando alunoSolution..."; fflush(0);
-
-	// ----------------------------------------------------------	
-	// DELETA ALUNO_SOLUTION
-	for ( auto itMap = mapAlunoSolution.begin(); itMap != mapAlunoSolution.end(); itMap++ )
-	{
-		if ( itMap->second != nullptr )
-			delete itMap->second;
-	}
-	mapAlunoSolution.clear();
-	// ----------------------------------------------------------
-
-	std::cout << " limpo!"; fflush(0);
 }
 
 void ProblemSolution::verificaNrDiscSimultVirtual()
@@ -1334,8 +1328,8 @@ void ProblemSolution::verificaNrDiscSimultVirtual()
 
    // PERCORRE TODAS AS TURMAS COM PROFESSORES VIRTUAIS
    nrMaxDiscSimult_=0;
-   auto itFinder1 = mapSolTurmaProfVirtualDiaAula.begin();
-   for ( ; itFinder1 != mapSolTurmaProfVirtualDiaAula.end(); itFinder1++ )
+   auto itFinder1 = mapSolTurmaProfVirtualDiaAula_.begin();
+   for ( ; itFinder1 != mapSolTurmaProfVirtualDiaAula_.end(); itFinder1++ )
    {
 	    int cpId = itFinder1->first;
 		
@@ -1616,8 +1610,8 @@ void ProblemSolution::verificaNaoAtendimentosTaticos()
 				if (bd) std::cout<<"\n2"; fflush(NULL);
 
 				// Verifica se alguma turma para o campus foi criada
-				auto itMapSol = mapSolDiscTurmaDiaAula.find( campusAlunoId );
-				if ( itMapSol == mapSolDiscTurmaDiaAula.end() )
+				auto itMapSol = mapSolDiscTurmaDiaAula_.find( campusAlunoId );
+				if ( itMapSol == mapSolDiscTurmaDiaAula_.end() )
 				{				
 					stringstream ss2;
 					ss2 << "Nenhuma turma de nenhuma disciplina criada no campus " << ad->getCampus()->getCodigo() << ".";
@@ -1632,8 +1626,8 @@ void ProblemSolution::verificaNaoAtendimentosTaticos()
 
 				// Acha as aulas do aluno
 				AlunoSolution* alSol=nullptr;
-				auto itAulasAluno = this->mapAlunoSolution.find(aluno);				
-				if ( itAulasAluno != this->mapAlunoSolution.end() )
+				auto itAulasAluno = this->mapAlunoSolution_.find(aluno);				
+				if ( itAulasAluno != this->mapAlunoSolution_.end() )
 					alSol = itAulasAluno->second;
 
 				// Disciplinas que serviriam para atender esse aluno-demanda
@@ -2165,8 +2159,8 @@ void ProblemSolution::verificaPossivelNovaTurma(
 	// Acha as aulas do aluno
 	Aluno *aluno = ad->getAluno();
 	AlunoSolution* alSol=nullptr;
-	auto itAulasAluno = this->mapAlunoSolution.find(aluno);				
-	if ( itAulasAluno != this->mapAlunoSolution.end() )
+	auto itAulasAluno = this->mapAlunoSolution_.find(aluno);				
+	if ( itAulasAluno != this->mapAlunoSolution_.end() )
 		alSol = itAulasAluno->second;
 	
 
@@ -2412,8 +2406,8 @@ void ProblemSolution::verificaUsoDeProfsVirtuais()
    
    // PERCORRE TODAS AS TURMAS COM PROFESSORES VIRTUAIS
 
-   auto itFinder1 = mapSolTurmaProfVirtualDiaAula.begin();
-   for ( ; itFinder1 != mapSolTurmaProfVirtualDiaAula.end(); itFinder1++ )
+   auto itFinder1 = mapSolTurmaProfVirtualDiaAula_.begin();
+   for ( ; itFinder1 != mapSolTurmaProfVirtualDiaAula_.end(); itFinder1++ )
    {
 	    int cpId = itFinder1->first;
 		Campus* cp = problemData->refCampus[cpId];
@@ -2574,7 +2568,7 @@ void ProblemSolution::verificaUsoDeProfsVirtuais()
 								int acrescimo = aula0->getDisciplina()->getTotalCreditos() *
 												aula0->getDisciplina()->getTempoCredSemanaLetiva();
 
-								flagProfCHMaxima = ! ( quantChProfs[p->getId()] + acrescimo <= p->getChMax()*60 );
+								flagProfCHMaxima = ! ( quantChProfs_[p->getId()].first + acrescimo <= p->getChMax()*60 );
 								
 								flagFaltaCargaHoraria = flagFaltaCargaHoraria && flagProfCHMaxima;
 
@@ -2582,7 +2576,7 @@ void ProblemSolution::verificaUsoDeProfsVirtuais()
 
 								if( !flagProfCHMaxima || DETALHAR_TODOS_OS_MOTIVOS ) // Se a carga horaria maxima desse professor nao é violada
 								{
-									auto itDiaHorsAlocados = mapSolProfRealDiaHorarios.find(p);
+									auto itDiaHorsAlocados = mapSolProfRealDiaHorarios_.find(p);
 							
 									// -------------------------------------------------
 									// Percorre todas as aulas do trio e confere
@@ -2601,7 +2595,7 @@ void ProblemSolution::verificaUsoDeProfsVirtuais()
 						
 										// Horarios ocupados no dia do professor
 										std::vector<HorarioDia*> horariosAlocadosNoDia;
-										if( itDiaHorsAlocados != mapSolProfRealDiaHorarios.end() )
+										if( itDiaHorsAlocados != mapSolProfRealDiaHorarios_.end() )
 										{
 											int nroDiasUsados = itDiaHorsAlocados->second.size();
 
@@ -2710,7 +2704,7 @@ void ProblemSolution::verificaUsoDeProfsVirtuais()
 											{
 												// Verifica se o professor esta alocado em algum horario h no dia seguinte
 												// tal que h < dtf_maisDescanso
-												if( itDiaHorsAlocados != mapSolProfRealDiaHorarios.end() )
+												if( itDiaHorsAlocados != mapSolProfRealDiaHorarios_.end() )
 												{
 													auto itHorsDiaSeg = itDiaHorsAlocados->second.find( aula->getDiaSemana() + 1 );
 													if ( itHorsDiaSeg != itDiaHorsAlocados->second.end() )
@@ -2738,7 +2732,7 @@ void ProblemSolution::verificaUsoDeProfsVirtuais()
 											{
 												// Verifica se o professor esta alocado em algum horario h no dia anterior
 												// tal que h > dti_menosDescanso									
-												if( itDiaHorsAlocados != mapSolProfRealDiaHorarios.end() )
+												if( itDiaHorsAlocados != mapSolProfRealDiaHorarios_.end() )
 												{
 													auto itHorsDiaAnt = itDiaHorsAlocados->second.find( aula->getDiaSemana() - 1 );
 													if ( itHorsDiaAnt != itDiaHorsAlocados->second.end() )
@@ -3069,8 +3063,8 @@ void ProblemSolution::imprimeIndicadores()
 	#pragma region TURMAS COM COMPARTILHAMENTO DE CURSOS
 	Indicadores::printSeparator(1);
 
-	auto itCpId = mapSolTurmaCursos.begin();
-	for ( ; itCpId != mapSolTurmaCursos.end(); itCpId++ )
+	auto itCpId = mapSolTurmaCursos_.begin();
+	for ( ; itCpId != mapSolTurmaCursos_.end(); itCpId++ )
 	{
 		int nroTurmasMaisDeUmCurso=0;
 		auto itDisc = itCpId->second.begin();
@@ -3168,8 +3162,8 @@ void ProblemSolution::imprimeMapSolDiscTurmaDiaAula()
 		return;
 	}
 
-	auto itMap1 = mapSolDiscTurmaDiaAula.begin();
-	for ( ; itMap1 != mapSolDiscTurmaDiaAula.end(); itMap1++ )
+	auto itMap1 = mapSolDiscTurmaDiaAula_.begin();
+	for ( ; itMap1 != mapSolDiscTurmaDiaAula_.end(); itMap1++ )
 	{
 		int campusId = itMap1->first;
 
@@ -3250,7 +3244,7 @@ void ProblemSolution::imprimeMapSolAlunoDiaDiscAulas()
 		return;
 	}
 
-	for( auto itAluno = mapAlunoSolution.begin(); itAluno != mapAlunoSolution.end(); itAluno++ )
+	for( auto itAluno = mapAlunoSolution_.begin(); itAluno != mapAlunoSolution_.end(); itAluno++ )
 	{
 		Aluno* aluno = itAluno->first;
 		AlunoSolution *alSol = itAluno->second;
@@ -3279,7 +3273,7 @@ void ProblemSolution::imprimeMapAlunoDiscTurmaCp()
 		return;
 	}
 
-	for( auto itAluno = mapAlunoSolution.begin(); itAluno != mapAlunoSolution.end(); itAluno++ )
+	for( auto itAluno = mapAlunoSolution_.begin(); itAluno != mapAlunoSolution_.end(); itAluno++ )
 	{
 		Aluno* aluno = itAluno->first;
 		AlunoSolution *alSol = itAluno->second;
@@ -3308,7 +3302,7 @@ void ProblemSolution::imprimeMapSalaDiaHorariosVagos()
 		return;
 	}
 		
-	for( auto itMapSala = mapSalaDiaHorariosVagos.begin(); itMapSala != mapSalaDiaHorariosVagos.end(); itMapSala++ )
+	for( auto itMapSala = mapSalaDiaHorariosVagos_.begin(); itMapSala != mapSalaDiaHorariosVagos_.end(); itMapSala++ )
 	{
 		Sala* sala = itMapSala->first;
 
@@ -3355,7 +3349,7 @@ void ProblemSolution::imprimeMapSolTurmaProfVirtualDiaAula()
 		return;
 	}
 	
-	for( auto itMapCpId = mapSolTurmaProfVirtualDiaAula.begin(); itMapCpId != mapSolTurmaProfVirtualDiaAula.end(); itMapCpId++ )
+	for( auto itMapCpId = mapSolTurmaProfVirtualDiaAula_.begin(); itMapCpId != mapSolTurmaProfVirtualDiaAula_.end(); itMapCpId++ )
 	{
 		int cpId = itMapCpId->first;
 
@@ -3408,7 +3402,7 @@ void ProblemSolution::imprimeMapSolProfRealDiaHorarios()
 		return;
 	}
 
-	for( auto itMapProfReal = mapSolProfRealDiaHorarios.begin(); itMapProfReal != mapSolProfRealDiaHorarios.end(); itMapProfReal++ )
+	for( auto itMapProfReal = mapSolProfRealDiaHorarios_.begin(); itMapProfReal != mapSolProfRealDiaHorarios_.end(); itMapProfReal++ )
 	{
 		Professor* professor = itMapProfReal->first;
 
@@ -3456,9 +3450,10 @@ void ProblemSolution::imprimeQuantChProfs()
 
 	outFile << "\n-----------------------------------------------------------------\n";
 	outFile << "Prof \t Qtd total de creditos alocados na semana\n";
-	for ( auto itProf = quantChProfs.begin(); itProf != quantChProfs.end(); itProf++ )
+	for ( auto itProf = quantChProfs_.begin(); itProf != quantChProfs_.end(); itProf++ )
 	{
-		outFile << "\n" << itProf->first << "\t\t\t" << itProf->second;
+		outFile << "\n" << itProf->first << "\t\t" << itProf->second.first
+			<< " minutos \t" << itProf->second.second << " creditos";
 	}
 		
 	outFile.close();

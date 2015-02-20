@@ -9,10 +9,11 @@ using std::stringstream;
 
 // tatico columns sizes
 int cs[] = { 27, 12, 15, 13, 10, 12, 10, 10, 10 };
-int cse[] = { 27, 12, 15, 13, 10 };
+int cse[] = { 27, 12, 15, 13, 13, 10, 12 };
 
 std::string Indicadores::indicadorName_("");
 bool Indicadores::printTaticoHeader_ = true;
+bool Indicadores::printGoalsHeader_ = true;
 
 Indicadores::Indicadores()
 {
@@ -99,12 +100,15 @@ void Indicadores::printEscolaHeader()
 		<< std::left << setw(cse[1]) << "FO value"
 		<< std::left << setw(cse[2]) << "Gap"
 		<< std::left << setw(cse[3]) << "IsOptimal"
-		<< std::left << setw(cse[4]) << "Runtime\n\n";
+		<< std::left << setw(cse[4]) << "PercFixed"
+		<< std::left << setw(cse[5]) << "Runtime"
+		<< std::left << setw(cse[6]) << "StopCriteria\n\n";
 
 	Indicadores::printIndicador( header.str() );
 }
 
-void Indicadores::printEscolaIndicadores(std::string rowName, double value, double gap, bool opt, std::string runtime)
+void Indicadores::printEscolaIndicadores(std::string rowName, double value, double gap, bool opt, 
+	int percFixed, std::string runtime, std::string stopCriteria)
 {
 	if ( firstTimePrintTaticoHeader() )
 		printEscolaHeader();
@@ -113,10 +117,50 @@ void Indicadores::printEscolaIndicadores(std::string rowName, double value, doub
 	row << std::endl << std::left << setw(cse[0]) << rowName
 		<< std::left << setw(cse[1]) << value
 		<< std::left << setw(cse[2]) << gap
-		<< std::left << setw(cse[3]) << opt
-		<< std::left << setw(cse[4]) << runtime;
+		<< std::left << setw(cse[3]) << (opt? "true":"false")
+		<< std::left << setw(cse[4]) << percFixed
+		<< std::left << setw(cse[5]) << runtime
+		<< std::left << setw(cse[6]) << stopCriteria;
 	Indicadores::printIndicador( row.str() );
 }
+
+
+bool Indicadores::firstTimePrintGoalsHeader()
+{
+	return printGoalsHeader_;
+}
+
+void Indicadores::printEscolaGoalsHeader()
+{
+	printGoalsHeader_ = false;
+
+	std::stringstream header;
+	header << std::left << setw(cse[0]) << "\n\nPhase"
+		<< std::left << setw(cse[1]) << "Atend"
+		<< std::left << setw(cse[2]) << "Turmas"
+		<< std::left << setw(cse[3]) << "Desloc"
+		<< std::left << setw(cse[4]) << "Fases&Dias"
+		<< std::left << setw(cse[5]) << "Gaps";
+
+	Indicadores::printIndicador( header.str() );
+}
+
+void Indicadores::printEscolaGoalsIndicadores(std::string rowName, double atend, double turmas, double desloc, 
+	double fasesDias, double gaps)
+{
+	if ( firstTimePrintGoalsHeader() )
+		printEscolaGoalsHeader();
+	
+	std::stringstream row;
+	row << std::endl << std::left << setw(cse[0]) << rowName
+		<< std::left << setw(cse[1]) << atend
+		<< std::left << setw(cse[2]) << turmas
+		<< std::left << setw(cse[3]) << desloc
+		<< std::left << setw(cse[4]) << fasesDias
+		<< std::left << setw(cse[5]) << gaps;
+	Indicadores::printIndicador( row.str() );
+}
+
 
 void Indicadores::printIndicador( std::string str )
 {

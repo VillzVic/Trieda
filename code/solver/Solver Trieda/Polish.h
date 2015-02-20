@@ -46,7 +46,7 @@ private:
 	
 	// ---------------------------------------------------------------------------------
 	
-	void updateGoal(GoalStatus* const goal);
+	void updateGoal();
 
 	// Initializing
 	void init();
@@ -130,8 +130,8 @@ private:
 	void optimize();
 	void getSolution(double &objN);
 	void setMelhora(double objN);
-	void updatePercAndTimeIter(double objN);
-	void updatePercAndTimeIterSmallGap(double objN);
+	void updatePercAndTimeIter();
+	void updatePercAndTimeIterSmallGap();
 	void updatePercAndTimeIterBigGap();
 	void adjustPercOrUnid();
 	void decreasePercOrFreeUnid(int percToSubtract);
@@ -139,7 +139,7 @@ private:
 	void adjustTime();
 	void increaseTime();
 	void decreaseTime();
-	void adjustOkIter(double objN);
+	void adjustOkIter();
 	bool allFree();
 	void setAllFreeConfig();
 	bool globalOptimal(double objN);
@@ -152,7 +152,7 @@ private:
 	double getTimeWithoutImprov();
 	void resetTimeWithoutImprov();
 	double getLastTimeWithoutImprov();
-	void checkTimeWithoutImprov(double objN);
+	void checkTimeWithoutImprov();
 	void updateObj(double objN);
 	void checkTimeLimit();
 	void unfixBounds();
@@ -226,7 +226,8 @@ private:
 	   double timeLeft_;
 	   int nrIterSemMelhoraConsec_;
 	   int nrIterSemMelhora_;
-	   
+	   int nrIter_;
+
 	   // Unidade to leave free
 	   set<Unidade*> unidadeslivres_;
 	   int percUnidFixed_;
@@ -265,7 +266,8 @@ private:
 
 	   // Solution
 	   double *xSol_;
-	   
+	   GoalStatus* goal_;
+
 	   std::set<int> fixedCols_;
 
 	   // Identify classes to fix

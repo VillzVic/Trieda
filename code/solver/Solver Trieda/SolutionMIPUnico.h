@@ -19,6 +19,7 @@ class AlunoDemanda;
 class DateTime;
 class HorarioAula;
 class Professor; 
+class VariableMIPUnico;
 
 class SolutionMIPUnico
 {
@@ -32,8 +33,10 @@ public:
 	// Modifica a solução
 	void deleteGoalStatus();
 	void clearMapsSolution();
+	void deleteVariablesSol();
 	void addSolAlocProfTurma(Professor* const p, Campus * const cp, Disciplina * const d, int turma);
 	void addSolAlocAlunoTurma(Aluno* const a, Disciplina * const d, int turma, int dia, DateTime dti);
+	void addVarSol(VariableMIPUnico* const v);
 	GoalStatus* getAddNewGoal(int fase);
 	
 	// Consultas
@@ -51,10 +54,14 @@ public:
     bool alunoAlocIncompNaDisc(Aluno* const aluno, Disciplina* const disc) const;
     bool profAlocNaTurma(Professor* const prof, Campus* const campus, Disciplina* const disciplina, int turma) const;
     bool getProfAlocNaTurma(Professor* &professor, Campus* const campus, Disciplina* const disciplina, int turma) const;
-	
+	void copyFinalSolution(std::set<VariableMIPUnico*> &solMipUnico) const;
+
 	// Imprime solução
 	void imprimeTurmaProf( int campusId, int prioridade );
 	void imprimeProfTurmas( int campusId, int prioridade );
+	void imprimeGoals();
+
+	void confereCorretude( int campusId, int prioridade );
 
 private:
 	
@@ -66,6 +73,8 @@ private:
 											SOLUTION
    */
 	
+	std::set<VariableMIPUnico*> solVarsTatInt_;
+		
    
 	unordered_map<Professor*, unordered_map< Campus*, unordered_map< Disciplina*, unordered_set<int>> >> solAlocProfTurma_;
 	unordered_map<Campus*, unordered_map< Disciplina*, unordered_map<int, Professor*> >> solAlocTurmaProf_;	

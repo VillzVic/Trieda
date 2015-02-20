@@ -7,6 +7,7 @@
 #include "CentroDados.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
+#include "SolutionMIPUnico.h"
 
 #include "GoalStatus.h"
 #include "Indicadores.h"
@@ -45,7 +46,7 @@ int MIPUnico::idCounter = 0;
 MIPUnico::MIPUnico( ProblemData * aProblemData, ProblemSolution * const aProbSolInicial,
 	bool *endCARREGA_SOLUCAO, bool equiv, int fase )
 	: Solver( aProblemData ),
-	probSolInicial(aProbSolInicial), CARREGA_SOLUCAO(endCARREGA_SOLUCAO), xSol_(nullptr),
+	probSolInicial_(aProbSolInicial), CARREGA_SOLUCAO(endCARREGA_SOLUCAO), xSol_(nullptr),
 	optLogFileName("mipUnico"), optimized_(false)	
 {
    MIPUnico::idCounter++;
@@ -91,7 +92,7 @@ void MIPUnico::printCabecalho(int campusId, int prioridade, int r)
 }
 
 void MIPUnico::solveMainEscola(int campusId, int prioridade, int r, 
-		std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico)
+		std::set<VariableMIPUnico*> &solMipUnico)
 {
 	updateOptLogFileName(campusId, prioridade, r);
 
@@ -107,18 +108,11 @@ void MIPUnico::solveMainEscola(int campusId, int prioridade, int r,
 			
 	problemData->preencheMapsTurmasTurnosIES();
 
-	std::stringstream stepName;
-	stepName << "ESCOLA_" << MIPUnico::idCounter;
-
-	problemData->imprimeAlocacaoAlunos( campusId, prioridade, 0, false, r, stepName.str(), this->getRunTime() );
-		
 	copyFinalSolution(solMipUnico);
 		
+	imprimeGoals();
 	imprimeGrades(campusId, prioridade);
-	
-	//confereCorretude( campusId, prioridade );		
-	//bool violou = problemData->violaMinTurma( campusId );
-		
+			
 	std::cout<<"\nFim do tatico integrado!\n"; fflush(NULL);
 }
 
@@ -129,6 +123,7 @@ void MIPUnico::solveStrategy(int campusId, int prioridade, int r)
 		if (ETAPA_UNICA) 
 			solveMIPUnico_unico(campusId, prioridade, r);
 		else if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOff ||
+				 MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOffWeight ||
 				 MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorType1 ||
 				 MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorType2)
 			solveMIPUnico_pduplo(campusId, prioridade, r);
@@ -175,44 +170,9 @@ void MIPUnico::chgCoeffList(
    delete [] vList;
 }
 
-/*
-	Verifica se seria possivel inserir o 'aluno' nas aulas em 'aulasX' (variaveis do tipo crédito, x).
-	Para isso olha sobreposição de horários do aluno em todas as aulas, e capacidade das salas.
-*/
-bool MIPUnico::violaInsercao( Aluno* aluno, GGroup< VariableMIPUnico *, LessPtr<VariableMIPUnico> > aulasX )
+void MIPUnico::imprimeGoals()
 {
-	bool viola=false;
-	
-	// verifica todas as aulas antes de inserir
-	ITERA_GGROUP_LESSPTR( itAula, aulasX, VariableMIPUnico )
-	{
-		if ( itAula->getType() != VariableMIPUnico::V_CREDITOS )
-		{
-			std::cout<<"\nErro: só deveria haver variaveis do tipo x aqui.\n";
-			continue;
-		}
-
-		HorarioAula *hi = itAula->getHorarioAulaInicial();
-		HorarioAula *hf = itAula->getHorarioAulaFinal();
-		int dia = itAula->getDia();				
-		Sala* sala = itAula->getSubCjtSala()->salas.begin()->second;
-
-		int nroAlunos = problemData->existeTurmaDiscCampus( itAula->getTurma(), itAula->getDisciplina()->getId(), itAula->getUnidade()->getIdCampus() );
-
-		int capacidade = sala->getCapacidade();
-		if ( nroAlunos + 1 > capacidade )
-		{
-			viola=true;
-			break;
-		}
-		if ( aluno->sobrepoeAulaJaAlocada( hi, hf, dia ) )
-		{
-			viola=true;
-			break;
-		}
-	}
-
-	return viola;
+	solMIPUnico_->imprimeGoals();
 }
 
 void MIPUnico::imprimeGrades(int campusId, int prioridade)
@@ -382,199 +342,6 @@ void MIPUnico::imprimeTodasVars(int p)
 	outFile.close();
 }
 
-void MIPUnico::confereCorretude( int campusId, int prioridade )
-{
-	std::cout<<"\nConfere corretude...\n";
-
-	// --------------------------------------------------------
-	// Confere corretude de alocacoes de alunos em disciplinas
-	problemData->confereCorretudeAlocacoes();
-
-
-	// --------------------------------------------------------
-	// Maps da solução
-	std::map< Sala*, std::map< int /*dia*/, std::map<DateTime /*dti*/, std::pair<DateTime /*dtf*/, VariableMIPUnico*> > >,
-		LessPtr<Sala> > mapSalaDiaDtiDtfAula;
-	std::map< Disciplina*, std::map< int /*turma*/, std::map<int /*dia*/, VariableMIPUnico*> >, LessPtr<Disciplina> > mapDiscTurmaDiaAula;
-	
-
-	// --------------------------------------------------------
-	// Maperando as turmas da solução
-
-	for (auto itVar=solVarsTatInt.cbegin(); itVar!=solVarsTatInt.cend(); itVar++)
-	{
-		if ((*itVar)->getType() != VariableMIPUnico::V_CREDITOS) 
-			continue;
-
-		VariableMIPUnico *x = *itVar;
-		Sala *sala = x->getSubCjtSala()->getSala();
-		int dia = x->getDia();
-		DateTime dti = x->getHorarioAulaInicial()->getInicio();
-		DateTime dtf = x->getHorarioAulaFinal()->getFinal();
-
-		if ( sala->getIdCampus() != campusId ) continue;
-
-		// --------------------------------------------------------
-
-		auto itMapSala = mapSalaDiaDtiDtfAula.find(sala);
-		if ( itMapSala != mapSalaDiaDtiDtfAula.end() )
-		{
-			auto itMapDia = itMapSala->second.find(dia);
-			if ( itMapDia != itMapSala->second.end() )
-			{
-				bool ok=true;
-
-				auto itMapDti = itMapDia->second.begin();
-				for ( ; itMapDti != itMapDia->second.end() && ok; itMapDti++ )
-				{
-					DateTime salaDti = itMapDti->first;
-
-					if ( salaDti >= dtf ) break;
-
-					DateTime salaDtf = itMapDti->second.first;
-					
-					if ( salaDtf > dti ) 
-					{
-						ok = false;
-						stringstream msg;
-						msg << "Conflito de horario na sala [id " << sala->getId() << ", codigo " << sala->getCodigo()
-							<< "] no dia " << dia << " horario " << dti;
-						CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
-					}
-				}
-
-				if ( ok ) 
-				{
-					(itMapDia->second)[dti] = std::make_pair(dtf, x);
-				}
-			}
-			else (itMapSala->second)[dia][dti] = std::make_pair(dtf, x);
-		}
-		else mapSalaDiaDtiDtfAula[sala][dia][dti] = std::make_pair(dtf, x);
-
-		// --------------------------------------------------------
-		
-		Disciplina *disciplina = x->getDisciplina();
-		int turma = x->getTurma();
-		
-		auto itMapDisc = mapDiscTurmaDiaAula.find(disciplina);
-		if ( itMapDisc != mapDiscTurmaDiaAula.end() )
-		{
-			auto itTurma = itMapDisc->second.find(turma);
-			if ( itTurma != itMapDisc->second.end() )
-			{
-				auto itDiaX = itTurma->second.find(dia);
-				if ( itDiaX == itTurma->second.end() )
-				{
-					(itTurma->second)[dia] = x;
-				}
-				else
-				{
-					stringstream msg;
-					msg << "Mais de uma aula no dia " << dia << " para a turma "
-						<< turma << " da disciplina " << disciplina->getId() << ". Variaveis: " << x->toString() << " e "
-						<< itDiaX->second->toString();
-					CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
-				}
-			}
-			else (itMapDisc->second)[turma][dia] = x;
-		}
-		else mapDiscTurmaDiaAula[disciplina][turma][dia] = x;
-
-		// --------------------------------------------------------
-	}	
-
-
-	// --------------------------------------------------------
-	// Mapeando alunos
-
-	auto itMapAlunoAlocacoes = problemData->mapAluno_CampusTurmaDisc.begin();
-	for ( ;  itMapAlunoAlocacoes != problemData->mapAluno_CampusTurmaDisc.end(); itMapAlunoAlocacoes++ )
-	{
-		Aluno *aluno = itMapAlunoAlocacoes->first;
-		
-		std::map< int /*dia*/, std::map<DateTime /*dti*/,
-			std::pair<DateTime /*dtf*/, VariableMIPUnico*> > > mapAlunoDiaDtiDtfAula;
-
-		auto *trios = &itMapAlunoAlocacoes->second;
-		auto itTrio = trios->begin();
-		for ( ; itTrio != trios->end(); itTrio++ )
-		{
-			auto trio = *itTrio;
-			int cpId = trio.first;
-			int turma = trio.second;
-			Disciplina* disciplina = trio.third;
-
-			if ( cpId != campusId ) continue;
-
-			std::map<int /*dia*/, VariableMIPUnico*> *mapDiaVar=nullptr;
-
-			// Aulas da turma
-			auto itMapDisc = mapDiscTurmaDiaAula.find(disciplina);
-			if ( itMapDisc != mapDiscTurmaDiaAula.end() )
-			{
-				auto itTurma = itMapDisc->second.find(turma);
-				if ( itTurma != itMapDisc->second.end() )
-				{
-					mapDiaVar = & itTurma->second;
-				}
-			}
-			if ( mapDiaVar == nullptr )
-			{
-				stringstream msg;
-				msg << "Aluno [id " << aluno->getAlunoId() << ", " << aluno->getNomeAluno()
-					<< "] alocado em turma " << turma << " da disciplina " << disciplina->getId()
-					<< " mas nao existe variavel de aula associada.";
-				CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
-				continue;
-			}
-
-			// mapeia as aulas da turma no map do aluno
-			auto itDiaX = mapDiaVar->begin();
-			for ( ; itDiaX != mapDiaVar->end(); itDiaX++ )
-			{
-				VariableMIPUnico *x = itDiaX->second;
-				int dia = x->getDia();
-				DateTime dti = x->getHorarioAulaInicial()->getInicio();
-				DateTime dtf = x->getHorarioAulaFinal()->getFinal();
-
-				auto itMapDia = mapAlunoDiaDtiDtfAula.find(dia);
-				if ( itMapDia != mapAlunoDiaDtiDtfAula.end() )
-				{
-					bool ok=true;
-
-					auto itMapDti = itMapDia->second.begin();
-					for ( ; itMapDti != itMapDia->second.end() && ok; itMapDti++ )
-					{
-						DateTime alunoDti = itMapDti->first;
-
-						if ( alunoDti >= dtf ) break;
-
-						DateTime alunoDtf = itMapDti->second.first;
-					
-						if ( alunoDtf > dti ) 
-						{
-							ok = false;
-							stringstream msg;
-							msg << "Conflito de horario do aluno [id " << aluno->getAlunoId() << ", " << aluno->getNomeAluno()
-								<< "] no dia " << dia << " horario " << dti;
-							CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
-						}
-					}
-
-					if ( ok )
-					{
-						(itMapDia->second)[dti] = std::make_pair(dtf, x);
-					}
-				}
-				else mapAlunoDiaDtiDtfAula[dia][dti] = std::make_pair(dtf, x);
-			
-			}
-		}
-	}
-
-}
-
 void MIPUnico::corrigeNroTurmas( int prioridade, int campusId )
 {	
 #ifdef MIP_ESCOLA
@@ -670,7 +437,8 @@ std::string MIPUnico::getEtapaName(int campusId, int prioridade, int r)
    else
 		solName += "_SemPV";
 
-   if (MIPUnicoParametros::priorProfImportante_ != MIPUnicoParametros::PriorTypeOff)
+   if (MIPUnicoParametros::priorProfImportante_ != MIPUnicoParametros::PriorTypeOff &&
+	   MIPUnicoParametros::priorProfImportante_ != MIPUnicoParametros::PriorTypeOffWeight)
    {
 	   if (MIPUnicoParametros::priorProfLevel_==1)
 		 solName += "_ProfLevel1";
@@ -905,16 +673,21 @@ void MIPUnico::addSolAlocAlunoTurma(Aluno* const a, Disciplina * const d, int tu
 	solMIPUnico_->addSolAlocAlunoTurma(a, d, turma, dia, dti);
 }
 
+void MIPUnico::addVarSol(VariableMIPUnico* const v)
+{
+	solMIPUnico_->addVarSol(v);
+}
+
 void MIPUnico::carregaSolucaoInicialFixada()
 {
-	if (!probSolInicial) return;
+	if (!probSolInicial_) return;
 
 	unordered_map<Sala*, unordered_map<Disciplina*, unordered_map<int, 
 			std::pair<Professor*, unordered_set<Aluno*>> >>> solTurmaProfAlunos;
 	unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int,
 			unordered_map<int, set<DateTime>> >>> solCpDiscTurmaDiaDti;
 
-	probSolInicial->getMapsDaSolucao(solTurmaProfAlunos, solCpDiscTurmaDiaDti);
+	probSolInicial_->getMapsDaSolucao(solTurmaProfAlunos, solCpDiscTurmaDiaDti);
 	
 	for (auto itSala = solTurmaProfAlunos.cbegin(); 
 		itSala != solTurmaProfAlunos.cend(); itSala++)
@@ -998,7 +771,7 @@ void MIPUnico::carregaVariaveisSolucao( int campusAtualId, int prioridade, int r
          lp->getColName( auxName, col, 100 );
          fprintf( fout, "%s = %f\n", auxName, v->getValue() );
 
-		 solVarsTatInt.insert( v );
+		 addVarSol(v);
 		 		 
 		 Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
 		 Aluno *vAluno;
@@ -1185,11 +958,7 @@ void MIPUnico::criaNewLp( int campusId, int prioridade, int r )
 
 void MIPUnico::deleteVariablesSol()
 {
-   // Deleta todas as variaveis referenciadas em solVarsTatInt
-   for (auto it = solVarsTatInt.begin(); it != solVarsTatInt.end(); it++)
-		delete *it;
-
-   solVarsTatInt.clear();
+   solMIPUnico_->deleteVariablesSol();
 }
 
 void MIPUnico::clearVariablesMaps()
@@ -1453,7 +1222,8 @@ int MIPUnico::solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARR
 
 	if (!MIPUnicoParametros::permiteCriarPV)
 	{
-		if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOff)
+		if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOff ||
+			MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOffWeight)
 			status=solveMIPUnicoEtapaReal_Off(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
 		else if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorType1) 
 			status=solveMIPUnicoEtapaReal_1(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
@@ -1476,7 +1246,9 @@ int MIPUnico::solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARR
 
 int MIPUnico::solveMIPUnicoEtapaReal_Off(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL)
 {	
-	if (!ETAPA_UNICA && MIPUnicoParametros::priorProfImportante_ != MIPUnicoParametros::PriorTypeOff) return 0;
+	if (!ETAPA_UNICA &&
+		MIPUnicoParametros::priorProfImportante_ != MIPUnicoParametros::PriorTypeOff &&
+		MIPUnicoParametros::priorProfImportante_ != MIPUnicoParametros::PriorTypeOffWeight) return 0;
 
 	MIPUnicoParametros::priorProfLevel_ = MIPUnicoParametros::allPriorProfLevels_;
 
@@ -1896,7 +1668,7 @@ int MIPUnico::polishAndOptimize( int campusId, int prioridade, int r, bool& CARR
 		int timeLimit = getTimeLimit(fase);
 		int timeLimitNoImprov = getTimeLimitNoImprov(fase);
 
-		bool polishing = false;
+		bool polishing = true;
 		if ( polishing )
 		{  
 			Polish *pol = new Polish(lp, vHashTatico, optLogFileName, fase);
@@ -1923,13 +1695,48 @@ int MIPUnico::polishAndOptimize( int campusId, int prioridade, int r, bool& CARR
 			optimize(goal, xS);
 		}
 
+		updateAllGoals(goal);
+
 		Indicadores::printEscolaIndicadores(
 			goal->getGoalName(), goal->getValue(), goal->getGap(),
-			goal->isOpt(), Utilidade::getTimeStr(goal->getRunTime()));
+			goal->isOpt(), goal->getPercFixedFinal(), Utilidade::getTimeStr(goal->getRunTime()), goal->getStopCriteriaStr());
 		
 		writeSolTxt( campusId, prioridade, r, fase, xS, 0 );
 	}
 	return 1;
+}
+
+void MIPUnico::updateAllGoals(GoalStatus* const goal)
+{   
+	double objValueAtend=0;
+	double objValueNrTurmas=0;
+	double objValueDesloc=0;
+	double objValueFasesDias=0;
+	double objValueGap=0;
+
+    auto vit = vHashTatico.begin();
+    for (; vit != vHashTatico.end(); vit++)
+    {
+		 int col = vit->second;
+	     int value = (int) (xSol_[col] + 0.5);
+	   
+	     if (value <= 0)
+			 continue;
+		 
+		 VariableMIPUnico v = vit->first;
+
+		 objValueAtend += getCoefObjMaxAtend(v) * value;
+		 objValueNrTurmas += getCoefObjMinTurmas(v) * value;
+		 objValueDesloc += getCoefObjMinDeslocProf(v) * value;
+		 objValueFasesDias += getCoefObjMinFasesDoDiaProf(v) * value;
+		 objValueGap += getCoefObjMinGapProf(v) * value;
+	}
+
+	goal->setValueAtend(objValueAtend);
+	goal->setValueNrTurmas(objValueNrTurmas);
+	goal->setValueDesloc(objValueDesloc);
+	goal->setValueFasesDias(objValueFasesDias);
+	goal->setValueGap(objValueGap);
 }
 
 int MIPUnico::solveGaranteSolucao( int campusId, int prioridade, int r, bool& CARREGA_SOL_PARCIAL, double *xS )
@@ -1983,6 +1790,8 @@ int MIPUnico::solveGaranteSolucao( int campusId, int prioridade, int r, bool& CA
 
 	optimize(goal, xS);
 					
+	updateAllGoals(goal);
+
 	// -------------------------------------------------------------------
 	// Volta com a função objetivo original	
 	bool chg = lp->chgObj(nBdsObj,idxN,objN);
@@ -2065,17 +1874,9 @@ void MIPUnico::zeraAtendGaranteSolucao(int &nBds, double* valsOrig, int* idxs, B
 	delete[] vals;
 }
 
-void MIPUnico::copyFinalSolution(std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> &solMipUnico)
+void MIPUnico::copyFinalSolution(std::set<VariableMIPUnico*> &solMipUnico)
 {
-	for (auto itVar=solVarsTatInt.begin(); itVar!=solVarsTatInt.end(); itVar++)
-	{
-		if ((*itVar)->getType() == VariableMIPUnico::V_CREDITOS ||
-			(*itVar)->getType() == VariableMIPUnico::V_PROF_TURMA ||
-			(*itVar)->getType() == VariableMIPUnico::V_ALOCA_ALUNO_TURMA_DISC)
-		{
-			solMipUnico.insert(*itVar);
-		}
-	}
+	solMIPUnico_->copyFinalSolution(solMipUnico);
 }
 
 // -------------------------------
@@ -2420,10 +2221,17 @@ double MIPUnico::getCoefObjMaxAtend(VariableMIPUnico v)
 		return 0;
           
 	double coef = v.getDisciplina()->getTotalCreditos();		
-	if (considerarPriorProf() && !priorProfLivre()) 
+	if (considerarDivisaoPriorProf() && !priorProfLivre()) 
 	{
 		int nr = v.getDisciplina()->getNroProfRealImportHabilit(MIPUnicoParametros::priorProfLevel_);
 		coef = (nr>0 ? v.getDisciplina()->getTotalCreditos() : 0);
+	}
+
+	if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOffWeight)
+	{
+		int nrImport = v.getDisciplina()->getNroProfRealImportHabilit(1);
+		int nrNaoImport = v.getDisciplina()->getNroProfRealImportHabilit(2);
+		coef = (nrImport>nrNaoImport ? 2*coef : coef);
 	}
 
 	return coef;
@@ -3041,6 +2849,22 @@ int MIPUnico::solveMinTurmas( int campusId, int prioridade, int r, bool& CARREGA
 	return cpyStatus;
 }
 
+double MIPUnico::getCoefObjMinTurmas(VariableMIPUnico v)
+{
+	if ( v.getType() != VariableMIPUnico::V_ABERTURA )
+		return 0;      
+	if (v.getDisciplina()->getMaxAlunosT() <= 1)
+		return 0;
+
+	double coef = 1.0;
+	if (considerarDivisaoPriorProf()) 
+	{
+		int nr = v.getDisciplina()->getNroProfRealImportHabilit(MIPUnicoParametros::priorProfLevel_);
+		coef = (nr>0 ? 1 : 0);
+	}	
+	return coef;
+}
+
 bool MIPUnico::chgObjMinTurmas()
 {
 	int *idxs = new int[lp->getNumCols()];
@@ -3052,17 +2876,7 @@ bool MIPUnico::chgObjMinTurmas()
 	{
 		VariableMIPUnico v = vit->first;
 
-		double coef = 0.0;		
-		if (v.getType() == VariableMIPUnico::V_ABERTURA)
-		if (v.getDisciplina()->getMaxAlunosT() > 1)
-		{
-			coef = 1.0;
-			if (considerarPriorProf()) 
-			{
-				int nr = v.getDisciplina()->getNroProfRealImportHabilit(MIPUnicoParametros::priorProfLevel_);
-				coef = (nr>0 ? 1 : 0);
-			}
-		}
+		double coef = getCoefObjMinTurmas(v);
 
 		idxs[nBds] = vit->second;
 		vals[nBds] = coef;
@@ -3340,6 +3154,41 @@ int MIPUnico::solveMinDeslocProf( int campusId, int prioridade, int r, bool& CAR
 	return cpyStatus;
 }
 
+double MIPUnico::getCoefObjMinDeslocProf(VariableMIPUnico v)
+{
+	double coef = 0.0;
+	if (v.getType() != VariableMIPUnico::V_PROF_DESLOC &&
+		v.getType() != VariableMIPUnico::V_PROF_UNID)
+		 return coef;
+	if (!priorProf(v.getProfessor()))
+		return coef;
+
+	if (v.getType() == VariableMIPUnico::V_PROF_DESLOC)
+	{     
+		Campus *campusDest = problemData->refCampus[v.getUnidade2()->getIdCampus()];
+		Campus *campusOrig = problemData->refCampus[v.getUnidade1()->getIdCampus()];
+
+		int tempoMin = problemData->calculaTempoEntreCampusUnidades(
+			campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
+			
+		if (tempoMin >= MIPUnicoParametros::maxTempoDeslocCurto_) 
+			coef = tempoMin;
+	}
+	
+	if (v.getType() == VariableMIPUnico::V_PROF_UNID)
+	{
+		coef = 10;
+	}	
+
+	if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOffWeight &&
+		v.getProfessor()->getImportancia()==1)
+	{
+		coef *= 2;
+	}
+
+	return coef;
+}
+
 bool MIPUnico::chgObjMinDeslocProf()
 {
 	int *idxs = new int[lp->getNumCols()];
@@ -3352,24 +3201,7 @@ bool MIPUnico::chgObjMinDeslocProf()
 	{
 		VariableMIPUnico v = vit->first;
 			
-		double coef = 0.0;		
-		if ( v.getType() == VariableMIPUnico::V_PROF_DESLOC &&
-			priorProf(v.getProfessor()) )
-		{     
-			Campus *campusDest = problemData->refCampus[v.getUnidade2()->getIdCampus()];
-			Campus *campusOrig = problemData->refCampus[v.getUnidade1()->getIdCampus()];
-
-			int tempoMin = problemData->calculaTempoEntreCampusUnidades(
-				campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
-			
-			if (tempoMin >= MIPUnicoParametros::maxTempoDeslocCurto_) 
-				coef = tempoMin;
-		}
-		else if ( v.getType() == VariableMIPUnico::V_PROF_UNID &&
-				 priorProf(v.getProfessor()) )
-		{
-			coef = 10;
-		}
+		double coef = getCoefObjMinDeslocProf(v);
 
 		idxs[nBds] = vit->second;
 		vals[nBds] = coef;
@@ -3690,6 +3522,36 @@ int MIPUnico::solveMinFasesDoDiaProf( int campusId, int prioridade, int r, bool&
 	return cpyStatus;
 }
 
+double MIPUnico::getCoefObjMinFasesDoDiaProf(VariableMIPUnico v)
+{
+	double coef = 0.0;
+	if (v.getType() != VariableMIPUnico::V_PROF_FASE_DIA_USADA &&
+		v.getType() != VariableMIPUnico::V_PROF_DIA_USADO)
+		return coef;
+	if (v.getProfessor()->eVirtual())
+		return coef;
+
+	if (v.getType() == VariableMIPUnico::V_PROF_FASE_DIA_USADA && MIPUnicoParametros::minimizarProfFaseDoDiaUsada_)
+	if (!v.getProfessor()->eVirtual() && priorProf(v.getProfessor()))
+	{     
+		coef = 1.0;
+	}
+
+	if (v.getType() == VariableMIPUnico::V_PROF_DIA_USADO && MIPUnicoParametros::minimizarProfDiaUsado_)
+	if (!v.getProfessor()->eVirtual() && priorProf(v.getProfessor()))
+	{     
+		coef = 1.0;
+	}
+	
+	if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOffWeight &&
+		v.getProfessor()->getImportancia()==1)
+	{
+		coef *= 2;
+	}
+
+	return coef;
+}
+
 bool MIPUnico::chgObjMinFasesDoDiaProf()
 {
 	int *idxs = new int[lp->getNumCols()];
@@ -3701,18 +3563,7 @@ bool MIPUnico::chgObjMinFasesDoDiaProf()
 	{
 		VariableMIPUnico v = vit->first;
 			
-		double coef = 0.0;		
-		if (v.getType() == VariableMIPUnico::V_PROF_FASE_DIA_USADA && MIPUnicoParametros::minimizarProfFaseDoDiaUsada_)
-		if (!v.getProfessor()->eVirtual() && priorProf(v.getProfessor()))
-		{     
-			coef = 1.0;
-		}
-
-		if (v.getType() == VariableMIPUnico::V_PROF_DIA_USADO && MIPUnicoParametros::minimizarProfDiaUsado_)
-		if (!v.getProfessor()->eVirtual() && priorProf(v.getProfessor()))
-		{     
-			coef = 1.0;
-		}
+		double coef = getCoefObjMinFasesDoDiaProf(v);
 
 		idxs[nBds] = vit->second;
 		vals[nBds] = coef;
@@ -3941,6 +3792,42 @@ int MIPUnico::solveMinGapProf( int campusId, int prioridade, int r, bool& CARREG
 	return cpyStatus;
 }
 
+double MIPUnico::getCoefObjMinGapProf(VariableMIPUnico v)
+{
+	double coef = 0.0;
+	if (v.getType() != VariableMIPUnico::V_FOLGA_GAP_PROF &&
+		v.getType() != VariableMIPUnico::V_PROF_DESLOC)
+		return coef;
+	if (v.getProfessor()->eVirtual())
+		return coef;
+
+	if (v.getType() == VariableMIPUnico::V_FOLGA_GAP_PROF && 
+		priorProf(v.getProfessor()))
+	{     
+		coef = 1.0;
+	}
+	if (v.getType() == VariableMIPUnico::V_PROF_DESLOC &&
+		priorProf(v.getProfessor()))
+	{     
+		Campus *campusDest = problemData->refCampus[v.getUnidade2()->getIdCampus()];
+		Campus *campusOrig = problemData->refCampus[v.getUnidade1()->getIdCampus()];
+
+		int tempoMin = problemData->calculaTempoEntreCampusUnidades(
+			campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
+			
+		if (tempoMin < MIPUnicoParametros::maxTempoDeslocCurto_) 
+			coef = tempoMin * 0.01;
+	}
+	
+	if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOffWeight &&
+		v.getProfessor()->getImportancia()==1)
+	{
+		coef *= 2;
+	}
+
+	return coef;
+}
+
 bool MIPUnico::chgObjMinGapProf()
 {
 	int *idxs = new int[lp->getNumCols()];
@@ -3952,24 +3839,7 @@ bool MIPUnico::chgObjMinGapProf()
 	{
 		VariableMIPUnico v = vit->first;
 			
-		double coef = 0.0;		
-		if (v.getType() == VariableMIPUnico::V_FOLGA_GAP_PROF && 
-			priorProf(v.getProfessor()))
-		{     
-			coef = 1.0;
-		}
-		if (v.getType() == VariableMIPUnico::V_PROF_DESLOC &&
-			priorProf(v.getProfessor()))
-		{     
-			Campus *campusDest = problemData->refCampus[v.getUnidade2()->getIdCampus()];
-			Campus *campusOrig = problemData->refCampus[v.getUnidade1()->getIdCampus()];
-
-			int tempoMin = problemData->calculaTempoEntreCampusUnidades(
-				campusDest, campusOrig, v.getUnidade2(), v.getUnidade1() );
-			
-			if (tempoMin < MIPUnicoParametros::maxTempoDeslocCurto_) 
-				coef = tempoMin * 0.01;
-		}
+		double coef = getCoefObjMinGapProf(v);
 
 		idxs[nBds] = vit->second;
 		vals[nBds] = coef;
@@ -4180,21 +4050,22 @@ int MIPUnico::solveGeneral( int campusId, int prioridade, int r, bool& CARREGA_S
 
 bool MIPUnico::priorProfLivre()
 {
-	if (!considerarPriorProf()) return true;
+	if (!considerarDivisaoPriorProf()) return true;
 
 	return (MIPUnicoParametros::priorProfLevel_ == MIPUnicoParametros::allPriorProfLevels_);
 }
 
-bool MIPUnico::considerarPriorProf()
+bool MIPUnico::considerarDivisaoPriorProf()
 {
-	if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOff)
+	if (MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOff ||
+		MIPUnicoParametros::priorProfImportante_ == MIPUnicoParametros::PriorTypeOffWeight)
 		return false;
 	return true;
 }
 
 bool MIPUnico::priorProf(Professor* const professor, bool ouMenor)
 {
-	if (!considerarPriorProf())
+	if (!considerarDivisaoPriorProf())
 		return true;
 	if (MIPUnicoParametros::priorProfLevel_ == MIPUnicoParametros::allPriorProfLevels_)
 		return true;
@@ -4204,13 +4075,13 @@ bool MIPUnico::priorProf(Professor* const professor, bool ouMenor)
 
 bool MIPUnico::priorDisc(Disciplina* const disciplina, bool ouMenor)
 {
-	if (!considerarPriorProf())
+	if (!considerarDivisaoPriorProf())
 		return true;
 	if (MIPUnicoParametros::priorProfLevel_ == MIPUnicoParametros::allPriorProfLevels_)
 		return true;
 
 	bool existeProfPriorNaDisc = true;
-	if (considerarPriorProf() && !priorProfLivre() && !ehMarreta(disciplina)) 
+	if (considerarDivisaoPriorProf() && !priorProfLivre() && !ehMarreta(disciplina)) 
 	{
 		int nr = disciplina->getNroProfRealImportHabilit(MIPUnicoParametros::priorProfLevel_, ouMenor);
 		if (nr == 0)
@@ -4291,10 +4162,7 @@ int MIPUnico::addConstrGapProf()
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	lp->updateLP();
-
-#ifdef PRINT_cria_restricoes
 	std::cout << "\nnumRest criarRestricaoProfHiHf_: " << restricoes  <<" "<<dif <<" sec" << std::endl;
-#endif
 
 	copyInitialSolutionGapProf();
 
@@ -4394,18 +4262,14 @@ int MIPUnico::addConstrDivCred(int campusId)
 	restricoes += criaRestricaoTaticoDivisaoCredito_hash(campusId);
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
-	#ifdef PRINT_cria_restricoes
 	std::cout << "\nnumRest criaRestricaoTaticoDivisaoCredito_hash: " << restricoes  <<" "<<dif <<" sec" << std::endl;
-	#endif
-
+	
 	timer.start();
 	restricoes += criaRestricaoTaticoCombinacaoDivisaoCredito(campusId);
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
-	#ifdef PRINT_cria_restricoes
 	std::cout << "\nnumRest criaRestricaoTaticoCombinacaoDivisaoCredito: " << restricoes  <<" "<<dif <<" sec" << std::endl;
-	#endif
-
+	
 	lp->updateLP();
 	copyInitialSolutionDivCred();
 
@@ -11464,11 +11328,9 @@ int MIPUnico::criarRestricaoProfHiHf_()
 		}
 	}
 
-	#ifdef PRINT_cria_restricoes
-		std::cout << std::endl << "numRest criarRestricaoProfHiUB_ e criarRestricaoProfHfLB_: " 
-			<< numRestr-numRestAnterior << std::endl;
-		numRestAnterior = numRestr;
-	#endif
+	std::cout << std::endl << "numRest criarRestricaoProfHiUB_ e criarRestricaoProfHfLB_: " 
+		<< numRestr-numRestAnterior << std::endl;
+	numRestAnterior = numRestr;
 	#pragma endregion
 
 	// -------------------------------------------------------------------------------------------------
@@ -11527,11 +11389,11 @@ int MIPUnico::criarRestricaoProfHiHf_()
 			}
 		}
 	}
-	#ifdef PRINT_cria_restricoes
-		std::cout << "numRest criarRestricaoProfHiLB_ e criarRestricaoProfHfUB_: " 
-			<< numRestr-numRestAnterior << std::endl;
-		numRestAnterior = numRestr;
-	#endif
+
+	std::cout << "numRest criarRestricaoProfHiLB_ e criarRestricaoProfHfUB_: " 
+		<< numRestr-numRestAnterior << std::endl;
+	numRestAnterior = numRestr;
+
 	#pragma endregion
 
 	// -------------------------------------------------------------------------------------------------
@@ -11579,11 +11441,11 @@ int MIPUnico::criarRestricaoProfHiHf_()
 			}
 		}
 	}
-	#ifdef PRINT_cria_restricoes
-		std::cout << "numRest criarRestricaoProfGapMTN_: " 
-			<< numRestr-numRestAnterior << std::endl;
-		numRestAnterior = numRestr;
-	#endif
+
+	std::cout << "numRest criarRestricaoProfGapMTN_: " 
+		<< numRestr-numRestAnterior << std::endl;
+	numRestAnterior = numRestr;
+
 	#pragma endregion
 
 	return numRestr;
@@ -12082,11 +11944,10 @@ int MIPUnico::criarRestricaoAlunoHiHf_()
 		}
 	}
 
-	#ifdef PRINT_cria_restricoes
-		std::cout << std::endl << "numRest criarRestricaoAlunoHiUB_ e criarRestricaoAlunoHfLB_: " 
-			<< numRestr-numRestAnterior << std::endl;
-		numRestAnterior = numRestr;
-	#endif
+	std::cout << std::endl << "numRest criarRestricaoAlunoHiUB_ e criarRestricaoAlunoHfLB_: " 
+		<< numRestr-numRestAnterior << std::endl;
+	numRestAnterior = numRestr;
+
 	#pragma endregion
 
 	// -------------------------------------------------------------------------------------------------
@@ -12134,11 +11995,10 @@ int MIPUnico::criarRestricaoAlunoHiHf_()
 		}
 	}
 
-	#ifdef PRINT_cria_restricoes
-		std::cout << "numRest criarRestricaoAlunoHiLB_ e criarRestricaoAlunoHfUB_: " 
-			<< numRestr-numRestAnterior << std::endl;
-		numRestAnterior = numRestr;
-	#endif
+	std::cout << "numRest criarRestricaoAlunoHiLB_ e criarRestricaoAlunoHfUB_: " 
+		<< numRestr-numRestAnterior << std::endl;
+	numRestAnterior = numRestr;
+
 	#pragma endregion
 
 	// -------------------------------------------------------------------------------------------------
@@ -12181,11 +12041,10 @@ int MIPUnico::criarRestricaoAlunoHiHf_()
 			numRestr += criarRestricaoAlunoGap_( aluno, dia, rhs, colHi, colHf, itDia->second );
 		}
 	}
-	#ifdef PRINT_cria_restricoes
-		std::cout << "numRest criarRestricaoAlunoGap_: "
-			<< numRestr-numRestAnterior << std::endl;
-		numRestAnterior = numRestr;
-	#endif
+
+	std::cout << "numRest criarRestricaoAlunoGap_: "
+		<< numRestr-numRestAnterior << std::endl;
+	numRestAnterior = numRestr;
 	#pragma endregion
 
 	return numRestr;

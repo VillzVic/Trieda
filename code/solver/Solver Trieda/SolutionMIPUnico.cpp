@@ -10,7 +10,8 @@
 #include "Professor.h"
 #include "CentroDados.h"
 #include "MIPUnicoParametros.h"
-
+#include "VariableMIPUnico.h"
+#include "Indicadores.h"
 
 // -----------------------------------------------------------------------------------------------
 
@@ -51,6 +52,16 @@ void SolutionMIPUnico::clearMapsSolution()
 	solAlocAlunoDiaDti_.clear();
 }
 
+void SolutionMIPUnico::deleteVariablesSol()
+{
+   // Deleta todas as variaveis referenciadas em solVarsTatInt
+   for (auto it = solVarsTatInt_.begin(); it != solVarsTatInt_.end(); it++)
+   {
+		if (*it) delete *it;
+   }
+   solVarsTatInt_.clear();
+}
+
 void SolutionMIPUnico::addSolAlocProfTurma(Professor* const p, Campus * const cp, Disciplina * const d, int turma)
 {
 	if (p) solAlocProfTurma_[p][cp][d].insert(turma);
@@ -62,6 +73,11 @@ void SolutionMIPUnico::addSolAlocAlunoTurma(Aluno* const a, Disciplina * const d
 	solAlocAlunoDiscTurmaDiaDti_[a][d].first = turma;
 	solAlocAlunoDiscTurmaDiaDti_[a][d].second[dia].insert(dti);
 	solAlocAlunoDiaDti_[a][dia].insert(dti);
+}
+
+void SolutionMIPUnico::addVarSol(VariableMIPUnico* const v)
+{
+	solVarsTatInt_.insert( v );
 }
 
 GoalStatus* SolutionMIPUnico::getAddNewGoal(int fase)
@@ -323,6 +339,18 @@ bool SolutionMIPUnico::getProfAlocNaTurma(Professor* &professor, Campus* const c
 	return false;
 }
 
+void SolutionMIPUnico::copyFinalSolution(std::set<VariableMIPUnico*> &solMipUnico) const
+{
+	for (auto itVar=solVarsTatInt_.cbegin(); itVar!=solVarsTatInt_.cend(); itVar++)
+	{
+		if ((*itVar)->getType() == VariableMIPUnico::V_CREDITOS ||
+			(*itVar)->getType() == VariableMIPUnico::V_PROF_TURMA ||
+			(*itVar)->getType() == VariableMIPUnico::V_ALOCA_ALUNO_TURMA_DISC)
+		{
+			solMipUnico.insert(*itVar);
+		}
+	}
+}
 
 
 // -----------------------------------------------------------------------------------------------
@@ -403,4 +431,211 @@ void SolutionMIPUnico::imprimeProfTurmas( int campusId, int prioridade )
 		}
 	}
 	outProfTurmas.close();
+}
+
+void SolutionMIPUnico::imprimeGoals()
+{
+	Indicadores::printSeparator(2);
+	for (auto at = 0; at < goalStats_.size(); at++)
+	{
+		GoalStatus * const g = goalStats_[at];
+		Indicadores::printEscolaGoalsIndicadores(g->getGoalName(), g->getValueAtend(), g->getValueNrTurmas(), 
+			g->getValueDesloc(), g->getValueFasesDias(), g->getValueGap());
+	}
+	Indicadores::printSeparator(3);
+}
+
+
+// -----------------------------------------------------------------------------------------------
+void SolutionMIPUnico::confereCorretude( int campusId, int prioridade )
+{
+	std::cout<<"\nConfere corretude...\n";
+
+	// --------------------------------------------------------
+	// Confere corretude de alocacoes de alunos em disciplinas
+	//problemData->confereCorretudeAlocacoes();
+
+
+	// --------------------------------------------------------
+	// Maps da solução
+	std::map< Sala*, std::map< int /*dia*/, std::map<DateTime /*dti*/, std::pair<DateTime /*dtf*/, VariableMIPUnico*> > >,
+		LessPtr<Sala> > mapSalaDiaDtiDtfAula;
+	std::map< Disciplina*, std::map< int /*turma*/, std::map<int /*dia*/, VariableMIPUnico*> >, LessPtr<Disciplina> > mapDiscTurmaDiaAula;
+	
+
+	// --------------------------------------------------------
+	// Maperando as turmas da solução
+
+	for (auto itVar=solVarsTatInt_.cbegin(); itVar!=solVarsTatInt_.cend(); itVar++)
+	{
+		if ((*itVar)->getType() != VariableMIPUnico::V_CREDITOS) 
+			continue;
+
+		VariableMIPUnico *x = *itVar;
+		Sala *sala = x->getSubCjtSala()->getSala();
+		int dia = x->getDia();
+		DateTime dti = x->getHorarioAulaInicial()->getInicio();
+		DateTime dtf = x->getHorarioAulaFinal()->getFinal();
+
+		if ( sala->getIdCampus() != campusId ) continue;
+
+		// --------------------------------------------------------
+
+		auto itMapSala = mapSalaDiaDtiDtfAula.find(sala);
+		if ( itMapSala != mapSalaDiaDtiDtfAula.end() )
+		{
+			auto itMapDia = itMapSala->second.find(dia);
+			if ( itMapDia != itMapSala->second.end() )
+			{
+				bool ok=true;
+
+				auto itMapDti = itMapDia->second.begin();
+				for ( ; itMapDti != itMapDia->second.end() && ok; itMapDti++ )
+				{
+					DateTime salaDti = itMapDti->first;
+
+					if ( salaDti >= dtf ) break;
+
+					DateTime salaDtf = itMapDti->second.first;
+					
+					if ( salaDtf > dti ) 
+					{
+						ok = false;
+						stringstream msg;
+						msg << "Conflito de horario na sala [id " << sala->getId() << ", codigo " << sala->getCodigo()
+							<< "] no dia " << dia << " horario " << dti;
+						CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
+					}
+				}
+
+				if ( ok ) 
+				{
+					(itMapDia->second)[dti] = std::make_pair(dtf, x);
+				}
+			}
+			else (itMapSala->second)[dia][dti] = std::make_pair(dtf, x);
+		}
+		else mapSalaDiaDtiDtfAula[sala][dia][dti] = std::make_pair(dtf, x);
+
+		// --------------------------------------------------------
+		
+		Disciplina *disciplina = x->getDisciplina();
+		int turma = x->getTurma();
+		
+		auto itMapDisc = mapDiscTurmaDiaAula.find(disciplina);
+		if ( itMapDisc != mapDiscTurmaDiaAula.end() )
+		{
+			auto itTurma = itMapDisc->second.find(turma);
+			if ( itTurma != itMapDisc->second.end() )
+			{
+				auto itDiaX = itTurma->second.find(dia);
+				if ( itDiaX == itTurma->second.end() )
+				{
+					(itTurma->second)[dia] = x;
+				}
+				else
+				{
+					stringstream msg;
+					msg << "Mais de uma aula no dia " << dia << " para a turma "
+						<< turma << " da disciplina " << disciplina->getId() << ". Variaveis: " << x->toString() << " e "
+						<< itDiaX->second->toString();
+					CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
+				}
+			}
+			else (itMapDisc->second)[turma][dia] = x;
+		}
+		else mapDiscTurmaDiaAula[disciplina][turma][dia] = x;
+
+		// --------------------------------------------------------
+	}	
+
+
+	// --------------------------------------------------------
+	// Mapeando alunos
+
+	//auto itMapAlunoAlocacoes = problemData->mapAluno_CampusTurmaDisc.begin();
+	//for ( ;  itMapAlunoAlocacoes != problemData->mapAluno_CampusTurmaDisc.end(); itMapAlunoAlocacoes++ )
+	//{
+	//	Aluno *aluno = itMapAlunoAlocacoes->first;
+	//	
+	//	std::map< int /*dia*/, std::map<DateTime /*dti*/,
+	//		std::pair<DateTime /*dtf*/, VariableMIPUnico*> > > mapAlunoDiaDtiDtfAula;
+
+	//	auto *trios = &itMapAlunoAlocacoes->second;
+	//	auto itTrio = trios->begin();
+	//	for ( ; itTrio != trios->end(); itTrio++ )
+	//	{
+	//		auto trio = *itTrio;
+	//		int cpId = trio.first;
+	//		int turma = trio.second;
+	//		Disciplina* disciplina = trio.third;
+
+	//		if ( cpId != campusId ) continue;
+
+	//		std::map<int /*dia*/, VariableMIPUnico*> *mapDiaVar=nullptr;
+
+	//		// Aulas da turma
+	//		auto itMapDisc = mapDiscTurmaDiaAula.find(disciplina);
+	//		if ( itMapDisc != mapDiscTurmaDiaAula.end() )
+	//		{
+	//			auto itTurma = itMapDisc->second.find(turma);
+	//			if ( itTurma != itMapDisc->second.end() )
+	//			{
+	//				mapDiaVar = & itTurma->second;
+	//			}
+	//		}
+	//		if ( mapDiaVar == nullptr )
+	//		{
+	//			stringstream msg;
+	//			msg << "Aluno [id " << aluno->getAlunoId() << ", " << aluno->getNomeAluno()
+	//				<< "] alocado em turma " << turma << " da disciplina " << disciplina->getId()
+	//				<< " mas nao existe variavel de aula associada.";
+	//			CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
+	//			continue;
+	//		}
+
+	//		// mapeia as aulas da turma no map do aluno
+	//		auto itDiaX = mapDiaVar->begin();
+	//		for ( ; itDiaX != mapDiaVar->end(); itDiaX++ )
+	//		{
+	//			VariableMIPUnico *x = itDiaX->second;
+	//			int dia = x->getDia();
+	//			DateTime dti = x->getHorarioAulaInicial()->getInicio();
+	//			DateTime dtf = x->getHorarioAulaFinal()->getFinal();
+
+	//			auto itMapDia = mapAlunoDiaDtiDtfAula.find(dia);
+	//			if ( itMapDia != mapAlunoDiaDtiDtfAula.end() )
+	//			{
+	//				bool ok=true;
+
+	//				auto itMapDti = itMapDia->second.begin();
+	//				for ( ; itMapDti != itMapDia->second.end() && ok; itMapDti++ )
+	//				{
+	//					DateTime alunoDti = itMapDti->first;
+
+	//					if ( alunoDti >= dtf ) break;
+
+	//					DateTime alunoDtf = itMapDti->second.first;
+	//				
+	//					if ( alunoDtf > dti ) 
+	//					{
+	//						ok = false;
+	//						stringstream msg;
+	//						msg << "Conflito de horario do aluno [id " << aluno->getAlunoId() << ", " << aluno->getNomeAluno()
+	//							<< "] no dia " << dia << " horario " << dti;
+	//						CentroDados::printError( "void MIPUnico::confereCorretude( int campusId, int prioridade )", msg.str() );
+	//					}
+	//				}
+
+	//				if ( ok )
+	//				{
+	//					(itMapDia->second)[dti] = std::make_pair(dtf, x);
+	//				}
+	//			}
+	//			else mapAlunoDiaDtiDtfAula[dia][dti] = std::make_pair(dtf, x);
+	//		
+	//		}
+	//	}
+	//}
+
 }

@@ -8,8 +8,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "VariableMIPUnico.h"
-
 class ProblemDataLoader;
 class ProblemSolution;
 class ProblemData;
@@ -26,6 +24,7 @@ class AtendimentoCampus;
 class AtendimentoSala;
 class AtendimentoDiaSemana;
 class DateTime;
+class VariableMIPUnico;
 
 class SolverMIPUnico : public Solver
 {
@@ -79,7 +78,7 @@ private:
 
    void contabilizaGapProfReal_();
    void mapSolutionProfReal_();
-   void countGapProfReal_();
+   void countGapDeslocProfReal_();
 
    void getAulas(Campus* const cp, Disciplina* const d, int const turma,
 		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*> >> * &ptMapSala);
@@ -115,14 +114,14 @@ private:
    
    ProblemSolution * problemSolution;
    ProblemDataLoader * problemDataLoader;
-   ProblemSolution * const probSolInicial;
+   ProblemSolution * const probSolInicial_;
    
    // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores      
    
-   std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> solMipUnico_;
-   std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> solMipUnicoX_;
-   std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> solMipUnicoY_;
-   std::set<VariableMIPUnico*, LessPtr<VariableMIPUnico>> solMipUnicoS_;
+   std::set<VariableMIPUnico*> solMipUnico_;
+   std::set<VariableMIPUnico*> solMipUnicoX_;
+   std::set<VariableMIPUnico*> solMipUnicoY_;
+   std::set<VariableMIPUnico*> solMipUnicoS_;
 
    unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, unordered_map<Professor*,
 	   unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> >>>> solAulas_;

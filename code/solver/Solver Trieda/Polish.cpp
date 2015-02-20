@@ -20,7 +20,7 @@ bool SO_USAR_WORST_CLUSTER=true;
 Polish::Polish( OPT_GUROBI * &lp, VariableMIPUnicoHash const & hashVars, string originalLogFile, int phase, double maxFOAddValue )
 	: lp_(lp), vHashTatico_(hashVars), minOptValue_(maxFOAddValue), maxTime_(0),
 	maxTempoSemMelhora_(9999999999), objAtual_(999999999999.9), gapAtual_(999999999999.9),
-	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), maxIterSemMelhora_(8),
+	melhorou_(true), melhora_(0), runtime_(0), nrIterSemMelhoraConsec_(0), nrIterSemMelhora_(0), nrIter_(0), maxIterSemMelhora_(8),
 	fixarVarsTatProf_(true), perc_(0), tempoIni_(80),
 	nrPrePasses_(-1), heurFreq_(0.8), module_(Polish::TATICO), fixType_(2), status_(OPTSTAT_MIPOPTIMAL),
 	phase_(phase), percUnidFixed_(30), useFreeBlockPerCluster_(true), clusterIdxFreeUnid_(-1), idFreeUnid_(-1),
@@ -374,6 +374,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
     
 	init();	      
 	
+	goal_ = goal;
 	xSol_ = xS;
 
     perc_ = percIni;
@@ -385,6 +386,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 
 	if( !needsPolish() )
 	{
+		goal_->setStopCriteria(GoalStatus::NoNeedOfPolish);
 		okIter_ = false;
 		polishing = false;
 	}
@@ -393,7 +395,7 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	
 	setParams(timeIter_);
 
-	int i=0;
+	nrIter_ = 0;
     while (okIter_)
     {     
 		logIter( perc_, timeIter_ );
@@ -410,23 +412,23 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
 	  
 		setMelhora(objN);
 
-		updatePercAndTimeIter(objN);
-
-		checkTimeWithoutImprov(objN);
-	  
 		updateObj(objN);
+	  
+		updatePercAndTimeIter();
+
+		checkTimeWithoutImprov();
 	  
 		checkTimeLimit();
 	  
 		unfixBounds();
 		
-		i++;
+		nrIter_++;
     }
 
-	updateGoal(goal);
+	updateGoal();
 	
 	stringstream ss;
-	ss << "\n\nNumber of performed iterations: " << i;
+	ss << "\n\nNumber of performed iterations: " << nrIter_;
 	printLog(ss.str());
 		
 	lp_->setCallbackFunc( NULL, NULL );
@@ -437,16 +439,19 @@ bool Polish::polish(double* xS, double maxTime, int percIni, double maxTempoSemM
     return polishing;
 }
 
-void Polish::updateGoal(GoalStatus* const goal)
+void Polish::updateGoal()
 {
-	goal->setValue(objAtual_);
-	goal->setGap(gapAtual_);
+	goal_->setValue(objAtual_);
+	goal_->setGap(gapAtual_);
 
 	double tempoAtual = getTotalElapsedTime();
-	goal->setRunTime(tempoAtual);
+	goal_->setRunTime(tempoAtual);
 	
 	bool opt = (allFree() && optimal());
-	goal->setIsOpt(opt);
+	goal_->setIsOpt(opt);
+
+	int p = (nrIter_ > 0? perc_ : 0);
+	goal_->setPercFixedFinal(p);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -1185,12 +1190,13 @@ void Polish::setMelhora( double objN )
 	}
 }
 
-void Polish::updatePercAndTimeIter(double objN)
+void Polish::updatePercAndTimeIter()
 {			  	  	  
 	  if (allFree())
 	  {
 		  printLog("All free: The End!");
 		  okIter_ = false;
+		  goal_->setStopCriteria(GoalStatus::AllFree);
 		  return;
 	  }
 	  
@@ -1202,7 +1208,7 @@ void Polish::updatePercAndTimeIter(double objN)
 	  
 	  if (optimal() || gapAtual_ <= 1.0)		// TINY GAP
 	  {
-		  updatePercAndTimeIterSmallGap( objN );
+		  updatePercAndTimeIterSmallGap();
 	  }
 	  else								// BIG GAP
 	  {
@@ -1215,9 +1221,9 @@ void Polish::updatePercAndTimeIter(double objN)
 	  }
 }
 
-void Polish::updatePercAndTimeIterSmallGap( double objN )
+void Polish::updatePercAndTimeIterSmallGap()
 {	
-	adjustOkIter(objN);
+	adjustOkIter();
 
 	adjustPercOrUnid();
 
@@ -1328,15 +1334,21 @@ void Polish::decreaseTime()
 	}
 }
 
-void Polish::adjustOkIter(double objN)
+void Polish::adjustOkIter()
 {
 	// Obj acchieved a known minimal possible value
-	if (globalOptimal(objN))
-		okIter_ = false;		
+	if (globalOptimal(objAtual_))
+	{
+		okIter_ = false;
+		goal_->setStopCriteria(GoalStatus::GlobalOpt);
+	}
 
 	// final!
 	if (allFree())
+	{
 		okIter_ = false;
+		goal_->setStopCriteria(GoalStatus::AllFree);
+	}
 }
 
 bool Polish::allFree()
@@ -1454,9 +1466,9 @@ double Polish::getLastTimeWithoutImprov()
 	return maxTempoSemMelhora_ - getTimeWithoutImprov();
 }
 
-void Polish::checkTimeWithoutImprov(double objN)
+void Polish::checkTimeWithoutImprov()
 {
-	if ( fabs(objN-objAtual_) < 0.0001 )
+	if (!melhorou_)
 	{
 		/* no improvement */
 
@@ -1464,15 +1476,16 @@ void Polish::checkTimeWithoutImprov(double objN)
 		{
 			/* if there is too much time without any improvement, then quit */
 			okIter_ = false;
+			goal_->setStopCriteria(GoalStatus::TimeNoImprov);
 			tempoSemMelhora_.stop();
 			tempoPol_.stop();
 			cout << "Abort by timeWithoutChange. Limit of time without improvement" 
-				<< getTimeWithoutImprov() << ", BestObj " << objN;
+				<< getTimeWithoutImprov() << ", BestObj " << objAtual_;
 			if (polishFile_)
 			{
 				stringstream ss;
 				ss << "Abort by timeWithoutChange. Limit of time without improvement" 
-					<< getTimeWithoutImprov() << ", BestObj " << objN;
+					<< getTimeWithoutImprov() << ", BestObj " << objAtual_;
 				printLog(ss.str());
 			}
 		}
@@ -1493,6 +1506,7 @@ void Polish::checkTimeLimit()
 		if ( tempoAtual >= maxTime_ )
 		{
 			okIter_ = false;
+			goal_->setStopCriteria(GoalStatus::TimeLimit);
 			tempoPol_.stop();
 			tempoSemMelhora_.stop();
 			cout << "\nTempo maximo atingido: " << tempoAtual << "s, maximo:" << maxTime_ << endl;
@@ -1690,7 +1704,6 @@ void Polish::checkFeasibility()
 		printLog(ss.str());
 		CentroDados::printError("bool Polish::checkFeasibility()",ss.str());
 		lp_->writeProbLP("infeasibleModelPolish");
-	//	throw ss.str();
 	}
 }
 

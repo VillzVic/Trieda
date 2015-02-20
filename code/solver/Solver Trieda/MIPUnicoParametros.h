@@ -15,13 +15,14 @@ public:
 
 	enum PRIOR_PROF_TYPE
 	{
-		PriorTypeOff,	// Sem prior de profs	= um único modelo contendo indiferentemente todos os professores reais
+		PriorTypeOff,		// Sem prior de profs	= um único modelo contendo indiferentemente todos os professores reais
+		PriorTypeOffWeight,	// Sem dividir profs em etapas	= um único modelo contendo todos os professores reais, mas com pesos por prior
 		PriorType1,	// Prior 1 > Prior 2	= etapa de maximizar demanda é única, com um único modelo contendo ambas prioridades
 		PriorType2,	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um único modelo contendo ambas prioridades
 		PriorType3	// Prior 1 >> Prior 2	= todas as etapas são duplas (exceto marreta), com um modelo para cada prioridade
 	};
 	
-   enum OutPutFileType
+   enum MIPPhaseName
    {
 	  MIP_GENERAL,
 	  MIP_GARANTE_SOL,

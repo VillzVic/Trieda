@@ -35,7 +35,13 @@ public:
 		int totalCreditosPagos, int totalTurmas, int totalCusto, int totalReceita, std::string runtime );
 
 	static void printEscolaHeader();
-	static void printEscolaIndicadores(std::string rowName, double value, double gap, bool opt, std::string runtime);
+	static void printEscolaIndicadores(std::string rowName, double value, double gap, bool opt, 
+		int percFixed, std::string runtime, std::string stopCriteria);
+
+	static bool firstTimePrintGoalsHeader();
+	static void printEscolaGoalsHeader();
+	static void printEscolaGoalsIndicadores(std::string rowName, double atend, double turmas, 
+		double desloc, double fasesDias, double gaps);
 
 
 	/*
@@ -67,6 +73,7 @@ public:
 private:
 
 	static bool printTaticoHeader_;
+	static bool printGoalsHeader_;
 
 	static std::string indicadorName_;
 	
