@@ -7894,16 +7894,11 @@ int MIPUnico::criaRestricaoTaticoProibeCompartilhamento( int campusId )
 /*
 	Para cada turma i, disciplina d:
 
-	sum[a] s_{i,d,a} >= MinAlunos * (z_{i,d,cp} - f_{i,d,cp})
+	sum[a] s_{i,d,a} >= MinAlunos * z_{i,d,cp}
 */
 int MIPUnico::criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade )
 {
    int restricoes = 0;
-   
-   if ( !problemData->parametros->min_alunos_abertura_turmas )
-   {
-	   return restricoes;
-   }
 
    int MinAlunosPrat=1;
    int MinAlunosTeor=1;

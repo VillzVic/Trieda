@@ -13,15 +13,27 @@ const string RED			= "#ff0000";
 const string DARKRED		= "#8b0000";
 const string BLACK			= "#000000";
 
-const int NrColors = 7;
-const string COLOR[] = {PEACH,		// 0
-						LIGHTSALMON,// 1
-						SALMON,		// 2
-						CRIMSON,	// 3
-						RED,		// 4
-						DARKRED,	// 5
-						BLACK };	// 6
+const string GOLD1			= "gold1";
+const string GOLD2			= "goldenrod2";
+const string CORAL			= "coral";
+const string ORANGED		= "orangered";
+const string FIREBRICK		= "firebrick";
 
+const int NrColors = 6;
+//const string COLOR[] = {PEACH,		// 0
+//						LIGHTSALMON,// 1
+//						SALMON,		// 2
+//						CRIMSON,	// 3
+//						RED,		// 4
+//						DARKRED,	// 5
+//						BLACK };	// 6
+
+const string COLOR[] = {GOLD1,		// 0
+						GOLD2,		// 1
+						CORAL,		// 2
+						ORANGED,	// 3
+						FIREBRICK,	// 4
+						BLACK };	// 5
 
 ProblemData* ProbDataAnalyzer::problemData_ = nullptr;
 
@@ -559,39 +571,48 @@ void ProbDataAnalyzer::printGraphviz(
 	std::ofstream out(sName.str(),ios::out);
 	if (!out) return;
 	
-	bool const digraph=true;
+	bool const digraph=false;
 
 	int maxNrProfs = getMaxNrProfsComuns(parUnidProfsComuns);
 
-	out << "graph G {";
+	if (digraph) out << "digraph G {";
+	else out << "graph G {";
+
 	for (auto itUnid1 = parUnidProfsComuns.cbegin();
 		itUnid1 != parUnidProfsComuns.cend(); itUnid1++)
 	{
 		int const unid1 = itUnid1->first;
-
 		int const totalProfsU1 = getNrProfsNaUnid(mapUnidIdProfs,unid1);
+
+		stringstream node1;
+		node1 << "u" << unid1 << " [" << totalProfsU1 << "]";
 
 		for (auto itUnid2 = itUnid1->second.cbegin();
 			itUnid2 != itUnid1->second.cend(); itUnid2++)
 		{
 			int const unid2 = itUnid2->first;
-			int const nrProfs = itUnid2->second.size();
+			int const nrProfsComuns = itUnid2->second.size();
+			int const totalProfsU2 = getNrProfsNaUnid(mapUnidIdProfs,unid2);
 			int max = 0;
+
+			stringstream node2;
+			node2 << "u" << unid2 << " [" << totalProfsU2 << "]";
 
 			if (!digraph)
 			{
 				if (unid1 >= unid2) continue; // relacao <--> nao repete
-				out << std::endl << "u" << unid1 << " -- " << "u" << unid2;
-				max = maxNrProfs;
+				out << std::endl << node1.str() << " -- " << node2.str();
+				//max = maxNrProfs;
+				max = min(totalProfsU1,totalProfsU2);
 			}
 			else
 			{
-				out << std::endl << "u" << unid1 << " -> " << "u" << unid2;
+				out << std::endl << node1.str() << " -> " << node2.str();
 				max = totalProfsU1;
 			}
 
-			out << " [ label = \"" << nrProfs << "\""
-				<< " color=\"" << COLOR[getColorIdx(max,nrProfs)] << "\" ];";
+			out << " [ label = \"" << nrProfsComuns << "\""
+				<< " color=\"" << COLOR[getColorIdx(max,nrProfsComuns)] << "\" ];";
 		}
 	}
 	out << std::endl << "}";
