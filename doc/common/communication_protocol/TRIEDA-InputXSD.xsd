@@ -1383,7 +1383,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAtendimentoHorarioAula">
+  <xs:complexType name="ItemAtendimentoHorarioAulaSolucao">
     <xs:sequence>
       <xs:element minOccurs="0" name="fixar" type="xs:boolean" />
       <xs:element name="horarioAulaId" type="xs:int">
@@ -1545,7 +1545,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoHorarioAulaSolucao">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="AtendimentoHorarioAula" type="ItemAtendimentoHorarioAula">
+      <xs:element name="AtendimentoHorarioAula" type="ItemAtendimentoHorarioAulaSolucao">
         <xs:annotation>
           <xs:documentation>contém os atendimentos realizados num determinado horario de aula (ou tempo de aula) de um determinado turno de um determinado dia da semana em uma determinada sala de uma determinada unidade de um determinado campus que foi considerado no planejamento</xs:documentation>
         </xs:annotation>
