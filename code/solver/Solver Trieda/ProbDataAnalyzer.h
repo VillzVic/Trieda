@@ -40,6 +40,18 @@ public:
 	// Set Problem Data (evitar que pointer seja mudado por engano)
 	static void setProblemData(ProblemData* const probData);
 	
+	static void printInputDataLog();
+	static void printAlunosInputDataLog();
+	static void printDiscsInputDataLog();
+	static void printProfsInputDataLog();
+	static void printDemandasInputDataLog();
+	static void printRelacaoDemProfInputDataLog();
+
+	static void getDemandasMapeadas(
+		std::unordered_map<Disciplina*, std::set<AlunoDemanda*>> &mapDemandaDisc,
+		std::map<int /*profPrior*/, int /*nrCredsDemanda*/> &mapDemandaProfPrior,
+		std::unordered_map<int /*unid*/, std::unordered_set<int>> &mapTurmasUnid,
+		std::unordered_map<int /*unid*/, int> &mapDemandaUnid);
 
    // -------------------------------------------------------------------
    // Ordenacao de prioridades para ESCOLA

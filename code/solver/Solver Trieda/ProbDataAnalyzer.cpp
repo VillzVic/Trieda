@@ -1,6 +1,7 @@
 #include "ProbDataAnalyzer.h"
 #include "ProblemData.h"
 #include "CentroDados.h"
+#include "Indicadores.h"
 
 #include <iostream>
 #include <fstream>
@@ -49,6 +50,387 @@ ProbDataAnalyzer::~ProbDataAnalyzer(void)
 void ProbDataAnalyzer::setProblemData(ProblemData* const probData)
 {
 	ProbDataAnalyzer::problemData_ = probData;
+}
+
+
+// -----------------------------------------------------------------------------------------------
+
+void ProbDataAnalyzer::printInputDataLog()
+{
+	printAlunosInputDataLog();
+	printDemandasInputDataLog();
+	printRelacaoDemProfInputDataLog();
+	printDiscsInputDataLog();
+	printProfsInputDataLog();
+}
+
+void ProbDataAnalyzer::printAlunosInputDataLog()
+{	
+	Indicadores::printSeparator(3);
+	Indicadores::printIndicador( "\n\t\t\tDados de entrada\n" );
+
+	// ----------------------------------------------------------------------------------------------------------
+	// ALUNOS
+	
+	int totalAlunos = 0;
+	int totalAlunosVeter = 0;
+	int nroFormandos = 0;
+	int nroCalouros = 0;
+	double nroMedioDiscPorAlunoP1 = 0;
+	double nroMedioCredPorAlunoP1 = 0;
+
+	ITERA_GGROUP_LESSPTR( itAluno, problemData_->alunos, Aluno )
+	{
+		Aluno* const aluno = *itAluno;
+
+		totalAlunos++;
+		if ( !aluno->ehCalouro() && aluno->ehFormando() ) nroFormandos++;
+		if ( !aluno->ehCalouro() ) totalAlunosVeter++;
+		if ( aluno->ehCalouro() ) nroCalouros++;
+		
+		nroMedioDiscPorAlunoP1 += aluno->getNroDiscsOrigRequeridosP1();
+		nroMedioCredPorAlunoP1 += aluno->getNroCredsOrigRequeridosP1();
+	}
+
+	if ( totalAlunos!=0 )
+	{
+		nroMedioDiscPorAlunoP1 = nroMedioDiscPorAlunoP1 / totalAlunos;
+		nroMedioCredPorAlunoP1 = nroMedioCredPorAlunoP1 / totalAlunos;
+	}
+
+	stringstream ssAlunos;
+	
+	ssAlunos << "\nDos " << totalAlunos << " alunos:"
+		<< "\n\t" << totalAlunosVeter << " foram marcados como alunos veteranos;"
+		<< "\n\t" << nroFormandos << " foram marcados como veteranos formandos;"
+		<< "\n\t" << nroCalouros << " foram marcados como entrantes.";
+	
+	ssAlunos << "\nNúmero médio de disciplinas por aluno considerando demandas presenciais P1 e externas P1: " << nroMedioDiscPorAlunoP1;
+	
+	ssAlunos << "\nNúmero médio de créditos por aluno considerando demandas presenciais P1 e externas P1: " << nroMedioCredPorAlunoP1;
+	
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador( ssAlunos.str() );
+
+}
+
+void ProbDataAnalyzer::printDiscsInputDataLog()
+{
+	int nroDiscLab = 0;
+	int nroDiscLabNaoAssoc = 0;
+	double mediaOrigLabPorDisc = 0;
+	double mediaFinalLabPorDisc = 0;
+	int totalDisc = 0;
+	int nroDiscSemProf = 0;
+
+	ITERA_GGROUP_LESSPTR( itDisciplina, problemData_->disciplinas, Disciplina )
+	{
+		Disciplina *disciplina = *itDisciplina;
+												
+		if ( disciplina->getId() > 0 )
+		{
+			totalDisc++;
+			if ( disciplina->getNroProfRealHabilit() == 0 )
+				nroDiscSemProf++;
+		}
+
+		if ( disciplina->eLab() ) 
+		{
+			mediaFinalLabPorDisc += disciplina->cjtSalasAssociados.size();
+			nroDiscLab++;
+
+			int nroOrigLabAssoc=0;
+			auto itDisc = problemData_->disc_Salas_Pref.find(disciplina);
+			if ( itDisc != problemData_->disc_Salas_Pref.end() )
+				nroOrigLabAssoc = itDisc->second.size();
+
+			mediaOrigLabPorDisc += nroOrigLabAssoc;
+			if ( nroOrigLabAssoc==0 )
+				nroDiscLabNaoAssoc++;
+		}
+	}
+
+	if ( nroDiscLab != 0 )
+	{
+		mediaFinalLabPorDisc /= nroDiscLab;
+		mediaOrigLabPorDisc /= nroDiscLab;
+	}
+	
+	stringstream ssDiscs;
+
+	if ( nroDiscLabNaoAssoc > 0 )
+	{
+		ssDiscs << "\nDas " << nroDiscLab << " disciplinas que exigem laboratório, "
+			<< nroDiscLabNaoAssoc << " não estão associadas a nenhum ambiente nos dados de entrada originais."
+			<< " Nesses casos, as disciplinas são associadas automaticamente a todos os laboratórios (*).";
+	}
+	else if ( nroDiscLab > 0 )
+	{
+		ssDiscs << "\nDas " << nroDiscLab << " disciplinas que exigem laboratório, todas têm laboratórios associados.";
+	}
+	else
+	{
+		ssDiscs << "\nNenhuma disciplina exige laboratório.";
+	}
+
+	ssDiscs << "\nMédia original de laboratórios associados por disciplina que exige laboratório: " << mediaOrigLabPorDisc;
+	
+	if ( nroDiscLabNaoAssoc > 0 )
+		ssDiscs << "\nMédia de laboratórios associados por disciplina após possíveis associações automáticas (*): " << mediaFinalLabPorDisc;
+
+	if ( nroDiscSemProf > 0 )
+		ssDiscs << "\nDas " << totalDisc << " disciplinas cadastradas, " << nroDiscSemProf << " não possuem professor habilitado.";
+	else
+		ssDiscs << "\nDas " << totalDisc << " disciplinas cadastradas, todas possuem pelo menos 1 professor habilitado.";
+
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador( ssDiscs.str() );
+}
+
+void ProbDataAnalyzer::printProfsInputDataLog()
+{
+	int nroProfHor = 0;
+	int nroProfParcial = 0;
+	int nroProfIntegral = 0;
+	double custoMinProf = 999999999;
+	double custoMaxProf = 0;
+	double mediaCustoProf = 0;
+	int totalProfs = 0;
+	int nroProfAte3Disc = 0;
+	double nroMedioHabPorProf = 0;
+	int nroMaxHab = 0;
+	int nroProfAte2DiasDisp = 0;
+	Professor *profComMaxHab=nullptr;
+
+	for( auto itProf = problemData_->refProfessores.begin(); itProf != problemData_->refProfessores.end(); itProf++ )
+	{
+		Professor* const professor = itProf->second;
+
+		if ( !professor->eVirtual() )
+		{
+			totalProfs++;
+				
+			// Número de habilitações do Professor
+			int nroHabilit=0;
+			ITERA_GGROUP_LESSPTR( itMagisterio, professor->magisterio, Magisterio )
+			{
+				if ( itMagisterio->getDisciplinaId() > 0 )
+					nroHabilit++;		
+			}			
+			if ( nroHabilit > nroMaxHab )
+			{
+				nroMaxHab = nroHabilit;
+				profComMaxHab = professor;
+			}
+			nroMedioHabPorProf += nroHabilit;
+			if ( nroHabilit <= 3 ) nroProfAte3Disc++;
+				
+			// Tipo de Contrato do Professor
+			if ( professor->tipo_contrato->getContrato() == TipoContrato::Integral )		// Integral (Mensalista)
+				nroProfIntegral++;
+			else if ( professor->tipo_contrato->getContrato() == TipoContrato::Parcial )	// Parcial  (Mensalista)
+				nroProfParcial++;
+			else																			// Horista
+				nroProfHor++; 
+
+			// Custo do Professor
+			mediaCustoProf += professor->getValorCredito();
+			if ( professor->getValorCredito() < custoMinProf )
+				custoMinProf = professor->getValorCredito();
+			if ( professor->getValorCredito() > custoMaxProf )
+				custoMaxProf = professor->getValorCredito();
+
+			// Dias de Disponibilidade do Professor
+			if ( professor->getNroDiasDisponiv() <= 2 )
+				nroProfAte2DiasDisp++;
+		}
+	}
+
+	// Custo Médio dos Professores
+	if ( totalProfs != 0 )
+	{
+		mediaCustoProf = mediaCustoProf/ totalProfs;
+		nroMedioHabPorProf = nroMedioHabPorProf / totalProfs;
+	}
+	
+	stringstream ssProfs;
+	if ( totalProfs > 0 )
+	{
+		ssProfs << "\n" << nroProfHor << " professores foram cadastrados como horistas, " 
+			<< nroProfIntegral << " como integrais e " << nroProfParcial << " como parciais, somando "
+			<< nroProfParcial+nroProfIntegral << " mensalistas.";
+
+		ssProfs << "\nO custo dos professores varia entre R$" << custoMinProf 
+			<< " e R$" << custoMaxProf << ", sendo que a média é R$" << mediaCustoProf << ".";
+
+		ssProfs << "\nDos " << totalProfs << " professores, " << nroProfAte3Disc 
+			<< (nroProfAte3Disc==1? " está homologado " : " estão homologados " )
+			<< "em apenas 1, 2 ou 3 disciplinas.";
+
+		ssProfs << "\nNúmero médio de habilitações por docente: " << nroMedioHabPorProf;	
+	
+		if(profComMaxHab != nullptr)
+		{
+			ssProfs << "\nMáximo de habilitações: " << profComMaxHab->getNome()
+				<< " (CPF: " << profComMaxHab->getCpf() << ") com "	<< nroMaxHab << " disciplinas habilitadas.";
+		}
+		else
+		{
+			ssProfs << "\nNão existe nenhuma associação de professor a disciplina.";
+		}
+
+		ssProfs << "\nDos " << totalProfs << " professores, " << nroProfAte2DiasDisp 
+			<< " estão disponíveis apenas 1 ou 2 dias na semana.";
+	}
+	else
+	{
+		ssProfs << "\nNao ha professores cadastrados.";
+	}
+
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador( ssProfs.str() );
+	Indicadores::printSeparator(4);
+}
+
+void ProbDataAnalyzer::printDemandasInputDataLog()
+{
+	std::unordered_map<Disciplina*, std::set<AlunoDemanda*>> mapDemandaDisc;
+	std::map<int /*profPrior*/, int> mapDemandaProfPrior;
+	std::unordered_map<int /*unid*/, std::unordered_set<int>> mapAlunosUnid;
+	std::unordered_map<int /*unid*/, int> mapDemandaUnid;
+	getDemandasMapeadas(mapDemandaDisc, mapDemandaProfPrior, mapAlunosUnid, mapDemandaUnid);
+
+	std::map<int, int> mapNrCredDiscNrDemandas;
+	int totalCredsDemanda=0;
+	for (auto itDisc=mapDemandaDisc.cbegin(); itDisc!=mapDemandaDisc.cend(); itDisc++)
+	{
+		int nrCredDisc = itDisc->first->getTotalCreditos();
+		totalCredsDemanda += nrCredDisc * itDisc->second.size();
+		
+		if (mapNrCredDiscNrDemandas.find(nrCredDisc) == mapNrCredDiscNrDemandas.end())
+			mapNrCredDiscNrDemandas.insert(pair<int,int> (nrCredDisc, 0));
+		mapNrCredDiscNrDemandas[nrCredDisc] += itDisc->second.size();
+	}
+
+	int totalDiscs=mapDemandaDisc.size();
+	
+	stringstream ss;
+	ss << "\nNro disciplinas: " << totalDiscs;
+	ss << "\nNro creditos demandados: " << totalCredsDemanda;
+	ss << "\n----";
+	for (auto itUnidDem=mapDemandaUnid.cbegin(); itUnidDem!=mapDemandaUnid.cend(); itUnidDem++)
+	{
+		int unid = itUnidDem->first;
+		int nrAlunos = 0;
+		auto finder = mapAlunosUnid.find(unid);
+		if (finder != mapAlunosUnid.cend())
+			nrAlunos = finder->second.size();
+
+		ss << "\nUnidade " << unid << ": " << itUnidDem->second << " creditos demandados, " << nrAlunos << " alunos";
+	}
+	ss << "\n----";
+	for (auto itNrCredDisc = mapNrCredDiscNrDemandas.cbegin(); itNrCredDisc != mapNrCredDiscNrDemandas.cend(); itNrCredDisc++)
+	{
+		ss << "\nDiscs com " << itNrCredDisc->first << " creditos: " << itNrCredDisc->second << " alunos demandando";
+	}
+	ss << "\n----";
+	for (auto itPP=mapDemandaProfPrior.cbegin(); itPP!=mapDemandaProfPrior.cend(); itPP++)
+	{
+		ss << "\nNro creditos demandados que possuem habilitacao de professores de prioridade " << itPP->first << ": " << itPP->second;
+	}
+
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador( ss.str() );
+}
+
+void ProbDataAnalyzer::printRelacaoDemProfInputDataLog()
+{
+	// Agrupa aluno-demanda
+	std::map<string, std::unordered_map<Disciplina*, std::unordered_map<TurnoIES*, 
+			std::unordered_map<Calendario*, std::set<AlunoDemanda*>> >>> mapDiscTurnoCalend;
+	getDemandasMapeadas(mapDiscTurnoCalend);
+		
+	// Get demandas filtradas por intersecao de disponibilidade
+	std::unordered_map<Disciplina*, std::map<Professor*,
+		std::pair< std::map<int, std::set<DateTime>>, std::set<AlunoDemanda*> > >> mapDiscIntersec;
+	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> mapProfDiaDiscIntersec;	
+	getDemandasIntersecDisponib(mapDiscTurnoCalend, mapDiscIntersec, mapProfDiaDiscIntersec);
+
+	int totalCredsDisponib=0;
+	map<int,int> totalCredsDisponibPorFase;
+	for (auto itProf=mapProfDiaDiscIntersec.cbegin(); itProf!=mapProfDiaDiscIntersec.cend(); itProf++)
+	{
+		for (auto itDia=itProf->second.cbegin(); itDia!=itProf->second.cend(); itDia++)
+		{
+			totalCredsDisponib += itDia->second.size();
+			for (auto itDt=itDia->second.cbegin(); itDt!=itDia->second.cend(); itDt++)
+			{
+				int fase = problemData_->getFaseDoDia(itDt->first);
+				auto finder = totalCredsDisponibPorFase.find(fase);
+				if (finder == totalCredsDisponibPorFase.end())
+					finder = totalCredsDisponibPorFase.insert(pair<int,int> (fase,0)).first;
+				finder->second = finder->second + 1;
+			}
+		}
+	}
+	stringstream ss;
+	ss << "\nTotal de horarios disponiveis de profs: " << totalCredsDisponib;
+	ss << "\n\t\t Por fase do dia: ";
+	for (auto itCred=totalCredsDisponibPorFase.cbegin(); itCred!=totalCredsDisponibPorFase.cend(); itCred++)
+	{
+		ss << "\n\t\t\tFase " << itCred->first << ": " << itCred->second;
+	}
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador( ss.str() );
+}
+
+void ProbDataAnalyzer::getDemandasMapeadas(
+	std::unordered_map<Disciplina*, std::set<AlunoDemanda*>> &mapDemandaDisc,
+	std::map<int /*profPrior*/, int /*nrCredsDemanda*/> &mapDemandaProfPrior,
+	std::unordered_map<int /*unid*/, std::unordered_set<int>> &mapAlunosUnid,
+	std::unordered_map<int /*unid*/, int> &mapDemandaUnid)
+{
+	// Agrupa aluno-demanda
+	for (auto itAlDem = ProbDataAnalyzer::problemData_->alunosDemanda.begin(); 
+		itAlDem != ProbDataAnalyzer::problemData_->alunosDemanda.end(); itAlDem++)
+	{
+		AlunoDemanda* const alDem = *itAlDem;
+		Demanda* const demanda = alDem->demanda;
+		Disciplina* const disciplina = demanda->disciplina;
+		TurnoIES* const turno = demanda->getTurnoIES();
+		Calendario* const calendario = demanda->getCalendario();
+
+		mapDemandaDisc[disciplina].insert(alDem);
+
+		int nrProfsP1 = disciplina->getNroProfRealImportHabilit(1);
+		int nrProfsP2 = disciplina->getNroProfRealImportHabilit(2);
+		if (nrProfsP1){
+			if (mapDemandaProfPrior.find(1) == mapDemandaProfPrior.end())
+				mapDemandaProfPrior.insert(pair<int,int> (1,0));
+			mapDemandaProfPrior[1] += (disciplina->getTotalCreditos());
+		}
+		if (nrProfsP2){
+			if (mapDemandaProfPrior.find(2) == mapDemandaProfPrior.end())
+				mapDemandaProfPrior.insert(pair<int,int> (2,0));
+			mapDemandaProfPrior[2] += (disciplina->getTotalCreditos());
+		}
+		
+		std::unordered_set<int> unids;
+		disciplina->getUnidsAssociadas(unids);
+		for (auto it=unids.cbegin(); it!=unids.cend(); it++)
+		{
+			if (mapDemandaUnid.find(*it) == mapDemandaUnid.end())
+				mapDemandaUnid.insert(pair<int,int> (*it,0));
+			mapDemandaUnid[*it] += disciplina->getTotalCreditos();
+						
+			if (mapAlunosUnid.find(*it) == mapAlunosUnid.end())
+			{
+				std::unordered_set<int> empty;
+				mapAlunosUnid.insert(pair<int,std::unordered_set<int>> (*it,empty));
+			}
+			mapAlunosUnid[*it].insert(alDem->getAlunoId());
+		}
+	}
 }
 
 

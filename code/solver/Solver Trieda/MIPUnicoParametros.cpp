@@ -30,7 +30,7 @@ const int MIPUnicoParametros::timeLimitGeneralSemMelhora = 1800;
 const int MIPUnicoParametros::timeLimitMinDeslocProf_= 3600*2;
 const int MIPUnicoParametros::timeLimitMinDeslocProfSemMelhora_ = 3600;
 const int MIPUnicoParametros::timeLimitMinFaseDiaProf_ = 3600;
-const int MIPUnicoParametros::timeLimitMinFaseDiaProfSemMelhora_ = 3600;
+const int MIPUnicoParametros::timeLimitMinFaseDiaProfSemMelhora_ = 1800;
 
 
 
@@ -54,7 +54,7 @@ const int MIPUnicoParametros::maxTempoDeslocCurto_ = 50;
 const bool MIPUnicoParametros::minimizarProfFaseDoDiaUsada_ = true;
 const bool MIPUnicoParametros::minimizarProfDiaUsado_ = true;
 int MIPUnicoParametros::priorProfLevel_ = 0;
-const MIPUnicoParametros::PRIOR_PROF_TYPE MIPUnicoParametros::priorProfImportante_ = MIPUnicoParametros::PriorTypeOffWeight;
+const MIPUnicoParametros::PRIOR_PROF_TYPE MIPUnicoParametros::priorProfImportante_ = MIPUnicoParametros::PriorType2;
 const bool MIPUnicoParametros::minimizarGapProfEntreFases_ = true;
 const int MIPUnicoParametros::MaxGapEntreFase_ = 170;
 const int MIPUnicoParametros::minCredDispFaseMinGapProf_ = 3;
