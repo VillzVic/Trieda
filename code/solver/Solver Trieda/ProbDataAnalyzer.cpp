@@ -967,7 +967,7 @@ void ProbDataAnalyzer::printGraphviz(
 		int const totalProfsU1 = getNrProfsNaUnid(mapUnidIdProfs,unid1);
 
 		stringstream node1;
-		node1 << "u" << unid1 << " [" << totalProfsU1 << "]";
+		node1 << "u" << unid1 << "_" << totalProfsU1;
 
 		for (auto itUnid2 = itUnid1->second.cbegin();
 			itUnid2 != itUnid1->second.cend(); itUnid2++)
@@ -978,7 +978,7 @@ void ProbDataAnalyzer::printGraphviz(
 			int max = 0;
 
 			stringstream node2;
-			node2 << "u" << unid2 << " [" << totalProfsU2 << "]";
+			node2 << "u" << unid2 << "_" << totalProfsU2;
 
 			if (!digraph)
 			{
