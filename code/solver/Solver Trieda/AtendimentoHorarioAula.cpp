@@ -6,25 +6,23 @@
 #include "HeurNuno\ParametrosHeuristica.h"
 
 AtendimentoHorarioAula::AtendimentoHorarioAula( int id )
+	: profVirtual_(false), fixar_(false)
 {
    this->setId( id );
    this->atendimentos_ofertas = new GGroup< AtendimentoOferta*, LessPtr<AtendimentoOferta> >();
-   _profVirtual = false;
 }
 
 AtendimentoHorarioAula::AtendimentoHorarioAula( void )
+	: profVirtual_(false), fixar_(false)
 {
 	this->setId( InputMethods::fakeId );
    this->atendimentos_ofertas = new GGroup< AtendimentoOferta*, LessPtr<AtendimentoOferta> >();
-   _profVirtual = false;
 }
 
 
 AtendimentoHorarioAula::~AtendimentoHorarioAula( void )
 {
-   this->setId( -1 );
-
-   if ( atendimentos_ofertas != NULL )
+   if (atendimentos_ofertas)
    {
       atendimentos_ofertas->deleteElements();
       delete atendimentos_ofertas;
@@ -77,7 +75,16 @@ std::istream & operator >> ( std::istream &file, AtendimentoHorarioAula* const &
 {
 	std::string line;
 	while( !getline( file, line ).eof() && (line.find("</AtendimentoHorarioAula>") == string::npos))
-	{
+	{		
+		// FIXAÇÃO (OPCIONAL)
+		// --------------------------------------------------------------------------
+		if(line.find("<fixar>") != string::npos)
+		{
+			bool fixar = true;
+			InputMethods::getInlineAttrBool(line, "<fixar>", fixar);
+			ptrAtendHoraAula->setFixar(fixar);
+		}
+
 		// HORÁRIO AULA
 		// --------------------------------------------------------------------------
 		if(line.find("<horarioAulaId>") != string::npos)

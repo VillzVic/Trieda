@@ -486,7 +486,8 @@ void ProblemSolution::getMapsDaSolucao(
 	unordered_map<Sala*, unordered_map<Disciplina*, unordered_map<int, 
 			std::pair<Professor*, unordered_set<Aluno*>> >>> & solTurmaProfAlunos,
 	unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int,
-			unordered_map<int, set<DateTime>> >>> & solCpDiscTurmaDiaDti )
+			unordered_map<int, set<DateTime>> >>> & solCpDiscTurmaDiaDti,
+	bool somenteFixado )
 {	
 	ProblemData *problemData = CentroDados::getProblemData();
 	
@@ -545,6 +546,10 @@ void ProblemSolution::getMapsDaSolucao(
 						ITERA_GGROUP_LESSPTR( it_At_Hor_Aula,
 							( *it_At_Turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
 						{
+							// Pula alocações não fixadas
+							if (!it_At_Hor_Aula->fixar() && somenteFixado)
+								continue;
+
 							// Horario do atendimento
 							HorarioAula* horAula = it_At_Hor_Aula->horario_aula;
 
@@ -597,6 +602,10 @@ void ProblemSolution::getMapsDaSolucao(
 							ITERA_GGROUP_LESSPTR( it_At_Oft,
 								( *it_At_Hor_Aula->atendimentos_ofertas ), AtendimentoOferta )
 							{
+								// Pula alocações não fixadas
+								if (!it_At_Oft->fixar() && somenteFixado)
+									continue;
+								
 								int turma = it_At_Oft->getTurma();										
 								GGroup<int /*alDem*/> *alDemAtend = & it_At_Oft->alunosDemandasAtendidas;
 								string strOfertaId = it_At_Oft->getOfertaCursoCampiId();

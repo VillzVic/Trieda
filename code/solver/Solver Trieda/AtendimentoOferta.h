@@ -25,6 +25,7 @@ public:
    void setTurma( int value ) { this->turma = value; }
    void setTurmaStr( string value ) { this->turmaStr_ = value; }
    void setDisciplinaSubstitutaId( int value ) { this->disciplina_substituta_id = value; }
+   void setFixar( bool value ) { this->fixar_ = value; }
 
    std::string getOfertaCursoCampiId() const { return this->oferta_curso_campi_id; }
    int getDisciplinaId() const { return this->disciplina_id; }
@@ -32,6 +33,7 @@ public:
    int getTurma() const { return this->turma; }
    string getTurmaStr() const { return this->turmaStr_; }
    int getDisciplinaSubstitutaId() const { return this->disciplina_substituta_id;}
+   bool fixar() const { return this->fixar_; }
 
    Disciplina * disciplina; // Disciplina atendida. Se tiver havido substituição, é a substituta. Caso contrario, é a original
 
@@ -43,6 +45,7 @@ private:
    int quantidade;
    int turma;
    int disciplina_substituta_id;
+   bool fixar_;
 
    string turmaStr_;
 

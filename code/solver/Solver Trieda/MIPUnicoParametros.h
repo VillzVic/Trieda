@@ -53,7 +53,6 @@ public:
 
 	// Disciplinas
 	static const int consideraDivCredDisc;
-	static const double pesoDivCred;
 
 	// Professores	
 	static bool permiteCriarPV;
@@ -61,10 +60,6 @@ public:
 	static const int MaxUnidProfDia_;
 	static const bool filtroPVHorCompl_;
 	static const bool minimizarCustoProf;
-	static const double pesoGapProf;
-	static const double pesoCredPV;
-	static const double pesoDeslocProf;
-	static const double pesoCHAntProf;
 	static const bool limitar1DeslocSoUnidLonge_;
 	static const bool limitarDeslocUnidLongeSemana_;
 	static const int maxDeslocUnidLongeSemana_;	
@@ -78,17 +73,28 @@ public:
 	static const int minCredDispFaseMinGapProf_;
 
 	static const bool fixarSolucaoProfPrior1_;
-
 	static const int allPriorProfLevels_;
 
+	// Geral
+	static const bool goalProgramming_;
+
 	// Alunos
-	static const double pesoFD;
-	static const int pesoGapAluno;
-	static const int pesoMinCredDiaAluno;
 	static const int desvioMinCredDiaAluno;		// desvio máximo do nr médio de créditos por dia do aluno, sem que haja penalização 
 	static const int considerarMinCredDiaAluno;
 	static const bool ignorarGapAlunoContraTurno_;
-
+	
+	// Peso de variaveis
+	static const double pesoFD;
+	static const double pesoDivCred;
+	static const int pesoGapAluno;
+	static const int pesoMinCredDiaAluno;
+	static const double pesoGapProf;
+	static const double pesoCredPV;
+	static const double pesoDeslocProf;
+	static const double pesoCHAntProf;
+	static const double pesoProfDia;
+	static const double pesoProfFaseDia;
+	static const double pesoProfUnidDia;
 	
     static std::string getGoalToString(int type);
 	

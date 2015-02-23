@@ -21,12 +21,14 @@ public:
    void setHorarioAulaId( int value ) { this->horario_aula_id = value; }
    void setProfessorId( int value ) { this->professor_id = value; }
    void setCreditoTeorico( bool value ) { this->credito_teorico = value; }
-   void setProfVirtual( bool value ) { this->_profVirtual = value; }
+   void setProfVirtual( bool value ) { this->profVirtual_ = value; }
+   void setFixar( bool value ) { this->fixar_ = value; }
 
    int getHorarioAulaId() const { return this->horario_aula_id; }
    int getProfessorId() const { return this->professor_id; }
    bool getCreditoTeorico() const { return this->credito_teorico; }
-   bool profVirtual() const { return this->_profVirtual; }
+   bool profVirtual() const { return this->profVirtual_; }
+   bool fixar() const { return this->fixar_; }
 
    HorarioAula * horario_aula;
    Professor * professor;
@@ -37,8 +39,9 @@ public:
 private:
    int horario_aula_id;
    int professor_id;
-   bool _profVirtual;
+   bool profVirtual_;
    bool credito_teorico;
+   bool fixar_;
 };
 
 std::ostream & operator << ( std::ostream &, AtendimentoHorarioAula & );

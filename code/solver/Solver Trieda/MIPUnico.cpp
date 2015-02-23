@@ -1082,9 +1082,7 @@ int MIPUnico::solveMIPUnico(int campusId, int prioridade, int r)
     setOptLogFile(mipFile,optLogFileName);
 	
 	clearStrutures();
-	
-	criaNewLp(campusId, prioridade, r);
-	
+		
 	// Variable creation
 	varNum = criaVariaveisTatico( campusId, prioridade, r );
 		
@@ -1197,7 +1195,10 @@ int MIPUnico::solveMIPUnico_v2(int campusId, int prioridade, int r)
 
 		//makeLazyConstr();
 
-		solveMIPUnicoEtapas(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+		if (MIPUnicoParametros::goalProgramming_)
+			solveMIPUnicoEtapas(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+		else
+			solveMIPUnico_MultiObjFunc(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
 	}
 	
 	carregaVariaveisSolucao( campusId, prioridade, r );
@@ -1242,6 +1243,33 @@ int MIPUnico::solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARR
 	}
 
 	return status;
+}
+
+int MIPUnico::solveMIPUnico_MultiObjFunc(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL)
+{
+	if (MIPUnicoParametros::goalProgramming_) return 0;
+
+	resetXSol();
+
+	if (!MIPUnicoParametros::permiteCriarPV)
+		return solveMIPUnicoEtapaReal_MultiObjFunc(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+	
+	return solveMIPUnicoEtapaVirtual(campusId, prioridade, r, CARREGA_SOL_PARCIAL);
+}
+
+int MIPUnico::solveMIPUnicoEtapaReal_MultiObjFunc(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL)
+{
+	MIPUnicoParametros::priorProfLevel_ = MIPUnicoParametros::allPriorProfLevels_;
+
+	solveGaranteSolucao( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );	
+	solveMaxAtendMarreta( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+	fixaVariaveisPVZero( xSol_ );
+	solveGeneral( campusId, prioridade, r, CARREGA_SOL_PARCIAL, xSol_ );
+	
+	liberaVariaveisPV( xSol_ );
+	fixaSolMinProfReal( xSol_ );
+
+	return 1;
 }
 
 int MIPUnico::solveMIPUnicoEtapaReal_Off(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL)
@@ -6554,7 +6582,9 @@ int MIPUnico::criaVariavelUnidUsadaProfAPartirDeK(void)
 				
 				vars_prof_dia_unid[itProf->first][itDia->first][itUnid->first] = colNr;
 
-				OPT_COL col( OPT_COL::VAR_BINARY, 0, 0, 1,
+				double coef = MIPUnicoParametros::pesoProfUnidDia;
+
+				OPT_COL col( OPT_COL::VAR_BINARY, coef, 0, 1,
 					(char*) var.toString().c_str() );
 
 				lp->newCol( col );
@@ -6932,7 +6962,7 @@ int MIPUnico::criaVariaveisProfUsaFaseDiaAPartirDeK(void)
 		{
 			for(auto itFase = itDia->second.begin(); itFase != itDia->second.end(); ++itFase)
 			{
-				double coef = 1.0;
+				double coef = 1.0 * MIPUnicoParametros::pesoProfFaseDia;
 								
 				// ptf_{p,t,f}
 				VariableMIPUnico var;
@@ -6973,7 +7003,7 @@ int MIPUnico::criaVariaveisProfDiaUsadoAPartirDeK(void)
 
 		for(auto itDia = itProf->second.begin(); itDia != itProf->second.end(); ++itDia)
 		{			
-			double coef = 1.0;
+			double coef = 1.0 * MIPUnicoParametros::pesoProfDia;
 			
 			// pt_{p,t}
 			VariableMIPUnico var;

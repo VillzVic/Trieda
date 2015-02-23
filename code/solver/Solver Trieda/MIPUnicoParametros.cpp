@@ -43,10 +43,6 @@ const bool MIPUnicoParametros::limitarNrUnidsProfDia_ = false;
 const int MIPUnicoParametros::MaxUnidProfDia_ = 2;
 const bool MIPUnicoParametros::filtroPVHorCompl_ = true;
 const bool MIPUnicoParametros::minimizarCustoProf = false;
-const double MIPUnicoParametros::pesoGapProf = 0.001;			// multiplica uma var inteira
-const double MIPUnicoParametros::pesoCredPV = 10;
-const double MIPUnicoParametros::pesoDeslocProf = 0.1;			// multiplica uma var inteira
-const double MIPUnicoParametros::pesoCHAntProf = 0.1;
 const bool MIPUnicoParametros::limitar1DeslocSoUnidLonge_ = true;
 const bool MIPUnicoParametros::limitarDeslocUnidLongeSemana_ = true;
 const int MIPUnicoParametros::maxDeslocUnidLongeSemana_ = 2;
@@ -54,26 +50,34 @@ const int MIPUnicoParametros::maxTempoDeslocCurto_ = 50;
 const bool MIPUnicoParametros::minimizarProfFaseDoDiaUsada_ = true;
 const bool MIPUnicoParametros::minimizarProfDiaUsado_ = true;
 int MIPUnicoParametros::priorProfLevel_ = 0;
-const MIPUnicoParametros::PRIOR_PROF_TYPE MIPUnicoParametros::priorProfImportante_ = MIPUnicoParametros::PriorType2;
+const MIPUnicoParametros::PRIOR_PROF_TYPE MIPUnicoParametros::priorProfImportante_ = MIPUnicoParametros::PriorTypeOff;
 const bool MIPUnicoParametros::minimizarGapProfEntreFases_ = true;
 const int MIPUnicoParametros::MaxGapEntreFase_ = 170;
 const int MIPUnicoParametros::minCredDispFaseMinGapProf_ = 3;
 
 const int MIPUnicoParametros::allPriorProfLevels_ = 0;
-
-// Solução geral
 const bool MIPUnicoParametros::fixarSolucaoProfPrior1_ = true;
 
+// Geral
+const bool MIPUnicoParametros::goalProgramming_ = false;
+
 // Alunos
-const double MIPUnicoParametros::pesoFD = 100;
-const int MIPUnicoParametros::pesoGapAluno = 3;
-const int MIPUnicoParametros::pesoMinCredDiaAluno = 500;
 const int MIPUnicoParametros::desvioMinCredDiaAluno = 2;
 const int MIPUnicoParametros::considerarMinCredDiaAluno = ParametrosPlanejamento::Off;
 const bool MIPUnicoParametros::ignorarGapAlunoContraTurno_ = true;
 
-// Disciplinas
-const double MIPUnicoParametros::pesoDivCred = 0.01;
+// Peso de variaveis
+const double MIPUnicoParametros::pesoDivCred = 0.01;			// multiplica uma var inteira
+const double MIPUnicoParametros::pesoFD = 100;					// multiplica uma var binaria
+const int MIPUnicoParametros::pesoGapAluno = 3;					// multiplica uma var inteira
+const int MIPUnicoParametros::pesoMinCredDiaAluno = 500;		// multiplica uma var inteira
+const double MIPUnicoParametros::pesoGapProf = 0.0001;			// multiplica uma var inteira
+const double MIPUnicoParametros::pesoCredPV = 10;				// multiplica uma var binaria
+const double MIPUnicoParametros::pesoDeslocProf = 0.01;			// multiplica uma var inteira
+const double MIPUnicoParametros::pesoCHAntProf = 0.0001;		// multiplica uma var inteira
+const double MIPUnicoParametros::pesoProfDia = 0.01;			// multiplica uma var binaria
+const double MIPUnicoParametros::pesoProfFaseDia = 0.01;		// multiplica uma var binaria
+const double MIPUnicoParametros::pesoProfUnidDia = 0.01;		// multiplica uma var binaria
 
 
 std::string MIPUnicoParametros::getGoalToString(int type)

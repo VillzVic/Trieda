@@ -48,7 +48,7 @@ public:
 	static void getNovasAulas(unordered_map<int, AulaHeur*> const &oldAulas, SalaHeur* const sala, unordered_map<int, AulaHeur*>& newAulas);
 
 	// get / set indicador demanda
-	double getIndicDem(void) { return indicDem_; }
+	double getIndicDem(void) const { return indicDem_; }
 	void resetIndicDem(void) { indicDem_ = 0; }
 	double setIndicDem(double credsAlunos) { indicDem_ = credsAlunos/getCapacidade(); return indicDem_; }
 	double decIndicDem(double decCredsAlunos) { indicDem_ -= (decCredsAlunos/getCapacidade()); return indicDem_;}

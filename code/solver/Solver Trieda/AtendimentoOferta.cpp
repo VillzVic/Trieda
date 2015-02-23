@@ -5,7 +5,7 @@
 int AtendimentoOferta::globalId_ = 0;
 
 AtendimentoOferta::AtendimentoOferta( int id )
-	: disciplina(nullptr), turmaStr_(InputMethods::fakeStrId)
+	: disciplina(nullptr), fixar_(false), turmaStr_(InputMethods::fakeStrId)
 {
    this->setId( id );
    this->oferta_curso_campi_id = "";
@@ -17,7 +17,7 @@ AtendimentoOferta::AtendimentoOferta( int id )
 }
 
 AtendimentoOferta::AtendimentoOferta( void )
-	: disciplina(nullptr), turmaStr_(InputMethods::fakeStrId)
+	: disciplina(nullptr), fixar_(false), turmaStr_(InputMethods::fakeStrId)
 {
 	this->setId( ++AtendimentoOferta::globalId_ );
    this->oferta_curso_campi_id = "";
@@ -60,6 +60,15 @@ std::istream & operator >> ( std::istream &file, AtendimentoOferta* const &ptrAt
 		   ((line.find("</AtendimentoOferta>") == string::npos) &&
 		    (line.find("</atendimentoOferta>") == string::npos) ) )
 	{
+		// FIXAÇÃO (OPCIONAL)
+		// --------------------------------------------------------------------------
+		if(line.find("<fixar>") != string::npos)
+		{
+			bool fixar = true;
+			InputMethods::getInlineAttrBool(line, "<fixar>", fixar);
+			ptrAtendOferta->setFixar(fixar);
+		}
+
 		// OFERTA CURSO CAMPI
 		// --------------------------------------------------------------------------
 		if(line.find("<ofertaCursoCampiId>") != string::npos)		   

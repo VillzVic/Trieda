@@ -47,7 +47,8 @@ public:
 		unordered_map<Sala*, unordered_map<Disciplina*, unordered_map<int, 
 			std::pair<Professor*, unordered_set<Aluno*>> >>> & solTurmaProfAlunos,
 		unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int,
-			unordered_map<int, set<DateTime>> >>> & solCpDiscTurmaDiaDti );
+			unordered_map<int, set<DateTime>> >>> & solCpDiscTurmaDiaDti,
+		bool somenteFixado = true );
 
     void constroiMapsDaSolucao();
 	void preencheQuantChProfs();

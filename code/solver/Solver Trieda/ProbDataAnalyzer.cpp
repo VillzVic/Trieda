@@ -300,6 +300,7 @@ void ProbDataAnalyzer::printDemandasInputDataLog()
 	std::unordered_map<int /*unid*/, int> mapDemandaUnid;
 	getDemandasMapeadas(mapDemandaDisc, mapDemandaProfPrior, mapAlunosUnid, mapDemandaUnid);
 
+	std::unordered_set<Aluno*> alunos;
 	std::map<int, int> mapNrCredDiscNrDemandas;
 	int totalCredsDemanda=0;
 	for (auto itDisc=mapDemandaDisc.cbegin(); itDisc!=mapDemandaDisc.cend(); itDisc++)
@@ -310,6 +311,9 @@ void ProbDataAnalyzer::printDemandasInputDataLog()
 		if (mapNrCredDiscNrDemandas.find(nrCredDisc) == mapNrCredDiscNrDemandas.end())
 			mapNrCredDiscNrDemandas.insert(pair<int,int> (nrCredDisc, 0));
 		mapNrCredDiscNrDemandas[nrCredDisc] += itDisc->second.size();
+
+		for (auto itAlDem=itDisc->second.cbegin(); itAlDem!=itDisc->second.cend(); itAlDem++)
+			alunos.insert((*itAlDem)->getAluno());
 	}
 
 	int totalDiscs=mapDemandaDisc.size();
@@ -328,6 +332,9 @@ void ProbDataAnalyzer::printDemandasInputDataLog()
 
 		ss << "\nUnidade " << unid << ": " << itUnidDem->second << " creditos demandados, " << nrAlunos << " alunos";
 	}
+	ss << "\n----";
+	ss << "\nTotal de Unidades: " << mapDemandaUnid.size();
+	ss << "\nTotal de Alunos: " << alunos.size();
 	ss << "\n----";
 	for (auto itNrCredDisc = mapNrCredDiscNrDemandas.cbegin(); itNrCredDisc != mapNrCredDiscNrDemandas.cend(); itNrCredDisc++)
 	{

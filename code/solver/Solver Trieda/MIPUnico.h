@@ -345,6 +345,8 @@ private:
 
 	int solveMIPUnico_v2(int campusId, int prioridade, int r);
 	int solveMIPUnicoEtapas(int campusId, int prioridade, int r, bool CARREGA_SOL_PARCIAL);	
+	int solveMIPUnico_MultiObjFunc(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
+	int solveMIPUnicoEtapaReal_MultiObjFunc(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 	int solveMIPUnicoEtapaReal_Off(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 	int solveMIPUnicoEtapaReal_1(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
 	int solveMIPUnicoEtapaReal_2(int campusId, int prioridade, int r, bool &CARREGA_SOL_PARCIAL);
