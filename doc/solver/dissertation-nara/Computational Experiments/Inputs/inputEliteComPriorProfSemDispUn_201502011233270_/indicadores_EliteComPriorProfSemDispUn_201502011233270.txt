@@ -1,0 +1,60 @@
+
+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+			Dados de entrada
+
+-----------
+Dos 295 alunos:
+	0 foram marcados como alunos veteranos;
+	0 foram marcados como veteranos formandos;
+	295 foram marcados como entrantes.
+Número médio de disciplinas por aluno considerando demandas presenciais P1 e externas P1: 31.1288
+Número médio de créditos por aluno considerando demandas presenciais P1 e externas P1: 32.1695
+-----------
+Nro disciplinas: 9028
+Nro creditos demandados: 9490
+----
+Unidade 662: 891 creditos demandados, 27 alunos
+Unidade 654: 820 creditos demandados, 25 alunos
+Unidade 656: 711 creditos demandados, 22 alunos
+Unidade 666: 708 creditos demandados, 22 alunos
+Unidade 658: 367 creditos demandados, 11 alunos
+Unidade 660: 291 creditos demandados, 9 alunos
+Unidade 663: 582 creditos demandados, 19 alunos
+Unidade 665: 479 creditos demandados, 15 alunos
+Unidade 667: 1080 creditos demandados, 33 alunos
+Unidade 668: 880 creditos demandados, 27 alunos
+Unidade 655: 402 creditos demandados, 13 alunos
+Unidade 657: 495 creditos demandados, 16 alunos
+Unidade 659: 890 creditos demandados, 28 alunos
+Unidade 661: 540 creditos demandados, 17 alunos
+Unidade 664: 354 creditos demandados, 11 alunos
+----
+Discs com 1 creditos: 8876 alunos demandando
+Discs com 2 creditos: 307 alunos demandando
+----
+Nro creditos demandados que possuem habilitacao de professores de prioridade 1: 2271
+Nro creditos demandados que possuem habilitacao de professores de prioridade 2: 7174
+-----------
+Total de horarios disponiveis de profs: 15249
+		 Por fase do dia: 
+			Fase 1: 8422
+			Fase 2: 5693
+			Fase 3: 1134
+-----------
+Nenhuma disciplina exige laboratório.
+Média original de laboratórios associados por disciplina que exige laboratório: 0
+Das 9028 disciplinas cadastradas, 48 não possuem professor habilitado.
+-----------
+490 professores foram cadastrados como horistas, 0 como integrais e 0 como parciais, somando 0 mensalistas.
+O custo dos professores varia entre R$1 e R$2, sendo que a média é R$1.83469.
+Dos 490 professores, 34 estão homologados em apenas 1, 2 ou 3 disciplinas.
+Número médio de habilitações por docente: 18.3469
+Máximo de habilitações: Leandro Ladi-Leandro Marques Ladi (CPF: 105.062.457-21) com 69 disciplinas habilitadas.
+Dos 490 professores, 167 estão disponíveis apenas 1 ou 2 dias na semana.
+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+

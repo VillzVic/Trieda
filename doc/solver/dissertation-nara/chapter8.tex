@@ -12,7 +12,7 @@ The implementation of the solver was done in C++, compiled with MS Visual Studio
 
 All the linear integer programs were solved using the generic MIP-Solver Gurobi 6.0. 
 
-Computational experiments were executed on 3.2GHz Intel Core i7 computer with 32 GB of RAM.
+Computational experiments were executed on 3.2GHz \fixme{conferir} Intel Core i7 computer with 32 GB of RAM.
 \fixme{maximo de RAM usado observado foi uns 10gb}
 
 
@@ -21,6 +21,53 @@ Computational experiments were executed on 3.2GHz Intel Core i7 computer with 32
 
 Several computational experiments have been performed for real scenarios of Brazilian schools. Those considered the most significant are following detailed.
 
+\begin{enumerate}
+\item Pensi - sem noite - com amarracao de disponib por unidade
+
+\item Elite - sem amarracao de disponib por unidade
+
+\item Elite - com amarracao de disponib por unidade
+
+\item Elite ou Pensi - exemplo pequeno
+
+\item CEI
+
+\item Colegio Vicosa
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Approaches}
+
+Different approaches and strategies for solving the problem were discussed at chapter ~\ref{chap:strategies}. Here some of these approaches are combined so that further various computational experiments are carried out and impacts of these distinct strategies are evaluated. The variations to be combined are briefly reviewed below.
+
+\paragraph{Preemptive and Nonpreemptive Goal Programming}
+The impact of ordered goals, their correlations, and trade-off situations are evaluated by solving the problem both with the preemptive goal programming and with an unified objective function.
+
+\paragraph{Polishing method usage}
+The need of the polishing method is demonstrated by optimizing the problem with and without it.
+
+\paragraph{Professor Priority}
+Professors priorities are evaluated using the three following perspectives:
+\begin{enumerate}
+\item No professor priority is considered: every goal of the problem is executed only once, considering all professors assignments without distinction.
+\item Weak professor priority is considered: every goal of the problem is executed only once, but considering first-priority professors assignments more important than second-priority professors.
+\item Strong professor priority is considered: every goal of the problem is executed twice. First, all goals are sequentially performed for all first-priority professors, then solution quality that was achieved for these professors is ensured and all goals are again sequentially performed for all second-priority professors.
+\end{enumerate}
+
+
+%Testes:
+%
+%Padre Marcelo
+%
+%Judas
+%21-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorType2
+%
+%Slayer
+%22-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorType2
+%21-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorOffWeight
+%20-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorOffWeight (melhor rodar de novo, foi com o solver com erro de min de alunos)
 
 
 

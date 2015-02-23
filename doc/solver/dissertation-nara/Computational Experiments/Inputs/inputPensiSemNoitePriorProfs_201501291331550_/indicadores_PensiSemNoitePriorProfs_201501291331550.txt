@@ -1,0 +1,29 @@
+
+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+			Dados de entrada
+
+-----------
+Dos 178 alunos:
+	0 foram marcados como alunos veteranos;
+	0 foram marcados como veteranos formandos;
+	178 foram marcados como entrantes.
+Número médio de disciplinas por aluno considerando demandas presenciais P1 e externas P1: 31.5337
+Número médio de créditos por aluno considerando demandas presenciais P1 e externas P1: 32.5843
+-----------
+Nenhuma disciplina exige laboratório.
+Média original de laboratórios associados por disciplina que exige laboratório: 0
+Das 5526 disciplinas cadastradas, 1 não possuem professor habilitado.
+-----------
+295 professores foram cadastrados como horistas, 0 como integrais e 0 como parciais, somando 0 mensalistas.
+O custo dos professores varia entre R$1 e R$2, sendo que a média é R$1.44407.
+Dos 295 professores, 33 estão homologados em apenas 1, 2 ou 3 disciplinas.
+Número médio de habilitações por docente: 18.7288
+Máximo de habilitações: SG-Sergio Gomes de Oliveira Junior (CPF: 929.588.697-68) com 60 disciplinas habilitadas.
+Dos 295 professores, 96 estão disponíveis apenas 1 ou 2 dias na semana.
+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+

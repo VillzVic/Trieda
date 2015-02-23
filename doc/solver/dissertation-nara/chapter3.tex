@@ -250,13 +250,15 @@ From the previous basic sets we define the following derived sets:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Model Data}
 
+Next, some problem data used in model formulation are defined.
+
 \begin{itemize}
 \item $Cap_{s}$ - Capacity of classroom $s$.
 \item $nCreds_{d}$ - Total of credits of course $d$.
 \item $duration_{h}$ - Total of minutes of time slot $h$.
 \item $duration_{hi,hf}$ - Total of minutes from the beginning of time slot $hi$ to the end of time slot $hf$.
 \item $M$ - called \q{big M}, it is a large enough value that depends on the constraint it is applied to.
-\item $N_{d,k,t}$ - number of credits for course $d$ at day $t$ of credits split rule $k$.
+\item $N_{d,k,t}$ - number of credits of the course $d$ to be taught at day $t$ if the credits split rule $k$ is chosen. The value $k$ is an integer identifier for the rule, ranging from 1 to $K$, where $K$ is the total number of credits split rules for the course $d$.
 \item $NCH_{d,hi,hf}$ - number of credits for course $d$ from time slot $hi$ to time slot $hf$.
 \item $MinSize$ - minimum number of students required for offering a class.
 \item $delta_{t,f}$ - maximum of idle time allowed at phase $f$ of day $t$ for a professor. Used only for gap-constraints, usually is the average sum of intervals at phase $f$ of day $t$ of calenders.
@@ -278,7 +280,7 @@ All possible variables used in the model are following described. The need of so
 \item $z_{i,d}$ - binary variable, indicates if section $i$ of course $d$ is offered. 
 \item $o_{i,d,s}$ - binary variable, indicates if section $i$ of course $d$ is offered at classroom $s$. 
 \item $fd_{d,a}$ - binary slack variable, indicates if student $a$ has his request for course $d$ not satisfied.
-\item $m_{d,i,k}$ - binary variable, indicates if a credits split rule $k$ was chosen for section $i$ of course $d$.
+\item $m_{d,i,k}$ - binary variable, indicates if the credits split rule $k$ was chosen for section $i$ of course $d$.
 \item $s_{i,d,a}$ - binary variable, indicates if student $a$ is assigned to section $i$ of course $d$.
 \item $k_{p,i,d,u,t,h}$ - binary variable, indicates if professor $p$ teaches to section $i$ of course $d$ at block $u$ at day $t$ and time slot $h$.
 \item $y_{p,i,d}$ - binary variable, indicates if professor $p$ is assigned to section $i$ of course $d$.
