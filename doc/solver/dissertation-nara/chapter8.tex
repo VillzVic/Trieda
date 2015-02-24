@@ -20,18 +20,97 @@ Computational experiments were executed on 3.40GHz Intel Core i7 computer with 3
 
 Several computational experiments have been performed for real scenarios of Brazilian schools. Those considered the most significant are following detailed.
 
+General features of scenarios:
+\begin{table}[ht]
+\caption{Scenarios} 							% title of Table
+\centering
+\begin{tabular}{c c c c c} 							% centered columns
+\hline\hline 											% inserts double horizontal lines
+Scenario & Nr Classes & Credits demanded & Teaching staff available credits & Nr Blocks \\ [0.5ex] 						% heading
+\hline 														% inserts single horizontal line
+A & 178 & 5800 & 9154 & 14 \\
+B1 & 295 & 9490 & 15249 & 15 \\
+B2 & 295 & 9490 & 15243 & 15 \\
+C & & & & \\
+D & & & & \\
+E & & & & \\ [1ex] 							% [1ex] adds vertical space
+\hline
+\end{tabular}
+\label{table:scenarios} 					% is used to refer this table in the text
+\end{table}
+
+
+
+Detailed features of scenarios:
+\begin{table}[ht]
+\caption{Scenarios} 							% title of Table
+\centering
+\begin{tabular}{c | c c c c c c} 	% centered columns
+\hline\hline 											% inserts double horizontal lines
+\multirow{2}{*}{Features} &
+	\multicolumn{6}{c}{Scenarios} \\
+			& A & B1 & B2 & C & D & E \\ [0.5ex] 						% heading
+\hline 														% inserts single horizontal line
+Nr classes & & & & & \\
+Nr demanded credits & & & & & \\
+Average nr of demanded credits per class & & & & & \\
+\hline
+Nr professors & & & & & \\
+Nr professors available credits & & & & & \\
+Nr professors of first-priority & & & & & \\
+Nr professors of second-priority & & & & & \\
+\hline
+Nr blocks & & & & & \\
+Min/Max classes per block & & & & & \\
+Average nr of classes per block & & & & & \\
+
+ [1ex] 							% [1ex] adds vertical space
+\hline
+\end{tabular}
+\label{table:scenarios} 					% is used to refer this table in the text
+\end{table}
+
+
+
+
 \begin{enumerate}
-\item Pensi - sem noite - com amarracao de disponib por unidade
+%---------------
+\item A: Pensi - sem noite - com amarracao de disponib por unidade
 
-\item Elite - sem amarracao de disponib por unidade
+\begin{figure}[H]
+\includegraphics[scale=1.0]{"Computational Experiments/Inputs/inputPensiSemNoitePriorProfs_201501291331550_/parUnidProfsComuns-PensiSemNoitePriorProfs_201501291331550.png"}
+\centering
+\caption{Sharing of professors between blocks (school units) of scenario A}
+\end{figure}
 
-\item Elite - com amarracao de disponib por unidade
+%---------------
+\item B1: Elite - sem amarracao de disponib por unidade
 
-\item Elite ou Pensi - exemplo pequeno
+\begin{figure}[H]
+\includegraphics[scale=1.0]{"Computational Experiments/Inputs/inputEliteComPriorProfSemDispUn_201502011233270_/parUnidProfsComuns-EliteComPriorProfSemDispUn_201502011233270.png"}
+\centering
+\caption{Sharing of professors between blocks (school units) of scenario B1}
+\end{figure}
 
-\item CEI
 
-\item Colegio Vicosa
+%---------------
+\item B2: Elite - com amarracao de disponib por unidade
+
+\begin{figure}[H]
+\includegraphics[scale=1.0]{"Computational Experiments/Inputs/inputEliteComPriorProfs_201501300027330_/parUnidProfsComuns-EliteComPriorProfs_201501300027330.png"}
+\centering
+\caption{Sharing of professors between blocks (school units) of scenario B2}
+\end{figure}
+
+
+%---------------
+\item C: Elite ou Pensi - exemplo pequeno
+
+%---------------
+\item D: CEI
+
+%---------------
+\item E: Colegio Vicosa
 
 \end{enumerate}
 
@@ -55,23 +134,20 @@ Professors priorities are evaluated using the three following perspectives:
 \item Strong professor priority is considered: every goal of the problem is executed twice. First, all goals are sequentially performed for all first-priority professors, then solution quality that was achieved for these professors is ensured and all goals are again sequentially performed for all second-priority professors.
 \end{enumerate}
 
-
 %Testes:
 %
-%Padre Marcelo
-%23-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorOffWeight
+%23-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorTypeOff (Judas)
+%21-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorTypeOffWeight (Slayer)
+%21-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorType2 (Judas)
 %
-%Judas
-%23-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorTypeOff
-%21-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorType2
+%23-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorTypeOff (Slayer)
+%22-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorType2 (Slayer)
+%24-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorTypeOffWeight (PadreMarcelo rodando)
+%20-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorOffWeight (Slayer, melhor rodar de novo, foi com o solver com erro de min de alunos)
 %
-%Slayer
-%23-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorOff
-%22-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorType2
-%21-02-15-NaraMaster-PensiSemNoitePriorProfs_201501291331550-priorOffWeight
-%20-02-15-NaraMaster-EliteComPriorProfSemDispUn_201502011233270-priorOffWeight (melhor rodar de novo, foi com o solver com erro de min de alunos)
-
-
+%24-02-15-NaraMaster-EliteComPriorProfs_201501300027330-priorTypeOff (Slayer rodando)
+%
+%23-02-14-NaraMaster-PensiSemNoiteProfsImpo_201501291331550-priorTypeOffWeight (PadreMarcelo)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}

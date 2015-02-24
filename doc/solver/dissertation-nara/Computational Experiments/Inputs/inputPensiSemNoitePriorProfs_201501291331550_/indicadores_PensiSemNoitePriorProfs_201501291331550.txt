@@ -15,6 +15,36 @@ Dos 178 alunos:
 Número médio de disciplinas por aluno considerando demandas presenciais P1 e externas P1: 31.5337
 Número médio de créditos por aluno considerando demandas presenciais P1 e externas P1: 32.5843
 -----------
+Nro disciplinas: 5526
+Nro creditos demandados: 5800
+----
+Unidade 602: 256 creditos demandados, 11 alunos
+Unidade 594: 288 creditos demandados, 9 alunos
+Unidade 595: 746 creditos demandados, 25 alunos
+Unidade 596: 364 creditos demandados, 17 alunos
+Unidade 597: 560 creditos demandados, 24 alunos
+Unidade 598: 451 creditos demandados, 14 alunos
+Unidade 599: 758 creditos demandados, 29 alunos
+Unidade 600: 307 creditos demandados, 14 alunos
+Unidade 601: 664 creditos demandados, 21 alunos
+Unidade 605: 436 creditos demandados, 14 alunos
+Unidade 603: 388 creditos demandados, 13 alunos
+Unidade 607: 373 creditos demandados, 13 alunos
+Unidade 604: 139 creditos demandados, 4 alunos
+Unidade 606: 70 creditos demandados, 2 alunos
+----
+Discs com 1 creditos: 5426 alunos demandando
+Discs com 2 creditos: 187 alunos demandando
+----
+Nro creditos demandados que possuem habilitacao de professores de prioridade 1: 4412
+Nro creditos demandados que possuem habilitacao de professores de prioridade 2: 1387
+-----------
+Total de horarios disponiveis de profs: 9154
+		 Por fase do dia: 
+			Fase 1: 5677
+			Fase 2: 3460
+			Fase 3: 17
+-----------
 Nenhuma disciplina exige laboratório.
 Média original de laboratórios associados por disciplina que exige laboratório: 0
 Das 5526 disciplinas cadastradas, 1 não possuem professor habilitado.
@@ -26,4 +56,5 @@ Número médio de habilitações por docente: 18.7288
 Máximo de habilitações: SG-Sergio Gomes de Oliveira Junior (CPF: 929.588.697-68) com 60 disciplinas habilitadas.
 Dos 295 professores, 96 estão disponíveis apenas 1 ou 2 dias na semana.
 
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+------------------------------------
+Numero total de alunos-demanda de P1: 5613
