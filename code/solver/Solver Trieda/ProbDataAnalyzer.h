@@ -45,8 +45,23 @@ public:
 	static void printDiscsInputDataLog();
 	static void printProfsInputDataLog();
 	static void printDemandasInputDataLog();
+	static void getRelacaoDemandaDiscMapeadas(
+		std::unordered_map<Disciplina*, std::set<AlunoDemanda*>> const & mapDemandaDisc,
+		std::unordered_set<Aluno*> & alunosComDemanda,
+		std::map<int, int> & mapNrCredDiscNrDemandas,
+		int & totalCredsDemanda);
 	static void printRelacaoDemProfInputDataLog();
+	static void printRelacaoDemProfInputDataLog(
+		std::map<int,int> const & mapNrHorDispNrProfs,
+		std::map<int,int> const & totalCredsDisponibPorFase, 
+		int const totalProfs,
+		int const totalCredsDisponib);
 
+	static void getRelacaoDemProfMapeadas(
+		std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> const & mapProfDiaDiscIntersec,
+		std::map<int,int> & mapNrHorDispNrProfs,
+		std::map<int,int> & totalCredsDisponibPorFase,
+		int & totalCredsDisponib);
 	static void getDemandasMapeadas(
 		std::unordered_map<Disciplina*, std::set<AlunoDemanda*>> &mapDemandaDisc,
 		std::map<int /*profPrior*/, int /*nrCredsDemanda*/> &mapDemandaProfPrior,

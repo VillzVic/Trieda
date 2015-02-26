@@ -25,7 +25,7 @@ const int MIPUnicoParametros::timeLimitMinTurmas = 3600*1.5;
 const int MIPUnicoParametros::timeLimitMinTurmasSemMelhora = 2700;
 const int MIPUnicoParametros::timeLimitMinGapProf = 3600;
 const int MIPUnicoParametros::timeLimitMinGapProfSemMelhora = 1800;
-const int MIPUnicoParametros::timeLimitGeneral= 3600;
+const int MIPUnicoParametros::timeLimitGeneral= 3600*4;
 const int MIPUnicoParametros::timeLimitGeneralSemMelhora = 1800;
 const int MIPUnicoParametros::timeLimitMinDeslocProf_= 3600*2;
 const int MIPUnicoParametros::timeLimitMinDeslocProfSemMelhora_ = 3600;
@@ -50,7 +50,7 @@ const int MIPUnicoParametros::maxTempoDeslocCurto_ = 50;
 const bool MIPUnicoParametros::minimizarProfFaseDoDiaUsada_ = true;
 const bool MIPUnicoParametros::minimizarProfDiaUsado_ = true;
 int MIPUnicoParametros::priorProfLevel_ = 0;
-const MIPUnicoParametros::PRIOR_PROF_TYPE MIPUnicoParametros::priorProfImportante_ = MIPUnicoParametros::PriorTypeOff;
+const MIPUnicoParametros::PRIOR_PROF_TYPE MIPUnicoParametros::priorProfImportante_ = MIPUnicoParametros::PriorType2;
 const bool MIPUnicoParametros::minimizarGapProfEntreFases_ = true;
 const int MIPUnicoParametros::MaxGapEntreFase_ = 170;
 const int MIPUnicoParametros::minCredDispFaseMinGapProf_ = 3;
@@ -59,7 +59,7 @@ const int MIPUnicoParametros::allPriorProfLevels_ = 0;
 const bool MIPUnicoParametros::fixarSolucaoProfPrior1_ = true;
 
 // Geral
-const bool MIPUnicoParametros::goalProgramming_ = false;
+const bool MIPUnicoParametros::goalProgramming_ = true;
 
 // Alunos
 const int MIPUnicoParametros::desvioMinCredDiaAluno = 2;

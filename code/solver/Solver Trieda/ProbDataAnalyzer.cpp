@@ -303,6 +303,57 @@ void ProbDataAnalyzer::printDemandasInputDataLog()
 	std::unordered_set<Aluno*> alunos;
 	std::map<int, int> mapNrCredDiscNrDemandas;
 	int totalCredsDemanda=0;
+	getRelacaoDemandaDiscMapeadas(mapDemandaDisc, alunosComDemanda, mapNrCredDiscNrDemandas, totalCredsDemanda);
+
+	int totalDiscs=mapDemandaDisc.size();
+	
+	stringstream ss;
+	ss << "\nNro disciplinas: " << totalDiscs;
+	ss << "\nNro creditos demandados: " << totalCredsDemanda;
+	ss << "\n----";
+	int minNrAl=99999999, maxNrAl=0, mediaNrAl=0;
+	for (auto itUnidDem=mapDemandaUnid.cbegin(); itUnidDem!=mapDemandaUnid.cend(); itUnidDem++)
+	{
+		int unid = itUnidDem->first;
+		int nrAlunos = 0;
+		auto finder = mapAlunosUnid.find(unid);
+		if (finder != mapAlunosUnid.cend())
+			nrAlunos = finder->second.size();
+		minNrAl = min(minNrAl, nrAlunos);
+		maxNrAl = max(maxNrAl, nrAlunos);
+		mediaNrAl += nrAlunos;
+		ss << "\nUnidade " << unid << ": " << itUnidDem->second << " creditos demandados, " << nrAlunos << " alunos";
+	}
+	mediaNrAl /= mapDemandaUnid.size();
+
+	ss << "\n----";
+	ss << "\nMin/Max alunos por unidade: " << minNrAl << "/" << maxNrAl;
+	ss << "\nMedia de alunos por unidade: " << mediaNrAl;
+	ss << "\n----";
+	ss << "\nTotal de Unidades: " << mapDemandaUnid.size();
+	ss << "\nTotal de Alunos: " << alunos.size();
+	ss << "\n----";
+	for (auto itNrCredDisc = mapNrCredDiscNrDemandas.cbegin(); itNrCredDisc != mapNrCredDiscNrDemandas.cend(); itNrCredDisc++)
+	{
+		ss << "\nDiscs com " << itNrCredDisc->first << " creditos: " << itNrCredDisc->second << " alunos-demanda";
+	}
+	ss << "\n----";
+	for (auto itPP=mapDemandaProfPrior.cbegin(); itPP!=mapDemandaProfPrior.cend(); itPP++)
+	{
+		ss << "\nNro creditos demandados que possuem habilitacao de professores de prioridade " << itPP->first << ": " << itPP->second;
+	}
+
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador( ss.str() );
+}
+
+void ProbDataAnalyzer::getRelacaoDemandaDiscMapeadas(
+	std::unordered_map<Disciplina*, std::set<AlunoDemanda*>> const & mapDemandaDisc,
+	std::unordered_set<Aluno*> & alunosComDemanda,
+	std::map<int, int> & mapNrCredDiscNrDemandas,
+	int & totalCredsDemanda)
+{	
+	int totalCredsDemanda=0;
 	for (auto itDisc=mapDemandaDisc.cbegin(); itDisc!=mapDemandaDisc.cend(); itDisc++)
 	{
 		int nrCredDisc = itDisc->first->getTotalCreditos();
@@ -313,41 +364,8 @@ void ProbDataAnalyzer::printDemandasInputDataLog()
 		mapNrCredDiscNrDemandas[nrCredDisc] += itDisc->second.size();
 
 		for (auto itAlDem=itDisc->second.cbegin(); itAlDem!=itDisc->second.cend(); itAlDem++)
-			alunos.insert((*itAlDem)->getAluno());
+			alunosComDemanda.insert((*itAlDem)->getAluno());
 	}
-
-	int totalDiscs=mapDemandaDisc.size();
-	
-	stringstream ss;
-	ss << "\nNro disciplinas: " << totalDiscs;
-	ss << "\nNro creditos demandados: " << totalCredsDemanda;
-	ss << "\n----";
-	for (auto itUnidDem=mapDemandaUnid.cbegin(); itUnidDem!=mapDemandaUnid.cend(); itUnidDem++)
-	{
-		int unid = itUnidDem->first;
-		int nrAlunos = 0;
-		auto finder = mapAlunosUnid.find(unid);
-		if (finder != mapAlunosUnid.cend())
-			nrAlunos = finder->second.size();
-
-		ss << "\nUnidade " << unid << ": " << itUnidDem->second << " creditos demandados, " << nrAlunos << " alunos";
-	}
-	ss << "\n----";
-	ss << "\nTotal de Unidades: " << mapDemandaUnid.size();
-	ss << "\nTotal de Alunos: " << alunos.size();
-	ss << "\n----";
-	for (auto itNrCredDisc = mapNrCredDiscNrDemandas.cbegin(); itNrCredDisc != mapNrCredDiscNrDemandas.cend(); itNrCredDisc++)
-	{
-		ss << "\nDiscs com " << itNrCredDisc->first << " creditos: " << itNrCredDisc->second << " alunos demandando";
-	}
-	ss << "\n----";
-	for (auto itPP=mapDemandaProfPrior.cbegin(); itPP!=mapDemandaProfPrior.cend(); itPP++)
-	{
-		ss << "\nNro creditos demandados que possuem habilitacao de professores de prioridade " << itPP->first << ": " << itPP->second;
-	}
-
-	Indicadores::printSeparator(1);
-	Indicadores::printIndicador( ss.str() );
 }
 
 void ProbDataAnalyzer::printRelacaoDemProfInputDataLog()
@@ -363,13 +381,78 @@ void ProbDataAnalyzer::printRelacaoDemProfInputDataLog()
 	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> mapProfDiaDiscIntersec;	
 	getDemandasIntersecDisponib(mapDiscTurnoCalend, mapDiscIntersec, mapProfDiaDiscIntersec);
 
+	// Get relacao de creditos de profs disponiveis
+	std::map<int,int> mapNrHorDispNrProfs;
+	std::map<int,int> totalCredsDisponibPorFase;
 	int totalCredsDisponib=0;
-	map<int,int> totalCredsDisponibPorFase;
+	getRelacaoDemProfMapeadas(mapProfDiaDiscIntersec, mapNrHorDispNrProfs, totalCredsDisponibPorFase, totalCredsDisponib);
+
+	// print
+	int const totalProfs = mapProfDiaDiscIntersec.size();
+	printRelacaoDemProfInputDataLog(mapNrHorDispNrProfs, totalCredsDisponibPorFase, totalProfs, totalCredsDisponib);
+}
+
+void ProbDataAnalyzer::printRelacaoDemProfInputDataLog(
+	std::map<int,int> const & mapNrHorDispNrProfs,
+	std::map<int,int> const & totalCredsDisponibPorFase, 
+	int const totalProfs,
+	int const totalCredsDisponib)
+{
+	stringstream ss1;
+	ss1 << "\nTotal de horarios disponiveis de profs: " << totalCredsDisponib;
+	ss1 << "\n\t\t Por fase do dia: ";
+	for (auto itCred=totalCredsDisponibPorFase.cbegin(); itCred!=totalCredsDisponibPorFase.cend(); itCred++)
+	{
+		ss1 << "\n\t\t\tFase " << itCred->first << ": " << itCred->second;
+	}
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador(ss1.str());
+
+	int faixaCorte=0;
+	int maxHorsDisp = 0;
+	if (mapNrHorDispNrProfs.size())
+	{
+		// map ordenado!
+		maxHorsDisp = mapNrHorDispNrProfs.rbegin()->first;
+		faixaCorte = mapNrHorDispNrProfs.begin()->first;;
+	}
+
+	int nrFaixas = 5;
+	int deltaFaixa = maxHorsDisp/nrFaixas;
+	faixaCorte += deltaFaixa;
+	int nrProfsNaFaixa=0;
+
+	stringstream ss2;
+	ss2 << "\nTotal de profs: " << totalCredsDisponib;
+	for (auto itCred=mapNrHorDispNrProfs.cbegin(); itCred!=mapNrHorDispNrProfs.cend(); itCred++)
+	{
+		if (itCred->first > faixaCorte ||						// mudou de faixa
+			std::next(itCred)==mapNrHorDispNrProfs.cend())		// é o ultimo item da ultima faixa
+		{
+			ss2 << "\nDe (" << faixaCorte - deltaFaixa << ", " << faixaCorte << "] horarios disponiveis: " << nrProfsNaFaixa << " professores";
+			faixaCorte += deltaFaixa;
+			nrProfsNaFaixa = 0;
+		}
+
+		nrProfsNaFaixa += itCred->second;
+	}
+	Indicadores::printSeparator(1);
+	Indicadores::printIndicador(ss2.str());
+}
+
+void ProbDataAnalyzer::getRelacaoDemProfMapeadas(
+	std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::unordered_set<Disciplina*>>>> const & mapProfDiaDiscIntersec,
+	std::map<int,int> & mapNrHorDispNrProfs,
+	std::map<int,int> & totalCredsDisponibPorFase,
+	int & totalCredsDisponib)
+{
+	totalCredsDisponib = 0;
 	for (auto itProf=mapProfDiaDiscIntersec.cbegin(); itProf!=mapProfDiaDiscIntersec.cend(); itProf++)
 	{
+		int profCredsDisp=0;
 		for (auto itDia=itProf->second.cbegin(); itDia!=itProf->second.cend(); itDia++)
 		{
-			totalCredsDisponib += itDia->second.size();
+			totalCredsDisponib += itDia->second.size();			
 			for (auto itDt=itDia->second.cbegin(); itDt!=itDia->second.cend(); itDt++)
 			{
 				int fase = problemData_->getFaseDoDia(itDt->first);
@@ -379,16 +462,12 @@ void ProbDataAnalyzer::printRelacaoDemProfInputDataLog()
 				finder->second = finder->second + 1;
 			}
 		}
+
+		auto finderNrCred = mapNrHorDispNrProfs.find(profCredsDisp);
+		if (finderNrCred == mapNrHorDispNrProfs.end())
+			finderNrCred = mapNrHorDispNrProfs.insert(pair<int,int> (profCredsDisp, 0)).first;
+		(finderNrCred->second)++;
 	}
-	stringstream ss;
-	ss << "\nTotal de horarios disponiveis de profs: " << totalCredsDisponib;
-	ss << "\n\t\t Por fase do dia: ";
-	for (auto itCred=totalCredsDisponibPorFase.cbegin(); itCred!=totalCredsDisponibPorFase.cend(); itCred++)
-	{
-		ss << "\n\t\t\tFase " << itCred->first << ": " << itCred->second;
-	}
-	Indicadores::printSeparator(1);
-	Indicadores::printIndicador( ss.str() );
 }
 
 void ProbDataAnalyzer::getDemandasMapeadas(

@@ -136,7 +136,7 @@ void Indicadores::printEscolaGoalsHeader()
 
 	std::stringstream header;
 	header << std::left << setw(cse[0]) << "\n\nPhase"
-		<< std::left << setw(cse[1]) << "Atend"
+		<< std::left << setw(cse[1]) << "Nao Atend"
 		<< std::left << setw(cse[2]) << "Turmas"
 		<< std::left << setw(cse[3]) << "Desloc"
 		<< std::left << setw(cse[4]) << "Fases&Dias"
