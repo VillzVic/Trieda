@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
@@ -44,6 +46,7 @@ import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
+import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
@@ -62,7 +65,6 @@ import com.gapso.web.trieda.server.xml.input.GrupoAlunos;
 import com.gapso.web.trieda.server.xml.input.GrupoAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoCalendario;
 import com.gapso.web.trieda.server.xml.input.GrupoCampus;
-import com.gapso.web.trieda.server.xml.input.GrupoCreditoDisponivel;
 import com.gapso.web.trieda.server.xml.input.GrupoCurriculo;
 import com.gapso.web.trieda.server.xml.input.GrupoCurso;
 import com.gapso.web.trieda.server.xml.input.GrupoDemanda;
@@ -95,13 +97,14 @@ import com.gapso.web.trieda.server.xml.input.ItemAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.ItemAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoCampusSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoDiaSemanaSolucao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoHorarioAulaSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoOfertaSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoSalaSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoTaticoSolucao;
+import com.gapso.web.trieda.server.xml.input.ItemAtendimentoTurnoSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoUnidadeSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemCalendario;
 import com.gapso.web.trieda.server.xml.input.ItemCampus;
-import com.gapso.web.trieda.server.xml.input.ItemCreditoDisponivel;
 import com.gapso.web.trieda.server.xml.input.ItemCurriculo;
 import com.gapso.web.trieda.server.xml.input.ItemCurso;
 import com.gapso.web.trieda.server.xml.input.ItemDemanda;
@@ -158,6 +161,14 @@ public class SolverInput
 	private Set< Demanda > demandasCampusTurno = new HashSet< Demanda >();
 	private Set< Disciplina > disciplinasComDemandaCurriculo = new HashSet< Disciplina >();
 	private Map< Curriculo, List< Integer > > mapCurriculosPeriodos = new HashMap< Curriculo, List< Integer > >();
+	
+	private Map<Integer, ItemAtendimentoCampusSolucao> itemAtendCampusMap = new HashMap<Integer, ItemAtendimentoCampusSolucao>();
+	private Map<Integer, ItemAtendimentoUnidadeSolucao> itemAtendUnidadeMap = new HashMap<Integer, ItemAtendimentoUnidadeSolucao>();
+	private Map<Integer, ItemAtendimentoSalaSolucao> itemAtendSalaMap = new HashMap<Integer, ItemAtendimentoSalaSolucao>();
+	private Map<String, ItemAtendimentoDiaSemanaSolucao> itemAtendDiaSemanaMap = new HashMap<String, ItemAtendimentoDiaSemanaSolucao>();
+	private Map<String, ItemAtendimentoTurnoSolucao> itemAtendTurnoMap = new HashMap<String, ItemAtendimentoTurnoSolucao>();
+	private Map<String, ItemAtendimentoHorarioAulaSolucao> itemAtendHorAulaMap = new HashMap<String, ItemAtendimentoHorarioAulaSolucao>();
+	private Map<String, ItemAtendimentoOfertaSolucao> itemAtendOfertaMap = new HashMap<String, ItemAtendimentoOfertaSolucao>();
 	
 	public SolverInput(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
@@ -546,10 +557,7 @@ public class SolverInput
 			generateFixacoes();
 		prw.endSubPartial();
 		prw.setInitSubPartial("Escrevendo Atendimentos...");
-			if ( !tatico )
-			{
-				generateTaticoInput();
-			}
+			generateSolucao();
 		prw.endSubPartial();
 	}
 
@@ -2057,26 +2065,63 @@ public class SolverInput
 		this.triedaInput.setFixacoes( grupoFixacao );
 	}
 
-	private void generateTaticoInput() {
-		for (AtendimentoTatico at : this.cenario.getAtendimentosTaticos()) {
-			if (!this.parametro.getTurnos().contains(at.getOferta().getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
-				continue;
+//	private void generateSolucaoTatico() {
+//		for (AtendimentoTatico at : this.cenario.getAtendimentosTaticos()) {
+//			if (!this.parametro.getTurnos().contains(at.getOferta().getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
+//				continue;
+//			}
+//			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda(),
+//					at.getConfirmada(), at.getHorarioAula());
+//		}
+//	}
+	
+	private void generateSolucao() {
+		if (!this.cenario.getAtendimentosOperacionais().isEmpty()) {
+			// limpa estruturas
+			this.itemAtendCampusMap.clear();
+			this.itemAtendUnidadeMap.clear();
+			this.itemAtendSalaMap.clear();
+			this.itemAtendDiaSemanaMap.clear();
+			this.itemAtendTurnoMap.clear();
+			this.itemAtendHorAulaMap.clear();
+			this.itemAtendOfertaMap.clear();
+			
+			// preenche estruturas
+			for (AtendimentoOperacional at : this.cenario.getAtendimentosOperacionais()) {
+				if (!this.parametro.getTurnos().contains(at.getOferta().getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
+					continue;
+				}
+				insereNoXML(at);
 			}
-			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda(),
-					at.getConfirmada(), at.getHorarioAula());
+			
+			// insere no XML
+			for (Entry<Integer, ItemAtendimentoCampusSolucao> entry : this.itemAtendCampusMap.entrySet()) {
+				if (this.triedaInput.getAtendimentos() == null) {
+					this.triedaInput.setAtendimentos(this.of.createGrupoAtendimentoCampusSolucao());
+				}
+				this.triedaInput.getAtendimentos().getAtendimentoCampus().add(entry.getValue());
+			}
+		} else {		
+			for (AtendimentoTatico at : this.cenario.getAtendimentosTaticos()) {
+				if (!this.parametro.getTurnos().contains(at.getOferta().getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
+					continue;
+				}
+				createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda(),
+						at.getConfirmada(), at.getHorarioAula());
+			}
 		}
 	}
 
 	private ItemAtendimentoCampusSolucao getItemAtendimentoCampusSolucao( Campus campus )
 	{
-		if ( this.triedaInput.getAtendimentosTatico() == null )
+		if ( this.triedaInput.getAtendimentos() == null )
 		{
-			this.triedaInput.setAtendimentosTatico(
+			this.triedaInput.setAtendimentos(
 				this.of.createGrupoAtendimentoCampusSolucao() );
 		}
 
 		for ( ItemAtendimentoCampusSolucao atSolucao
-			: this.triedaInput.getAtendimentosTatico().getAtendimentoCampus() )
+			: this.triedaInput.getAtendimentos().getAtendimentoCampus() )
 		{
 			if ( atSolucao.getCampusId() == campus.getId().intValue() )
 			{
@@ -2090,7 +2135,7 @@ public class SolverInput
 		atSolucao.setCampusId( campus.getId().intValue() );
 		atSolucao.setCampusCodigo( campus.getCodigo() );
 
-		this.triedaInput.getAtendimentosTatico().getAtendimentoCampus().add( atSolucao );
+		this.triedaInput.getAtendimentos().getAtendimentoCampus().add( atSolucao );
 
 		return atSolucao;
 	}
@@ -2098,7 +2143,7 @@ public class SolverInput
 	private ItemAtendimentoUnidadeSolucao getItemAtendimentoUnidadeSolucao( Unidade unidade )
 	{
 		for ( ItemAtendimentoCampusSolucao atCampusSolucao
-			: this.triedaInput.getAtendimentosTatico().getAtendimentoCampus() )
+			: this.triedaInput.getAtendimentos().getAtendimentoCampus() )
 		{
 			if ( atCampusSolucao.getAtendimentosUnidades() == null )
 			{
@@ -2139,14 +2184,14 @@ public class SolverInput
 
 	private ItemAtendimentoSalaSolucao getItemAtendimentoSalaSolucao( Sala sala )
 	{
-		if ( this.triedaInput.getAtendimentosTatico() == null )
+		if ( this.triedaInput.getAtendimentos() == null )
 		{
-			this.triedaInput.setAtendimentosTatico(
+			this.triedaInput.setAtendimentos(
 				this.of.createGrupoAtendimentoCampusSolucao() );
 		}
 
 		for ( ItemAtendimentoCampusSolucao atCampusSolucao
-			: this.triedaInput.getAtendimentosTatico().getAtendimentoCampus() )
+			: this.triedaInput.getAtendimentos().getAtendimentoCampus() )
 		{
 			if ( atCampusSolucao.getAtendimentosUnidades() == null )
 			{
@@ -2194,17 +2239,15 @@ public class SolverInput
 		return atSalaSolucao;
 	}
 
-	private ItemAtendimentoDiaSemanaSolucao getItemAtendimentoDiaSemanaSolucao(
-		Sala sala, Semanas semana )
-	{
-		if ( this.triedaInput.getAtendimentosTatico() == null )
+	private ItemAtendimentoDiaSemanaSolucao getItemAtendimentoDiaSemanaSolucao(Sala sala, Semanas semana) {
+		if ( this.triedaInput.getAtendimentos() == null )
 		{
-			this.triedaInput.setAtendimentosTatico(
+			this.triedaInput.setAtendimentos(
 				this.of.createGrupoAtendimentoCampusSolucao() );
 		}
 
 		for ( ItemAtendimentoCampusSolucao atCampusSolucao
-			: this.triedaInput.getAtendimentosTatico().getAtendimentoCampus() )
+			: this.triedaInput.getAtendimentos().getAtendimentoCampus() )
 		{
 			if ( atCampusSolucao.getAtendimentosUnidades() == null )
 			{
@@ -2328,6 +2371,103 @@ public class SolverInput
 
 		return atTaticoSolucao;
 	}
+	
+	private void insereNoXML(AtendimentoOperacional at) {
+		Sala sala = at.getSala();
+		Unidade unidade = sala.getUnidade();
+		Campus campus = unidade.getCampus();
+		HorarioDisponivelCenario hdc = at.getHorarioDisponivelCenario();
+		Semanas diaSemana = hdc.getDiaSemana();
+		int diaSemanaInt = Semanas.toInt(diaSemana);
+		HorarioAula horAula = hdc.getHorarioAula();
+		Professor professor = at.getProfessor();
+		ProfessorVirtual professorVirtual = at.getProfessorVirtual();
+		Oferta oferta = at.getOferta();
+		Turno turno = oferta.getTurno();
+		Disciplina disciplina = at.getDisciplina();
+		Disciplina disciplinaSubstituta = at.getDisciplinaSubstituta();
+		
+		ItemAtendimentoCampusSolucao itemAtendCampus = this.itemAtendCampusMap.get(campus.getId().intValue());
+		if (itemAtendCampus == null) {
+			itemAtendCampus = this.of.createItemAtendimentoCampusSolucao();
+			itemAtendCampus.setCampusId(campus.getId().intValue());
+			itemAtendCampus.setCampusCodigo(campus.getCodigo());
+			itemAtendCampus.setAtendimentosUnidades(this.of.createGrupoAtendimentoUnidadeSolucao());
+			this.itemAtendCampusMap.put(campus.getId().intValue(),itemAtendCampus);
+		}
+		
+		ItemAtendimentoUnidadeSolucao itemAtendUnidade = this.itemAtendUnidadeMap.get(unidade.getId().intValue());
+		if (itemAtendUnidade == null) {
+			itemAtendUnidade = this.of.createItemAtendimentoUnidadeSolucao();
+			itemAtendUnidade.setUnidadeId(unidade.getId().intValue());
+			itemAtendUnidade.setUnidadeCodigo(unidade.getCodigo());
+			itemAtendUnidade.setAtendimentosSalas(this.of.createGrupoAtendimentoSalaSolucao());
+			this.itemAtendUnidadeMap.put(unidade.getId().intValue(),itemAtendUnidade);
+			itemAtendCampus.getAtendimentosUnidades().getAtendimentoUnidade().add(itemAtendUnidade);
+		}
+		
+		ItemAtendimentoSalaSolucao itemAtendSala = this.itemAtendSalaMap.get(sala.getId().intValue());
+		if (itemAtendSala == null) {
+			itemAtendSala = this.of.createItemAtendimentoSalaSolucao();
+			itemAtendSala.setSalaId(sala.getId().intValue());
+			itemAtendSala.setSalaNome(sala.getCodigo());
+			itemAtendSala.setAtendimentosDiasSemana(this.of.createGrupoAtendimentoDiaSemanaSolucao());
+			this.itemAtendSalaMap.put(sala.getId().intValue(), itemAtendSala);
+			itemAtendUnidade.getAtendimentosSalas().getAtendimentoSala().add(itemAtendSala);
+		}
+		
+		String chaveAtendDiaSemana = campus.getId() + "-" + unidade.getId() + "-" + sala.getId() + "-" + diaSemanaInt;
+		ItemAtendimentoDiaSemanaSolucao itemAtendDiaSemana = this.itemAtendDiaSemanaMap.get(chaveAtendDiaSemana);
+		if (itemAtendDiaSemana == null) {
+			itemAtendDiaSemana = this.of.createItemAtendimentoDiaSemanaSolucao();
+			itemAtendDiaSemana.setDiaSemana(diaSemanaInt);
+			itemAtendDiaSemana.setAtendimentosTurnos(this.of.createGrupoAtendimentoTurnoSolucao());
+			this.itemAtendDiaSemanaMap.put(chaveAtendDiaSemana, itemAtendDiaSemana);
+			itemAtendSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana().add(itemAtendDiaSemana);
+		}
+		
+		String chaveAtendTurno = chaveAtendDiaSemana + "-" + turno.getId();
+		ItemAtendimentoTurnoSolucao itemAtendTurno = this.itemAtendTurnoMap.get(chaveAtendTurno);
+		if (itemAtendTurno == null) {
+			itemAtendTurno = this.of.createItemAtendimentoTurnoSolucao();
+			itemAtendTurno.setTurnoId(turno.getId().intValue());
+			itemAtendTurno.setAtendimentosHorariosAula(this.of.createGrupoAtendimentoHorarioAulaSolucao());
+			this.itemAtendTurnoMap.put(chaveAtendTurno, itemAtendTurno);
+			itemAtendDiaSemana.getAtendimentosTurnos().getAtendimentoTurno().add(itemAtendTurno);
+		}
+		
+		String chaveAtendHorAula = chaveAtendTurno + "-" + horAula.getId();
+		ItemAtendimentoHorarioAulaSolucao itemAtendHorAula = this.itemAtendHorAulaMap.get(chaveAtendHorAula);
+		if (itemAtendHorAula == null) {
+			itemAtendHorAula = this.of.createItemAtendimentoHorarioAulaSolucao();
+			itemAtendHorAula.setHorarioAulaId(horAula.getId().intValue());
+			itemAtendHorAula.setCreditoTeorico(at.getCreditoTeorico());
+			itemAtendHorAula.setProfessorId((professor.getId() != null) ? professor.getId().intValue() : professorVirtual.getId().intValue());
+			itemAtendHorAula.setVirtual((professorVirtual != null));
+			itemAtendHorAula.setAtendimentosOfertas(this.of.createGrupoAtendimentoOfertaSolucao());
+			this.itemAtendHorAulaMap.put(chaveAtendHorAula, itemAtendHorAula);
+			itemAtendTurno.getAtendimentosHorariosAula().getAtendimentoHorarioAula().add(itemAtendHorAula);
+		}
+		
+		String chaveAtendOferta = oferta.getId() + "-" + disciplina.getId() + "-" + at.getTurma() + "-" + at.getQuantidadeAlunos();
+		ItemAtendimentoOfertaSolucao itemAtendOferta = this.itemAtendOfertaMap.get(chaveAtendOferta);
+		if (itemAtendOferta == null) {
+			itemAtendOferta = this.of.createItemAtendimentoOfertaSolucao();
+			itemAtendOferta.setOfertaCursoCampiId(oferta.getId().intValue());
+			itemAtendOferta.setDisciplinaId(disciplina.getId().intValue());
+			itemAtendOferta.setQuantidade(at.getQuantidadeAlunos());
+			itemAtendOferta.setTurma(at.getTurma());
+			if (disciplinaSubstituta != null) {
+				itemAtendOferta.setdisciplinaSubstitutaId(disciplinaSubstituta.getId().intValue());
+			}
+			itemAtendOferta.setAlunosDemandasAtendidas(this.of.createGrupoIdentificador());
+			for (AlunoDemanda alunoDemanda : at.getAlunosDemanda()) {
+				itemAtendOferta.getAlunosDemandasAtendidas().getId().add(alunoDemanda.getId().intValue());
+			}
+			this.itemAtendOfertaMap.put(chaveAtendOferta, itemAtendOferta);
+		}
+		itemAtendHorAula.getAtendimentosOfertas().getAtendimentoOferta().add(itemAtendOferta);
+	}
 
 	private GrupoHorario createGrupoHorario(
 		Collection< HorarioDisponivelCenario > horarios )
@@ -2373,49 +2513,6 @@ public class SolverInput
 		}
 
 		return grupoHorario;
-	}
-
-	private GrupoCreditoDisponivel createCreditosDisponiveis(
-		GrupoHorario horariosDisponiveis )
-	{
-		GrupoCreditoDisponivel grupoCreditoDisponivel
-			= this.of.createGrupoCreditoDisponivel();
-
-		List< ItemHorario > horarios = horariosDisponiveis.getHorario();
-
-		for ( Semanas semana : Semanas.values() )
-		{
-			for ( Turno turno : this.cenario.getTurnos() )
-			{
-				if ( !this.parametro.getTurnos().contains(turno) )
-				{
-					continue;
-				}
-
-				ItemCreditoDisponivel itemCD = this.of.createItemCreditoDisponivel();
-
-				itemCD.setDiaSemana( Semanas.toInt( semana ) );
-				itemCD.setTurnoId( turno.getId().intValue() );
-				itemCD.setMaxCreditos( 0 );
-
-				for ( ItemHorario itemHorario : horarios )
-				{
-					if ( itemHorario.getTurnoId() == itemCD.getTurnoId()
-						&& itemHorario.getDiasSemana().getDiaSemana().contains(
-							Semanas.toInt( semana ) ) )
-					{
-						itemCD.setMaxCreditos( itemCD.getMaxCreditos() + 1 );
-					}
-				}
-
-				if ( itemCD.getMaxCreditos() > 0 )
-				{
-					grupoCreditoDisponivel.getCreditoDisponivel().add( itemCD );
-				}
-			}
-		}
-
-		return grupoCreditoDisponivel;
 	}
 
 	private void createWarningMessage( String warningMessage )

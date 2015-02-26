@@ -74,10 +74,12 @@ public interface TriedaI18nConstants
 	String deslocamentoUnidades();
 	String deslocamentoUnidadesCampus();
 	String dia();
+	String diaDaSemana();
 	String diasHorariosAula();
 	String disciplina();
 	String disciplinas();
 	String disciplinasAssociadas();
+	String disciplinaAula();
 	String disciplinasSalas();
 	String disponibilidadesProfessores();
 	String disponibilidadesSemanaLetiva();
@@ -89,6 +91,7 @@ public interface TriedaI18nConstants
 	String estado();
 	String exigeEquivalenciaForcada();
 	String exportarExcel();
+	String fim();
 	String formando();
 	String habilitacaoProfessores();
 	String gruposSalas();
@@ -97,6 +100,7 @@ public interface TriedaI18nConstants
 	String horarioFinal();
 	String importarExcel();
 	String informacao();
+	String inicio();
 	String insercaoDe();
 	String maisDeUmaDisciplinaProfessor();
 	String margem();
@@ -129,6 +133,7 @@ public interface TriedaI18nConstants
 	String prioridade();
 	String periodos();
 	String percentMestresDoutores();
+	String prat();
 	String pratico();
 	String pratico_s();
 	String preenchaA();
@@ -161,6 +166,7 @@ public interface TriedaI18nConstants
 	String selecioneO();
 	String semanaLetiva();
 	String sim();
+	String teo();
 	String teorico();
 	String teorico_s();
 	String tipo();

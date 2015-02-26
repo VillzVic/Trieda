@@ -229,6 +229,11 @@ public class GTriedaI18nConstants
 	}
 	
 	@Override
+	public String diaDaSemana() {
+		return this.languageManager.getText("diaDaSemana");
+	}
+	
+	@Override
 	public String diasHorariosAula() {
 		return this.languageManager.getText("diasHorariosAula");
 	}
@@ -247,7 +252,12 @@ public class GTriedaI18nConstants
 	public String disciplinasAssociadas() {
 		return this.languageManager.getText("disciplinasAssociadas");
 	}
-
+	
+	@Override
+	public String disciplinaAula() {
+		return this.languageManager.getText("disciplinaAula");
+	}
+	
 	@Override
 	public String disciplinasSalas() {
 		return this.languageManager.getText("disciplinasSalas");
@@ -292,6 +302,11 @@ public class GTriedaI18nConstants
 	public String exportarExcel() {
 		return this.languageManager.getText("exportarExcel");
 	}
+	
+	@Override
+	public String fim() {
+		return this.languageManager.getText("fim");
+	}
 
 	@Override
 	public String habilitacaoProfessores() {
@@ -326,6 +341,11 @@ public class GTriedaI18nConstants
 	@Override
 	public String informacao() {
 		return this.languageManager.getText("informacao");
+	}
+	
+	@Override
+	public String inicio() {
+		return this.languageManager.getText("inicio");
 	}
 
 	@Override
@@ -444,6 +464,11 @@ public class GTriedaI18nConstants
 	}
 
 	@Override
+	public String prat() {
+		return this.languageManager.getText("prat");
+	}
+	
+	@Override
 	public String pratico() {
 		return this.languageManager.getText("pratico");
 	}
@@ -548,6 +573,11 @@ public class GTriedaI18nConstants
 		return this.languageManager.getText("sim");
 	}
 
+	@Override
+	public String teo() {
+		return this.languageManager.getText("teo");
+	}
+	
 	@Override
 	public String teorico() {
 		return this.languageManager.getText("teorico");

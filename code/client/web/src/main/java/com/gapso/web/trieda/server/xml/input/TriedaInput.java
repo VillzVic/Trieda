@@ -78,7 +78,7 @@ import javax.xml.bind.annotation.XmlType;
     "alunosDemanda",
     "parametrosPlanejamento",
     "fixacoes",
-    "atendimentosTatico"
+    "atendimentos"
 })
 @XmlRootElement(name = "TriedaInput")
 public class TriedaInput {
@@ -125,7 +125,7 @@ public class TriedaInput {
     protected ItemParametrosPlanejamento parametrosPlanejamento;
     @XmlElement(required = true)
     protected GrupoFixacao fixacoes;
-    protected GrupoAtendimentoCampusSolucao atendimentosTatico;
+    protected GrupoAtendimentoCampusSolucao atendimentos;
 
     /**
      * Gets the value of the calendarios property.
@@ -639,8 +639,8 @@ public class TriedaInput {
      *     {@link GrupoAtendimentoCampusSolucao }
      *     
      */
-    public GrupoAtendimentoCampusSolucao getAtendimentosTatico() {
-        return atendimentosTatico;
+    public GrupoAtendimentoCampusSolucao getAtendimentos() {
+        return atendimentos;
     }
 
     /**
@@ -651,8 +651,8 @@ public class TriedaInput {
      *     {@link GrupoAtendimentoCampusSolucao }
      *     
      */
-    public void setAtendimentosTatico(GrupoAtendimentoCampusSolucao value) {
-        this.atendimentosTatico = value;
+    public void setAtendimentos(GrupoAtendimentoCampusSolucao value) {
+        this.atendimentos = value;
     }
 
 }

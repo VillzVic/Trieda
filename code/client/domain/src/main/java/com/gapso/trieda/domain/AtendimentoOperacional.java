@@ -999,6 +999,17 @@ public class AtendimentoOperacional
 			+ "-" + getTurma()
 			+ "-" + getCreditoTeorico();
 	}
+	
+	public static String getKeyAtendOp(Sala ambiente, HorarioDisponivelCenario hdc, Boolean temCredTeo, String turma, Disciplina dis, Disciplina disSub, Professor prof, String profV, Oferta ofe) {
+		return ambiente.getId() +
+			"-" + hdc.getId() +
+			"-" + temCredTeo +
+			"-" + turma +
+			"-" + dis.getId() +
+			"-" + (disSub == null ? "null" : disSub.getId()) +
+			"-" + (prof != null ? prof.getId() : profV) +
+			"-" + ofe.getId();
+	}
 
 	static public List< AtendimentoOperacional > getAtendimentosOperacional(
 		InstituicaoEnsino instituicaoEnsino, boolean isAdmin,

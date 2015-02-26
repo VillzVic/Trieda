@@ -147,7 +147,7 @@ public class Parametro
     
     //Minimizar Deslocamentos de Professores entre Campi
     @Column(name = "PAR_MINDESLPROF")
-    private Boolean minimizarDeslocamentoProfessor = false;
+    private Boolean minimizarDeslocamentoProfessor = true;
     @Column(name = "PAR_MINDESLPROFVALUE")
     private Integer minimizarDeslocamentoProfessorValue;
     

@@ -10,7 +10,6 @@ package com.gapso.web.trieda.server.xml.input;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -36,14 +35,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ItemAtendimentoDiaSemanaSolucao", propOrder = {
-    "diaSemana",
-    "atendimentosTatico"
+	"diaSemana",
+    "atendimentosTatico",
+    "atendimentosTurnos"
 })
 public class ItemAtendimentoDiaSemanaSolucao {
 
     protected int diaSemana;
-    @XmlElement(required = true)
     protected GrupoAtendimentoTaticoSolucao atendimentosTatico;
+    protected GrupoAtendimentoTurnoSolucao atendimentosTurnos;
 
     /**
      * Gets the value of the diaSemana property.
@@ -85,4 +85,27 @@ public class ItemAtendimentoDiaSemanaSolucao {
         this.atendimentosTatico = value;
     }
 
+    /**
+     * Gets the value of the atendimentosTurnos property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoAtendimentoTurnoSolucao }
+     *     
+     */
+    public GrupoAtendimentoTurnoSolucao getAtendimentosTurnos() {
+        return atendimentosTurnos;
+    }
+
+    /**
+     * Sets the value of the atendimentosTurnos property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoAtendimentoTurnoSolucao }
+     *     
+     */
+    public void setAtendimentosTurnos(GrupoAtendimentoTurnoSolucao value) {
+        this.atendimentosTurnos = value;
+    }
 }

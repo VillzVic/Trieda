@@ -146,6 +146,8 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 				int column = 2;
 				// Campus
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getCampusString());
+				// Unidade
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getUnidadeString());
 				// Ambiente
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getSalaString());
 				// Dia Semana
@@ -162,9 +164,11 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],disciplinaAula);				
 				// Turma
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getTurma());
-				// Professor
+				// Professor - CPF
 				String professorCPF = aula.getProfessorCPF();//(aula.getProfessorId() != null) ? aula.getProfessorCPF() : aula.getProfessorVirtualCPF();
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],professorCPF);
+				// Professor - Virtual?
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],(aula.getProfessorVirtualId() != null)?"Sim":"Não");
 				// Aula - Créditos Teóricos
 				int credT = (aula.isTeorico() ? aula.getTotalCreditos() : 0);
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],credT);

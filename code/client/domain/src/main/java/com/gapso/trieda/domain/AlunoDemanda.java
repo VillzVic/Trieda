@@ -566,6 +566,10 @@ public class AlunoDemanda
 	{
 		return this.getDemanda() + "-" + this.getAluno();
 	}
+	
+	public String getNaturalKeyString() {
+		return this.getDemanda().getNaturalKeyString() + "-" + this.getAluno().getMatricula();
+	}
 
 	public String toString()
 	{
@@ -709,6 +713,16 @@ public class AlunoDemanda
 		}
 		
 		return alunoDemandaIdToAlunoDemandaMap;
+	}
+	
+	public static Map<String,AlunoDemanda> buildAlunoDemandaKeyToAlunoDemandaMap(InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+		// [ CodCampus-NomeTurno-CodCurso-CodCurric-Matricula-CodDisc -> AlunoDemanda ]
+		Map<String, AlunoDemanda> alunoDemandaKeyToAlunoDemandaMap = new HashMap<String, AlunoDemanda>();
+		List<AlunoDemanda> alunosDemandas = AlunoDemanda.findAll(instituicaoEnsino,cenario);		
+		for (AlunoDemanda ad : alunosDemandas) {
+			alunoDemandaKeyToAlunoDemandaMap.put(ad.getNaturalKeyString(), ad);
+		}
+		return alunoDemandaKeyToAlunoDemandaMap;
 	}
 	
 	public static int sumDemandaPorPrioridade(InstituicaoEnsino instituicaoEnsino, Campus campus, int prioridade) {

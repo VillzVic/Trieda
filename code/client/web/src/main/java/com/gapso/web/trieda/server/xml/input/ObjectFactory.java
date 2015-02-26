@@ -315,6 +315,14 @@ public class ObjectFactory {
     public GrupoAtendimentoTaticoSolucao createGrupoAtendimentoTaticoSolucao() {
         return new GrupoAtendimentoTaticoSolucao();
     }
+    
+    /**
+     * Create an instance of {@link GrupoAtendimentoTurnoSolucao }
+     * 
+     */
+    public GrupoAtendimentoTurnoSolucao createGrupoAtendimentoTurnoSolucao() {
+        return new GrupoAtendimentoTurnoSolucao();
+    }
 
     /**
      * Create an instance of {@link ItemCreditoDisponivel }
@@ -442,6 +450,30 @@ public class ObjectFactory {
      */
     public GrupoAtendimentoSalaSolucao createGrupoAtendimentoSalaSolucao() {
         return new GrupoAtendimentoSalaSolucao();
+    }
+    
+    /**
+     * Create an instance of {@link GrupoAtendimentoSalaSolucao }
+     * 
+     */
+    public GrupoAtendimentoHorarioAulaSolucao createGrupoAtendimentoHorarioAulaSolucao() {
+        return new GrupoAtendimentoHorarioAulaSolucao();
+    }
+    
+    /**
+     * Create an instance of {@link GrupoAtendimentoOfertaSolucao }
+     * 
+     */
+    public GrupoAtendimentoOfertaSolucao createGrupoAtendimentoOfertaSolucao() {
+        return new GrupoAtendimentoOfertaSolucao();
+    }
+    
+    /**
+     * Create an instance of {@link ItemAtendimentoHorarioAulaSolucao }
+     * 
+     */
+    public ItemAtendimentoHorarioAulaSolucao createItemAtendimentoHorarioAulaSolucao() {
+        return new ItemAtendimentoHorarioAulaSolucao();
     }
 
     /**
@@ -642,6 +674,14 @@ public class ObjectFactory {
      */
     public ItemAtendimentoDiaSemanaSolucao createItemAtendimentoDiaSemanaSolucao() {
         return new ItemAtendimentoDiaSemanaSolucao();
+    }
+    
+    /**
+     * Create an instance of {@link ItemAtendimentoTurnoSolucao }
+     * 
+     */
+    public ItemAtendimentoTurnoSolucao createItemAtendimentoTurnoSolucao() {
+        return new ItemAtendimentoTurnoSolucao();
     }
     
     /**

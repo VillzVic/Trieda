@@ -90,7 +90,7 @@ public class TRIEDAImportExcel
 			importers.add( new DivisoesCreditoDisciplinaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new DisciplinasPreRequisitosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino) );
 			importers.add( new DisciplinasCoRequisitosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino) );
-			
+			importers.add( new AtendimentoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino) );
 			
 			for ( IImportExcel importer : importers )
 			{

@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server.excel.imp;
 
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+
 public enum ImportExcelError
 {
 	ALUNO_MATRICULA_VAZIO,
@@ -25,6 +26,33 @@ public enum ImportExcelError
 	ALUNO_DEMANDA_PERIODO_NEGATIVO,
 	ALUNO_DEMANDA_PRIORIDADE_FORMATO_INVALIDO,
 	ALUNO_DEMANDA_PRIORIDADE_NEGATIVO,
+	
+	ATENDIMENTO_CAMPUS_VAZIO,
+	ATENDIMENTO_AMBIENTE_VAZIO,
+	ATENDIMENTO_DIA_SEMANA_VALOR_INVALIDO,
+	ATENDIMENTO_DIA_SEMANA_VAZIO,
+	ATENDIMENTO_HORARIO_INICIAL_FORMATO_INVALIDO,
+	ATENDIMENTO_HORARIO_INICIAL_VAZIO,
+	ATENDIMENTO_HORARIO_FINAL_FORMATO_INVALIDO,
+	ATENDIMENTO_HORARIO_FINAL_VAZIO,
+	ATENDIMENTO_DISCIPLINA_AULA_VAZIO,
+	ATENDIMENTO_TURMA_VAZIO,
+	ATENDIMENTO_PROFESSOR_CPF_VAZIO,
+	ATENDIMENTO_CRED_PRATICOS_VAZIO,
+	ATENDIMENTO_CRED_PRATICOS_FORMATO_INVALIDO,
+	ATENDIMENTO_CRED_PRATICOS_VALOR_NEGATIVO,
+	ATENDIMENTO_CRED_TEORICOS_VAZIO,
+	ATENDIMENTO_CRED_TEORICOS_FORMATO_INVALIDO,
+	ATENDIMENTO_CRED_TEORICOS_VALOR_NEGATIVO,
+	ATENDIMENTO_TURNO_VAZIO,
+	ATENDIMENTO_CURSO_VAZIO,
+	ATENDIMENTO_CURRICULO_VAZIO,
+	ATENDIMENTO_MATRICULA_ALUNO_VAZIO,
+	ATENDIMENTO_PERIODO_FORMATO_INVALIDO,
+	ATENDIMENTO_PERIODO_NEGATIVO,
+	ATENDIMENTO_DISCIPLINA_DEMANDA_VAZIO,
+	ATENDIMENTO_PRIORIDADE_FORMATO_INVALIDO,
+	ATENDIMENTO_PRIORIDADE_NEGATIVO,
 	
 	AREA_TITULACAO_CODIGO_VAZIO,
 	
@@ -265,6 +293,33 @@ public enum ImportExcelError
 			case ALUNO_DEMANDA_PERIODO_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, AlunosDemandaImportExcel.PERIODO_COLUMN_NAME );
 			case ALUNO_DEMANDA_PRIORIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido( param1, AlunosDemandaImportExcel.PRIORIDADE_COLUMN_NAME );
 			case ALUNO_DEMANDA_PRIORIDADE_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, AlunosDemandaImportExcel.PRIORIDADE_COLUMN_NAME );
+			
+			case ATENDIMENTO_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.CAMPUS_COLUMN_NAME );
+			case ATENDIMENTO_AMBIENTE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.AMBIENTE_COLUMN_NAME );
+			case ATENDIMENTO_DIA_SEMANA_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,AtendimentoImportExcel.DIA_SEMANA_COLUMN_NAME);
+			case ATENDIMENTO_DIA_SEMANA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AtendimentoImportExcel.DIA_SEMANA_COLUMN_NAME);
+			case ATENDIMENTO_HORARIO_INICIAL_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,AtendimentoImportExcel.HORARIO_INICIAL_COLUMN_NAME);
+			case ATENDIMENTO_HORARIO_INICIAL_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AtendimentoImportExcel.HORARIO_INICIAL_COLUMN_NAME);
+			case ATENDIMENTO_HORARIO_FINAL_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,AtendimentoImportExcel.HORARIO_FINAL_COLUMN_NAME);
+			case ATENDIMENTO_HORARIO_FINAL_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AtendimentoImportExcel.HORARIO_FINAL_COLUMN_NAME);
+			case ATENDIMENTO_DISCIPLINA_AULA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.DISCIPLINA_AULA_COLUMN_NAME );
+			case ATENDIMENTO_TURMA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.TURMA_COLUMN_NAME );
+			case ATENDIMENTO_PROFESSOR_CPF_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AtendimentoImportExcel.ATENDIMENTO_PROFESSOR_CPF_COLUMN_NAME);
+			case ATENDIMENTO_CRED_PRATICOS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AtendimentoImportExcel.ATENDIMENTO_CRED_PRATICOS_COLUMN_NAME);
+			case ATENDIMENTO_CRED_PRATICOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,AtendimentoImportExcel.ATENDIMENTO_CRED_PRATICOS_COLUMN_NAME);
+			case ATENDIMENTO_CRED_PRATICOS_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,AtendimentoImportExcel.ATENDIMENTO_CRED_PRATICOS_COLUMN_NAME);
+			case ATENDIMENTO_CRED_TEORICOS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AtendimentoImportExcel.ATENDIMENTO_CRED_TEORICOS_COLUMN_NAME);
+			case ATENDIMENTO_CRED_TEORICOS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,AtendimentoImportExcel.ATENDIMENTO_CRED_TEORICOS_COLUMN_NAME);
+			case ATENDIMENTO_CRED_TEORICOS_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,AtendimentoImportExcel.ATENDIMENTO_CRED_TEORICOS_COLUMN_NAME);
+			case ATENDIMENTO_TURNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.TURNO_COLUMN_NAME );
+			case ATENDIMENTO_CURSO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.CURSO_COLUMN_NAME );
+			case ATENDIMENTO_CURRICULO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.CURRICULO_COLUMN_NAME );
+			case ATENDIMENTO_MATRICULA_ALUNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.MATRICULA_ALUNO_COLUMN_NAME );
+			case ATENDIMENTO_PERIODO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido( param1, AtendimentoImportExcel.PERIODO_COLUMN_NAME );
+			case ATENDIMENTO_PERIODO_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, AtendimentoImportExcel.PERIODO_COLUMN_NAME );
+			case ATENDIMENTO_DISCIPLINA_DEMANDA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AtendimentoImportExcel.DISCIPLINA_DEMANDA_COLUMN_NAME );
+			case ATENDIMENTO_PRIORIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido( param1, AtendimentoImportExcel.PRIORIDADE_COLUMN_NAME );
+			case ATENDIMENTO_PRIORIDADE_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, AtendimentoImportExcel.PRIORIDADE_COLUMN_NAME );
 		
 			case AREA_TITULACAO_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AreasTitulacaoImportExcel.CODIGO_COLUMN_NAME);
 			

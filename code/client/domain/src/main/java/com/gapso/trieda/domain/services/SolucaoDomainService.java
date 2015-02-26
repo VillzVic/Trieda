@@ -88,6 +88,7 @@ public class SolucaoDomainService {
 		
 		Map<AlunoDemanda, Set<AtendimentoOperacional>> alunoDemandaToAtendimentosOpMap = new HashMap<AlunoDemanda, Set<AtendimentoOperacional>>();
 		for (AtendimentoOperacional at : atendimentosOperacional) {
+			at.setQuantidadeAlunos(at.getAlunosDemanda().size());
 			at.persist();
 			// colhe atendimentos por aluno demanda
 			for (AlunoDemanda ald : at.getAlunosDemanda()) {
