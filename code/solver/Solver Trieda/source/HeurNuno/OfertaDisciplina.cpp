@@ -1218,7 +1218,7 @@ int OfertaDisciplina::getTempoComumProf( ProfessorHeur* const prof,
 				auto itDayInser = mapDiaHorComum.insert(
 					pair<int/*dia*/,std::map<DateTime, std::set<DateTime>>> (dia,empty1) ).first;
 				
-				std:set<DateTime> empty2;
+				std::set<DateTime> empty2;
 				auto itDtiInser = itDayInser->second.insert(
 					pair<DateTime, std::set<DateTime>> (dti,empty2) ).first;
 
