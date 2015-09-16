@@ -21,8 +21,8 @@ public:
 	void setGap(double v);
 	double getGap() const;
 	
-	void setIsOpt(double v);
-	double isOpt() const;
+	void setIsOpt(bool v);
+	bool isOpt() const;
 	
 	void setRunTime(int v);
 	int getRunTime() const;

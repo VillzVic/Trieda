@@ -58,11 +58,11 @@ double GoalStatus::getGap() const
 	return gap_;
 }
 
-void GoalStatus::setIsOpt(double v)
+void GoalStatus::setIsOpt(bool v)
 {
 	opt_ = v;
 }
-double GoalStatus::isOpt() const
+bool GoalStatus::isOpt() const
 {
 	return opt_;
 }	
