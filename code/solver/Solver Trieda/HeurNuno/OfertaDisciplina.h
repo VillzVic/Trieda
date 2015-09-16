@@ -168,9 +168,9 @@ public:
 	int getNrCreds(bool teorico) const;
 	int nrLabsAssoc(void) const { return nrLabsAssoc_; }
 
-	int nrAlunosAloc(void) const { return alunosTurma_.size(); }
+	int nrAlunosAloc(void) const { return (int)alunosTurma_.size(); }
 	int nrAlunosCompleto(void) const;
-	int nrAlunosIncompleto(void) const { return alunosIncompleto_.size(); }
+	int nrAlunosIncompleto(void) const { return (int)alunosIncompleto_.size(); }
 
 	// retorna todos os alunos que estão alocados numa componente mas não noutra, e.g. tão numa turma teórica mas não numa prática
 	unordered_set<AlunoHeur*> getAlunosIncompleto(void) { return alunosIncompleto_; }

@@ -9,8 +9,7 @@
 #include "HorarioDia.h"
 #include "Curso.h"
 
-class Professor :
-   public OFBase
+class Professor : public OFBase
 {
 public:
    Professor( bool = false );

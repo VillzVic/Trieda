@@ -1,6 +1,8 @@
 #include "Campus.h"
 #include "Oferta.h"
 
+#include "ConjUnidades.h"
+
 Campus::Campus( void )
 {
    totalSalas = 0;

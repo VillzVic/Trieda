@@ -2074,7 +2074,7 @@ void SolverMIPUnico::criarAulaPorOfertaOutput_(AtendimentoDiaSemana &atendDia, D
 		if(demanda->getDisciplinaId() != disciplina->getId())
 			atendOferta->setDisciplinaSubstitutaId( abs(disciplina->getId()) );
 		// set nr alunos
-		atendOferta->addQuantidade(itDem->second.size());
+		atendOferta->addQuantidade((int)itDem->second.size());
 		// set turma
 		atendOferta->setTurma(turmaId);
 

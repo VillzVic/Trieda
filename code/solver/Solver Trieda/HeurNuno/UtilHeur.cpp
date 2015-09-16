@@ -220,7 +220,7 @@ bool UtilHeur::calendarioContemAnyHorarioTurno(Calendario* const calendario, Tur
 		if(itReg == calendarioTurnos_.end())
 		{
 			unordered_set<int> vazio;
-			itReg = calendarioTurnos_.insert(make_pair<int, unordered_set<int>> (calId, vazio)).first;
+			itReg = calendarioTurnos_.insert(make_pair(calId, vazio)).first;
 		}
 		itReg->second.insert(turnoId);
 	}
@@ -229,7 +229,7 @@ bool UtilHeur::calendarioContemAnyHorarioTurno(Calendario* const calendario, Tur
 		if(itRegNot == calTurnosNot_.end())
 		{
 			unordered_set<int> vazio;
-			itRegNot = calTurnosNot_.insert(make_pair<int, unordered_set<int>> (calId, vazio)).first;
+			itRegNot = calTurnosNot_.insert(make_pair(calId, vazio)).first;
 		}
 		itRegNot->second.insert(turnoId);
 	}
@@ -427,7 +427,7 @@ void UtilHeur::aulasUnidade(unordered_map<int, AulaHeur*> const &aulas, int unid
 		AulaHeur* const aula = itOld->second;
 		AulaHeur newAula (aula->calendarioId, aula->campusId, unidadeId, aula->horarios);
 		AulaHeur* ptrNewAula = UtilHeur::saveAula(newAula);
-		if(!newAulas.insert(make_pair<int, AulaHeur*>(itOld->first, ptrNewAula)).second)
+		if(!newAulas.insert(make_pair(itOld->first, ptrNewAula)).second)
 			HeuristicaNuno::excepcao("UtilHeur::aulasUnidade", "nova aula nao inserida");
 	}
 }
@@ -826,13 +826,13 @@ bool UtilHeur::getAulasPossiveisDia(int dia, int nrCreditos, Calendario * const 
 		if(itCal == aulasCalendario.end())
 		{
 			unordered_map<int, unordered_map<int, vector<AulaHeur*>>> emptyDay;
-			aulasCalendario.insert(make_pair<Calendario*, unordered_map<int, unordered_map<int, vector<AulaHeur*>>>>(calendario, emptyDay));
+			aulasCalendario.insert(make_pair(calendario, emptyDay));
 		}
 		auto itDia = itCal->second.find(dia);
 		if(itDia == itCal->second.end())
 		{
 			unordered_map<int, vector<AulaHeur*>> emptyCreds;
-			itCal->second.insert(make_pair<int, unordered_map<int, vector<AulaHeur*>>>(dia, emptyCreds));
+			itCal->second.insert(make_pair(dia, emptyCreds));
 		}
 		itDia->second[nrCreditos] = aulasSemCampUnid;
 	}
@@ -1022,7 +1022,7 @@ void UtilHeur::credsPossiveisDias(vector<vector<pair<int,int>>> const &divisoesC
 
 			auto itDia = credsPossiveisDias.find(dia);
 			if(itDia == credsPossiveisDias.end())
-				itDia = credsPossiveisDias.insert(make_pair<int, unordered_set<int>>(dia, emptySet)).first;
+				itDia = credsPossiveisDias.insert(make_pair(dia, emptySet)).first;
 
 			if(itDia->second.find(creds) == itDia->second.end())
 				itDia->second.insert(creds);
@@ -1063,7 +1063,7 @@ void UtilHeur::intersectSetsAlunos(OfertaDisciplina* const ofertaDisc, unordered
 AulaHeur* UtilHeur::addAula_(AulaHeur const &aula, size_t hash)
 {
 	int id = ++UtilHeur::idAulas;
-	auto par = aulasHeurId_.insert(make_pair<int, AulaHeur>(id, aula));
+	auto par = aulasHeurId_.insert(make_pair(id, aula));
 	if(!par.second)
 		HeuristicaNuno::excepcao("UtilHeur::saveAula", "Aula nao adicionada a aulasHeurId_!");
 
@@ -1134,7 +1134,7 @@ bool UtilHeur::calendarioDomina(Calendario* const calendario, Calendario* const 
 	if(itCalReg == dominanciaCalendarios_.end())
 	{
 		unordered_set<int> dominadosId;
-		auto par = dominanciaCalendarios_.insert(make_pair<int, unordered_set<int>>(calId, dominadosId));
+		auto par = dominanciaCalendarios_.insert(make_pair(calId, dominadosId));
 		if(par.second == false)
 			HeuristicaNuno::excepcao("UtilHeur::calendarioDomina", "Dominancia nao inserida corretamente.");
 
@@ -1266,14 +1266,14 @@ void UtilHeur::regAbrangencia(int id, int dia, HorarioAula* const horario,
 	if(itTurno == registo.end())
 	{
 		unordered_map<int, unordered_set<int>> emptyMap;
-		itTurno = registo.insert(make_pair<int, unordered_map<int, unordered_set<int>>>(id, emptyMap)).first; 
+		itTurno = registo.insert(make_pair(id, emptyMap)).first; 
 	}
 
 	auto itDia = itTurno->second.find(dia);
 	if(itDia == itTurno->second.end())
 	{
 		unordered_set<int> emptySet;
-		itDia = itTurno->second.insert(make_pair<int, unordered_set<int>>(dia, emptySet)).first;
+		itDia = itTurno->second.insert(make_pair(dia, emptySet)).first;
 	}
 	itDia->second.insert(horario->getId());
 }
@@ -1285,22 +1285,21 @@ void UtilHeur::regAbrangencia(int idCalend, int idTurno, int dia, HorarioAula* c
 	if(itCalend == registo.end())
 	{
 		unordered_map<int, unordered_map<int, unordered_set<int>>> emptyMap;
-		itCalend = registo.insert(make_pair<int, 
-			unordered_map<int, unordered_map<int, unordered_set<int>>>>(idCalend, emptyMap)).first; 
+		itCalend = registo.insert(make_pair(idCalend, emptyMap)).first; 
 	}
 
 	auto itTurno = itCalend->second.find(idTurno);
 	if(itTurno == itCalend->second.end())
 	{
 		unordered_map<int, unordered_set<int>> emptyMap;
-		itTurno = itCalend->second.insert(make_pair<int, unordered_map<int, unordered_set<int>>>(idTurno, emptyMap)).first; 
+		itTurno = itCalend->second.insert(make_pair(idTurno, emptyMap)).first; 
 	}
 
 	auto itDia = itTurno->second.find(dia);
 	if(itDia == itTurno->second.end())
 	{
 		unordered_set<int> emptySet;
-		itDia = itTurno->second.insert(make_pair<int, unordered_set<int>>(dia, emptySet)).first;
+		itDia = itTurno->second.insert(make_pair(dia, emptySet)).first;
 	}
 	itDia->second.insert(horario->getId());
 }

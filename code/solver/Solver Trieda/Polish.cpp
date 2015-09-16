@@ -259,7 +259,7 @@ void Polish::calculaClustersProfsComuns(set<Unidade*> &unidsAddedToSomeCluster,
 		int nrProfsU1 = 0;
 		auto unidProfFinder = unidProfs_.find(u1);
 		if (unidProfFinder!=unidProfs_.end()) 
-			nrProfsU1 = unidProfFinder->second.size();
+			nrProfsU1 = (int)unidProfFinder->second.size();
 
 		set<Unidade*> clusterUnids;
 		clusterUnids.insert(u1);
@@ -356,7 +356,7 @@ void Polish::getProfsAssocCluster(set<Unidade*> const &cluster, set<Professor*> 
 
 void Polish::addCluster(set<Unidade*> const & cluster)
 {
-	int idx = unidClustersByProfs_.size();
+	int idx = (int)unidClustersByProfs_.size();
 	unidClustersByProfs_.insert(pair<int,set<Unidade*>> (idx,cluster));
 
 	set<Professor*> clusterProfs;
@@ -1011,12 +1011,12 @@ int Polish::getPercUnidCurrentFixed()
 	double n = unidadeslivres_.size();
 	double t = unidades_.size();
 	double p = 100 * (n/t);
-	return (int) p;
+	return (int)p;
 }
 
 int Polish::getNrFreeUnidade()
 {
-	return unidadeslivres_.size();
+	return (int)unidadeslivres_.size();
 }
 
 int Polish::getNrUnidToBeFree()
@@ -1413,7 +1413,7 @@ bool Polish::checkDecreaseDueToIterSemMelhora()
 	{
 		decreasePerc(5);
 		stringstream ss;
-		ss << "\nDecreasing 5\% in fixed solution due to no change of best solution for more than "
+		ss << "\nDecreasing 5% in fixed solution due to no change of best solution for more than "
 			<< maxIterSemMelhora_ <<  " consecutive iterations.";
 		printLog(ss.str());
 		return true;

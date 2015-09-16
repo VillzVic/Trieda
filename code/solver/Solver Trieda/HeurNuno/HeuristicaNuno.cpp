@@ -398,7 +398,7 @@ void HeuristicaNuno::logDiscSemDivisao(int id, bool teorico, bool compSec)
 	if(itDisc == discSemDiv_.end())
 	{
 		unordered_set<bool> setComps;
-		itDisc = discSemDiv_.insert(make_pair<int, unordered_set<bool>>(posId, setComps)).first;
+		itDisc = discSemDiv_.insert(make_pair(posId, setComps)).first;
 	}
 	auto itComp = itDisc->second.find(teorico);
 	if(itComp == itDisc->second.end())
@@ -429,7 +429,7 @@ void HeuristicaNuno::logDiscSemSala(int id, bool teorico, bool compSec)
 	if(itDisc == discSemSala_.end())
 	{
 		unordered_set<bool> setComps;
-		itDisc = discSemSala_.insert(make_pair<int, unordered_set<bool>>(posId, setComps)).first;
+		itDisc = discSemSala_.insert(make_pair(posId, setComps)).first;
 	}
 	auto itComp = itDisc->second.find(teorico);
 	if(itComp == itDisc->second.end())
@@ -703,7 +703,7 @@ void HeuristicaNuno::loadIndispExtraSalas(char* const fullPath)
 		if(itSala == indispExtraSalas.end())
 		{
 			unordered_map<int, unordered_set<TurnoIES*>> emptyMapDia;
-			auto par = indispExtraSalas.insert(make_pair<int, unordered_map<int, unordered_set<TurnoIES*>>>(salaId, emptyMapDia));
+			auto par = indispExtraSalas.insert(make_pair(salaId, emptyMapDia));
 			if(!par.second)
 			{
 				HeuristicaNuno::warning("HeuristicaNuno::loadIndispExtraSalas", "Map indisp da sala nao inserido");
@@ -716,7 +716,7 @@ void HeuristicaNuno::loadIndispExtraSalas(char* const fullPath)
 		if(itDia == itSala->second.end())
 		{
 			unordered_set<TurnoIES*> setTurnos;
-			auto par = itSala->second.insert(make_pair<int, unordered_set<TurnoIES*>>(dia, setTurnos));
+			auto par = itSala->second.insert(make_pair(dia, setTurnos));
 			if(!par.second)
 			{
 				HeuristicaNuno::warning("HeuristicaNuno::loadIndispExtraSalas", "Map indisp dia da sala nao inserido");

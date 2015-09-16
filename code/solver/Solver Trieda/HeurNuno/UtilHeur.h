@@ -86,7 +86,7 @@ public:
 	// get id de aula
 	static AulaHeur* saveAula(AulaHeur const &aula);
 	static AulaHeur* getAula(int id);
-	static int nrAulasReg(void) { return aulasHeurId_.size(); }
+	static int nrAulasReg(void) { return (int)aulasHeurId_.size(); }
 
 	// devolve novas aulas com nova unidade
 	static void aulasUnidade(unordered_map<int, AulaHeur*> const &aulas, int unidadeId, unordered_map<int, AulaHeur*> &newAulas);

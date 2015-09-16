@@ -606,7 +606,7 @@ void MIPAloc::criarTurmasTemHorDia(unordered_set<Calendario*> const &calendarios
 	for(auto itClust = DadosHeuristica::clustersUnidades.cbegin(); 
 					 itClust != DadosHeuristica::clustersUnidades.cend(); ++itClust)
 	{
-		auto parIns = horsDia.insert(make_pair<ConjUnidades*, unordered_set<pair<int, HorarioAula*>, hashHorsDia, equalHorsDia>>(*itClust, emptySet));
+		auto parIns = horsDia.insert(make_pair(*itClust, emptySet));
 		if(!parIns.second)
 			HeuristicaNuno::excepcao("MIPAloc::criarTurmasTemHorDia", "Par conj unidade nao inserido");
 
@@ -619,7 +619,7 @@ void MIPAloc::criarTurmasTemHorDia(unordered_set<Calendario*> const &calendarios
 				if(itFindDia == turmasTemHorarios.end())
 				{
 					vector<TurmasIncHorarioDia*> emptyVector;
-					auto par = turmasTemHorarios.insert(make_pair<int, vector<TurmasIncHorarioDia*>>(itDia->first, emptyVector));
+					auto par = turmasTemHorarios.insert(make_pair(itDia->first, emptyVector));
 					if(!par.second)
 						HeuristicaNuno::excepcao("MIPAloc::criarTurmasTemHorDia", "Dia nao adicionado ao mapa");
 					itFindDia = par.first;
@@ -782,7 +782,7 @@ void MIPAloc::addMIPStartParcial(int* indices, double* values, const int size)
 		}
 	}
 
-	int nrPos = indPos.size(); 
+	int nrPos = (int)indPos.size(); 
 	HeuristicaNuno::logMsgInt("# cols positivas MIP Start: ", nrPos, 1);
 
 	// só inserir positivos

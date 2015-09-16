@@ -39,7 +39,7 @@ struct compNodes
 {
 	bool operator ()(Node* const first, Node* const second)
 	{
-		int diff = first->vizinhos.size() - second->vizinhos.size(); 
+		int diff = (int)(first->vizinhos.size() - second->vizinhos.size());
 		if(diff != 0)
 			return diff > 0;
 		return first->id > second->id;

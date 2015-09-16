@@ -356,7 +356,7 @@ void MIPAlocarAlunos::criarVariaveis_(void)
 		}
 	}
 
-	HeuristicaNuno::logMsgInt("nr vars folga min: ", varsViolaMin.size(), 1);
+	HeuristicaNuno::logMsgInt("nr vars folga min: ", (int)varsViolaMin.size(), 1);
 
 	// verificação
 	double sum = 0;
@@ -393,9 +393,9 @@ void MIPAlocarAlunos::criarVariavelAlunoOferta_(int campusId, int disciplinaId, 
 	if(itOft == varsOfertaAluno_.end())
 	{
 		unordered_map<int, int> emptyMap;
-		itOft = varsOfertaAluno_.insert(make_pair<OfertaDisciplina*, unordered_map<int, int>>(oferta, emptyMap)).first;
+		itOft = varsOfertaAluno_.insert(make_pair(oferta, emptyMap)).first;
 	}
-	if(!itOft->second.insert(make_pair<int, int>(alunoId, colNr)).second)
+	if(!itOft->second.insert(make_pair(alunoId, colNr)).second)
 		HeuristicaNuno::excepcao("MIPAlocarAlunos::criarVariavelAlunoOferta_", "Var nao inserida em varsOfertaAluno_ !");
 }
 // criar variaveis binarias aluno turma -> 1 se o aluno for alocado à turma
@@ -530,9 +530,9 @@ void MIPAlocarAlunos::criarVariaveisAssocTurmas_(OfertaDisciplina* const oferta)
 
 			int colNr = addBinaryVarLP_(0.0, var.toString().c_str(), lb, ub);
 			nrVarsAssoc_++;
-			if(!varsAssocTurmasTP[itTeor->second].insert(make_pair<TurmaHeur*, int>(itPrat->second, colNr)).second)
+			if(!varsAssocTurmasTP[itTeor->second].insert(make_pair(itPrat->second, colNr)).second)
 				HeuristicaNuno::excepcao("MIPAlocarAlunos::criarVariaveisAssocTurmas_", "Var nao adicionada as varsAssocTurmasTP (T)");
-			if(!varsAssocTurmasTP[itPrat->second].insert(make_pair<TurmaHeur*, int>(itTeor->second, colNr)).second)
+			if(!varsAssocTurmasTP[itPrat->second].insert(make_pair(itTeor->second, colNr)).second)
 				HeuristicaNuno::excepcao("MIPAlocarAlunos::criarVariaveisAssocTurmas_", "Var nao adicionada as varsAssocTurmasTP (P)");
 
 			// verificar se já têm associação
@@ -570,7 +570,7 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 		int salaNr = 0;
 
 		// adicionar par a varsTurmaSala_
-		auto itTSala = varsTurmaSala_.insert(make_pair<TurmaHeur*, unordered_map<SalaHeur*, int>>(turma, emptyMap)).first;
+		auto itTSala = varsTurmaSala_.insert(make_pair(turma, emptyMap)).first;
 		SalaHeur* const salaAtual = turma->getSala();
 
 		// procurar sala da solucao carregada
@@ -589,7 +589,7 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 			salaIniId = salaIni->getId();
 			auto itSTurma = varsSalaTurma_.find(salaIni);
 			if(itSTurma == varsSalaTurma_.end())
-				itSTurma = varsSalaTurma_.insert(make_pair<SalaHeur*, unordered_map<TurmaHeur*, int>>(salaIni, emptyTurmasMap)).first;
+				itSTurma = varsSalaTurma_.insert(make_pair(salaIni, emptyTurmasMap)).first;
 
 			// criar variavel e guardar
 			MIPAlocarAlunoVar var;
@@ -639,7 +639,7 @@ void MIPAlocarAlunos::criarVariaveisTurmaSala_(OfertaDisciplina* const oferta, b
 
 			auto itSTurma = varsSalaTurma_.find(sala);
 			if(itSTurma == varsSalaTurma_.end())
-				itSTurma = varsSalaTurma_.insert(make_pair<SalaHeur*, unordered_map<TurmaHeur*, int>>(sala, emptyTurmasMap)).first;
+				itSTurma = varsSalaTurma_.insert(make_pair(sala, emptyTurmasMap)).first;
 
 			// criar variavel e guardar			
 			MIPAlocarAlunoVar var;
@@ -1304,7 +1304,7 @@ void MIPAlocarAlunos::criarRestAssocTurma_(TurmaHeur* const turma)
 	{
 		// impedir de ser associado se não abrir!
 		OPT_ROW rowNaoAbrir = OPT_ROW(OPT_ROW::ROWSENSE::LESS, 0);				
-		int nrAssoc = itAssocTurma->second.size();
+		int nrAssoc = (int)itAssocTurma->second.size();
 		rowNaoAbrir.insert(itAbrir->second, -nrAssoc);
 
 		for(auto itAssoc = itAssocTurma->second.begin(); itAssoc != itAssocTurma->second.end(); ++itAssoc)
@@ -1457,8 +1457,8 @@ int MIPAlocarAlunos::intersectAlunosTurma(unordered_map<int, int> const &alunosU
 	}
 
 	// set outs
-	outUm = alunosUm.size() - inter.size();
-	outDois = alunosDois.size() - inter.size();
+	outUm = (int)(alunosUm.size() - inter.size());
+	outDois = (int)(alunosDois.size() - inter.size());
 
 	return nr;
 }

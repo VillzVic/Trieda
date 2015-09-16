@@ -29,7 +29,7 @@ public:
 	void removeAulasTurma(TurmaHeur* const turma);
 
 	// get turmas a que tá alocado
-	int nrTurmas (void) const { return turmas_.size(); }
+	int nrTurmas (void) const { return (int)turmas_.size(); }
 	void getTurmas(unordered_set<TurmaHeur*> &turmas);
 	bool temTurmas(void) const;
 	bool temTurma(TurmaHeur* turma) const;
@@ -73,7 +73,7 @@ public:
 	// nr de créditos alocados
 	int getNrCreditosAlocados(void) const { return credsAloc_; }
 	// nr de dias alocados
-	int getNrDiasAlocados(void) const { return diasAulas_.size(); }
+	int getNrDiasAlocados(void) const { return (int)diasAulas_.size(); }
 	// verifica se está alocado no dia
 	bool estaAlocadoDia(int dia) const { return (diasAulas_.find(dia) != diasAulas_.end()); }
 

@@ -1,7 +1,8 @@
 #ifndef _PARAMETROS_HEURISTICA_H_
 #define _PARAMETROS_HEURISTICA_H_
 
-class Professor;
+#include "../Professor.h"
+
 class ProblemData;
 
 class ParametrosHeuristica

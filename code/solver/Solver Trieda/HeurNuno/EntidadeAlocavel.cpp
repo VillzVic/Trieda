@@ -96,7 +96,7 @@ void EntidadeAlocavel::addAulasTurma(TurmaHeur* const turma)
 		if(itDia == diasAulas_.end())
 		{
 			unordered_set<AulaHeur*> aulasDia;
-			auto par = diasAulas_.insert(make_pair<int, unordered_set<AulaHeur*> >(dia, aulasDia));
+			auto par = diasAulas_.insert(make_pair(dia, aulasDia));
 			if(!par.second)
 				HeuristicaNuno::excepcao("EntidadeAlocavel::addAulasTurma", "aulas do dia nao adicionadas!");
 

@@ -573,10 +573,10 @@ void Sala::calculaTempoDispPorTurno()
 			if( min_max.second < T )
 				min_max.second = T;			
 		}		
-		if ( min_max != std::make_pair<int,int>(99999,0) )
+		if ( min_max != std::make_pair(99999,0) )
 			tempoMinMaxDispPorTurno[turno] = min_max;
 		else
-			tempoMinMaxDispPorTurno[turno] = std::make_pair<int,int>(0,0);
+			tempoMinMaxDispPorTurno[turno] = std::make_pair(0,0);
 	}
 }
 

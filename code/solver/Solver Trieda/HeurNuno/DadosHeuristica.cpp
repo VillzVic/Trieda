@@ -212,7 +212,7 @@ void DadosHeuristica::getMapEquivAluno(Aluno* const aluno, unordered_map<int, un
 			if(itEquiv == mapEquivOrig.end())
 			{
 				unordered_set<int> empty;
-				auto par = mapEquivOrig.insert(make_pair<int, unordered_set<int>>(equivId, empty));
+				auto par = mapEquivOrig.insert(make_pair(equivId, empty));
 				if(!par.second)
 					HeuristicaNuno::excepcao("DadosHeuristica::checkDemEquivAluno_", "equiv nao adicionada ao map");
 
@@ -377,7 +377,7 @@ void DadosHeuristica::agregarDemandas_(void)
 					// contabilizar nr demandas prioridade (equiv)
 					auto itNrDemPrior = nrDemandasPrioridade_.find(-p);
 					if(itNrDemPrior == nrDemandasPrioridade_.end())
-						itNrDemPrior = nrDemandasPrioridade_.insert(make_pair<int, int>(-p, 0)).first;
+						itNrDemPrior = nrDemandasPrioridade_.insert(make_pair(-p, 0)).first;
 					int nr = itNrDemPrior->second;
 					itNrDemPrior->second = (nr+1);
 				}
@@ -393,7 +393,7 @@ void DadosHeuristica::agregarDemandas_(void)
 		// contabilizar nr demandas prioridade
 		auto itNrDemPrior = nrDemandasPrioridade_.find(p);
 		if(itNrDemPrior == nrDemandasPrioridade_.end())
-			itNrDemPrior = nrDemandasPrioridade_.insert(make_pair<int, int>(p, 0)).first;
+			itNrDemPrior = nrDemandasPrioridade_.insert(make_pair(p, 0)).first;
 		int nr = itNrDemPrior->second;
 		itNrDemPrior->second = (nr+1);
 	}
@@ -485,7 +485,7 @@ bool DadosHeuristica::adicionarPrioridade_(AlunoDemanda* const alunoDemanda, Cam
 	}
 	
 	// inserir <prior, demanda>
-	if(!itCampus->second.insert(make_pair<Disciplina*, pair<int, AlunoDemanda*>>(disciplina, parPrioDem)).second)
+	if(!itCampus->second.insert(make_pair(disciplina, parPrioDem)).second)
 		HeuristicaNuno::excepcao("DadosHeuristica::adicionarPrioridade_", "Prioridade nao adicionada");
 
 	return true;
@@ -497,7 +497,7 @@ void DadosHeuristica::adicionarDemanda_(AlunoDemanda* const alunoDemanda, Campus
 	if(itCampus == demandasAgregadas_.end())
 	{
 		unordered_map<Disciplina*, unordered_map<int, unordered_set<AlunoDemanda*>>> mapDisc;
-		itCampus = demandasAgregadas_.insert(make_pair<Campus *, unordered_map<Disciplina*, unordered_map<int, unordered_set<AlunoDemanda*>>>>(campus, mapDisc)).first;
+		itCampus = demandasAgregadas_.insert(make_pair(campus, mapDisc)).first;
 	}
 
 	// disciplina
@@ -505,7 +505,7 @@ void DadosHeuristica::adicionarDemanda_(AlunoDemanda* const alunoDemanda, Campus
 	if(itDisc == itCampus->second.end())
 	{
 		unordered_map<int, unordered_set<AlunoDemanda*>> mapPrior;
-		itDisc = itCampus->second.insert(make_pair<Disciplina*, unordered_map<int, unordered_set<AlunoDemanda*>>>(disciplina, mapPrior)).first;
+		itDisc = itCampus->second.insert(make_pair(disciplina, mapPrior)).first;
 	}
 
 	// prioridade
@@ -513,7 +513,7 @@ void DadosHeuristica::adicionarDemanda_(AlunoDemanda* const alunoDemanda, Campus
 	if(itPrior == itDisc->second.end())
 	{
 		unordered_set<AlunoDemanda*> mapDem;
-		itPrior = itDisc->second.insert(make_pair<int, unordered_set<AlunoDemanda*>>(p, mapDem)).first;
+		itPrior = itDisc->second.insert(make_pair(p, mapDem)).first;
 	}
 
 	if(!itPrior->second.insert(alunoDemanda).second)
@@ -876,7 +876,7 @@ void DadosHeuristica::criarClustersUnidades_(void)
 		clusterizer.criarClusters();
 
 		HeuristicaNuno::logMsgInt("# unidades: ", (*it)->unidades.size(), 1);
-		HeuristicaNuno::logMsgInt("# clusters: ", (*it)->getClustersUnids().size(), 1);
+		HeuristicaNuno::logMsgInt("# clusters: ", (int)(*it)->getClustersUnids().size(), 1);
 
 		// associar unidade a cluster
 		int nrUnCl = 0;
@@ -891,7 +891,7 @@ void DadosHeuristica::criarClustersUnidades_(void)
 				{
 					clust = true;
 					(*itUnid)->conjunto = *itClust;
-					nrUnCl += (*itClust)->unidades.size();
+					nrUnCl += (int)(*itClust)->unidades.size();
 					break;
 				}
 				
@@ -977,7 +977,7 @@ void DadosHeuristica::setCalsReduzidosDisc_(Disciplina* const disciplina)
 		HeuristicaNuno::excepcao("DadosHeuristica::setCalsReduzidosDisc_", "Nenhum calendario depois da reducao!");
 
 	// verificar a diferença
-	int diff = disciplina->calendarios.size() - disciplina->calendariosReduzidos.size();
+	int diff = (int)(disciplina->calendarios.size() - disciplina->calendariosReduzidos.size());
 	if(diff > 0)
 		HeuristicaNuno::logMsgInt("# cals removed: ", diff, 2);
 	else if(diff < 0)

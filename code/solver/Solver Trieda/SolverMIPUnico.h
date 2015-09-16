@@ -53,7 +53,7 @@ public:
    void writeOutputOp_();
 
    void getAlDemsAlocados(Campus* const cp, Disciplina* const d, 
-			int const turma, unordered_set<AlunoDemanda*> &alDems) const;
+			int const turma, std::unordered_set<AlunoDemanda*> &alDems) const;
 
 private:
    
@@ -65,9 +65,9 @@ private:
 
    void individualizaProfsVirtuais_();   
    void agrupaTurmaProfVirtPorAluno_(
-	   unordered_map<Aluno*, unordered_map<Campus*, unordered_map<Disciplina*, int>>> &alunoTurmasParaIndiv);      
+	   std::unordered_map<Aluno*, std::unordered_map<Campus*, std::unordered_map<Disciplina*, int>>> &alunoTurmasParaIndiv);
    void individualProfVirtPorAluno_(
-	   unordered_map<Aluno*, unordered_map<Campus*, unordered_map<Disciplina*, int>>> const &alunoTurmasParaIndiv);
+	   std::unordered_map<Aluno*, std::unordered_map<Campus*, std::unordered_map<Disciplina*, int>>> const &alunoTurmasParaIndiv);
 
    Professor* criaProfessorVirtual();
    bool cadastraTurmaMapPV(Campus* const cp, Disciplina* const d, int const turma);
@@ -81,22 +81,22 @@ private:
    void countGapDeslocProfReal_();
 
    void getAulas(Campus* const cp, Disciplina* const d, int const turma,
-		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*> >> * &ptMapSala);
+	   std::unordered_map<Sala*, std::unordered_map<int, std::unordered_set<HorarioAula*> >> * &ptMapSala);
 
    void criarOutputFinal_(ProblemSolution* const solution) const;
    // criar output para a turma
    void criarTurmaOutput_(AtendimentoCampus &atendCampus, Disciplina* const disciplina, int turmaId,
-	   unordered_map<Professor*, unordered_map<Sala*, unordered_map<int,
-	   unordered_set<HorarioAula*>>> > const &mapTurma,
-	   unordered_map<Demanda*, unordered_set<AlunoDemanda*>> const &mapDemAlDems) const;
+	   std::unordered_map<Professor*, std::unordered_map<Sala*, std::unordered_map<int,
+	   std::unordered_set<HorarioAula* >> > > const &mapTurma,
+	   std::unordered_map<Demanda*, std::unordered_set<AlunoDemanda*>> const &mapDemAlDems) const;
    // criar output para a aula   
    void criarAulasOutput_(AtendimentoSala &atendSala, Disciplina* const disciplina, int turmaId, Professor* const professor, 
-		int dia, unordered_set<HorarioAula*> const &mapHorAlDems,
-		unordered_map<Demanda*, unordered_set<AlunoDemanda*>> const &mapDemAlDems) const;
+	   int dia, std::unordered_set<HorarioAula*> const &mapHorAlDems,
+	   std::unordered_map<Demanda*, std::unordered_set<AlunoDemanda*>> const &mapDemAlDems) const;
    // criar output para a aula   
    void criarAulaPorOfertaOutput_(AtendimentoDiaSemana &atendDia, Disciplina* const disciplina, int turmaId,
 	   Professor* const professor, HorarioAula* const h, int dia, 
-	   unordered_map<Demanda*, unordered_set<AlunoDemanda*>> const &mapDemAlDems) const;
+	   std::unordered_map<Demanda*, std::unordered_set<AlunoDemanda*>> const &mapDemAlDems) const;
    // criar professores virtuais para problem solution
    void criarOutProfsVirtuais_(ProblemSolution* const solution) const;
 
@@ -123,30 +123,30 @@ private:
    std::set<VariableMIPUnico*> solMipUnicoY_;
    std::set<VariableMIPUnico*> solMipUnicoS_;
 
-   unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, unordered_map<Professor*,
-	   unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> >>>> solAulas_;
+   std::unordered_map<Campus*, std::unordered_map<Disciplina*, std::unordered_map<int, std::unordered_map<Professor*,
+	   std::unordered_map<Sala*, std::unordered_map<int, std::unordered_set<HorarioAula*>>> >>>> solAulas_;
 
-   unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, Professor*>>> solTurmasComPV_;
+   std::unordered_map<Campus*, std::unordered_map<Disciplina*, std::unordered_map<int, Professor*>>> solTurmasComPV_;
 
-   unordered_map<Campus*, unordered_map<Disciplina*, unordered_map<int, unordered_set<AlunoDemanda*> >>> solTurmaAlunosAloc_;
+   std::unordered_map<Campus*, std::unordered_map<Disciplina*, std::unordered_map<int, std::unordered_set<AlunoDemanda*> >>> solTurmaAlunosAloc_;
    
    // ------------
    // Typedefs
-   typedef unordered_map<Disciplina*, unordered_map<int, unordered_map<Professor*,
-		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> >>> MapDiscTurmProfSalaDiaHors;
+   typedef std::unordered_map<Disciplina*, std::unordered_map<int, std::unordered_map<Professor*,
+		std::unordered_map<Sala*, std::unordered_map<int, std::unordered_set<HorarioAula*>>> >>> MapDiscTurmProfSalaDiaHors;
    
-   typedef unordered_map<int, unordered_map<Professor*,
-		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> >> MapTurmProfSalaDiaHors;
+   typedef std::unordered_map<int, std::unordered_map<Professor*,
+		std::unordered_map<Sala*, std::unordered_map<int, std::unordered_set<HorarioAula*>>> >> MapTurmProfSalaDiaHors;
    
-   typedef unordered_map<Professor*,
-		unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> > MapProfSalaDiaHors;
+   typedef std::unordered_map<Professor*,
+		std::unordered_map<Sala*, std::unordered_map<int, std::unordered_set<HorarioAula*>>> > MapProfSalaDiaHors;
    
-   typedef unordered_map<Sala*, unordered_map<int, unordered_set<HorarioAula*>>> MapSalaDiaHors;
+   typedef std::unordered_map<Sala*, std::unordered_map<int, std::unordered_set<HorarioAula*>>> MapSalaDiaHors;
    
-   typedef unordered_map<int, unordered_set<HorarioAula*>> MapDiaHors;
+   typedef std::unordered_map<int, std::unordered_set<HorarioAula*>> MapDiaHors;
 
    // ------------ 
-   typedef unordered_map<Professor*, map<int, map<DateTime, pair<DateTime,Unidade*> >>> MapProfDiaDtiDtfUnid;
+   typedef std::unordered_map<Professor*, std::map<int, std::map<DateTime, std::pair<DateTime, Unidade*>>>> MapProfDiaDtiDtfUnid;
 
    MapProfDiaDtiDtfUnid solProfRealAloc_;
 
@@ -163,7 +163,7 @@ private:
 
    int campusAtualId;
    
-   std::map<int, std::vector<string> > alDemNaoAtend_output;  
+   std::map<int, std::vector<std::string> > alDemNaoAtend_output;
    
 };
 

@@ -20,9 +20,6 @@
 #include "ImproveMethods.h"
 #include <math.h>
 
-
-
-  
 #ifdef DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -30,8 +27,6 @@
 #define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
-
-
 
 long AbridorTurmas::nrCombAnalise = 0;
 int AbridorTurmas::nrGeraUnids_ = 0;
@@ -269,7 +264,7 @@ bool AbridorTurmas::abrirTurmasOfertaDiscComp_(OfertaDisciplina* const ofertaDis
 	if(compSec && !ofertaDisc->temAlunosIncompleto())
 	{
 		HeuristicaNuno::warning("AbridorTurmas::abrirTurmasOfertaDiscComp_", "Comp sec sem alunos incompletos!");
-		return nrAbertas;
+		return (nrAbertas > 0);
 	}
 	
 	// abrir turmas
@@ -379,7 +374,7 @@ bool AbridorTurmas::tentarAbrirTurmas_(OfertaDisciplina* const ofertaDisc)
 	bool temCoReq = false;
 	UtilHeur::temFormandoCoReq(demandas, temFormando, temCoReq);
 
-	return podeAbrirTurma_(demandas.size(), temFormando, 0, ofertaDisc->getDisciplina()->eLab(), temCoReq);
+	return podeAbrirTurma_((int)demandas.size(), temFormando, 0, ofertaDisc->getDisciplina()->eLab(), temCoReq);
 }
 
 
@@ -401,7 +396,7 @@ void AbridorTurmas::geraTurmasPotenciais_(OfertaDisciplina* const ofertaDisc, bo
 	// salas associadas
 	unordered_set<SalaHeur*> salasAssoc;
 	ofertaDisc->getSalasAssociadas(salasAssoc, teorico);
-	HeuristicaNuno::logMsgInt("# salas assoc: ", salasAssoc.size(), 2);
+	HeuristicaNuno::logMsgInt("# salas assoc: ", (int)salasAssoc.size(), 2);
 	if(salasAssoc.size() == 0)
 	{
 		HeuristicaNuno::warning("AbridorTurmas::geraTurmasPotenciais_", "Componente da oferta sem salas associadas. Retornar.");
@@ -411,7 +406,7 @@ void AbridorTurmas::geraTurmasPotenciais_(OfertaDisciplina* const ofertaDisc, bo
 	// profs associados
 	unordered_set<ProfessorHeur*> profsAssoc;
 	ofertaDisc->getProfessoresAssociados(profsAssoc);
-	HeuristicaNuno::logMsgInt("# profs assoc: ", profsAssoc.size(), 2);
+	HeuristicaNuno::logMsgInt("# profs assoc: ", (int)profsAssoc.size(), 2);
 
 	Disciplina* const disciplina = ofertaDisc->getDisciplina(teorico);
 
@@ -421,7 +416,7 @@ void AbridorTurmas::geraTurmasPotenciais_(OfertaDisciplina* const ofertaDisc, bo
 	bool temFormando = false;
 	bool temCoReq = false;
 	UtilHeur::temFormandoCoReq(ofertaDisc, alunosDem, temFormando, temCoReq);
-	if(!podeAbrirTurma_(alunosDem.size(), ofertaDisc->getNrCreds(teorico), temFormando, disciplina->eLab(), temCoReq))
+	if(!podeAbrirTurma_((int)alunosDem.size(), ofertaDisc->getNrCreds(teorico), temFormando, disciplina->eLab(), temCoReq))
 		return;
 	
 	// get divisões de créditos
@@ -459,7 +454,7 @@ void AbridorTurmas::geraTurmasPotenciais_(OfertaDisciplina* const ofertaDisc, bo
 			continue;
 
 		// verificar se pode abrir
-		if(!podeAbrirTurma_(alunosDispCal.size(), ofertaDisc->getNrCreds(teorico), temFormando, disciplina->eLab(), temCoReq))
+		if(!podeAbrirTurma_((int)alunosDispCal.size(), ofertaDisc->getNrCreds(teorico), temFormando, disciplina->eLab(), temCoReq))
 			continue;
 
 		HeuristicaNuno::logMsgInt("calendario #", ++nrCal, 2);
@@ -621,7 +616,7 @@ void AbridorTurmas::fillMapDisponibilidade_(OfertaDisciplina* const ofertaDisc, 
 
 				// obter os alunos disponiveis
 				getAlunosDisponiveis_(ofertaDisc, *alunosDemConsiderados, aulasMap, temFormando, temCoReq, teorico, alunosDisp);
-				if(!podeAbrirTurma_(alunosDisp.size(), ofertaDisc->getNrCreds(teorico), temFormando, temCoReq, disciplina->eLab()))
+				if(!podeAbrirTurma_((int)alunosDisp.size(), ofertaDisc->getNrCreds(teorico), temFormando, temCoReq, disciplina->eLab()))
 					continue;
 
 				parAlunosSalaDisp parDisp (alunosDisp, salasDisp);
@@ -682,7 +677,7 @@ void AbridorTurmas::addParAlunosSalaDisp_(int dia, int nrCreds, AulaHeur* const 
 	if(itDia == disponibilidades.end())
 	{
 		unordered_map<int, unordered_map<AulaHeur*, parAlunosSalaDisp>> emptyCreds;
-		itDia = disponibilidades.insert(make_pair<int, unordered_map<int, unordered_map<AulaHeur*, parAlunosSalaDisp>>>(dia, emptyCreds)).first;
+		itDia = disponibilidades.insert(make_pair(dia, emptyCreds)).first;
 	}
 
 	// nr creds
@@ -690,7 +685,7 @@ void AbridorTurmas::addParAlunosSalaDisp_(int dia, int nrCreds, AulaHeur* const 
 	if(itCreds == itDia->second.end())
 	{
 		unordered_map<AulaHeur*, parAlunosSalaDisp> emptyAula;
-		itCreds = itDia->second.insert(make_pair<int, unordered_map<AulaHeur*, parAlunosSalaDisp>>(nrCreds, emptyAula)).first;
+		itCreds = itDia->second.insert(make_pair(nrCreds, emptyAula)).first;
 	}
 
 	// aula id
@@ -698,7 +693,7 @@ void AbridorTurmas::addParAlunosSalaDisp_(int dia, int nrCreds, AulaHeur* const 
 	if(itAula != itCreds->second.end())
 		HeuristicaNuno::excepcao("AbridorTurmas::addParAlunosSalaDisp_", "Tuplo (dia, creds, aula) ja registado!");
 
-	if(!itCreds->second.insert(make_pair<AulaHeur*, parAlunosSalaDisp>(aula, parDisp)).second)
+	if(!itCreds->second.insert(make_pair(aula, parDisp)).second)
 		HeuristicaNuno::excepcao("AbridorTurmas::addParAlunosSalaDisp_", "par disponibilidade nao inserido");
 }
 
@@ -847,7 +842,7 @@ void AbridorTurmas::geraTurmasDivisaoRecHeap_(OfertaDisciplina* const &ofertaDis
 			HeuristicaNuno::logMsg("intersetar alunos", 3);
 			alunosDispAula = itAula->second.first;
 			UtilHeur::intersectSetsAlunos(ofertaDisc, *(step->alunosDisp), alunosDispAula, alunosComb, temFormando, temCoReq);
-			if(!podeAbrirTurma_(alunosComb.size(), ofertaDisc->getNrCreds(teorico), temFormando, temCoReq, usaLab))
+			if(!podeAbrirTurma_((int)alunosComb.size(), ofertaDisc->getNrCreds(teorico), temFormando, temCoReq, usaLab))
 				continue;
 		}
 
@@ -882,7 +877,7 @@ void AbridorTurmas::geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const
 	HeuristicaNuno::logMsgInt("nr alunos disp: ", (int)alunosDisponiveis.size(), 3); 
 
 	// verificar se pode abrir a turma. NOTA: deixar violar quando a turma é componente prática
-	if(!podeAbrirTurma_(alunosDisponiveis.size(), ofertaDisc->getNrCreds(teorico), temFormando, disciplina->eLab(), temCoReq))
+	if(!podeAbrirTurma_((int)alunosDisponiveis.size(), ofertaDisc->getNrCreds(teorico), temFormando, disciplina->eLab(), temCoReq))
 	{
 		HeuristicaNuno::logMsg("não pode abrir turma!", 3);
 		return;
@@ -899,7 +894,7 @@ void AbridorTurmas::geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const
 		return;
 	}
 	// escolher já a sala!!!!
-	SalaHeur* const sala = escolherSala_(salasDispUnidade, alunosDisponiveis.size());
+	SalaHeur* const sala = escolherSala_(salasDispUnidade, (int)alunosDisponiveis.size());
 	if(sala == nullptr)
 	{
 		HeuristicaNuno::logMsg("nenhuma sala pode ser escolhida", 2);
@@ -935,7 +930,7 @@ void AbridorTurmas::geraTurmasUnidade_(OfertaDisciplina* const ofertaDisc, const
 		HeuristicaNuno::logMsg("prof virtual", 2);
 
 	// Escolher alunos
-	int nrAlunosDisp = alunosDisponiveis.size();
+	int nrAlunosDisp = (int)alunosDisponiveis.size();
 	int maxPossivel = std::min(sala->getCapacidade(), ofertaDisc->getMaxAlunos(teorico)); 
 	if(maxPossivel == 0)
 	{
@@ -972,7 +967,7 @@ bool AbridorTurmas::escolherTurmaPotencial_(turmasPotOrd const &turmasPotenciais
 	// contar nr de turmas
 	int nr = 0;
 	for(auto it = turmasPotenciais.cbegin(); it != turmasPotenciais.cend(); ++it)
-		nr += it->second.size();
+		nr += (int)it->second.size();
 	HeuristicaNuno::logMsgInt("nr turmas pot: ", nr, 2);
 
 	// Nivel 0 - Turmas com professor disponivel
@@ -1557,7 +1552,7 @@ ProfessorHeur* AbridorTurmas::escolherProfessor_(set<ProfessorHeur*> const &prof
 // escolher os alunos de entre os disponíveis
 void AbridorTurmas::escolherAlunos_(set<AlunoHeur*> &alunos, int max)
 {
-	int diff = alunos.size() - max;
+	int diff = (int)alunos.size() - max;
 	if(diff <= 0)
 		return;
 
@@ -1582,7 +1577,7 @@ bool AbridorTurmas::addTurmaPotencial(const TurmaPotencial* turma, turmasPotOrd 
 	if(it == turmasPot.end())
 	{
 		set<const TurmaPotencial*> emptySet;
-		it = turmasPot.insert(make_pair<int, set<const TurmaPotencial*>>(tipo, emptySet)).first;
+		it = turmasPot.insert(make_pair(tipo, emptySet)).first;
 	}
 	// adicionar às turmas daquele tipo
 	return addTurmaPotencialTipo(turma, turmasPot, it->second, turmasDivisao);
@@ -1820,8 +1815,8 @@ void AbridorTurmas::addToBlackList(OfertaDisciplina* const oferta, unordered_set
 	if(itRemOft == removidos_.end())
 	{
 		unordered_set<int> alunosIds;
-		auto par = removidos_.insert(make_pair<OfertaDisciplina*, unordered_set<int>>(oferta, alunosIds));
-		if(!par.second)
+		auto par = removidos_.insert(make_pair(oferta, alunosIds));
+		if (!par.second)
 			HeuristicaNuno::excepcao("AbridorTurmas::addToBlackList", "mapa de removidos da oferta nao adicionado");
 
 		itRemOft = par.first;
@@ -1848,7 +1843,7 @@ void AbridorTurmas::addToBlackList(OfertaDisciplina* const oferta, unordered_set
 	if(itOft == blacklist_.end())
 	{
 		unordered_set<int> alunosIds;
-		auto par = blacklist_.insert(make_pair<OfertaDisciplina*, unordered_set<int>>(oferta, alunosIds));
+		auto par = blacklist_.insert(make_pair(oferta, alunosIds));
 		if(!par.second)
 			HeuristicaNuno::excepcao("AbridorTurmas::addToBlackList", "blacklist da oferta nao adicionada");
 
@@ -1860,7 +1855,7 @@ void AbridorTurmas::addToBlackList(OfertaDisciplina* const oferta, unordered_set
 		itOft->second.insert(*itRep);
 	}
 
-	HeuristicaNuno::logMsgInt("blacklist + ", repetentes.size(), 1);
+	HeuristicaNuno::logMsgInt("blacklist + ", (int)repetentes.size(), 1);
 }
 
 // nr profs assoc da disciplina

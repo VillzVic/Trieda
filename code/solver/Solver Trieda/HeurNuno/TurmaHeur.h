@@ -76,7 +76,7 @@ public:
 	bool ehCompSec(void) const;
 	bool ehTeoricaTag(void) const;
 	bool getAulaDia(int dia, AulaHeur* &aula) const;
-	int nrDias (void) const { return aulas_.size(); }
+	int nrDias (void) const { return (int)aulas_.size(); }
 
 	// professor
 	void setProfessor(ProfessorHeur* const professor);
@@ -99,7 +99,7 @@ public:
 
 	// capacidade
 	int getNrAlunos(void) const { return nrAlunos_; }
-	int getNrAlunosFix(void) const { return alunosFixados_.size(); }
+	int getNrAlunosFix(void) const { return (int)alunosFixados_.size(); }
 	int getCapacidadeRestante() const { return capacidadeRestante_; }
 	double getOcupacao();
 	int getNrCreditos() const;

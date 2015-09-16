@@ -325,18 +325,6 @@
     <ClCompile Include="ProbDataAnalyzer.cpp">
       <Filter>Geral</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_col.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_gurobi.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_lp.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\Bibliotecas\OPT_LP\source\opt_row.cpp">
-      <Filter>OPT_LP</Filter>
-    </ClCompile>
     <ClCompile Include="GoalStatus.cpp">
       <Filter>Puro MIP</Filter>
     </ClCompile>
@@ -681,18 +669,6 @@
     <ClInclude Include="ProbDataAnalyzer.h">
       <Filter>Geral</Filter>
     </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_col.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_gurobi.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_lp.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\Bibliotecas\OPT_LP\include\opt_row.h">
-      <Filter>OPT_LP</Filter>
-    </ClInclude>
     <ClInclude Include="GoalStatus.h">
       <Filter>Puro MIP</Filter>
     </ClInclude>
@@ -715,9 +691,6 @@
     </Filter>
     <Filter Include="Util">
       <UniqueIdentifier>{da91fb5c-ddcc-4478-b6ee-4f2b7bc535a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="OPT_LP">
-      <UniqueIdentifier>{d7d34e92-bb09-4f03-9dd6-5bf81576f3fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="HeuristicaNuno\Estruturas">
       <UniqueIdentifier>{6a2ed078-0862-4db3-a751-39e05c658ed9}</UniqueIdentifier>

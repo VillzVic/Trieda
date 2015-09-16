@@ -303,6 +303,7 @@ void ProbDataAnalyzer::printDemandasInputDataLog()
 	std::unordered_set<Aluno*> alunos;
 	std::map<int, int> mapNrCredDiscNrDemandas;
 	int totalCredsDemanda=0;
+	std::unordered_set<Aluno*> alunosComDemanda;
 	getRelacaoDemandaDiscMapeadas(mapDemandaDisc, alunosComDemanda, mapNrCredDiscNrDemandas, totalCredsDemanda);
 
 	int totalDiscs=mapDemandaDisc.size();
@@ -353,7 +354,7 @@ void ProbDataAnalyzer::getRelacaoDemandaDiscMapeadas(
 	std::map<int, int> & mapNrCredDiscNrDemandas,
 	int & totalCredsDemanda)
 {	
-	int totalCredsDemanda=0;
+	totalCredsDemanda=0;
 	for (auto itDisc=mapDemandaDisc.cbegin(); itDisc!=mapDemandaDisc.cend(); itDisc++)
 	{
 		int nrCredDisc = itDisc->first->getTotalCreditos();

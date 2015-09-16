@@ -32,13 +32,13 @@ void GeradorCombsDiv::gerarDivisoes(void)
 
 	// limpar divisões
 	HeuristicaNuno::logMsgInt("# cred: ", nrCreds_, 2);
-	HeuristicaNuno::logMsgInt("# divs (antes): ", disciplina_->combinacao_divisao_creditos.size(), 2);
+	HeuristicaNuno::logMsgInt("# divs (antes): ", (int)disciplina_->combinacao_divisao_creditos.size(), 2);
 	disciplina_->combinacao_divisao_creditos.clear();
 
 	// Gerar combinações
 	unordered_map<int, int> combIni;
 	fixaGeraCombs(2, 0, 0, combIni, disciplina_->combinacao_divisao_creditos);
-	HeuristicaNuno::logMsgInt("# divs (depois): ", disciplina_->combinacao_divisao_creditos.size(), 2);
+	HeuristicaNuno::logMsgInt("# divs (depois): ", (int)disciplina_->combinacao_divisao_creditos.size(), 2);
 	if(nrCombs_ > maxCombs)
 	{
 		maxCombs = nrCombs_;
@@ -65,7 +65,7 @@ void GeradorCombsDiv::setCredsPermitidos_(bool all)
 
 	// inicializar max creds dia
 	for(int dia = 2; dia <= 8; ++dia)
-		maxCredsDia_.insert(make_pair<int, int>(dia, 0));
+		maxCredsDia_.insert(make_pair(dia, 0));
 
 	// set max creditos com base no numero de horarios dos calendarios
 	setMaxCredsCalendarios_(!all);
@@ -103,7 +103,7 @@ void GeradorCombsDiv::setMaxCredsCalendarios_(bool div)
 			int nrHors = 0;
 			auto diaCal = itCal->mapDiaDateTime.find(dia);
 			if(diaCal != itCal->mapDiaDateTime.end())
-				nrHors = diaCal->second.size();
+				nrHors = (int)diaCal->second.size();
 
 			if(nrHors > nrCreds_)
 				maxCredsDia_[dia] = nrCreds_;
@@ -243,7 +243,7 @@ void GeradorCombsDiv::addComb_(vector<vector<pair<int, int>>> &combinacoes, unor
 		// inserir só quando tem créditos!
 		if(itDia->second > 0)
 		{
-			divisao.push_back(make_pair<int, int>(itDia->first, itDia->second));
+			divisao.push_back(make_pair(itDia->first, itDia->second));
 			nrCreds += itDia->second;
 		}
 	}

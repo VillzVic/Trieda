@@ -775,7 +775,7 @@ int Disciplina::getTotalDeInicioTerminoValidos()
 		itMap = this->horarios_hihf_validos.begin();
 	for ( ; itMap != this->horarios_hihf_validos.end() ; itMap++ )
 	{
-		total += itMap->second.size();
+		total += (int)itMap->second.size();
 	}
 
 	return total;
@@ -941,13 +941,13 @@ bool Disciplina::getProfRealNoHorarioDia(int dia, HorarioAula* const ha, std::un
 
 int Disciplina::getNroProfRealHabilit() const
 {
-	return profsHabilit.size();
+	return (int)profsHabilit.size();
 }
 
 int Disciplina::getNroProfRealImportHabilit(int importancia, bool ouMenor) const
 {
 	if (importancia == MIPUnicoParametros::allPriorProfLevels_)
-		return this->profsHabilit.size();
+		return (int)this->profsHabilit.size();
 
 	int nr=0;
 	for (auto itProf = this->profsHabilit.cbegin(); itProf != this->profsHabilit.cend(); itProf++)

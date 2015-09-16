@@ -401,14 +401,14 @@ void OfertaDisciplina::regAberturaTurma(TurmaHeur* const turma)
 	if(itTipo == turmas_.end())
 	{
 		unordered_map<int, TurmaHeur*> emptyMap;
-		auto parTipo = turmas_.insert(make_pair<bool, unordered_map<int, TurmaHeur*>>(turma->tipoAula, emptyMap));
+		auto parTipo = turmas_.insert(make_pair(turma->tipoAula, emptyMap));
 		if(!parTipo.second)
 			HeuristicaNuno::excepcao("OfertaDisciplina::regAberturaTurma", "Tipo de turma nao registado em turmas!");
 		itTipo = parTipo.first;
 	}
 	if(itTipo->second.find(turma->id) != itTipo->second.end())
 		HeuristicaNuno::excepcao("OfertaDisciplina::regAberturaTurma", "Turma do mesmo tipo ja registada com o mesmo id!!");
-	auto par = itTipo->second.insert(make_pair<int, TurmaHeur*>(turma->id, turma));
+	auto par = itTipo->second.insert(make_pair(turma->id, turma));
 	if(!par.second)
 		HeuristicaNuno::excepcao("OfertaDisciplina::regAberturaTurma", "Turma nao inserida com sucesso em turmas_!");
 
@@ -421,7 +421,7 @@ void OfertaDisciplina::regAberturaTurma(TurmaHeur* const turma)
 	if(itDisc == solucao_->turmasPorDisc_.end())
 	{
 		unordered_set<TurmaHeur*> emptySet;
-		itDisc = solucao_->turmasPorDisc_.insert(make_pair<Disciplina*, unordered_set<TurmaHeur*>>(turma->ofertaDisc->getDisciplina(), emptySet)).first;
+		itDisc = solucao_->turmasPorDisc_.insert(make_pair(turma->ofertaDisc->getDisciplina(), emptySet)).first;
 		HeuristicaNuno::excepcao("OfertaDisciplina::regAberturaTurma", "Disciplina não encontrada em turmasPorDisc_.");
 	}
 	itDisc->second.insert(turma);
@@ -677,7 +677,7 @@ bool OfertaDisciplina::addToAlunosTurma_(AlunoHeur* const aluno, TurmaHeur* cons
 	{
 		novo = true;
 		std::unordered_map<bool, TurmaHeur*> dict;
-		itAluno = alunosTurma_.insert(make_pair<AlunoHeur*, std::unordered_map<bool, TurmaHeur*>>(aluno, dict)).first;
+		itAluno = alunosTurma_.insert(make_pair(aluno, dict)).first;
 
 		// adicionar o aluno aos alunos incompleto caso esta disciplina tenha 2 componentes
 		if(nrTiposAula() == 2)
@@ -1584,7 +1584,7 @@ void OfertaDisciplina::getAlocacaoAtual(unordered_map<TurmaHeur*, pair<unordered
 	for(auto itTurma = turmasAlunos_.begin(); itTurma != turmasAlunos_.end(); ++itTurma)
 	{
 		pair<unordered_set<AlunoHeur*>, SalaHeur*> parTurma (mapaVazio, itTurma->first->getSala());
-		auto parIns = alocOft.insert(make_pair<TurmaHeur*,  pair<unordered_set<AlunoHeur*>, SalaHeur*>>(itTurma->first, parTurma));
+		auto parIns = alocOft.insert(make_pair(itTurma->first, parTurma));
 		if(!parIns.second)
 		{
 			HeuristicaNuno::warning("OfertaDisciplina::getAlocacaoAtual", "Par turma, alunos-sala nao inserido!");
@@ -1601,7 +1601,7 @@ void OfertaDisciplina::getAlocacaoAtual(unordered_map<TurmaHeur*, pair<unordered
 	for(auto itTurma = turmasAlunos_.begin(); itTurma != turmasAlunos_.end(); ++itTurma)
 	{
 		pair<unordered_set<AlunoHeur*>, SalaHeur*> parTurma (mapaVazio, itTurma->first->getSala());
-		auto parIns = alocOft->insert(make_pair<TurmaHeur*,  pair<unordered_set<AlunoHeur*>, SalaHeur*>>(itTurma->first, parTurma));
+		auto parIns = alocOft->insert(make_pair(itTurma->first, parTurma));
 		if(!parIns.second)
 		{
 			HeuristicaNuno::warning("OfertaDisciplina::getAlocacaoAtual", "Par turma, alunos-sala nao inserido!");
@@ -1803,7 +1803,7 @@ void OfertaDisciplina::getTurmasSalasAlunos(unordered_map<TurmaHeur*, pair<SalaH
 		TurmaHeur* const turma = it->first;
 		// para não ser deletado o objeto
 		turma->setKeep(true);
-		if(!turmasSalasAlunos.insert(make_pair<TurmaHeur*, pair<SalaHeur*, unordered_set<AlunoHeur*>>>(turma, make_pair<SalaHeur*, unordered_set<AlunoHeur*>>(turma->getSala(), it->second))).second)
+		if(!turmasSalasAlunos.insert(make_pair(turma, make_pair(turma->getSala(), it->second))).second)
 			HeuristicaNuno::excepcao("OfertaDisciplina::getTurmasSalasAlunos", "Alunos e sala nao guardados!");
 	}
 }
@@ -2090,7 +2090,7 @@ void OfertaDisciplina::addAlunoCheckAssocTurmas_(AlunoHeur* const aluno, TurmaHe
 	if(itAssoc == turmasAssoc_.end())
 	{
 		unordered_set<TurmaHeur*> assoc;
-		if(!turmasAssoc_.insert(make_pair<TurmaHeur*, unordered_set<TurmaHeur*>>(turma, assoc)).second)
+		if(!turmasAssoc_.insert(make_pair(turma, assoc)).second)
 			HeuristicaNuno::excepcao("OfertaDisciplina::addAlunoCheckAssocTurmas_", "Associacao nao inserida");
 	}
 

@@ -41,7 +41,7 @@ public:
 	int getUnidadeId(void) const { return sala != nullptr ? sala->unidadeId() : -1; }
 	int getCampusId(void) const { return sala != nullptr ? sala->campusId() : -1; }
 
-	int nrAlunos (void) const { return alunos.size(); }
+	int nrAlunos (void) const { return (int)alunos.size(); }
 
 	bool usaSabado(void) const { return aulas.find(7) != aulas.end(); }
 

@@ -3331,15 +3331,14 @@ void MIPUnico::mapSolMinDeslocProf(double* const xS,
 		if ( v.getType() == VariableMIPUnico::V_PROF_DESLOC )		
 		if ( !v.getProfessor()->eVirtual() )
 		{
-			solProfDiaDeslocUsado[v.getProfessor()][v.getDia()][v]
-				= make_pair<int,double>(vit->second, xS[vit->second]);
+			solProfDiaDeslocUsado[v.getProfessor()][v.getDia()][v] = make_pair(vit->second, xS[vit->second]);
 		}
 
 		if ( v.getType() == VariableMIPUnico::V_PROF_UNID )
 		if ( !v.getProfessor()->eVirtual() )
 		{
 			double value = (int) (xS[vit->second] + 0.5);
-			solProfDiaUnidUsada[v.getProfessor()].insert( make_pair<int,double>(vit->second, value) );
+			solProfDiaUnidUsada[v.getProfessor()].insert( make_pair(vit->second, value) );
 		}
 	}
 }

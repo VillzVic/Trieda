@@ -100,7 +100,7 @@ bool ClusterUnidades::checkUnidade(Unidade* const unidade, parCluster &cluster)
 	if(itUnid == cluster.second.end())
 		HeuristicaNuno::excepcao("ClusterUnidades::checkUnidade", "Deslocamento para unidade inserida nao encontrado");
 
-	int size = cluster.second.size();
+	int size = (int)cluster.second.size();
 	cluster.second.erase(itUnid);
 	if(size == cluster.second.size())
 		HeuristicaNuno::excepcao("ClusterUnidades::checkUnidade", "Deslocamento para unidade inserida nao apagado");

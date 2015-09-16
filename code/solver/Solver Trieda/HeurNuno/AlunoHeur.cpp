@@ -109,7 +109,7 @@ bool AlunoHeur::alocCompleto(void)  const
 		OfertaDisciplina* const oferta = (*it)->ofertaDisc;
 		auto itOft = ofertas.find(oferta);
 		if(itOft == ofertas.end())
-			itOft = ofertas.insert(make_pair<OfertaDisciplina*, unordered_set<TurmaHeur*>>(oferta, emptySet)).first;
+			itOft = ofertas.insert(make_pair(oferta, emptySet)).first;
 
 		// verificar se há uma turma do mesmo tipo
 		for(auto itT = itOft->second.cbegin(); itT != itOft->second.cend(); ++itT)
@@ -321,7 +321,7 @@ bool AlunoHeur::temCoReqsIncompletos (void) const
 
 	for(auto it = itAluno->second.cbegin(); it != itAluno->second.cend(); ++it)
 	{
-		int nrDisc = it->size();
+		int nrDisc = (int)it->size();
 		if(nrDisc <= 1)
 		{
 			HeuristicaNuno::warning("AlunoHeur::temCoReqsIncompletos", "Co-requisito com 1 ou menos demandas.");
@@ -349,7 +349,7 @@ void AlunoHeur::getOfertasCoReqsIncompletos (vector<OfertaDisciplina*> &ofertas)
 	vector<OfertaDisciplina*> ofertasCoReq;
 	for(auto it = itAluno->second.cbegin(); it != itAluno->second.cend(); ++it)
 	{
-		int nrDisc = it->size();
+		int nrDisc = (int)it->size();
 		if(nrDisc <= 1)
 		{
 			HeuristicaNuno::warning("AlunoHeur::getOfertasCoReqsIncompletos", "Co-requisito com 1 ou menos demandas.");
@@ -366,7 +366,7 @@ void AlunoHeur::getOfertasCoReqsIncompletos (vector<OfertaDisciplina*> &ofertas)
 		}
 
 		// verificar se co-requisito foi parcialmente atendido
-		int nrAtend = ofertasCoReq.size();
+		int nrAtend = (int)ofertasCoReq.size();
 		if( (nrAtend > 0) && (nrAtend != nrDisc) )
 			ofertas.insert(ofertas.end(), ofertasCoReq.begin(), ofertasCoReq.end());
 	}
@@ -376,7 +376,7 @@ void AlunoHeur::getOfertasCoReqsIncompletos (vector<OfertaDisciplina*> &ofertas)
 void AlunoHeur::printDemsAtendidas(void) const
 {
 	HeuristicaNuno::logMsgInt(">> Aluno ", getId(), 1);
-	HeuristicaNuno::logMsgInt("# demandas atendidas: ", demandasAtendidas_.size(), 1);
+	HeuristicaNuno::logMsgInt("# demandas atendidas: ", (int)demandasAtendidas_.size(), 1);
 	for(auto itDems = demandasAtendidas_.cbegin(); itDems != demandasAtendidas_.cend(); ++itDems)
 	{
 		std::stringstream ss;

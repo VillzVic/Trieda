@@ -588,7 +588,7 @@ void SolucaoHeur::prepararDados(void)
 		if(itCurso == alunosPorCurso.end())
 		{
 			unordered_set<AlunoHeur*> emptySet;
-			auto par = alunosPorCurso.insert(make_pair<Curso*, unordered_set<AlunoHeur*>>(curso, emptySet));
+			auto par = alunosPorCurso.insert(make_pair(curso, emptySet));
 			if(!par.second)
 				HeuristicaNuno::excepcao("SolucaoHeur::prepararDados", "Alunos do curso nao inserido na estrutura");
 			itCurso = par.first;
@@ -623,7 +623,7 @@ void SolucaoHeur::inicializarDemandasNaoAtendidas_(unordered_map<Campus *, unord
 	for(auto itCamp = dados->cbegin(); itCamp != dados->cend(); itCamp++)
 	{
 		Campus* const ptrCampus = itCamp->first;
-		auto parCamp = demandasNaoAtendidas_.insert(make_pair<Campus *, unordered_map<Disciplina *, unordered_map<int, unordered_set<AlunoDemanda *>>>>(ptrCampus, emptyMapDisc));
+		auto parCamp = demandasNaoAtendidas_.insert(make_pair(ptrCampus, emptyMapDisc));
 		if(!parCamp.second)
 			HeuristicaNuno::excepcao("SolucaoHeur::initializarDemandasNaoAtendidas_", "Erro inserindo campus em demandas nao atendidas");
 		auto itDemCamp = parCamp.first;
@@ -631,14 +631,14 @@ void SolucaoHeur::inicializarDemandasNaoAtendidas_(unordered_map<Campus *, unord
 		for(auto itDisc = itCamp->second.cbegin(); itDisc != itCamp->second.cend(); ++itDisc)
 		{
 			Disciplina* const ptrDisc = itDisc->first;
-			auto parDisc = itDemCamp->second.insert(make_pair<Disciplina *, unordered_map<int, unordered_set<AlunoDemanda *>>>(itDisc->first, emptyMapPrior));
+			auto parDisc = itDemCamp->second.insert(make_pair(itDisc->first, emptyMapPrior));
 			if(!parDisc.second)
 				HeuristicaNuno::excepcao("SolucaoHeur::initializarDemandasNaoAtendidas_", "Erro inserindo disciplina em demandas nao atendidas");
 			auto itDemDisc = parDisc.first;
 
 			for(auto itPrior = itDisc->second.cbegin(); itPrior != itDisc->second.cend(); itPrior++)
 			{
-				auto parPrior = itDemDisc->second.insert(make_pair<int, unordered_set<AlunoDemanda *>>(itPrior->first, itPrior->second));
+				auto parPrior = itDemDisc->second.insert(make_pair(itPrior->first, itPrior->second));
 				if(!parPrior.second)
 					HeuristicaNuno::excepcao("SolucaoHeur::initializarDemandasNaoAtendidas_", "Erro inserindo prioridade e demandas nao atendidas");
 			}
@@ -730,7 +730,7 @@ void SolucaoHeur::criarOfertasDisciplina_(bool limpar)
 			auto itCampusOf = ofertasDisciplina_.find(campus);
 			if(itCampusOf == ofertasDisciplina_.end())
 			{
-				itCampusOf = ofertasDisciplina_.insert(make_pair<Campus *, unordered_map<Disciplina*, OfertaDisciplina*>>(campus, emptyMap)).first;
+				itCampusOf = ofertasDisciplina_.insert(make_pair(campus, emptyMap)).first;
 			}
 			itCampusOf->second[disciplina] = ofertaDisc;
 			allOfertasDisc_.push_back(ofertaDisc);
@@ -1083,7 +1083,7 @@ void SolucaoHeur::saveSolucao_(unordered_map<OfertaDisciplina*, unordered_map<Tu
 		turmasSalasAlunos.clear();
 		OfertaDisciplina* const oferta = (*it);
 		oferta->getTurmasSalasAlunos(turmasSalasAlunos);
-		if(!currSolucao.insert(make_pair<OfertaDisciplina*,unordered_map<TurmaHeur*, pair<SalaHeur*, unordered_set<AlunoHeur*>>>> (oferta, turmasSalasAlunos)).second)
+		if(!currSolucao.insert(make_pair(oferta, turmasSalasAlunos)).second)
 			HeuristicaNuno::excepcao("SolucaoHeur::saveSolucao_", "Turma, sala e alunos nao guardados!");
 	}
 }
@@ -1877,7 +1877,7 @@ void SolucaoHeur::getAllTurmasProf_(unordered_map<TurmaHeur*, ProfessorHeur*> &t
 		for(auto it = turmasOft.begin(); it != turmasOft.end(); ++it)
 		{
 			// guardar alocação do prof atual
-			turmasProfsAtual.insert(make_pair<TurmaHeur*, ProfessorHeur*>(*it, (*it)->getProfessor()));
+			turmasProfsAtual.insert(make_pair(*it, (*it)->getProfessor()));
 
 			// set virtual?
 			if(setVirtual)
@@ -2031,7 +2031,7 @@ void SolucaoHeur::criaProfessoresVirtuaisPorCurso(int n, TipoTitulacao* const ti
 	if(itPerfil == profsVirtuaisCursoPerfil.end())
 	{
 		set<ProfessorHeur*, cmpProfIds> emptySet;
-		auto par = profsVirtuaisCursoPerfil.insert(make_pair<PerfilVirtual*, set<ProfessorHeur*, cmpProfIds> >(perfil, emptySet));
+		auto par = profsVirtuaisCursoPerfil.insert(make_pair(perfil, emptySet));
 		if(!par.second)
 			HeuristicaNuno::excepcao("SolucaoHeur::criaProfessoresVirtuaisPorCurso", "Perfil nao inserido em profs virtuais curso!");
 		itPerfil = par.first;
@@ -2069,7 +2069,7 @@ void SolucaoHeur::criaProfessoresVirtuaisPorCurso(int n, TipoTitulacao* const ti
 		professor->setChAnterior(0);
 
 		// ainda é usado ?
-		auto parItProfDisc = probData->mapProfessorDisciplinasAssociadas.insert(make_pair<Professor*, GGroup<Disciplina*, LessPtr<Disciplina>>>(professor, emptyDisc));
+		auto parItProfDisc = probData->mapProfessorDisciplinasAssociadas.insert(make_pair(professor, emptyDisc));
 		if(!parItProfDisc.second)
 			HeuristicaNuno::warning("SolucaoHeur::criaProfessoresVirtuaisPorCurso", "Professor nao adicionado a mapProfessorDisciplinasAssociadas");
 		auto itProfDisc = parItProfDisc.first;
@@ -2113,7 +2113,7 @@ void SolucaoHeur::criaProfessoresVirtuaisPorCurso(int n, TipoTitulacao* const ti
 		auto itVirt = profsVirtuais.find(professor->getId());
 		if(itVirt != profsVirtuais.end())
 			HeuristicaNuno::excepcao("SolucaoHeur::criaProfessoresVirtuaisPorCurso", "Professor virtual com mesmo id ja inserido!");
-		profsVirtuais.insert(make_pair<int, ProfessorHeur*>(professor->getId(), profHeur));
+		profsVirtuais.insert(make_pair(professor->getId(), profHeur));
 
 		// profs virtuais curso
 		itPerfil->second.insert(profHeur);
@@ -2122,7 +2122,7 @@ void SolucaoHeur::criaProfessoresVirtuaisPorCurso(int n, TipoTitulacao* const ti
 		auto itAll = professoresHeur.find(professor->getId());
 		if(itAll != professoresHeur.end())
 			HeuristicaNuno::excepcao("SolucaoHeur::criaProfessoresVirtuaisPorCurso", "Professor com mesmo id ja inserido!");
-		professoresHeur.insert(make_pair<int, ProfessorHeur*>(professor->getId(), profHeur));
+		professoresHeur.insert(make_pair(professor->getId(), profHeur));
 
 		probData->professores_virtuais.push_back( professor );
 		probData->profs_virtuais_ids.insert(professor->getId());
@@ -2165,7 +2165,7 @@ void SolucaoHeur::addHorariosDiscProf(Professor* const professor, Disciplina* co
 	// Dias Letivos ??
 	std::pair< int, int > ids_Prof_Disc( professor->getId(), disciplina->getId() );
 	GGroup<int> diasLetivos;
-	auto insPar = problemData->prof_Disc_Dias.insert(make_pair<std::pair< int, int >, GGroup<int>>(ids_Prof_Disc, diasLetivos));
+	auto insPar = problemData->prof_Disc_Dias.insert(make_pair(ids_Prof_Disc, diasLetivos));
 	if(!insPar.second)
 	{
 		HeuristicaNuno::warning("SolucaoHeur::addHorariosDiscProf", "Par profvirtual-disciplina nao inserido em problemData->prof_Disc_Dias");
@@ -3089,7 +3089,7 @@ void SolucaoHeur::loadAtendimentoCampus(AtendimentoCampus* const atendCampus,
 	if(itCamp == ofertasDisciplina_.end())
 	{
 		unordered_map<Disciplina*, OfertaDisciplina*> emptyMap;
-		auto parIns = ofertasDisciplina_.insert(make_pair<Campus*, unordered_map<Disciplina*, OfertaDisciplina*>>(atendCampus->campus, emptyMap));
+		auto parIns = ofertasDisciplina_.insert(make_pair(atendCampus->campus, emptyMap));
 		if(!parIns.second)
 			HeuristicaNuno::excepcao("SolucaoHeur::checkAtendimentoCampus", "Campus nao inserido em OfertasDisciplina");
 
@@ -3182,7 +3182,7 @@ void SolucaoHeur::loadAtendimentoOferta(AtendimentoOferta* const atendOferta, it
 	if(itDisc == turmasPorDisc_.end())
 	{
 		unordered_set<TurmaHeur*> emptySet;
-		itDisc = turmasPorDisc_.insert(make_pair<Disciplina*, unordered_set<TurmaHeur*>>(disciplina, emptySet)).first;
+		itDisc = turmasPorDisc_.insert(make_pair(disciplina, emptySet)).first;
 	}
 
 	// obter os alunos atendidos
@@ -3232,7 +3232,7 @@ void SolucaoHeur::loadAtendimentoOferta(AtendimentoOferta* const atendOferta, it
 	if(itDia == itHorsT->second.end())
 	{
 		set<HorarioAula*> emptySet;
-		auto par = itHorsT->second.insert(make_pair<int, set<HorarioAula*>>(dia, emptySet));
+		auto par = itHorsT->second.insert(make_pair(dia, emptySet));
 		if(!par.second)
 			HeuristicaNuno::excepcao("SolucaoHeur::loadAtendimentoOferta", "Dia nao adicionado a estrutura turmasHorarios");
 		itDia = par.first;
@@ -3372,13 +3372,13 @@ TurmaHeur* SolucaoHeur::getAddTurma(OfertaDisciplina* const &ofertaDisc, int con
 
 	// adicionar à estrutura turmasAlunos
 	unordered_set<AlunoHeur*> emptySet;
-	auto par = turmasAlunos->insert(make_pair<TurmaHeur*, unordered_set<AlunoHeur*>>(turma, emptySet));
+	auto par = turmasAlunos->insert(make_pair(turma, emptySet));
 	if(!par.second)
 		HeuristicaNuno::excepcao("SolucaoHeur::getAddTurma", "[Load] Turma nao adicionada a estrutura turmasAluno");
 
 	// adicionar à estrutura turmasHorarios
 	unordered_map<int, set<HorarioAula*>> emptyMap;
-	auto parHor = turmasHorarios->insert(make_pair<TurmaHeur*, unordered_map<int, set<HorarioAula*>>>(turma, emptyMap));
+	auto parHor = turmasHorarios->insert(make_pair(turma, emptyMap));
 	if(!parHor.second)
 		HeuristicaNuno::excepcao("SolucaoHeur::getAddTurma", "[Load] Turma nao adicionada a estrutura turmasHorarios");
 

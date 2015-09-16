@@ -75,7 +75,7 @@ void AlunoSolution::mapAlDemDiscTurmaCpToStream( std::ostream & outFile )
 	}
 
 	outFile << ss1.str();
-	outFile << "\n\t" << 100 * ch / this->aluno_->getCargaHorariaOrigRequeridaP1() << "\% de atendimento\n\t";
+	outFile << "\n\t" << 100 * ch / this->aluno_->getCargaHorariaOrigRequeridaP1() << "% de atendimento\n\t";
 	outFile << ss2.str();
 }
 

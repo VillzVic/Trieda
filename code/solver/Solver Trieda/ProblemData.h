@@ -567,7 +567,7 @@ public:
    
    int getFaseDoDia( DateTime dt );
    DateTime getFimDaFase( int fase ) const;
-   int getNroTotalDeFasesDoDia() const { return fasesDosTurnos.size(); }
+   int getNroTotalDeFasesDoDia() const { return (int)fasesDosTurnos.size(); }
    bool haTurnoComumViavel( Disciplina *disciplina, TurnoIES *turnoIES );
    GGroup<int> getTurnosComunsViaveis( Disciplina *disciplina, TurnoIES *turnoIES );
    bool alocacaoEquivViavel( Demanda *demanda, Disciplina *disciplina );

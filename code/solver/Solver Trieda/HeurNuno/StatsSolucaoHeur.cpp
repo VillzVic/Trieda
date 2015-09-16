@@ -87,7 +87,7 @@ void StatsSolucaoHeur::addDemandaAtendPrior(int prioridade)
 {
 	auto itPrior = numDemandasAtend_.find(prioridade);
 	if(itPrior == numDemandasAtend_.end())
-		itPrior = numDemandasAtend_.insert(make_pair<int, int>(prioridade, 0)).first;
+		itPrior = numDemandasAtend_.insert(make_pair(prioridade, 0)).first;
 
 	itPrior->second++;
 }

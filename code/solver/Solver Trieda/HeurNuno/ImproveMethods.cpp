@@ -1108,10 +1108,10 @@ void ImproveMethods::getAlunosOrd(unordered_map<AlunoHeur*, unordered_set<TurmaH
 	unordered_set<AlunoHeur*> emptySet;
 	for(auto it = alunosTurma.begin(); it != alunosTurma.end(); ++it)
 	{
-		int nrTurmas = it->second.size();
+		int nrTurmas = (int)it->second.size();
 		auto itNr = ordAlunos.find(nrTurmas);
 		if(itNr == ordAlunos.end())
-			itNr = ordAlunos.insert(make_pair<int, unordered_set<AlunoHeur*>>(nrTurmas, emptySet)).first;
+			itNr = ordAlunos.insert(make_pair(nrTurmas, emptySet)).first;
 
 		itNr->second.insert(it->first);
 	}
@@ -1129,7 +1129,7 @@ void ImproveMethods::getTurmasPorAluno(unordered_map<TurmaHeur*, unordered_set<A
 			auto itTurmasAluno = turmasPorAluno.find(*itAluno);
 			if(itTurmasAluno == turmasPorAluno.end())
 			{
-				itTurmasAluno = turmasPorAluno.insert(make_pair<AlunoHeur*, unordered_set<TurmaHeur*>>(*itAluno, emptySet)).first;
+				itTurmasAluno = turmasPorAluno.insert(make_pair(*itAluno, emptySet)).first;
 			}
 
 			itTurmasAluno->second.insert(it->first);

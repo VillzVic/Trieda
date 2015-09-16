@@ -145,7 +145,7 @@ public:
 	template<typename T>
 	void reordenarOfertasDisciplina_(set<OfertaDisciplina*, T>& setOrd, int priorAluno, bool equiv = true)
 	{
-		int size = setOrd.size();
+		int size = (int)setOrd.size();
 		set<OfertaDisciplina*, T> copia = setOrd;
 		setOrd.clear();
 	

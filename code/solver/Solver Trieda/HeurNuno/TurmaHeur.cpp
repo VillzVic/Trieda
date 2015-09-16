@@ -237,7 +237,7 @@ void TurmaHeur::getDemandasAlunos(unordered_map<Demanda*, set<AlunoDemanda*>>& d
 		
 		auto itDem = demandas.find(demanda);
 		if(itDem == demandas.end())
-			itDem = demandas.insert(make_pair<Demanda*, set<AlunoDemanda*>>(demanda, conj)).first;
+			itDem = demandas.insert(make_pair(demanda, conj)).first;
 
 		itDem->second.insert(alunoDem);
 	}
