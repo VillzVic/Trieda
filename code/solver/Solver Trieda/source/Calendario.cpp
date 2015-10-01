@@ -1,54 +1,49 @@
+#include "Calendario.h"
+
 #include <iostream>
 #include <fstream>
 
-#include "Calendario.h"
+#include "HorarioAula.h"
 #include "CentroDados.h"
 
+using namespace std;
 
-Calendario::Calendario( void )
+void Calendario::le_arvore(ItemCalendario & elem)
 {
+	this->setId(elem.id());
+	this->setCodigo(elem.codigo());
+	this->setTempoAula(elem.tempoAula());
 
-}
-
-Calendario::~Calendario( void )
-{}
-
-void Calendario::le_arvore( ItemCalendario & elem ) 
-{
-   this->setId( elem.id() );
-   this->setCodigo( elem.codigo() );
-   this->setTempoAula( elem.tempoAula() );
-
-   ITERA_SEQ( it_turno, elem.turnos(), TurnoIES )
-   {     
-	  // Le arvore do turno -----
-	  ItemTurno elemTurno = *it_turno;
-	  ITERA_SEQ( it_horarios, elemTurno.HorariosAula(), HorarioAula )
-	  {
-		HorarioAula * horario = new HorarioAula();
-		horario->le_arvore( *it_horarios );
-		horario->setTurnoIESId( elemTurno.id() );
-
-		this->horarios_aula.add( horario );
-		
-		ITERA_GGROUP_N_PT( itDia, horario->dias_semana, int )
+	ITERA_SEQ(it_turno, elem.turnos(), TurnoIES)
+	{
+		// Le arvore do turno -----
+		ItemTurno elemTurno = *it_turno;
+		ITERA_SEQ(it_horarios, elemTurno.HorariosAula(), HorarioAula)
 		{
-			this->mapDiaDateTime[*itDia][horario->getInicio()] = horario;
+			HorarioAula * horario = new HorarioAula();
+			horario->le_arvore(*it_horarios);
+			horario->setTurnoIESId(elemTurno.id());
+
+			this->horarios_aula.add(horario);
+
+			ITERA_GGROUP_N_PT(itDia, horario->dias_semana, int)
+			{
+				this->mapDiaDateTime[*itDia][horario->getInicio()] = horario;
+			}
 		}
-	  }
-	  // ------------------------
-   }
+		// ------------------------
+	}
 
-   if ( elem.permiteIntervaloEmAula().present() )
-	   this->RESTRINGE_AULA_COM_INTERVALO = ! elem.permiteIntervaloEmAula();
-   else
-	   this->RESTRINGE_AULA_COM_INTERVALO = true;
+	if (elem.permiteIntervaloEmAula().present())
+		this->RESTRINGE_AULA_COM_INTERVALO = !elem.permiteIntervaloEmAula();
+	else
+		this->RESTRINGE_AULA_COM_INTERVALO = true;
 
-   calculaProximosHorarioAula();
+	calculaProximosHorarioAula();
 
 #ifdef KROTON
-  // if ( this->getTempoAula() == 75 ) // TODO
-  //	RESTRINGE_AULA_COM_INTERVALO = false;	
+	// if ( this->getTempoAula() == 75 ) // TODO
+	//	RESTRINGE_AULA_COM_INTERVALO = false;	
 #endif
 
 }
@@ -56,15 +51,15 @@ void Calendario::le_arvore( ItemCalendario & elem )
 /*
   Dado um dia especifico, retorna o numero de horarios de aula disponiveis no dia da semana letiva em questao
   (ou numero de creditos).
-*/
+  */
 int Calendario::getNroDeHorariosAula(int dia)
 {
 	int nHorariosNoTurnoDoDia = 0;
-	std::map< int/*dia*/, std::map< DateTime, HorarioAula* > >::iterator
+	map< int/*dia*/, map< DateTime, HorarioAula* > >::iterator
 		itMapDia = mapDiaDateTime.find(dia);
-	if( itMapDia != mapDiaDateTime.end() )
+	if (itMapDia != mapDiaDateTime.end())
 	{
-		nHorariosNoTurnoDoDia += (int) itMapDia->second.size();		
+		nHorariosNoTurnoDoDia += (int)itMapDia->second.size();
 	}
 
 	return nHorariosNoTurnoDoDia;
@@ -72,40 +67,40 @@ int Calendario::getNroDeHorariosAula(int dia)
 
 /*
 	Dado um horarioAula h, retorna o proximo horarioAula do turno do calendario.
-*/
+	*/
 
 void Calendario::calculaProximosHorarioAula()
 {
-	std::ofstream outFile;
+	ofstream outFile;
 	if (CentroDados::getPrintLogs())
 	{
-		std::stringstream ssName;
+		stringstream ssName;
 		ssName << "proximoHorarioCalendarios.txt";
-		outFile.open( ssName.str(), std::ios::app );
+		outFile.open(ssName.str(), ios::app);
 
 		outFile << "------------------------\n";
-		outFile << "Calendario " << this->getId() << std::endl << std::endl;
+		outFile << "Calendario " << this->getId() << endl << endl;
 	}
 
-	ITERA_GGROUP_LESSPTR( itHorarioAula, this->horarios_aula, HorarioAula )
+	ITERA_GGROUP_LESSPTR(itHorarioAula, this->horarios_aula, HorarioAula)
 	{
 		HorarioAula *h = *itHorarioAula;
 
 		HorarioAula * proximoHor = NULL;
 		DateTime menorInicio = h->getInicio();
-		menorInicio.addMinutes(1840*2); // adiciona 48hs no dateTime, só para garantir que será um valor suficientemente grande
+		menorInicio.addMinutes(1840 * 2); // adiciona 48hs no dateTime, só para garantir que será um valor suficientemente grande
 
 		DateTime fim = h->getInicio();
-		fim.addMinutes( (int) this->getTempoAula() ); // Fim da aula
+		fim.addMinutes(getTempoAula()); // Fim da aula
 
-		ITERA_GGROUP_LESSPTR( itHorAula, this->horarios_aula, HorarioAula )
+		ITERA_GGROUP_LESSPTR(itHorAula, this->horarios_aula, HorarioAula)
 		{
-			if ( itHorAula->getInicio() == fim )
+			if (itHorAula->getInicio() == fim)
 			{
-				if ( itHorAula->getTurnoIESId() == h->getTurnoIESId() )
+				if (itHorAula->getTurnoIESId() == h->getTurnoIESId())
 				{
-					 proximoHor = *itHorAula;
-					 break;
+					proximoHor = *itHorAula;
+					break;
 				}
 				else
 				{
@@ -113,10 +108,10 @@ void Calendario::calculaProximosHorarioAula()
 					menorInicio = proximoHor->getInicio();
 				}
 			}
-			if ( itHorAula->getInicio() > fim &&
-				 itHorAula->getInicio() <= menorInicio )
+			if (itHorAula->getInicio() > fim &&
+				itHorAula->getInicio() <= menorInicio)
 			{
-				if ( itHorAula->getInicio() < menorInicio )
+				if (itHorAula->getInicio() < menorInicio)
 				{
 					proximoHor = *itHorAula;
 					menorInicio = proximoHor->getInicio();
@@ -124,8 +119,8 @@ void Calendario::calculaProximosHorarioAula()
 				else
 				{
 					// prefere pegar o mesmo turno
-					if ( itHorAula->getTurnoIESId() == h->getTurnoIESId() &&
-						 proximoHor->getTurnoIESId() != h->getTurnoIESId() )
+					if (itHorAula->getTurnoIESId() == h->getTurnoIESId() &&
+						proximoHor->getTurnoIESId() != h->getTurnoIESId())
 					{
 						proximoHor = *itHorAula;
 						menorInicio = proximoHor->getInicio();
@@ -134,14 +129,14 @@ void Calendario::calculaProximosHorarioAula()
 			}
 		}
 
-		if (CentroDados::getPrintLogs())	
+		if (CentroDados::getPrintLogs())
 		{
-			if (outFile )
+			if (outFile)
 			{
 				outFile << h->getId() << "(" << h->getInicio() << ")  ->  ";
-				if ( proximoHor !=NULL ) 
-					outFile << proximoHor->getId() << "(" << proximoHor->getInicio() << ")\n" ;
-				else 
+				if (proximoHor != NULL)
+					outFile << proximoHor->getId() << "(" << proximoHor->getInicio() << ")\n";
+				else
 					outFile << "NULL\n";
 			}
 		}
@@ -151,7 +146,7 @@ void Calendario::calculaProximosHorarioAula()
 
 	if (CentroDados::getPrintLogs())
 	{
-		if ( outFile )
+		if (outFile)
 		{
 			outFile.close();
 		}
@@ -161,19 +156,19 @@ void Calendario::calculaProximosHorarioAula()
 
 /*
 	Dado um horarioAula h, retorna o proximo horarioAula do turno do calendario.
-*/
-HorarioAula * Calendario::getProximoHorario( HorarioAula *h ) const
-{	
+	*/
+HorarioAula * Calendario::getProximoHorario(HorarioAula *h) const
+{
 	HorarioAula * proximoHor = NULL;
 
-	auto it = mapProximoHorarioAula.find( h->getId() );
-	if ( it != mapProximoHorarioAula.end() )
+	auto it = mapProximoHorarioAula.find(h->getId());
+	if (it != mapProximoHorarioAula.end())
 	{
 		proximoHor = it->second;
 	}
 	else
 	{
-		std::cout<<"\nErro. HorarioAula nao encontrado no calendario:\nh = " 
+		cout << "\nErro. HorarioAula nao encontrado no calendario:\nh = "
 			<< h->getId() << ", " << h->getInicio() << ", calend de h: " << h->getCalendario()->getId();
 		fflush(NULL);
 	}
@@ -185,16 +180,16 @@ HorarioAula * Calendario::getProximoHorario( HorarioAula *h ) const
 
 /*
 	Dado um horarioAula h, retorna o horarioAula anterior do calendario.
-*/
-HorarioAula * Calendario::getHorarioAnterior( HorarioAula *h )
-{	
+	*/
+HorarioAula * Calendario::getHorarioAnterior(HorarioAula *h)
+{
 	HorarioAula * horAnterior = NULL;
 
-	if ( this->horarios_aula.find( h ) != this->horarios_aula.end() )
-	{						
-		ITERA_GGROUP_LESSPTR( itHorAula, this->horarios_aula, HorarioAula )
+	if (this->horarios_aula.find(h) != this->horarios_aula.end())
+	{
+		ITERA_GGROUP_LESSPTR(itHorAula, this->horarios_aula, HorarioAula)
 		{
-			if ( this->getProximoHorario( *itHorAula ) == h )
+			if (this->getProximoHorario(*itHorAula) == h)
 			{
 				horAnterior = *itHorAula;
 				break;
@@ -202,12 +197,12 @@ HorarioAula * Calendario::getHorarioAnterior( HorarioAula *h )
 		}
 	}
 
-	if ( horAnterior != NULL )
-	if ( horAnterior->getFinal().getDateMinutes() + h->getTempoAula() <= h->getInicio().getDateMinutes() )	
-	{
-		// Gap grande entre os horarios
-		return NULL;
-	}
+	if (horAnterior != NULL)
+		if (horAnterior->getFinal().getDateMinutes() + h->getTempoAula() <= h->getInicio().getDateMinutes())
+		{
+			// Gap grande entre os horarios
+			return NULL;
+		}
 
 	return horAnterior;
 }
@@ -217,62 +212,62 @@ HorarioAula * Calendario::getHorarioAnterior( HorarioAula *h )
 	Dados dois horarios-aula de inicio e fim, retorna quantos creditos
 	estão delimitados por eles. Se hi = hf, temos 1 credito.
 	Se hf não for encontrado após hi, retorna 0.
-*/
-int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf )
+	*/
+int Calendario::retornaNroCreditosEntreHorarios(HorarioAula *hi, HorarioAula *hf)
 {
-	if ( hi == NULL || hf == NULL ) return 0;
+	if (hi == NULL || hf == NULL) return 0;
 
-	std::pair<HorarioAula*, HorarioAula*> parHorarios( hi, hf );
-	if ( this->horarios_nroCreds.find( parHorarios ) != this->horarios_nroCreds.end() )
+	pair<HorarioAula*, HorarioAula*> parHorarios(hi, hf);
+	if (this->horarios_nroCreds.find(parHorarios) != this->horarios_nroCreds.end())
 	{
-		return horarios_nroCreds[ parHorarios ];
+		return horarios_nroCreds[parHorarios];
 	}
 
-	if ( !possuiHorario( hi ) ||
-		 !possuiHorario( hf ) )
+	if (!possuiHorario(hi) ||
+		!possuiHorario(hf))
 	{
-		std::stringstream msg;
-		msg <<"Horario hf " << hf->getId() << " ou hi " << hi->getId() 
-			<< " nao encontrado no calendario " << this->getId() << ".\n";		
-		CentroDados::printError("Calendario::retornaNroCreditosEntreHorarios()",msg.str());
-		return 0;
-	}	
-	if ( *hi > *hf && !hi->inicioFimIguais(*hf) )
-	{
-		std::stringstream msg;
-		msg << "hi > hf\n" <<"hi = "<<hi->getInicio() <<"\thf = "<<hf->getInicio();
-		CentroDados::printError("Calendario::retornaNroCreditosEntreHorarios()",msg.str());
+		stringstream msg;
+		msg << "Horario hf " << hf->getId() << " ou hi " << hi->getId()
+			<< " nao encontrado no calendario " << this->getId() << ".\n";
+		CentroDados::printError("Calendario::retornaNroCreditosEntreHorarios()", msg.str());
 		return 0;
 	}
-	else if ( hi->inicioFimIguais(*hf) )
+	if (*hi > *hf && !hi->inicioFimIguais(*hf))
+	{
+		stringstream msg;
+		msg << "hi > hf\n" << "hi = " << hi->getInicio() << "\thf = " << hf->getInicio();
+		CentroDados::printError("Calendario::retornaNroCreditosEntreHorarios()", msg.str());
+		return 0;
+	}
+	else if (hi->inicioFimIguais(*hf))
 		return 1;
 
 
 	int n = 1;
-	HorarioAula *h = hi;	
-	while ( h != NULL && !h->inicioFimIguais(*hf) )
+	HorarioAula *h = hi;
+	while (h != NULL && !h->inicioFimIguais(*hf))
 	{
-		h = getProximoHorario( h );
-		n++;	
+		h = getProximoHorario(h);
+		n++;
 	}
 
-	if ( h == NULL )
+	if (h == NULL)
 	{
-		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ): \n";
-		std::cout<<"O horario hf nao existe apos o hi informado.\n";
+		cout << "\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ): \n";
+		cout << "O horario hf nao existe apos o hi informado.\n";
 
 		return 0;
 	}
 
-	horarios_nroCreds[ parHorarios ] = n;
+	horarios_nroCreds[parHorarios] = n;
 
 	return n;
 }
 
 
-bool Calendario::possuiHorario( HorarioAula *h )
+bool Calendario::possuiHorario(HorarioAula *h)
 {
-	if ( this->horarios_aula.find( h ) != this->horarios_aula.end() )
+	if (this->horarios_aula.find(h) != this->horarios_aula.end())
 	{
 		return true;
 	}
@@ -281,13 +276,13 @@ bool Calendario::possuiHorario( HorarioAula *h )
 }
 
 
-bool Calendario::possuiHorarioDia( HorarioAula *h, int dia )
+bool Calendario::possuiHorarioDia(HorarioAula *h, int dia)
 {
 	GGroup< HorarioAula *, LessPtr< HorarioAula > >::iterator
-		it = this->horarios_aula.find( h );
-	if ( it != this->horarios_aula.end() )
+		it = this->horarios_aula.find(h);
+	if (it != this->horarios_aula.end())
 	{
-		if ( it->dias_semana.find( dia ) != it->dias_semana.end() )
+		if (it->dias_semana.find(dia) != it->dias_semana.end())
 			return true;
 		else
 			return false;
@@ -297,92 +292,92 @@ bool Calendario::possuiHorarioDia( HorarioAula *h, int dia )
 
 // Procura o horarioDia no calendario, ou um igual exceto pelo id.
 HorarioAula* Calendario::possuiHorarioDiaOuCorrespondente(int duracao, DateTime dti, int dia)
-{		
-	if ( this->getTempoAula() != duracao )
+{
+	if (getTempoAula() != duracao)
 		return false;
 
 	auto itMapDia = this->mapDiaDateTime.find(dia);
-	if ( itMapDia != this->mapDiaDateTime.end() )
+	if (itMapDia != this->mapDiaDateTime.end())
 	{
 		auto itMapDateTime = itMapDia->second.find(dti);
-		if ( itMapDateTime != itMapDia->second.end() )
-		{ 
+		if (itMapDateTime != itMapDia->second.end())
+		{
 			return itMapDateTime->second;
 		}
 	}
 	return nullptr;
 }
 // Procura o horarioDia no calendario, ou um igual exceto pelo id.
-HorarioAula* Calendario::possuiHorarioDiaOuCorrespondente( HorarioAula *h, int dia )
-{		
+HorarioAula* Calendario::possuiHorarioDiaOuCorrespondente(HorarioAula *h, int dia)
+{
 	return this->possuiHorarioDiaOuCorrespondente(h->getTempoAula(), h->getInicio(), dia);
 }
 
 // Procura os horarioDias entre hi e hf no calendario, ou iguais exceto pelo id.
 // Usado quando hi e hf são de calendarios diferentes de this
-bool Calendario::possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula *hf, int dia )
+bool Calendario::possuiHorarioDiaOuCorrespondente(HorarioAula *hi, HorarioAula *hf, int dia)
 {
-	if ( hi->getCalendario()->getId() != hf->getCalendario()->getId() )
+	if (hi->getCalendario()->getId() != hf->getCalendario()->getId())
 	{
-		std::cout<<"\nErro, calendarios diferentes. So deveria ser par (hi, hf) com mesmo calendario!";
+		cout << "\nErro, calendarios diferentes. So deveria ser par (hi, hf) com mesmo calendario!";
 		return false;
 	}
 
-	if ( hi->getCalendario()->getId() == this->getId() )
+	if (hi->getCalendario()->getId() == this->getId())
 	{
 		return true;
 	}
-	
-	if ( this->getTempoAula() != hi->getCalendario()->getTempoAula() ) 
+
+	if (getTempoAula() != hi->getCalendario()->getTempoAula())
 	{
 		return false;
 	}
-	
+
 	Calendario *sl = hi->getCalendario();
 	int n = sl->retornaNroCreditosEntreHorarios(hi, hf);
 
-	HorarioAula* thisHi=NULL;
-	HorarioAula* thisHf=NULL;
+	HorarioAula* thisHi = NULL;
+	HorarioAula* thisHf = NULL;
 
-	bool hiFound=false;
-	bool hfFound=false;
-	
-	std::map< int/*dia*/, std::map< DateTime, HorarioAula* > >::iterator itMapDia = this->mapDiaDateTime.find(dia);
-	if ( itMapDia != this->mapDiaDateTime.end() )
+	bool hiFound = false;
+	bool hfFound = false;
+
+	map< int/*dia*/, map< DateTime, HorarioAula* > >::iterator itMapDia = this->mapDiaDateTime.find(dia);
+	if (itMapDia != this->mapDiaDateTime.end())
 	{
 		// Procura hi
-		std::map< DateTime, HorarioAula* >::iterator itMapDateTime = itMapDia->second.find( hi->getInicio() );
-		if ( itMapDateTime != itMapDia->second.end() )
+		map< DateTime, HorarioAula* >::iterator itMapDateTime = itMapDia->second.find(hi->getInicio());
+		if (itMapDateTime != itMapDia->second.end())
 		{
-			thisHi = itMapDateTime->second;	hiFound=true;
-			
-			int k = 1;	
+			thisHi = itMapDateTime->second;	hiFound = true;
+
+			int k = 1;
 			HorarioAula *thisH = thisHi;
 			HorarioAula *h = hi;
 
 			// Continua (já que o map é ordenado), procurando hf			
-			for ( ; itMapDateTime != itMapDia->second.end(); itMapDateTime++ )
-			{ 
+			for (; itMapDateTime != itMapDia->second.end(); itMapDateTime++)
+			{
 				thisH = itMapDateTime->second;
 				DateTime thisDateTime = itMapDateTime->first;
 
-				if( h==NULL ) return false; 
+				if (h == NULL) return false;
 
-				if ( thisH->inicioFimIguais( *h ) ) 
+				if (thisH->inicioFimIguais(*h))
 				{
-					if ( k==n )
+					if (k == n)
 					{
-						if ( thisDateTime == hf->getInicio() )
+						if (thisDateTime == hf->getInicio())
 							return true;
 
-						std::cout<<"\nAtencao! Isso deveria ocorrer?? n="<<n<<", thisH="<<thisH->getId()<<", hi="<<hi->getId()<<", hf="<<hf->getId()<<", dia="<<dia;
+						cout << "\nAtencao! Isso deveria ocorrer?? n=" << n << ", thisH=" << thisH->getId() << ", hi=" << hi->getId() << ", hf=" << hf->getId() << ", dia=" << dia;
 						return false;
 					}
-					
-					h = sl->getProximoHorario( h );
+
+					h = sl->getProximoHorario(h);
 					k++;
 				}
-				else return false;				
+				else return false;
 			}
 		}
 	}
@@ -411,21 +406,21 @@ bool Calendario::possuiHorarioDiaOuCorrespondente( HorarioAula *hi, HorarioAula 
 	//return true;
 }
 
-bool Calendario::intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf )
+bool Calendario::intervaloEntreHorarios(HorarioAula *hi, HorarioAula *hf)
 {
 	int n = retornaNroCreditosEntreHorarios(hi, hf);
 
 	HorarioAula *h1 = hi;
 	HorarioAula *h2;
 
-	for ( int i = 1; i < n; i++ )
+	for (int i = 1; i < n; i++)
 	{
-		h2 = getProximoHorario( h1 );
+		h2 = getProximoHorario(h1);
 
-		DateTime dtf = h1->getFinal();	
+		DateTime dtf = h1->getFinal();
 		DateTime dti = h2->getInicio();
-		
-		if ( dtf < dti )
+
+		if (dtf < dti)
 			return true;
 
 		h1 = h2;
@@ -434,39 +429,39 @@ bool Calendario::intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf )
 	return false;
 }
 
- 
-double Calendario::getTempoTotal( int dia )
+
+double Calendario::getTempoTotal(int dia)
 {
-	return ( tempo_aula * this->getNroDeHorariosAula(dia) ); 
+	return (tempo_aula * this->getNroDeHorariosAula(dia));
 }
 
-GGroup<HorarioAula*, LessPtr<HorarioAula>> Calendario::retornaHorariosDisponiveisNoDia( int dia )
+GGroup<HorarioAula*, LessPtr<HorarioAula>> Calendario::retornaHorariosDisponiveisNoDia(int dia)
 {
 	GGroup<HorarioAula*, LessPtr<HorarioAula>> horarios;
-	
-	std::map< int/*dia*/, std::map< DateTime, HorarioAula* > >::iterator itMapDia = this->mapDiaDateTime.find(dia);
-	if ( itMapDia != this->mapDiaDateTime.end() )
+
+	map< int/*dia*/, map< DateTime, HorarioAula* > >::iterator itMapDia = this->mapDiaDateTime.find(dia);
+	if (itMapDia != this->mapDiaDateTime.end())
 	{
-		std::map< DateTime, HorarioAula* >::iterator itMapDateTime = itMapDia->second.begin();
-		for ( ; itMapDateTime != itMapDia->second.end(); itMapDateTime++ )
-		{ 
-			horarios.add( itMapDateTime->second );
+		map< DateTime, HorarioAula* >::iterator itMapDateTime = itMapDia->second.begin();
+		for (; itMapDateTime != itMapDia->second.end(); itMapDateTime++)
+		{
+			horarios.add(itMapDateTime->second);
 		}
 	}
 
 	return horarios;
 }
 
-std::unordered_set<HorarioAula*> Calendario::retornaHorariosDisponiveis( int dia, int turnoIdIES )
+unordered_set<HorarioAula*> Calendario::retornaHorariosDisponiveis(int dia, int turnoIdIES)
 {
-	std::unordered_set<HorarioAula*> horarios;
-	
+	unordered_set<HorarioAula*> horarios;
+
 	auto itHor = horarios_aula.begin();
-	for ( ; itHor != horarios_aula.end(); itHor++ )
-	{ 
+	for (; itHor != horarios_aula.end(); itHor++)
+	{
 		if (itHor->getTurnoIESId() == turnoIdIES)
-		if (itHor->dias_semana.find(dia) != itHor->dias_semana.end())
-			horarios.insert( *itHor );
+			if (itHor->dias_semana.find(dia) != itHor->dias_semana.end())
+				horarios.insert(*itHor);
 	}
 
 	return horarios;
@@ -481,16 +476,16 @@ std::unordered_set<HorarioAula*> Calendario::retornaHorariosDisponiveis( int dia
 	- se nCreds = 0, retorna o proprio horario inicial
 	- se nCreds = 1, retorna o horario seguinte ao horario inicial
 	...
-*/
-HorarioAula* Calendario::getHorarioMaisNCreds( HorarioAula *h, int nCreds )
-{	
+	*/
+HorarioAula* Calendario::getHorarioMaisNCreds(HorarioAula *h, int nCreds)
+{
 	HorarioAula *hf = h;
 
-	for ( int i=1; i<=nCreds; i++ )
+	for (int i = 1; i <= nCreds; i++)
 	{
-		if ( hf == NULL ) return NULL;
+		if (hf == NULL) return NULL;
 
-		hf = this->getProximoHorario( hf );
+		hf = this->getProximoHorario(hf);
 	}
 
 	return hf;
@@ -500,104 +495,104 @@ HorarioAula* Calendario::getHorarioMaisNCreds( HorarioAula *h, int nCreds )
 /*
 	Dado um grupo de calendarios, retorna um map contendo, para cada dia, a lista de HorariosAula
 	que são comuns em todos os calendarios (incluindo o calendario this).
-*/
-std::map< int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > Calendario::retornaDiaHorariosEmComum( GGroup<Calendario*,LessPtr<Calendario>> calendarios )
+	*/
+map<int, GGroup<HorarioAula*, Less<HorarioAula*>>> Calendario::retornaDiaHorariosEmComum(GGroup<Calendario*, Less<Calendario*>> calendarios)
 {
-	std::map< int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > horariosDiaComuns;
+	map<int, GGroup<HorarioAula*, Less<HorarioAula*>>> horariosDiaComuns;
 
 	// Copia horariosDia do primeiro calendario da lista
-	ITERA_GGROUP_LESSPTR( itHorAula, this->horarios_aula, HorarioAula )
+	ITERA_GGROUP_LESSPTR(itHorAula, this->horarios_aula, HorarioAula)
 	{
-		ITERA_GGROUP_N_PT( itDia, itHorAula->dias_semana, int )
+		ITERA_GGROUP_N_PT(itDia, itHorAula->dias_semana, int)
 		{
 			horariosDiaComuns[*itDia].add(*itHorAula);
 		}
 	}
 
 	// Remove os horariosDia que não são comuns
-	ITERA_GGROUP_LESSPTR( itCalend, calendarios, Calendario )
-	{		
-		std::map< int, GGroup<HorarioAula*, LessPtr<HorarioAula>> > remover;
-		std::map< int, GGroup<HorarioAula*, LessPtr<HorarioAula>> >::iterator itMap = horariosDiaComuns.begin();
-		for( ; itMap != horariosDiaComuns.end(); itMap++ )
-		{			
+	ITERA_GGROUP_LESS(itCalend, calendarios, Calendario)
+	{
+		map<int, GGroup<HorarioAula*, Less<HorarioAula*>>> remover;
+		map<int, GGroup<HorarioAula*, Less<HorarioAula*>>>::iterator itMap = horariosDiaComuns.begin();
+		for (; itMap != horariosDiaComuns.end(); itMap++)
+		{
 			int dia = (*itMap).first;
-			ITERA_GGROUP_LESSPTR( itHa, (*itMap).second, HorarioAula )
+			ITERA_GGROUP_LESS(itHa, (*itMap).second, HorarioAula)
 			{
 				HorarioAula *ha = *itHa;
-				if ( ! (*itCalend)->possuiHorarioDia( ha, dia ) )
+				if (!(*itCalend)->possuiHorarioDia(ha, dia))
 				{
-					remover[dia].add( ha );
+					remover[dia].add(ha);
 				}
 			}
 		}
-				
-		for( itMap = remover.begin(); itMap != remover.end(); itMap++ )
-		{			
+
+		for (itMap = remover.begin(); itMap != remover.end(); itMap++)
+		{
 			int dia = (*itMap).first;
-			ITERA_GGROUP_LESSPTR( itHa, (*itMap).second, HorarioAula )
+			ITERA_GGROUP_LESS(itHa, (*itMap).second, HorarioAula)
 			{
 				HorarioAula *ha = *itHa;
-				horariosDiaComuns[dia].remove( ha );				
+				horariosDiaComuns[dia].remove(ha);
 			}
 		}
 
-		if ( horariosDiaComuns.size()==0 ) break;
+		if (horariosDiaComuns.size() == 0) break;
 	}
 
 	return horariosDiaComuns;
 }
 
 
-bool Calendario::possuiTurno( int t )
+bool Calendario::possuiTurno(int t)
 {
-	if ( this->mapTurnos.find(t) != this->mapTurnos.end() )
+	if (this->mapTurnos.find(t) != this->mapTurnos.end())
 		return true;
 	else
 		return false;
 }
 
-bool Calendario::possuiTurno( int t , int dia )
+bool Calendario::possuiTurno(int t, int dia)
 {
-	std::map<int, GGroup<int>>::iterator itMap = this->mapTurnos.find(t);
-	if ( itMap != this->mapTurnos.end() )
+	map<int, GGroup<int>>::iterator itMap = this->mapTurnos.find(t);
+	if (itMap != this->mapTurnos.end())
 	{
 		GGroup<int> dias = itMap->second;
-		if ( dias.find(dia) != dias.end() )
+		if (dias.find(dia) != dias.end())
 			return true;
 	}
-	
+
 	return false;
 }
 
-GGroup<int> Calendario::dias( int t ) 
+GGroup<int> Calendario::dias(int t)
 {
 	GGroup<int> d;
 
-	std::map<int, GGroup<int>>::iterator it = mapTurnos.find(t);
-	if ( it != mapTurnos.end() ) 
+	map<int, GGroup<int>>::iterator it = mapTurnos.find(t);
+	if (it != mapTurnos.end())
 		d = it->second;
 
 	return d;
 }
 
-int Calendario::getTurnoIES( DateTime dt )
+int Calendario::getTurnoIES(DateTime dt)
 {
-	ITERA_GGROUP_LESSPTR( itHorAula, horarios_aula, HorarioAula )
+	ITERA_GGROUP_LESSPTR(itHorAula, horarios_aula, HorarioAula)
 	{
-		if ( itHorAula->getInicio() == dt )
+		if (itHorAula->getInicio() == dt)
 		{
 			return itHorAula->getTurnoIESId();
 		}
 	}
 
-	std::cout<<"\nErro, turno nao encontrado!! DateTime " << dt << " Calendario " << this->getId(); fflush(NULL);
+	cout << "\nErro, turno nao encontrado!! DateTime " << dt << " Calendario " << this->getId(); fflush(NULL);
 	return -1;
 }
 
 void Calendario::calculaDiaFaseSomaInterv()
 {
-	for ( auto itDia = this->mapDiaDateTime.begin(); itDia != this->mapDiaDateTime.end(); itDia++ )
+	for (auto itDia = this->mapDiaDateTime.begin(); itDia != this->mapDiaDateTime.end(); itDia++)
 	{
 		int dia = itDia->first;
 
@@ -606,24 +601,24 @@ void Calendario::calculaDiaFaseSomaInterv()
 		DateTime dtAnt;
 		int maxInterv = 0;
 
-		for ( auto itDt = itDia->second.begin(); itDt != itDia->second.end(); itDt++ )
+		for (auto itDt = itDia->second.begin(); itDt != itDia->second.end(); itDt++)
 		{
 			DateTime dt = itDt->first;
-			
+
 			fase = CentroDados::getFaseDoDia(dt);
 
-			if ( faseAnt == fase )
+			if (faseAnt == fase)
 			{
-				int interv = (dt - dtAnt).getDateMinutes() - (int) getTempoAula();
+				int interv = (dt - dtAnt).getDateMinutes() - getTempoAula();
 				soma += interv;
-				maxInterv = max( maxInterv, interv );
+				maxInterv = max(maxInterv, interv);
 			}
-			
-			bool fechaFase=false;
-			if ( faseAnt != fase && faseAnt>0 )									// finaliza nova fase
-				fechaFase=true;
-			if ( auto itRev = (++itDia->second.rend())->first == itDt->first )	// finaliza ultima fase
-				fechaFase=true;
+
+			bool fechaFase = false;
+			if (faseAnt != fase && faseAnt > 0)									// finaliza nova fase
+				fechaFase = true;
+			if (auto itRev = (++itDia->second.rend())->first == itDt->first)	// finaliza ultima fase
+				fechaFase = true;
 
 			if (fechaFase)
 			{
@@ -637,26 +632,26 @@ void Calendario::calculaDiaFaseSomaInterv()
 			faseAnt = fase;
 		}
 	}
-	
+
 }
 
 void Calendario::calculaDiaSomaInterv()
 {
-	for ( auto itDia = this->mapDiaDateTime.begin(); itDia != this->mapDiaDateTime.end(); itDia++ )
+	for (auto itDia = this->mapDiaDateTime.begin(); itDia != this->mapDiaDateTime.end(); itDia++)
 	{
 		auto *mapDtHor = &itDia->second;
-				
+
 		int dia = itDia->first;
-		int soma = 0;		
+		int soma = 0;
 		DateTime dtAnt;
 
-		for ( auto itDt = mapDtHor->begin(); itDt != mapDtHor->end(); itDt++ )
+		for (auto itDt = mapDtHor->begin(); itDt != mapDtHor->end(); itDt++)
 		{
 			DateTime dt = itDt->first;
-			
-			if ( itDt != mapDtHor->begin() )
+
+			if (itDt != mapDtHor->begin())
 			{
-				int interv = (dt - dtAnt).getDateMinutes() - (int) getTempoAula();
+				int interv = (dt - dtAnt).getDateMinutes() - getTempoAula();
 				soma += interv;
 			}
 
@@ -665,17 +660,17 @@ void Calendario::calculaDiaSomaInterv()
 
 		mapDiaSomaInterv[dia] = soma;
 	}
-	
+
 }
 
-int Calendario::getSomaInterv( int dia, int fase )
+int Calendario::getSomaInterv(int dia, int fase)
 {
 	int soma = 0;
 	auto itDia = this->mapDiaFaseSomaInterv.find(dia);
-	if ( itDia != this->mapDiaFaseSomaInterv.end() )
+	if (itDia != this->mapDiaFaseSomaInterv.end())
 	{
 		auto itFase = itDia->second.find(fase);
-		if ( itFase != itDia->second.end() )
+		if (itFase != itDia->second.end())
 		{
 			soma = itFase->second;
 		}
@@ -683,25 +678,25 @@ int Calendario::getSomaInterv( int dia, int fase )
 	return soma;
 }
 
-int Calendario::getSomaInterv( int dia )
+int Calendario::getSomaInterv(int dia)
 {
 	int soma = 0;
 	auto itDia = this->mapDiaSomaInterv.find(dia);
-	if ( itDia != this->mapDiaSomaInterv.end() )
+	if (itDia != this->mapDiaSomaInterv.end())
 	{
 		soma = itDia->second;
 	}
 	return soma;
 }
 
-int Calendario::getMaxInterv( int dia, int fase )
+int Calendario::getMaxInterv(int dia, int fase)
 {
 	int interv = 0;
 	auto itDia = this->mapDiaFaseMaxInterv.find(dia);
-	if ( itDia != this->mapDiaFaseMaxInterv.end() )
+	if (itDia != this->mapDiaFaseMaxInterv.end())
 	{
 		auto itFase = itDia->second.find(fase);
-		if ( itFase != itDia->second.end() )
+		if (itFase != itDia->second.end())
 		{
 			interv = itFase->second;
 		}

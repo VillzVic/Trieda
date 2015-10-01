@@ -206,7 +206,7 @@ void MIPUnico::imprimeGradeHorAlunos( int campusId, int prioridade )
 	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
 	{
 		GGroup<TurnoIES*,LessPtr<TurnoIES>> turnos;
-		ITERA_GGROUP_LESSPTR( itAlDem, itAluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDem, itAluno->demandas, AlunoDemanda )
 		{
 			turnos.add( itAlDem->demanda->getTurnoIES() );
 		}
@@ -4562,7 +4562,7 @@ int MIPUnico::criaVariaveisTatico( int campusId, int P, int r )
 	num_vars += this->criaVariavelDeslocProfAPartirDeK();		// desloc_{p,t,u1,u2}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
-	std::cout << "numVars \desloc\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
+	std::cout << "numVars \"desloc\": " << (num_vars - numVarsAnterior)  <<"\t "<<dif <<" sec" << std::endl; fflush(NULL);
 	numVarsAnterior = num_vars;
 
 
@@ -5539,7 +5539,7 @@ int MIPUnico::criaVariavelTaticoFolgaDemandaDiscAluno( int campusId, int P )
    {
 	    Aluno *aluno = *itAluno;
 
-		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 		{
 			if ( itAlDemanda->demanda->oferta->getCampusId() != campusId )
 				continue;
@@ -5707,11 +5707,11 @@ int MIPUnico::criaVariavelFolgaProibeCompartilhamento( int campusId, int P )
 		   continue;
 	   }
 
-	   ITERA_GGROUP_LESSPTR( itCurso1, cp->cursos, Curso )
+	   ITERA_GGROUP_LESS( itCurso1, cp->cursos, Curso )
 	   {
 		   Curso* c1 = *itCurso1;
 		   
-		   ITERA_GGROUP_INIC_LESSPTR( itCurso2, itCurso1, cp->cursos, Curso )
+		   ITERA_GGROUP_INIC_LESS( itCurso2, itCurso1, cp->cursos, Curso )
 		   {
 				Curso* c2 = *itCurso2;
 			    
@@ -5820,7 +5820,7 @@ int MIPUnico::criaVariavelFolgaPrioridadeInf( int campusId, int prior )
 			int totalCreditosP2 = 0;
 			double tempoMaxCred=0;
 
-			ITERA_GGROUP_LESSPTR( itAlunoDem, aluno->demandas, AlunoDemanda )
+			ITERA_GGROUP_LESS( itAlunoDem, aluno->demandas, AlunoDemanda )
 			{
 				if ( itAlunoDem->getPrioridade() != prior )
 					continue;
@@ -6026,7 +6026,7 @@ int MIPUnico::criaVariavelTaticoAlunosMesmaTurmaPratica( int campusId, int P )
 	{
 		Aluno *aluno = *itAluno;
 
-		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 		{
 			Disciplina *disciplina = (*itAlDemanda)->demanda->disciplina;
 
@@ -8146,7 +8146,7 @@ int MIPUnico::criaRestricaoTaticoAlunoDiscPraticaTeorica_MxN( int campusId )
 	{
 		Aluno *aluno = *itAluno;
 
-		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 		{
 			if ( itAlDemanda->demanda->oferta->getCampusId() != campusId )
 			{
@@ -9142,7 +9142,7 @@ int MIPUnico::criaRestricaoTaticoAbreTurmasEmSequencia( int campusId )
 					continue;
 				}
 
-               ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+               ITERA_GGROUP_LESS( itUnidade, itCampus->unidades, Unidade )
                {
                   ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
                   {
@@ -9421,7 +9421,7 @@ int MIPUnico::criaRestricaoTaticoAtendeAlunoEquivTotal( int campusId, int priori
 	{
 		Aluno *aluno = *itAluno;
 		
-		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 		{
 			Disciplina *disciplina = itAlDemanda->demanda->disciplina;
 						
@@ -9540,7 +9540,7 @@ int MIPUnico::criaRestricaoTaticoAlunoDiscPraticaTeoricaEquiv_MxN( int campusId,
 		Aluno *aluno = *itAluno;
 		  
 
-		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 		{
 			if ( itAlDemanda->getOferta()->getCampusId() != campusId )
 			{

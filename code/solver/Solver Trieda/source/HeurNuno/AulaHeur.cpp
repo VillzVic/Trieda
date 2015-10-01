@@ -1,5 +1,5 @@
 #include "AulaHeur.h"
-#include "../HorarioAula.h"
+
 #include "UtilHeur.h"
 #include "EntidadeAlocavel.h"
 #include "HeuristicaNuno.h"

@@ -60,7 +60,7 @@
 #define XSD_CXX_TREE_USE_CHAR
 #endif
 
-#include <xsd/cxx/xml/char-utf8.hxx>
+#include <xsd/cxx/xml/char-iso8859-1.hxx>
 
 #include <xsd/cxx/tree/exceptions.hxx>
 #include <xsd/cxx/tree/elements.hxx>
@@ -636,7 +636,7 @@ class TriedaOutput;
 #include <limits>    // std::numeric_limits
 #include <algorithm> // std::binary_search
 
-#include <xsd/cxx/xml/char-utf8.hxx>
+#include <xsd/cxx/xml/char-iso8859-1.hxx>
 
 #include <xsd/cxx/tree/exceptions.hxx>
 #include <xsd/cxx/tree/elements.hxx>

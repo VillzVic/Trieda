@@ -1,15 +1,13 @@
 #ifndef _NIVEL_DIFICULDADE_HORARIO_H_
 #define _PARAMETROS_PLANEJAMENTO_H_
 
-#include "ofbase.h"
+#include "OFBase.h"
 
 #include "NivelDificuldadeHorario.h"
 
-class ParametrosPlanejamento:
-   public OFBase
+class ParametrosPlanejamento : public OFBase
 {
 public:
-
 	enum ConstraintLevel
 	{
 		Off = 0,
@@ -17,95 +15,92 @@ public:
 		Strong = 2
 	};
 
-   ParametrosPlanejamento( void );
-   virtual ~ParametrosPlanejamento( void );
-   
-   std::string modo_otimizacao;
-   GGroup< NivelDificuldadeHorario * > niveis_dificuldade_horario;
+	std::string modo_otimizacao;
+	GGroup< NivelDificuldadeHorario * > niveis_dificuldade_horario;
 
-   GGroup< int > maximizar_avaliacao_cursos;
-   GGroup< int > minimizar_custo_docente_cursos;
-   GGroup< GGroup< int > * > nao_permite_compart_turma;
-   enum CHS { EQUILIBRAR, MINIMIZAR_DIAS, INDIFERENTE };
-   CHS carga_horaria_semanal_aluno;
-   CHS carga_horaria_semanal_prof;
+	GGroup< int > maximizar_avaliacao_cursos;
+	GGroup< int > minimizar_custo_docente_cursos;
+	GGroup< GGroup< int > * > nao_permite_compart_turma;
+	enum CHS { EQUILIBRAR, MINIMIZAR_DIAS, INDIFERENTE };
+	CHS carga_horaria_semanal_aluno;
+	CHS carga_horaria_semanal_prof;
 
-   int maxDeslocProf;
-   
-   // funcao objetivo:
-   // 0 = maximizar margem
-   // 1 = minimizar custo docente
-   int funcao_objetivo;
+	int maxDeslocProf;
 
-   double perc_max_reducao_CHP;
-   double minAtendPercPorAluno;
+	// funcao objetivo:
+	// 0 = maximizar margem
+	// 1 = minimizar custo docente
+	int funcao_objetivo;
 
-   // ALUNO ou BLOCOCURRICULAR
-   std::string otimizarPor;
+	double perc_max_reducao_CHP;
+	double minAtendPercPorAluno;
 
-   bool equilibrar_diversidade_disc_dia;
-   bool minimizar_desloc_prof;
-   bool minimizar_desloc_aluno;
-   bool minimizar_horarios_vazios_professor;
-   bool custo_prof_disponibilidade;
-   bool evitar_reducao_carga_horaria_prof;
-   bool evitar_prof_ultimo_primeiro_hr;
-   bool considerar_equivalencia;
-   bool permite_compartilhamento_turma_sel;
-   bool permitir_alunos_em_varios_campi;
-   bool min_mestres;
-   bool min_doutores;
-   bool minContratoIntegral;
-   bool minContratoParcial;
-   bool considerar_preferencia_prof;
-   bool considerar_desempenho_prof;
-   
-   bool min_alunos_abertura_turmas;
-   int min_alunos_abertura_turmas_value;
-   bool min_alunos_abertura_turmas_praticas;
-   int min_alunos_abertura_turmas_praticas_value;
-   bool violar_min_alunos_turmas_formandos;
+	// ALUNO ou BLOCOCURRICULAR
+	std::string otimizarPor;
 
-   bool utilizarDemandasP2;
-   bool considerar_equivalencia_por_aluno;
-   bool considerar_disponibilidade_prof_em_tatico;
-   bool considerar_disciplinas_incompativeis_no_dia;
-   bool maximoDisciplinasDeUmProfessorPorCurso;
+	bool equilibrar_diversidade_disc_dia;
+	bool minimizar_desloc_prof;
+	bool minimizar_desloc_aluno;
+	bool minimizar_horarios_vazios_professor;
+	bool custo_prof_disponibilidade;
+	bool evitar_reducao_carga_horaria_prof;
+	bool evitar_prof_ultimo_primeiro_hr;
+	bool considerar_equivalencia;
+	bool permite_compartilhamento_turma_sel;
+	bool permitir_alunos_em_varios_campi;
+	bool min_mestres;
+	bool min_doutores;
+	bool minContratoIntegral;
+	bool minContratoParcial;
+	bool considerar_preferencia_prof;
+	bool considerar_desempenho_prof;
 
-   bool discPratTeor1x1;
-   bool discPratTeor1xN;
-   bool discPratTeorMxN;
+	bool min_alunos_abertura_turmas;
+	int min_alunos_abertura_turmas_value;
+	bool min_alunos_abertura_turmas_praticas;
+	int min_alunos_abertura_turmas_praticas_value;
+	bool violar_min_alunos_turmas_formandos;
 
-   bool discPratTeor1xN_antigo;
-   bool considerarMaxDiasPorProf;
-   bool minCredsDiariosPorProf;
-   bool considerarMinPercAtendAluno;
-   bool min_folga_ocupacao_sala;
-   bool limitar_unidades_por_periodo;
-   bool limitar_salas_por_periodo;
+	bool utilizarDemandasP2;
+	bool considerar_equivalencia_por_aluno;
+	bool considerar_disponibilidade_prof_em_tatico;
+	bool considerar_disciplinas_incompativeis_no_dia;
+	bool maximoDisciplinasDeUmProfessorPorCurso;
 
-   bool considerarDescansoMinProf;
-   double descansoMinProfValue;
+	bool discPratTeor1x1;
+	bool discPratTeor1xN;
+	bool discPratTeorMxN;
 
-   int proibirProfGapMTN;
-   int proibirProfVirtualGapMTN;
+	bool discPratTeor1xN_antigo;
+	bool considerarMaxDiasPorProf;
+	bool minCredsDiariosPorProf;
+	bool considerarMinPercAtendAluno;
+	bool min_folga_ocupacao_sala;
+	bool limitar_unidades_por_periodo;
+	bool limitar_salas_por_periodo;
 
-   int proibirAlunoGap;
+	bool considerarDescansoMinProf;
+	double descansoMinProfValue;
 
-   bool priorizarCalouros;
-   bool priorizarFormandos;
+	int proibirProfGapMTN;
+	int proibirProfVirtualGapMTN;
 
-   bool minDeslocAlunoEntreUnidadesNoDia;
+	int proibirAlunoGap;
 
-   bool considerarCoRequisitos;
-   bool considerarPrioridadePorAlunos;
+	bool priorizarCalouros;
+	bool priorizarFormandos;
 
-   bool regrasGenericasDivisaoCredito;
-   bool regrasEspecificasDivisaoCredito;
+	bool minDeslocAlunoEntreUnidadesNoDia;
 
-   virtual void le_arvore( ItemParametrosPlanejamento & );
+	bool considerarCoRequisitos;
+	bool considerarPrioridadePorAlunos;
+
+	bool regrasGenericasDivisaoCredito;
+	bool regrasEspecificasDivisaoCredito;
+
+	virtual void le_arvore(ItemParametrosPlanejamento &);
 };
 
-std::ostream & operator << ( std::ostream &, ParametrosPlanejamento & );
+std::ostream & operator<<(std::ostream &, ParametrosPlanejamento &);
 
 #endif

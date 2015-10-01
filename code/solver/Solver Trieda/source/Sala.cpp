@@ -535,8 +535,8 @@ void Sala::calculaTempoDispPorTurno()
     {
 		if (itDisc->getCalendarios().size() == 0)
 			continue;			   
-		GGroup< Calendario*, LessPtr<Calendario> > calendsDisc = itDisc->getCalendarios();
-		ITERA_GGROUP_LESSPTR (itCalend, calendsDisc, Calendario )
+		GGroup< Calendario*, Less<Calendario*> > calendsDisc = itDisc->getCalendarios();
+		ITERA_GGROUP_LESS (itCalend, calendsDisc, Calendario )
 		{
 			calendarios.add( *itCalend );
 		}

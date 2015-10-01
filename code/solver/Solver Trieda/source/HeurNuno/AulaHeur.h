@@ -4,8 +4,8 @@
 #include "UtilHeur.h"
 #include "../Calendario.h"
 #include "DateTime.h"
+#include "../HorarioAula.h"
 
-class HorarioAula;
 class TurmaHeur;
 
 class AulaHeur

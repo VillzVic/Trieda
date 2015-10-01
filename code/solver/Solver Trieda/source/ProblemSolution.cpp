@@ -1067,7 +1067,7 @@ void ProblemSolution::constroiMapsDaSolucao()
 
 	ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
 	{
-		ITERA_GGROUP_LESSPTR( itUnidade, itCp->unidades, Unidade )
+		ITERA_GGROUP_LESS( itUnidade, itCp->unidades, Unidade )
 		{
 			ITERA_GGROUP_LESSPTR( itSala, itUnidade->salas, Sala )
 			{

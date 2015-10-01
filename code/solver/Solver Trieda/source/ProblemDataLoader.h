@@ -16,7 +16,6 @@
 
 struct DivCredType;
 
-
 class ProblemDataLoader
 {
 public:
@@ -78,12 +77,10 @@ public:
    /* */
    void geraHorariosDia();
 
-   /* */
-   //template< class T > 
-   //void find_and_set( int, GGroup< T *, LessPtr< T > > &, T * &, bool );
-
-   template< class T > 
-   void find_and_set_lessptr( int, GGroup< T *, LessPtr< T > > &, T * &, bool );
+   template<class T>
+   void find_and_set_lessptr(int, GGroup<T*, LessPtr<T>>&, T*&, bool);
+   template<class T>
+   void find_and_set(int, GGroup<T*, Less<T*>>&, T*&, bool);
 
    /* */
    void gera_refs();

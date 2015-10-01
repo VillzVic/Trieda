@@ -124,9 +124,9 @@ public:
    GGroup< HorarioAula*, LessPtr<HorarioAula> > getHorariosDia( Calendario* sl, int dia );
    GGroup< HorarioDia*, LessPtr<HorarioDia> > getHorariosDia( Calendario* sl ) { return calendarios[sl]; } 
    
-   GGroup< Calendario*, LessPtr<Calendario> > getCalendarios() 
+   GGroup< Calendario*, Less<Calendario*> > getCalendarios() 
    { 
-	   GGroup< Calendario*, LessPtr<Calendario> > ggroupCalend;
+	   GGroup< Calendario*, Less<Calendario*> > ggroupCalend;
 	   std::map< Calendario*, GGroup< HorarioDia*, LessPtr<HorarioDia> >, LessPtr<Calendario> >::iterator
 		   it = calendarios.begin();
 	   for ( ; it!=calendarios.end(); it++ )
@@ -143,7 +143,7 @@ public:
    double getTotalTempo() { return ( getTotalCreditos() * getTempoCredSemanaLetiva() ); }
 
    // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
-   double getTempoCredSemanaLetiva();
+   int getTempoCredSemanaLetiva();
 
    int getTotalCreditos() const { return this->getCredTeoricos() + this->getCredPraticos(); }
       
@@ -179,7 +179,7 @@ public:
    std::map< Calendario*, GGroup< HorarioDia*, LessPtr<HorarioDia> >, LessPtr<Calendario> > calendarios;
 
    // calendarios reduzidos (usado na heurística)
-   GGroup<Calendario*, LessPtr<Calendario>> calendariosReduzidos;
+   GGroup<Calendario*, Less<Calendario*>> calendariosReduzidos;
    // combinações de divisões por id
 
 private:   

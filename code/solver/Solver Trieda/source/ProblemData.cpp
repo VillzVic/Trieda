@@ -1110,7 +1110,7 @@ void ProblemData::refTitContProfReal()
    // Referencia titulação e contrato dos professores reais
    ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )
    {
-	   ITERA_GGROUP_LESSPTR( it_prof, it_campi->professores, Professor )
+	   ITERA_GGROUP_LESS( it_prof, it_campi->professores, Professor )
       {
 		  int titid = it_prof->getTitulacaoId();
 		  TipoTitulacao *tipotit = this->retornaTitulacaoPorId( titid );
@@ -1144,7 +1144,7 @@ void ProblemData::preencheHorSalas(TriedaInput &raiz)
    // Prencher os horários e/ou créditos das salas
    ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )
    {
-      ITERA_GGROUP_LESSPTR( it_unidade, it_campi->unidades, Unidade )
+      ITERA_GGROUP_LESS( it_unidade, it_campi->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
          {
@@ -1921,7 +1921,7 @@ GGroup< Professor *, LessPtr< Professor > > ProblemData::getProfessores() const
    {
       Campus * campus = ( *it_campi );
 
-      ITERA_GGROUP_LESSPTR( it_prof, it_campi->professores, Professor )
+      ITERA_GGROUP_LESS( it_prof, it_campi->professores, Professor )
       {
          Professor * professor = ( *it_prof );
 
@@ -1993,7 +1993,7 @@ GGroup< Sala *, LessPtr< Sala > > ProblemData::getSalas() const
    {
       Campus * campus = ( *it_campus );
 
-      ITERA_GGROUP_LESSPTR( it_unidade, campus->unidades, Unidade )
+      ITERA_GGROUP_LESS( it_unidade, campus->unidades, Unidade )
       {
          Unidade * unidade = ( *it_unidade );
 
@@ -2087,7 +2087,7 @@ Campus* ProblemData::retornaCampus( int unidId /*unidId*/ )
    {
       Campus * campus = ( *it_campus );
 	  
-	  ITERA_GGROUP_LESSPTR( it_unid, campus->unidades, Unidade )
+	  ITERA_GGROUP_LESS( it_unid, campus->unidades, Unidade )
 	  {
 		  if ( ( *it_unid )->getId() == unidId )
 		  {
@@ -2262,7 +2262,7 @@ AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId, int pri
 
 AlunoDemanda* ProblemData::procuraAlunoDemOrigEquiv( Disciplina* disc, Aluno *aluno, int prioridade )
 {
-	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 	{
 		if ( itAlDemanda->demanda->disciplina == disc &&
 			 itAlDemanda->getPrioridade() <= prioridade )
@@ -2307,7 +2307,7 @@ AlunoDemanda* ProblemData::procuraAlunoDemOrigEquiv( Disciplina* disc, Aluno *al
 
 AlunoDemanda* ProblemData::procuraAlunoDemEquiv( Disciplina* disc, Aluno *aluno, int prioridade )
 {
-	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 	{
 		if ( itAlDemanda->demanda->disciplina == disc &&
 			 itAlDemanda->getPrioridade() <= prioridade )
@@ -2573,7 +2573,7 @@ AlunoDemanda* ProblemData::atualizaAlunoDemandaEquiv( int turma, Disciplina* dis
 
 	AlunoDemanda *alDem = NULL;
 
-	ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda ) // procura AlunoDemanda original
+	ITERA_GGROUP_LESS ( itAlDem, aluno->demandas, AlunoDemanda ) // procura AlunoDemanda original
 	{
 		alDem = (*itAlDem);
 		Demanda *demandaOriginal;
@@ -2783,7 +2783,7 @@ AlunoDemanda* ProblemData::atualizaAlunoDemandaEquiv( int turma, Disciplina* dis
 		{
 			std::cout<<"\nErro! Nao achei AlunoDemanda original nem substituto. Aluno"
 			<<aluno->getAlunoId()<<" Disc"<<disciplina->getId()<<". Rodada P"<<prioridade<<"\n";
-			ITERA_GGROUP_LESSPTR ( itAlDemanda, aluno->demandas, AlunoDemanda )
+			ITERA_GGROUP_LESS ( itAlDemanda, aluno->demandas, AlunoDemanda )
 				std::cout<<" (AlDem"<<itAlDemanda->getId()<<",Disc"<<itAlDemanda->demanda->getDisciplinaId()<<")";
 		}
 		alDem = NULL;
@@ -2878,7 +2878,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 		}
 		// Pula AlunoDemanda possivelmente repetido
 		bool repetido=false;
-		ITERA_GGROUP_LESSPTR( itAlDem2, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDem2, aluno->demandas, AlunoDemanda )
 		{
 			if ( (*itAlDem2)->demanda->getDisciplinaId() == (*itAlDem)->demanda->getDisciplinaId() )
 			{
@@ -3124,7 +3124,7 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaMaxDemandasDisc
 	{
 		Aluno *aluno = *itAl;
 		
-		ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS ( itAlDem, aluno->demandas, AlunoDemanda )
 		{
 			AlunoDemanda *alunoDemanda = *itAlDem;
 
@@ -3168,7 +3168,7 @@ bool ProblemData::haDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, 
 	{
 		Aluno *aluno = *itAl;
 		
-		ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS ( itAlDem, aluno->demandas, AlunoDemanda )
 		{
 			if ( (*itAlDem)->getPrioridade() > prioridade )
 				continue;
@@ -3411,7 +3411,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 		map< int, GGroup< Aluno *, LessPtr< Aluno > > >::iterator itCjtAlunos;
 
 		// Procura se já existe grupo com demanda de alguma disciplina do aluno
-		ITERA_GGROUP_LESSPTR( itAlDem, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDem, aluno->demandas, AlunoDemanda )
 		{			
 			AlunoDemanda *ad = *itAlDem;
 			Disciplina *disciplina = ad->demanda->disciplina;
@@ -3442,7 +3442,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 					GGroup< Aluno *, LessPtr< Aluno > > *grupoAlunos = & (*itCjtAlunos).second;
 					ITERA_GGROUP_LESSPTR( itAlunoInt, *grupoAlunos, Aluno )
 					{
-						ITERA_GGROUP_LESSPTR( itAlDemInt, itAlunoInt->demandas, AlunoDemanda )
+						ITERA_GGROUP_LESS( itAlDemInt, itAlunoInt->demandas, AlunoDemanda )
 						{
 							if ( true)//itAlDemInt->demanda->disciplina == d )
 							{
@@ -3580,7 +3580,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 		{
 			Aluno *a = *itAl;
 			
-			ITERA_GGROUP_LESSPTR( itAlDem, a->demandas, AlunoDemanda )
+			ITERA_GGROUP_LESS( itAlDem, a->demandas, AlunoDemanda )
 			{
 				AlunoDemanda *alDem = *itAlDem;
 				Demanda *dem = alDem->demanda;
@@ -4064,7 +4064,7 @@ double ProblemData::cargaHorariaOriginalRequeridaPorPrioridade( int prior, Aluno
 double ProblemData::cargaHorariaAtualRequeridaPorPrioridade( int prior, Aluno* aluno )
 {
 	double cargaHorariaP2 = 0.0;
-	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDemanda, aluno->demandas, AlunoDemanda )
 	{		
 		if ( (*itAlDemanda)->getPrioridade() == prior )
 		{
@@ -4751,7 +4751,7 @@ bool ProblemData::haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, i
 		if ( ! aluno->ehFormando() )
 			continue;
 
-		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( it1AlDemanda, aluno->demandas, AlunoDemanda )
 		{
 			Disciplina *d = it1AlDemanda->demanda->disciplina;			
 			
@@ -4779,7 +4779,7 @@ bool ProblemData::haAlunoFormandoNaoAlocadoEquiv( Disciplina *disciplina, int cp
 		if ( ! aluno->ehFormando() )
 			continue;
 
-		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( it1AlDemanda, aluno->demandas, AlunoDemanda )
 		{			
 			if ( it1AlDemanda->getCampus()->getId() != cpId )
 				continue;
@@ -5048,7 +5048,7 @@ void ProblemData::imprimeResumoDemandasPorAluno()
 
 		demandasFile <<"\n\n" << a->getNomeAluno() << "\t" << a->getAlunoId();
 		
-		ITERA_GGROUP_LESSPTR( itAlunoDemanda, a->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlunoDemanda, a->demandas, AlunoDemanda )
 		{
 			demandasFile << "\nDiscId " << (*itAlunoDemanda)->demanda->getDisciplinaId() 
 				<< ", AlunoDemandaId " << (*itAlunoDemanda)->getId();
@@ -5154,7 +5154,7 @@ void ProblemData::imprimeResumoDemandasPorAlunoPosEquiv()
 
 		demandasFile <<"\n\n" << a->getNomeAluno() << "\t" << a->getAlunoId();
 		
-		ITERA_GGROUP_LESSPTR( itAlunoDemanda, a->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlunoDemanda, a->demandas, AlunoDemanda )
 		{
 			AlunoDemanda *alDem = (*itAlunoDemanda);
 
@@ -5544,8 +5544,8 @@ void ProblemData::preencheMapsTurmasCalendarios()
 		GGroup<HorarioDia*, LessPtr<HorarioDia>> horariosDiaComuns = this->retornaHorariosDiaTurnoComum( calendsTrio );
 				
 		// Adiciona horários dos calendarios da Disciplina que estejam em mesmo turno/dia que os comuns aos alunos.
-		GGroup<Calendario*, LessPtr<Calendario>> discCalends = disciplina->getCalendarios();
-		ITERA_GGROUP_LESSPTR( itCalend, discCalends, Calendario )
+		GGroup<Calendario*, Less<Calendario*>> discCalends = disciplina->getCalendarios();
+		ITERA_GGROUP_LESS( itCalend, discCalends, Calendario )
 		{
 			Calendario * calendario = *itCalend;
 
@@ -6186,14 +6186,14 @@ bool ProblemData::ehSubstituivel( int disciplina, int disciplinaEquiv, Curso *cu
 
 AlunoDemanda* ProblemData::getAlunoDemandaEquiv( Aluno* aluno, Disciplina *discProcurada )
 {
-	ITERA_GGROUP_LESSPTR( itAlDem, aluno->demandas, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDem, aluno->demandas, AlunoDemanda )
 	{
 		if ( (*itAlDem)->demanda->getDisciplinaId() == discProcurada->getId() )
 		{
 			return (*itAlDem);
 		}
 	}
-	ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda )
+	ITERA_GGROUP_LESS ( itAlDem, aluno->demandas, AlunoDemanda )
 	{
 		Disciplina *d = (*itAlDem)->demanda->disciplina;			
 		if ( d != discProcurada ) // procura nas equivalencias

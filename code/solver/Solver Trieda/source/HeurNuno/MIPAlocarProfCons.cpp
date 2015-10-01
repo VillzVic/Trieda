@@ -1,7 +1,9 @@
 #include "MIPAlocarProfCons.h"
+
 #include "OfertaDisciplina.h"
 #include "TurmaHeur.h"
-#include "..\CentroDados.h"
+#include "../CentroDados.h"
+#include "../Campus.h"
 
 #include "HashUtil.h"
 

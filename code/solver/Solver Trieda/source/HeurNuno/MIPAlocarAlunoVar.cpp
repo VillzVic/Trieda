@@ -1,7 +1,9 @@
 #include "MIPAlocarAlunoVar.h"
+
 #include "OfertaDisciplina.h"
 #include "TurmaHeur.h"
 #include "HashUtil.h"
+#include "../Campus.h"
 
 #define E_MENOR( a, b ) \
    ( a == nullptr && b != nullptr) || \

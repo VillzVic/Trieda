@@ -76,7 +76,7 @@ GGroup<HorarioAula*> BlocoCurricular::retornaHorariosDisponiveisNoDiaPorSL( int 
 	{
 		Disciplina *d = itPeriodoDisc->first;
 
-		GGroup< Calendario*, LessPtr<Calendario> > calendsDisc = d->getCalendarios();
+		GGroup< Calendario*, Less<Calendario*> > calendsDisc = d->getCalendarios();
 		if ( calendsDisc.find( sl ) != calendsDisc.end() )
 		{
 			ITERA_GGROUP_LESSPTR( it_horarios, d->horarios, Horario )
