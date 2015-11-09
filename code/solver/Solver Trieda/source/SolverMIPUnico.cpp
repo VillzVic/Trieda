@@ -12,6 +12,7 @@
 #include "NaoAtendimento.h"
 #include "AtendimentoHorarioAula.h"
 #include "AtendimentoTurno.h"
+#include "ProfessorVirtualOutput.h"
 #include "MIPUnico.h"
 #include "CentroDados.h"
 

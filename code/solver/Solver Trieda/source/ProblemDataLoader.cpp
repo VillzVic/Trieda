@@ -446,7 +446,7 @@ void ProblemDataLoader::relacionaDemandaAlunos()
 	{
 		Demanda * demanda = (*it_demanda);
 
-		ITERA_GGROUP_LESSPTR(it_aluno_demanda,
+		ITERA_GGROUP_LESS(it_aluno_demanda,
 			this->problemData->alunosDemanda, AlunoDemanda)
 		{
 			AlunoDemanda * aluno_demanda = (*it_aluno_demanda);
@@ -2648,7 +2648,7 @@ void ProblemDataLoader::divideDisciplinas()
 	}
 
 	// Testa se existe referencia para todas as demandas corretamente
-	ITERA_GGROUP_LESSPTR(it_aluno_dem, problemData->alunosDemanda, AlunoDemanda)
+	ITERA_GGROUP_LESS(it_aluno_dem, problemData->alunosDemanda, AlunoDemanda)
 	{
 		bool achou = false;
 		int id = (*it_aluno_dem)->getDemandaId();
@@ -3183,7 +3183,7 @@ void ProblemDataLoader::gera_refs()
 	} // deslocamento unidades 
 
 	std::cout << "\nGerando referencias para demandas...";
-	ITERA_GGROUP_LESSPTR(it_aluno_demanda,
+	ITERA_GGROUP_LESS(it_aluno_demanda,
 		problemData->alunosDemanda, AlunoDemanda)
 	{
 		bool encontrouDemanda = false;
@@ -3895,7 +3895,7 @@ void ProblemDataLoader::cache()
 	}
 
 	problemData->totalTurmas_AlDem = 0;
-	ITERA_GGROUP_LESSPTR(it_aldem, problemData->alunosDemanda, AlunoDemanda)
+	ITERA_GGROUP_LESS(it_aldem, problemData->alunosDemanda, AlunoDemanda)
 	{
 		problemData->totalTurmas_AlDem += it_aldem->demanda->disciplina->getNumTurmas();
 	}
@@ -5108,7 +5108,7 @@ void ProblemDataLoader::preencheHashHorarioAulaDateTime()
 
 void ProblemDataLoader::calculaCHOriginalPorAluno()
 {
-	ITERA_GGROUP_LESSPTR(it_aluno_demanda,
+	ITERA_GGROUP_LESS(it_aluno_demanda,
 		problemData->alunosDemanda, AlunoDemanda)
 	{
 		AlunoDemanda *aldem = *it_aluno_demanda;

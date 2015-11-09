@@ -360,7 +360,7 @@ void MIPUnico::corrigeNroTurmas( int prioridade, int campusId )
 	}
 	
 	map< Disciplina*, set<AlunoDemanda*> > mapDiscDemanda;
-	ITERA_GGROUP_LESSPTR( itAlDem, problemData->alunosDemanda, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDem, problemData->alunosDemanda, AlunoDemanda )
 	{		
 		Disciplina* disciplina = itAlDem->demanda->disciplina;
 

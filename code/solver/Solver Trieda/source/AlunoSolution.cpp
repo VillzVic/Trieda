@@ -122,8 +122,8 @@ map< DateTime /*dti*/, map< DateTime /*dtf*/, map< Disciplina*, Aula*,
 }
 
 void AlunoSolution::procuraChoqueDeHorariosAluno(
-	vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > > &opcoes,
-	map< int, GGroup< Trio<int,int,Disciplina*> > > &turmas_choque_horarios )
+	vector<map<int /*dia*/, GGroup<HorarioAula*, Less<HorarioAula*>>>> &opcoes,
+	map<int, GGroup<Trio<int, int, Disciplina*>>> &turmas_choque_horarios )
 {
 	/*
 		- Recebe em 'opcoes' um vetor com combinacoes de horários-dia, e um aluno.
@@ -134,13 +134,13 @@ void AlunoSolution::procuraChoqueDeHorariosAluno(
 	// Verifica conflitos entre horários-dia alocados do aluno e os horários-dia em 'opcoes'
 	for ( int at = 0; at != opcoes.size(); at++ )
 	{
-		map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > *opcao = & opcoes[at];
+		map<int /*dia*/, GGroup<HorarioAula*, Less<HorarioAula*>>> *opcao = & opcoes[at];
 		auto itDiaHors = (*opcao).begin();
 		for ( ; itDiaHors != (*opcao).end(); itDiaHors++ )
 		{
 			int dia = itDiaHors->first;
 
-			ITERA_GGROUP_LESSPTR( itHorAula, itDiaHors->second, HorarioAula )
+			ITERA_GGROUP_LESS( itHorAula, itDiaHors->second, HorarioAula )
 			{
 				DateTime dti = itHorAula->getInicio();
 				DateTime dtf = itHorAula->getFinal();
@@ -187,7 +187,7 @@ void AlunoSolution::procuraChoqueDeHorariosAluno(
 }
 
 
-void AlunoSolution::procuraChoqueDeHorariosAluno( int dia, DateTime dti, DateTime dtf, GGroup< Aula* > & aulas_choque )
+void AlunoSolution::procuraChoqueDeHorariosAluno(int dia, DateTime dti, DateTime dtf, GGroup<Aula*>& aulas_choque)
 {
 	/*
 		- Recebe o dia, o horario inicial dti e o horario final dtf;

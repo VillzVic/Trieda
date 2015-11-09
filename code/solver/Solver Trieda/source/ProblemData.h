@@ -91,7 +91,7 @@ public:
    GGroup< Oferta *, LessPtr< Oferta > > ofertas;
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
-   GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
+   GGroup< AlunoDemanda *, Less< AlunoDemanda* > > alunosDemanda;
    GGroup< Aluno *, LessPtr< Aluno > > alunos;
    GGroup< Professor *, LessPtr< Professor > > profsVirtuais; // 1 por tipo de titulação
    GGroup< Equivalencia*, LessPtr< Equivalencia > > equivalencias; // só contém as teoricas

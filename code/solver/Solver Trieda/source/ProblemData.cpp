@@ -922,7 +922,7 @@ void ProblemData::leDemandas(TriedaInput &raiz)
 
 			   if ( p > 1 )
 			   {
-				   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda ) // Só p1
+				   ITERA_GGROUP_LESS( itAlDem, this->alunosDemanda, AlunoDemanda ) // Só p1
 				   {
 					   if ( (*itAlDem)->getDemandaId() == demId && (*itAlDem)->getAlunoId() == alunoId ) 
 						  remover.add( *itAlDemTotal );
@@ -948,7 +948,7 @@ void ProblemData::leDemandas(TriedaInput &raiz)
 		   int id = itDem->getId();
 		   int n = 0;
 
-		   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+		   ITERA_GGROUP_LESS( itAlDem, this->alunosDemanda, AlunoDemanda )
 		   {
 			   if ( itAlDem->getDemandaId() == id )
 			   {
@@ -2827,7 +2827,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 	}
 	
 	// Retira de alunosDemanda e de cada aluno todos os AlunosDemanda de velhaPrioridade que não foram TOTALMENTE atendidos
-	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDem, this->alunosDemanda, AlunoDemanda )
 	{
 		int discId = itAlDem->demanda->getDisciplinaId();
 		int alunoId = itAlDem->getAlunoId();
@@ -2913,7 +2913,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 
 	// Atualiza total de turmas existentes referentes aos alunos-demanda atuais existentes
 	this->totalTurmas_AlDem = 0;
-	ITERA_GGROUP_LESSPTR( it_aldem, this->alunosDemanda, AlunoDemanda )
+	ITERA_GGROUP_LESS( it_aldem, this->alunosDemanda, AlunoDemanda )
 	{
 		this->totalTurmas_AlDem += it_aldem->demanda->disciplina->getNumTurmas();
 	}
@@ -2928,7 +2928,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 		int demandaId = itDem->getId();
 		int n = 0;
 
-		ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+		ITERA_GGROUP_LESS( itAlDem, this->alunosDemanda, AlunoDemanda )
 		{
 			if ( itAlDem->getDemandaId() == demandaId )
 			{
@@ -3851,7 +3851,7 @@ int ProblemData::maxDemandaDiscNoCursoEquiv( Disciplina *disciplina, int cursoId
 int ProblemData::getQtdAlunoDemandaAtualPorCampus( int campusId )
 {
 	int n = 0;
-	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDem, this->alunosDemanda, AlunoDemanda )
 	{
 		if ( itAlDem->demanda->oferta->getCampusId() == campusId )
 		{
@@ -5225,7 +5225,7 @@ void ProblemData::preencheMapDisciplinaAlunosDemanda( bool EQUIVALENCIA )
 	this->mapDisciplinaAlunosDemanda.clear();
 
 #ifdef EQUIVALENCIA_DESDE_O_INICIO
-	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+	ITERA_GGROUP_LESS( itAlDem, this->alunosDemanda, AlunoDemanda )
 	{
 		AlunoDemanda *alunoDemanda = (*itAlDem);
 
@@ -6100,8 +6100,8 @@ void ProblemData::imprimeUtilizacaoSala( int campusId, int prioridade, int cjtAl
 		   Sala *sala = itCS->first->salas.begin()->second;
 		   
 		   int dia = 0;
-		   GGroup< HorarioDia*, LessPtr<HorarioDia> > alocacoes = sala->getHorariosDiaOcupados();
-		   ITERA_GGROUP_LESSPTR( it, alocacoes, HorarioDia )
+		   GGroup<HorarioDia*, Less<HorarioDia*>> alocacoes = sala->getHorariosDiaOcupados();
+		   ITERA_GGROUP_LESS(it, alocacoes, HorarioDia)
 		   {
 			   if ( dia != it->getDia() ) utilizaSalasFile << "\nDia " << it->getDia() << ":";
 

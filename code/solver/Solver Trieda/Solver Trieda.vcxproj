@@ -518,7 +518,6 @@
     <ClCompile Include="source\AtendimentoUnidade.cpp" />
     <ClCompile Include="source\ProblemSolution.cpp" />
     <ClCompile Include="source\ProfessorVirtualOutput.cpp" />
-    <ClCompile Include="source\RestricaoViolada.cpp" />
     <ClCompile Include="source\TRIEDA-OutputXSD.cpp" />
   </ItemGroup>
   <ItemGroup>

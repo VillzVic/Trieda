@@ -432,7 +432,7 @@ ProblemSolution* SolucaoHeur::getProblemSolution(void) const
 
 	if(probSolution->alunosDemanda)
 		delete probSolution->alunosDemanda;
-	probSolution->alunosDemanda = new GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > >(HeuristicaNuno::probData->alunosDemanda);
+	probSolution->alunosDemanda = new GGroup<AlunoDemanda*, Less<AlunoDemanda*>>(HeuristicaNuno::probData->alunosDemanda);
 
 	HeuristicaNuno::logMsg("problem solution criada", 1);
 

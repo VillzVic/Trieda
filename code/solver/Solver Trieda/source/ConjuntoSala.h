@@ -4,6 +4,7 @@
 #include "ofbase.h"
 #include "Sala.h"
 #include "CreditoDisponivel.h"
+#include "Disciplina.h"
 
 class ConjuntoSala
 	: public OFBase
@@ -174,7 +175,7 @@ public:
 	{
 		int maxTempo = 0;
 
-		GGroup< Calendario*, Less<Calendario*> > calendarios;
+		GGroup<Calendario*, Less<Calendario*>> calendarios;
 		ITERA_GGROUP_LESSPTR(itDisc, this->disciplinas_associadas, Disciplina)
 		{
 			if (itDisc->getCalendarios().size() == 0)

@@ -76,7 +76,7 @@ public:
 		LessPtr<Disciplina> > > >* getMapAulasNoDia( int dia );
 
    void procuraChoqueDeHorariosAluno(
-		vector< map<int /*dia*/, GGroup<HorarioAula*, LessPtr<HorarioAula>> > > &opcoes,
+		vector< map<int /*dia*/, GGroup<HorarioAula*, Less<HorarioAula*>> > > &opcoes,
 		map< int, GGroup< Trio<int,int,Disciplina*> > > &turmas_choque_horarios );
 
    void procuraChoqueDeHorariosAluno( int dia, DateTime dti, DateTime dtf, GGroup< Aula* > & aulas_choque );

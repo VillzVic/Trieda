@@ -22,7 +22,7 @@ using std::stringstream;
 #endif
 
 
-#define DEFAULT_MIP_UNICO
+//#define DEFAULT_MIP_UNICO
 
 
 CmdLine::CmdLine( int argc, char**& argv) : argc_ (argc), argv_ (argv)
@@ -238,10 +238,10 @@ void CmdLine::checkLoadPartialSol()
 
 void CmdLine::checkPrintLogs()
 {
-	int idx = findArg( "-logs" );
-	bool found = (idx >= 0) && (idx < argc_);
-	if (found)
-		CentroDados::setPrintLogs(true);
+	//int idx = findArg( "-logs" );
+	//bool found = (idx >= 0) && (idx < argc_);
+	bool found = true;
+	if (found) CentroDados::setPrintLogs(true);
 }
 
 // [HEURÍSTICA]
