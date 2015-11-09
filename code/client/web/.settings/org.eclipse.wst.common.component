@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="Trieda">
-        <wb-resource deploy-path="/" source-path="/src/main/java"/>
-        <wb-resource deploy-path="/" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <dependent-module archiveName="trieda-domain-0.1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/domain/domain">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="Trieda"/>
-        <property name="java-output-path" value="/Trieda/war/WEB-INF/classes"/>
+        <property name="java-output-path" value="/web/target/Trieda-0.0-beta-5/WEB-INF/classes"/>
+        <property name="component.exclusion.patterns" value="WEB-INF/lib/*.jar"/>
     </wb-module>
 </project-modules>

@@ -5,7 +5,7 @@
 
 <web-app id="WebApp_ID">
 
-	<display-name>TriedaTeste</display-name>
+	<display-name>web</display-name>
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
