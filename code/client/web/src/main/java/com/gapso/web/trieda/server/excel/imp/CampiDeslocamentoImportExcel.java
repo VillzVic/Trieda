@@ -24,27 +24,24 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 @ProgressDeclarationAnnotation
-public class CampiDeslocamentoImportExcel
-	extends AbstractImportExcel< CampiDeslocamentoImportExcelBean >
+public class CampiDeslocamentoImportExcel extends AbstractImportExcel<CampiDeslocamentoImportExcelBean>
 {
 	static public String TEMPO_COLUMN_NAME;
-	private List< String > headerColumnsNames;
-	
-	public CampiDeslocamentoImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	private List<String> headerColumnsNames;
+
+	public CampiDeslocamentoImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
-	
+
 		createHeaderColumnNames();
 
 	}
-	
-	private void createHeaderColumnNames() {
-		List< Campus > campi = Campus.findByCenario(instituicaoEnsino, getCenario());
-		this.headerColumnsNames = new ArrayList< String >();
+
+	private void createHeaderColumnNames()
+	{
+		List<Campus> campi = Campus.findByCenario(instituicaoEnsino, getCenario());
+		this.headerColumnsNames = new ArrayList<String>();
 		this.headerColumnsNames.add(TEMPO_COLUMN_NAME);
 		for (Campus campus : campi)
 		{
@@ -53,46 +50,32 @@ public class CampiDeslocamentoImportExcel
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(
-		int sheetIndex, Sheet sheet, Workbook workbook )
-	{
-		String sheetName = workbook.getSheetName( sheetIndex );
-		return ExcelInformationType.CAMPI_DESLOCAMENTO.getSheetName().equals( sheetName );
-	}
-	
-	@Override
-	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, Sheet sheet, Workbook workbook )
+	protected List<String> getHeaderColumnsNames()
 	{
 		return this.headerColumnsNames;
 	}
-	
-	@Override
-	protected CampiDeslocamentoImportExcelBean createExcelBean(
-		Row header, Row row, int sheetIndex,
-		Sheet sheet, Workbook workbook )
-	{
-		CampiDeslocamentoImportExcelBean bean
-			= new CampiDeslocamentoImportExcelBean( row.getRowNum() + 1 );
 
-	    for ( int cellIndex = row.getFirstCellNum();
-	       	  cellIndex <= row.getLastCellNum(); cellIndex++ )
-	    {
-	        Cell cell = row.getCell( cellIndex );
-	
-	    	if ( cell != null )
-	    	{
-	    		Cell headerCell
-	    			= header.getCell( cell.getColumnIndex() );
-	
-	    		if ( headerCell != null )
-	    		{
-	    			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue( cell );
-					
-					if ( TEMPO_COLUMN_NAME.endsWith( columnName ) )
+	@Override
+	protected CampiDeslocamentoImportExcelBean createExcelBean(Row header, Row row)
+	{
+		CampiDeslocamentoImportExcelBean bean = new CampiDeslocamentoImportExcelBean(row.getRowNum() + 1);
+
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
+			Cell cell = row.getCell(cellIndex);
+
+			if (cell != null)
+			{
+				Cell headerCell = header.getCell(cell.getColumnIndex());
+
+				if (headerCell != null)
+				{
+					String columnName = headerCell.getRichStringCellValue().getString();
+					String cellValue = getCellValue(cell);
+
+					if (TEMPO_COLUMN_NAME.endsWith(columnName))
 					{
-						bean.setCampusOrigemStr( cellValue );
+						bean.setCampusOrigemStr(cellValue);
 					}
 					else
 					{
@@ -103,127 +86,105 @@ public class CampiDeslocamentoImportExcel
 								bean.addCampusDestinoStr(columnName, cellValue);
 							}
 						}
-					}		
-	    		}
-	    	}
-	    }
-	
+					}
+				}
+			}
+		}
+
 		return bean;
 	}
-	
+
 	@Override
 	protected String getHeaderToString()
 	{
 		return this.headerColumnsNames.toString();
 	}
-	
+
 	@Override
 	public String getSheetName()
 	{
 		return ExcelInformationType.CAMPI_DESLOCAMENTO.getSheetName();
 	}
-	
+
 	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected void processSheetContent(
-		String sheetName, List< CampiDeslocamentoImportExcelBean > sheetContent )
-	{
-		if ( doSyntacticValidation( sheetName, sheetContent )
-			&& doLogicValidation( sheetName, sheetContent ) )
-		{
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
-			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
-		}
-	}
-	
-	private boolean doSyntacticValidation(
-		String sheetName, List< CampiDeslocamentoImportExcelBean > sheetContent )
+	protected boolean doSyntacticValidation(List<CampiDeslocamentoImportExcelBean> sheetContent)
 	{
 		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
-		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
-			= new HashMap< ImportExcelError, List< Integer > >();
-	
-		for ( CampiDeslocamentoImportExcelBean bean : sheetContent )
+		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
+
+		for (CampiDeslocamentoImportExcelBean bean : sheetContent)
 		{
-			List< ImportExcelError > errorsBean
-				= bean.checkSyntacticErrors();
-	
-			for ( ImportExcelError error : errorsBean )
+			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
+
+			for (ImportExcelError error : errorsBean)
 			{
-				List< Integer> rowsWithErrors
-					= syntacticErrorsMap.get( error );
-	
-				if ( rowsWithErrors == null )
+				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
+
+				if (rowsWithErrors == null)
 				{
-					rowsWithErrors = new ArrayList< Integer >();
-					syntacticErrorsMap.put( error, rowsWithErrors );
+					rowsWithErrors = new ArrayList<Integer>();
+					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
-	
-				rowsWithErrors.add( bean.getRow() );
+
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
-	
+
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
 		{
-			List< Integer > linhasComErro
-				= syntacticErrorsMap.get( error );
-	
-			getErrors().add( error.getMessage(
-				linhasComErro.toString(), getI18nMessages() ) );
+			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
+
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
-	
+
 		return syntacticErrorsMap.isEmpty();
 	}
-	
-	private boolean doLogicValidation(
-		String sheetName, List< CampiDeslocamentoImportExcelBean > sheetContent )
+
+	@Override
+	protected boolean doLogicValidation(List<CampiDeslocamentoImportExcelBean> sheetContent)
 	{
 		checkUniqueness(sheetContent);
-		
+
 		checkCampusNaoCadastrado(sheetContent);
-		
+
 		checkOrigensDestinos(sheetContent);
-		
+
 		checkDeslocamentosMesmoCampus(sheetContent);
-		
-		
-	
+
 		return getErrors().isEmpty();
 	}
 
-	private void checkCampusNaoCadastrado(
-			List<CampiDeslocamentoImportExcelBean> sheetContent) {
+	private void checkCampusNaoCadastrado(List<CampiDeslocamentoImportExcelBean> sheetContent)
+	{
 		// [ CodigoCampus -> Campus ]
-		Map< String, Campus > campusBDMap = Campus.buildCampusNomeToCampusMap(
-			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Campus> campusBDMap = Campus.buildCampusNomeToCampusMap(Campus.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		if ( campusBDMap == null || campusBDMap.size() == 0 )
+		if (campusBDMap == null || campusBDMap.size() == 0)
 		{
 			return;
 		}
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( CampiDeslocamentoImportExcelBean bean : sheetContent )
+		for (CampiDeslocamentoImportExcelBean bean : sheetContent)
 		{
-			Campus campusOrigem = campusBDMap.get( bean.getCampusOrigemStr() );
+			Campus campusOrigem = campusBDMap.get(bean.getCampusOrigemStr());
 
-			if ( campusOrigem != null )
+			if (campusOrigem != null)
 			{
-				bean.setCampusOrigem( campusOrigem );
+				bean.setCampusOrigem(campusOrigem);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
-			
+
 			for (Entry<String, String> destinos : bean.getCampusDestinoStrToTempoStrMap().entrySet())
 			{
 				Campus campusDestino = campusBDMap.get(destinos.getKey());
-				
+
 				if (campusDestino != null)
 				{
 					bean.addCampusDestino(campusDestino, Integer.parseInt(destinos.getValue()));
@@ -231,111 +192,101 @@ public class CampiDeslocamentoImportExcel
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				"Campus",rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas("Campus", rowsWithErrors.toString()));
 		}
-		
+
 	}
 
-	private void checkOrigensDestinos(
-			List<CampiDeslocamentoImportExcelBean> sheetContent) {
+	private void checkOrigensDestinos(List<CampiDeslocamentoImportExcelBean> sheetContent)
+	{
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
-		
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+
 		List<String> campiOrigem = this.headerColumnsNames;
-				
-		for (int i = 1; i<campiOrigem.size(); i++)
+
+		for (int i = 1; i < campiOrigem.size(); i++)
 		{
-			if (sheetContent.get(i-1).getCampusOrigem() != null)
+			if (sheetContent.get(i - 1).getCampusOrigem() != null)
 			{
-				if (!sheetContent.get(i-1).getCampusOrigem().getNome().equals(campiOrigem.get(i)) )
+				if (!sheetContent.get(i - 1).getCampusOrigem().getNome().equals(campiOrigem.get(i)))
 				{
-					rowsWithErrors.add( sheetContent.get(i-1).getRow() );
+					rowsWithErrors.add(sheetContent.get(i - 1).getRow());
 				}
 			}
 		}
-		
-		if ( !rowsWithErrors.isEmpty() )
+
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoDeslocamentoAssimetrico(
-					rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoDeslocamentoAssimetrico(rowsWithErrors.toString()));
 		}
-		
+
 	}
 
-	private void checkDeslocamentosMesmoCampus(
-			List<CampiDeslocamentoImportExcelBean> sheetContent) {
+	private void checkDeslocamentosMesmoCampus(List<CampiDeslocamentoImportExcelBean> sheetContent)
+	{
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
-		for (CampiDeslocamentoImportExcelBean bean : sheetContent )
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+		for (CampiDeslocamentoImportExcelBean bean : sheetContent)
 		{
 			for (Entry<String, String> destino : bean.getCampusDestinoStrToTempoStrMap().entrySet())
 			{
 				if (bean.getCampusOrigemStr().equals(destino.getKey()) && Integer.parseInt(destino.getValue()) != 0)
 				{
-					rowsWithErrors.add( bean.getRow() );
+					rowsWithErrors.add(bean.getRow());
 				}
 			}
 		}
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getWarnings().add( getI18nMessages().excelAvisoMesmaEntidadeDeslocamento(
-					rowsWithErrors.toString() ) );
+			getWarnings().add(getI18nMessages().excelAvisoMesmaEntidadeDeslocamento(rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkUniqueness(
-		List< CampiDeslocamentoImportExcelBean > sheetContent )
+	private void checkUniqueness(List<CampiDeslocamentoImportExcelBean> sheetContent)
 	{
 		// Map com as divisoes de creditos e as
 		// linhas em que a mesmo aparece no arquivo de entrada
 		// [ CodigoTurno -> Lista de Linhas do Arquivo de Entrada ]
-		Map< String, List< Integer > > divisaoCodigoToRowsMap
-			= new HashMap< String, List< Integer > >();
-	
-		for ( CampiDeslocamentoImportExcelBean bean : sheetContent )
+		Map<String, List<Integer>> divisaoCodigoToRowsMap = new HashMap<String, List<Integer>>();
+
+		for (CampiDeslocamentoImportExcelBean bean : sheetContent)
 		{
-			List< Integer > rows
-				= divisaoCodigoToRowsMap.get( bean.getCampusOrigemStr() );
-	
-			if ( rows == null )
+			List<Integer> rows = divisaoCodigoToRowsMap.get(bean.getCampusOrigemStr());
+
+			if (rows == null)
 			{
-				rows = new ArrayList< Integer >();
-				divisaoCodigoToRowsMap.put(
-					bean.getCampusOrigemStr(), rows );
+				rows = new ArrayList<Integer>();
+				divisaoCodigoToRowsMap.put(bean.getCampusOrigemStr(), rows);
 			}
-		
-			rows.add( bean.getRow() );
+
+			rows.add(bean.getRow());
 		}
-	
+
 		// Verifica se alguma divisao de credito apareceu
 		// mais de uma vez no arquivo de entrada
-		for ( Entry< String, List< Integer > > entry : divisaoCodigoToRowsMap.entrySet() )
+		for (Entry<String, List<Integer>> entry : divisaoCodigoToRowsMap.entrySet())
 		{
-			if ( entry.getValue().size() > 1 )
+			if (entry.getValue().size() > 1)
 			{
-				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeViolada(
-					entry.getKey(), entry.getValue().toString() ) );
+				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(), entry.getValue().toString()));
 			}
 		}
 	}
-	
 
-	
 	@Transactional
-	private void updateDataBase( String sheetName,
-		List< CampiDeslocamentoImportExcelBean > sheetContent )
+	@Override
+	protected void updateDataBase(List<CampiDeslocamentoImportExcelBean> sheetContent)
 	{
 		List<DeslocamentoCampus> deslocamentos = DeslocamentoCampus.findAllByCampus(instituicaoEnsino, getCenario());
-		
+
 		for (DeslocamentoCampus deslocamento : deslocamentos)
 		{
 			deslocamento.remove();
 		}
-	
-		for ( CampiDeslocamentoImportExcelBean deslocamentoExcel : sheetContent )
+
+		for (CampiDeslocamentoImportExcelBean deslocamentoExcel : sheetContent)
 		{
 			for (Entry<Campus, Integer> destinos : deslocamentoExcel.getCampusDestinoToTempoMap().entrySet())
 			{
@@ -345,18 +296,18 @@ public class CampiDeslocamentoImportExcel
 					novoDeslocamento.setOrigem(deslocamentoExcel.getCampusOrigem());
 					novoDeslocamento.setDestino(destinos.getKey());
 					novoDeslocamento.setTempo(destinos.getValue());
-					
+
 					novoDeslocamento.persist();
 				}
 			}
 		}
 	}
-	
+
 	private void resolveHeaderColumnNames()
 	{
-		if ( TEMPO_COLUMN_NAME == null )
+		if (TEMPO_COLUMN_NAME == null)
 		{
-			TEMPO_COLUMN_NAME = HtmlUtils.htmlUnescape( "Tempo de deslocamento (min)" );
+			TEMPO_COLUMN_NAME = HtmlUtils.htmlUnescape("Tempo de deslocamento (min)");
 		}
 	}
 }

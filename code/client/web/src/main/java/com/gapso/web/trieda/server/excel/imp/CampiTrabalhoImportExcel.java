@@ -26,86 +26,68 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 @ProgressDeclarationAnnotation
-public class CampiTrabalhoImportExcel
-	extends AbstractImportExcel< CampiTrabalhoImportExcelBean >
+public class CampiTrabalhoImportExcel extends AbstractImportExcel<CampiTrabalhoImportExcelBean>
 {
 	static public String CAMPUS_COLUMN_NAME;
 	static public String CPF_COLUMN_NAME;
 	static public String PROFESSOR_COLUMN_NAME;
 
-	private List< String > headerColumnsNames;
+	private List<String> headerColumnsNames;
 
-	public CampiTrabalhoImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public CampiTrabalhoImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
 
-		this.headerColumnsNames = new ArrayList< String >();
-		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
-		this.headerColumnsNames.add( CPF_COLUMN_NAME );
-		this.headerColumnsNames.add( PROFESSOR_COLUMN_NAME );
+		this.headerColumnsNames = new ArrayList<String>();
+		this.headerColumnsNames.add(CAMPUS_COLUMN_NAME);
+		this.headerColumnsNames.add(CPF_COLUMN_NAME);
+		this.headerColumnsNames.add(PROFESSOR_COLUMN_NAME);
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(
-		int sheetIndex, Sheet sheet, Workbook workbook )
+	protected List<String> getHeaderColumnsNames()
 	{
-		String sheetName = workbook.getSheetName( sheetIndex );
-		return ExcelInformationType.CAMPI_TRABALHO.getSheetName().equals( sheetName );
-	}
-
-	@Override
-	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, Sheet sheet, Workbook workbook )
-		{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected CampiTrabalhoImportExcelBean createExcelBean(
-		Row header, Row row, int sheetIndex,
-		Sheet sheet, Workbook workbook )
+	protected CampiTrabalhoImportExcelBean createExcelBean(Row header, Row row)
 	{
-		CampiTrabalhoImportExcelBean bean
-			= new CampiTrabalhoImportExcelBean( row.getRowNum() + 1 );
+		CampiTrabalhoImportExcelBean bean = new CampiTrabalhoImportExcelBean(row.getRowNum() + 1);
 
-        for ( int cellIndex = row.getFirstCellNum();
-        	  cellIndex <= row.getLastCellNum(); cellIndex++ )
-        {
-            Cell cell = row.getCell( cellIndex );
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
+			Cell cell = row.getCell(cellIndex);
 
-        	if ( cell != null )
-        	{
-        		Cell headerCell = header.getCell( cell.getColumnIndex() );
+			if (cell != null)
+			{
+				Cell headerCell = header.getCell(cell.getColumnIndex());
 
-        		if ( headerCell != null )
-        		{
-        			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue( cell );
+				if (headerCell != null)
+				{
+					String columnName = headerCell.getRichStringCellValue().getString();
+					String cellValue = getCellValue(cell);
 
-					if ( CAMPUS_COLUMN_NAME.equals( columnName ) )
+					if (CAMPUS_COLUMN_NAME.equals(columnName))
 					{
-						bean.setCampusStr( cellValue );
+						bean.setCampusStr(cellValue);
 					}
-					else if ( CPF_COLUMN_NAME.equals( columnName ) )
+					else if (CPF_COLUMN_NAME.equals(columnName))
 					{
-						cell.setCellType( Cell.CELL_TYPE_STRING );
+						cell.setCellType(Cell.CELL_TYPE_STRING);
 
-						cellValue = TriedaUtil.formatStringCPF(
-							cell.getRichStringCellValue().getString().trim() );
+						cellValue = TriedaUtil.formatStringCPF(cell.getRichStringCellValue().getString().trim());
 
-						bean.setCpfStr( cellValue );
+						bean.setCpfStr(cellValue);
 					}
-					else if ( PROFESSOR_COLUMN_NAME.equals( columnName ) )
+					else if (PROFESSOR_COLUMN_NAME.equals(columnName))
 					{
-						bean.setProfessorStr( cellValue );
+						bean.setProfessorStr(cellValue);
 					}
-        		}
-        	}
-        }
+				}
+			}
+		}
 
 		return bean;
 	}
@@ -121,152 +103,138 @@ public class CampiTrabalhoImportExcel
 	{
 		return ExcelInformationType.CAMPI_TRABALHO.getSheetName();
 	}
-	
-	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected void processSheetContent( String sheetName,
-		List< CampiTrabalhoImportExcelBean > sheetContent )
-	{
-		if ( doSyntacticValidation( sheetName, sheetContent )
-			&& doLogicValidation( sheetName, sheetContent ) )
-		{
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
-			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
-		}
-	}
 
-	private boolean doSyntacticValidation( String sheetName,
-		List< CampiTrabalhoImportExcelBean > sheetContent )
+	@Override
+	protected boolean doSyntacticValidation(List<CampiTrabalhoImportExcelBean> sheetContent)
 	{
 		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
 		// [ImportExcelError -> Lista de linhas onde o erro ocorre]
-		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
-			= new HashMap< ImportExcelError, List< Integer > >();
+		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
 
-		for ( CampiTrabalhoImportExcelBean bean : sheetContent )
+		for (CampiTrabalhoImportExcelBean bean : sheetContent)
 		{
-			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
 
-			for ( ImportExcelError error : errorsBean )
+			for (ImportExcelError error : errorsBean)
 			{
-				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
-				if ( rowsWithErrors == null )
+				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
+				if (rowsWithErrors == null)
 				{
-					rowsWithErrors = new ArrayList< Integer >();
-					syntacticErrorsMap.put( error, rowsWithErrors );
+					rowsWithErrors = new ArrayList<Integer>();
+					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
 
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
-		
+
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
 		{
-			List<Integer> linhasComErro = syntacticErrorsMap.get( error );
-			getErrors().add( error.getMessage( linhasComErro.toString(), getI18nMessages() ) );
+			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
 
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation( String sheetName,
-		List< CampiTrabalhoImportExcelBean > sheetContent )
+	@Override
+	protected boolean doLogicValidation(List<CampiTrabalhoImportExcelBean> sheetContent)
 	{
 		// Verifica se há referência a algum tipo de contrato não cadastrado
-		checkNonRegisteredCampus( sheetContent );
-		checkNonRegisteredProfessor( sheetContent );
+		checkNonRegisteredCampus(sheetContent);
+		checkNonRegisteredProfessor(sheetContent);
 
 		return getErrors().isEmpty();
 	}
 
-	private void checkNonRegisteredCampus(
-		List< CampiTrabalhoImportExcelBean > sheetContent )
+	private void checkNonRegisteredCampus(List<CampiTrabalhoImportExcelBean> sheetContent)
 	{
 		// [ CódidoCampus -> Campus ]
-		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
-			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Campus> campiBDMap = Campus.buildCampusCodigoToCampusMap(Campus.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
-		for ( CampiTrabalhoImportExcelBean bean : sheetContent )
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+		for (CampiTrabalhoImportExcelBean bean : sheetContent)
 		{
-			Campus campus = campiBDMap.get( bean.getCampusStr() );
-			if ( campus != null )
+			Campus campus = campiBDMap.get(bean.getCampusStr());
+			if (campus != null)
 			{
-				bean.setCampus( campus );
+				bean.setCampus(campus);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				CAMPUS_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(CAMPUS_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkNonRegisteredProfessor(
-		List< CampiTrabalhoImportExcelBean > sheetContent )
+	private void checkNonRegisteredProfessor(List<CampiTrabalhoImportExcelBean> sheetContent)
 	{
 		// [ CodidoCampus -> Campus ]
-		Map< String, Professor > professoresBDMap = Professor.buildProfessorCpfToProfessorMap(
-			Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Professor> professoresBDMap = Professor.buildProfessorCpfToProfessorMap(Professor.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( CampiTrabalhoImportExcelBean bean : sheetContent )
+		for (CampiTrabalhoImportExcelBean bean : sheetContent)
 		{
-			Professor professor = professoresBDMap.get( bean.getCpfStr() );
+			Professor professor = professoresBDMap.get(bean.getCpfStr());
 
-			if ( professor != null )
+			if (professor != null)
 			{
-				bean.setProfessor( professor );
+				bean.setProfessor(professor);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				PROFESSOR_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(PROFESSOR_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
 	@Transactional
 	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
-	protected void updateDataBase( String sheetName,
-		List< CampiTrabalhoImportExcelBean > sheetContent )
+	@Override
+	protected void updateDataBase(List<CampiTrabalhoImportExcelBean> sheetContent)
 	{
-		Set< Professor > professorMerge = new HashSet< Professor >();
+		Set<Professor> professorMerge = new HashSet<Professor>();
 
-		for ( CampiTrabalhoImportExcelBean campiTrabalhoExcel : sheetContent )
+		for (CampiTrabalhoImportExcelBean campiTrabalhoExcel : sheetContent)
 		{
-			professorMerge.add( campiTrabalhoExcel.getProfessor() );
-			campiTrabalhoExcel.getProfessor().getCampi().add( campiTrabalhoExcel.getCampus() );
+			professorMerge.add(campiTrabalhoExcel.getProfessor());
+			campiTrabalhoExcel.getProfessor().getCampi().add(campiTrabalhoExcel.getCampus());
 		}
 
-		int count = 0, total=professorMerge.size(); System.out.print(" "+total);
-		for ( Professor professor : professorMerge )
+		int count = 0, total = professorMerge.size();
+		System.out.print(" " + total);
+		for (Professor professor : professorMerge)
 		{
 			professor.mergeWithoutFlush();
-			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" professores"); count = 0;}
+			count++;
+			total--;
+			if (count == 100)
+			{
+				System.out.println("   Faltam " + total + " professores");
+				count = 0;
+			}
 		}
 	}
 
 	private void resolveHeaderColumnNames()
 	{
-		if ( CAMPUS_COLUMN_NAME == null )
+		if (CAMPUS_COLUMN_NAME == null)
 		{
-			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCampus() );
-			CPF_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cpfProfessor() );
-			PROFESSOR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().professor() );
+			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoCampus());
+			CPF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().cpfProfessor());
+			PROFESSOR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().professor());
 		}
 	}
 }

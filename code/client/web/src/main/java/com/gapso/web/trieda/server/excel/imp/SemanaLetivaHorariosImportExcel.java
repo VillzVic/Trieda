@@ -36,7 +36,8 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 @ProgressDeclarationAnnotation
-public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaLetivaHorariosImportExcelBean> {
+public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaLetivaHorariosImportExcelBean>
+{
 	static public String SEMANA_LETIVA_CODIGO_COLUMN_NAME;
 	static public String TURNO_COLUMN_NAME;
 	static public String HORARIO_COLUMN_NAME;
@@ -51,9 +52,8 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 	private List<String> headerColumnsNames;
 	boolean continuaProcessamento = true;
 
-	public SemanaLetivaHorariosImportExcel(Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-			InstituicaoEnsino instituicaoEnsino) {
+	public SemanaLetivaHorariosImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
+	{
 		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
 
@@ -71,49 +71,67 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(int sheetIndex, Sheet sheet, Workbook workbook) {
-		String sheetName = workbook.getSheetName(sheetIndex);
-		return ExcelInformationType.SEMANA_LETIVA_HORARIOS.getSheetName().equals(sheetName);
-	}
-
-	@Override
-	protected List<String> getHeaderColumnsNames(int sheetIndex, Sheet sheet, Workbook workbook) {
+	protected List<String> getHeaderColumnsNames()
+	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected SemanaLetivaHorariosImportExcelBean createExcelBean(Row header, Row row, int sheetIndex, Sheet sheet, Workbook workbook) {
+	protected SemanaLetivaHorariosImportExcelBean createExcelBean(Row header, Row row)
+	{
 		SemanaLetivaHorariosImportExcelBean bean = new SemanaLetivaHorariosImportExcelBean(row.getRowNum() + 1);
 
-		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++) {
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
 			Cell cell = row.getCell(cellIndex);
 
-			if (cell != null) {
+			if (cell != null)
+			{
 				Cell headerCell = header.getCell(cell.getColumnIndex());
 
-				if (headerCell != null) {
+				if (headerCell != null)
+				{
 					String columnName = headerCell.getRichStringCellValue().getString();
 					String cellValue = getCellValue(cell);
 
-					if (SEMANA_LETIVA_CODIGO_COLUMN_NAME.equals(columnName)) {
+					if (SEMANA_LETIVA_CODIGO_COLUMN_NAME.equals(columnName))
+					{
 						bean.setSemanaLetivaCodigoStr(cellValue);
-					} else if (TURNO_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (TURNO_COLUMN_NAME.equals(columnName))
+					{
 						bean.setTurnoNomeStr(cellValue);
-					} else if (HORARIO_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (HORARIO_COLUMN_NAME.equals(columnName))
+					{
 						bean.setHorarioStr(cellValue);
-					} else if (SEGUNDA_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (SEGUNDA_COLUMN_NAME.equals(columnName))
+					{
 						bean.setSegundaStr(cellValue);
-					} else if (TERCA_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (TERCA_COLUMN_NAME.equals(columnName))
+					{
 						bean.setTercaStr(cellValue);
-					} else if (QUARTA_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (QUARTA_COLUMN_NAME.equals(columnName))
+					{
 						bean.setQuartaStr(cellValue);
-					} else if (QUINTA_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (QUINTA_COLUMN_NAME.equals(columnName))
+					{
 						bean.setQuintaStr(cellValue);
-					} else if (SEXTA_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (SEXTA_COLUMN_NAME.equals(columnName))
+					{
 						bean.setSextaStr(cellValue);
-					} else if (SABADO_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (SABADO_COLUMN_NAME.equals(columnName))
+					{
 						bean.setSabadoStr(cellValue);
-					} else if (DOMINGO_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (DOMINGO_COLUMN_NAME.equals(columnName))
+					{
 						bean.setDomingoStr(cellValue);
 					}
 				}
@@ -124,36 +142,33 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 	}
 
 	@Override
-	public String getSheetName() {
+	public String getSheetName()
+	{
 		return ExcelInformationType.SEMANA_LETIVA_HORARIOS.getSheetName();
 	}
 
 	@Override
-	protected String getHeaderToString() {
+	protected String getHeaderToString()
+	{
 		return this.headerColumnsNames.toString();
 	}
 
 	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected void processSheetContent(String sheetName, List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName, sheetContent) && doLogicValidation(sheetName, sheetContent)) {
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
-			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
-		}
-	}
-
-	private boolean doSyntacticValidation(String sheetName, List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
+	protected boolean doSyntacticValidation(List<SemanaLetivaHorariosImportExcelBean> sheetContent)
+	{
 		// Map utilizado para associar um erro
 		// às linhas do arquivo onde o mesmo ocorre
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
 		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
 
-		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent) {
+		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent)
+		{
 			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
-			for (ImportExcelError error : errorsBean) {
+			for (ImportExcelError error : errorsBean)
+			{
 				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
-				if (rowsWithErrors == null) {
+				if (rowsWithErrors == null)
+				{
 					rowsWithErrors = new ArrayList<Integer>();
 					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
@@ -162,112 +177,131 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 		}
 
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for (ImportExcelError error : syntacticErrorsMap.keySet()) {
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
+		{
 			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
-			getErrors().add(error.getMessage(linhasComErro.toString(),getI18nMessages()));
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
 
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(String sheetName, List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
+	@Override
+	protected boolean doLogicValidation(List<SemanaLetivaHorariosImportExcelBean> sheetContent)
+	{
 		checkNonRegisteredSemanaLetiva(sheetContent);
 		checkNonRegisteredTurno(sheetContent);
 		checkIntervaloHorarios(sheetContent);
 
 		return getErrors().isEmpty();
 	}
-	
-	private void checkNonRegisteredSemanaLetiva(List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
+
+	private void checkNonRegisteredSemanaLetiva(List<SemanaLetivaHorariosImportExcelBean> sheetContent)
+	{
 		// [ CodigoSala -> Sala ]
-		Map<String,SemanaLetiva> semanaLetivaBDMap = SemanaLetiva.buildSemanaLetivaCodigoToSemanaLetivaMap(SemanaLetiva.findByCenario(this.instituicaoEnsino,getCenario()));
+		Map<String, SemanaLetiva> semanaLetivaBDMap = SemanaLetiva.buildSemanaLetivaCodigoToSemanaLetivaMap(SemanaLetiva.findByCenario(this.instituicaoEnsino, getCenario()));
 
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent) {
+		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent)
+		{
 			SemanaLetiva semanaLetiva = semanaLetivaBDMap.get(bean.getSemanaLetivaCodigoStr());
-			if (semanaLetiva != null) {
+			if (semanaLetiva != null)
+			{
 				bean.setSemanaLetiva(semanaLetiva);
-			} else {
+			}
+			else
+			{
 				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(SEMANA_LETIVA_CODIGO_COLUMN_NAME,rowsWithErrors.toString()));
+		if (!rowsWithErrors.isEmpty())
+		{
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(SEMANA_LETIVA_CODIGO_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
-	
-	private void checkNonRegisteredTurno(List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
+
+	private void checkNonRegisteredTurno(List<SemanaLetivaHorariosImportExcelBean> sheetContent)
+	{
 		// [ CodigoSala -> Sala ]
-		Map<String,Turno> turnoBDMap = Turno.buildTurnoNomeToTurnoMap(Turno.findByCenario(this.instituicaoEnsino,getCenario()));
+		Map<String, Turno> turnoBDMap = Turno.buildTurnoNomeToTurnoMap(Turno.findByCenario(this.instituicaoEnsino, getCenario()));
 
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent) {
+		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent)
+		{
 			Turno turno = turnoBDMap.get(bean.getTurnoNomeStr());
-			if (turno != null) {
+			if (turno != null)
+			{
 				bean.setTurno(turno);
-			} else {
+			}
+			else
+			{
 				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TURNO_COLUMN_NAME,rowsWithErrors.toString()));
+		if (!rowsWithErrors.isEmpty())
+		{
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TURNO_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
-	
-	private void checkIntervaloHorarios(List<SemanaLetivaHorariosImportExcelBean> sheetContent) 
+
+	private void checkIntervaloHorarios(List<SemanaLetivaHorariosImportExcelBean> sheetContent)
 	{
 		Map<SemanaLetiva, Map<Turno, List<Calendar>>> semanaLetivaTurnoMapHorario = new HashMap<SemanaLetiva, Map<Turno, List<Calendar>>>();
 		String horariosComErros = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent) 
+		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent)
 		{
 			if (semanaLetivaTurnoMapHorario.get(bean.getSemanaLetiva()) == null)
 			{
-				
+
 				Map<Turno, List<Calendar>> turnoMapHorarios = new HashMap<Turno, List<Calendar>>();
 				List<Calendar> horarios = new ArrayList<Calendar>();
 				horarios.add(bean.getHorario());
-				
+
 				turnoMapHorarios.put(bean.getTurno(), horarios);
-				
-				semanaLetivaTurnoMapHorario.put(bean.getSemanaLetiva(),turnoMapHorarios);
+
+				semanaLetivaTurnoMapHorario.put(bean.getSemanaLetiva(), turnoMapHorarios);
 			}
 			else
 			{
-				if(semanaLetivaTurnoMapHorario.get(bean.getSemanaLetiva()).get(bean.getTurno()) == null){
+				if (semanaLetivaTurnoMapHorario.get(bean.getSemanaLetiva()).get(bean.getTurno()) == null)
+				{
 					Map<Turno, List<Calendar>> turnoMapHorarios = new HashMap<Turno, List<Calendar>>();
 					List<Calendar> horarios = new ArrayList<Calendar>();
 					horarios.add(bean.getHorario());
 					turnoMapHorarios.put(bean.getTurno(), horarios);
-					semanaLetivaTurnoMapHorario.put(bean.getSemanaLetiva(),turnoMapHorarios);
-				} else {
+					semanaLetivaTurnoMapHorario.put(bean.getSemanaLetiva(), turnoMapHorarios);
+				}
+				else
+				{
 					semanaLetivaTurnoMapHorario.get(bean.getSemanaLetiva()).get(bean.getTurno()).add(bean.getHorario());
 				}
 			}
 		}
 		for (SemanaLetiva key : semanaLetivaTurnoMapHorario.keySet())
 		{
-			
-			for(Turno turnoKey : semanaLetivaTurnoMapHorario.get(key).keySet()){
-			
+
+			for (Turno turnoKey : semanaLetivaTurnoMapHorario.get(key).keySet())
+			{
+
 				List<Calendar> horariosOrdenados = new ArrayList<Calendar>();
 				horariosOrdenados.addAll(semanaLetivaTurnoMapHorario.get(key).get(turnoKey));
-				
+
 				Collections.sort(horariosOrdenados);
-				
-				for (int i = 1; i<horariosOrdenados.size(); i++)
+
+				for (int i = 1; i < horariosOrdenados.size(); i++)
 				{
-					if ((horariosOrdenados.get(i).getTimeInMillis() - horariosOrdenados.get(i-1).getTimeInMillis()) < (key.getTempo() * 60000))
+					if ((horariosOrdenados.get(i).getTimeInMillis() - horariosOrdenados.get(i - 1).getTimeInMillis()) < (key.getTempo() * 60000))
 					{
-						horariosComErros += " \"" + sdf.format(horariosOrdenados.get(i-1).getTime()) + "-" + sdf.format(horariosOrdenados.get(i).getTime()) + "\"";
+						horariosComErros += " \"" + sdf.format(horariosOrdenados.get(i - 1).getTime()) + "-" + sdf.format(horariosOrdenados.get(i).getTime()) + "\"";
 					}
 				}
-			
+
 			}
 		}
-		
+
 		if (!horariosComErros.isEmpty())
 		{
 			getErrors().add("Os horarios" + horariosComErros + " tem a diferença menor que o tempo da semana letiva");
@@ -275,13 +309,15 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<SemanaLetivaHorariosImportExcelBean> sheetContent) {
+	@Override
+	protected void updateDataBase(List<SemanaLetivaHorariosImportExcelBean> sheetContent)
+	{
 		Set<SemanaLetiva> semanasLetivasAtualizadas = new HashSet<SemanaLetiva>();
 		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent)
 		{
 			semanasLetivasAtualizadas.add(bean.getSemanaLetiva());
 		}
-		for (SemanaLetiva semanaLetiva : semanasLetivasAtualizadas )
+		for (SemanaLetiva semanaLetiva : semanasLetivasAtualizadas)
 		{
 			for (HorarioAula horario : semanaLetiva.getHorariosAula())
 			{
@@ -289,38 +325,38 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 			}
 			semanaLetiva.getHorariosAula().clear();
 		}
-		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent) {
+		for (SemanaLetivaHorariosImportExcelBean bean : sheetContent)
+		{
 			HorarioAula newHorario = new HorarioAula();
-			
+
 			newHorario.setSemanaLetiva(bean.getSemanaLetiva());
 			newHorario.setTurno(bean.getTurno());
 			newHorario.setHorario(bean.getHorario().getTime());
 			newHorario.persist();
 			bean.getSemanaLetiva().getHorariosAula().add(newHorario);
 			bean.getSemanaLetiva().merge();
-			
-			List< Campus > campi = Campus.findByCenario( instituicaoEnsino, cenario );
-			List< Unidade > unidades = Unidade.findByCenario( instituicaoEnsino, cenario );
-			List< Sala > salas = Sala.findByCenario( instituicaoEnsino, cenario );
-			List< Disciplina > disciplinas = Disciplina.findByCenario( instituicaoEnsino, cenario );
-			List< Professor > professores = Professor.findByCenario( instituicaoEnsino, cenario );
 
-			for ( Semanas semana : Semanas.values() )
+			List<Campus> campi = Campus.findByCenario(instituicaoEnsino, cenario);
+			List<Unidade> unidades = Unidade.findByCenario(instituicaoEnsino, cenario);
+			List<Sala> salas = Sala.findByCenario(instituicaoEnsino, cenario);
+			List<Disciplina> disciplinas = Disciplina.findByCenario(instituicaoEnsino, cenario);
+			List<Professor> professores = Professor.findByCenario(instituicaoEnsino, cenario);
+
+			for (Semanas semana : Semanas.values())
 			{
-				
-				if(checkWeekDayEnable(semana,bean))
+
+				if (checkWeekDayEnable(semana, bean))
 				{
 					HorarioDisponivelCenario hdc = new HorarioDisponivelCenario();
-	
-					hdc.setDiaSemana( semana );
-					hdc.setHorarioAula( newHorario );
-	
-/*					hdc.getCampi().addAll( campi );
-					hdc.getUnidades().addAll( unidades );
-					hdc.getSalas().addAll( salas );
-					hdc.getDisciplinas().addAll( disciplinas );
-					hdc.getProfessores().addAll( professores );*/
-	
+
+					hdc.setDiaSemana(semana);
+					hdc.setHorarioAula(newHorario);
+
+					/*
+					 * hdc.getCampi().addAll( campi ); hdc.getUnidades().addAll( unidades ); hdc.getSalas().addAll( salas ); hdc.getDisciplinas().addAll( disciplinas );
+					 * hdc.getProfessores().addAll( professores );
+					 */
+
 					hdc.persist();
 					newHorario.getHorariosDisponiveisCenario().add(hdc);
 				}
@@ -329,11 +365,12 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 		}
 	}
 
-	private boolean checkWeekDayEnable(Semanas semana,
-			SemanaLetivaHorariosImportExcelBean bean) {
-		
+	private boolean checkWeekDayEnable(Semanas semana, SemanaLetivaHorariosImportExcelBean bean)
+	{
+
 		boolean output = false;
-		switch (semana) {
+		switch (semana)
+		{
 		case SEG:
 			output = bean.getSegunda();
 			break;
@@ -359,8 +396,10 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 		return output;
 	}
 
-	private void resolveHeaderColumnNames() {
-		if (SEMANA_LETIVA_CODIGO_COLUMN_NAME == null) {
+	private void resolveHeaderColumnNames()
+	{
+		if (SEMANA_LETIVA_CODIGO_COLUMN_NAME == null)
+		{
 			SEMANA_LETIVA_CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape("Código Semana Letiva");
 			TURNO_COLUMN_NAME = HtmlUtils.htmlUnescape("Turno");
 			HORARIO_COLUMN_NAME = HtmlUtils.htmlUnescape("Horário Inicial");

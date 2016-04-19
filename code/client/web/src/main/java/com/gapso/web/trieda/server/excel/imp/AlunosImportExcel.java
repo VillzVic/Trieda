@@ -23,8 +23,7 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 @ProgressDeclarationAnnotation
-public class AlunosImportExcel
-	extends AbstractImportExcel< AlunosImportExcelBean >
+public class AlunosImportExcel extends AbstractImportExcel<AlunosImportExcelBean>
 {
 	static public String MATRICULA_COLUMN_NAME;
 	static public String NOME_COLUMN_NAME;
@@ -32,83 +31,67 @@ public class AlunosImportExcel
 	static public String VIRTUAL_COLUMN_NAME;
 	static public String PRIORIDADE_COLUMN_NAME;
 
-	private List< String > headerColumnsNames;
+	private List<String> headerColumnsNames;
 
-	public AlunosImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public AlunosImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
 
-		this.headerColumnsNames = new ArrayList< String >();
-		this.headerColumnsNames.add( MATRICULA_COLUMN_NAME );
-		this.headerColumnsNames.add( NOME_COLUMN_NAME );
-		this.headerColumnsNames.add( PRIORIDADE_COLUMN_NAME );
-		this.headerColumnsNames.add( FORMANDO_COLUMN_NAME );
+		this.headerColumnsNames = new ArrayList<String>();
+		this.headerColumnsNames.add(MATRICULA_COLUMN_NAME);
+		this.headerColumnsNames.add(NOME_COLUMN_NAME);
+		this.headerColumnsNames.add(PRIORIDADE_COLUMN_NAME);
+		this.headerColumnsNames.add(FORMANDO_COLUMN_NAME);
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(
-		int sheetIndex, Sheet sheet, Workbook workbook )
+	protected List<String> getHeaderColumnsNames()
 	{
-		String sheetName = workbook.getSheetName( sheetIndex );
-		return ExcelInformationType.ALUNOS.getSheetName().equals( sheetName );
-	}
-
-	@Override
-	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, Sheet sheet, Workbook workbook )
-		{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected AlunosImportExcelBean createExcelBean(
-		Row header, Row row, int sheetIndex,
-		Sheet sheet, Workbook workbook )
+	protected AlunosImportExcelBean createExcelBean(Row header, Row row)
 	{
-		AlunosImportExcelBean bean
-			= new AlunosImportExcelBean( row.getRowNum() + 1 );
+		AlunosImportExcelBean bean = new AlunosImportExcelBean(row.getRowNum() + 1);
 
-        for ( int cellIndex = row.getFirstCellNum();
-        	  cellIndex <= row.getLastCellNum(); cellIndex++ )
-        {
-            Cell cell = row.getCell( cellIndex );
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
+			Cell cell = row.getCell(cellIndex);
 
-        	if ( cell != null )
-        	{
-        		Cell headerCell = header.getCell( cell.getColumnIndex() );
+			if (cell != null)
+			{
+				Cell headerCell = header.getCell(cell.getColumnIndex());
 
-        		if ( headerCell != null )
-        		{
-        			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue( cell );
+				if (headerCell != null)
+				{
+					String columnName = headerCell.getRichStringCellValue().getString();
+					String cellValue = getCellValue(cell);
 
-					if ( MATRICULA_COLUMN_NAME.equals( columnName ) )
+					if (MATRICULA_COLUMN_NAME.equals(columnName))
 					{
-						bean.setMatriculaStr( cellValue );
+						bean.setMatriculaStr(cellValue);
 					}
-					else if ( NOME_COLUMN_NAME.endsWith( columnName ) )
+					else if (NOME_COLUMN_NAME.endsWith(columnName))
 					{
-						bean.setNomeStr( cellValue );
+						bean.setNomeStr(cellValue);
 					}
-					else if ( PRIORIDADE_COLUMN_NAME.endsWith( columnName ) )
+					else if (PRIORIDADE_COLUMN_NAME.endsWith(columnName))
 					{
-						bean.setPrioridadeStr( cellValue );
+						bean.setPrioridadeStr(cellValue);
 					}
-					else if ( FORMANDO_COLUMN_NAME.endsWith( columnName ) )
+					else if (FORMANDO_COLUMN_NAME.endsWith(columnName))
 					{
-						bean.setFormandoStr( cellValue );
+						bean.setFormandoStr(cellValue);
 					}
-					else if ( VIRTUAL_COLUMN_NAME.endsWith( columnName ) )
+					else if (VIRTUAL_COLUMN_NAME.endsWith(columnName))
 					{
-						bean.setVirtualStr( cellValue );
+						bean.setVirtualStr(cellValue);
 					}
-        		}
-        	}
-        }
+				}
+			}
+		}
 
 		return bean;
 	}
@@ -126,164 +109,144 @@ public class AlunosImportExcel
 	}
 
 	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected void processSheetContent(
-		String sheetName, List< AlunosImportExcelBean > sheetContent )
-	{
-		if ( doSyntacticValidation( sheetName, sheetContent )
-			&& doLogicValidation( sheetName, sheetContent ) )
-		{
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
-			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
-		}
-	}
-
-	private boolean doSyntacticValidation(
-		String sheetName, List< AlunosImportExcelBean > sheetContent )
+	protected boolean doSyntacticValidation(List<AlunosImportExcelBean> sheetContent)
 	{
 		// Map utilizado para associar um erro
 		// às linhas do arquivo onde o mesmo ocorre
 
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
-		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
-			= new HashMap< ImportExcelError, List< Integer > >();
+		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
 
-		for ( AlunosImportExcelBean bean : sheetContent )
+		for (AlunosImportExcelBean bean : sheetContent)
 		{
-			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
 
-			for ( ImportExcelError error : errorsBean )
+			for (ImportExcelError error : errorsBean)
 			{
-				List< Integer > rowsWithErrors
-					= syntacticErrorsMap.get( error );
+				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
 
-				if ( rowsWithErrors == null )
+				if (rowsWithErrors == null)
 				{
-					rowsWithErrors = new ArrayList< Integer >();
-					syntacticErrorsMap.put( error, rowsWithErrors );
+					rowsWithErrors = new ArrayList<Integer>();
+					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
 
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
 		{
-			List< Integer > linhasComErro = syntacticErrorsMap.get( error );
-			getErrors().add( error.getMessage(
-				linhasComErro.toString(), getI18nMessages() ) );
+			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
 
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(
-		String sheetName, List< AlunosImportExcelBean > sheetContent )
+	@Override
+	protected boolean doLogicValidation(List<AlunosImportExcelBean> sheetContent)
 	{
 		// Verifica se alguma disciplina apareceu
 		// mais de uma vez no arquivo de entrada
-		checkUniqueness( sheetContent );
+		checkUniqueness(sheetContent);
 
 		return getErrors().isEmpty();
 	}
 
-	private void checkUniqueness(
-		List< AlunosImportExcelBean > sheetContent )
+	private void checkUniqueness(List<AlunosImportExcelBean> sheetContent)
 	{
 		// Map com as matrículas dos alunos e as
 		// linhas em que o mesmo aparece no arquivo de entrada
 
 		// [ MatrículaAluno -> Lista de Linhas do Arquivo de Entrada ]
-		Map< String, List< Integer > > alunoMatriculaToRowsMap
-			= new HashMap< String, List< Integer > >();
+		Map<String, List<Integer>> alunoMatriculaToRowsMap = new HashMap<String, List<Integer>>();
 
-		for ( AlunosImportExcelBean bean : sheetContent )
+		for (AlunosImportExcelBean bean : sheetContent)
 		{
-			List< Integer > rows = alunoMatriculaToRowsMap.get( bean.getMatriculaStr() );
+			List<Integer> rows = alunoMatriculaToRowsMap.get(bean.getMatriculaStr());
 
-			if ( rows == null )
+			if (rows == null)
 			{
-				rows = new ArrayList< Integer >();
-				alunoMatriculaToRowsMap.put( bean.getMatriculaStr(), rows );
+				rows = new ArrayList<Integer>();
+				alunoMatriculaToRowsMap.put(bean.getMatriculaStr(), rows);
 			}
 
-			rows.add( bean.getRow() );
+			rows.add(bean.getRow());
 		}
 
 		// Verifica se alguma aluno apareceu
 		// mais de uma vez no arquivo de entrada
-		for ( Entry< String, List< Integer > > entry
-			: alunoMatriculaToRowsMap.entrySet() )
+		for (Entry<String, List<Integer>> entry : alunoMatriculaToRowsMap.entrySet())
 		{
-			if ( entry.getValue().size() > 1 )
+			if (entry.getValue().size() > 1)
 			{
-				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeViolada(
-					entry.getKey(), entry.getValue().toString() ) );
+				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(), entry.getValue().toString()));
 			}
 		}
 	}
 
 	@Transactional
 	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
-	protected void updateDataBase(
-		String sheetName, List< AlunosImportExcelBean > sheetContent )
+	@Override
+	protected void updateDataBase(List<AlunosImportExcelBean> sheetContent)
 	{
-		Map< String, Aluno > alunosBDMap
-			= Aluno.buildMatriculaAlunoToAlunoMap(
-				Aluno.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Aluno> alunosBDMap = Aluno.buildMatriculaAlunoToAlunoMap(Aluno.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
-		for ( AlunosImportExcelBean alunoExcel : sheetContent )
+		int count = 0, total = sheetContent.size();
+		System.out.print(" " + total);
+		for (AlunosImportExcelBean alunoExcel : sheetContent)
 		{
-			Aluno alunoBD = alunosBDMap.get(
-				alunoExcel.getMatriculaStr() );
+			Aluno alunoBD = alunosBDMap.get(alunoExcel.getMatriculaStr());
 
-			if ( alunoBD != null )
+			if (alunoBD != null)
 			{
 				// Update
-				alunoBD.setNome( alunoExcel.getNomeStr() );
-				alunoBD.setFormando( alunoExcel.getFormando() );
-				alunoBD.setVirtual( alunoExcel.getVirtual() );
-				alunoBD.setPrioridade( Integer.parseInt(alunoExcel.getPrioridadeStr()));
+				alunoBD.setNome(alunoExcel.getNomeStr());
+				alunoBD.setFormando(alunoExcel.getFormando());
+				alunoBD.setVirtual(alunoExcel.getVirtual());
+				alunoBD.setPrioridade(Integer.parseInt(alunoExcel.getPrioridadeStr()));
 				alunoBD.setCriadoTrieda(false);
-				
-				//alunoBD.merge();
+
+				// alunoBD.merge();
 			}
 			else
 			{
 				// Insert
 				Aluno newAluno = new Aluno();
 
-				newAluno.setCenario( getCenario() );
+				newAluno.setCenario(getCenario());
 				newAluno.setInstituicaoEnsino(instituicaoEnsino);
-				newAluno.setMatricula( alunoExcel.getMatriculaStr() );
-				newAluno.setNome( alunoExcel.getNomeStr() );
-				newAluno.setFormando( alunoExcel.getFormando() );
-				newAluno.setVirtual( alunoExcel.getVirtual() );
-				newAluno.setPrioridade( Integer.parseInt(alunoExcel.getPrioridadeStr()));
+				newAluno.setMatricula(alunoExcel.getMatriculaStr());
+				newAluno.setNome(alunoExcel.getNomeStr());
+				newAluno.setFormando(alunoExcel.getFormando());
+				newAluno.setVirtual(alunoExcel.getVirtual());
+				newAluno.setPrioridade(Integer.parseInt(alunoExcel.getPrioridadeStr()));
 				newAluno.setCriadoTrieda(false);
-				
+
 				newAluno.persist();
 			}
-			
-			count++;total--;if (count == 100) {
-				System.out.println("\t   Faltam "+total+" alunos"); 
+
+			count++;
+			total--;
+			if (count == 100)
+			{
+				System.out.println("\t   Faltam " + total + " alunos");
 				count = 0;
-				}
+			}
 		}
 	}
 
 	private void resolveHeaderColumnNames()
 	{
-		if ( MATRICULA_COLUMN_NAME == null )
+		if (MATRICULA_COLUMN_NAME == null)
 		{
-			MATRICULA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().matriculaAluno() );
-			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeAluno() );
-			PRIORIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( "Prioridade" );
-			FORMANDO_COLUMN_NAME = HtmlUtils.htmlUnescape( "Formando?" );
-			VIRTUAL_COLUMN_NAME = HtmlUtils.htmlUnescape( "Virtual?" );
+			MATRICULA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().matriculaAluno());
+			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().nomeAluno());
+			PRIORIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape("Prioridade");
+			FORMANDO_COLUMN_NAME = HtmlUtils.htmlUnescape("Formando?");
+			VIRTUAL_COLUMN_NAME = HtmlUtils.htmlUnescape("Virtual?");
 		}
 	}
 }

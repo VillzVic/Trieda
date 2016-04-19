@@ -91,7 +91,7 @@ public class EquivalenciasExportExcel
 	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Equivalencia > equivalencias
-			= Equivalencia.findAll( this.instituicaoEnsino );
+			= Equivalencia.findByCenario(instituicaoEnsino, getCenario());
 		
 		if ( this.removeUnusedSheets )
 		{

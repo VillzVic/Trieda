@@ -26,76 +26,58 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.google.gwt.dev.util.collect.HashSet;
 
 @ProgressDeclarationAnnotation
-public class DisciplinasSalasImportExcel
-	extends AbstractImportExcel< DisciplinasSalasImportExcelBean >
+public class DisciplinasSalasImportExcel extends AbstractImportExcel<DisciplinasSalasImportExcelBean>
 {
 	static public String SALA_COLUMN_NAME;
 	static public String DISCIPLINA_COLUMN_NAME;
 
-	private List< String > headerColumnsNames;
+	private List<String> headerColumnsNames;
 
-	public DisciplinasSalasImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public DisciplinasSalasImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
 
-		this.headerColumnsNames = new ArrayList< String >();
-		this.headerColumnsNames.add( SALA_COLUMN_NAME );
-		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
+		this.headerColumnsNames = new ArrayList<String>();
+		this.headerColumnsNames.add(SALA_COLUMN_NAME);
+		this.headerColumnsNames.add(DISCIPLINA_COLUMN_NAME);
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(
-		int sheetIndex, Sheet sheet, Workbook workbook )
-	{
-		String sheetName = workbook.getSheetName( sheetIndex );
-		return ExcelInformationType.DISCIPLINAS_SALAS.getSheetName().equals( sheetName );
-	}
-
-	@Override
-	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, Sheet sheet, Workbook workbook )
+	protected List<String> getHeaderColumnsNames()
 	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected DisciplinasSalasImportExcelBean createExcelBean(
-		Row header, Row row, int sheetIndex,
-		Sheet sheet, Workbook workbook )
+	protected DisciplinasSalasImportExcelBean createExcelBean(Row header, Row row)
 	{
-		DisciplinasSalasImportExcelBean bean
-			= new DisciplinasSalasImportExcelBean( row.getRowNum() + 1 );
+		DisciplinasSalasImportExcelBean bean = new DisciplinasSalasImportExcelBean(row.getRowNum() + 1);
 
-        for ( int cellIndex = row.getFirstCellNum();
-        	  cellIndex <= row.getLastCellNum(); cellIndex++ )
-        {
-            Cell cell = row.getCell( cellIndex );
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
+			Cell cell = row.getCell(cellIndex);
 
-        	if ( cell != null )
-        	{
-        		Cell headerCell = header.getCell( cell.getColumnIndex() );
+			if (cell != null)
+			{
+				Cell headerCell = header.getCell(cell.getColumnIndex());
 
-        		if ( headerCell != null )
-        		{
-        			String columnName
-        				= headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue( cell );
+				if (headerCell != null)
+				{
+					String columnName = headerCell.getRichStringCellValue().getString();
+					String cellValue = getCellValue(cell);
 
-					if ( SALA_COLUMN_NAME.equals( columnName ) )
+					if (SALA_COLUMN_NAME.equals(columnName))
 					{
-						bean.setSalaStr( cellValue );
+						bean.setSalaStr(cellValue);
 					}
-					else if ( DISCIPLINA_COLUMN_NAME.equals( columnName ) )
+					else if (DISCIPLINA_COLUMN_NAME.equals(columnName))
 					{
-						bean.setDisciplinaStr( cellValue );
+						bean.setDisciplinaStr(cellValue);
 					}
-        		}
-        	}
-        }
+				}
+			}
+		}
 
 		return bean;
 	}
@@ -113,157 +95,152 @@ public class DisciplinasSalasImportExcel
 	}
 
 	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected void processSheetContent(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent)) {
-			if (doLogicValidation(sheetName,sheetContent)) {
-				getProgressReport().setInitNewPartial("Atualizando banco de dados");
-				updateDataBase( sheetName, sheetContent );
-				getProgressReport().setPartial("Fim de Atualizando banco de dados");
-			}
-		}
-	}
-
-	private boolean doSyntacticValidation(
-		String sheetName, List< DisciplinasSalasImportExcelBean > sheetContent )
+	protected boolean doSyntacticValidation(List<DisciplinasSalasImportExcelBean> sheetContent)
 	{
 		// Map utilizado para associar um erro
 		// às linhas do arquivo onde o mesmo ocorre
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
-		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
-			= new HashMap< ImportExcelError, List< Integer > >();
+		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
 
-		for ( DisciplinasSalasImportExcelBean bean : sheetContent )
+		for (DisciplinasSalasImportExcelBean bean : sheetContent)
 		{
-			List< ImportExcelError > errorsBean
-				= bean.checkSyntacticErrors();
+			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
 
-			for ( ImportExcelError error : errorsBean )
+			for (ImportExcelError error : errorsBean)
 			{
-				List< Integer > rowsWithErrors
-					= syntacticErrorsMap.get( error );
+				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
 
-				if ( rowsWithErrors == null )
+				if (rowsWithErrors == null)
 				{
-					rowsWithErrors = new ArrayList< Integer >();
-					syntacticErrorsMap.put( error, rowsWithErrors );
+					rowsWithErrors = new ArrayList<Integer>();
+					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
 
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
 		{
-			List< Integer > linhasComErro = syntacticErrorsMap.get( error );
-			getErrors().add( error.getMessage(
-				linhasComErro.toString(), getI18nMessages() ) );
+			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
 
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent) {
+	@Override
+	protected boolean doLogicValidation(List<DisciplinasSalasImportExcelBean> sheetContent)
+	{
 		checkNonRegisteredSala(sheetContent);
 		checkNonRegisteredDisciplina(sheetContent);
 
 		return getErrors().isEmpty();
 	}
 
-	private void checkNonRegisteredSala(
-		List< DisciplinasSalasImportExcelBean > sheetContent )
+	private void checkNonRegisteredSala(List<DisciplinasSalasImportExcelBean> sheetContent)
 	{
 		// [ CodidoSala -> Sala ]
-		Map< String, Sala > salasBDMap
-			= Sala.buildSalaCodigoToSalaMap( Sala.findByCenario(
-				this.instituicaoEnsino, getCenario() ) );
+		Map<String, Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors
-			= new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( DisciplinasSalasImportExcelBean bean : sheetContent )
+		for (DisciplinasSalasImportExcelBean bean : sheetContent)
 		{
-			Sala sala = salasBDMap.get( bean.getSalaStr() );
+			Sala sala = salasBDMap.get(bean.getSalaStr());
 
-			if ( sala != null )
+			if (sala != null)
 			{
-				bean.setSala( sala );
+				bean.setSala(sala);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				SALA_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(SALA_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkNonRegisteredDisciplina(
-		List< DisciplinasSalasImportExcelBean > sheetContent )
+	private void checkNonRegisteredDisciplina(List<DisciplinasSalasImportExcelBean> sheetContent)
 	{
 		// [ CodigoDisciplina -> Disciplina ]
-		Map<String,Disciplina> disciplinasBDMap
-			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors
-			= new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( DisciplinasSalasImportExcelBean bean : sheetContent )
+		for (DisciplinasSalasImportExcelBean bean : sheetContent)
 		{
-			Disciplina disciplina = disciplinasBDMap.get( bean.getDisciplinaStr() );
+			Disciplina disciplina = disciplinasBDMap.get(bean.getDisciplinaStr());
 
-			if ( disciplina != null )
+			if (disciplina != null)
 			{
-				bean.setDisciplina( disciplina );
+				bean.setDisciplina(disciplina);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent) {
-		Map<String,Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(this.instituicaoEnsino,getCenario()));
-		Map<String,Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(instituicaoEnsino, getCenario()));
+	@Override
+	protected void updateDataBase(List<DisciplinasSalasImportExcelBean> sheetContent)
+	{
+		Map<String, Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(this.instituicaoEnsino, getCenario()));
+		Map<String, Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(instituicaoEnsino, getCenario()));
 
 		Set<CurriculoDisciplina> curriculoDisciplinaAlterados = new HashSet<CurriculoDisciplina>();
-		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
-		for (DisciplinasSalasImportExcelBean bean : sheetContent) {
+		int count = 0, total = sheetContent.size();
+		System.out.print(" " + total);
+		for (DisciplinasSalasImportExcelBean bean : sheetContent)
+		{
 			Sala salaBD = salasBDMap.get(bean.getSalaStr());
 			Disciplina disciplinaBD = disciplinasBDMap.get(bean.getDisciplinaStr());
-			
+
 			disciplinaBD.getSalas().add(salaBD);
-			
-			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" DisciplinasSalasBeans"); count = 0;}
+
+			count++;
+			total--;
+			if (count == 100)
+			{
+				System.out.println("   Faltam " + total + " DisciplinasSalasBeans");
+				count = 0;
+			}
 		}
 
-		count = 0; total=curriculoDisciplinaAlterados.size(); System.out.println(" "+total);
-		for (CurriculoDisciplina curriculoDisciplina : curriculoDisciplinaAlterados) {
+		count = 0;
+		total = curriculoDisciplinaAlterados.size();
+		System.out.println(" " + total);
+		for (CurriculoDisciplina curriculoDisciplina : curriculoDisciplinaAlterados)
+		{
 			curriculoDisciplina.mergeWithoutFlush();
-			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" CurriculoDisciplina"); count = 0;}
+			count++;
+			total--;
+			if (count == 100)
+			{
+				System.out.println("   Faltam " + total + " CurriculoDisciplina");
+				count = 0;
+			}
 		}
 	}
 
 	private void resolveHeaderColumnNames()
 	{
-		if ( SALA_COLUMN_NAME == null )
+		if (SALA_COLUMN_NAME == null)
 		{
-			SALA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoSala() );
-			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
+			SALA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoSala());
+			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoDisciplina());
 		}
 	}
 }

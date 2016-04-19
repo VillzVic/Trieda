@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.server.excel.imp;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,117 +16,130 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class TRIEDAImportExcel 
-	extends ProgressDeclarationImpl
-	implements IImportExcel
+public class TRIEDAImportExcel extends ProgressDeclarationImpl implements IImportExcel
 {
-	protected List< String > errors;
-	protected List< String > warnings;
+	protected List<String> errors;
+	protected List<String> warnings;
 	private Cenario cenario;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
 	private InstituicaoEnsino instituicaoEnsino;
 
-	protected TRIEDAImportExcel(
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	protected TRIEDAImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
 
-		this.errors = new ArrayList< String >();
-		this.warnings = new ArrayList< String >();
+		this.errors = new ArrayList<String>();
+		this.warnings = new ArrayList<String>();
 	}
 
 	@Override
-	public boolean load(
-		String fileName, Workbook workbook )
+	public boolean load(String fileName, Workbook workbook, boolean obrigatorio)
 	{
-		return false;
-	}
-
-	@Override
-	public boolean load(String fileName, InputStream inputStream )
-	{
-		boolean flag = true;
-		try
+		if (checkAnyValidSheet(workbook))
 		{
-			Workbook workbook = WorkbookFactory.create( inputStream );
-			if (checkAnyValidSheet(workbook))
-			{
-				this.errors.add("Não foi encontrada nenhuma aba válida para a importação");
-				return false;
-			}
-
-			List< IImportExcel > importers = new ArrayList< IImportExcel >();
-
-			importers.add( new TurnosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new SemanaLetivaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new SemanaLetivaHorariosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new CampiImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new UnidadesImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new UnidadesDeslocamentoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new SalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DisponibilidadesSalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DisciplinasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new AreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new TiposCursoImportExcel( this.cenario, i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new CursosImportExcel( this.cenario, i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new CursoAreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new CurriculosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino, true ) );
-			importers.add( new DisponibilidadesDisciplinasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DisciplinasSalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new EquivalenciasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new OfertasCursosCampiImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DemandasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino, false ) );
-			importers.add( new AlunosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new AlunosDemandaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new ProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DisponibilidadesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new CampiTrabalhoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new HabilitacoesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DivisoesCreditoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DivisoesCreditoDisciplinaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DisciplinasPreRequisitosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino) );
-			importers.add( new DisciplinasCoRequisitosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino) );
-			importers.add( new AtendimentoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino) );
-			
-			for ( IImportExcel importer : importers )
-			{
-				getProgressReport().setInitNewPartial("Importando " + importer.getSheetName());
-				flag = ( importer.load( fileName, workbook ) && flag );
-				getProgressReport().setPartial("Etapa concluída");
-
-				for ( String error : importer.getErrors() )
-				{
-					getErrors().add( importer.getSheetName() + ": " + error );
-				}
-
-				for ( String warning : importer.getWarnings() )
-				{
-					getErrors().add( importer.getSheetName() + ": " + warning );
-				}
-			}
-		}
-		catch ( Exception e ) {
-			e.printStackTrace();
-			flag = false;
-			String errorMessage = TriedaUtil.extractMessage(e);
-			getErrors().add(getI18nMessages().excelErroGenericoImportacao(errorMessage));
+			this.errors.add("Não foi encontrada nenhuma aba válida para a importação");
+			return false;
 		}
 
+		List<IImportExcel> importers = new ArrayList<IImportExcel>();
+
+		importers.add(new TurnosImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new SemanaLetivaImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new SemanaLetivaHorariosImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new CampiImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new UnidadesImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new UnidadesDeslocamentoImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new SalasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DisponibilidadesSalasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DisciplinasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new AreasTitulacaoImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new TiposCursoImportExcel(this.cenario, i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new CursosImportExcel(this.cenario, i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new CursoAreasTitulacaoImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new CurriculosImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino, true));
+		importers.add(new DisponibilidadesDisciplinasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DisciplinasSalasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new EquivalenciasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new OfertasCursosCampiImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DemandasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino, false));
+		importers.add(new AlunosImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new AlunosDemandaImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new ProfessoresImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DisponibilidadesProfessoresImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new CampiTrabalhoImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new HabilitacoesProfessoresImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DivisoesCreditoImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DivisoesCreditoDisciplinaImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DisciplinasPreRequisitosImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new DisciplinasCoRequisitosImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new AtendimentoImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+
+		boolean flag = true;
+		for (IImportExcel importer : importers)
+		{
+			getProgressReport().setInitNewPartial("Importando " + importer.getSheetName());
+			flag = (importer.load(fileName, workbook, false) && flag);
+			getProgressReport().setPartial("Etapa concluída");
+
+			for (String error : importer.getErrors())
+			{
+				getErrors().add(importer.getSheetName() + ": " + error);
+			}
+
+			for (String warning : importer.getWarnings())
+			{
+				getWarnings().add(importer.getSheetName() + ": " + warning);
+			}
+		}
 		return flag;
 	}
-	
-	private boolean checkAnyValidSheet(Workbook workbook) {
+
+	@Override
+	public boolean load(String fileName, InputStream inputStream)
+	{
+		try
+		{
+			Workbook workbook = WorkbookFactory.create(inputStream);
+			return load(fileName, workbook, false);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			String errorMessage = TriedaUtil.extractMessage(e);
+			getErrors().add(getI18nMessages().excelErroGenericoImportacao(errorMessage));
+			return false;
+		}
+	}
+
+	@Override
+	public boolean load(String fileName, File file)
+	{
+		try
+		{
+			Workbook workbook = WorkbookFactory.create(file);
+			return load(fileName, workbook, false);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			String errorMessage = TriedaUtil.extractMessage(e);
+			getErrors().add(getI18nMessages().excelErroGenericoImportacao(errorMessage));
+			return false;
+		}
+	}
+
+	private boolean checkAnyValidSheet(Workbook workbook)
+	{
 		boolean nenhumaAbaValida = true;
-		for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++)
 		{
 			for (ExcelInformationType value : ExcelInformationType.values())
 			{
-				if (value.getSheetName().equals(workbook.getSheetName( sheetIndex )))
+				if (value.getSheetName().equals(workbook.getSheetName(sheetIndex)))
 				{
 					nenhumaAbaValida = false;
 				}
@@ -135,13 +149,13 @@ public class TRIEDAImportExcel
 	}
 
 	@Override
-	public List< String > getErrors()
+	public List<String> getErrors()
 	{
 		return this.errors;
 	}
 
 	@Override
-	public List< String > getWarnings()
+	public List<String> getWarnings()
 	{
 		return this.warnings;
 	}

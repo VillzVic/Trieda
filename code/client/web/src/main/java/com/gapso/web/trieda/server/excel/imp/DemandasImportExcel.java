@@ -36,8 +36,7 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 @ProgressDeclarationAnnotation
-public class DemandasImportExcel
-	extends AbstractImportExcel< DemandasImportExcelBean >
+public class DemandasImportExcel extends AbstractImportExcel<DemandasImportExcelBean>
 {
 	static public String CAMPUS_COLUMN_NAME;
 	static public String TURNO_COLUMN_NAME;
@@ -49,128 +48,108 @@ public class DemandasImportExcel
 	static public String EXIGE_EQUIVALENCIA_COLUMN_NAME;
 	static public String PRIORIDADE_ALUNOS_COLUMN_NAME;
 
-	private List< String > headerColumnsNames;
+	private List<String> headerColumnsNames;
 	private Boolean criarAlunosVirtuais;
 
-	public DemandasImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino,
-		Boolean criarAlunosVirtuais )
+	public DemandasImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino, Boolean criarAlunosVirtuais)
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
 		this.criarAlunosVirtuais = criarAlunosVirtuais;
 
-		this.headerColumnsNames = new ArrayList< String >();
-		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
-		this.headerColumnsNames.add( TURNO_COLUMN_NAME );
-		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
-		this.headerColumnsNames.add( MATRIZ_CURRICULAR_COLUMN_NAME );
-		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
-		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
-		this.headerColumnsNames.add( DEMANDA_COLUMN_NAME );
-		this.headerColumnsNames.add( EXIGE_EQUIVALENCIA_COLUMN_NAME );
-		this.headerColumnsNames.add( PRIORIDADE_ALUNOS_COLUMN_NAME );
+		this.headerColumnsNames = new ArrayList<String>();
+		this.headerColumnsNames.add(CAMPUS_COLUMN_NAME);
+		this.headerColumnsNames.add(TURNO_COLUMN_NAME);
+		this.headerColumnsNames.add(CURSO_COLUMN_NAME);
+		this.headerColumnsNames.add(MATRIZ_CURRICULAR_COLUMN_NAME);
+		this.headerColumnsNames.add(PERIODO_COLUMN_NAME);
+		this.headerColumnsNames.add(DISCIPLINA_COLUMN_NAME);
+		this.headerColumnsNames.add(DEMANDA_COLUMN_NAME);
+		this.headerColumnsNames.add(EXIGE_EQUIVALENCIA_COLUMN_NAME);
+		this.headerColumnsNames.add(PRIORIDADE_ALUNOS_COLUMN_NAME);
 	}
-	
-	public DemandasImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+
+	public DemandasImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
 		this.criarAlunosVirtuais = true;
 
-		this.headerColumnsNames = new ArrayList< String >();
-		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
-		this.headerColumnsNames.add( TURNO_COLUMN_NAME );
-		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
-		this.headerColumnsNames.add( MATRIZ_CURRICULAR_COLUMN_NAME );
-		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
-		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
-		this.headerColumnsNames.add( DEMANDA_COLUMN_NAME );
-		this.headerColumnsNames.add( EXIGE_EQUIVALENCIA_COLUMN_NAME );
-		this.headerColumnsNames.add( PRIORIDADE_ALUNOS_COLUMN_NAME );
+		this.headerColumnsNames = new ArrayList<String>();
+		this.headerColumnsNames.add(CAMPUS_COLUMN_NAME);
+		this.headerColumnsNames.add(TURNO_COLUMN_NAME);
+		this.headerColumnsNames.add(CURSO_COLUMN_NAME);
+		this.headerColumnsNames.add(MATRIZ_CURRICULAR_COLUMN_NAME);
+		this.headerColumnsNames.add(PERIODO_COLUMN_NAME);
+		this.headerColumnsNames.add(DISCIPLINA_COLUMN_NAME);
+		this.headerColumnsNames.add(DEMANDA_COLUMN_NAME);
+		this.headerColumnsNames.add(EXIGE_EQUIVALENCIA_COLUMN_NAME);
+		this.headerColumnsNames.add(PRIORIDADE_ALUNOS_COLUMN_NAME);
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(
-		int sheetIndex, Sheet sheet, Workbook workbook )
-	{
-		String sheetName = workbook.getSheetName( sheetIndex );
-		return ExcelInformationType.DEMANDAS.getSheetName().equals( sheetName );
-	}
-
-	@Override
-	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, Sheet sheet, Workbook workbook )
+	protected List<String> getHeaderColumnsNames()
 	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected DemandasImportExcelBean createExcelBean(
-		Row header, Row row, int sheetIndex,
-		Sheet sheet, Workbook workbook )
+	protected DemandasImportExcelBean createExcelBean(Row header, Row row)
 	{
-		DemandasImportExcelBean bean
-			= new DemandasImportExcelBean( row.getRowNum() + 1 );
+		DemandasImportExcelBean bean = new DemandasImportExcelBean(row.getRowNum() + 1);
 
-        for ( int cellIndex = row.getFirstCellNum();
-        	  cellIndex <= row.getLastCellNum(); cellIndex++ )
-        {
-            Cell cell = row.getCell( cellIndex );
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
+			Cell cell = row.getCell(cellIndex);
 
-        	if ( cell != null )
-        	{
-        		Cell headerCell = header.getCell( cell.getColumnIndex() );
+			if (cell != null)
+			{
+				Cell headerCell = header.getCell(cell.getColumnIndex());
 
-        		if ( headerCell != null )
-        		{
-        			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue( cell );
+				if (headerCell != null)
+				{
+					String columnName = headerCell.getRichStringCellValue().getString();
+					String cellValue = getCellValue(cell);
 
-					if ( CAMPUS_COLUMN_NAME.equals( columnName ) )
+					if (CAMPUS_COLUMN_NAME.equals(columnName))
 					{
-						bean.setCampusStr( cellValue );
+						bean.setCampusStr(cellValue);
 					}
-					else if ( TURNO_COLUMN_NAME.equals( columnName ) )
+					else if (TURNO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setTurnoStr( cellValue );
+						bean.setTurnoStr(cellValue);
 					}
-					else if ( CURSO_COLUMN_NAME.equals( columnName ) )
+					else if (CURSO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setCursoStr( cellValue );
+						bean.setCursoStr(cellValue);
 					}
-					else if ( MATRIZ_CURRICULAR_COLUMN_NAME.equals( columnName ) )
+					else if (MATRIZ_CURRICULAR_COLUMN_NAME.equals(columnName))
 					{
-						bean.setMatrizCurricularStr( cellValue );
+						bean.setMatrizCurricularStr(cellValue);
 					}
-					else if ( PERIODO_COLUMN_NAME.equals( columnName ) )
+					else if (PERIODO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setPeriodoStr( cellValue );
+						bean.setPeriodoStr(cellValue);
 					}
-					else if ( DISCIPLINA_COLUMN_NAME.equals( columnName ) )
+					else if (DISCIPLINA_COLUMN_NAME.equals(columnName))
 					{
-						bean.setDisciplinaStr( cellValue );
+						bean.setDisciplinaStr(cellValue);
 					}
-					else if ( DEMANDA_COLUMN_NAME.equals( columnName ) )
+					else if (DEMANDA_COLUMN_NAME.equals(columnName))
 					{
-						bean.setDemandaStr( cellValue );
+						bean.setDemandaStr(cellValue);
 					}
-					else if ( EXIGE_EQUIVALENCIA_COLUMN_NAME.equals( columnName ) )
+					else if (EXIGE_EQUIVALENCIA_COLUMN_NAME.equals(columnName))
 					{
-						bean.setExigeEquivalenciaForcadaStr( cellValue );
+						bean.setExigeEquivalenciaForcadaStr(cellValue);
 					}
-					else if ( PRIORIDADE_ALUNOS_COLUMN_NAME.equals( columnName ) )
+					else if (PRIORIDADE_ALUNOS_COLUMN_NAME.equals(columnName))
 					{
-						bean.setPrioridadeAlunosStr( cellValue );
+						bean.setPrioridadeAlunosStr(cellValue);
 					}
-        		}
-        	}
-        }
+				}
+			}
+		}
 
 		return bean;
 	}
@@ -188,359 +167,304 @@ public class DemandasImportExcel
 	}
 
 	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected void processSheetContent( String sheetName,
-		List< DemandasImportExcelBean > sheetContent )
-	{
-		if ( doSyntacticValidation( sheetName, sheetContent )
-			&& doLogicValidation( sheetName, sheetContent ) )
-		{
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
-			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
-		}
-	}
-
-	private boolean doSyntacticValidation( String sheetName,
-		List< DemandasImportExcelBean > sheetContent )
+	protected boolean doSyntacticValidation(List<DemandasImportExcelBean> sheetContent)
 	{
 		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
 		// [ ImportExcelError' -> Lista de linhas onde o erro ocorre ]
-		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
-			= new HashMap< ImportExcelError, List< Integer > >();
+		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
 
-		for ( DemandasImportExcelBean bean : sheetContent )
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
 
-			for ( ImportExcelError error : errorsBean )
+			for (ImportExcelError error : errorsBean)
 			{
-				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
+				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
 
-				if ( rowsWithErrors == null )
+				if (rowsWithErrors == null)
 				{
-					rowsWithErrors = new ArrayList< Integer >();
-					syntacticErrorsMap.put( error, rowsWithErrors );
+					rowsWithErrors = new ArrayList<Integer>();
+					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
 
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
 		{
-			List< Integer > linhasComErro = syntacticErrorsMap.get( error );
-			getErrors().add( error.getMessage( linhasComErro.toString(), getI18nMessages() ) );
+			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
 
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation( String sheetName,
-		List< DemandasImportExcelBean > sheetContent )
+	@Override
+	protected boolean doLogicValidation(List<DemandasImportExcelBean> sheetContent)
 	{
 		// Verifica se uma demanda ( Campus + Turno + Matriz Curricular +
 		// Disciplina + Período ) é adicionada mais de uma vez no arquivo de entrada
-		checkUniqueness( sheetContent );
+		checkUniqueness(sheetContent);
 
 		// Verifica se há referência a algum tipo de contrato não cadastrado
-		checkNonRegisteredCampus( sheetContent );
-		checkNonRegisteredTurno( sheetContent );
-		checkNonRegisteredCurso( sheetContent );
-		checkNonRegisteredDisciplina( sheetContent );
-		checkNonRegisteredCurriculo( sheetContent );
-		checkNonRegisteredDisciplinaEmCurricular( sheetContent );
-		checkNonRegisteredOfertas( sheetContent );
+		checkNonRegisteredCampus(sheetContent);
+		checkNonRegisteredTurno(sheetContent);
+		checkNonRegisteredCurso(sheetContent);
+		checkNonRegisteredDisciplina(sheetContent);
+		checkNonRegisteredCurriculo(sheetContent);
+		checkNonRegisteredDisciplinaEmCurricular(sheetContent);
+		checkNonRegisteredOfertas(sheetContent);
 
 		return getErrors().isEmpty();
 	}
 
-	private void checkUniqueness(
-		List< DemandasImportExcelBean > sheetContent )
+	private void checkUniqueness(List<DemandasImportExcelBean> sheetContent)
 	{
 		// Map com os códigos " Campus + Turno + Matriz Curricular + Período +
 		// Disciplina" e as linhas em que o mesmo aparece no arquivo de entrada
 
 		// [ "Campus + Turno + Matriz Curricular + Período +
 		// Disciplina" -> Lista de Linhas do Arquivo de Entrada ]
-		Map< String, List< Integer > > demandasToRowsMap
-			= new HashMap< String, List< Integer > >();
+		Map<String, List<Integer>> demandasToRowsMap = new HashMap<String, List<Integer>>();
 
-		for ( DemandasImportExcelBean bean : sheetContent )
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			String demandaPeriodo = ( getCodeDemanda( bean ) + "-" + bean.getPeriodoStr() + "-" +bean.getPrioridadeAlunosStr());
-			List< Integer > rows = demandasToRowsMap.get( demandaPeriodo );
+			String demandaPeriodo = (getCodeDemanda(bean) + "-" + bean.getPeriodoStr() + "-" + bean.getPrioridadeAlunosStr());
+			List<Integer> rows = demandasToRowsMap.get(demandaPeriodo);
 
-			if ( rows == null )
+			if (rows == null)
 			{
-				rows = new ArrayList< Integer >();
-				demandasToRowsMap.put( demandaPeriodo, rows );
+				rows = new ArrayList<Integer>();
+				demandasToRowsMap.put(demandaPeriodo, rows);
 			}
 
-			rows.add( bean.getRow() );
+			rows.add(bean.getRow());
 		}
 
 		// Verifica se alguma demanda de disciplina / período
 		// apareceu mais de uma vez no arquivo de entrada
-		for ( Entry< String, List< Integer > > entry : demandasToRowsMap.entrySet() )
+		for (Entry<String, List<Integer>> entry : demandasToRowsMap.entrySet())
 		{
-			if ( entry.getValue().size() > 1 )
+			if (entry.getValue().size() > 1)
 			{
-				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeViolada(
-					entry.getKey(), entry.getValue().toString() ) );
+				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(), entry.getValue().toString()));
 			}
 		}
 	}
 
-	private void checkNonRegisteredCampus(
-		List< DemandasImportExcelBean > sheetContent )
+	private void checkNonRegisteredCampus(List<DemandasImportExcelBean> sheetContent)
 	{
 		// [ CódidoCampus -> Campus ]
-		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
-			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Campus> campiBDMap = Campus.buildCampusCodigoToCampusMap(Campus.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
-		for ( DemandasImportExcelBean bean : sheetContent )
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			Campus campus = campiBDMap.get( bean.getCampusStr() );
-			if ( campus != null )
+			Campus campus = campiBDMap.get(bean.getCampusStr());
+			if (campus != null)
 			{
-				bean.setCampus( campus );
+				bean.setCampus(campus);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				CAMPUS_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(CAMPUS_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkNonRegisteredTurno(
-		List< DemandasImportExcelBean > sheetContent )
+	private void checkNonRegisteredTurno(List<DemandasImportExcelBean> sheetContent)
 	{
 		// [ NomeTurno -> Turno ]
-		Map< String, Turno > turnosBDMap = Turno.buildTurnoNomeToTurnoMap(
-			Turno.findAll( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Turno> turnosBDMap = Turno.buildTurnoNomeToTurnoMap(Turno.findAll(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors = new ArrayList<Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( DemandasImportExcelBean bean : sheetContent )
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			Turno turno = turnosBDMap.get( bean.getTurnoStr() );
+			Turno turno = turnosBDMap.get(bean.getTurnoStr());
 
-			if ( turno != null )
+			if (turno != null)
 			{
-				bean.setTurno( turno );
+				bean.setTurno(turno);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				TURNO_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TURNO_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkNonRegisteredCurso(
-		List< DemandasImportExcelBean > sheetContent )
+	private void checkNonRegisteredCurso(List<DemandasImportExcelBean> sheetContent)
 	{
 		// [ CódigoCurso -> Curso ]
-		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap(
-			Curso.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap(Curso.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( DemandasImportExcelBean bean : sheetContent )
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			Curso curso = cursosBDMap.get( bean.getCursoStr() );
+			Curso curso = cursosBDMap.get(bean.getCursoStr());
 
-			if ( curso != null )
+			if (curso != null)
 			{
-				bean.setCurso( curso );
+				bean.setCurso(curso);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				CURSO_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(CURSO_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkNonRegisteredDisciplina(
-		List< DemandasImportExcelBean > sheetContent )
+	private void checkNonRegisteredDisciplina(List<DemandasImportExcelBean> sheetContent)
 	{
 		// [ CódigoDisciplina -> Disciplina ]
-		Map< String, Disciplina > disciplinasBDMap
-			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors
-			= new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( DemandasImportExcelBean bean : sheetContent )
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			Disciplina disciplina
-				= disciplinasBDMap.get( bean.getDisciplinaStr() );
+			Disciplina disciplina = disciplinasBDMap.get(bean.getDisciplinaStr());
 
-			if ( disciplina != null )
+			if (disciplina != null)
 			{
-				bean.setDisciplina( disciplina );
+				bean.setDisciplina(disciplina);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkNonRegisteredCurriculo(
-		List< DemandasImportExcelBean > sheetContent )
+	private void checkNonRegisteredCurriculo(List<DemandasImportExcelBean> sheetContent)
 	{
 		// [ CodigoCurriculo -> Curriculo ]
-		Map< String, Curriculo > curriculosBDMap	
-			= Curriculo.buildCurriculoCodigoToCurriculoMap(
-				Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Curriculo> curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(Curriculo.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		List< Integer > rowsWithErrors
-			= new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( DemandasImportExcelBean bean : sheetContent )
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			Curriculo curriculo
-				= curriculosBDMap.get( bean.getMatrizCurricularStr() );
+			Curriculo curriculo = curriculosBDMap.get(bean.getMatrizCurricularStr());
 
-			if ( curriculo != null )
+			if (curriculo != null)
 			{
-				bean.setMatrizCurricular( curriculo );
+				bean.setMatrizCurricular(curriculo);
 			}
 			else
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
-				MATRIZ_CURRICULAR_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(MATRIZ_CURRICULAR_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
-	
-	private void checkNonRegisteredOfertas(
-			List< DemandasImportExcelBean > sheetContent )
-		{
-		
-		Map< String, Oferta > ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(
-			Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
-		
-		List< Integer > rowsWithErrors
-		= new ArrayList< Integer >();
-		
-		for ( DemandasImportExcelBean bean : sheetContent )
-		{
-			Oferta oferta = ofertasBDMap.get(
-					getCodeOferta(bean) );
 
-			if ( oferta == null )
+	private void checkNonRegisteredOfertas(List<DemandasImportExcelBean> sheetContent)
+	{
+
+		Map<String, Oferta> ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(Oferta.findByCenario(this.instituicaoEnsino, getCenario()));
+
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+
+		for (DemandasImportExcelBean bean : sheetContent)
+		{
+			Oferta oferta = ofertasBDMap.get(getCodeOferta(bean));
+
+			if (oferta == null)
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
-		
-		if ( !rowsWithErrors.isEmpty() )
+
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoOfertasCursosCampiEmOfertasEDemandas(
-				rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoOfertasCursosCampiEmOfertasEDemandas(rowsWithErrors.toString()));
 		}
 	}
 
-	private void checkNonRegisteredDisciplinaEmCurricular(
-		List< DemandasImportExcelBean > sheetContent )
+	private void checkNonRegisteredDisciplinaEmCurricular(List<DemandasImportExcelBean> sheetContent)
 	{
 		// [ NaturalKeyCurriculo -> Curriculo ]
-		Map< String, CurriculoDisciplina > curriculosDisciplinasBDMap
-			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
-				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, CurriculoDisciplina> curriculosDisciplinasBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario(this.instituicaoEnsino,
+						getCenario()));
 
-		List< Integer > rowsWithErrors
-			= new ArrayList< Integer >();
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 
-		for ( DemandasImportExcelBean bean : sheetContent )
+		for (DemandasImportExcelBean bean : sheetContent)
 		{
-			CurriculoDisciplina curriculoDisciplina = curriculosDisciplinasBDMap.get(
-				getNaturalKeyStringDeCurriculoDisciplina( bean ) );
+			CurriculoDisciplina curriculoDisciplina = curriculosDisciplinasBDMap.get(getNaturalKeyStringDeCurriculoDisciplina(bean));
 
-			if ( curriculoDisciplina == null )
+			if (curriculoDisciplina == null)
 			{
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if ( !rowsWithErrors.isEmpty() )
+		if (!rowsWithErrors.isEmpty())
 		{
-			getErrors().add( getI18nMessages().excelErroLogicoDisciplinaEmMatrizCurricular(
-				DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString() ) );
+			getErrors().add(getI18nMessages().excelErroLogicoDisciplinaEmMatrizCurricular(DISCIPLINA_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
 	@Transactional
 	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
-	private void updateDataBase( String sheetName,
-		List< DemandasImportExcelBean > sheetContent )
+	@Override
+	protected void updateDataBase(List<DemandasImportExcelBean> sheetContent)
 	{
-		Map< String, Demanda > demandasBDMap
-			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(
-				Demanda.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Demanda> demandasBDMap = Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(Demanda.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		Map< String, Oferta > ofertasBDMap
-			= Oferta.buildCampusTurnoCurriculoToOfertaMap(
-				Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
-		
-		Map<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>> ofertaParPeriodoMapPrioridadeMapDemandaQuantidade
-			= new HashMap<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>>();
+		Map<String, Oferta> ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(Oferta.findByCenario(this.instituicaoEnsino, getCenario()));
 
-		for ( DemandasImportExcelBean demandasExcel : sheetContent )
+		Map<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>> ofertaParPeriodoMapPrioridadeMapDemandaQuantidade = new HashMap<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>>();
+
+		for (DemandasImportExcelBean demandasExcel : sheetContent)
 		{
-			String codeDemanda = getCodeDemanda( demandasExcel );
-			String codeOferta = getCodeOferta( demandasExcel );
+			String codeDemanda = getCodeDemanda(demandasExcel);
+			String codeOferta = getCodeOferta(demandasExcel);
 
-			Demanda demandaBD = demandasBDMap.get( codeDemanda );
-			Oferta oferta = ofertasBDMap.get( codeOferta );
+			Demanda demandaBD = demandasBDMap.get(codeDemanda);
+			Oferta oferta = ofertasBDMap.get(codeOferta);
 
 			TriedaPar<Oferta, Integer> key = TriedaPar.create(oferta, demandasExcel.getPeriodo());
-			if ( demandaBD != null )
+			if (demandaBD != null)
 			{
 				// Update
 				demandaBD.merge();
-				
+
 				if (ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key) == null)
 				{
 					TriedaTrio<Demanda, Integer, Boolean> demandaQuantidade = TriedaTrio.create(demandaBD, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada());
 					List<TriedaTrio<Demanda, Integer, Boolean>> demandaQuantidadeList = new ArrayList<TriedaTrio<Demanda, Integer, Boolean>>();
 					demandaQuantidadeList.add(demandaQuantidade);
-					Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> prioridadeMapDemandaQuantidade
-						= new HashMap<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>();
+					Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> prioridadeMapDemandaQuantidade = new HashMap<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>();
 					prioridadeMapDemandaQuantidade.put(demandasExcel.getPrioridade(), demandaQuantidadeList);
 					ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.put(key, prioridadeMapDemandaQuantidade);
 				}
@@ -555,7 +479,8 @@ public class DemandasImportExcel
 					}
 					else
 					{
-						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade()).add( TriedaTrio.create(demandaBD, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada()));
+						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade())
+										.add(TriedaTrio.create(demandaBD, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada()));
 					}
 				}
 			}
@@ -564,18 +489,17 @@ public class DemandasImportExcel
 				// Insert
 				Demanda newDemanda = new Demanda();
 
-				newDemanda.setDisciplina( demandasExcel.getDisciplina() );
-				newDemanda.setOferta( oferta );
+				newDemanda.setDisciplina(demandasExcel.getDisciplina());
+				newDemanda.setOferta(oferta);
 
 				newDemanda.persist();
-				
+
 				if (ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key) == null)
 				{
 					TriedaTrio<Demanda, Integer, Boolean> demandaQuantidade = TriedaTrio.create(newDemanda, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada());
 					List<TriedaTrio<Demanda, Integer, Boolean>> demandaQuantidadeList = new ArrayList<TriedaTrio<Demanda, Integer, Boolean>>();
 					demandaQuantidadeList.add(demandaQuantidade);
-					Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> prioridadeMapDemandaQuantidade
-						= new HashMap<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>();
+					Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> prioridadeMapDemandaQuantidade = new HashMap<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>();
 					prioridadeMapDemandaQuantidade.put(demandasExcel.getPrioridade(), demandaQuantidadeList);
 					ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.put(key, prioridadeMapDemandaQuantidade);
 				}
@@ -590,12 +514,13 @@ public class DemandasImportExcel
 					}
 					else
 					{
-						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade()).add( TriedaTrio.create(newDemanda, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada()));
+						ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.get(key).get(demandasExcel.getPrioridade())
+										.add(TriedaTrio.create(newDemanda, demandasExcel.getDemanda(), demandasExcel.getExigeEquivalenciaForcada()));
 					}
 				}
 			}
 		}
-		//Criando Alunos Virtuais
+		// Criando Alunos Virtuais
 		if (criarAlunosVirtuais)
 		{
 			for (Entry<TriedaPar<Oferta, Integer>, Map<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>>> entry2 : ofertaParPeriodoMapPrioridadeMapDemandaQuantidade.entrySet())
@@ -603,9 +528,11 @@ public class DemandasImportExcel
 				for (Entry<Integer, List<TriedaTrio<Demanda, Integer, Boolean>>> entry : entry2.getValue().entrySet())
 				{
 					List<TriedaTrio<Demanda, Integer, Boolean>> demandas = entry.getValue();
-					Collections.sort(demandas, new Comparator<TriedaTrio<Demanda, Integer, Boolean>>() {
+					Collections.sort(demandas, new Comparator<TriedaTrio<Demanda, Integer, Boolean>>()
+					{
 						@Override
-						public int compare(TriedaTrio<Demanda, Integer, Boolean> o1, TriedaTrio<Demanda, Integer, Boolean> o2) {
+						public int compare(TriedaTrio<Demanda, Integer, Boolean> o1, TriedaTrio<Demanda, Integer, Boolean> o2)
+						{
 							return o1.getSegundo().compareTo(o2.getSegundo());
 						}
 					});
@@ -626,12 +553,12 @@ public class DemandasImportExcel
 								novoAluno.setVirtual(true);
 								novoAluno.setCriadoTrieda(true);
 								novoAluno.setPrioridade(entry.getKey());
-								
+
 								novoAluno.persist();
-								
+
 								alunos.add(novoAluno);
 							}
-			
+
 							for (int i = 0; i < demanda.getSegundo(); i++)
 							{
 								AlunoDemanda novoAlunoDemanda = new AlunoDemanda();
@@ -641,16 +568,16 @@ public class DemandasImportExcel
 								novoAlunoDemanda.setPrioridade(1);
 								novoAlunoDemanda.setAtendido(false);
 								novoAlunoDemanda.setExigeEquivalenciaForcada(demanda.getTerceiro());
-								
+
 								novoAlunoDemanda.persist();
 							}
 						}
 					}
 					for (Aluno aluno : alunos)
 					{
-						aluno.setNome("Aluno Virtual " + aluno.getId() + " " + entry2.getKey().getPrimeiro().getCurriculo().getCurso().getNome() + " " 
-								+  entry2.getKey().getPrimeiro().getCurriculo().getCodigo() + " " +  entry2.getKey().getSegundo() );
-						aluno.setMatricula( aluno.getId().toString() );
+						aluno.setNome("Aluno Virtual " + aluno.getId() + " " + entry2.getKey().getPrimeiro().getCurriculo().getCurso().getNome() + " "
+										+ entry2.getKey().getPrimeiro().getCurriculo().getCodigo() + " " + entry2.getKey().getSegundo());
+						aluno.setMatricula(aluno.getId().toString());
 						aluno.merge();
 					}
 				}
@@ -660,44 +587,35 @@ public class DemandasImportExcel
 
 	private void resolveHeaderColumnNames()
 	{
-		if ( CAMPUS_COLUMN_NAME == null )
+		if (CAMPUS_COLUMN_NAME == null)
 		{
-			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCampus() );
-			TURNO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().turno() );
-			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCurso() );
-			MATRIZ_CURRICULAR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().matrizCurricular() );
-			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
-			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
-			DEMANDA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().demandaDeAlunosVirtual() );
-			EXIGE_EQUIVALENCIA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().exigeEquivalenciaForcada() );
-			PRIORIDADE_ALUNOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().prioridadeAlunos() );
+			CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoCampus());
+			TURNO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().turno());
+			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoCurso());
+			MATRIZ_CURRICULAR_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().matrizCurricular());
+			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().periodo());
+			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoDisciplina());
+			DEMANDA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().demandaDeAlunosVirtual());
+			EXIGE_EQUIVALENCIA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().exigeEquivalenciaForcada());
+			PRIORIDADE_ALUNOS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().prioridadeAlunos());
 		}
 	}
 
 	// Campus + Turno + Matriz Curricular + Disciplina
-	private String getCodeDemanda( DemandasImportExcelBean bean )
+	private String getCodeDemanda(DemandasImportExcelBean bean)
 	{
-		return bean.getCampusStr()
-			+ "-" + bean.getTurnoStr()
-			+ "-" + bean.getMatrizCurricularStr()
-			+ "-" + bean.getDisciplinaStr();
+		return bean.getCampusStr() + "-" + bean.getTurnoStr() + "-" + bean.getMatrizCurricularStr() + "-" + bean.getDisciplinaStr();
 	}
 
 	// Campus + Turno + Matriz Curricular
-	private String getCodeOferta( DemandasImportExcelBean bean )
+	private String getCodeOferta(DemandasImportExcelBean bean)
 	{
-		return bean.getCampusStr()
-			+ "-" + bean.getTurnoStr()
-			+ "-" + bean.getMatrizCurricularStr();
+		return bean.getCampusStr() + "-" + bean.getTurnoStr() + "-" + bean.getMatrizCurricularStr();
 	}
 
 	// Curso + Curriculo + Período + Disciplina
-	public String getNaturalKeyStringDeCurriculoDisciplina(
-		DemandasImportExcelBean bean )
+	public String getNaturalKeyStringDeCurriculoDisciplina(DemandasImportExcelBean bean)
 	{
-		return bean.getCursoStr()
-			+ "-" + bean.getMatrizCurricularStr()
-			+ "-" + bean.getPeriodo()
-			+ "-" + bean.getDisciplinaStr();
+		return bean.getCursoStr() + "-" + bean.getMatrizCurricularStr() + "-" + bean.getPeriodo() + "-" + bean.getDisciplinaStr();
 	}
 }

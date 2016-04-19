@@ -8,8 +8,6 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
@@ -20,13 +18,13 @@ import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TriedaTrio;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
-import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 @ProgressDeclarationAnnotation
-public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<DisponibilidadesSalasImportExcelBean> {
+public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<DisponibilidadesSalasImportExcelBean>
+{
 	static public String SALA_CODIGO_COLUMN_NAME;
 	static public String DIA_SEMANA_COLUMN_NAME;
 	static public String HORARIO_INICIAL_COLUMN_NAME;
@@ -34,9 +32,8 @@ public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<Dispon
 
 	private List<String> headerColumnsNames;
 
-	public DisponibilidadesSalasImportExcel(Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-			InstituicaoEnsino instituicaoEnsino) {
+	public DisponibilidadesSalasImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
+	{
 		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		resolveHeaderColumnNames();
 
@@ -48,37 +45,43 @@ public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<Dispon
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(int sheetIndex, Sheet sheet, Workbook workbook) {
-		String sheetName = workbook.getSheetName(sheetIndex);
-		return ExcelInformationType.DISPONIBILIDADES_SALAS.getSheetName().equals(sheetName);
-	}
-
-	@Override
-	protected List<String> getHeaderColumnsNames(int sheetIndex, Sheet sheet, Workbook workbook) {
+	protected List<String> getHeaderColumnsNames()
+	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected DisponibilidadesSalasImportExcelBean createExcelBean(Row header, Row row, int sheetIndex, Sheet sheet, Workbook workbook) {
+	protected DisponibilidadesSalasImportExcelBean createExcelBean(Row header, Row row)
+	{
 		DisponibilidadesSalasImportExcelBean bean = new DisponibilidadesSalasImportExcelBean(row.getRowNum() + 1);
 
-		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++) {
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
 			Cell cell = row.getCell(cellIndex);
 
-			if (cell != null) {
+			if (cell != null)
+			{
 				Cell headerCell = header.getCell(cell.getColumnIndex());
 
-				if (headerCell != null) {
+				if (headerCell != null)
+				{
 					String columnName = headerCell.getRichStringCellValue().getString();
 					String cellValue = getCellValue(cell);
 
-					if (SALA_CODIGO_COLUMN_NAME.equals(columnName)) {
+					if (SALA_CODIGO_COLUMN_NAME.equals(columnName))
+					{
 						bean.setSalaCodigoStr(cellValue);
-					} else if (DIA_SEMANA_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (DIA_SEMANA_COLUMN_NAME.equals(columnName))
+					{
 						bean.setDiaStr(cellValue);
-					} else if (HORARIO_INICIAL_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (HORARIO_INICIAL_COLUMN_NAME.equals(columnName))
+					{
 						bean.setHorarioInicialStr(cellValue);
-					} else if (HORARIO_FINAL_COLUMN_NAME.equals(columnName)) {
+					}
+					else if (HORARIO_FINAL_COLUMN_NAME.equals(columnName))
+					{
 						bean.setHorarioFinalStr(cellValue);
 					}
 				}
@@ -89,36 +92,33 @@ public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<Dispon
 	}
 
 	@Override
-	public String getSheetName() {
+	public String getSheetName()
+	{
 		return ExcelInformationType.DISPONIBILIDADES_SALAS.getSheetName();
 	}
 
 	@Override
-	protected String getHeaderToString() {
+	protected String getHeaderToString()
+	{
 		return this.headerColumnsNames.toString();
 	}
 
 	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected void processSheetContent(String sheetName, List<DisponibilidadesSalasImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName, sheetContent) && doLogicValidation(sheetName, sheetContent)) {
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
-			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
-		}
-	}
-
-	private boolean doSyntacticValidation(String sheetName, List<DisponibilidadesSalasImportExcelBean> sheetContent) {
+	protected boolean doSyntacticValidation(List<DisponibilidadesSalasImportExcelBean> sheetContent)
+	{
 		// Map utilizado para associar um erro
 		// às linhas do arquivo onde o mesmo ocorre
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
 		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
 
-		for (DisponibilidadesSalasImportExcelBean bean : sheetContent) {
+		for (DisponibilidadesSalasImportExcelBean bean : sheetContent)
+		{
 			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
-			for (ImportExcelError error : errorsBean) {
+			for (ImportExcelError error : errorsBean)
+			{
 				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
-				if (rowsWithErrors == null) {
+				if (rowsWithErrors == null)
+				{
 					rowsWithErrors = new ArrayList<Integer>();
 					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
@@ -127,52 +127,67 @@ public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<Dispon
 		}
 
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for (ImportExcelError error : syntacticErrorsMap.keySet()) {
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
+		{
 			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
-			getErrors().add(error.getMessage(linhasComErro.toString(),getI18nMessages()));
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
 
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(String sheetName, List<DisponibilidadesSalasImportExcelBean> sheetContent) {
+	@Override
+	protected boolean doLogicValidation(List<DisponibilidadesSalasImportExcelBean> sheetContent)
+	{
 		checkNonRegisteredSala(sheetContent);
 
 		return getErrors().isEmpty();
 	}
-	
-	private void checkNonRegisteredSala(List<DisponibilidadesSalasImportExcelBean> sheetContent) {
+
+	private void checkNonRegisteredSala(List<DisponibilidadesSalasImportExcelBean> sheetContent)
+	{
 		// [ CodigoSala -> Sala ]
-		Map<String,Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(this.instituicaoEnsino,getCenario()));
+		Map<String, Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(this.instituicaoEnsino, getCenario()));
 
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (DisponibilidadesSalasImportExcelBean bean : sheetContent) {
+		for (DisponibilidadesSalasImportExcelBean bean : sheetContent)
+		{
 			Sala sala = salasBDMap.get(bean.getSalaCodigoStr());
-			if (sala != null) {
+			if (sala != null)
+			{
 				bean.setSala(sala);
-			} else {
+			}
+			else
+			{
 				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(SALA_CODIGO_COLUMN_NAME,rowsWithErrors.toString()));
+		if (!rowsWithErrors.isEmpty())
+		{
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(SALA_CODIGO_COLUMN_NAME, rowsWithErrors.toString()));
 		}
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<DisponibilidadesSalasImportExcelBean> sheetContent) {
+	@Override
+	protected void updateDataBase(List<DisponibilidadesSalasImportExcelBean> sheetContent)
+	{
 		int count = 0, total = sheetContent.size();
 		System.out.print(" " + total);
 
-		Map<Sala, List<TriedaTrio<Semanas,Calendar,Calendar>>> salaToDisponibilidadesMap = new HashMap<Sala, List<TriedaTrio<Semanas,Calendar,Calendar>>>();
-		for (DisponibilidadesSalasImportExcelBean bean : sheetContent) {
-			TriedaTrio<Semanas,Calendar,Calendar> disponibilidade = TriedaTrio.create(bean.getDiaSemana(),bean.getHorarioInicial(),bean.getHorarioFinal());
+		Map<Sala, List<TriedaTrio<Semanas, Calendar, Calendar>>> salaToDisponibilidadesMap = new HashMap<Sala, List<TriedaTrio<Semanas, Calendar, Calendar>>>();
+		for (DisponibilidadesSalasImportExcelBean bean : sheetContent)
+		{
+			TriedaTrio<Semanas, Calendar, Calendar> disponibilidade = TriedaTrio.create(bean.getDiaSemana(), bean.getHorarioInicial(), bean.getHorarioFinal());
 
-			if (salaToDisponibilidadesMap.containsKey(bean.getSala())) {
+			if (salaToDisponibilidadesMap.containsKey(bean.getSala()))
+			{
 				Boolean concatenouHorario = false;
-				for (TriedaTrio<Semanas,Calendar,Calendar> trio : salaToDisponibilidadesMap.get(bean.getSala()) ) {
-					if (trio.getTerceiro().equals(disponibilidade.getSegundo())) {
+				for (TriedaTrio<Semanas, Calendar, Calendar> trio : salaToDisponibilidadesMap.get(bean.getSala()))
+				{
+					if (trio.getTerceiro().equals(disponibilidade.getSegundo()))
+					{
 						trio.setTerceiro(disponibilidade.getTerceiro());
 						concatenouHorario = true;
 					}
@@ -180,28 +195,33 @@ public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<Dispon
 				if (!concatenouHorario)
 					salaToDisponibilidadesMap.get(bean.getSala()).add(disponibilidade);
 			}
-			else {
-				List<TriedaTrio<Semanas,Calendar,Calendar>> trios = new ArrayList<TriedaTrio<Semanas,Calendar,Calendar>>();
+			else
+			{
+				List<TriedaTrio<Semanas, Calendar, Calendar>> trios = new ArrayList<TriedaTrio<Semanas, Calendar, Calendar>>();
 				trios.add(disponibilidade);
 				salaToDisponibilidadesMap.put(bean.getSala(), trios);
 			}
 
 			count++;
 			total--;
-			if (count == 100) {
+			if (count == 100)
+			{
 				System.out.println("\t   Faltam " + total + " disponibilidades das salas");
 				count = 0;
 			}
 		}
-		
-		if (!salaToDisponibilidadesMap.isEmpty()) {
+
+		if (!salaToDisponibilidadesMap.isEmpty())
+		{
 			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
-			Sala.atualizaHorariosDasSalas(salaToDisponibilidadesMap,semanasLetivas);
+			Sala.atualizaHorariosDasSalas(salaToDisponibilidadesMap, semanasLetivas);
 		}
 	}
 
-	private void resolveHeaderColumnNames() {
-		if (SALA_CODIGO_COLUMN_NAME == null) {
+	private void resolveHeaderColumnNames()
+	{
+		if (SALA_CODIGO_COLUMN_NAME == null)
+		{
 			SALA_CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoSala());
 			DIA_SEMANA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().dia());
 			HORARIO_INICIAL_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().horarioInicial());
@@ -209,4 +229,3 @@ public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<Dispon
 		}
 	}
 }
-

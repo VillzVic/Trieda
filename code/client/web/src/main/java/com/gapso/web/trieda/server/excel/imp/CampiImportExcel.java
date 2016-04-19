@@ -24,8 +24,7 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 @ProgressDeclarationAnnotation
-public class CampiImportExcel
-	extends AbstractImportExcel< CampiImportExcelBean >
+public class CampiImportExcel extends AbstractImportExcel<CampiImportExcelBean>
 {
 	static public String CODIGO_COLUMN_NAME;
 	static public String NOME_COLUMN_NAME;
@@ -34,88 +33,73 @@ public class CampiImportExcel
 	static public String BAIRRO_COLUMN_NAME;
 	static public String CUSTO_CREDITO_COLUMN_NAME;
 
-	private List< String > headerColumnsNames;
+	private List<String> headerColumnsNames;
 
-	public CampiImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public CampiImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
-		super( cenario,i18nConstants, i18nMessages, instituicaoEnsino );
+		super(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 		this.resolveHeaderColumnNames();
 
-		this.headerColumnsNames = new ArrayList< String >();
-		this.headerColumnsNames.add( CODIGO_COLUMN_NAME );
-		this.headerColumnsNames.add( NOME_COLUMN_NAME );
-		this.headerColumnsNames.add( ESTADO_COLUMN_NAME );
-		this.headerColumnsNames.add( MUNICIPIO_COLUMN_NAME );
-		this.headerColumnsNames.add( BAIRRO_COLUMN_NAME );
-		this.headerColumnsNames.add( CUSTO_CREDITO_COLUMN_NAME );
+		this.headerColumnsNames = new ArrayList<String>();
+		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
+		this.headerColumnsNames.add(NOME_COLUMN_NAME);
+		this.headerColumnsNames.add(ESTADO_COLUMN_NAME);
+		this.headerColumnsNames.add(MUNICIPIO_COLUMN_NAME);
+		this.headerColumnsNames.add(BAIRRO_COLUMN_NAME);
+		this.headerColumnsNames.add(CUSTO_CREDITO_COLUMN_NAME);
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(
-		int sheetIndex, Sheet sheet, Workbook workbook )
-	{
-		String sheetName = workbook.getSheetName( sheetIndex );
-		return ExcelInformationType.CAMPI.getSheetName().equals( sheetName );
-	}
-
-	@Override
-	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, Sheet sheet, Workbook workbook )
+	protected List<String> getHeaderColumnsNames()
 	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected CampiImportExcelBean createExcelBean(
-		Row header, Row row, int sheetIndex,
-		Sheet sheet, Workbook workbook )
+	protected CampiImportExcelBean createExcelBean(Row header, Row row)
 	{
-		CampiImportExcelBean bean = new CampiImportExcelBean( row.getRowNum() + 1 );
+		CampiImportExcelBean bean = new CampiImportExcelBean(row.getRowNum() + 1);
 
-        for ( int cellIndex = row.getFirstCellNum();
-        	  cellIndex <= row.getLastCellNum(); cellIndex++ )
-        {
-            Cell cell = row.getCell( cellIndex );
+		for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++)
+		{
+			Cell cell = row.getCell(cellIndex);
 
-        	if ( cell != null )
-        	{
-        		Cell headerCell = header.getCell( cell.getColumnIndex() );
+			if (cell != null)
+			{
+				Cell headerCell = header.getCell(cell.getColumnIndex());
 
-        		if ( headerCell != null )
-        		{
-        			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue( cell );
+				if (headerCell != null)
+				{
+					String columnName = headerCell.getRichStringCellValue().getString();
+					String cellValue = getCellValue(cell);
 
-					if ( CODIGO_COLUMN_NAME.equals( columnName ) )
+					if (CODIGO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setCodigoStr( cellValue );
+						bean.setCodigoStr(cellValue);
 					}
-					else if ( NOME_COLUMN_NAME.endsWith( columnName ) )
+					else if (NOME_COLUMN_NAME.endsWith(columnName))
 					{
-						bean.setNomeStr( cellValue );
+						bean.setNomeStr(cellValue);
 					}
-					else if ( ESTADO_COLUMN_NAME.equals( columnName ) )
+					else if (ESTADO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setEstadoStr( cellValue );
+						bean.setEstadoStr(cellValue);
 					}
-					else if ( MUNICIPIO_COLUMN_NAME.equals( columnName ) )
+					else if (MUNICIPIO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setMunicipioStr( cellValue );
+						bean.setMunicipioStr(cellValue);
 					}
-					else if ( BAIRRO_COLUMN_NAME.equals( columnName ) )
+					else if (BAIRRO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setBairroStr( cellValue );
+						bean.setBairroStr(cellValue);
 					}
-					else if ( CUSTO_CREDITO_COLUMN_NAME.equals( columnName ) )
+					else if (CUSTO_CREDITO_COLUMN_NAME.equals(columnName))
 					{
-						bean.setCustoMedioCreditoStr( cellValue );
+						bean.setCustoMedioCreditoStr(cellValue);
 					}
-        		}
-        	}
-        }
+				}
+			}
+		}
 
 		return bean;
 	}
@@ -131,169 +115,149 @@ public class CampiImportExcel
 	{
 		return ExcelInformationType.CAMPI.getSheetName();
 	}
-	
-	@Override
-	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	public void processSheetContent( String sheetName,
-		List< CampiImportExcelBean > sheetContent )
-	{
-		if ( doSyntacticValidation( sheetName, sheetContent )
-			&& doLogicValidation( sheetName, sheetContent ) )
-		{
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
-			updateDataBase( sheetName, sheetContent );
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
-		}
-	}
 
-	private boolean doSyntacticValidation( String sheetName,
-		List< CampiImportExcelBean > sheetContent )
+	@Override
+	protected boolean doSyntacticValidation(List<CampiImportExcelBean> sheetContent)
 	{
-		// Map utilizado para associar um erro 
+		// Map utilizado para associar um erro
 		// às linhas do arquivo onde o mesmo ocorre
 
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
-		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
-			= new HashMap< ImportExcelError, List< Integer > >();
+		Map<ImportExcelError, List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError, List<Integer>>();
 
-		for ( CampiImportExcelBean bean : sheetContent )
+		for (CampiImportExcelBean bean : sheetContent)
 		{
-			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
 
-			for ( ImportExcelError error : errorsBean )
+			for (ImportExcelError error : errorsBean)
 			{
-				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
+				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
 
-				if ( rowsWithErrors == null )
+				if (rowsWithErrors == null)
 				{
-					rowsWithErrors = new ArrayList< Integer >();
-					syntacticErrorsMap.put( error, rowsWithErrors );
+					rowsWithErrors = new ArrayList<Integer>();
+					syntacticErrorsMap.put(error, rowsWithErrors);
 				}
 
-				rowsWithErrors.add( bean.getRow() );
+				rowsWithErrors.add(bean.getRow());
 			}
 		}
 
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
-		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		for (ImportExcelError error : syntacticErrorsMap.keySet())
 		{
-			List< Integer > linhasComErro = syntacticErrorsMap.get( error );
+			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
 
-			getErrors().add( error.getMessage(
-				linhasComErro.toString(), getI18nMessages() ) );
+			getErrors().add(error.getMessage(linhasComErro.toString(), getI18nMessages()));
 		}
 
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation( String sheetName,
-		List< CampiImportExcelBean > sheetContent )
+	@Override
+	protected boolean doLogicValidation(List<CampiImportExcelBean> sheetContent)
 	{
-		// Verifica se algum campus apareceu 
+		// Verifica se algum campus apareceu
 		// mais de uma vez no arquivo de entrada
-		checkUniqueness( sheetContent );
+		checkUniqueness(sheetContent);
 
 		return getErrors().isEmpty();
 	}
 
-	private void checkUniqueness(
-		List< CampiImportExcelBean > sheetContent )
+	private void checkUniqueness(List<CampiImportExcelBean> sheetContent)
 	{
 		// Map com os códigos dos campi e as linhas
 		// em que o mesmo aparece no arquivo de entrada
 
 		// [ CódigoCampus -> Lista de Linhas do Arquivo de Entrada ]
-		Map< String, List< Integer > > campusCodigoToRowsMap
-			= new HashMap< String, List< Integer > >();
+		Map<String, List<Integer>> campusCodigoToRowsMap = new HashMap<String, List<Integer>>();
 
-		for ( CampiImportExcelBean bean : sheetContent )
+		for (CampiImportExcelBean bean : sheetContent)
 		{
-			List< Integer > rows = campusCodigoToRowsMap.get( bean.getCodigoStr() );
+			List<Integer> rows = campusCodigoToRowsMap.get(bean.getCodigoStr());
 
-			if ( rows == null )
+			if (rows == null)
 			{
-				rows = new ArrayList< Integer >();
-				campusCodigoToRowsMap.put( bean.getCodigoStr(), rows );
+				rows = new ArrayList<Integer>();
+				campusCodigoToRowsMap.put(bean.getCodigoStr(), rows);
 			}
 
-			rows.add( bean.getRow() );
+			rows.add(bean.getRow());
 		}
 
-		// Verifica se algum campus apareceu 
+		// Verifica se algum campus apareceu
 		// mais de uma vez no arquivo de entrada
-		for ( Entry< String, List< Integer > > entry
-			: campusCodigoToRowsMap.entrySet() )
+		for (Entry<String, List<Integer>> entry : campusCodigoToRowsMap.entrySet())
 		{
-			if ( entry.getValue().size() > 1 )
+			if (entry.getValue().size() > 1)
 			{
-				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeViolada(
-					entry.getKey(), entry.getValue().toString() ) );
+				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(), entry.getValue().toString()));
 			}
 		}
 	}
 
 	@Transactional
 	@ProgressReportMethodScan(texto = "Atualizando Banco de Dados")
-	public void updateDataBase( String sheetName,
-		List< CampiImportExcelBean > sheetContent )
+	@Override
+	protected void updateDataBase(List<CampiImportExcelBean> sheetContent)
 	{
-		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
-			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map<String, Campus> campiBDMap = Campus.buildCampusCodigoToCampusMap(Campus.findByCenario(this.instituicaoEnsino, getCenario()));
 
 		List<Campus> persistedCampi = new ArrayList<Campus>();
-		for ( CampiImportExcelBean campusExcel : sheetContent )
+		for (CampiImportExcelBean campusExcel : sheetContent)
 		{
-			Campus campusBD = campiBDMap.get( campusExcel.getCodigoStr() );
+			Campus campusBD = campiBDMap.get(campusExcel.getCodigoStr());
 
-			if ( campusBD != null )
+			if (campusBD != null)
 			{
 				// Update
-				campusBD.setInstituicaoEnsino( this.instituicaoEnsino );
-				campusBD.setNome( campusExcel.getNomeStr() );
-				campusBD.setEstado( campusExcel.getEstado() );
-				campusBD.setMunicipio( campusExcel.getMunicipioStr() );
-				campusBD.setBairro( campusExcel.getBairroStr() );
-				campusBD.setValorCredito( campusExcel.getCustoMedioCredito() );
+				campusBD.setInstituicaoEnsino(this.instituicaoEnsino);
+				campusBD.setNome(campusExcel.getNomeStr());
+				campusBD.setEstado(campusExcel.getEstado());
+				campusBD.setMunicipio(campusExcel.getMunicipioStr());
+				campusBD.setBairro(campusExcel.getBairroStr());
+				campusBD.setValorCredito(campusExcel.getCustoMedioCredito());
 
 				campusBD.merge();
-				Campus.entityManager().refresh( campusBD );
+				Campus.entityManager().refresh(campusBD);
 			}
 			else
 			{
 				// Insert
 				Campus newCampus = new Campus();
 
-				newCampus.setInstituicaoEnsino( this.instituicaoEnsino );
-				newCampus.setCenario( getCenario() );
-				newCampus.setCodigo( campusExcel.getCodigoStr() );
-				newCampus.setNome( campusExcel.getNomeStr() );
-				newCampus.setEstado( campusExcel.getEstado() );
-				newCampus.setMunicipio( campusExcel.getMunicipioStr() );
-				newCampus.setBairro( campusExcel.getBairroStr() );
-				newCampus.setValorCredito( campusExcel.getCustoMedioCredito() );
+				newCampus.setInstituicaoEnsino(this.instituicaoEnsino);
+				newCampus.setCenario(getCenario());
+				newCampus.setCodigo(campusExcel.getCodigoStr());
+				newCampus.setNome(campusExcel.getNomeStr());
+				newCampus.setEstado(campusExcel.getEstado());
+				newCampus.setMunicipio(campusExcel.getMunicipioStr());
+				newCampus.setBairro(campusExcel.getBairroStr());
+				newCampus.setValorCredito(campusExcel.getCustoMedioCredito());
 
 				newCampus.persistAndPreencheHorarios();
-				Campus.entityManager().refresh( newCampus );
+				Campus.entityManager().refresh(newCampus);
 				persistedCampi.add(newCampus);
 			}
 		}
-		
-		if (!persistedCampi.isEmpty()) {
+
+		if (!persistedCampi.isEmpty())
+		{
 			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
-			Campus.preencheHorariosDosCampi(persistedCampi,semanasLetivas);
+			Campus.preencheHorariosDosCampi(persistedCampi, semanasLetivas);
 		}
 	}
 
 	private void resolveHeaderColumnNames()
 	{
-		if ( CODIGO_COLUMN_NAME == null )
+		if (CODIGO_COLUMN_NAME == null)
 		{
-			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCampus() );
-			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nome() );
-			ESTADO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().estado() );
-			MUNICIPIO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().municipio() );
-			BAIRRO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().bairro() );
-			CUSTO_CREDITO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().custoMedioCreditoExcel() );
+			CODIGO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().codigoCampus());
+			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().nome());
+			ESTADO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().estado());
+			MUNICIPIO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().municipio());
+			BAIRRO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().bairro());
+			CUSTO_CREDITO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().custoMedioCreditoExcel());
 		}
 	}
 
