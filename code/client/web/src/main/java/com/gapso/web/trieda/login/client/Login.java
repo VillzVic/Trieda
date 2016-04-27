@@ -168,7 +168,7 @@ public class Login
 
 		LabelField versionLabel = new LabelField();
 		versionLabel.setValue("Sistema Analítico de Planejamento para Instituições de Ensino construído por " +
-				"<a href=\"http://www.trieda.com.br/\" target=\"_blank\">Trieda</a>. (" + i18nConstants.triedaVersion()+ ")");
+				"<a href=\"http://www.trieda.com.br/\" target=\"_blank\">Trieda</a>.");// (" + i18nConstants.triedaVersion()+ ")");
 		versionLabel.setStyleAttribute("position", "absolute");
 		versionLabel.setStyleAttribute("margin-top", "60px");
 		versionLabel.setStyleAttribute("font-size", "9px");
