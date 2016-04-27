@@ -75,7 +75,7 @@ public class Usuario
 
 	@ManyToOne( cascade = { CascadeType.PERSIST,
 		CascadeType.MERGE, CascadeType.REFRESH },
-		targetEntity = InstituicaoEnsino.class )
+		targetEntity = InstituicaoEnsino.class, fetch=FetchType.EAGER )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
 	

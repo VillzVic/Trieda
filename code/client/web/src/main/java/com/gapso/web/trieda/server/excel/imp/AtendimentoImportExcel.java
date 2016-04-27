@@ -589,7 +589,7 @@ public class AtendimentoImportExcel extends AbstractImportExcel<AtendimentoImpor
 			{
 				if (i > 0)
 				{
-					HorarioAula proxHA = horariosDeAulaOrdenados.get(horariosDeAulaOrdenados.indexOf(hdc.getHorarioAula()) + 1);
+					HorarioAula proxHA = horariosDeAulaOrdenados.get(horariosDeAulaOrdenados.indexOf(hdc.getHorarioAula()));
 					horarioInicio = TriedaUtil.shortTimeString(proxHA.getHorario());
 					hdc = getHDC(semanaLetiva, diaSemana, turno, horarioInicio, semLetToDiaSemToTurnoToHIToHDCMap);
 				}
@@ -681,7 +681,7 @@ public class AtendimentoImportExcel extends AbstractImportExcel<AtendimentoImpor
 			HORARIO_FINAL_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().fim());
 			DISCIPLINA_AULA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().disciplinaAula());
 			TURMA_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().turma());
-			ATENDIMENTO_PROFESSOR_CPF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().cpf());
+			ATENDIMENTO_PROFESSOR_CPF_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().professor());
 			ATENDIMENTO_CRED_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().prat());
 			ATENDIMENTO_CRED_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().teo());
 			TURNO_COLUMN_NAME = HtmlUtils.htmlUnescape(getI18nConstants().turno());

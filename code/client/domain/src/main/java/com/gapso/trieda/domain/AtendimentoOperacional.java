@@ -65,7 +65,7 @@ public class AtendimentoOperacional
 
 	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-		CascadeType.REFRESH }, targetEntity = HorarioDisponivelCenario.class )
+		CascadeType.REFRESH , CascadeType.REMOVE }, targetEntity = HorarioDisponivelCenario.class )
 	@JoinColumn( name = "HDC_ID" )
 	private HorarioDisponivelCenario HorarioDisponivelCenario;
 

@@ -177,7 +177,7 @@ public abstract class AbstractImportExcel<ExcelBeanType> extends ProgressDeclara
 
 	protected boolean isHeaderValid(Row candidateHeader, List<String> headerColumnsNames)
 	{
-		if (candidateHeader != null)
+		if (candidateHeader != null && headerColumnsNames != null)
 		{
 			boolean[] columnStatus = new boolean[headerColumnsNames.size()];
 

@@ -43,7 +43,11 @@ public class UnidadesDeslocamentoImportExcel extends AbstractImportExcel<Unidade
 
 	protected List<String> getHeaderColumnsNames(Campus campus)
 	{
-		return this.campusToHeaderMap.get(campus);
+		if (this.campusToHeaderMap.containsKey(campus)) {
+			return this.campusToHeaderMap.get(campus);
+		} else {
+			return new ArrayList<String>();
+		}
 	}
 
 	private void createHeaderColumnsNames()

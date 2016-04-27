@@ -217,13 +217,13 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 	public static RequisicaoOtimizacao findBy(Usuario usuario, Cenario cenario, Parametro parametro, Long round) {
 		Query q = entityManager().createQuery(
 			" SELECT o FROM RequisicaoOtimizacao o " +
-			" WHERE o.usuario = :usuario " +
+			" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario " +
 			" AND o.parametro = :parametro " +
 			" AND o.round = :round "
 		);
 
-		q.setParameter("usuario",usuario);
+		q.setParameter("instituicaoEnsino",usuario.getInstituicaoEnsino());
 		q.setParameter("cenario",cenario);
 		q.setParameter("parametro",parametro);
 		q.setParameter("round",round);
@@ -235,10 +235,10 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 	public static List<RequisicaoOtimizacao> findBy(Usuario usuario) {
 		Query q = entityManager().createQuery(
 			" SELECT o FROM RequisicaoOtimizacao o " +
-			" WHERE o.usuario = :usuario "
+			" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino"
 		);
 
-		q.setParameter("usuario",usuario);
+		q.setParameter("instituicaoEnsino", usuario.getInstituicaoEnsino());
 
 		return q.getResultList();
 	}
