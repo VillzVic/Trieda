@@ -21,7 +21,9 @@ public class ProgressReportAspect {
 			if(textoNulo) texto = "Executando " + pjp.getSignature().getName();
 			prw.setInitNewPartial(texto);
 		}
+
 		Object obj = pjp.proceed(pjp.getArgs());
+
 		if(prw != null){
 			texto = (!textoNulo) ? "Fim de " + method.texto() : 
 				"Fim da execução de " + pjp.getSignature().getName();
@@ -38,9 +40,15 @@ public class ProgressReportAspect {
 	public Object aroundInterceptOfIImportExcelLoad(ProceedingJoinPoint pjp) throws Throwable{
 		ProgressReportWriter prw = ((ProgressDeclaration) pjp.getTarget()).getProgressReport();
 
-		if(prw != null) prw.start();
+		if(prw != null) {
+			prw.start();
+		}
+
 		Object obj = pjp.proceed(pjp.getArgs());
-		if(prw != null) prw.finish();
+
+		if(prw != null) {
+			prw.finish();
+		}
 		
 		return obj;
 	}
@@ -52,9 +60,15 @@ public class ProgressReportAspect {
 	public Object aroundInterceptOfIExportExcelExport(ProceedingJoinPoint pjp) throws Throwable{
 		ProgressReportWriter prw = ((ProgressDeclaration) pjp.getTarget()).getProgressReport();
 
-		if(prw != null) prw.start();
+		if(prw != null) {
+			prw.start();
+		}
+
 		Object obj = pjp.proceed(pjp.getArgs());
-		if(prw != null) prw.finish();
+
+		if(prw != null) {
+			prw.finish();
+		}
 		
 		return obj;
 	}

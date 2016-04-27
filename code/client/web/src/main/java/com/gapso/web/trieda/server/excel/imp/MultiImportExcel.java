@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationImpl;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -67,9 +68,17 @@ public class MultiImportExcel extends ProgressDeclarationImpl implements IImport
 			boolean flag = true;
 			for (IImportExcel importer : importers)
 			{
-				getProgressReport().setInitNewPartial("Importandos " + importer.getSheetName());
+				ProgressReportWriter prw = this.getProgressReport();
+
+				if(prw != null) {
+					prw.setInitNewPartial("Importandos " + importer.getSheetName());
+				}
+
 				flag = (importer.load(fileName, workbook, obrigatorio) && flag);
-				getProgressReport().setPartial("Etapa concluída");
+
+				if (prw != null) {
+					prw.setPartial("Etapa concluída");
+				}
 
 				for (String error : importer.getErrors())
 				{

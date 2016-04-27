@@ -15,6 +15,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationImpl;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -216,9 +217,17 @@ public abstract class AbstractImportExcel<ExcelBeanType> extends ProgressDeclara
 	{
 		if (doSyntacticValidation(sheetContent) && doLogicValidation(sheetContent))
 		{
-			getProgressReport().setInitNewPartial("Atualizando banco de dados");
+			ProgressReportWriter prw = this.getProgressReport();
+
+			if (prw != null) {
+				prw.setInitNewPartial("Atualizando banco de dados");
+			}
+
 			updateDataBase(sheetContent);
-			getProgressReport().setPartial("Fim de Atualizando banco de dados");
+
+			if (prw != null) {
+				prw.setPartial("Fim de Atualizando banco de dados");	
+			}
 		}
 	}
 
