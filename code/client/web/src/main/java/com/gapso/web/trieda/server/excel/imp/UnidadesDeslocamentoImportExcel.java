@@ -146,7 +146,7 @@ public class UnidadesDeslocamentoImportExcel extends AbstractImportExcel<Unidade
 	@Override
 	protected String getHeaderToString()
 	{
-		return this.campusToHeaderMap.get(currentCampus).toString();
+		return this.getHeaderColumnsNames(this.currentCampus).toString();
 	}
 
 	@Override
@@ -381,6 +381,6 @@ public class UnidadesDeslocamentoImportExcel extends AbstractImportExcel<Unidade
 	@Override
 	protected List<String> getHeaderColumnsNames()
 	{
-		return this.campusToHeaderMap.get(currentCampus);
+		return this.getHeaderColumnsNames(this.currentCampus);
 	}
 }

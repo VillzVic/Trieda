@@ -1002,10 +1002,10 @@ public class AtendimentoOperacional
 	
 	public static String getKeyAtendOp(Sala ambiente, HorarioDisponivelCenario hdc, Boolean temCredTeo, String turma, Disciplina dis, Disciplina disSub, Professor prof, String profV, Oferta ofe) {
 		return ambiente.getId() +
-			"-" + hdc.getId() +
+			"-" + (hdc != null? hdc.getId() : "null") +
 			"-" + temCredTeo +
 			"-" + turma +
-			"-" + dis.getId() +
+			"-" + (dis.getId() != null? dis.getId() : "null")+
 			"-" + (disSub == null ? "null" : disSub.getId()) +
 			"-" + (prof != null ? prof.getId() : profV) +
 			"-" + ofe.getId();

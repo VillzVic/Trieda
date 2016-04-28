@@ -270,7 +270,7 @@ public enum ImportExcelError
 
 	public String getMessage( String param1, TriedaI18nMessages i18nMessages )
 	{
-		switch ( this )
+		switch (this)
 		{
 			case ALUNO_MATRICULA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.MATRICULA_COLUMN_NAME );
 			case ALUNO_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.NOME_COLUMN_NAME );
@@ -527,8 +527,7 @@ public enum ImportExcelError
 			case SEMANA_LETIVA_SEXTA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.SEXTA_COLUMN_NAME);
 			case SEMANA_LETIVA_SABADO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.SABADO_COLUMN_NAME);
 			case SEMANA_LETIVA_DOMINGO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.DOMINGO_COLUMN_NAME);
+			default: return "";
 		}
-
-		return "";
 	}
 }
