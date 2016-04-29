@@ -585,33 +585,36 @@ public class AtendimentoImportExcel extends AbstractImportExcel<AtendimentoImpor
 
 			String horarioInicio = bean.getAula_horarioInicialStr();
 			HorarioDisponivelCenario hdc = getHDC(semanaLetiva, diaSemana, turno, horarioInicio, semLetToDiaSemToTurnoToHIToHDCMap);
-			for (int i = 0; i < bean.getTotalCreditos(); i++)
-			{
-				if (i > 0)
+			
+			if (hdc != null) {
+				for (int i = 0; i < bean.getTotalCreditos(); i++)
 				{
-					HorarioAula proxHA = horariosDeAulaOrdenados.get(horariosDeAulaOrdenados.indexOf(hdc.getHorarioAula()));
-					horarioInicio = TriedaUtil.shortTimeString(proxHA.getHorario());
-					hdc = getHDC(semanaLetiva, diaSemana, turno, horarioInicio, semLetToDiaSemToTurnoToHIToHDCMap);
-				}
-
-				String keyAtendOp = AtendimentoOperacional.getKeyAtendOp(ambiente, hdc, temCredTeorico, turma, dis, disSubs, professorReal, bean.getAula_cpfProfessorStr(), oferta);
-				AtendimentoOperacional atdOp = keyToAtendimentoOpMap.get(keyAtendOp);
-				if (atdOp == null)
-				{
-					atdOp = criaAtendimentoOp(turma, ambiente, oferta, dis, disSubs, professorReal, temCredTeorico, hdc);
-					keyToAtendimentoOpMap.put(keyAtendOp, atdOp);
-				}
-				atdOp.getAlunosDemanda().add(bean.getAlunoDemanda());
-
-				if (professorReal == null)
-				{
-					List<AtendimentoOperacional> atendimentosDoProfessorVirtual = profVirtualKeyToAtendimentosOpMap.get(bean.getAula_cpfProfessorStr());
-					if (atendimentosDoProfessorVirtual == null)
+					if (i > 0)
 					{
-						atendimentosDoProfessorVirtual = new ArrayList<AtendimentoOperacional>();
-						profVirtualKeyToAtendimentosOpMap.put(bean.getAula_cpfProfessorStr(), atendimentosDoProfessorVirtual);
+						HorarioAula proxHA = horariosDeAulaOrdenados.get(horariosDeAulaOrdenados.indexOf(hdc.getHorarioAula()));
+						horarioInicio = TriedaUtil.shortTimeString(proxHA.getHorario());
+						hdc = getHDC(semanaLetiva, diaSemana, turno, horarioInicio, semLetToDiaSemToTurnoToHIToHDCMap);
 					}
-					atendimentosDoProfessorVirtual.add(atdOp);
+	
+					String keyAtendOp = AtendimentoOperacional.getKeyAtendOp(ambiente, hdc, temCredTeorico, turma, dis, disSubs, professorReal, bean.getAula_cpfProfessorStr(), oferta);
+					AtendimentoOperacional atdOp = keyToAtendimentoOpMap.get(keyAtendOp);
+					if (atdOp == null)
+					{
+						atdOp = criaAtendimentoOp(turma, ambiente, oferta, dis, disSubs, professorReal, temCredTeorico, hdc);
+						keyToAtendimentoOpMap.put(keyAtendOp, atdOp);
+					}
+					atdOp.getAlunosDemanda().add(bean.getAlunoDemanda());
+	
+					if (professorReal == null)
+					{
+						List<AtendimentoOperacional> atendimentosDoProfessorVirtual = profVirtualKeyToAtendimentosOpMap.get(bean.getAula_cpfProfessorStr());
+						if (atendimentosDoProfessorVirtual == null)
+						{
+							atendimentosDoProfessorVirtual = new ArrayList<AtendimentoOperacional>();
+							profVirtualKeyToAtendimentosOpMap.put(bean.getAula_cpfProfessorStr(), atendimentosDoProfessorVirtual);
+						}
+						atendimentosDoProfessorVirtual.add(atdOp);
+					}
 				}
 			}
 

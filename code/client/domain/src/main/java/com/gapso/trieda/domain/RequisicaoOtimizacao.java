@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -235,10 +236,13 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 	public static List<RequisicaoOtimizacao> findBy(Usuario usuario) {
 		Query q = entityManager().createQuery(
 			" SELECT o FROM RequisicaoOtimizacao o " +
-			" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino"
+			" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
+			" AND YEAR(o.instanteInicioRequisicao) = :ano " +
+			" ORDER BY o.instanteInicioRequisicao DESC"
 		);
 
 		q.setParameter("instituicaoEnsino", usuario.getInstituicaoEnsino());
+		q.setParameter("ano", Calendar.getInstance().get(Calendar.YEAR));
 
 		return q.getResultList();
 	}
