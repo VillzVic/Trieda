@@ -31,5 +31,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/trieda-domain"/>
 	<classpathentry kind="output" path="target/Trieda-0.0-beta-5/WEB-INF/classes"/>
 </classpath>

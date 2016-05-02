@@ -2,7 +2,8 @@
     <wb-module deploy-name="Trieda">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-        <dependent-module archiveName="trieda-domain-0.1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/domain/domain">
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+        <dependent-module archiveName="trieda-domain-0.1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/trieda-domain/trieda-domain">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="Trieda"/>
