@@ -1576,16 +1576,17 @@ public class SolverInput
 			// EQUIVALENCIAS
 			Set< Equivalencia > equivalencias = curso.getEquivalencias();
 
-			if ( equivalencias != null)
-			{
-				GrupoIdentificador grupoIdentificadorEquivalencias
-					= this.of.createGrupoIdentificador();
+			if (equivalencias != null) {
+				GrupoIdentificador grupoIdentificadorEquivalencias = this.of.createGrupoIdentificador();
 				
-				for ( Equivalencia equivalencia : equivalencias )
-				{
-					grupoIdentificadorEquivalencias.getId().add(
-						equivalencia.getId().intValue() );
+				for ( Equivalencia equivalencia : equivalencias ) {
+					Disciplina elimina = equivalencia.getElimina();
+
+					if (elimina != null && !elimina.getDemandas().isEmpty()) {
+						grupoIdentificadorEquivalencias.getId().add(equivalencia.getId().intValue());
+					}
 				}
+
 				itemCurso.setEquivalencias(grupoIdentificadorEquivalencias);
 			}
 		}
