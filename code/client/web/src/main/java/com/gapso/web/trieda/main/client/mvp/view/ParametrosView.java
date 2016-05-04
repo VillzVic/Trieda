@@ -179,7 +179,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.proibeCiclosEmEquivalenciaCheckBox = createCheckBox("Proibir ciclos em equivalências",this.parametroDTO.getProibirCiclosEmEquivalencia());
 		this.proibeCiclosEmEquivalenciaCheckBox.setEnabled(this.considerarEquivalenciaCheckBox.getValue());
 		this.consideraTransitividadeEmEquivalenciaCheckBox = createCheckBox("Considerar transitividade em equivalências",this.parametroDTO.getConsiderarTransitividadeEmEquivalencia());
-		this.consideraTransitividadeEmEquivalenciaCheckBox.setEnabled(this.considerarEquivalenciaCheckBox.getValue());
+		this.consideraTransitividadeEmEquivalenciaCheckBox.setEnabled(false);
 		this.proibeTrocaPorDisciplinasOnlineOuSemCreditosEmEquivalenciaCheckBox = createCheckBox("Proibir troca por disciplinas online ou sem créditos em equivalências",this.parametroDTO.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia());
 		this.proibeTrocaPorDisciplinasOnlineOuSemCreditosEmEquivalenciaCheckBox.setEnabled(this.considerarEquivalenciaCheckBox.getValue());
 

@@ -189,6 +189,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						} else {
 							checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,warnings);
 						}
+						checkEquivalenciasSemDemandas(parametro, warnings);
 					}
 				}
 			prw.endSubPartial();
@@ -238,7 +239,20 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 		return response;
 	}
-	
+
+	private void checkEquivalenciasSemDemandas(Parametro parametro, List<String> warnings)
+	{
+		for (Disciplina disciplina : parametro.getCenario().getDisciplinas()) {
+			for (Equivalencia equivalencia : disciplina.getEliminadasPor()) {
+				if (equivalencia.getElimina().getDemandas().isEmpty()) {
+					warnings.add(HtmlUtils.htmlUnescape(
+						String.format("A equivalencia [%s -> %s] elimina uma disciplina que não tem demanda e portanto será desconsiderada na otimização", equivalencia.getCursou().getCodigo(), equivalencia.getElimina().getCodigo())
+					));
+				}
+			}
+		}
+	}
+
 	private void checkExigeEquivalenciaForcadaAlunosDemanda(
 			Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
 		

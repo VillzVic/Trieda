@@ -1313,11 +1313,11 @@ public class SolverInput
 
 				for ( Equivalencia equivalencia : equivalencias )
 				{
-					Disciplina eliminas = equivalencia.getElimina();
+					Disciplina elimina = equivalencia.getElimina();
 
-					if ( eliminas != null )
+					if ( elimina != null && !elimina.getDemandas().isEmpty())
 					{
-						grupoIdentificadorEquivalencias.getId().add(eliminas.getId().intValue());
+						grupoIdentificadorEquivalencias.getId().add(elimina.getId().intValue());
 					}
 				}
 			}
@@ -2537,14 +2537,16 @@ public class SolverInput
 		List< Equivalencia > equivalencias = Equivalencia.findByCenario(this.instituicaoEnsino,this.cenario);
 		
 		for (Equivalencia equivalencia : equivalencias) {
-			ItemEquivalencia itemEquivalencia = this.of.createItemEquivalencia();
+			if (!equivalencia.getElimina().getDemandas().isEmpty()) {
+				ItemEquivalencia itemEquivalencia = this.of.createItemEquivalencia();
 			
-			itemEquivalencia.setId( equivalencia.getId().intValue() );
-			itemEquivalencia.setDisciplinaCursouId( equivalencia.getCursou().getId().intValue() );
-			itemEquivalencia.setDisciplinaEliminaId( equivalencia.getElimina().getId().intValue() );
-			itemEquivalencia.setGeral( equivalencia.getEquivalenciaGeral() );
+				itemEquivalencia.setId( equivalencia.getId().intValue() );
+				itemEquivalencia.setDisciplinaCursouId( equivalencia.getCursou().getId().intValue() );
+				itemEquivalencia.setDisciplinaEliminaId( equivalencia.getElimina().getId().intValue() );
+				itemEquivalencia.setGeral( equivalencia.getEquivalenciaGeral() );
 			
-			grupoEquivalencia.getEquivalencia().add( itemEquivalencia );
+				grupoEquivalencia.getEquivalencia().add( itemEquivalencia );
+			}
 		}
 		
 		this.triedaInput.setEquivalencias( grupoEquivalencia );	

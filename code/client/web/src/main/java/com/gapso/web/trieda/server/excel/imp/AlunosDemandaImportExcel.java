@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.excel.imp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.transaction.annotation.Transactional;
@@ -338,6 +340,10 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 	@Override
 	protected void updateDataBase(List<AlunosDemandaImportExcelBean> sheetContent)
 	{
+		List<Integer> rowsWithErrorsOfertas = new ArrayList<Integer>();
+		List<Integer> rowsWithErrorsDemandas = new ArrayList<Integer>();
+		List<Integer> rowsWithErrorsAlunos = new ArrayList<Integer>();
+		
 		Map<String, Aluno> alunosBDMap = Aluno.buildMatriculaAlunoToAlunoMap(Aluno.findByCenario(this.instituicaoEnsino, getCenario()));
 		Map<String, Demanda> demandasBDMap = Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(Demanda.findByCenario(this.instituicaoEnsino, getCenario()));
 		Map<String, Oferta> ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(Oferta.findByCenario(this.instituicaoEnsino, getCenario()));
@@ -359,6 +365,7 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 			// Verifica se a oferta já estava cadastrada
 			if (ofertaBD == null)
 			{
+				/*
 				ofertaBD = new Oferta();
 
 				ofertaBD.setCampus(alunosDemandaExcel.getCampus());
@@ -371,11 +378,14 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 
 				// Oferta.entityManager().refresh( ofertaBD );
 				ofertasBDMap.put(codeOferta, ofertaBD);
+				*/
+				rowsWithErrorsOfertas.add(alunosDemandaExcel.getRow());
 			}
 
 			// Verifica se a demanda já estava cadastrada
 			if (demandaBD == null)
 			{
+				/*
 				demandaBD = new Demanda();
 
 				demandaBD.setDisciplina(alunosDemandaExcel.getDisciplina());
@@ -385,11 +395,14 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 
 				// Demanda.entityManager().refresh( demandaBD );
 				demandasBDMap.put(codeDemanda, demandaBD);
+				*/
+				rowsWithErrorsDemandas.add(alunosDemandaExcel.getRow());
 			}
 
 			// Verifica se o aluno já estava cadastrado
 			if (alunoBD == null)
 			{
+				/*
 				alunoBD = new Aluno();
 
 				alunoBD.setInstituicaoEnsino(this.instituicaoEnsino);
@@ -402,6 +415,8 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 				alunoBD.persist();
 				// Aluno.entityManager().refresh( alunoBD );
 				alunosBDMap.put(codeAluno, alunoBD);
+				*/
+				rowsWithErrorsAlunos.add(alunosDemandaExcel.getRow());
 			}
 
 			// Relaciona o aluno com a demanda
@@ -473,6 +488,19 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 				count = 0;
 			}
 		}
+
+		if (!rowsWithErrorsOfertas.isEmpty()) {
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(StringUtils.join(new String[] { CAMPUS_COLUMN_NAME, TURNO_COLUMN_NAME, CURRICULO_COLUMN_NAME, DISCIPLINA_COLUMN_NAME }, ","), rowsWithErrorsOfertas.toString()));
+		}
+
+		if (!rowsWithErrorsDemandas.isEmpty()) {
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(StringUtils.join(new String[] { CAMPUS_COLUMN_NAME, TURNO_COLUMN_NAME, CURRICULO_COLUMN_NAME }, ","), rowsWithErrorsDemandas.toString()));
+		}
+
+		if (!rowsWithErrorsAlunos.isEmpty()) {
+			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(MATRICULA_ALUNO_COLUMN_NAME, rowsWithErrorsAlunos.toString()));
+		}
+		
 
 		atualizaQuantidadeDemanda();
 	}
