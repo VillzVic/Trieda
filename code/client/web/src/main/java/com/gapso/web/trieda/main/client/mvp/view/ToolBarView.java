@@ -691,7 +691,6 @@ public class ToolBarView
 		planejamentoToolBar.add(confirmacaoTurmasBt);
 		
 		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
-		fixacoesListBt.hide();
 		planejamentoToolBar.add(fixacoesListBt);
 	}
 
