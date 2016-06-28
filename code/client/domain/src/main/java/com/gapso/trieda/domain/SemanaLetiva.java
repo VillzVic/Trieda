@@ -538,6 +538,24 @@ public class SemanaLetiva
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
+	public static SemanaLetiva getBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo)
+	{
+		String sql =
+			"SELECT o FROM SemanaLetiva o " +
+			"WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			"AND o.cenario = :cenario " +
+			"AND o.codigo = :codigo";
+
+		EntityManager em = SemanaLetiva.entityManager();
+		Query q = em.createQuery(sql);
+
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
+
+		return (SemanaLetiva) q.getSingleResult();
+	}
+
 	@SuppressWarnings( "unchecked" )
 	public static List< SemanaLetiva > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
@@ -568,7 +586,7 @@ public class SemanaLetiva
 		descricao = ( ( descricao == null ) ? "" : descricao );
 		descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
 
-		EntityManager em = Turno.entityManager();
+		EntityManager em = SemanaLetiva.entityManager();
 		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
 		Query q = em.createQuery(sql + orderBy );

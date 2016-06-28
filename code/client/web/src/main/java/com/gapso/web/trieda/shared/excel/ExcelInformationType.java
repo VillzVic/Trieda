@@ -13,6 +13,7 @@ public enum ExcelInformationType
 	DEMANDAS_POR_ALUNO( "Demanda por Aluno" ),
 	DISCIPLINAS( "Disciplinas" ),
 	EQUIVALENCIAS( "Equivalencias" ),
+	FIXACOES("Fixacoes"),
 	DISCIPLINAS_SALAS( "Disciplinas-Ambientes" ),
 	PALETA_CORES( "PaletaCores" ),
 	PROFESSORES( "Professores" ),

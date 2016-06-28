@@ -29,6 +29,10 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.misc.Semanas;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+
 @Configurable
 @Entity
 @RooJavaBean
@@ -70,8 +74,7 @@ public class Fixacao
     @JoinColumn( name = "SAL_ID" )
     private Sala sala;
     
-    @ManyToMany( cascade = { CascadeType.PERSIST,
-    	CascadeType.MERGE }, mappedBy = "fixacoes" )
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "fixacoes" )
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
     @PersistenceContext
@@ -230,8 +233,9 @@ public class Fixacao
     	InstituicaoEnsino instituicaoEnsino )
     {
         Query q = entityManager().createQuery(
-        	" SELECT o FROM Fixacao o " +
-        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
+        	"SELECT o " +
+        	"FROM Fixacao o " +
+        	"WHERE o.instituicaoEnsino = :instituicaoEnsino ");
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
@@ -285,6 +289,21 @@ public class Fixacao
         List< Fixacao > list = q.getResultList();
         return list;
     }
+
+    @SuppressWarnings( "unchecked" )
+	public static List<Fixacao> findByCenario(InstituicaoEnsino instituicaoEnsino, Cenario cenario)
+	{
+        Query q = entityManager().createQuery(
+        	        	" SELECT o FROM Fixacao o " +
+        	        	" WHERE o.campus.cenario = :cenario " +
+        	        	" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+        q.setParameter( "cenario", cenario );
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        List< Fixacao > list = q.getResultList();
+        return list;
+	}
 
     @SuppressWarnings( "unchecked" )
     public static List< Fixacao > findAllBy(
@@ -510,5 +529,29 @@ public class Fixacao
 		}
 
 		return true;
+	}
+
+	public String getHorariosStr()
+	{
+		DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat(PredefinedFormat.HOUR24_MINUTE);
+		StringBuilder horariosDisponiveisCenario = new StringBuilder();
+
+		for (HorarioDisponivelCenario horarioDisponivelCenario : this.getHorarios())
+		{
+			if (horariosDisponiveisCenario.length() > 0) {
+				horariosDisponiveisCenario.append(";");
+			}
+			
+			horariosDisponiveisCenario
+				.append(horarioDisponivelCenario.getDiaSemana().name())
+				.append(" ")
+				.append(horarioDisponivelCenario.getHorarioAula().getSemanaLetiva().getCodigo())
+				.append(" ")
+				.append(horarioDisponivelCenario.getHorarioAula().getTurno().getId())
+				.append(" ")
+				.append(dateTimeFormat.format(horarioDisponivelCenario.getHorarioAula().getHorario()));
+		}
+
+		return horariosDisponiveisCenario.toString();
 	}
 }

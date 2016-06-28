@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.FixacoesPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -70,6 +71,11 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_CODIGO, "Código", 100));
 		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_DESCRICAO, "Descrição", 200));
+		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_PROFESSOR_STRING, "Professor", 200));
+		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 200));
+		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_CAMPUS_STRING, "Campus", 200));
+		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_UNIDADE_STRING, "Unidade", 200));
+		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_SALA_STRING, "Sala", 200));
 		return list;
 	}
 
@@ -107,8 +113,15 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 	
 	@Override
@@ -135,5 +148,4 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	public Button getResetBuscaButton() {
 		return filter.getResetButton();
 	}
-
 }

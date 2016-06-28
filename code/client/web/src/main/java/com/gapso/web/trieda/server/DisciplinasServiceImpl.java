@@ -921,40 +921,40 @@ public class DisciplinasServiceImpl
 		return list;
 	}
 
-	private AtendimentoRelatorioDTO concatenaAtendimentosResumoDisciplina(
-		List< AtendimentoRelatorioDTO > list )
-	{
-		if ( list == null || list.size() == 0 )
-		{
-			return null;
-		}
-
-		if ( list.size() == 1 )
-		{
-			return list.get( 0 );
-		}
-
-		Integer totalAlunos = 0;
-		for ( AtendimentoRelatorioDTO at : list )
-		{
-			totalAlunos += at.getQuantidadeAlunos();
-		}
-
-		AtendimentoRelatorioDTO atendimento = null;
-
-		if ( list.get( 0 ) instanceof AtendimentoTaticoDTO )
-		{
-			atendimento = new AtendimentoTaticoDTO( (AtendimentoTaticoDTO) list.get( 0 ) );
-			( (AtendimentoTaticoDTO)atendimento ).setQuantidadeAlunos( totalAlunos );
-		}
-		else if ( list.get( 0 ) instanceof AtendimentoOperacionalDTO )
-		{
-			atendimento = new AtendimentoOperacionalDTO( (AtendimentoOperacionalDTO) list.get( 0 ) );
-			( (AtendimentoOperacionalDTO) atendimento ).setQuantidadeAlunos( totalAlunos );
-		}
-
-		return atendimento;
-	}
+//	private AtendimentoRelatorioDTO concatenaAtendimentosResumoDisciplina(
+//		List< AtendimentoRelatorioDTO > list )
+//	{
+//		if ( list == null || list.size() == 0 )
+//		{
+//			return null;
+//		}
+//
+//		if ( list.size() == 1 )
+//		{
+//			return list.get( 0 );
+//		}
+//
+//		Integer totalAlunos = 0;
+//		for ( AtendimentoRelatorioDTO at : list )
+//		{
+//			totalAlunos += at.getQuantidadeAlunos();
+//		}
+//
+//		AtendimentoRelatorioDTO atendimento = null;
+//
+//		if ( list.get( 0 ) instanceof AtendimentoTaticoDTO )
+//		{
+//			atendimento = new AtendimentoTaticoDTO( (AtendimentoTaticoDTO) list.get( 0 ) );
+//			( (AtendimentoTaticoDTO)atendimento ).setQuantidadeAlunos( totalAlunos );
+//		}
+//		else if ( list.get( 0 ) instanceof AtendimentoOperacionalDTO )
+//		{
+//			atendimento = new AtendimentoOperacionalDTO( (AtendimentoOperacionalDTO) list.get( 0 ) );
+//			( (AtendimentoOperacionalDTO) atendimento ).setQuantidadeAlunos( totalAlunos );
+//		}
+//
+//		return atendimento;
+//	}
 
 	private void calculaResumo2(
 		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2,

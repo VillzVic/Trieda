@@ -179,6 +179,15 @@ public enum ImportExcelError
 	
 	EQUIVALENCIA_CURSOU_VAZIO,
 	EQUIVALENCIA_ELIMINA_VAZIO,
+
+	FIXACAO_CODIGO_VAZIO,
+	FIXACAO_DESCRICAO_VAZIO,
+	FIXACAO_PROFESSOR_VAZIO,
+	FIXACAO_DISCIPLINA_VAZIO,
+	FIXACAO_CAMPUS_VAZIO,
+	FIXACAO_UNIDADE_VAZIO,
+	FIXACAO_SALA_VAZIO,
+	FIXACAO_HORARIOS_VAZIO,
 	
 	HABILITACOESPROFESSORES_CODIGO_CAMPUS_VAZIO,
 	HABILITACOESPROFESSORES_CPF_PROFESSOR_VAZIO,
@@ -440,6 +449,14 @@ public enum ImportExcelError
 			
 			case EQUIVALENCIA_CURSOU_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.CURSOU_COLUMN_NAME);
 			case EQUIVALENCIA_ELIMINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.ELIMINA_COLUMN_NAME);
+
+			case FIXACAO_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1, FixacoesImportExcel.CODIGO_COLUMN_NAME);
+			case FIXACAO_DESCRICAO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1, FixacoesImportExcel.DESCRICAO_COLUMN_NAME);
+			case FIXACAO_PROFESSOR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1, FixacoesImportExcel.CPF_PROFESSOR_COLUMN_NAME);
+			case FIXACAO_DISCIPLINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1, FixacoesImportExcel.CODIGO_DISCIPLINA_COLUMN_NAME);
+			case FIXACAO_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1, FixacoesImportExcel.CODIGO_CAMPUS_COLUMN_NAME);
+			case FIXACAO_UNIDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1, FixacoesImportExcel.CODIGO_UNIDADE_COLUMN_NAME);
+			case FIXACAO_SALA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1, FixacoesImportExcel.CODIGO_SALA_COLUMN_NAME);
 			
 			case HABILITACOESPROFESSORES_CPF_PROFESSOR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,HabilitacoesProfessoresImportExcel.CPF_PROFESSOR_COLUMN_NAME);
 			case HABILITACOESPROFESSORES_DISCIPLINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,HabilitacoesProfessoresImportExcel.DISCIPLINA_COLUMN_NAME);

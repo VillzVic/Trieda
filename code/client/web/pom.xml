@@ -330,7 +330,6 @@
 						</resource>
 					</webResources>
 				</configuration>
-				 -->
 				<executions>
 					<execution>
 						<phase>process-resources</phase>
@@ -339,6 +338,7 @@
 						</goals>
 					</execution>
 				</executions>
+				 -->
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -65,6 +65,7 @@ public class TRIEDAImportExcel extends ProgressDeclarationImpl implements IImpor
 		importers.add(new DisponibilidadesDisciplinasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
 		importers.add(new DisciplinasSalasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
 		importers.add(new EquivalenciasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
+		importers.add(new FixacoesImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
 		importers.add(new OfertasCursosCampiImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));
 		importers.add(new DemandasImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino, false));
 		importers.add(new AlunosImportExcel(this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino));

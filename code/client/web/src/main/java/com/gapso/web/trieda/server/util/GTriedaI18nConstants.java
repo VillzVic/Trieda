@@ -5,8 +5,7 @@ import java.util.Locale;
 import com.gapso.gipe.common.GLanguageManager;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 
-public class GTriedaI18nConstants
-	implements TriedaI18nConstants
+public class GTriedaI18nConstants implements TriedaI18nConstants
 {
 	private GLanguageManager languageManager = null;
 
@@ -1101,5 +1100,10 @@ public class GTriedaI18nConstants
 	@Override
 	public String prioridadeAlunos() {
 		return this.languageManager.getText("prioridadeAlunos");
+	}
+
+	@Override
+	public String fixacoes() {
+		return this.languageManager.getText("fixacoes");
 	}
 }

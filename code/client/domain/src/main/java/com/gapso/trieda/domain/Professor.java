@@ -1315,9 +1315,9 @@ public class Professor
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.professores ) c " +
-			" WHERE c.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
-			" AND c = :professor " );
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.atendimentosOperacionais ) c " +
+			" WHERE c.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.professor = :professor " );
 
 		q.setParameter( "professor", this );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );

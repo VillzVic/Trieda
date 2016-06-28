@@ -978,6 +978,21 @@ public class Disciplina
 		return q.getResultList();
 	}
 
+	public static Disciplina findByCodigo(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo)
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND o.codigo = :codigo " );
+
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("cenario", cenario);
+		q.setParameter("codigo", codigo);
+
+		return (Disciplina) q.getSingleResult();
+	}
+
 	public static Disciplina findByCodigo(
 		InstituicaoEnsino instituicaoEnsino, String codigo )
 	{
@@ -1369,9 +1384,9 @@ public class Disciplina
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.disciplinas ) c " +
-			" WHERE c.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-			" AND c = :disciplina " +
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.atendimentosOperacionais ) c " +
+			" WHERE c.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.disciplina = :disciplina " +
 			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "disciplina", this );

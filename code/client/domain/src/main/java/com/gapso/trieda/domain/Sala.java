@@ -1208,9 +1208,9 @@ public class Sala
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.salas ) c " +
-			" WHERE c.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND c = :sala " );
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.atendimentosOperacionais ) c " +
+			" WHERE c.sala.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.sala = :sala " );
 
 		q.setParameter( "sala", this );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );

@@ -1,8 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -557,7 +555,7 @@ public class Campus
 				return horaInicio.compareTo(horaFim);
 		    }
 		});
-		DateFormat df = new SimpleDateFormat("HH:mm");
+//		DateFormat df = new SimpleDateFormat("HH:mm");
 		for (int i = 1; i < todosHorariosOrdenados.size() ; i++)
 		{
 			DisponibilidadeCampus disponibilidade = new DisponibilidadeCampus();
@@ -1139,9 +1137,8 @@ public class Campus
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.campi ) c " +
-			" WHERE c.instituicaoEnsino = :instituicaoEnsino " +
-			" AND c = :campus " +
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.atendimentosOperacionais ) c " +
+			" WHERE c.sala.unidade.campus = :campus " +
 			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "campus", this );

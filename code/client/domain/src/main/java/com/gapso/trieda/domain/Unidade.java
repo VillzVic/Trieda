@@ -519,6 +519,22 @@ public class Unidade implements Serializable, Clonable< Unidade >
     	return q.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    public static Unidade findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo)
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT o FROM Unidade o " +
+    		" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.campus.cenario = :cenario " +
+			" AND o.codigo = :codigo ");
+
+    	q.setParameter("instituicaoEnsino", instituicaoEnsino);
+    	q.setParameter("cenario", cenario);
+    	q.setParameter("codigo", codigo);
+
+    	return (Unidade) q.getSingleResult();
+    }
+
     public static Map< String, Unidade > buildUnidadeCodigoToUnidadeMap(
     	List< Unidade > unidades )
     {
@@ -752,9 +768,9 @@ public class Unidade implements Serializable, Clonable< Unidade >
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.unidades ) u " +
-			" WHERE u = :unidade " +
-			" AND u.campus.instituicaoEnsino = :instituicaoEnsino " );
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.atendimentosOperacionais ) u " +
+			" WHERE u.sala.unidade = :unidade " +
+			" AND u.sala.unidade.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "unidade", this );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );

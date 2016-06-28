@@ -57,6 +57,9 @@ public class ImportExcelFactory
 		case EQUIVALENCIAS:
 			importer = new EquivalenciasImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
+		case FIXACOES:
+			importer = new FixacoesImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
+			break;
 		case CURSO_AREAS_TITULACAO:
 			importer = new CursoAreasTitulacaoImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
