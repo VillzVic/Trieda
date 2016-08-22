@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,8 +31,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.misc.Semanas;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+
 
 @Configurable
 @Entity
@@ -533,7 +533,7 @@ public class Fixacao
 
 	public String getHorariosStr()
 	{
-		DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat(PredefinedFormat.HOUR24_MINUTE);
+		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("HH:mm");
 		StringBuilder horariosDisponiveisCenario = new StringBuilder();
 
 		for (HorarioDisponivelCenario horarioDisponivelCenario : this.getHorarios())

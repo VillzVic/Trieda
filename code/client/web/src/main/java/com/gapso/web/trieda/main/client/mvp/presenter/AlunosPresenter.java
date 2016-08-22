@@ -15,11 +15,11 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.main.client.mvp.presenter.AlocacaoManualDisciplinaFormPresenter.Display;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AlunosServiceAsync;
@@ -35,6 +35,7 @@ import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
 public class AlunosPresenter
 	implements Presenter
@@ -46,6 +47,7 @@ public class AlunosPresenter
 		Button getImportExcelButton();
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
+		Button getRemoveAllButton();
 		TextField< String > getNomeBuscaTextField();
 		TextField< String > getMatriculaBuscaTextField();
 		ComboBoxBoolean getFormando();
@@ -62,7 +64,9 @@ public class AlunosPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private CenarioDTO cenarioDTO;
-
+	
+	
+	
 	public AlunosPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenarioDTO, Display display )
@@ -70,7 +74,6 @@ public class AlunosPresenter
 		this.cenarioDTO = cenarioDTO;
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-
 		configureProxy();
 		setListeners();
 	}
@@ -156,6 +159,7 @@ public class AlunosPresenter
 			}
 		});
 		
+		
 		this.display.getImportExcelButton().addSelectionListener(new SelectionListener< ButtonEvent >() {
 			@Override
 			public void componentSelected( ButtonEvent ce ) {
@@ -186,6 +190,33 @@ public class AlunosPresenter
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
+		
+		//issue6
+				this.display.getRemoveAllButton().addSelectionListener (
+								new SelectionListener< ButtonEvent >() 
+							{
+								@Override
+								public void componentSelected( ButtonEvent ce )
+								{									 
+								final AlunosServiceAsync service = Services.alunos();
+								
+									service.removeAllAlunos(cenarioDTO, new AsyncCallback< Void >()
+									{
+										@Override
+										public void onFailure( Throwable caught )
+										{
+											MessageBox.alert( "ERRO!", "Não foi possível remover o(s) aluno(s)", null );
+									}
+
+										@Override
+									public void onSuccess( Void result )
+										{
+											display.getGrid().updateList();
+											Info.display( "Removido", "Aluno(s) removido(s) com sucesso!" );
+										}
+									});
+								}
+							});
 
 		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()

@@ -6,6 +6,7 @@ public interface TriedaI18nMessages
 	extends Messages
 {
 	String confirmacaoButton();
+	String confirmacaoAllButton(String entidade);
 	String erroAoSalvar(String entidade);
 	String erroAoRemover(String entidade);
 	String erroExclusaoAreaTitulacao();

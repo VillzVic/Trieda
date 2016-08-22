@@ -24,6 +24,7 @@ public interface AlunosDemandaServiceAsync
 	void getAlunosDemandaList(DemandaDTO demandaDTO, AsyncCallback< ListLoadResult< AlunoDemandaDTO > > callback );
 	void saveAlunoDemanda( DemandaDTO demandaDTO, AlunoDemandaDTO alunoDemandaDTO, AsyncCallback< Void > callback );
 	void removeAlunosDemanda( List< AlunoDemandaDTO > list, AsyncCallback< Void > callback );
+	void removeAllAlunosDemanda( CenarioDTO cenario, AsyncCallback< Void > callback );
 	void getResumoMatriculasList( CenarioDTO cenarioDTO, String aluno, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO, PagingLoadConfig loadConfig,
 			AsyncCallback<PagingLoadResult<ResumoMatriculaDTO>> callback );
 	void getResumoAtendimentosDisciplinaList(CenarioDTO cenarioDTO, String codigo,	CampusDTO campusDTO, CursoDTO cursoDTO,

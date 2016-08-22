@@ -21,6 +21,7 @@ public interface AlunosServiceAsync
 	void getAlunosListByCampus(CampusDTO campusDTO, AsyncCallback<PagingLoadResult<AlunoDTO>> callback);
 	void saveAluno( AlunoDTO alunoDTO, AsyncCallback< Void > callback );
 	void removeAlunos( List< AlunoDTO > list, AsyncCallback< Void > callback );
+	void removeAllAlunos(CenarioDTO cenario, AsyncCallback< Void > callback  );
 	void getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox,
 			AsyncCallback<ListLoadResult<AlunoDTO>> callback);
 	void getRelatorio(CenarioDTO cenarioDTO,	RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode,

@@ -1,5 +1,4 @@
 package com.gapso.web.trieda.server;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +32,9 @@ import com.gapso.web.trieda.shared.util.view.TriedaException;
 public class AlunosServiceImpl
 	extends RemoteService
 	implements AlunosService
-{
+{		
 	private static final long serialVersionUID = -3593829435380014345L;
-
+	
 	@Override
 	public AlunoDTO getAluno( Long id )
 	{
@@ -202,6 +201,12 @@ public class AlunosServiceImpl
 			Aluno aluno = ConvertBeans.toAluno( alunoDTO );
 			aluno.remove();
 		}
+	}
+	
+	@Override
+	public void removeAllAlunos( CenarioDTO cenarioDTO )
+	{
+		Aluno.removeAllAlunos(ConvertBeans.toCenario(cenarioDTO));		
 	}
 	
 	@Override

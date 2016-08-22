@@ -59,7 +59,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar(true, true, true, true, true, this);
+		this.toolBar = new SimpleToolBar(true, true, true, true, true, true, this, "Equivalências" );
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -110,6 +110,12 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	@Override
 	public Button getRemoveButton() {
 		return toolBar.getRemoveButton();
+	}
+	
+	@Override
+	public Button getRemoveAllButton()
+	{
+		return this.toolBar.getRemoveAllButton();
 	}
 
 	@Override

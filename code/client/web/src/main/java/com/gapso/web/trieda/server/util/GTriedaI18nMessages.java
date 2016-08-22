@@ -23,6 +23,12 @@ public class GTriedaI18nMessages
 	}
 	
 	@Override
+	public String confirmacaoAllButton(String entidade)
+	{
+		return this.languageManager.getText( "confirmacaoAllButton" );
+	}
+	
+	@Override
 	public String erroAoSalvar(String entidade) {
 		return this.languageManager.getText( "erroAoSalvar" );
 	}

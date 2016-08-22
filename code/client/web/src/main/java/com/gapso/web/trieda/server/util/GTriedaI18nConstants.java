@@ -531,6 +531,11 @@ public class GTriedaI18nConstants implements TriedaI18nConstants
 	public String remover() {
 		return this.languageManager.getText("remover");
 	}
+	
+	@Override
+	public String removerTodos() {
+		return this.languageManager.getText("removerTodos");
+	}
 
 	@Override
 	public String resumoDisciplina() {

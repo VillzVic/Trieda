@@ -1990,11 +1990,13 @@ public class SolverInput
 		int id = 1;
 		GrupoFixacao grupoFixacao = this.of.createGrupoFixacao();
 
-		List< Fixacao > fixacoes = Fixacao.findAll( this.instituicaoEnsino );
+		List< Fixacao > fixacoes
+			= Fixacao.findAll( this.instituicaoEnsino );
 
 		for ( Fixacao fixacao : fixacoes )
 		{
-			Set< HorarioDisponivelCenario > horarios = this.getHorarios( fixacao );
+			Set< HorarioDisponivelCenario > horarios
+				= this.getHorarios( fixacao );
 
 			if ( horarios.size() > 0 )
 			{

@@ -1,5 +1,4 @@
 package com.gapso.web.trieda.server;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,7 +27,6 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoCargaHorariaDTO;
@@ -45,6 +43,9 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AlunosDemandaService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
+import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
+
 
 @Transactional
 public class AlunosDemandaServiceImpl
@@ -52,7 +53,7 @@ public class AlunosDemandaServiceImpl
 	implements AlunosDemandaService
 {
 	private static final long serialVersionUID = -8767166425201585831L;
-
+	
 	@Override
 	public AlunoDemandaDTO getAlunoDemanda( Long id )
 	{
@@ -205,6 +206,12 @@ public class AlunosDemandaServiceImpl
 
 			alunoDemanda.remove();
 		}
+	}
+	
+	@Override
+	public void removeAllAlunosDemanda( CenarioDTO cenarioDTO )
+	{
+		AlunoDemanda.removeAllAlunosDemanda(ConvertBeans.toCenario(cenarioDTO));
 	}
 	
 	@Override

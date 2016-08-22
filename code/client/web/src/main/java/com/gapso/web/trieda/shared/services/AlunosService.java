@@ -25,6 +25,7 @@ public interface AlunosService
 	PagingLoadResult< AlunoDTO > getAlunosListByCampus(CampusDTO campusDTO);
 	void saveAluno( AlunoDTO alunoDTO );
 	void removeAlunos( List< AlunoDTO > list );
+	void removeAllAlunos(CenarioDTO cenario);
 	ListLoadResult<AlunoDTO> getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox);
 	List<RelatorioDTO> getRelatorio(CenarioDTO cenarioDTO, RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode) throws TriedaException;
 	AlunoDTO getProxAluno(CenarioDTO cenarioDTO, AlunoDTO alunoDTO, String order);

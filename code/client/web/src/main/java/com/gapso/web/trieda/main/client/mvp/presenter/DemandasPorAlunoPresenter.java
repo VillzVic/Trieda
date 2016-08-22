@@ -1,7 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
-
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.main.client.mvp.presenter.AlocacaoManualDisciplinaFormPresenter.Display;
 import com.gapso.web.trieda.main.client.mvp.view.MotivosNaoAtendimentoView;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -23,7 +24,6 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
-import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AlunosDemandaServiceAsync;
@@ -55,6 +55,7 @@ public class DemandasPorAlunoPresenter
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
+		Button getRemoveAllButton();
 		Button getImportExcelButton();
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
@@ -154,6 +155,26 @@ public class DemandasPorAlunoPresenter
 				});
 			}
 		});
+		
+		this.display.getRemoveAllButton().addSelectionListener(
+						new SelectionListener< ButtonEvent >()
+				{
+					@Override
+					public void componentSelected( ButtonEvent ce )
+					{
+						final AlunosDemandaServiceAsync service = Services.alunosDemanda();
+
+						service.removeAllAlunosDemanda( cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+						{
+							@Override
+							public void onSuccess( Void result )
+							{
+								display.getGrid().getGrid().getStore().getLoader().load();
+								Info.display( "Removido", "Item(ns) removido com sucesso!" );
+							}
+						});
+					}
+				});
 		
 		this.display.getImportExcelButton().addSelectionListener(new SelectionListener< ButtonEvent >()	{
 			@Override

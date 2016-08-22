@@ -19,6 +19,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("add_16.png") ImageResource add16();
 	@Source("edit_16.png") ImageResource edit16();
 	@Source("del_16.png") ImageResource del16();
+	@Source("del_all_16.png") ImageResource delall16();
 	@Source("exportar_16.png") ImageResource exportar16();
 	@Source("exportar_24.png") ImageResource exportar24();
 	@Source("importar_16.png") ImageResource importar16();

@@ -158,6 +158,7 @@ public interface TriedaI18nConstants
 	String relatorioVisaoProfessor();
 	String relatorioVisaoSala();
 	String remover();
+	String removerTodos();
 	String resumoDisciplina();
 	String resumoCurso();
 	String sala();
