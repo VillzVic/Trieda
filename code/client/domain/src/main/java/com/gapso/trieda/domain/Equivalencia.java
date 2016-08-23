@@ -431,15 +431,18 @@ public class Equivalencia
 			entidadeClone.getCursos().add(novoCenario.getEntidadeClonada(curso));
 		}
 	}
-	
+	/*
 	public static void removeAll(Cenario cenario) {
 		
-		Query q = entityManager().createNativeQuery("delete from equivalencias where dis_cursou_id in " +
-				"(select dis_id from disciplinas where cen_id = :cen_id)");
+		Query q = entityManager().createNativeQuery(
+			"DELETE FROM equivalencias e WHERE e.dis_cursou_id IN " +
+			"(SELECT dis_id FROM disciplinas WHERE cen_id = :cen_id) OR e.dis_elimina_id IN" +
+			"(SELECT dis_id FROM disciplinas WHERE cen_id = :cen_id)");
+		
 		q.setParameter("cen_id",cenario.getId());
 		
 		q.executeUpdate();
 		
-	}
+	}*/
 
 }
