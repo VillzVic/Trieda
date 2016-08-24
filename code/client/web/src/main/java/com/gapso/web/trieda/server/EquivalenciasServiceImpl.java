@@ -135,9 +135,9 @@ public class EquivalenciasServiceImpl
 	@Override
 	public void removeAll( CenarioDTO cenarioDTO )
 	{
-		//Equivalencia.removeAll(ConvertBeans.toCenario(cenarioDTO));
+		Equivalencia.removeAll(ConvertBeans.toCenario(cenarioDTO));
 		
-		List<Equivalencia> equivalencia = Equivalencia.findByCenario(getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenarioDTO)); 
+		/*List<Equivalencia> equivalencia = Equivalencia.findByCenario(getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenarioDTO)); 
 
 		for(Equivalencia equiv : equivalencia){
 			
@@ -145,7 +145,7 @@ public class EquivalenciasServiceImpl
 			{
 				equiv.remove();
 			}
-		}
+		}*/
 	}
 	
 	@Override

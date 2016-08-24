@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.CampusFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
@@ -32,10 +33,12 @@ public class CampusFormView
 	private EstadoComboBox estadoCB;
 	private TextField< String > municipioTF;
 	private TextField< String > bairroTF;
+	private TextField< String > profVirtualTF;
 	private NumberField valorCreditoNF;
 	private CheckBox publicadoCB;
 	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
+	private CheckBox permiteProfVirtualCB;
 
 	public CampusFormView( CenarioDTO cenarioDTO )
 	{
@@ -58,7 +61,7 @@ public class CampusFormView
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.campus16() );
-		this.simpleModal.setHeight( 340 );
+		this.simpleModal.setHeight( 430 );
 		this.simpleModal.setWidth( 400 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
@@ -153,7 +156,30 @@ public class CampusFormView
 		enderecoFS.add( this.bairroTF, formData );
 
 		this.formPanel.add( enderecoFS, formData );
-
+		
+		FieldSet configFS = new FieldSet();
+		formLayout = new FormLayout( LabelAlign.RIGHT );
+		formLayout.setLabelWidth(180);
+		configFS.setLayout( formLayout );
+		configFS.setHeadingHtml( "Config. Avançadas" );
+		
+		this.permiteProfVirtualCB = new CheckBox();
+		this.permiteProfVirtualCB.setFieldLabel("Permite Professor Virtual");
+		this.permiteProfVirtualCB.setName( campusDTO.PROPERTY_PERMITE_PROF_VIRTUAL );
+		this.permiteProfVirtualCB.setValue( this.campusDTO.getPermProfVirtual());
+		
+		configFS.add( this.permiteProfVirtualCB, formData );
+		
+		this.profVirtualTF = new TextField< String >();
+		this.profVirtualTF.setName( CampusDTO.PROPERTY_QUANTIDADE_PROF_VIRTUAL );
+		this.profVirtualTF.setValue( this.campusDTO.getQdeProfVirtual());
+		profVirtualTF.setFieldLabel( "Nº Max. Professor Virtual" );
+		profVirtualTF.setMaxLength( 10 );
+		profVirtualTF.setEmptyText( "Quantidade" );
+		configFS.add( this.profVirtualTF, formData );
+		
+		this.formPanel.add( configFS, formData );
+		
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
 		

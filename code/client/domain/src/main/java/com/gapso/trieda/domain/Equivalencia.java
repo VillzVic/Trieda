@@ -1,11 +1,16 @@
 package com.gapso.trieda.domain;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
-
+import java.sql.SQLException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,390 +34,349 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
 @Configurable
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity( identifierColumn = "EQV_ID" )
-@Table( name = "EQUIVALENCIAS" )
-public class Equivalencia
-	implements java.io.Serializable, Clonable< Equivalencia >
-{
+@RooEntity(identifierColumn = "EQV_ID")
+@Table(name = "EQUIVALENCIAS")
+public class Equivalencia implements java.io.Serializable,
+		Clonable<Equivalencia> {
 	private static final long serialVersionUID = -8632323368932009356L;
 
-    @NotNull
-    @ManyToOne( targetEntity = Disciplina.class )
-    @JoinColumn( name = "DIS_CURSOU_ID" )
-    private Disciplina cursou;
+	@NotNull
+	@ManyToOne(targetEntity = Disciplina.class)
+	@JoinColumn(name = "DIS_CURSOU_ID")
+	private Disciplina cursou;
 
-    @NotNull
-    @ManyToOne( targetEntity = Disciplina.class )
-    @JoinColumn( name = "DIS_ELIMINA_ID" )
-    private Disciplina elimina;
-    
-	@Column( name = "EQV_GERAL" )
+	@NotNull
+	@ManyToOne(targetEntity = Disciplina.class)
+	@JoinColumn(name = "DIS_ELIMINA_ID")
+	private Disciplina elimina;
+
+	@Column(name = "EQV_GERAL")
 	private Boolean equivalenciaGeral;
-	
-	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinTable(name="cursos_equivalencias",
-	joinColumns={ @JoinColumn(name="eqv_id") },
-	inverseJoinColumns={ @JoinColumn(name="cur_id") })
-	private Set< Curso > cursos = new HashSet< Curso >();
 
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "cursos_equivalencias", joinColumns = { @JoinColumn(name = "eqv_id") }, inverseJoinColumns = { @JoinColumn(name = "cur_id") })
+	private Set<Curso> cursos = new HashSet<Curso>();
 
-	public String toString()
-	{
-        StringBuilder sb = new StringBuilder();
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
 
-        sb.append( "Id: " ).append( getId() ).append( ", " );
-        sb.append( "Version: " ).append( getVersion() ).append( ", " );
-        sb.append( "Cursou: " ).append( getCursou() ).append( ", " );
-        sb.append( "Elimina: " ).append( getElimina()).append( ", " );
+		sb.append("Id: ").append(getId()).append(", ");
+		sb.append("Version: ").append(getVersion()).append(", ");
+		sb.append("Cursou: ").append(getCursou()).append(", ");
+		sb.append("Elimina: ").append(getElimina()).append(", ");
 
-        return sb.toString();
-    }
+		return sb.toString();
+	}
 
-	public Disciplina getCursou()
-	{
-        return this.cursou;
-    }
+	public Disciplina getCursou() {
+		return this.cursou;
+	}
 
-	public void setCursou( Disciplina cursou )
-	{
-        this.cursou = cursou;
-    }
+	public void setCursou(Disciplina cursou) {
+		this.cursou = cursou;
+	}
 
-	public Disciplina getElimina()
-	{
-        return this.elimina;
-    }
+	public Disciplina getElimina() {
+		return this.elimina;
+	}
 
-	public void setElimina( Disciplina elimina )
-	{
-        this.elimina = elimina;
-    }
-	
-	public Boolean getEquivalenciaGeral()
-	{
-        return this.equivalenciaGeral;
-    }
+	public void setElimina(Disciplina elimina) {
+		this.elimina = elimina;
+	}
 
-	public void setEquivalenciaGeral( Boolean equivalenciaGeral )
-	{
-        this.equivalenciaGeral = equivalenciaGeral;
-    }
-	
-	public Set< Curso > getCursos()
-	{
-        return this.cursos;
-    }
+	public Boolean getEquivalenciaGeral() {
+		return this.equivalenciaGeral;
+	}
 
-	public void setCursos( Set< Curso > cursos )
-	{
-        this.cursos = cursos;
-    }
+	public void setEquivalenciaGeral(Boolean equivalenciaGeral) {
+		this.equivalenciaGeral = equivalenciaGeral;
+	}
+
+	public Set<Curso> getCursos() {
+		return this.cursos;
+	}
+
+	public void setCursos(Set<Curso> cursos) {
+		this.cursos = cursos;
+	}
 
 	@PersistenceContext
-    transient EntityManager entityManager;
+	transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue( strategy = GenerationType.AUTO )
-    @Column( name = "EQV_ID" )
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "EQV_ID")
+	private Long id;
 
 	@Version
-    @Column( name = "version" )
-    private Integer version;
+	@Column(name = "version")
+	private Integer version;
 
-	public Long getId()
-	{
-        return this.id;
-    }
+	public Long getId() {
+		return this.id;
+	}
 
-	public void setId( Long id )
-	{
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-	public Integer getVersion()
-	{
-        return this.version;
-    }
+	public Integer getVersion() {
+		return this.version;
+	}
 
-	public void setVersion( Integer version )
-	{
-        this.version = version;
-    }
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 
 	@Transactional
-	public void detach()
-	{
-		if ( this.entityManager == null )
-		{
+	public void detach() {
+		if (this.entityManager == null) {
 			this.entityManager = entityManager();
 		}
 
-		this.entityManager.detach( this );
+		this.entityManager.detach(this);
 	}
-	
-	@Transactional
-    public void persist()
-	{
-        if ( this.entityManager == null )
-        {
-        	this.entityManager = entityManager();
-        }
-
-        this.entityManager.persist( this );
-    }
 
 	@Transactional
-    public void remove()
-	{
-        if ( this.entityManager == null )
-        {
-        	this.entityManager = entityManager();
-        }
+	public void persist() {
+		if (this.entityManager == null) {
+			this.entityManager = entityManager();
+		}
 
-        if ( this.entityManager.contains( this ) )
-        {
-            this.entityManager.remove( this );
-        }
-        else
-        {
-            Equivalencia attached = this.entityManager.find(
-            	this.getClass(), this.id );
-
-            this.entityManager.remove( attached );
-        }
-    }
+		this.entityManager.persist(this);
+	}
 
 	@Transactional
-    public void flush()
-	{
-        if ( this.entityManager == null )
-        {
-        	this.entityManager = entityManager();
-        }
+	public void remove() {
+		if (this.entityManager == null) {
+			this.entityManager = entityManager();
+		}
 
-        this.entityManager.flush();
-    }
+		if (this.entityManager.contains(this)) {
+			this.entityManager.remove(this);
+		} else {
+			Equivalencia attached = this.entityManager.find(this.getClass(),
+					this.id);
+
+			this.entityManager.remove(attached);
+		}
+	}
 
 	@Transactional
-    public Equivalencia merge()
-	{
-        if ( this.entityManager == null )
-        {
-        	this.entityManager = entityManager();
-        }
+	public void flush() {
+		if (this.entityManager == null) {
+			this.entityManager = entityManager();
+		}
 
-        Equivalencia merged = this.entityManager.merge( this );
-        this.entityManager.flush();
-        return merged;
-    }
+		this.entityManager.flush();
+	}
 
-	public static final EntityManager entityManager()
-	{
-        EntityManager em = new Equivalencia().entityManager;
+	@Transactional
+	public Equivalencia merge() {
+		if (this.entityManager == null) {
+			this.entityManager = entityManager();
+		}
 
-        if ( em == null )
-        {
-        	throw new IllegalStateException(
-        		"Entity manager has not been injected (is the Spring " +
-        		"Aspects JAR configured as an AJC/AJDT aspects library?)" );
-        }
+		Equivalencia merged = this.entityManager.merge(this);
+		this.entityManager.flush();
+		return merged;
+	}
 
-        return em;
-    }
+	public static final EntityManager entityManager() {
+		EntityManager em = new Equivalencia().entityManager;
 
-	@SuppressWarnings( "unchecked" )
-    public static List< Equivalencia > findAll(
-    	InstituicaoEnsino instituicaoEnsino )
-    {
-		Query q = entityManager().createQuery(
-	        " SELECT o FROM Equivalencia o " +
-    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+		if (em == null) {
+			throw new IllegalStateException(
+					"Entity manager has not been injected (is the Spring "
+							+ "Aspects JAR configured as an AJC/AJDT aspects library?)");
+		}
 
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		return em;
+	}
 
-        return q.getResultList();
-    }
-	
-	@SuppressWarnings( "unchecked" )
-    public static List< Equivalencia > findByCenario(
-    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
-    {
-		Query q = entityManager().createQuery(
-	        " SELECT o FROM Equivalencia o " +
-    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-    		" AND o.cursou.cenario = :cenario " );
+	@SuppressWarnings("unchecked")
+	public static List<Equivalencia> findAll(InstituicaoEnsino instituicaoEnsino) {
+		Query q = entityManager()
+				.createQuery(
+						" SELECT o FROM Equivalencia o "
+								+ " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ");
 
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "cenario", cenario );
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
 
-        return q.getResultList();
-    }
+		return q.getResultList();
+	}
 
-	public static Equivalencia find(
-		Long id, InstituicaoEnsino instituicaoEnsino )
-	{
-        if ( id == null || instituicaoEnsino == null )
-        {
-        	return null;
-        }
+	@SuppressWarnings("unchecked")
+	public static List<Equivalencia> findByCenario(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+		Query q = entityManager()
+				.createQuery(
+						" SELECT o FROM Equivalencia o "
+								+ " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND o.cursou.cenario = :cenario ");
 
-        Equivalencia equivalencia
-        	= entityManager().find( Equivalencia.class, id );
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("cenario", cenario);
 
-        if ( equivalencia != null && equivalencia.getCursou() != null
-        	&& equivalencia.getCursou().getTipoDisciplina() != null
-        	&& equivalencia.getCursou().getTipoDisciplina().getInstituicaoEnsino() != null
-        	&& equivalencia.getCursou().getTipoDisciplina().getInstituicaoEnsino() == instituicaoEnsino )
-        {
-        	return equivalencia;
-        }
+		return q.getResultList();
+	}
 
-        return null;
-    }
-	
-	public static int count(
-		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Disciplina disciplina, Curso curso )
-	{
-		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-				"AND o.cursou.cenario = :cenario ";
+	public static Equivalencia find(Long id, InstituicaoEnsino instituicaoEnsino) {
+		if (id == null || instituicaoEnsino == null) {
+			return null;
+		}
+
+		Equivalencia equivalencia = entityManager()
+				.find(Equivalencia.class, id);
+
+		if (equivalencia != null
+				&& equivalencia.getCursou() != null
+				&& equivalencia.getCursou().getTipoDisciplina() != null
+				&& equivalencia.getCursou().getTipoDisciplina()
+						.getInstituicaoEnsino() != null
+				&& equivalencia.getCursou().getTipoDisciplina()
+						.getInstituicaoEnsino() == instituicaoEnsino) {
+			return equivalencia;
+		}
+
+		return null;
+	}
+
+	public static int count(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Disciplina disciplina, Curso curso) {
+		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino "
+				+ "AND o.cursou.cenario = :cenario ";
 		String from = " FROM Equivalencia o ";
 
-		if ( disciplina != null )
-		{
-			where += ( " AND o.cursou = :disciplina " );
+		if (disciplina != null) {
+			where += (" AND o.cursou = :disciplina ");
 		}
-		
+
 		Set<Curso> cursoBusca = new HashSet<Curso>();
-		if ( curso != null )
-		{
+		if (curso != null) {
 			cursoBusca.add(curso);
 			from += ", IN ( o.cursos ) cur";
-			where += ( " AND cur IN ( :curso )" );
+			where += (" AND cur IN ( :curso )");
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT COUNT ( o )" + from + where );
+				" SELECT COUNT ( o )" + from + where);
 
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "cenario", cenario );
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("cenario", cenario);
 
-		if ( disciplina != null )
-		{
-			q.setParameter( "disciplina", disciplina );
+		if (disciplina != null) {
+			q.setParameter("disciplina", disciplina);
 		}
-		if ( curso != null )
-		{
-			q.setParameter( "curso", cursoBusca);
+		if (curso != null) {
+			q.setParameter("curso", cursoBusca);
 		}
 
-		return ( (Number) q.getSingleResult() ).intValue();
+		return ((Number) q.getSingleResult()).intValue();
 	}
 
-	@SuppressWarnings( "unchecked" )
-	public static List< Equivalencia > findBy(
-		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Disciplina disciplina,
-		Curso curso, int firstResult, int maxResults, String orderBy )
-	{
-		orderBy = ( ( orderBy != null ) ? " ORDER BY o." +
-				orderBy.replace("String", "").replace("curso", "equivalenciaGeral") : "" );
+	@SuppressWarnings("unchecked")
+	public static List<Equivalencia> findBy(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Disciplina disciplina, Curso curso, int firstResult,
+			int maxResults, String orderBy) {
+		orderBy = ((orderBy != null) ? " ORDER BY o."
+				+ orderBy.replace("String", "").replace("curso",
+						"equivalenciaGeral") : "");
 
-		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-				"AND o.cursou.cenario = :cenario";
+		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino "
+				+ "AND o.cursou.cenario = :cenario";
 		String from = "FROM Equivalencia o";
 
-		if ( disciplina != null )
-		{
-			where += ( " AND o.cursou = :disciplina " );
+		if (disciplina != null) {
+			where += (" AND o.cursou = :disciplina ");
 		}
-		
+
 		Set<Curso> cursoBusca = new HashSet<Curso>();
-		if ( curso != null )
-		{
+		if (curso != null) {
 			cursoBusca.add(curso);
 			from += ", IN ( o.cursos ) cur";
-			where += ( " AND cur IN ( :curso )" );
+			where += (" AND cur IN ( :curso )");
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o "+ from + where + orderBy );
+				" SELECT o " + from + where + orderBy);
 
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "cenario", cenario );
-		q.setFirstResult( firstResult );
-		q.setMaxResults( maxResults );
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("cenario", cenario);
+		q.setFirstResult(firstResult);
+		q.setMaxResults(maxResults);
 
-		if ( disciplina != null )
-		{
-			q.setParameter( "disciplina", disciplina );
+		if (disciplina != null) {
+			q.setParameter("disciplina", disciplina);
 		}
-		if ( curso != null )
-		{
-			q.setParameter( "curso", cursoBusca);
+		if (curso != null) {
+			q.setParameter("curso", cursoBusca);
 		}
 
 		return q.getResultList();
 	}
-	
-	@SuppressWarnings( "unchecked" )
-    public static List< Equivalencia > find(InstituicaoEnsino instituicaoEnsino) {
-		Query q = entityManager().createQuery(
-        	" SELECT o FROM Equivalencia o " +
-    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
 
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+	@SuppressWarnings("unchecked")
+	public static List<Equivalencia> find(InstituicaoEnsino instituicaoEnsino) {
+		Query q = entityManager()
+				.createQuery(
+						" SELECT o FROM Equivalencia o "
+								+ " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ");
 
-        return q.getResultList();
-    }
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
 
-	@SuppressWarnings( "unchecked" )
-    public static List< Equivalencia > find(
-    	InstituicaoEnsino instituicaoEnsino,
-    	int firstResult, int maxResults )
-    {
-		Query q = entityManager().createQuery(
-        	" SELECT o FROM Equivalencia o " +
-    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+		return q.getResultList();
+	}
 
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-    	q.setFirstResult( firstResult );
-    	q.setMaxResults( maxResults );
+	@SuppressWarnings("unchecked")
+	public static List<Equivalencia> find(InstituicaoEnsino instituicaoEnsino,
+			int firstResult, int maxResults) {
+		Query q = entityManager()
+				.createQuery(
+						" SELECT o FROM Equivalencia o "
+								+ " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ");
 
-        return q.getResultList();
-    }
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setFirstResult(firstResult);
+		q.setMaxResults(maxResults);
 
-	public static Map< String, Equivalencia > buildEquivalenciaCursouCodigoEliminaCodigoToEquivalenciaMap(
-		List< Equivalencia > equivalencias )
-	{
-		Map< String, Equivalencia > equivalenciasMap
-			= new HashMap< String, Equivalencia >();
+		return q.getResultList();
+	}
 
-		for ( Equivalencia equivalencia : equivalencias )
-		{
-			equivalenciasMap.put( equivalencia.getCursou().getCodigo() +
-					equivalencia.getElimina().getCodigo(), equivalencia );
+	public static Map<String, Equivalencia> buildEquivalenciaCursouCodigoEliminaCodigoToEquivalenciaMap(
+			List<Equivalencia> equivalencias) {
+		Map<String, Equivalencia> equivalenciasMap = new HashMap<String, Equivalencia>();
+
+		for (Equivalencia equivalencia : equivalencias) {
+			equivalenciasMap.put(equivalencia.getCursou().getCodigo()
+					+ equivalencia.getElimina().getCodigo(), equivalencia);
 		}
 
 		return equivalenciasMap;
 	}
 
-	@SuppressWarnings( "unchecked" )
-	public static List< Equivalencia > findBy(InstituicaoEnsino instituicaoEnsino,
-		Disciplina cursou, Disciplina elimina)
-	{
-		Query q = entityManager().createQuery(
-	       	" SELECT o FROM Equivalencia o " +
-	   		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-	       	" AND o.cursou = :cursou AND o.elimina = :elimina");
+	@SuppressWarnings("unchecked")
+	public static List<Equivalencia> findBy(
+			InstituicaoEnsino instituicaoEnsino, Disciplina cursou,
+			Disciplina elimina) {
+		Query q = entityManager()
+				.createQuery(
+						" SELECT o FROM Equivalencia o "
+								+ " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND o.cursou = :cursou AND o.elimina = :elimina");
 
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "cursou", cursou);
-		q.setParameter( "elimina", elimina);
-		
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("cursou", cursou);
+		q.setParameter("elimina", elimina);
+
 		return q.getResultList();
 	}
 
@@ -421,28 +385,55 @@ public class Equivalencia
 		clone.setCursou(novoCenario.getEntidadeClonada(this.getCursou()));
 		clone.setElimina(novoCenario.getEntidadeClonada(this.getElimina()));
 		clone.setEquivalenciaGeral(this.getEquivalenciaGeral());
-		
+
 		return clone;
 	}
 
 	public void cloneChilds(CenarioClone novoCenario, Equivalencia entidadeClone) {
-		for (Curso curso : this.getCursos())
-		{
-			entidadeClone.getCursos().add(novoCenario.getEntidadeClonada(curso));
+		for (Curso curso : this.getCursos()) {
+			entidadeClone.getCursos()
+					.add(novoCenario.getEntidadeClonada(curso));
 		}
 	}
+
 	/*
+	 * Devido ao não aceite de implementação, desta classe ao método
+	 * convencional, criando o "entityManager().createQuery" e, o método
+	 * utilizado gerou uma demora consideravel ao excluir grande demanda de
+	 * equivalencias, foi proposto o método abaixo afim de contornar esta
+	 * demora. Este é provisório, devendo ser implementado dentro do contexto do
+	 * framwork aplicado, tão logo seja descoberta a rezão do não aceite.
+	 */
 	public static void removeAll(Cenario cenario) {
-		
-		Query q = entityManager().createNativeQuery(
-			"DELETE FROM equivalencias e WHERE e.dis_cursou_id IN " +
-			"(SELECT dis_id FROM disciplinas WHERE cen_id = :cen_id) OR e.dis_elimina_id IN" +
-			"(SELECT dis_id FROM disciplinas WHERE cen_id = :cen_id)");
-		
-		q.setParameter("cen_id",cenario.getId());
-		
-		q.executeUpdate();
-		
-	}*/
+		/*String properties = "trieda-production.properties";
+		Properties prop = new Properties();
+*/		Connection con = null;
+		//InputStream file;
+		try {
+			/*file =  InputStream.class.getResourceAsStream(properties) ;
+			prop.load(file);
+			String driver = prop.getProperty("database.driverClassName");
+			String url = prop.getProperty("database.url");
+			String user = prop.getProperty("database.username");
+			String passwd = prop.getProperty("database.password");
+			*/
+			Class.forName("com.mysql.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost/trieda", "trieda", "trieda");
+
+			String sql = "DELETE FROM equivalencias WHERE dis_cursou_id IN" +
+						 "(SELECT dis_id FROM disciplinas WHERE cen_id = ?)";
+			PreparedStatement stmt = con.prepareStatement(sql);
+			stmt.setLong(1, cenario.getId());
+			stmt.execute();
+			stmt.close();
+			/*file.close();*/
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} /*catch (IOException e) {
+			e.printStackTrace();
+		}*/
+	}
 
 }
