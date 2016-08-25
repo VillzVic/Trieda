@@ -159,7 +159,7 @@ public class CampusFormView
 		
 		FieldSet configFS = new FieldSet();
 		formLayout = new FormLayout( LabelAlign.RIGHT );
-		formLayout.setLabelWidth(180);
+		formLayout.setLabelWidth(160);
 		configFS.setLayout( formLayout );
 		configFS.setHeadingHtml( "Config. Avançadas" );
 		
