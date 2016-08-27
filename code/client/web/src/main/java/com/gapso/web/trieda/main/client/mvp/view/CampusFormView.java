@@ -33,12 +33,12 @@ public class CampusFormView
 	private EstadoComboBox estadoCB;
 	private TextField< String > municipioTF;
 	private TextField< String > bairroTF;
-	private TextField< String > profVirtualTF;
+	private NumberField profVirtualNF;
 	private NumberField valorCreditoNF;
 	private CheckBox publicadoCB;
 	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
-	private CheckBox permiteProfVirtualCB;
+	private CheckBox limitaProfVirtualCB;
 
 	public CampusFormView( CenarioDTO cenarioDTO )
 	{
@@ -163,20 +163,20 @@ public class CampusFormView
 		configFS.setLayout( formLayout );
 		configFS.setHeadingHtml( "Config. Avançadas" );
 		
-		this.permiteProfVirtualCB = new CheckBox();
-		this.permiteProfVirtualCB.setFieldLabel("Permite Professor Virtual");
-		this.permiteProfVirtualCB.setName( campusDTO.PROPERTY_PERMITE_PROF_VIRTUAL );
-		this.permiteProfVirtualCB.setValue( this.campusDTO.getPermProfVirtual());
+		this.limitaProfVirtualCB = new CheckBox();
+		this.limitaProfVirtualCB.setFieldLabel("Limitar nº de Prof. Virtual");
+		this.limitaProfVirtualCB.setName( campusDTO.PROPERTY_LIMITA_PROF_VIRTUAL );
+		this.limitaProfVirtualCB.setValue( this.campusDTO.getLimitaProfVirtual());
 		
-		configFS.add( this.permiteProfVirtualCB, formData );
+		configFS.add( this.limitaProfVirtualCB, formData );
 		
-		this.profVirtualTF = new TextField< String >();
-		this.profVirtualTF.setName( CampusDTO.PROPERTY_QUANTIDADE_PROF_VIRTUAL );
-		this.profVirtualTF.setValue( this.campusDTO.getQdeProfVirtual());
-		profVirtualTF.setFieldLabel( "Nº Max. Professor Virtual" );
-		profVirtualTF.setMaxLength( 10 );
-		profVirtualTF.setEmptyText( "Quantidade" );
-		configFS.add( this.profVirtualTF, formData );
+		this.profVirtualNF = new NumberField();
+		this.profVirtualNF.setName( CampusDTO.PROPERTY_QUANTIDADE_PROF_VIRTUAL );
+		this.profVirtualNF.setValue( this.campusDTO.getQdeProfVirtual());
+		profVirtualNF.setFieldLabel( "Nº Max. Professor Virtual" );
+		profVirtualNF.setMaxLength( 10 );
+		profVirtualNF.setEmptyText( "Quantidade" );
+		configFS.add( this.profVirtualNF, formData );
 		
 		this.formPanel.add( configFS, formData );
 		
@@ -249,5 +249,11 @@ public class CampusFormView
 	public CheckBox getPublicadoCheckBox()
 	{
 		return this.publicadoCB;
+	}
+	
+	@Override
+	public NumberField getQdeProfVirtual()
+	{
+		return this.profVirtualNF;
 	}
 }

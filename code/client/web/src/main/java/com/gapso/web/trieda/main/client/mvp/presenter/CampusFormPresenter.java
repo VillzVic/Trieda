@@ -40,6 +40,7 @@ public class CampusFormPresenter
 		EstadoComboBox getEstadoComboBox();
 		TextField< String > getMunicipioTextField();
 		TextField< String > getBairroTextField();
+		NumberField getQdeProfVirtual();
 		CheckBox getPublicadoCheckBox();
 		CampusDTO getCampusDTO();
 		boolean isValid();
@@ -165,6 +166,7 @@ public class CampusFormPresenter
 		campusDTO.setMunicipio( this.display.getMunicipioTextField().getValue() );
 		campusDTO.setBairro( this.display.getBairroTextField().getValue() );
 		campusDTO.setPublicado( this.display.getPublicadoCheckBox().getValue() );
+		campusDTO.setQdeProfVirtual( this.display.getQdeProfVirtual().getValue().intValue() );
 
 		return campusDTO;
 	}

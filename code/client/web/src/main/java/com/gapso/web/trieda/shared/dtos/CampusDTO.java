@@ -22,8 +22,8 @@ public class CampusDTO
 	public static final String PROPERTY_OTIMIZADO_TATICO = "otimizadoTatico";
 	public static final String PROPERTY_OTIMIZADO_OPERACIONAL = "otimizadoOperacional";
 	public static final String PROPERTY_PUBLICADO = "publicado";
-	public static final String PROPERTY_PERMITE_PROF_VIRTUAL = "permiteProfVirtual";
 	public static final String PROPERTY_QUANTIDADE_PROF_VIRTUAL = "quantidadeProfVirtual";
+	public static final String PROPERTY_LIMITA_PROF_VIRTUAL = "limitaProfVirtual";
 
 	public CampusDTO()
 	{
@@ -114,17 +114,17 @@ public class CampusDTO
 	public Boolean getPublicado() {
 		return get(PROPERTY_PUBLICADO);
 	}
-	public void setPermProfVirtual(Boolean value){
-		set(PROPERTY_PERMITE_PROF_VIRTUAL, value);
-	}
-	public Boolean getPermProfVirtual() {
-		return get(PROPERTY_PERMITE_PROF_VIRTUAL);
-	}
-	public void setQdeProfVirtual(String value){
+	public void setQdeProfVirtual(Integer value){
 		set(PROPERTY_QUANTIDADE_PROF_VIRTUAL, value);
 	}
-	public String getQdeProfVirtual() {
+	public Integer getQdeProfVirtual() {
 		return get(PROPERTY_QUANTIDADE_PROF_VIRTUAL);
+	}
+	public void setLimitaProfVirtual(Boolean value){
+		set(PROPERTY_LIMITA_PROF_VIRTUAL, value);
+	}
+	public Boolean getLimitaProfVirtual() {
+		return get(PROPERTY_LIMITA_PROF_VIRTUAL);
 	}
 	
 	@Override
