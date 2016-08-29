@@ -216,4 +216,5 @@ public interface TriedaI18nConstants
 	String permiteIntervaloAula();
 	String divisoesCreditoDisciplina();
 	String prioridadeAlunos();
+	String qtdProfessorVirtual();
 }

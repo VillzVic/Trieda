@@ -302,6 +302,8 @@ public class ConvertBeans {
 		domain.setBairro( dto.getBairro() );
 		domain.setValorCredito( dto.getValorCredito().getDoubleValue() );
 		domain.setPublicado( dto.getPublicado() );
+		
+		domain.setQtdProfessorVirtual( dto.getQtdProfessorVirtual() );
 
 		return domain;
 	}
@@ -345,6 +347,11 @@ public class ConvertBeans {
 		dto.setPublicado( domain.getPublicado() == null ? false : domain.getPublicado() );
 		dto.setOtimizadoTatico( domain.isOtimizadoTatico( instituicaoEnsino ) );
 		dto.setOtimizadoOperacional( domain.isOtimizadoOperacional( instituicaoEnsino ) );
+		
+		if ( domain.getQtdProfessorVirtual() != null )
+		{
+			dto.setQtdProfessorVirtual(domain.getQtdProfessorVirtual() );
+		}
 
 		return dto;
 	}

@@ -27,6 +27,7 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AlunosDemandaServiceAsync;
+import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
@@ -156,25 +157,45 @@ public class DemandasPorAlunoPresenter
 			}
 		});
 		
-		this.display.getRemoveAllButton().addSelectionListener(
-						new SelectionListener< ButtonEvent >()
+		
+		this.display.getRemoveAllButton().addSelectionListener(new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final CenariosServiceAsync service = Services.cenarios();
+								
+				service.removeAllAlunosDemanda( cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
 				{
 					@Override
-					public void componentSelected( ButtonEvent ce )
+					public void onSuccess( Void result )
 					{
-						final AlunosDemandaServiceAsync service = Services.alunosDemanda();
-
-						service.removeAllAlunosDemanda( cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
-						{
-							@Override
-							public void onSuccess( Void result )
-							{
-								display.getGrid().getGrid().getStore().getLoader().load();
-								Info.display( "Removido", "Item(ns) removido com sucesso!" );
-							}
-						});
+						display.getGrid().getGrid().getStore().getLoader().load();
+						Info.display( "Removido", "Item(ns) removido com sucesso!" );
 					}
 				});
+			}
+		});
+		/*
+		this.display.getRemoveAllButton().addSelectionListener(new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final AlunosDemandaServiceAsync service = Services.alunosDemanda();
+
+				service.removeAllAlunosDemanda( cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
+					@Override
+					public void onSuccess( Void result )
+					{
+						display.getGrid().getGrid().getStore().getLoader().load();
+						Info.display( "Removido", "Item(ns) removido com sucesso!" );
+					}
+				});
+			}
+		});
+		*/
 		
 		this.display.getImportExcelButton().addSelectionListener(new SelectionListener< ButtonEvent >()	{
 			@Override

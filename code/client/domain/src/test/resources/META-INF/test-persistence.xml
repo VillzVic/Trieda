@@ -4,40 +4,19 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
   <persistence-unit name="test-PU" transaction-type="RESOURCE_LOCAL">
+   <provider>org.hibernate.ejb.HibernatePersistence</provider>
+   <properties>
+	   <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+	   <!--value='create' to build a new database on each run; value='update' to modify an existing database; value='create-drop' means the same as 'create' but also drops tables when Hibernate closes; value='validate' makes no changes to the database-->
+	   <property name="hibernate.jdbc.batch_size" value="50" />
+	   <property name="hibernate.hbm2ddl.auto" value="validate"/>
+	   <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+	   <property name="hibernate.show_sql" value="false" />
+	   <property name="hibernate.format_sql" value="false" />
+	   <property name="use_sql_comments" value="false" />
+	   <property name="hibernate.ejb.event.flush" value="com.gapso.trieda.hibernate.PatchedDefaultFlushEventListener" />
+	</properties> 
   
-	<class>com.gapso.trieda.domain.Usuario</class>
-	<class>com.gapso.trieda.domain.Sessao</class>
-	<class>com.gapso.trieda.domain.Turno</class>
-	<class>com.gapso.trieda.domain.Cenario</class>
-	<class>com.gapso.trieda.domain.Campus</class>
-	<class>com.gapso.trieda.domain.Unidade</class>
-	<class>com.gapso.trieda.domain.TipoContrato</class>
-	<class>com.gapso.trieda.domain.Titulacao</class>
-	<class>com.gapso.trieda.domain.AreaTitulacao</class>
-	<class>com.gapso.trieda.domain.Professor</class>
-	<class>com.gapso.trieda.domain.TipoSala</class>
-	<class>com.gapso.trieda.domain.Sala</class>
-	<class>com.gapso.trieda.domain.DivisaoCredito</class>
-	<class>com.gapso.trieda.domain.TipoDisciplina</class>
-	<class>com.gapso.trieda.domain.Disciplina</class>
-	<class>com.gapso.trieda.domain.TipoCurso</class>
-	<class>com.gapso.trieda.domain.Curso</class>
-	<class>com.gapso.trieda.domain.HorarioAula</class>
-	<class>com.gapso.trieda.domain.DeslocamentoCampus</class>
-	<class>com.gapso.trieda.domain.DeslocamentoUnidade</class>
-	<class>com.gapso.trieda.domain.HorarioDisponivelCenario</class>
-	<class>com.gapso.trieda.domain.ProfessorDisciplina</class>
-	<class>com.gapso.trieda.domain.Compatibilidade</class>
-	<class>com.gapso.trieda.domain.Equivalencia</class>
-	<class>com.gapso.trieda.domain.GrupoSala</class>
-	<class>com.gapso.trieda.domain.Curriculo</class>
-	<class>com.gapso.trieda.domain.CurriculoDisciplina</class>
-	<class>com.gapso.trieda.domain.Oferta</class>
-	<class>com.gapso.trieda.domain.Demanda</class>
-	<class>com.gapso.trieda.domain.SemanaLetiva</class>
-	<class>com.gapso.trieda.domain.AtendimentoTatico</class>
-	<class>com.gapso.trieda.domain.AtendimentoOperacional</class>
-	<class>com.gapso.trieda.domain.Fixacao</class>
   </persistence-unit>
   
 </persistence>

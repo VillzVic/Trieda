@@ -3,9 +3,14 @@ package com.gapso.web.trieda.shared.services;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Query;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -33,4 +38,9 @@ public interface CenariosService
 	void setCurrentCenario(long cenarioId);
 	void limpaSolucoesCenario(CenarioDTO cenarioDTO);
 	ListLoadResult<CenarioDTO> getCenarios();
+	
+	void removeAllAlunos(CenarioDTO cenarioDTO);
+	void removeAllAlunosDemanda(CenarioDTO cenarioDTO);
+	void removeAllEquivalencias(CenarioDTO cenarioDTO);
+	
 }

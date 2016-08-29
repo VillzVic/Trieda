@@ -33,7 +33,7 @@ public class CampusFormView
 	private EstadoComboBox estadoCB;
 	private TextField< String > municipioTF;
 	private TextField< String > bairroTF;
-	private NumberField profVirtualNF;
+	private TextField< String > qtdProfessorVirtualTF;
 	private NumberField valorCreditoNF;
 	private CheckBox publicadoCB;
 	private CenarioDTO cenarioDTO;
@@ -163,20 +163,19 @@ public class CampusFormView
 		configFS.setLayout( formLayout );
 		configFS.setHeadingHtml( "Config. Avançadas" );
 		
-		this.limitaProfVirtualCB = new CheckBox();
-		this.limitaProfVirtualCB.setFieldLabel("Limitar nº de Prof. Virtual");
-		this.limitaProfVirtualCB.setName( campusDTO.PROPERTY_LIMITA_PROF_VIRTUAL );
-		this.limitaProfVirtualCB.setValue( this.campusDTO.getLimitaProfVirtual());
+		//this.limitaProfVirtualCB = new CheckBox();
+		//this.limitaProfVirtualCB.setFieldLabel("Limitar nº de Prof. Virtual");
+		//this.limitaProfVirtualCB.setName( campusDTO.PROPERTY_LIMITA_PROF_VIRTUAL );
+		//this.limitaProfVirtualCB.setValue( this.campusDTO.getLimitaProfVirtual());
 		
-		configFS.add( this.limitaProfVirtualCB, formData );
+		//configFS.add( this.limitaProfVirtualCB, formData );
 		
-		this.profVirtualNF = new NumberField();
-		this.profVirtualNF.setName( CampusDTO.PROPERTY_QUANTIDADE_PROF_VIRTUAL );
-		this.profVirtualNF.setValue( this.campusDTO.getQdeProfVirtual());
-		profVirtualNF.setFieldLabel( "Nº Max. Professor Virtual" );
-		profVirtualNF.setMaxLength( 10 );
-		profVirtualNF.setEmptyText( "Quantidade" );
-		configFS.add( this.profVirtualNF, formData );
+		this.qtdProfessorVirtualTF = new TextField< String >();
+		this.qtdProfessorVirtualTF.setName( CampusDTO.PROPERTY_QTD_PROFESSOR_VIRTUAL );
+		this.qtdProfessorVirtualTF.setValue( this.campusDTO.getQtdProfessorVirtual());
+		qtdProfessorVirtualTF.setFieldLabel( "Qtd Professor Virtual" );
+		qtdProfessorVirtualTF.setEmptyText( "Quantidade" );
+		configFS.add( this.qtdProfessorVirtualTF, formData );
 		
 		this.formPanel.add( configFS, formData );
 		
@@ -252,8 +251,8 @@ public class CampusFormView
 	}
 	
 	@Override
-	public NumberField getQdeProfVirtual()
+	public TextField< String > getQtdProfessorVirtualTextField()
 	{
-		return this.profVirtualNF;
+		return this.qtdProfessorVirtualTF;
 	}
 }

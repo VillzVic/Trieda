@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
     "professores",
     "horariosDisponiveis",
     "custo",
-    "limiteProfVirtual" // Ajuste issue188
+    "qtdProfessorVirtual"
 })
 public class ItemCampus {
 
@@ -64,8 +64,7 @@ public class ItemCampus {
     @XmlElement(required = true)
     protected GrupoHorario horariosDisponiveis;
     protected double custo;
-    protected String limiteProfVirtual;  // Ajuste issue188
-    @XmlElement(required = true)
+    protected String qtdProfessorVirtual;
 
     /**
      * Gets the value of the id property.
@@ -219,14 +218,14 @@ public class ItemCampus {
         this.custo = value;
     }
 
-	public String getLimiteProfVirtual()
+    public String getQtdProfessorVirtual()
 	{
-		return limiteProfVirtual;
+		return qtdProfessorVirtual;
 	}
 
-	public void setLimiteProfVirtual(String limiteProfVirtual)
+	public void setQtdProfessorVirtual(String qtdProfessorVirtual)
 	{
-		this.limiteProfVirtual = limiteProfVirtual;
+		this.qtdProfessorVirtual = qtdProfessorVirtual;
 	}
 
 }

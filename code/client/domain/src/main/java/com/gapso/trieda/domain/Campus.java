@@ -32,6 +32,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -89,6 +91,9 @@ public class Campus
 
 	@Column( name = "CAM_PUBLICAR" )
 	private Boolean publicado;
+	
+	@Column( name = "CAM_QTD_PROFESSOR_VIRTUAL" )
+	private String qtdProfessorVirtual;
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
 	private Set< Unidade > unidades = new HashSet< Unidade >();
@@ -271,6 +276,17 @@ public class Campus
 	{
 		this.publicado = publicado;
 	}
+			
+	public String getQtdProfessorVirtual()
+	{
+		return this.qtdProfessorVirtual;
+	}
+
+	public void setQtdProfessorVirtual( String qtdProfessorVirtual )
+	{
+		this.qtdProfessorVirtual = qtdProfessorVirtual;
+	}
+	
 
 	public Set< Parametro > getParametros()
 	{
@@ -1243,19 +1259,14 @@ public class Campus
 		sb.append( "Estado: " ).append( getEstado().name() ).append( ", " );
 		sb.append( "Municipio: " ).append( getMunicipio() ).append( ", " );
 		sb.append( "Bairro: " ).append( getBairro() ).append( ", " );
-		sb.append( "Unidades: " ).append(
-			getUnidades() == null ? "null" : getUnidades().size() ).append( ", " );
-		sb.append( "Deslocamentos: " ).append(
-			getDeslocamentos() == null ? "null" : getDeslocamentos().size() ).append( ", " );
-		sb.append( "DeslocamentosDestino: " ).append(
-			getDeslocamentosDestino() == null ? "null" : getDeslocamentosDestino().size() ).append( ", " );
-		sb.append("Professores: ").append(
-			getProfessores() == null ? "null" : getProfessores().size() ).append( ", " );
-		sb.append("Horarios: ").append(
-			getOfertas() == null ? "null" : getOfertas().size() );
+		sb.append( "Unidades: " ).append(getUnidades() == null ? "null" : getUnidades().size() ).append( ", " );
+		sb.append( "Deslocamentos: " ).append(getDeslocamentos() == null ? "null" : getDeslocamentos().size() ).append( ", " );
+		sb.append( "DeslocamentosDestino: " ).append(getDeslocamentosDestino() == null ? "null" : getDeslocamentosDestino().size() ).append( ", " );
+		sb.append( "Professores: ").append(getProfessores() == null ? "null" : getProfessores().size() ).append( ", " );
+		sb.append( "Horarios: ").append(getOfertas() == null ? "null" : getOfertas().size() );
 		sb.append( "Publicado: " ).append( getPublicado() );
-		sb.append( "Parametros: " ).append(
-			getParametros() == null ? "null" : getParametros().size() ).append(", ");
+		sb.append( "Parametros: " ).append(getParametros() == null ? "null" : getParametros().size() ).append(", ");
+		sb.append( "QtdProfessorVirtual: " ).append( getQtdProfessorVirtual());
 
 		return sb.toString();
 	}
@@ -1303,6 +1314,7 @@ public class Campus
 		clone.setNome(this.getNome());
 		clone.setPublicado(this.getPublicado());
 		clone.setValorCredito(this.getValorCredito());
+		clone.setQtdProfessorVirtual(this.getQtdProfessorVirtual());
 		
 		return clone;
 	}
@@ -1318,6 +1330,8 @@ public class Campus
 		clone.setNome(this.getNome());
 		clone.setPublicado(this.getPublicado());
 		clone.setValorCredito(this.getValorCredito());
+		clone.setQtdProfessorVirtual(this.getQtdProfessorVirtual());
+		
 		
 		return clone;
 	}

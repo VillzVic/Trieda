@@ -755,6 +755,29 @@ public class CenariosServiceImpl
 		return list;
 	}
 	
+	
+	@Override
+	public void removeAllAlunos(CenarioDTO cenarioDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Cenario.removeAllAlunos(cenario);
+	}
+	
+	@Override
+	public void removeAllAlunosDemanda(CenarioDTO cenarioDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Cenario.removeAllAlunos(cenario);
+	}
+	
+	@Override
+	public void removeAllEquivalencias(CenarioDTO cenarioDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Cenario.removeAllAlunos(cenario);
+	}
+	
+	
 	@Override
 	public void limpaSolucoesCenario(CenarioDTO cenarioDTO)
 	{

@@ -6,6 +6,7 @@ import java.util.Set;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -34,4 +35,8 @@ public interface CenariosServiceAsync
 	void limpaSolucoesCenario(CenarioDTO cenarioDTO,
 			AsyncCallback<Void> callback);
 	void getCenarios(AsyncCallback<ListLoadResult<CenarioDTO>> callback);
+	
+	void removeAllAlunos(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
+	void removeAllAlunosDemanda(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
+	void removeAllEquivalencias(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
 }
