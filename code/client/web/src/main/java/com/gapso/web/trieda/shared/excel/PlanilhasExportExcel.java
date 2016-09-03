@@ -11,6 +11,7 @@ public class PlanilhasExportExcel {
 	public static final String DEMANDAS = "ofertasDemandas";
 	public static final String DEMANDAS_POR_ALUNO = "demandasPorAluno";
 	public static final String DISCIPLINAS = "disciplinas";
+	public static final String DISPONIBILIDADES_DISCIPLINAS = "disponibilidadesDisciplinas";
 	public static final String EQUIVALENCIAS = "equivalencias";
 	public static final String DISCIPLINAS_SALAS = "disciplinasSalas";
 	public static final String PROFESSORES = "professores";
