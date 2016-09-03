@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaNullableCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class CampusDTO
@@ -22,7 +23,8 @@ public class CampusDTO
 	public static final String PROPERTY_OTIMIZADO_TATICO = "otimizadoTatico";
 	public static final String PROPERTY_OTIMIZADO_OPERACIONAL = "otimizadoOperacional";
 	public static final String PROPERTY_PUBLICADO = "publicado";
-	public static final String PROPERTY_QTD_PROFESSOR_VIRTUAL = "qtdProfessorVirtual";
+	public static final String PROPERTY_QTD_LIMITE_PROFESSOR_VIRTUAL = "qtdLimiteProfessorVirtual";
+	public static final String PROPERTY_VALOR_MEDIO_PROFESSOR_VIRTUAL = "valorMedioProfessorVirtual";
 
 	public CampusDTO()
 	{
@@ -113,11 +115,19 @@ public class CampusDTO
 	public Boolean getPublicado() {
 		return get(PROPERTY_PUBLICADO);
 	}
-	public void setQtdProfessorVirtual(String value){
-		set(PROPERTY_QTD_PROFESSOR_VIRTUAL, value);
+	public void setQtdLimiteProfessorVirtual(Integer value){
+		set(PROPERTY_QTD_LIMITE_PROFESSOR_VIRTUAL, value);
 	}
-	public String getQtdProfessorVirtual() {
-		return get(PROPERTY_QTD_PROFESSOR_VIRTUAL);
+	public Integer getQtdLimiteProfessorVirtual() {
+		return get(PROPERTY_QTD_LIMITE_PROFESSOR_VIRTUAL);
+	}
+	
+	public void setValorMedioProfessorVirtual(TriedaNullableCurrency value){
+		set(PROPERTY_VALOR_MEDIO_PROFESSOR_VIRTUAL, value.toString());	
+	}
+	
+	public TriedaNullableCurrency getValorMedioProfessorVirtual() {
+		return TriedaUtil.parseTriedaNullableCurrency(get(PROPERTY_VALOR_MEDIO_PROFESSOR_VIRTUAL));
 	}
 	
 	@Override

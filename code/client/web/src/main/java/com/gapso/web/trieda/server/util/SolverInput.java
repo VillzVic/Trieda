@@ -859,6 +859,8 @@ public class SolverInput
 			itemCampus.setId( campus.getId().intValue() );
 			itemCampus.setCodigo( campus.getCodigo() );
 			itemCampus.setNome( campus.getNome() );
+			itemCampus.setQtdLimiteProfessorVirtual( campus.getQtdLimiteProfessorVirtual() );
+			itemCampus.setValorMedioProfessorVirtual( campus.getValorMedioProfessorVirtual() );
 			
 			Set< HorarioDisponivelCenario > horarios
 				= new HashSet< HorarioDisponivelCenario >();

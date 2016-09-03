@@ -124,6 +124,7 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaNullableCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 
@@ -303,7 +304,8 @@ public class ConvertBeans {
 		domain.setValorCredito( dto.getValorCredito().getDoubleValue() );
 		domain.setPublicado( dto.getPublicado() );
 		
-		domain.setQtdProfessorVirtual( dto.getQtdProfessorVirtual() );
+		domain.setQtdLimiteProfessorVirtual( dto.getQtdLimiteProfessorVirtual() );
+		domain.setValorMedioProfessorVirtual( dto.getValorMedioProfessorVirtual().getDoubleValue() );
 
 		return domain;
 	}
@@ -348,9 +350,14 @@ public class ConvertBeans {
 		dto.setOtimizadoTatico( domain.isOtimizadoTatico( instituicaoEnsino ) );
 		dto.setOtimizadoOperacional( domain.isOtimizadoOperacional( instituicaoEnsino ) );
 		
-		if ( domain.getQtdProfessorVirtual() != null )
+		if ( domain.getQtdLimiteProfessorVirtual() != null )
 		{
-			dto.setQtdProfessorVirtual(domain.getQtdProfessorVirtual() );
+			dto.setQtdLimiteProfessorVirtual(domain.getQtdLimiteProfessorVirtual() );
+		}
+		
+		if ( domain.getValorMedioProfessorVirtual() != null )
+		{
+			dto.setValorMedioProfessorVirtual(new TriedaNullableCurrency(domain.getValorMedioProfessorVirtual()) );
 		}
 
 		return dto;
