@@ -306,13 +306,13 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 		list.add( createColumnConfig( "semanaLetivaString", "Semana Letiva", 100, semanaLetivaMergeRenderer, null ) );
 		list.add( createColumnConfig( "turnoString", "Turno", 100, turnoMergeRenderer, null ) );
 		list.add( createColumnConfig( "horarioString", "Horario", 90, horarioRenderer, null ) );
-		list.add( createColumnConfig( "segunda", "Seg", 55, buttonRenderer, this.segCB ) );
-		list.add( createColumnConfig( "terca",   "Ter", 55, buttonRenderer, this.terCB ) );
-		list.add( createColumnConfig( "quarta",  "Qua", 55, buttonRenderer, this.quaCB ) );
-		list.add( createColumnConfig( "quinta",  "Qui", 55, buttonRenderer, this.quiCB ) );
-		list.add( createColumnConfig( "sexta",   "Sex", 55, buttonRenderer, this.sexCB ) );
-		list.add( createColumnConfig( "sabado",  "Sab", 55, buttonRenderer, this.sabCB ) );
-		list.add( createColumnConfig( "domingo", "Dom", 55, buttonRenderer, this.domCB ) );
+		list.add( createColumnConfig( "segunda", "Seg", 55, buttonRenderer, null ) );
+		list.add( createColumnConfig( "terca",   "Ter", 55, buttonRenderer, null ) );
+		list.add( createColumnConfig( "quarta",  "Qua", 55, buttonRenderer, null ) );
+		list.add( createColumnConfig( "quinta",  "Qui", 55, buttonRenderer, null ) );
+		list.add( createColumnConfig( "sexta",   "Sex", 55, buttonRenderer, null ) );
+		list.add( createColumnConfig( "sabado",  "Sab", 55, buttonRenderer, null ) );
+		list.add( createColumnConfig( "domingo", "Dom", 55, buttonRenderer, null ) );
 		
 		this.checkHeader.put(3, false);
 		this.checkHeader.put(4, false);
