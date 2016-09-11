@@ -33,12 +33,14 @@ public class CampusFormView
 	private EstadoComboBox estadoCB;
 	private TextField< String > municipioTF;
 	private TextField< String > bairroTF;
-	private TextField< String > qtdProfessorVirtualTF;
+	private NumberField qtdLimiteProfessorVirtualNF;
+	private NumberField valorMedioProfessorVirtualNF;
 	private NumberField valorCreditoNF;
 	private CheckBox publicadoCB;
 	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
-	private CheckBox limitaProfVirtualCB;
+	private CheckBox habilitaConfiguracoesProfessorVirtualCB;
+	
 
 	public CampusFormView( CenarioDTO cenarioDTO )
 	{
@@ -157,27 +159,53 @@ public class CampusFormView
 
 		this.formPanel.add( enderecoFS, formData );
 		
+		
 		FieldSet configFS = new FieldSet();
+		
 		formLayout = new FormLayout( LabelAlign.RIGHT );
 		formLayout.setLabelWidth(160);
 		configFS.setLayout( formLayout );
-		configFS.setHeadingHtml( "Config. Avançadas" );
+		configFS.setHeadingHtml( "Config. Professor Virtual" );
 		
-		//this.limitaProfVirtualCB = new CheckBox();
-		//this.limitaProfVirtualCB.setFieldLabel("Limitar nº de Prof. Virtual");
-		//this.limitaProfVirtualCB.setName( campusDTO.PROPERTY_LIMITA_PROF_VIRTUAL );
-		//this.limitaProfVirtualCB.setValue( this.campusDTO.getLimitaProfVirtual());
+		this.habilitaConfiguracoesProfessorVirtualCB = new CheckBox();
+		this.habilitaConfiguracoesProfessorVirtualCB.setName("Configurações Professor Virtual");
+		this.habilitaConfiguracoesProfessorVirtualCB.setTitle("Configurações Professor Virtual");
+		this.habilitaConfiguracoesProfessorVirtualCB.setFieldLabel("Permite Configurações");
+		this.habilitaConfiguracoesProfessorVirtualCB.setValue(this.campusDTO.getQtdLimiteProfessorVirtual()!=null || this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue()!=null);
+
+		configFS.add( this.habilitaConfiguracoesProfessorVirtualCB, formData );
 		
-		//configFS.add( this.limitaProfVirtualCB, formData );
+		this.qtdLimiteProfessorVirtualNF = new NumberField();
+		this.qtdLimiteProfessorVirtualNF.setName( CampusDTO.PROPERTY_QTD_LIMITE_PROFESSOR_VIRTUAL );
+		this.qtdLimiteProfessorVirtualNF.setValue( this.campusDTO.getQtdLimiteProfessorVirtual());
+		this.qtdLimiteProfessorVirtualNF.setAllowBlank( true );
+		this.qtdLimiteProfessorVirtualNF.setAllowDecimals( false );
+		this.qtdLimiteProfessorVirtualNF.setMaxValue( 999999 );
+		this.qtdLimiteProfessorVirtualNF.setFieldLabel( "Qtd Limite" );
+		this.qtdLimiteProfessorVirtualNF.setEmptyText( "Quantidade" );
+		this.qtdLimiteProfessorVirtualNF.setToolTip("Representa a quantidade limite de Professores Virturais gerados na Otimização para o Campus.");
+		this.qtdLimiteProfessorVirtualNF.setEnabled(this.campusDTO.getQtdLimiteProfessorVirtual()!=null || this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue()!=null);
+		configFS.add( this.qtdLimiteProfessorVirtualNF, formData );
 		
-		this.qtdProfessorVirtualTF = new TextField< String >();
-		this.qtdProfessorVirtualTF.setName( CampusDTO.PROPERTY_QTD_PROFESSOR_VIRTUAL );
-		this.qtdProfessorVirtualTF.setValue( this.campusDTO.getQtdProfessorVirtual());
-		qtdProfessorVirtualTF.setFieldLabel( "Qtd Professor Virtual" );
-		qtdProfessorVirtualTF.setEmptyText( "Quantidade" );
-		configFS.add( this.qtdProfessorVirtualTF, formData );
+		this.valorMedioProfessorVirtualNF = new NumberField();
+		this.valorMedioProfessorVirtualNF.setName( CampusDTO.PROPERTY_VALOR_MEDIO_PROFESSOR_VIRTUAL );
+		
+		if(!(this.campusDTO.getValorMedioProfessorVirtual()==null)){
+			this.valorMedioProfessorVirtualNF.setValue( this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue() );
+		}
+		
+		this.valorMedioProfessorVirtualNF.setFieldLabel( "Custo Médio (R$)" );
+		this.valorMedioProfessorVirtualNF.setAllowBlank( true );
+		this.valorMedioProfessorVirtualNF.setAllowDecimals( true );
+		this.valorMedioProfessorVirtualNF.setMaxValue( 999999 );
+		this.valorMedioProfessorVirtualNF.setEmptyText( "Ex: 65,00" );
+		this.valorMedioProfessorVirtualNF.setToolTip("Representa o custo médio do Professor Virtual.");
+		this.valorMedioProfessorVirtualNF.setEnabled(this.campusDTO.getQtdLimiteProfessorVirtual()!=null || this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue()!=null);
+		configFS.add( this.valorMedioProfessorVirtualNF, formData );
+		
 		
 		this.formPanel.add( configFS, formData );
+		
 		
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
@@ -251,8 +279,21 @@ public class CampusFormView
 	}
 	
 	@Override
-	public TextField< String > getQtdProfessorVirtualTextField()
+	public NumberField getQtdLimiteProfessorVirtualNumberField()
 	{
-		return this.qtdProfessorVirtualTF;
+		return this.qtdLimiteProfessorVirtualNF;
 	}
+	
+	@Override
+	public NumberField getValorMedioProfessorVirtualNumberField()
+	{
+		return this.valorMedioProfessorVirtualNF;
+	}
+	
+	@Override
+	public CheckBox getHabilitaConfiguracoesProfessorVirtualCheckBox()
+	{
+		return this.habilitaConfiguracoesProfessorVirtualCB;
+	}
+		
 }

@@ -92,9 +92,13 @@ public class Campus
 	@Column( name = "CAM_PUBLICAR" )
 	private Boolean publicado;
 	
-	@Column( name = "CAM_QTD_PROFESSOR_VIRTUAL" )
-	private String qtdProfessorVirtual;
+	@Column( name = "CAM_QTD_LIMITE_PROFESSOR_VIRTUAL" )
+	private Integer qtdLimiteProfessorVirtual;
 
+	@Column( name = "CAM_VALOR_MEDIO_PROFESSOR_VIRTUAL" )
+	@Digits( integer = 6, fraction = 2 )
+	private Double valorMedioProfessorVirtual;
+	
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
 	private Set< Unidade > unidades = new HashSet< Unidade >();
 
@@ -277,14 +281,24 @@ public class Campus
 		this.publicado = publicado;
 	}
 			
-	public String getQtdProfessorVirtual()
+	public Integer getQtdLimiteProfessorVirtual()
 	{
-		return this.qtdProfessorVirtual;
+		return this.qtdLimiteProfessorVirtual;
 	}
 
-	public void setQtdProfessorVirtual( String qtdProfessorVirtual )
+	public void setQtdLimiteProfessorVirtual( Integer qtdLimiteProfessorVirtual )
 	{
-		this.qtdProfessorVirtual = qtdProfessorVirtual;
+		this.qtdLimiteProfessorVirtual = qtdLimiteProfessorVirtual;
+	}
+	
+	public Double getValorMedioProfessorVirtual()
+	{
+		return this.valorMedioProfessorVirtual;
+	}
+
+	public void setValorMedioProfessorVirtual( Double valorMedioProfessorVirtual )
+	{
+		this.valorMedioProfessorVirtual = valorMedioProfessorVirtual;
 	}
 	
 
@@ -1266,7 +1280,8 @@ public class Campus
 		sb.append( "Horarios: ").append(getOfertas() == null ? "null" : getOfertas().size() );
 		sb.append( "Publicado: " ).append( getPublicado() );
 		sb.append( "Parametros: " ).append(getParametros() == null ? "null" : getParametros().size() ).append(", ");
-		sb.append( "QtdProfessorVirtual: " ).append( getQtdProfessorVirtual());
+		sb.append( "QtdLimiteProfessorVirtual: " ).append( getQtdLimiteProfessorVirtual() == null ? "null" : getQtdLimiteProfessorVirtual() ).append(", ");
+		sb.append( "ValorMedioProfessorVirtual: " ).append( getValorMedioProfessorVirtual()==null ? "null" : getValorMedioProfessorVirtual());
 
 		return sb.toString();
 	}
@@ -1314,7 +1329,8 @@ public class Campus
 		clone.setNome(this.getNome());
 		clone.setPublicado(this.getPublicado());
 		clone.setValorCredito(this.getValorCredito());
-		clone.setQtdProfessorVirtual(this.getQtdProfessorVirtual());
+		clone.setQtdLimiteProfessorVirtual(this.getQtdLimiteProfessorVirtual());
+		clone.setValorMedioProfessorVirtual(this.getValorMedioProfessorVirtual());
 		
 		return clone;
 	}
@@ -1330,7 +1346,8 @@ public class Campus
 		clone.setNome(this.getNome());
 		clone.setPublicado(this.getPublicado());
 		clone.setValorCredito(this.getValorCredito());
-		clone.setQtdProfessorVirtual(this.getQtdProfessorVirtual());
+		clone.setQtdLimiteProfessorVirtual(this.getQtdLimiteProfessorVirtual());
+		clone.setValorMedioProfessorVirtual(this.getValorMedioProfessorVirtual());
 		
 		
 		return clone;

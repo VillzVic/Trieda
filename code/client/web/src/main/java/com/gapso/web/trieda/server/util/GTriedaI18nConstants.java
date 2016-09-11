@@ -1113,7 +1113,7 @@ public class GTriedaI18nConstants implements TriedaI18nConstants
 	}
 	
 	@Override
-	public String qtdProfessorVirtual() {
-		return this.languageManager.getText("qtdProfessorVirtual");
+	public String qtdLimiteProfessorVirtual() {
+		return this.languageManager.getText("qtdLimiteProfessorVirtual");
 	}
 }

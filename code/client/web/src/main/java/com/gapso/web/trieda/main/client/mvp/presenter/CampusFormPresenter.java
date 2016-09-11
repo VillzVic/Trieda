@@ -1,7 +1,9 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -9,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -21,6 +24,7 @@ import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaNullableCurrency;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -40,11 +44,14 @@ public class CampusFormPresenter
 		EstadoComboBox getEstadoComboBox();
 		TextField< String > getMunicipioTextField();
 		TextField< String > getBairroTextField();
-		TextField< String > getQtdProfessorVirtualTextField();
+		NumberField getQtdLimiteProfessorVirtualNumberField();
+		NumberField getValorMedioProfessorVirtualNumberField();
 		CheckBox getPublicadoCheckBox();
+		CheckBox getHabilitaConfiguracoesProfessorVirtualCheckBox();
 		CampusDTO getCampusDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
+		
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -145,6 +152,25 @@ public class CampusFormPresenter
 				}
 			}
 		});
+		
+		this.display.getHabilitaConfiguracoesProfessorVirtualCheckBox().addListener(Events.Change,new Listener<BaseEvent>() {
+			@Override
+			public void handleEvent(BaseEvent be) {
+				boolean value = ((CheckBox)be.getSource()).getValue();
+				
+				//String msgChkTrue="Deseja realmente Habilitar as configuraçãoes avançadas do Professor Virtual?";
+				//String msgChkFalse="Ao desmarcar esta opção os campos [Qtd Limite] e [Valor Médio] serrão apagados. Deseja continuar?";
+				
+				display.getQtdLimiteProfessorVirtualNumberField().setEnabled(value);
+				display.getValorMedioProfessorVirtualNumberField().setEnabled(value);
+
+				if(!value){
+					display.getQtdLimiteProfessorVirtualNumberField().setValue(null);
+					display.getValorMedioProfessorVirtualNumberField().setValue(null);
+				}
+				
+			}
+		});
 	}
 
 	private boolean isValid()
@@ -166,7 +192,16 @@ public class CampusFormPresenter
 		campusDTO.setMunicipio( this.display.getMunicipioTextField().getValue() );
 		campusDTO.setBairro( this.display.getBairroTextField().getValue() );
 		campusDTO.setPublicado( this.display.getPublicadoCheckBox().getValue() );
-		campusDTO.setQtdProfessorVirtual( this.display.getQtdProfessorVirtualTextField().getValue() );
+		
+		if(!(this.display.getQtdLimiteProfessorVirtualNumberField().getValue()==null)){
+			campusDTO.setQtdLimiteProfessorVirtual( this.display.getQtdLimiteProfessorVirtualNumberField().getValue().intValue() );
+		}
+		else{campusDTO.setQtdLimiteProfessorVirtual( null);}
+		
+		if(!(this.display.getValorMedioProfessorVirtualNumberField().getValue()==null)){
+			campusDTO.setValorMedioProfessorVirtual( new TriedaNullableCurrency(this.display.getValorMedioProfessorVirtualNumberField().getValue().doubleValue() ) );
+		}
+		else{campusDTO.setValorMedioProfessorVirtual(new TriedaNullableCurrency(null));}
 
 		return campusDTO;
 	}

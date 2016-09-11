@@ -225,6 +225,37 @@ public class TriedaUtil
 		return tc;
 	}
 	
+	
+	static public TriedaNullableCurrency parseTriedaNullableCurrency( Double d )
+	{
+		Double doubleValue = ( d == null ? null : d );
+		return new TriedaNullableCurrency( doubleValue );
+	}
+
+	static public TriedaNullableCurrency parseTriedaNullableCurrency( Object o )
+	{
+		String s = ( o == null ? "" : o.toString() );
+		return TriedaUtil.parseTriedaNullableCurrency( s );
+	}
+
+	static public TriedaNullableCurrency parseTriedaNullableCurrency( String s )
+	{
+		Double d = null;
+		try
+		{
+			d = Double.parseDouble( s );
+		}
+		catch ( Exception e )
+		{
+			d = null;
+		}
+
+		TriedaNullableCurrency tc = new TriedaNullableCurrency( d );
+		return tc;
+	}
+
+	
+	
 	static public String beginBold(ReportType type) {
 		return type.equals(ReportType.WEB) ? "<b>" : "";
 	}
