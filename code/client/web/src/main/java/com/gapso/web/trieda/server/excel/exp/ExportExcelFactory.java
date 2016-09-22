@@ -48,7 +48,8 @@ public class ExportExcelFactory {
 			case DEMANDAS_POR_ALUNO: exporter = new AlunosDemandaExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case CAMPI_DESLOCAMENTO: exporter = new CampiDeslocamentoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case UNIDADES_DESLOCAMENTO: exporter = new UnidadesDeslocamentosExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
-			case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case DISCIPLINAS: exporter = new MultiExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{DisciplinasExportExcel.class,DisponibilidadesDisciplinasExportExcel.class}, fileExtension, ExcelInformationType.DISCIPLINAS.getSheetName() ); break;
+			//case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DISCIPLINAS_SALAS: exporter = new DisciplinasSalasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DISCIPLINAS_PRE_REQUISITOS: exporter = new DisciplinasPreRequisitosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DISCIPLINAS_CO_REQUISITOS: exporter = new DisciplinasCoRequisitosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;

@@ -229,7 +229,7 @@ public class ToolBarPresenter
 		Button getParametrosButton();
 		Button getConsultaRequisicoesOtimizacaoBt();
 		Button getConfirmacaoTurmasButton();
-		Button getAlocacaoManualButton();
+		//Button getAlocacaoManualButton();
 
 		Button getExportarButton();
 		Button getExportarGradesERPButton();
@@ -669,7 +669,7 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getAlocacaoManualButton().addSelectionListener(
+		/*this.toolBar.getAlocacaoManualButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -680,7 +680,7 @@ public class ToolBarPresenter
 
 						presenter.go( gTab );
 				}
-			});
+			});*/
 		
 		this.toolBar.getConfirmacaoTurmasButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()

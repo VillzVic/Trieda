@@ -42,18 +42,18 @@ public class ImportExcelFactory
 		case ALUNOS_DISCIPLINAS_CURSADAS:
 			importer = new AlunosDisciplinasCursadasImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
-		case PROFESSORES:
+		/*case PROFESSORES:
 			importer = new ProfessoresImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+			break;*/
+		case PROFESSORES:
+			importer = new MultiImportExcelProfessor(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
-//		case PROFESSORES:
-//			importer = new MultiImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[] { ProfessoresImportExcel.class, DisponibilidadesProfessoresImportExcel.class });
-//			break;
-		case DISCIPLINAS:
+		/*case DISCIPLINAS:
 			importer = new DisciplinasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+			break;*/
+		case DISCIPLINAS:
+			importer = new MultiImportExcelDisciplina(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
-//		case DISCIPLINAS:
-//			importer = new MultiImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[] { DisciplinasImportExcel.class, DisponibilidadesDisciplinasImportExcel.class });
-//			break;
 		case EQUIVALENCIAS:
 			importer = new EquivalenciasImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
@@ -69,12 +69,12 @@ public class ImportExcelFactory
 		case UNIDADES:
 			importer = new UnidadesImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
-		case SALAS:
+		/*case SALAS:
 			importer = new SalasImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
+			break;*/
+		case SALAS:
+			importer = new MultiImportExcelSalas(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
-//		case SALAS:
-//			importer = new MultiImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[] { SalasImportExcel.class, DisponibilidadesSalasImportExcel.class });
-//			break;
 		case OFERTAS_CURSOS_CAMPI:
 			importer = new OfertasCursosCampiImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
@@ -108,12 +108,12 @@ public class ImportExcelFactory
 		case TURNOS:
 			importer = new TurnosImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
-		case SEMANA_LETIVA:
+		/*case SEMANA_LETIVA:
 			importer = new SemanaLetivaImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
+			break;*/
+		case SEMANA_LETIVA:
+			importer = new MultiImportExcelSemanaLetiva(cenario, i18nConstants, i18nMessages, instituicaoEnsino);
 			break;
-//		case SEMANA_LETIVA:
-//			importer = new MultiImportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[] { SemanaLetivaImportExcel.class, SemanaLetivaHorariosImportExcel.class });
-//			break;
 		default:
 			break;
 		}

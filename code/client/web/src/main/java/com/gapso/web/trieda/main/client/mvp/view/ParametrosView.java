@@ -149,6 +149,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.regrasEspecificasDivisaoCreditoCheckBox = createCheckBox("Considerar regras específicas de divisão de créditos",this.parametroDTO.getRegrasEspecificasDivisaoCredito());
 		this.maximizarNotaAvaliacaoCorpoDocenteCheckBox = createCheckBox("Maximizar nota da avaliação do corpo docente de cursos específicos",this.parametroDTO.getMaximizarNotaAvaliacaoCorpoDocente());
 		this.maximizarNotaAvaliacaoCorpoDocenteCheckBox.disable();
+		this.maximizarNotaAvaliacaoCorpoDocenteCheckBox.hide();
 		this.minimizarCustoDocenteCursosCheckBox = createCheckBox("Minimizar custo docente de cursos específicos",this.parametroDTO.getMinimizarCustoDocenteCursos());
 		this.minimizarCustoDocenteCursosCheckBox.hide();
 		this.compartilharDisciplinasCampiCheckBox = createCheckBox("Permitir compartilhamento de disciplinas entre cursos",this.parametroDTO.getCompartilharDisciplinasCampi());
@@ -172,6 +173,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		dificuldadeButton.hide();
 		this.maximizarNotaAvaliacaoCorpoDocenteButton = createButton("Configurar cursos");
 		this.maximizarNotaAvaliacaoCorpoDocenteButton.disable();
+		this.maximizarNotaAvaliacaoCorpoDocenteButton.hide();
 		this.minimizarCustoDocenteCursosButton = createButton("Configurar cursos");
 		this.compartilharDisciplinasCampiButton = createButton("Cursos que não compartilham");
 		
@@ -251,28 +253,35 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private FieldSet criaParametrosPreferenciasProfessores() {
 		this.cargaHorariaProfessorCheckBox = createCheckBox("Distribuição da carga horária semanal do professor",this.parametroDTO.getCargaHorariaProfessor());
 		this.cargaHorariaProfessorCheckBox.disable();
+		this.cargaHorariaProfessorCheckBox.hide();
 		this.professorEmMuitosCampiCheckBox = createCheckBox("Permitir que o professor ministre aulas em mais de um campus",this.parametroDTO.getProfessorEmMuitosCampi());
 		this.minimizarDeslocamentoProfessorCheckBox = createCheckBox("Minimizar deslocamentos de professores entre campi",this.parametroDTO.getMinimizarDeslocamentoProfessor());
 		this.minimizarGapProfessorCheckBox = createCheckBox("Minimizar gaps nos horários dos professores",this.parametroDTO.getMinimizarGapProfessor());
 		this.proibirGapProfessorCheckBox = createCheckBox("Proibir gaps nos horários dos professores",this.parametroDTO.getProibirGapProfessor());
 		this.evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar redução de carga horária dos professores",this.parametroDTO.getEvitarReducaoCargaHorariaProfessor());
 		this.evitarReducaoCargaHorariaProfessorCheckBox.disable();
+		this.evitarReducaoCargaHorariaProfessorCheckBox.hide();
 		this.evitarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Considerar interjornada mínima (em horas)",this.parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessor());
 		this.preferenciaDeProfessoresCheckBox = createCheckBox("Considerar preferência de professores por disciplinas",this.parametroDTO.getPreferenciaDeProfessores());
 		this.preferenciaDeProfessoresCheckBox.disable();
+		this.preferenciaDeProfessoresCheckBox.hide();
 		this.avaliacaoDesempenhoProfessorCheckBox = createCheckBox("Considerar avaliação de desempenho de professores",this.parametroDTO.getAvaliacaoDesempenhoProfessor());
 		this.avaliacaoDesempenhoProfessorCheckBox.disable();
+		this.avaliacaoDesempenhoProfessorCheckBox.hide();
 		
 		this.cargaHorariaProfessorComboBox = createComboBox(this.parametroDTO.getCargaHorariaProfessorSel());
 		this.cargaHorariaProfessorComboBox.disable();
+		this.cargaHorariaProfessorComboBox.hide();
 		this.minimizarDeslocamentoProfessorNumberField = new NumberField();
 		this.minimizarDeslocamentoProfessorNumberField.setEmptyText("Configurar Máx de deslocamento");
 		this.minimizarDeslocamentoProfessorNumberField.setValue(this.parametroDTO.getMinimizarDeslocamentoProfessorValue());
 		this.minimizarDeslocamentoProfessorNumberField.disable();
+		this.minimizarDeslocamentoProfessorNumberField.hide();
 		this.evitarReducaoCargaHorariaProfessorNumberField = new NumberField();
 		this.evitarReducaoCargaHorariaProfessorNumberField.setEmptyText("Configurar % de tolerância");
 		this.evitarReducaoCargaHorariaProfessorNumberField.setValue(this.parametroDTO.getEvitarReducaoCargaHorariaProfessorValue());
 		this.evitarReducaoCargaHorariaProfessorNumberField.disable();
+		this.evitarReducaoCargaHorariaProfessorNumberField.hide();
 		this.evitarUltimoEPrimeiroHorarioProfessorNumberField = new NumberField();
 		this.evitarUltimoEPrimeiroHorarioProfessorNumberField.setEmptyText("Valor da interjornada (horas)");
 		this.evitarUltimoEPrimeiroHorarioProfessorNumberField.setValue(this.parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessorValue());
@@ -315,13 +324,17 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private FieldSet criaParametrosPreferenciasAlunos() {		
 		this.cargaHorariaAlunoCheckBox = createCheckBox("Distribuição da carga horária semanal do aluno",this.parametroDTO.getCargaHorariaAluno());
 		this.cargaHorariaAlunoCheckBox.disable();
+		this.cargaHorariaAlunoCheckBox.hide();
 		this.alunoDePeriodoMesmaSalaCheckBox = createCheckBox("Manter alunos do mesmo curso-período na mesma sala",this.parametroDTO.getAlunoDePeriodoMesmaSala());
 		this.alunoEmMuitosCampiCheckBox = createCheckBox("Permitir que o aluno estude em mais de um campus",this.parametroDTO.getAlunoEmMuitosCampi());
 		this.alunoEmMuitosCampiCheckBox.disable();
+		this.alunoEmMuitosCampiCheckBox.hide();
 		this.minimizarDeslocamentoAlunoCheckBox = createCheckBox("Minimizar Deslocamento de Alunos entre campi",this.parametroDTO.getMinimizarDeslocamentoAluno());
 		this.minimizarDeslocamentoAlunoCheckBox.disable();
+		this.minimizarDeslocamentoAlunoCheckBox.hide();
 		this.cargaHorariaAlunoComboBox = createComboBox(this.parametroDTO.getCargaHorariaAlunoSel());
 		this.cargaHorariaAlunoComboBox.disable();
+		this.cargaHorariaAlunoComboBox.hide();
 		this.priorizarCalourosCheckBox = createCheckBox("Priorizar calouros", this.parametroDTO.getPriorizarCalouros());
 		this.considerarPrioridadePorAlunosCheckBox = createCheckBox("Considerar prioridade por aluno", this.parametroDTO.getConsiderarPrioridadePorAlunos());
 		
@@ -351,9 +364,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.taticoRadio = new Radio();  
 		this.taticoRadio.setBoxLabel("Tático");
 		modoDeOtimizacaoRadioGroup.add(this.taticoRadio);
-		this.operacionalRadio = new Radio();  
+		this.operacionalRadio = new Radio(); 
 		this.operacionalRadio.setBoxLabel("Operacional");
 		modoDeOtimizacaoRadioGroup.add(this.operacionalRadio);
+		modoDeOtimizacaoRadioGroup.hide();
 		this.form.add(modoDeOtimizacaoRadioGroup);
 		
 		// OTIMIZAR POR
@@ -402,8 +416,8 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.form.add(turnosSelecionadosContainer);
 		
 		// INICIALIZA PARAMETROS
-		this.taticoRadio.setValue(this.parametroDTO.isTatico() || !parametroDTO.isOperacional());
-		this.operacionalRadio.setValue(this.parametroDTO.isOperacional());
+		this.taticoRadio.setValue(false);
+		this.operacionalRadio.setValue(true);
 		boolean otimizarPor = (this.parametroDTO.getOtimizarPor() == null) ? true : (this.parametroDTO.getOtimizarPor().equals(ParametroDTO.OTIMIZAR_POR_ALUNO));
 		this.otimizarPorAluno.setValue(otimizarPor);
 		this.otimizarPorBlocoCurricular.setValue(!otimizarPor);

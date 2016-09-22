@@ -167,7 +167,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			prw.setInitSubPartial("Verificando consistência das disciplinas...");
 				checkDisciplinasSemCurriculo(parametro,warnings);
 				checkDisciplinasSemLaboratorios(parametro,errors);
-				checkDisciplinasComSomenteLaboratorios(parametro,warnings);
+				checkDisciplinasComSomenteLaboratorios(parametro,errors);
 				checkDisciplinasComCreditosZerados(parametro,warnings);
 				checkDisciplinasComMaxAlunosTeoricosZerados(parametro,errors);
 				checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
@@ -991,6 +991,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 		
 		// verifica se há disciplinas que não exigem laboratório, porém, estão associadas somente a laboratórios
+		List<String> disciplinasNaoExigemLabComAssociacao = new ArrayList<String>();
 		for (Disciplina disciplina : disciplinasQueNaoExigemLaboratorio) {
 			boolean disciplinaTemAlgumaAssociacaoComAmbiente = false;
 			boolean disciplinaTemAssociacaoComAlgumaSalaDeAula = false;
@@ -1005,8 +1006,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			}
 			 
 			if (disciplinaTemAlgumaAssociacaoComAmbiente && !disciplinaTemAssociacaoComAlgumaSalaDeAula) {
-				warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que não exige laboratório, está associada somente com laboratórios no campus [" + campus.getCodigo() + "]."));
+				disciplinasNaoExigemLabComAssociacao.add(disciplina.getCodigo());
 			}
+		}
+		
+		if(!disciplinasNaoExigemLabComAssociacao.isEmpty()){
+			warnings.add(HtmlUtils.htmlUnescape("A(s) disciplina(s) " + disciplinasNaoExigemLabComAssociacao + " não exige(m) laboratório, mas está(ão) associada(s) somente a laboratórios no campus [" + campus.getCodigo() + "]."));
 		}
 	}
 	

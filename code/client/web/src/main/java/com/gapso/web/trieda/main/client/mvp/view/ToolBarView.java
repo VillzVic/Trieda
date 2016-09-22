@@ -140,7 +140,7 @@ public class ToolBarView
 	private Button fixacoesListBt;
 	private Button parametrosBt;
 	private Button consultaRequisicoesOtimizacaoBt;
-	private Button alocacaoManualBt;
+	//private Button alocacaoManualBt;
 	private Button confirmacaoTurmasBt;
 	
 	TabItem ofertasDemandasTabItem;
@@ -682,10 +682,10 @@ public class ToolBarView
 		
 		planejamentoToolBar.add( new SeparatorToolItem() );
 		
-		alocacaoManualBt = createButton("Alocação<br />Manual","Alocação Manual",Resources.DEFAULTS.alocacaoManual24());
+		/*alocacaoManualBt = createButton("Alocação<br />Manual","Alocação Manual",Resources.DEFAULTS.alocacaoManual24());
 		planejamentoToolBar.add(alocacaoManualBt);
 		
-		planejamentoToolBar.add( new SeparatorToolItem() );
+		planejamentoToolBar.add( new SeparatorToolItem() );*/
 		
 		confirmacaoTurmasBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.confirmacao24());
 		planejamentoToolBar.add(confirmacaoTurmasBt);
@@ -925,11 +925,11 @@ public class ToolBarView
 		return fixacoesListBt;
 	}
 	
-	@Override
+	/*@Override
 	public Button getAlocacaoManualButton()
 	{
 		return alocacaoManualBt;
-	}
+	}*/
 	
 	@Override
 	public Button getConfirmacaoTurmasButton()

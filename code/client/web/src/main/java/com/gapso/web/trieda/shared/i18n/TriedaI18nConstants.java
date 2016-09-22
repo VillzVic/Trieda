@@ -81,6 +81,7 @@ public interface TriedaI18nConstants
 	String disciplinasAssociadas();
 	String disciplinaAula();
 	String disciplinasSalas();
+	String disponibilidadesDisciplinas();
 	String disponibilidadesProfessores();
 	String disponibilidadesSemanaLetiva();
 	String divisoesCredito();
@@ -158,6 +159,7 @@ public interface TriedaI18nConstants
 	String relatorioVisaoProfessor();
 	String relatorioVisaoSala();
 	String remover();
+	String removerTodos();
 	String resumoDisciplina();
 	String resumoCurso();
 	String sala();

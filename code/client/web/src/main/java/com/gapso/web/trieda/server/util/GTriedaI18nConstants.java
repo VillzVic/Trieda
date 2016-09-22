@@ -263,6 +263,11 @@ public class GTriedaI18nConstants implements TriedaI18nConstants
 	}
 	
 	@Override
+	public String disponibilidadesDisciplinas() {
+		return this.languageManager.getText("disponibilidadesDisciplinas");
+	}
+	
+	@Override
 	public String disponibilidadesProfessores() {
 		return this.languageManager.getText("disponibilidadesProfessores");
 	}
@@ -530,6 +535,11 @@ public class GTriedaI18nConstants implements TriedaI18nConstants
 	@Override
 	public String remover() {
 		return this.languageManager.getText("remover");
+	}
+	
+	@Override
+	public String removerTodos() {
+		return this.languageManager.getText("removerTodos");
 	}
 
 	@Override
