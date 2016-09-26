@@ -18,6 +18,7 @@ import com.gapso.web.trieda.main.client.mvp.view.FixacaoFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -93,7 +94,7 @@ public class FixacoesPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
-					cenario, new FixacaoFormView( cenario, new FixacaoDTO(), null, null, null, null, null, null, false ), display.getGrid() );
+					cenario, new FixacaoFormView( cenario, new FixacaoDTO(), null, null, null, null, null, null, null, false ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -105,6 +106,7 @@ public class FixacoesPresenter
 				
 				final FutureResult<ProfessorDTO> futureProfessorDTO = new FutureResult<ProfessorDTO>();
 				final FutureResult<DisciplinaDTO> futureDisciplinaDTO = new FutureResult<DisciplinaDTO>();
+				final FutureResult<TurmaDTO> futureTurmaDTO = new FutureResult<TurmaDTO>();
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
 				final FutureResult<SalaDTO> futureSalaDTO = new FutureResult<SalaDTO>();
@@ -112,12 +114,13 @@ public class FixacoesPresenter
 				
 				Services.professores().getProfessor(fixacaoDTO.getProfessorId(), futureProfessorDTO);
 				Services.disciplinas().getDisciplina(fixacaoDTO.getDisciplinaId(), futureDisciplinaDTO);
+				Services.turmas().getTurma(fixacaoDTO.getTurmaId(), futureTurmaDTO);
 				Services.campi().getCampus(fixacaoDTO.getCampusId(), futureCampusDTO);
 				Services.unidades().getUnidade(fixacaoDTO.getUnidadeId(), futureUnidadeDTO);
 				Services.salas().getSala(fixacaoDTO.getSalaId(), futureSalaDTO);
 				Services.fixacoes().getHorariosSelecionados(fixacaoDTO, futureHorariosDTO);
 				
-				FutureSynchronizer synch = new FutureSynchronizer(futureProfessorDTO, futureDisciplinaDTO, futureCampusDTO, futureUnidadeDTO, futureSalaDTO, futureHorariosDTO);
+				FutureSynchronizer synch = new FutureSynchronizer(futureProfessorDTO, futureDisciplinaDTO, futureTurmaDTO, futureCampusDTO, futureUnidadeDTO, futureSalaDTO, futureHorariosDTO);
 				
 				synch.addCallback(new AsyncCallback<Boolean>() {
 					@Override
@@ -129,13 +132,14 @@ public class FixacoesPresenter
 					public void onSuccess(Boolean result) {
 						ProfessorDTO professorDTO = futureProfessorDTO.result();
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
+						TurmaDTO turmaDTO = futureTurmaDTO.result();
 						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						SalaDTO salaDTO = futureSalaDTO.result();
 						List<HorarioDisponivelCenarioDTO> horariosDTOList = futureHorariosDTO.result();
 						
 						Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
-							cenario, new FixacaoFormView( cenario, fixacaoDTO, professorDTO, disciplinaDTO,
+							cenario, new FixacaoFormView( cenario, fixacaoDTO, professorDTO, disciplinaDTO, turmaDTO,
 								campusDTO, unidadeDTO, salaDTO, horariosDTOList, false ), display.getGrid() );
 
 						presenter.go( null );

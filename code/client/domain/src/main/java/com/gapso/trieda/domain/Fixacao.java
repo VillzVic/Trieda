@@ -44,6 +44,7 @@ public class Fixacao
 {
 	private static final long serialVersionUID = -7545908494415718467L;
 
+
 	@NotNull
     @Column( name = "FIX_CODIGO" )
     @Size( min = 1, max = 50 )

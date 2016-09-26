@@ -54,19 +54,22 @@ public class FixacaoFormView extends MyComposite implements
 	private CampusComboBox campusCB;
 	private UnidadeComboBox unidadeCB;
 	private SalaComboBox salaCB;
+	private CheckBox diasEHorariosCB;
+	private CheckBox ambienteCB;
 	private SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> grid;
+	
 	private boolean selectDefault;
-	private TurmaDTO turmaDTO;
+	private CenarioDTO cenarioDTO;
 	private FixacaoDTO fixacaoDTO;
 	private ProfessorDTO professorDTO;
 	private DisciplinaDTO disciplinaDTO;
+	private TurmaDTO turmaDTO;
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
 	private SalaDTO salaDTO;
 	private List<HorarioDisponivelCenarioDTO> listHorarios;
-	private CenarioDTO cenarioDTO;
-	private CheckBox DiasEHorariosCB;
-	private CheckBox AmbienteCB;
+	
+	
 
 	public FixacaoFormView(CenarioDTO cenarioDTO, FixacaoDTO fixacaoDTO,
 			ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, TurmaDTO turmaDTO,
@@ -107,7 +110,7 @@ public class FixacaoFormView extends MyComposite implements
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		/*codigoTF = new TextField<String>();
+		codigoTF = new TextField<String>();
 		codigoTF.setName(FixacaoDTO.PROPERTY_CODIGO);
 		codigoTF.setValue(fixacaoDTO.getCodigo());
 		codigoTF.setFieldLabel("Código");
@@ -115,7 +118,7 @@ public class FixacaoFormView extends MyComposite implements
 		codigoTF.setMinLength(1);
 		codigoTF.setMaxLength(50);
 		codigoTF.setEmptyText("Preencha o código");
-		formPanel.add(codigoTF, formData);*/
+		formPanel.add(codigoTF, formData);
 
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName(FixacaoDTO.PROPERTY_DESCRICAO);
@@ -127,53 +130,54 @@ public class FixacaoFormView extends MyComposite implements
 		descricaoTF.setEmptyText("Preencha a descrição");
 		formPanel.add(descricaoTF, formData);
 
+		
 		professorCB = new ProfessorComboBox(cenarioDTO);
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 
+		
 		disciplinaCB = new DisciplinaAutoCompleteBox(cenarioDTO);
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
 		
-		// Acrescentar Turma...
 		
-		turmaCB = new TurmaComboBox(disciplinaDTO);
+		turmaCB = new TurmaComboBox(cenarioDTO, disciplinaCB);
 		turmaCB.setValue(turmaDTO);
-		fromPanel.add(turmaCB, formData);
-///////////////////////////////////////////////////
+		formPanel.add(turmaCB, formData);
+
 		
 		campusCB = new CampusComboBox(cenarioDTO);
 		campusCB.setValue(campusDTO);
 		formPanel.add(campusCB, formData);
 
+		
 		unidadeCB = new UnidadeComboBox(campusCB);
 		unidadeCB.setValue(unidadeDTO);
 		formPanel.add(unidadeCB, formData);
 
+		
 		salaCB = new SalaComboBox(unidadeCB);
 		salaCB.setValue(salaDTO);
 		formPanel.add(salaCB, formData);
 		
-		//Novos CheckBoxes//		
 		
-		DiasEHorariosCB = new CheckBox();
-		DiasEHorariosCB.setBoxLabel("Dia e Horários");
-		DiasEHorariosCB.setName(fixacaoDTO.PROPERTY_FIXA_DIAS_HORARIOS);	
-		DiasEHorariosCB.setValue(fixacaoDTO.getFixaDiaEHorario());
+		diasEHorariosCB = new CheckBox();
+		diasEHorariosCB.setBoxLabel("Dia e Horários");
+		diasEHorariosCB.setName(fixacaoDTO.PROPERTY_FIXA_DIAS_HORARIOS);	
+		diasEHorariosCB.setValue(fixacaoDTO.getFixaDiaEHorario());
 		
-		AmbienteCB = new CheckBox();
-		AmbienteCB.setBoxLabel("Ambiente");
-		AmbienteCB.setName(fixacaoDTO.PROPERTY_FIXA_AMBIENTE);
-		AmbienteCB.setValue(fixacaoDTO.getFixaAmbiente());
+		ambienteCB = new CheckBox();
+		ambienteCB.setBoxLabel("Ambiente");
+		ambienteCB.setName(fixacaoDTO.PROPERTY_FIXA_AMBIENTE);
+		ambienteCB.setValue(fixacaoDTO.getFixaAmbiente());
 		
 		CheckBoxGroup checkGroup = new CheckBoxGroup();
 		checkGroup.setFieldLabel("Fixar");
-	    checkGroup.add(DiasEHorariosCB);
-	    checkGroup.add(AmbienteCB);
+	    checkGroup.add(diasEHorariosCB);
+	    checkGroup.add(ambienteCB);
 				
 		formPanel.add(checkGroup, formData);
 		
-		////////////////////////////////////////////
 		
 		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
 				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID, this);
@@ -232,6 +236,11 @@ public class FixacaoFormView extends MyComposite implements
 	@Override
 	public DisciplinaAutoCompleteBox getDisciplinaComboBox() {
 		return disciplinaCB;
+	}
+	
+	@Override
+	public TurmaComboBox getTurmaComboBox() {
+		return turmaCB;
 	}
 
 	@Override

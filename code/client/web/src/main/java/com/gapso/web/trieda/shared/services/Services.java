@@ -34,6 +34,8 @@ public class Services
 	private static final String ALUNOS = "alunos";
 	private static final String DISPONIBILIDADES = "disponibilidades";
 	private static final String PROGRESSREPORT = "progressReport";
+	
+	private static final String TURMAS = "turmas";
 
 	public static OtimizarServiceAsync otimizar()
 	{
@@ -381,6 +383,18 @@ public class Services
 		{
 			service = GWT.create( ProgressReportService.class );
 			Registry.register( PROGRESSREPORT, service );
+		}
+
+		return service;
+	}
+	
+	public static TurmaServiceAsync turmas()
+	{
+		TurmaServiceAsync service = (TurmaServiceAsync) Registry.get( TURMAS );
+		if ( service == null )
+		{
+			service = GWT.create( TurmaService.class );
+			Registry.register( TURMAS, service );
 		}
 
 		return service;

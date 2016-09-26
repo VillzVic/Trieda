@@ -25,6 +25,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
+import com.gapso.web.trieda.shared.util.view.TurmaComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SalaComboBox;
 import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
@@ -43,6 +44,7 @@ public class FixacaoFormPresenter
 		TextField< String > getCodigoTextField();
 		TextField< String > getDescricaoTextField();
 		DisciplinaAutoCompleteBox getDisciplinaComboBox();
+		TurmaComboBox getTurmaComboBox();
 		CampusComboBox getCampusComboBox();
 		UnidadeComboBox getUnidadeComboBox();
 		SalaComboBox getSalaComboBox();
