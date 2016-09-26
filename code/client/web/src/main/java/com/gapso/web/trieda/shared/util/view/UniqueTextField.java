@@ -17,7 +17,7 @@ public class UniqueTextField
 	private UniqueDomain uniqueDomain;
 	private boolean checking = false;
 	private boolean error = false;
-	private final String uniqueInvalidMessage = "Código já cadastrado";
+	private final String uniqueInvalidMessage = "Valor já cadastrado para o campo";
 
 	public UniqueTextField( CenarioDTO cenarioDTO,
 		UniqueDomain uniqueDomain )

@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -41,7 +42,8 @@ import com.gapso.trieda.misc.Semanas;
 @RooJavaBean
 @RooToString
 @RooEntity( identifierColumn = "TUR_ID" )
-@Table( name = "TURNOS" )
+@Table( name = "TURNOS" , uniqueConstraints =
+@UniqueConstraint( columnNames = { "TUR_NOME" } ))
 public class Turno
 	implements Serializable, Comparable< Turno >, Clonable< Turno >
 {
@@ -558,4 +560,23 @@ public class Turno
 	{
 		
 	}
+	
+	public static boolean checkCodigoUnique(
+			InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario,
+			String codigo )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT COUNT ( o ) FROM Turno o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario" +
+				" AND o.nome = :codigo" );
+
+			q.setParameter( "codigo", codigo );
+			q.setParameter( "cenario", cenario );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			Number size = ( (Number) q.setMaxResults( 1 ).getSingleResult() );
+			return ( size.intValue() > 0 );
+		}
 }

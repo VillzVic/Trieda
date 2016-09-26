@@ -10,6 +10,7 @@ import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -36,6 +37,7 @@ public class UniquesServiceImpl
 		switch ( uniqueDomainEnum )
 		{
 			case CAMPI: exist = checkCampus( cenario, value ); break;
+			case CENARIO: exist = checkCenario( cenario, value ); break;
 			case UNIDADE: exist = checkUnidade( cenario, value ); break;
 			case SALA: exist = checkSala( cenario, value ); break;
 			case GRUPO_SALA: exist = checkGrupoSala( cenario, value ); break;
@@ -45,6 +47,7 @@ public class UniquesServiceImpl
 			case ALUNO: exist = checkAluno( cenario, value ); break;
 			case DISCIPLINA: exist = checkDisciplina( cenario, value ); break;
 			case MATRIZ_CURRICULAR: exist = checkMatrizCurricular( cenario, value ); break;
+			case TURNO: exist = checkTurno( cenario, value ); break;
 			case USUARIO: exist = checkUsuario( cenario, value ); break;
 		}
 
@@ -54,6 +57,12 @@ public class UniquesServiceImpl
 	private Boolean checkCampus( Cenario cenario, String value )
 	{
 		return Campus.checkCodigoUnique(
+			this.getInstituicaoEnsinoUser(), cenario, value);
+	}
+	
+	private Boolean checkCenario( Cenario cenario, String value )
+	{
+		return Cenario.checkCodigoUnique(
 			this.getInstituicaoEnsinoUser(), cenario, value);
 	}
 
@@ -116,5 +125,11 @@ public class UniquesServiceImpl
 	{
 		return Usuario.checkUsernameUnique(
 			cenario, value, getInstituicaoEnsinoUser() );
+	}
+	
+	private Boolean checkTurno( Cenario cenario, String value )
+	{
+		return Turno.checkCodigoUnique(
+			this.getInstituicaoEnsinoUser(), cenario, value);
 	}
 }

@@ -97,7 +97,7 @@ public class TurnosPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new TurnoFormPresenter( instituicaoEnsinoDTO, cenario,
-					new TurnoFormView( new TurnoDTO() ), display.getGrid() );
+					new TurnoFormView( new TurnoDTO(), cenario ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -111,7 +111,7 @@ public class TurnosPresenter
 			{
 				TurnoDTO turnoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				Presenter presenter = new TurnoFormPresenter( instituicaoEnsinoDTO,
-					cenario, new TurnoFormView( turnoDTO ), display.getGrid() );
+					cenario, new TurnoFormView( turnoDTO, cenario ), display.getGrid() );
 
 				presenter.go( null );
 			}

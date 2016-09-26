@@ -3,6 +3,7 @@ package com.gapso.web.trieda.shared.util.view;
 public enum UniqueDomain
 {
 	CAMPI,
+	CENARIO,
 	UNIDADE,
 	SALA,
 	GRUPO_SALA,
@@ -12,5 +13,6 @@ public enum UniqueDomain
 	ALUNO,
 	DISCIPLINA,
 	USUARIO,
-	MATRIZ_CURRICULAR;
+	MATRIZ_CURRICULAR,
+	TURNO;
 }

@@ -4,12 +4,16 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.layout.FlowLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.TurnoFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
 public class TurnoFormView
 	extends MyComposite
@@ -19,10 +23,12 @@ public class TurnoFormView
 	private FormPanel formPanel;
 	private TextField< String > nomeTF;
 	private TurnoDTO turnoDTO;
+	private CenarioDTO cenarioDTO;
 
-	public TurnoFormView( TurnoDTO turnoDTO )
+	public TurnoFormView( TurnoDTO turnoDTO, CenarioDTO cenarioDTO )
 	{
 		this.turnoDTO = turnoDTO;
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 	
@@ -44,8 +50,9 @@ public class TurnoFormView
 		FormData formData = new FormData( "-20" );
 		this.formPanel = new FormPanel();
 		this.formPanel.setHeaderVisible( false );
-
-		this.nomeTF = new TextField< String >();
+		this.formPanel.setLayout(new FlowLayout());
+		
+		this.nomeTF = new UniqueTextField( this.cenarioDTO, UniqueDomain.TURNO );
 		this.nomeTF.setName( TurnoDTO.PROPERTY_NOME );
 		this.nomeTF.setValue( this.turnoDTO.getNome() );
 		this.nomeTF.setFieldLabel( "Nome" );

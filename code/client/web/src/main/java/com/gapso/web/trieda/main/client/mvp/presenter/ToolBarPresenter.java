@@ -225,7 +225,7 @@ public class ToolBarPresenter
 		MenuItem getProfessoresTitulacoesMenuItem();
 		MenuItem getProfessoresAreasConhecimentoMenuItem();
 
-		Button getFixacoesListButton();
+		//Button getFixacoesListButton();
 		Button getParametrosButton();
 		Button getConsultaRequisicoesOtimizacaoBt();
 		Button getConfirmacaoTurmasButton();
@@ -656,7 +656,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		this.toolBar.getFixacoesListButton().addSelectionListener(
+		/*this.toolBar.getFixacoesListButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -667,7 +667,7 @@ public class ToolBarPresenter
 
 				presenter.go( gTab );
 			}
-		});
+		});*/
 		
 		/*this.toolBar.getAlocacaoManualButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()

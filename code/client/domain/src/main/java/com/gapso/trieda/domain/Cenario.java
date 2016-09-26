@@ -28,6 +28,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -52,7 +53,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity( identifierColumn = "CEN_ID" )
-@Table( name = "CENARIOS" )
+@Table( name = "CENARIOS" , uniqueConstraints =
+@UniqueConstraint( columnNames = { "CEN_NOME" } ))
 public class Cenario
 	implements Serializable, Comparable< Cenario >
 {
@@ -962,5 +964,21 @@ public class Cenario
 		this.semanasLetivas = semanasLetivas;
 	}
 	
+	public static boolean checkCodigoUnique(
+			InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario,
+			String codigo )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT COUNT ( o ) FROM Cenario o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.nome = :codigo" );
+
+			q.setParameter( "codigo", codigo );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			Number size = ( (Number) q.setMaxResults( 1 ).getSingleResult() );
+			return ( size.intValue() > 0 );
+		}
 	
 }

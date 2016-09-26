@@ -14,21 +14,21 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.UniqueDomain;
+import com.gapso.web.trieda.shared.util.view.UniqueTextField;
 
-public class CenarioEditarFormView
-	extends MyComposite
-	implements CenarioEditarFormPresenter.Display
+public class CenarioEditarFormView extends MyComposite implements CenarioEditarFormPresenter.Display
 {
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private CheckBox oficialCB;
-	private TextField< String > nomeTF;
+	private TextField<String> nomeTF;
 	private NumberField anoTF;
 	private NumberField semestreTF;
-	private TextField< String > comentarioTF;
+	private TextField<String> comentarioTF;
 	private CenarioDTO cenarioDTO;
 
-	public CenarioEditarFormView( CenarioDTO cenarioDTO )
+	public CenarioEditarFormView(CenarioDTO cenarioDTO)
 	{
 		this.cenarioDTO = cenarioDTO;
 
@@ -39,85 +39,84 @@ public class CenarioEditarFormView
 	{
 		String title = this.cenarioDTO.getId() == null ? "Inserção de Cenário" : "Edição de Cenário";
 
-		this.simpleModal = new SimpleModal(
-			title, Resources.DEFAULTS.cenario16() );
+		this.simpleModal = new SimpleModal(title, Resources.DEFAULTS.cenario16());
 
-		this.simpleModal.setHeight( 220 );
-		this.simpleModal.setWidth( 400 );
+		this.simpleModal.setHeight(220);
+		this.simpleModal.setWidth(400);
 
 		createForm();
-		this.simpleModal.setContent( this.formPanel );
+		this.simpleModal.setContent(this.formPanel);
 	}
 
 	private void createForm()
 	{
-		FormData formData = new FormData( "-20" );
+		FormData formData = new FormData("-20");
 
-		FormLayout formLayout = new FormLayout( LabelAlign.RIGHT );
-		formLayout.setLabelWidth( 75 );
+		FormLayout formLayout = new FormLayout(LabelAlign.RIGHT);
+		formLayout.setLabelWidth(75);
 
 		this.formPanel = new FormPanel();
-		this.formPanel.setHeaderVisible( false );
-		this.formPanel.setLayout( formLayout );
+		this.formPanel.setHeaderVisible(false);
+		this.formPanel.setLayout(formLayout);
 
-		this.nomeTF = new TextField< String >();
-		this.nomeTF.setName( CenarioDTO.PROPERTY_NOME );
-		this.nomeTF.setValue( this.cenarioDTO.getNome() );
-		this.nomeTF.setFieldLabel( "Nome" );
-		this.nomeTF.setAllowBlank( false );
-		this.nomeTF.setMinLength( 1 );
-		this.nomeTF.setMaxLength( 50 );
-		this.nomeTF.setEmptyText( "Preencha o nome" );
-		this.formPanel.add( this.nomeTF, formData );
+		this.nomeTF = new UniqueTextField( this.cenarioDTO, UniqueDomain.CENARIO );//TextField<String>();
+		this.nomeTF.setName(CenarioDTO.PROPERTY_NOME);
+		this.nomeTF.setValue(this.cenarioDTO.getNome());
+		this.nomeTF.setFieldLabel("Nome");
+		this.nomeTF.setAllowBlank(false);
+		this.nomeTF.setMinLength(1);
+		this.nomeTF.setMaxLength(50);
+		this.nomeTF.setEmptyText("Preencha o nome");
+		this.formPanel.add(this.nomeTF, formData);
 
 		this.oficialCB = new CheckBox();
-		this.oficialCB.setName( CenarioDTO.PROPERTY_OFICIAL );
-		this.oficialCB.setValue( this.cenarioDTO.getOficial() );
-		this.oficialCB.setFieldLabel( "Oficial" );
-		this.formPanel.add( this.oficialCB, formData );
+		this.oficialCB.setName(CenarioDTO.PROPERTY_OFICIAL);
+		this.oficialCB.setValue(this.cenarioDTO.getOficial());
+		this.oficialCB.setFieldLabel("Oficial");
+		this.formPanel.add(this.oficialCB, formData);
 
 		this.anoTF = new NumberField();
-		this.anoTF.setName( CenarioDTO.PROPERTY_ANO );
-		this.anoTF.setValue( this.cenarioDTO.getAno() );
-		this.anoTF.setFieldLabel( "Ano" );
-		this.anoTF.setAllowDecimals( false );
-		this.anoTF.setAllowBlank( false );
-		this.anoTF.setMinValue( 1 );
-		this.anoTF.setMaxValue( 9999 );
-		this.anoTF.setEmptyText( "Preencha o ano letivo" );
-		this.formPanel.add( this.anoTF, formData );
+		this.anoTF.setName(CenarioDTO.PROPERTY_ANO);
+		this.anoTF.setValue(this.cenarioDTO.getAno());
+		this.anoTF.setFieldLabel("Ano");
+		this.anoTF.setAllowDecimals(false);
+		this.anoTF.setAllowBlank(false);
+		this.anoTF.setMinValue(1);
+		this.anoTF.setMaxValue(9999);
+		this.anoTF.setEmptyText("Preencha o ano letivo");
+		this.formPanel.add(this.anoTF, formData);
 
 		this.semestreTF = new NumberField();
-		this.semestreTF.setName( CenarioDTO.PROPERTY_SEMESTRE );
-		this.semestreTF.setValue( this.cenarioDTO.getSemestre() );
-		this.semestreTF.setFieldLabel( "Semestre" );
-		this.semestreTF.setAllowDecimals( false );
-		this.semestreTF.setAllowBlank( false );
-		this.semestreTF.setMinValue( 1 );
-		this.semestreTF.setMaxValue( 12 );
-		this.semestreTF.setEmptyText( "Preencha semestre letivo" );
-		this.formPanel.add( this.semestreTF, formData );
+		this.semestreTF.setName(CenarioDTO.PROPERTY_SEMESTRE);
+		this.semestreTF.setValue(this.cenarioDTO.getSemestre());
+		this.semestreTF.setFieldLabel("Semestre");
+		this.semestreTF.setAllowDecimals(false);
+		this.semestreTF.setAllowBlank(false);
+		this.semestreTF.setMinValue(1);
+		this.semestreTF.setMaxValue(12);
+		this.semestreTF.setEmptyText("Preencha semestre letivo");
+		this.formPanel.add(this.semestreTF, formData);
 
-		this.comentarioTF = new TextField< String >();
-		this.comentarioTF.setName( CenarioDTO.PROPERTY_COMENTARIO );
-		this.comentarioTF.setValue( cenarioDTO.getComentario() );
-		this.comentarioTF.setFieldLabel( "Comentário" );
-		this.comentarioTF.setMaxLength( 255 );
-		this.comentarioTF.setEmptyText( "Preencha um comentário" );
-		this.formPanel.add( this.comentarioTF, formData );
-		this.formPanel.add( this.formPanel, formData );
+		this.comentarioTF = new TextField<String>();
+		this.comentarioTF.setName(CenarioDTO.PROPERTY_COMENTARIO);
+		this.comentarioTF.setValue(cenarioDTO.getComentario());
+		this.comentarioTF.setFieldLabel("Comentário");
+		this.comentarioTF.setMaxLength(255);
+		this.comentarioTF.setEmptyText("Preencha um comentário");
+		this.formPanel.add(this.comentarioTF, formData);
+		this.formPanel.add(this.formPanel, formData);
 
-		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
-		binding.addButton( this.simpleModal.getSalvarBt() );
+		FormButtonBinding binding = new FormButtonBinding(this.formPanel);
+		binding.addButton(this.simpleModal.getSalvarBt());
 
-		this.simpleModal.setFocusWidget( this.nomeTF );
+		this.simpleModal.setFocusWidget(this.nomeTF);
 	}
 
 	public boolean isValid()
 	{
 		return this.formPanel.isValid();
 	}
-
+	
 	@Override
 	public Button getSalvarButton()
 	{
@@ -137,7 +136,7 @@ public class CenarioEditarFormView
 	}
 
 	@Override
-	public TextField< String > getNomeTextField()
+	public TextField<String> getNomeTextField()
 	{
 		return this.nomeTF;
 	}
@@ -155,7 +154,7 @@ public class CenarioEditarFormView
 	}
 
 	@Override
-	public TextField< String > getComentarioTextField()
+	public TextField<String> getComentarioTextField()
 	{
 		return this.comentarioTF;
 	}

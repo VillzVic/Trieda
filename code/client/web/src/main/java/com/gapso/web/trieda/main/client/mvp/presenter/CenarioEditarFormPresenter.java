@@ -18,29 +18,34 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CenarioEditarFormPresenter
-	implements Presenter
+public class CenarioEditarFormPresenter implements Presenter
 {
 	public interface Display
 	{
 		Button getSalvarButton();
+
 		CheckBox getOficialCheckBox();
-		TextField< String > getNomeTextField();
+
+		TextField<String> getNomeTextField();
+
 		NumberField getAnoTextField();
+
 		NumberField getSemestreTextField();
-		TextField< String > getComentarioTextField();
+
+		TextField<String> getComentarioTextField();
+
 		CenarioDTO getCenarioDTO();
+
 		boolean isValid();
+
 		SimpleModal getSimpleModal();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
-	private SimpleGrid< CenarioDTO > gridPanel;
+	private SimpleGrid<CenarioDTO> gridPanel;
 	private Display display;
 
-	public CenarioEditarFormPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		Display display, SimpleGrid< CenarioDTO > gridPanel )
+	public CenarioEditarFormPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display, SimpleGrid<CenarioDTO> gridPanel)
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
@@ -48,41 +53,38 @@ public class CenarioEditarFormPresenter
 
 		setListeners();
 	}
-
+	
 	private void setListeners()
 	{
-		this.display.getSalvarButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected(ButtonEvent ce)
 			{
-				if ( isValid() )
+				if (isValid())
 				{
 					final CenariosServiceAsync service = Services.cenarios();
 
-					service.editar( getDTO(), new AsyncCallback< Void >()
+					service.editar(getDTO(), new AsyncCallback<Void>()
 					{
 						@Override
-						public void onFailure( Throwable caught )
+						public void onFailure(Throwable caught)
 						{
-							MessageBox.alert( "ERRO!",
-								"Deu falha na conexão", null );
+							MessageBox.alert("ERRO!", "Já existe um Cenário com este nome \""+ getDTO().getNome()+"\". Tente outro nome." , null);
 						}
 
 						@Override
-						public void onSuccess( Void result )
+						public void onSuccess(Void result)
 						{
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display( "Salvo", "Item salvo com sucesso!" );
+							Info.display("Salvo", "Item salvo com sucesso!");
 						}
 					});
 				}
 				else
 				{
-					MessageBox.alert( "ERRO!",
-						"Verifique os campos digitados", null );
+					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
 				}
 			}
 		});
@@ -92,24 +94,24 @@ public class CenarioEditarFormPresenter
 	{
 		return this.display.isValid();
 	}
-	
+
 	private CenarioDTO getDTO()
 	{
 		CenarioDTO cenarioDTO = this.display.getCenarioDTO();
 
-		cenarioDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
-		cenarioDTO.setMasterData( false );
-		cenarioDTO.setOficial( this.display.getOficialCheckBox().getValue() );
-		cenarioDTO.setNome( this.display.getNomeTextField().getValue() );
-		cenarioDTO.setAno( this.display.getAnoTextField().getValue().intValue() );
-		cenarioDTO.setSemestre( this.display.getSemestreTextField().getValue().intValue() );
-		cenarioDTO.setComentario( this.display.getComentarioTextField().getValue() );
+		cenarioDTO.setInstituicaoEnsinoId(this.instituicaoEnsinoDTO.getId());
+		cenarioDTO.setMasterData(false);
+		cenarioDTO.setOficial(this.display.getOficialCheckBox().getValue());
+		cenarioDTO.setNome(this.display.getNomeTextField().getValue());
+		cenarioDTO.setAno(this.display.getAnoTextField().getValue().intValue());
+		cenarioDTO.setSemestre(this.display.getSemestreTextField().getValue().intValue());
+		cenarioDTO.setComentario(this.display.getComentarioTextField().getValue());
 
 		return cenarioDTO;
 	}
 
 	@Override
-	public void go( Widget widget )
+	public void go(Widget widget)
 	{
 		this.display.getSimpleModal().show();
 	}
