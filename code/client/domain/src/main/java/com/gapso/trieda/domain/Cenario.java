@@ -476,14 +476,24 @@ public class Cenario
 	}
 
 	public static int count(
-		InstituicaoEnsino instituicaoEnsino )
+		Usuario usuario )
 	{
 		return ( (Number) entityManager().createQuery(
 			" SELECT count( o ) FROM Cenario o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			" WHERE o.criadoPor = :usuario " )
+			.setParameter( "usuario", usuario )
 			.getSingleResult() ).intValue();
 	}
+	
+	public static int count(
+			InstituicaoEnsino instituicaoEnsino )
+		{
+			return ( (Number) entityManager().createQuery(
+				" SELECT count( o ) FROM Cenario o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " )
+				.setParameter( "instituicaoEnsino", instituicaoEnsino )
+				.getSingleResult() ).intValue();
+		}
 
 	public Parametro getUltimoParametro(InstituicaoEnsino instituicaoEnsino) {
 		long maiorId = -1;
@@ -597,7 +607,7 @@ public class Cenario
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Cenario > findByAnoAndSemestre(
-		InstituicaoEnsino instituicaoEnsino, Integer ano,
+		Usuario usuario, Integer ano,
 		Integer semestre, int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
@@ -605,26 +615,33 @@ public class Cenario
 		String queryAno = "";
 		String querySemestre = "";
 		String queryInstituicaoEnsino = "";
+		String userDefault = "";
 
 		if ( ano != null )
 		{
 			queryAno = " o.ano = :ano AND ";
 		}
 
-		if ( ano != null )
+		if ( semestre != null )
 		{
 			querySemestre = " o.semestre = :semestre AND ";
 		}
 		
-		if (instituicaoEnsino != null)
+		if (usuario.getInstituicaoEnsino() != null)
 		{
 			queryInstituicaoEnsino = " o.instituicaoEnsino = :instituicaoEnsino AND ";
 		}
+		
+		if(!usuario.getAuthority().getAuthority().equals("ROLE_SUPERVISOR"))
+		{
+			userDefault = "o.criadoPor = :criadoPor AND ";
+		}
+			
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Cenario o " +
-			" WHERE " + queryAno + querySemestre + queryInstituicaoEnsino +
-			" o.masterData = :masterData " );
+			" WHERE " + queryAno + querySemestre + queryInstituicaoEnsino + userDefault +
+			" o.masterData = :masterData " + orderBy );
 
 		q.setParameter( "masterData", false );
 		q.setFirstResult( firstResult );
@@ -632,7 +649,7 @@ public class Cenario
 
 		if ( ano != null )
 		{
-			q.setParameter( "ano", semestre );
+			q.setParameter( "ano", ano );
 		}
 
 		if ( semestre != null )
@@ -640,9 +657,14 @@ public class Cenario
 			q.setParameter( "semestre", semestre );
 		}
 		
-		if (instituicaoEnsino != null)
+		if (usuario.getInstituicaoEnsino() != null)
 		{
-			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			q.setParameter( "instituicaoEnsino", usuario.getInstituicaoEnsino() );
+		}
+		
+		if(!usuario.getAuthority().getAuthority().equals("ROLE_SUPERVISOR"))
+		{
+			q.setParameter("criadoPor", usuario);
 		}
 
 		return q.getResultList();

@@ -10,7 +10,7 @@ public class UsuarioDTO extends AbstractDTO< String >
 
 	// Propriedades
 	public static final String PROPERTY_VERSION = "version";
-	public static final String PROPERTY_NOME = "nime";
+	public static final String PROPERTY_NOME = "nome";
 	public static final String PROPERTY_EMAIL = "email";
 	public static final String PROPERTY_USERNAME = "username";
 	public static final String PROPERTY_PASSWORD = "maxpassword";
