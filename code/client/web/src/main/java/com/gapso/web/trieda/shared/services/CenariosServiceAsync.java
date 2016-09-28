@@ -15,23 +15,33 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CenariosServiceAsync
 {
-	void getInstituicaoEnsinoDTO( AsyncCallback< InstituicaoEnsinoDTO > callback );
-	void getMasterData( AsyncCallback< CenarioDTO > callback );
-	void getCenario( Long id, AsyncCallback< CenarioDTO > callback );
-	void getList( PagingLoadConfig config, AsyncCallback< PagingLoadResult< CenarioDTO > > callback );
-	void getBuscaList( Integer ano, Integer semestre, PagingLoadConfig config,
-		AsyncCallback< PagingLoadResult< CenarioDTO > > callback );
-	void editar( CenarioDTO cenarioDTO, AsyncCallback< Void > callback );
-	void criar( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO,
-		Set< CampusDTO > campiDTO, AsyncCallback< Void > callback );
-	void clonar(CenarioDTO cenarioDTO, CenarioDTO clone, boolean clonarSolucao,
-			AsyncCallback<Void> callback);
-	void remove( List< CenarioDTO > cenarioDTOList, AsyncCallback< Void > callback );
-	void getResumos( CenarioDTO cenario, AsyncCallback< List< TreeNodeDTO > > callback );
+	void getInstituicaoEnsinoDTO(AsyncCallback<InstituicaoEnsinoDTO> callback);
+
+	void getMasterData(AsyncCallback<CenarioDTO> callback);
+
+	void getCenario(Long id, AsyncCallback<CenarioDTO> callback);
+
+	void getList(PagingLoadConfig config, AsyncCallback<PagingLoadResult<CenarioDTO>> callback);
+
+	void getBuscaList(String id, String nome, String ano, String semestre, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CenarioDTO>> callback);
+
+	void editar(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
+
+	void criar(CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO, Set<CampusDTO> campiDTO, AsyncCallback<Void> callback);
+
+	void clonar(CenarioDTO cenarioDTO, CenarioDTO clone, boolean clonarSolucao, AsyncCallback<Void> callback);
+
+	void remove(List<CenarioDTO> cenarioDTOList, AsyncCallback<Void> callback);
+
+	void getResumos(CenarioDTO cenario, AsyncCallback<List<TreeNodeDTO>> callback);
+
 	void checkDBVersion(AsyncCallback<Integer> callback);
+
 	void getCurrentCenario(AsyncCallback<CenarioDTO> callback);
+
 	void setCurrentCenario(long cenarioId, AsyncCallback<Void> callback);
-	void limpaSolucoesCenario(CenarioDTO cenarioDTO,
-			AsyncCallback<Void> callback);
+
+	void limpaSolucoesCenario(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
+
 	void getCenarios(AsyncCallback<ListLoadResult<CenarioDTO>> callback);
 }

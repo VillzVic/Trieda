@@ -607,16 +607,28 @@ public class Cenario
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Cenario > findByAnoAndSemestre(
-		Usuario usuario, Integer ano,
-		Integer semestre, int firstResult, int maxResults, String orderBy )
+		Usuario usuario, String id, String nome, String ano,
+		String semestre, int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
+		String queryId = "";
+		String queryNome = "";
 		String queryAno = "";
 		String querySemestre = "";
 		String queryInstituicaoEnsino = "";
 		String userDefault = "";
 
+		if ( id != null )
+		{
+			queryId = " o.id = :id AND ";
+		}
+		
+		if ( nome != null )
+		{
+			queryNome = " o.nome LIKE LOWER ( :nome ) AND ";
+		}
+		
 		if ( ano != null )
 		{
 			queryAno = " o.ano = :ano AND ";
@@ -637,25 +649,36 @@ public class Cenario
 			userDefault = "o.criadoPor = :criadoPor AND ";
 		}
 			
-
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Cenario o " +
-			" WHERE " + queryAno + querySemestre + queryInstituicaoEnsino + userDefault +
+			" WHERE " + queryId + queryNome + queryAno + querySemestre + queryInstituicaoEnsino + userDefault +
 			" o.masterData = :masterData " + orderBy );
 
 		q.setParameter( "masterData", false );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
-		if ( ano != null )
-		{
-			q.setParameter( "ano", ano );
-		}
-
-		if ( semestre != null )
-		{
-			q.setParameter( "semestre", semestre );
-		}
+		try{
+			if ( id != null )
+			{
+				q.setParameter( "id", Long.parseLong( id ));
+			}
+			
+			if ( nome != null )
+			{
+				q.setParameter( "nome", nome );
+			}
+			
+			if ( ano != null )
+			{
+				q.setParameter( "ano", Integer.parseInt( ano ));
+			}
+	
+			if ( semestre != null )
+			{
+				q.setParameter( "semestre", Integer.parseInt( semestre ));
+			}
+		}catch(NumberFormatException e) {}
 		
 		if (usuario.getInstituicaoEnsino() != null)
 		{

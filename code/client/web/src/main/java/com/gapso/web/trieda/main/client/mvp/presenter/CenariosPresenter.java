@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioClonarFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioEditarFormView;
@@ -41,13 +42,15 @@ public class CenariosPresenter
 		Button getAbrirCenarioButton();
 		Button getLimparSolucaoButton();
 		Button getProgressBarButton();
-		TextField< Integer > getAnoBuscaTextField();
-		TextField< Integer > getSemestreBuscaTextField();
+		TextField< String > getAnoBuscaTextField();
+		TextField< String > getSemestreBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< CenarioDTO > getGrid();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< CenarioDTO > > proxy );
+		TextField< String > getNomeBuscaTextField();
+		TextField< String > getIdBuscaTextField();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -78,10 +81,12 @@ public class CenariosPresenter
 			public void load( Object loadConfig,
 				AsyncCallback< PagingLoadResult< CenarioDTO > > callback )
 			{
-				Integer ano = display.getAnoBuscaTextField().getValue();
-				Integer semestre = display.getSemestreBuscaTextField().getValue();
+				String id = display.getIdBuscaTextField().getValue();
+				String nome = display.getNomeBuscaTextField().getValue();
+				String ano = display.getAnoBuscaTextField().getValue();
+				String semestre = display.getSemestreBuscaTextField().getValue();
 
-				service.getBuscaList( ano, semestre,
+				service.getBuscaList( id, nome, ano, semestre,
 					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
@@ -205,6 +210,8 @@ public class CenariosPresenter
 			{
 				display.getAnoBuscaTextField().setValue( null );
 				display.getSemestreBuscaTextField().setValue( null );
+				display.getIdBuscaTextField().setValue( null );
+				display.getNomeBuscaTextField().setValue( null );
 
 				display.getGrid().updateList();
 			}

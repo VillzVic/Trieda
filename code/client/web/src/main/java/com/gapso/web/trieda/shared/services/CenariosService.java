@@ -22,7 +22,7 @@ public interface CenariosService
 	CenarioDTO getMasterData();
 	CenarioDTO getCenario( Long id );
 	PagingLoadResult< CenarioDTO > getList( PagingLoadConfig config );
-	PagingLoadResult< CenarioDTO > getBuscaList( Integer ano, Integer semestre, PagingLoadConfig config );
+	PagingLoadResult<CenarioDTO> getBuscaList(String id, String nome, String ano, String semestre, PagingLoadConfig config);
 	void editar( CenarioDTO cenarioDTO );
 	void criar( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO, Set< CampusDTO > campiDTO );
 	void clonar( CenarioDTO cenarioDTO, CenarioDTO clone, boolean clonarSolucao );

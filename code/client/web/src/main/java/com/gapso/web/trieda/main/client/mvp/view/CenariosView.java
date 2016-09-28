@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -37,8 +38,10 @@ public class CenariosView
 	private Button limparSolucaoBt;
 	private Button progressBarBt;
 	private SimpleFilter filter;
-	private TextField< Integer > anoBuscaTextField;
-	private TextField< Integer > semestreBuscaTextField;
+	private TextField< String > anoBuscaTextField;
+	private TextField< String > semestreBuscaTextField;
+	private TextField< String > idBuscaTextField;
+	private TextField< String > nomeBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 
@@ -149,10 +152,16 @@ public class CenariosView
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
-		this.anoBuscaTextField = new TextField< Integer >();
+		this.idBuscaTextField = new TextField< String >();
+		this.idBuscaTextField.setFieldLabel( "Id" );
+		this.nomeBuscaTextField = new TextField< String >();
+		this.nomeBuscaTextField.setFieldLabel( "Nome" );
+		this.anoBuscaTextField = new TextField< String >();
 		this.anoBuscaTextField.setFieldLabel( "Ano" );
-		this.semestreBuscaTextField = new TextField< Integer >();
+		this.semestreBuscaTextField = new TextField< String >();
 		this.semestreBuscaTextField.setFieldLabel( "Semestre" );
+		this.filter.addField( this.idBuscaTextField );
+		this.filter.addField( this.nomeBuscaTextField );
 		this.filter.addField( this.anoBuscaTextField );
 		this.filter.addField( this.semestreBuscaTextField ); 
 
@@ -189,15 +198,27 @@ public class CenariosView
 	{
 		this.gridPanel.setProxy( proxy );
 	}
+	
+	@Override
+	public TextField< String > getIdBuscaTextField()
+	{
+		return this.idBuscaTextField;
+	}
+	
+	@Override
+	public TextField< String > getNomeBuscaTextField()
+	{
+		return this.nomeBuscaTextField;
+	}
 
 	@Override
-	public TextField< Integer > getAnoBuscaTextField()
+	public TextField< String > getAnoBuscaTextField()
 	{
 		return this.anoBuscaTextField;
 	}
 
 	@Override
-	public TextField< Integer > getSemestreBuscaTextField()
+	public TextField< String > getSemestreBuscaTextField()
 	{
 		return this.semestreBuscaTextField;
 	}

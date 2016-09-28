@@ -205,7 +205,7 @@ public class CenariosServiceImpl extends RemoteService implements CenariosServic
 	}
 
 	@Override
-	public PagingLoadResult<CenarioDTO> getBuscaList(Integer ano, Integer semestre, PagingLoadConfig config)
+	public PagingLoadResult<CenarioDTO> getBuscaList(String id, String nome, String ano, String semestre, PagingLoadConfig config)
 	{
 		List<CenarioDTO> list = new ArrayList<CenarioDTO>();
 		String orderBy = config.getSortField();
@@ -220,8 +220,7 @@ public class CenariosServiceImpl extends RemoteService implements CenariosServic
 				orderBy = (orderBy + " desc");
 			}
 		}
-		
-		List<Cenario> listCenarios = Cenario.findByAnoAndSemestre(this.getUsuario(), ano, semestre, config.getOffset(), config.getLimit(), orderBy);
+		List<Cenario> listCenarios = Cenario.findByAnoAndSemestre(this.getUsuario(), id, nome, ano, semestre, config.getOffset(), config.getLimit(), orderBy);
 
 		for (Cenario cenario : listCenarios)
 		{

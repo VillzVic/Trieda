@@ -317,7 +317,6 @@ public class CampiServiceImpl extends RemoteService
 				}
 			}
 		}
-
 		List< Campus > campi = Campus.findBy(
 			this.getInstituicaoEnsinoUser(), cenario, nome, codigo, estadoDomain,
 			municipio, bairro,
