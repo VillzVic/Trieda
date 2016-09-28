@@ -38,6 +38,7 @@ public interface TriedaI18nMessages
 	String excelErroCasasDecimaisInvalida( String nomeColuna );
 	String falhaOperacao();
 	String loading();
+	String deleting();
 	String ofertasNaoCadastradas( String campus );
 	String sucessoImportacaoExcel();
 	String sucessoRemoverDoBD( String codigoItem );

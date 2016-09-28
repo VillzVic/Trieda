@@ -36,7 +36,7 @@ public interface CenariosServiceAsync
 			AsyncCallback<Void> callback);
 	void getCenarios(AsyncCallback<ListLoadResult<CenarioDTO>> callback);
 	
-	void removeAllAlunos(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
+	/*void removeAllAlunos(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
 	void removeAllAlunosDemanda(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
-	void removeAllEquivalencias(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
+	void removeAllEquivalencias(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);*/
 }

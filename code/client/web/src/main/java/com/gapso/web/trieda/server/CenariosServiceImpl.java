@@ -756,7 +756,7 @@ public class CenariosServiceImpl
 	}
 	
 	
-	@Override
+	/*@Override
 	public void removeAllAlunos(CenarioDTO cenarioDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
@@ -776,7 +776,7 @@ public class CenariosServiceImpl
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Cenario.removeAllAlunos(cenario);
 	}
-	
+	*/
 	
 	@Override
 	public void limpaSolucoesCenario(CenarioDTO cenarioDTO)

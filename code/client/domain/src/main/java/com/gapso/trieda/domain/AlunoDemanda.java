@@ -273,7 +273,7 @@ public class AlunoDemanda implements Serializable, Comparable<AlunoDemanda>,
 
 		return q.getResultList();
 	}
-
+//issue 6 
 	@SuppressWarnings("unchecked")
 	public static List<AlunoDemanda> findAll(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
@@ -1622,6 +1622,19 @@ public class AlunoDemanda implements Serializable, Comparable<AlunoDemanda>,
 	public void cloneChilds(CenarioClone novoCenario, AlunoDemanda entidadeClone) {
 
 	}
+	
+	/*@SuppressWarnings("unchecked")
+	public static List<AlunoDemanda> findByCenario( InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(" SELECT o FROM AlunoDemanda o "
+											+ " WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino "
+											+ " AND o.demanda.oferta.campus.cenario = :cenario ");
+		
+		q.setParameter("cenario", cenario);
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		
+		return q.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
 	public static void removeAllAlunosDemanda(Cenario cenario) {
@@ -1630,5 +1643,5 @@ public class AlunoDemanda implements Serializable, Comparable<AlunoDemanda>,
 		q.setParameter("cen_id",cenario.getId());
 		q.executeUpdate();
 		
-	}
+	}*/
 }

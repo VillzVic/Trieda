@@ -404,19 +404,19 @@ public class Equivalencia implements java.io.Serializable,
 	 * demora. Este é provisório, devendo ser implementado dentro do contexto do
 	 * framwork aplicado, tão logo seja descoberta a rezão do não aceite.
 	 */
-	public static void removeAll(Cenario cenario) {
-		/*String properties = "trieda-production.properties";
+	/*public static void removeAll(Cenario cenario) {
+		String properties = "trieda-production.properties";
 		Properties prop = new Properties();
-*/		Connection con = null;
+		Connection con = null;
 		//InputStream file;
 		try {
-			/*file =  InputStream.class.getResourceAsStream(properties) ;
+			file =  InputStream.class.getResourceAsStream(properties) ;
 			prop.load(file);
 			String driver = prop.getProperty("database.driverClassName");
 			String url = prop.getProperty("database.url");
 			String user = prop.getProperty("database.username");
 			String passwd = prop.getProperty("database.password");
-			*/
+			
 			Class.forName("com.mysql.jdbc.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://localhost/trieda", "trieda", "trieda");
 
@@ -426,14 +426,14 @@ public class Equivalencia implements java.io.Serializable,
 			stmt.setLong(1, cenario.getId());
 			stmt.execute();
 			stmt.close();
-			/*file.close();*/
+			file.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} /*catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
-
+*/
 }

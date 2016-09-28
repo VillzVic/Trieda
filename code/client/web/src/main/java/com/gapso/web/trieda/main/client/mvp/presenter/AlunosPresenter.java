@@ -199,7 +199,7 @@ public class AlunosPresenter
 								public void componentSelected( ButtonEvent ce )
 								{									 
 								final AlunosServiceAsync service = Services.alunos();
-								
+								display.getGrid().mask(display.getI18nMessages().deleting(), "deleting");
 									service.removeAllAlunos(cenarioDTO, new AsyncCallback< Void >()
 									{
 										@Override
@@ -212,6 +212,7 @@ public class AlunosPresenter
 									public void onSuccess( Void result )
 										{
 											display.getGrid().updateList();
+											display.getGrid().unmask();
 											Info.display( "Removido", "Aluno(s) removido(s) com sucesso!" );
 										}
 									});

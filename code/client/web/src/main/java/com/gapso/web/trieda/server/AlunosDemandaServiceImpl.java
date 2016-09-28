@@ -26,6 +26,7 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
@@ -211,7 +212,16 @@ public class AlunosDemandaServiceImpl
 	@Override
 	public void removeAllAlunosDemanda( CenarioDTO cenarioDTO )
 	{
-		AlunoDemanda.removeAllAlunosDemanda(ConvertBeans.toCenario(cenarioDTO));
+		//AlunoDemanda.removeAllAlunosDemanda(ConvertBeans.toCenario(cenarioDTO));
+		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findAll(getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenarioDTO)); 
+
+		for(AlunoDemanda alunoDemanda : alunosDemanda){
+			
+			if ( alunoDemanda != null )
+			{
+				alunoDemanda.remove();
+			}
+		}
 	}
 	
 	@Override

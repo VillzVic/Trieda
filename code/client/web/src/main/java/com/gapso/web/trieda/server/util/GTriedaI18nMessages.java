@@ -275,6 +275,12 @@ public class GTriedaI18nMessages
 	{
 		return this.languageManager.getText( "loading" );
 	}
+	
+	@Override
+	public String deleting()
+	{
+		return this.languageManager.getText( "deleting" );
+	}
 
 	@Override
 	public String sucessoImportacaoExcel()

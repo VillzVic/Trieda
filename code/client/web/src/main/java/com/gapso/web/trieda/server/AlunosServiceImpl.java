@@ -19,6 +19,7 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -206,7 +207,17 @@ public class AlunosServiceImpl
 	@Override
 	public void removeAllAlunos( CenarioDTO cenarioDTO )
 	{
-		Aluno.removeAllAlunos(ConvertBeans.toCenario(cenarioDTO));		
+		//Aluno.removeAllAlunos(ConvertBeans.toCenario(cenarioDTO));
+		List< Aluno > alunos = Aluno.findByCenario(getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenarioDTO)); 
+
+		for(Aluno aluno : alunos){
+			
+			if ( aluno != null )
+			{
+				aluno.remove();
+			}
+		}
+		
 	}
 	
 	@Override

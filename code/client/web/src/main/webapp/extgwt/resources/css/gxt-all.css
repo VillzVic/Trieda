@@ -6081,6 +6081,10 @@ body.ext-ie6.x-body-masked .x-window select {
     background-color:#fbfbfb;
     background-image:url(../images/default/grid/loading.gif);
 }
+.x-mask-deleting div {
+    background-color:#fbfbfb;
+    background-image:url(../images/default/grid/loading.gif);
+}
 .x-item-disabled {
     color: gray;
 }

@@ -396,7 +396,7 @@ public class Cenario
 	}
 	
 	
-	@Transactional
+	/*@Transactional
 	public static void removeAllAlunos(Cenario cenario) {
 		Query q = entityManager().createNativeQuery("delete from alunos where cen_id = :cen_id");
 		q.setParameter("cen_id",cenario.getId());
@@ -419,7 +419,7 @@ public class Cenario
 		q.setParameter("cen_id",cenario.getId());
 		q.executeUpdate();
 		
-	}
+	}*/
 	
 		
 	@Transactional

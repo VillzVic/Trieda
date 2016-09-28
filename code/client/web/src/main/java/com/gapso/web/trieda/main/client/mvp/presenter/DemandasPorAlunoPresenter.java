@@ -158,21 +158,31 @@ public class DemandasPorAlunoPresenter
 		});
 		
 		
-		this.display.getRemoveAllButton().addSelectionListener(new SelectionListener< ButtonEvent >()
+		this.display.getRemoveAllButton().addSelectionListener(
+						new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				final CenariosServiceAsync service = Services.cenarios();
-								
-				service.removeAllAlunosDemanda( cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				final AlunosDemandaServiceAsync service = Services.alunosDemanda();
+				display.getGrid().mask(display.getI18nMessages().deleting(), "deleting");
+				
+				service.removeAllAlunosDemanda( cenarioDTO, new AsyncCallback< Void >()
 				{
 					@Override
-					public void onSuccess( Void result )
+					public void onFailure( Throwable caught )
 					{
-						display.getGrid().getGrid().getStore().getLoader().load();
-						Info.display( "Removido", "Item(ns) removido com sucesso!" );
+						Info.display( "ERRO!", "Não foi possível remover a(s) Demandas(s)" );
 					}
+
+					@Override
+				public void onSuccess( Void result )
+					{
+						display.getGrid().updateList();
+						display.getGrid().unmask();
+						Info.display( "Removido", "Demandas(s) removida(s) com sucesso!" );
+					}
+					
 				});
 			}
 		});

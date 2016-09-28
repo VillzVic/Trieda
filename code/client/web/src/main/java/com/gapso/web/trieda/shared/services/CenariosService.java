@@ -39,8 +39,8 @@ public interface CenariosService
 	void limpaSolucoesCenario(CenarioDTO cenarioDTO);
 	ListLoadResult<CenarioDTO> getCenarios();
 	
-	void removeAllAlunos(CenarioDTO cenarioDTO);
+	/*void removeAllAlunos(CenarioDTO cenarioDTO);
 	void removeAllAlunosDemanda(CenarioDTO cenarioDTO);
-	void removeAllEquivalencias(CenarioDTO cenarioDTO);
+	void removeAllEquivalencias(CenarioDTO cenarioDTO);*/
 	
 }

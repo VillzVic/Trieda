@@ -166,12 +166,21 @@ public class EquivalenciasPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				final EquivalenciasServiceAsync service = Services.equivalencias();
-				
-				service.removeAll(cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+				display.getGrid().mask(display.getI18nMessages().deleting(), "deleting");
+				service.removeAll(cenarioDTO, new AsyncCallback< Void >()
+								{
 					@Override
-					public void onSuccess(Void result) {
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Não foi possível remover a(s) Equivalência(s)", null );
+				}
+
+					@Override
+				public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Equivalencias removidas com sucesso!");
+						display.getGrid().unmask();
+						Info.display( "Removido", "Equivalência(s) removida(s) com sucesso!" );
 					}
 				});
 			}
