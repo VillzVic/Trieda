@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -190,6 +191,14 @@ public class FixacaoFormPresenter
 		{
 			fixacaoDTO.setDisciplinaId( disciplina.getId() );
 			fixacaoDTO.setDisciplinaString( disciplina.getCodigo() );
+		}
+		
+		TurmaDTO turma = this.display.getTurmaComboBox().getValue();
+		
+		if( turma != null )
+		{
+			fixacaoDTO.setTurmaId( turma.getId() );
+			fixacaoDTO.setTurmaString( turma.getNome() );
 		}
 
 		CampusDTO campus = this.display.getCampusComboBox().getValue();

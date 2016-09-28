@@ -63,6 +63,10 @@ public class Fixacao
     @JoinColumn( name = "DIS_ID" )
     private Disciplina disciplina;
     
+    @ManyToOne( targetEntity = Turma.class, fetch=FetchType.LAZY )
+    @JoinColumn( name = "TUR_ID" )
+    private Turma turma;
+    
     @ManyToOne( targetEntity = Campus.class )
     @JoinColumn( name = "CAM_ID" )
     private Campus campus;
@@ -411,7 +415,17 @@ public class Fixacao
 	{
         this.disciplina = disciplina;
     }
+	
+	public Turma getTurma()
+	{
+        return this.turma;
+    }
 
+	public void setTurma( Turma turma )
+	{
+        this.turma = turma;
+    }
+	
 	public Campus getCampus()
 	{
 		return this.campus;
@@ -464,6 +478,7 @@ public class Fixacao
         sb.append( "Professor: " ).append( getProfessor() ).append( ", " );
         sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
         sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+        sb.append( "Turma: " ).append( getTurma() ).append( ", " );
         sb.append( "Campus: " ).append( getCampus() ).append( ", " );
         sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
         sb.append( "Sala: " ).append( getSala() ).append( ", " );

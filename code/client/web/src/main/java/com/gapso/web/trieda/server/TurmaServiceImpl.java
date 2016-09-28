@@ -36,46 +36,58 @@ public class TurmaServiceImpl
 	@Override
 	public ListLoadResult< TurmaDTO > getListByDisciplina( CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO )
 	{
-		List< TurmaDTO > list = new ArrayList< TurmaDTO >();
-		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+		/*
+		List< TurmaDTO > list = new ArrayList< TurmaDTO >();		
+		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );		
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
-
-		List< Turma > turmas = Turma.findByDisciplina(
-			getInstituicaoEnsinoUser(), cenario, disciplina );
-
-		for ( Turma turma : turmas )
-		{
-			list.add( ConvertBeans.toTurmaDTO( turma ) );
-		}
-
+		
+		
+		List< Turma > turmas = Turma.findByDisciplina(getInstituicaoEnsinoUser(), cenario, disciplina );
+		for ( Turma turma : turmas ){ list.add( ConvertBeans.toTurmaDTO( turma ) );}
+		
 		return new BaseListLoadResult< TurmaDTO >( list );
+		*/
+		
+		
+		List< TurmaDTO > ls = new ArrayList< TurmaDTO >();
+		TurmaDTO t = new TurmaDTO();
+		t.setId(Long.parseLong("1"));
+		t.setNome("Teste 1");
+		ls.add(t);
+		return new BaseListLoadResult< TurmaDTO >( ls );
+				
 	}
 	
 	
 	@Override
 	public ListLoadResult< TurmaDTO > getListAllDisciplinaTodos( CenarioDTO cenarioDTO ){
+		/*
 		List< TurmaDTO > list = new ArrayList< TurmaDTO >();
-		/*Disciplina disciplina = null;
+		
+		Disciplina disciplina = null;
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		List< Turma > turmas = Turma.findByDisciplina(
-			getInstituicaoEnsinoUser(), cenario, disciplina );
+		List< Turma > turmas = Turma.findByDisciplina(getInstituicaoEnsinoUser(), cenario, disciplina );
 
 		for ( Turma turma : turmas )
 		{
 			list.add( ConvertBeans.toTurmaDTO( turma ) );
-		}*/
+		}
 		
+		return new BaseListLoadResult< TurmaDTO >( list );
+		*/
+		
+		List< TurmaDTO > ls = new ArrayList< TurmaDTO >();
 		TurmaDTO t = new TurmaDTO();
 		t.setId(Long.parseLong("1"));
 		t.setNome("Teste 1");
-		list.add(t);
-
-		return new BaseListLoadResult< TurmaDTO >( list );
+		ls.add(t);
+		return new BaseListLoadResult< TurmaDTO >( ls );
 	}
 	
 	@Override
 	public ListLoadResult< TurmaDTO > getListAll( CenarioDTO cenarioDTO ){
+		/*
 		List< TurmaDTO > list = new ArrayList< TurmaDTO >();
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
 		List< Turma > turmas = Turma.findAll(getInstituicaoEnsinoUser(), cenario);
@@ -86,7 +98,14 @@ public class TurmaServiceImpl
 		}
 		
 		return new BaseListLoadResult< TurmaDTO >( list );
-
+		*/
+		
+		List< TurmaDTO > ls = new ArrayList< TurmaDTO >();
+		TurmaDTO t = new TurmaDTO();
+		t.setId(Long.parseLong("1"));
+		t.setNome("Teste 1");
+		ls.add(t);
+		return new BaseListLoadResult< TurmaDTO >( ls );
 	}
 	
 	@Override

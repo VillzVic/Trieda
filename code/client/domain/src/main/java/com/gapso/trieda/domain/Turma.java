@@ -324,43 +324,25 @@ public class Turma implements Serializable, Clonable<Turma> {
 								+ " AND o.cenario = :cenario "
 								+ " AND alunos.demanda.disciplina = :disciplina ");*/
 
-		/*
+
 		Query q = entityManager()
-	    .createNativeQuery(" SELECT * FROM turmas ");
+				.createNativeQuery("select distinct t.* from trieda.turmas t" +
+		"inner join trieda.cenarios c on c.cen_id=t.cen_id" +
+		"inner join trieda.turmas_alunos_demanda tad on tad.tur_id=t.tur_id" +
+		"inner join trieda.demandas d on d.dis_id=t.dis_id" +
+		"where c.cen_id=:cenario and c.ins_id=:instituicaoEnsino and t.dis_id=:disciplina");
+
+		q.setParameter("cenario", cenario.getId());
+		q.setParameter("instituicaoEnsino", instituicaoEnsino.getId());
+		q.setParameter("disciplina", disciplina.getId());
 		
-		List< Turma > list = new ArrayList< Turma >();
+		List<Turma> lstTurma = new ArrayList<Turma>(); 
 		for (Object registro : q.getResultList()) {
 			Long turId = ((BigInteger)((Object[])registro)[0]).longValue();
-			String turNome = (((Object[])registro)[1]).toString();
-			
-			Turma turma = new Turma();
-			turma.setId(turId);
-			turma.setNome(turNome);
-			
-			list.add(turma);
-		}
-		*/
-		//.createQuery(" SELECT DISTINCT (o) FROM Turma o ");
-		//q.setParameter("cenario", cenario);
-		//q.setParameter("instituicaoEnsino", instituicaoEnsino);
-		//q.setParameter("disciplina", disciplina);
+			lstTurma.add(Turma.find(turId, instituicaoEnsino));
+		}		
 		
-		List< Turma > list = new ArrayList< Turma >();
-		
-		
-		Turma turma = new Turma();
-		turma.setId(Long.parseLong("1"));
-		turma.setNome("Teste 1");
-		
-		list.add(turma);
-		
-		Turma turma1 = new Turma();
-		turma1.setId(Long.parseLong("2"));
-		turma1.setNome("Teste 2");
-
-		list.add(turma1);
-		
-		return list;
+		return lstTurma;
 	}
 	
 	@SuppressWarnings("unchecked")

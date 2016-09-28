@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.shared.util.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.core.El;
@@ -15,6 +18,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
@@ -48,7 +52,8 @@ public class TurmaComboBox
 		this.turmaTodos = adicionaCampusTodos;
 		this.cenario = cenarioDTO;
 		this.clearButton = clearButton;
-
+		
+		
 		RpcProxy< ListLoadResult< TurmaDTO > > proxy =
 			new RpcProxy< ListLoadResult< TurmaDTO > >()
 		{
@@ -57,9 +62,6 @@ public class TurmaComboBox
 				AsyncCallback< ListLoadResult< TurmaDTO > > callback )
 			{
 				
-				Services.turmas().getListByDisciplina( cenario, disciplinaComboBox.getValue(), callback );
-				
-				/*
 				if ( disciplinaComboBox != null )
 				{
 					Services.turmas().getListByDisciplina( cenario, disciplinaComboBox.getValue(), callback );
@@ -75,13 +77,24 @@ public class TurmaComboBox
 						Services.turmas().getListAll( cenario, callback );
 					}
 				}
-				*/
+				
+		
+
 			}
 		};
-
-		
+	
 		setStore( new ListStore< TurmaDTO >(new BaseListLoader< BaseListLoadResult< TurmaDTO > >( proxy ) ) );
-
+		
+		/*
+		ListStore< TurmaDTO > ls = new ListStore< TurmaDTO >();
+		TurmaDTO t = new TurmaDTO();
+		t.setId(Long.parseLong("1"));
+		t.setNome("Teste 1");
+		ls.add(t);
+		setStore( ls );
+		*/
+		
+		
 		if ( disciplinaComboBox != null )
 		{
 			setEnabled( false );
