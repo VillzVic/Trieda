@@ -317,49 +317,50 @@ public class Turma implements Serializable, Clonable<Turma> {
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Disciplina disciplina) {
 
-		/*Query q = entityManager()
-				.createQuery(
-						" SELECT DISTINCT (o) FROM Turma o, IN (o.alunos) alunos "
-								+ " WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino "
-								+ " AND o.cenario = :cenario "
-								+ " AND alunos.demanda.disciplina = :disciplina ");*/
-
+		/*
+		 * Query q = entityManager() .createQuery(
+		 * " SELECT DISTINCT (o) FROM Turma o, IN (o.alunos) alunos " +
+		 * " WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
+		 * " AND o.cenario = :cenario " +
+		 * " AND alunos.demanda.disciplina = :disciplina ");
+		 */
 
 		Query q = entityManager()
-				.createNativeQuery("select distinct t.* from trieda.turmas t" +
-		"inner join trieda.cenarios c on c.cen_id=t.cen_id" +
-		"inner join trieda.turmas_alunos_demanda tad on tad.tur_id=t.tur_id" +
-		"inner join trieda.demandas d on d.dis_id=t.dis_id" +
-		"where c.cen_id=:cenario and c.ins_id=:instituicaoEnsino and t.dis_id=:disciplina");
+				.createNativeQuery(
+						"select distinct t.* from trieda.turmas t"
+								+ "inner join trieda.cenarios c on c.cen_id=t.cen_id"
+								+ "inner join trieda.turmas_alunos_demanda tad on tad.tur_id=t.tur_id"
+								+ "inner join trieda.demandas d on d.dis_id=t.dis_id"
+								+ "where c.cen_id=:cenario and c.ins_id=:instituicaoEnsino and t.dis_id=:disciplina");
 
 		q.setParameter("cenario", cenario.getId());
 		q.setParameter("instituicaoEnsino", instituicaoEnsino.getId());
 		q.setParameter("disciplina", disciplina.getId());
-		
-		List<Turma> lstTurma = new ArrayList<Turma>(); 
+
+		List<Turma> lstTurma = new ArrayList<Turma>();
 		for (Object registro : q.getResultList()) {
-			Long turId = ((BigInteger)((Object[])registro)[0]).longValue();
+			Long turId = ((BigInteger) ((Object[]) registro)[0]).longValue();
 			lstTurma.add(Turma.find(turId, instituicaoEnsino));
-		}		
-		
+		}
+
 		return lstTurma;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<Turma> findAll(InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+	public static List<Turma> findAll(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario) {
 
 		Query q = entityManager()
 				.createQuery(
 						" SELECT DISTINCT (o) FROM Turma o"
 								+ " WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino "
 								+ " AND o.cenario = :cenario ");
-		
+
 		q.setParameter("cenario", cenario);
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
 
 		return q.getResultList();
 	}
-
 
 	public Turma clone(CenarioClone novoCenario) {
 		Turma clone = new Turma();

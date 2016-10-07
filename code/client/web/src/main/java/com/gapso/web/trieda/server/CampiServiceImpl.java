@@ -29,6 +29,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.DeslocamentoCampus;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
@@ -48,7 +49,9 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.CampiService;
@@ -164,6 +167,23 @@ public class CampiServiceImpl extends RemoteService
 			campiDTO.add( ConvertBeans.toCampusDTO( c ) );
 		}
 		return new BaseListLoadResult< CampusDTO >( campiDTO );
+	}
+	
+	@Override
+	public ListLoadResult< CampusDTO > getCampusPorProfessor( ProfessorDTO professorDTO )
+	{
+
+		List< CampusDTO > list = new ArrayList< CampusDTO >();
+		Professor professor = Professor.find(
+						professorDTO.getId(), getInstituicaoEnsinoUser() );
+		List< Campus > listCampus = Campus.findByProfessorOtimizado(
+			getInstituicaoEnsinoUser(), professor );
+		for ( Campus listCamp : listCampus )
+		{
+			list.add( ConvertBeans.toCampusDTO( listCamp ) );
+		}
+		
+		return new BaseListLoadResult< CampusDTO >( list );
 	}
 
 	@Override

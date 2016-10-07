@@ -376,6 +376,22 @@ public class ProfessoresServiceImpl
 
 		return new BaseListLoadResult< ProfessorDTO >( listDTO );
 	}
+	
+	@Override
+	public ListLoadResult< ProfessorDTO > getProfessoresOtimizados( CenarioDTO cenarioDTO )
+	{
+		List< ProfessorDTO > listDTO = new ArrayList< ProfessorDTO >();
+		List< Professor > list = AtendimentoOperacional.findProfessorEmAtendimentos( ConvertBeans.toCenario(cenarioDTO), this.getInstituicaoEnsinoUser() );
+		Collections.sort( list );
+
+		for ( Professor professor : list )
+		{
+			listDTO.add( ConvertBeans.toProfessorDTO( professor ) );
+		}
+
+		return new BaseListLoadResult< ProfessorDTO >(listDTO);
+		
+	}
 
 	@Override
 	public List< ProfessorDTO > getProfessoresNaoEmCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO )

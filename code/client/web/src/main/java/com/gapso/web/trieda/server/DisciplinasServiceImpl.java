@@ -426,6 +426,45 @@ public class DisciplinasServiceImpl
 
 		return result;
 	}
+	
+	@Override
+	public ListLoadResult< DisciplinaDTO > getDisciplinaPorProfessor( ProfessorDTO professorDTO )
+	{
+
+		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
+		Professor professor = Professor.find(
+						professorDTO.getId(), getInstituicaoEnsinoUser() );
+		List< Disciplina > disciplinas = Disciplina.findByProfessorOtimizado(
+			getInstituicaoEnsinoUser(), professor );
+		for ( Disciplina disciplina : disciplinas )
+		{
+			list.add( ConvertBeans.toDisciplinaDTO( disciplina ) );
+		}
+		
+		return new BaseListLoadResult< DisciplinaDTO >( list );
+	}
+
+	
+	/*@Override
+	public ListLoadResult< DisciplinaDTO > getDisciplinaPorProfessor( ProfessorDTO professorDTO )
+	{
+
+		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
+		List< Disciplina > disciplinas = Disciplina.findByProfessorOtimizado(
+			getInstituicaoEnsinoUser(), ConvertBeans.toProfessor(professorDTO) );
+		
+		for ( Disciplina disciplina : disciplinas )
+		{
+
+			list.add( ConvertBeans.toDisciplinaDTO(disciplina) );
+		}
+
+		BasePagingLoadResult< DisciplinaDTO > result
+			= new BasePagingLoadResult< DisciplinaDTO >( list );
+
+
+		return new BaseListLoadResult< DisciplinaDTO >( list );
+	}*/
 
 	@Override
 	public PagingLoadResult< DisciplinaDTO > getBuscaList(	CenarioDTO cenarioDTO, String nome, String codigo,

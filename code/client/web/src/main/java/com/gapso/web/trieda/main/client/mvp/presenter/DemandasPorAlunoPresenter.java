@@ -165,7 +165,7 @@ public class DemandasPorAlunoPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				final AlunosDemandaServiceAsync service = Services.alunosDemanda();
-				display.getGrid().mask(display.getI18nMessages().deleting(), "deleting");
+				display.getGrid().mask(display.getI18nMessages().deleting(), "loading");
 				
 				service.removeAllAlunosDemanda( cenarioDTO, new AsyncCallback< Void >()
 				{

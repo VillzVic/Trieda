@@ -3277,11 +3277,6 @@ public class ConvertBeans {
 				dto.getDisciplinaId(), instituicaoEnsino ) );
 		}
 		
-		if ( dto.getTurmaId() != null )
-		{
-			domain.setTurma( Turma.find(
-				dto.getTurmaId(), instituicaoEnsino ) );
-		}
 
 		if ( dto.getCampusId() != null )
 		{
@@ -3330,14 +3325,6 @@ public class ConvertBeans {
 		{
 			dto.setDisciplinaId( disciplina.getId() );
 			dto.setDisciplinaString( disciplina.getCodigo() );
-		}
-
-		Turma turma = domain.getTurma();
-
-		if ( turma != null )
-		{
-			dto.setTurmaId( turma.getId() );
-			dto.setTurmaString( turma.getNome() );
 		}
 
 		

@@ -1360,4 +1360,23 @@ public class Campus
 			entidadeClone.getUnidades().add(novoCenario.clone(unidade));
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Campus> findByProfessorOtimizado(
+			InstituicaoEnsino instituicaoEnsino, Professor professor) {
+
+		Query q = entityManager()
+				.createQuery(
+						" SELECT DISTINCT ( o.oferta.campus ) " +
+								" FROM AtendimentoOperacional o " +
+								" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+								" AND o.oferta.campus.cenario = :cenario " +
+								" AND o.professor = :professor " );
+
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("cenario", professor.getCenario());
+		q.setParameter("professor", professor );
+
+		return q.getResultList();
+	}
 }

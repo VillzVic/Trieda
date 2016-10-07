@@ -166,7 +166,7 @@ public class EquivalenciasPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				final EquivalenciasServiceAsync service = Services.equivalencias();
-				display.getGrid().mask(display.getI18nMessages().deleting(), "deleting");
+				display.getGrid().mask(display.getI18nMessages().deleting(), "loading");
 				service.removeAll(cenarioDTO, new AsyncCallback< Void >()
 								{
 					@Override

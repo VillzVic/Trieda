@@ -125,6 +125,24 @@ public class SalasServiceImpl
 	}
 
 	@Override
+	public ListLoadResult< SalaDTO > getSalasPorTurma(  AtendimentoOperacionalDTO turma )
+	{
+		List< SalaDTO > list = new ArrayList< SalaDTO >();
+		/*Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+*/
+		List< Sala > salas = Sala.findByTurmaOtimizada(
+			getInstituicaoEnsinoUser(), ConvertBeans.toAtendimentoOperacional(turma), getCenario() );
+
+		for ( Sala sala : salas )
+		{
+			list.add( ConvertBeans.toSalaDTO( sala ) );
+		}
+
+		return new BaseListLoadResult< SalaDTO >( list );
+	}
+	
+	@Override
 	public ListLoadResult< SalaDTO > getBuscaList( UnidadeDTO unidadeDTO )
 	{
 		Unidade unidade = Unidade.find(

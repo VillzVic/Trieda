@@ -11,7 +11,9 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -41,4 +43,5 @@ public interface CampiService
 	ListLoadResult< CampusDTO > getListByCurriculo( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO );
 	ListLoadResult<CampusDTO> getListAllCampiTodos( CenarioDTO cenarioDTO );
 	List<BaseTreeModel> getCenariosComparados(List<CenarioDTO> cenariosDTO);
+	ListLoadResult< CampusDTO > getCampusPorProfessor( ProfessorDTO professorDTO );
 }

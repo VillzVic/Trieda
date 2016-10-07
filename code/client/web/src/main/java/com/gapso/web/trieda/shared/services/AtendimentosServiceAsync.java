@@ -9,6 +9,7 @@ import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -202,4 +203,7 @@ public interface AtendimentosServiceAsync {
 	void getAmbientesFaixaOcupacaoHorariosPorDiaSemana(CenarioDTO cenarioDTO,
 			CampusDTO campusDTO,
 			AsyncCallback<List<RelatorioQuantidadeDoubleDTO>> callback);
+	
+	void getTurmasPorDisciplina(DisciplinaDTO disciplinaDTO, AsyncCallback< ListLoadResult< AtendimentoOperacionalDTO > > callback );
+	
 }

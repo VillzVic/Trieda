@@ -51,6 +51,7 @@ public interface ProfessoresServiceAsync
 		AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
 	void removeProfessorCampus( List< ProfessorCampusDTO > professorCampusDTOList, AsyncCallback< Void > callback );
 	void getProfessoresEmCampus( CampusDTO campusDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
+	void getProfessoresOtimizados( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
 	void getProfessoresNaoEmCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ProfessorDTO > > callback );
 	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList, AsyncCallback< Void > callback );
 	void getProfessorCampusByCurrentProfessor( CenarioDTO cenarioDTO, AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );

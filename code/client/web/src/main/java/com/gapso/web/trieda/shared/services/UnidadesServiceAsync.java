@@ -30,4 +30,5 @@ public interface UnidadesServiceAsync
 	void saveDeslocamento( CampusDTO campus, List< DeslocamentoUnidadeDTO > list, AsyncCallback< Void > callback );
 	void getHorariosDisponiveis( UnidadeDTO unidadeDTO,
 		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
+	void getUnidadesPorCampus( CampusDTO campusDTO, AsyncCallback< ListLoadResult< UnidadeDTO > > callback );
 }

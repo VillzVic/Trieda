@@ -199,7 +199,7 @@ public class AlunosPresenter
 								public void componentSelected( ButtonEvent ce )
 								{									 
 								final AlunosServiceAsync service = Services.alunos();
-								display.getGrid().mask(display.getI18nMessages().deleting(), "deleting");
+								display.getGrid().mask(display.getI18nMessages().deleting(), "loading");
 									service.removeAllAlunos(cenarioDTO, new AsyncCallback< Void >()
 									{
 										@Override

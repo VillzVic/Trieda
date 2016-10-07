@@ -14,7 +14,6 @@ public class FixacaoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
-	public static final String PROPERTY_TURMA_ID = "turmaId";
 	public static final String PROPERTY_TURMA_STRING = "turmaString";
 	public static final String PROPERTY_CAMPUS_ID = "campusId";
 	public static final String PROPERTY_CAMPUS_STRING = "campusString";
@@ -24,6 +23,7 @@ public class FixacaoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_SALA_STRING = "salaString";
 	public static final String PROPERTY_FIXA_DIAS_HORARIOS = "diaEHorarioString";
 	public static final String PROPERTY_FIXA_AMBIENTE = "ambienteString";
+	
 	public void setId(Long value)
 	{
 		set(PROPERTY_ID, value);
@@ -79,13 +79,6 @@ public class FixacaoDTO extends AbstractDTO<String>
 	}
 	public String getDisciplinaString() {
 		return get(PROPERTY_DISCIPLINA_STRING);
-	}
-	
-	public void setTurmaId(Long value) {
-		set(PROPERTY_TURMA_ID, value);
-	}
-	public Long getTurmaId() {
-		return get(PROPERTY_TURMA_ID);
 	}
 	
 	public void setTurmaString(String value) {

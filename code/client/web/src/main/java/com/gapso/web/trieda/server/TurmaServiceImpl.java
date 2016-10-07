@@ -1,30 +1,21 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.Turma;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Turma;
 import com.gapso.web.trieda.server.util.ConvertBeans;
-import com.gapso.web.trieda.server.util.TriedaServerUtil;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
-import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.services.TurmaService;
-import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @Transactional
 public class TurmaServiceImpl
@@ -107,6 +98,23 @@ public class TurmaServiceImpl
 		ls.add(t);
 		return new BaseListLoadResult< TurmaDTO >( ls );
 	}
+	
+	/*@Override
+	public ListLoadResult< AtendimentoOperacionalDTO > getTurmasPorDisciplina( DisciplinaDTO disciplinaDTO )
+	{
+		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
+		Disciplina disciplina = Disciplina.find(
+						disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+		List< AtendimentoOperacional > turmas = AtendimentoOperacional.findByDisciplinaOtimizada(
+			getInstituicaoEnsinoUser(), disciplina );
+		
+		for ( AtendimentoOperacional turma : turmas )
+		{
+			list.add( ConvertBeans.toAtendimentoOperacionalDTO( turma ) );
+		}
+
+		return new BaseListLoadResult< AtendimentoOperacionalDTO >( list );
+	}*/
 	
 	@Override
 	public TurmaDTO getTurma( Long id )

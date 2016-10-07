@@ -80,6 +80,7 @@ public class FixacoesServiceImpl
 	public void save( FixacaoDTO fixacaoDTO,
 		List< HorarioDisponivelCenarioDTO > hdcDTOList )
 	{
+		System.out.println("Fixacao: " + fixacaoDTO + " HDC: " + hdcDTOList.toString());
 		Fixacao.entityManager().clear();
 		Fixacao fixacao = ConvertBeans.toFixacao( fixacaoDTO );
 

@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
@@ -60,4 +61,5 @@ public interface SalasService
 	SalaDTO getProxSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	SalaDTO getAntSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab);
+	ListLoadResult< SalaDTO > getSalasPorTurma(AtendimentoOperacionalDTO turma);
 }

@@ -54,6 +54,7 @@ public interface ProfessoresService
 	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusList( CenarioDTO cenarioDTO, CampusDTO campusDTO, ProfessorDTO professorDTO );
 	void removeProfessorCampus( List< ProfessorCampusDTO > professorCampusDTOList );
 	ListLoadResult<ProfessorDTO> getProfessoresEmCampus( CampusDTO campusDTO );
+	ListLoadResult<ProfessorDTO> getProfessoresOtimizados( CenarioDTO cenarioDTO );
 	List< ProfessorDTO > getProfessoresNaoEmCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList );
 	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusByCurrentProfessor( CenarioDTO cenarioDTO );
