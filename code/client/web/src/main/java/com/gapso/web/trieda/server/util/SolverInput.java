@@ -1993,7 +1993,7 @@ public class SolverInput
 		GrupoFixacao grupoFixacao = this.of.createGrupoFixacao();
 
 		List< Fixacao > fixacoes
-			= Fixacao.findAll( this.instituicaoEnsino );
+			= Fixacao.findAll( this.instituicaoEnsino, this.cenario );
 
 		for ( Fixacao fixacao : fixacoes )
 		{

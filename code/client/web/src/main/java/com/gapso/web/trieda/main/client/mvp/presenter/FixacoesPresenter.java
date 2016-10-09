@@ -82,7 +82,7 @@ public class FixacoesPresenter
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<FixacaoDTO>> callback) {
 				String codigo = display.getCodigoBuscaTextField().getValue();
-				Services.fixacoes().getBuscaList(codigo, (PagingLoadConfig)loadConfig, callback);
+				Services.fixacoes().getBuscaList(cenario, codigo, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);

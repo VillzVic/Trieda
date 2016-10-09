@@ -14,12 +14,14 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
@@ -37,13 +39,15 @@ public class FixacoesServiceImpl
 	public FixacaoDTO getFixacao( Long id )
 	{
 		return ConvertBeans.toFixacaoDTO(
-			Fixacao.find( id, getInstituicaoEnsinoUser() ) );
+			Fixacao.find( id, getInstituicaoEnsinoUser()) );
 	}
 
 	@Override
-	public PagingLoadResult< FixacaoDTO > getBuscaList(
+	public PagingLoadResult< FixacaoDTO > getBuscaList(CenarioDTO cenarioDTO,
 		String codigo, PagingLoadConfig config )
 	{
+		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
+		
 		String orderBy = config.getSortField();
 
 		if ( orderBy != null )
@@ -60,7 +64,7 @@ public class FixacoesServiceImpl
 		}
 
 		List< FixacaoDTO > list = new ArrayList< FixacaoDTO >();
-		List< Fixacao > listDomains = Fixacao.findBy( getInstituicaoEnsinoUser(),
+		List< Fixacao > listDomains = Fixacao.findBy( getInstituicaoEnsinoUser(),cenario,
 			codigo, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Fixacao fixacao : listDomains )
@@ -71,7 +75,7 @@ public class FixacoesServiceImpl
 		BasePagingLoadResult< FixacaoDTO > result
 			= new BasePagingLoadResult< FixacaoDTO >( list );
 		result.setOffset( config.getOffset() );
-		result.setTotalLength( Fixacao.count( getInstituicaoEnsinoUser() ) );
+		result.setTotalLength( Fixacao.count( getInstituicaoEnsinoUser(),cenario ) );
 
 		return result;
 	}
@@ -80,7 +84,6 @@ public class FixacoesServiceImpl
 	public void save( FixacaoDTO fixacaoDTO,
 		List< HorarioDisponivelCenarioDTO > hdcDTOList )
 	{
-		System.out.println("Fixacao: " + fixacaoDTO + " HDC: " + hdcDTOList.toString());
 		Fixacao.entityManager().clear();
 		Fixacao fixacao = ConvertBeans.toFixacao( fixacaoDTO );
 
@@ -108,7 +111,7 @@ public class FixacoesServiceImpl
 		fixacao = Fixacao.find( id, getInstituicaoEnsinoUser() );
 
 		adicionarList.removeAll( fixacao.getHorarios(
-			getInstituicaoEnsinoUser() ) );
+			getInstituicaoEnsinoUser(),fixacao.getCenario() ));
 
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{
@@ -125,7 +128,7 @@ public class FixacoesServiceImpl
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				fixacao.getHorarios( getInstituicaoEnsinoUser() ) );
+				fixacao.getHorarios( getInstituicaoEnsinoUser(),fixacao.getCenario() ) );
 
 		removerList.removeAll( listSelecionados );
 
@@ -157,7 +160,7 @@ public class FixacoesServiceImpl
 
 		return ConvertBeans.toHorarioDisponivelCenarioDTO(
 			new ArrayList< HorarioDisponivelCenario >(
-				fixacao.getHorarios( getInstituicaoEnsinoUser() ) ) );
+				fixacao.getHorarios( getInstituicaoEnsinoUser(),fixacao.getCenario() ) ) );
 	}
 
 	@Override

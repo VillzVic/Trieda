@@ -8,6 +8,7 @@ public class FixacaoDTO extends AbstractDTO<String>
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
 	public static final String PROPERTY_PROFESSOR_ID = "professorId";
@@ -39,6 +40,15 @@ public class FixacaoDTO extends AbstractDTO<String>
 		return get(PROPERTY_VERSION);
 	}
 
+	
+	public void setCenarioId(Long value) {
+		set(PROPERTY_CENARIO_ID, value);
+	}
+	public Long getCenarioId() {
+		return get(PROPERTY_CENARIO_ID);
+	}
+	
+	
 	public void setCodigo(String value) {
 		set(PROPERTY_CODIGO, value);
 	}

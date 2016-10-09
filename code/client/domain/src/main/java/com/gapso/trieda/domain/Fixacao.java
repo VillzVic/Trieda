@@ -68,6 +68,11 @@ public class Fixacao
     @Size( min = 1, max = 255 )
     private String turma;
     
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Cenario.class)
+    @JoinColumn( name = "CEN_ID" )
+    private Cenario cenario;
+    
     @ManyToOne( targetEntity = Campus.class )
     @JoinColumn( name = "CAM_ID" )
     private Campus campus;
@@ -228,22 +233,25 @@ public class Fixacao
     }
 
     public static int count(
-    	InstituicaoEnsino instituicaoEnsino )
+    	InstituicaoEnsino instituicaoEnsino,
+    	Cenario cenario)
     {
-    	List< Fixacao > list = Fixacao.findAll( instituicaoEnsino );
+    	List< Fixacao > list = Fixacao.findAll( instituicaoEnsino,cenario );
         return ( list == null ? 0 : list.size() );
     }
 
     @SuppressWarnings( "unchecked" )
     public static List< Fixacao > findAll(
-    	InstituicaoEnsino instituicaoEnsino )
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
     {
         Query q = entityManager().createQuery(
         	"SELECT o " +
         	"FROM Fixacao o " +
-        	"WHERE o.instituicaoEnsino = :instituicaoEnsino ");
+        	"WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+    		"AND o.cenario = :cenario ");
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
 
         List< Fixacao > list = q.getResultList();
         return list;
@@ -271,24 +279,28 @@ public class Fixacao
 
     public static List< Fixacao > find(
     	InstituicaoEnsino instituicaoEnsino,
+    	Cenario cenario,
         int firstResult, int maxResults )
     {
-        return Fixacao.find( instituicaoEnsino,
+        return Fixacao.find( instituicaoEnsino, cenario,
         	firstResult, maxResults, null );
     }
 
     @SuppressWarnings( "unchecked" )
     public static List< Fixacao > find(
     	InstituicaoEnsino instituicaoEnsino,
+    	Cenario cenario,
     	int firstResult, int maxResults, String orderBy )
     {
         orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
         Query q = entityManager().createQuery(
         	"SELECT o FROM Fixacao o " +
-        	"WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+        	"WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	"AND o.cenario = :cenario " + orderBy );
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );
         
@@ -303,6 +315,7 @@ public class Fixacao
         	        	" SELECT o FROM Fixacao o " +
         	        	" WHERE o.campus.cenario = :cenario " +
         	        	" AND o.instituicaoEnsino = :instituicaoEnsino " );
+    					
 
         q.setParameter( "cenario", cenario );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
@@ -313,15 +326,17 @@ public class Fixacao
 
     @SuppressWarnings( "unchecked" )
     public static List< Fixacao > findAllBy(
-    	InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, Disciplina disciplina )
     {
         Query q = entityManager().createQuery(
         	" SELECT o FROM Fixacao o " +
         	" WHERE o.disciplina = :disciplina " +
-        	" AND o.instituicaoEnsino = :instituicaoEnsino " );
+        	" AND o.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.cenario = :cenario " );
 
         q.setParameter( "disciplina", disciplina );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
 
         List< Fixacao > list = q.getResultList();
         return list;
@@ -329,7 +344,7 @@ public class Fixacao
     
     @SuppressWarnings( "unchecked" )
     public static List< Fixacao > findBy(
-    	InstituicaoEnsino instituicaoEnsino, String codigo,
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
     	int firstResult, int maxResults, String orderBy )
     {
     	codigo = ( ( codigo == null || codigo.length() == 0 ) ? "" : codigo );
@@ -350,10 +365,12 @@ public class Fixacao
         Query q = entityManager().createQuery(
         	" SELECT o FROM Fixacao o WHERE " +
         	" LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
-        	" AND o.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+        	" AND o.instituicaoEnsino = :instituicaoEnsino " + 
+        	" AND o.cenario = :cenario " + orderBy );
 
         q.setParameter( "codigo", codigo );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );
 
@@ -363,16 +380,18 @@ public class Fixacao
 
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.fixacoes ) c " +
 			" WHERE c = :fixacao " +
 			" AND c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.cenario = :cenario " +
 			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "fixacao", this );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return q.getResultList();
 	}
@@ -426,6 +445,18 @@ public class Fixacao
 	{
         this.turma = turma;
     }
+	
+	
+	public Cenario getCenario()
+	{
+		return this.cenario;
+	}
+
+	public void setCenario( Cenario cenario )
+	{
+		this.cenario = cenario;
+	}
+
 	
 	public Campus getCampus()
 	{
@@ -481,6 +512,7 @@ public class Fixacao
         sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
         sb.append( "Turma: " ).append( getTurma() ).append( ", " );
         sb.append( "Campus: " ).append( getCampus() ).append( ", " );
+        sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
         sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
         sb.append( "Sala: " ).append( getSala() ).append( ", " );
         sb.append( "Horarios: " ).append( getHorarios() == null ?

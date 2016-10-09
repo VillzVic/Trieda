@@ -108,9 +108,8 @@ public class FixacaoFormPresenter
 			{
 				if ( isValid() )
 				{
-					List< HorarioDisponivelCenarioDTO > hdcDTOList
-						= display.getGrid().getStore().getModels();
-
+					List< HorarioDisponivelCenarioDTO > hdcDTOList	= display.getGrid().getStore().getModels();
+					
 					Services.fixacoes().save( getDTO(), hdcDTOList, new AsyncCallback< Void >()
 					{
 						@Override
@@ -179,6 +178,8 @@ public class FixacaoFormPresenter
 		FixacaoDTO fixacaoDTO = this.display.getFixacaoDTO();
 
 		fixacaoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		fixacaoDTO.setCenarioId( this.cenario.getId() );
+		
 		fixacaoDTO.setCodigo( " " );
 		fixacaoDTO.setDescricao( this.display.getDescricaoTextField().getValue() );
 

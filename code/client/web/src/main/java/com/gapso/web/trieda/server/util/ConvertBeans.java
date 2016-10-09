@@ -3262,8 +3262,16 @@ public class ConvertBeans {
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
+		
+
+		Cenario cenario = Cenario.find(dto.getCenarioId(), instituicaoEnsino );
+		domain.setCenario( cenario );
+		
+		
+		
 		domain.setCodigo( dto.getCodigo() );
 		domain.setDescricao( dto.getDescricao() );
+		domain.setTurma( dto.getTurmaString() );
 
 		if ( dto.getProfessorId() != null )
 		{
@@ -3308,8 +3316,14 @@ public class ConvertBeans {
 
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
+		
+		
+		dto.setCenarioId( domain.getCenario().getId() );
+		
+		
 		dto.setCodigo( domain.getCodigo() );
 		dto.setDescricao( domain.getDescricao() );
+		dto.setTurmaString( domain.getTurma() );
 
 		Professor professor = domain.getProfessor();
 

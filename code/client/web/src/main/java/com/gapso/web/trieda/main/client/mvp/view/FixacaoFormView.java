@@ -82,7 +82,7 @@ public class FixacaoFormView extends MyComposite implements
 			CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO,
 			List<HorarioDisponivelCenarioDTO> listHorarios,	Boolean selectDefault) {
 		this.cenarioDTO = cenarioDTO;
-		this.fixacaoDTO = fixacaoDTO;
+		this.fixacaoDTO = fixacaoDTO; 
 		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		this.campusDTO = campusDTO;
