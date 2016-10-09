@@ -44,7 +44,6 @@ public class FixacaoFormPresenter
 	public interface Display
 	{
 		Button getSalvarButton();
-		TextField< String > getCodigoTextField();
 		TextField< String > getDescricaoTextField();
 		OtimizacaoDisciplinasComboBox getDisciplinaComboBox();
 		OtimizacaoTurmaComboBox getTurmaComboBox();
@@ -180,7 +179,6 @@ public class FixacaoFormPresenter
 		fixacaoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		fixacaoDTO.setCenarioId( this.cenario.getId() );
 		
-		fixacaoDTO.setCodigo( " " );
 		fixacaoDTO.setDescricao( this.display.getDescricaoTextField().getValue() );
 
 		ProfessorDTO professor = this.display.getProfessorComboBox().getValue();

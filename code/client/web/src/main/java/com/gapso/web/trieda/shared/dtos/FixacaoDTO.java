@@ -9,7 +9,6 @@ public class FixacaoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
-	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
 	public static final String PROPERTY_PROFESSOR_ID = "professorId";
 	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
@@ -46,14 +45,6 @@ public class FixacaoDTO extends AbstractDTO<String>
 	}
 	public Long getCenarioId() {
 		return get(PROPERTY_CENARIO_ID);
-	}
-	
-	
-	public void setCodigo(String value) {
-		set(PROPERTY_CODIGO, value);
-	}
-	public String getCodigo() {
-		return get(PROPERTY_CODIGO);
 	}
 	
 	public void setDescricao(String value) {
@@ -158,11 +149,11 @@ public class FixacaoDTO extends AbstractDTO<String>
 	
 	@Override
 	public String getNaturalKey() {
-		return getCodigo();
+		return getId().toString();
 	}
 	
 	@Override
 	public int compareTo(FixacaoDTO o) {
-		return getCodigo().compareTo(o.getCodigo());
+		return getId().compareTo(o.getId());
 	}
 }

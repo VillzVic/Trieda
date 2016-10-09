@@ -18,7 +18,7 @@ public interface FixacoesService
 	extends RemoteService
 {
 	FixacaoDTO getFixacao( Long id );
-	PagingLoadResult< FixacaoDTO > getBuscaList(CenarioDTO cenarioDTO, String codigo, PagingLoadConfig config );
+	PagingLoadResult< FixacaoDTO > getBuscaList(CenarioDTO cenarioDTO, String descricao, PagingLoadConfig config );
 	void remove( List< FixacaoDTO > fixacaoDTOList );
 	void save( FixacaoDTO fixacaoDTO, List< HorarioDisponivelCenarioDTO > hdcDTOList );
 	List< HorarioDisponivelCenarioDTO > getHorariosSelecionados( FixacaoDTO fixacaoDTO );

@@ -119,7 +119,7 @@ public class FixacoesExportExcel
 	private int writeData(Fixacao fixacao, int row, Sheet sheet)
 	{
 		// Código
-		setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getCodigo() );
+		setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getId() );
 
 		// Descrição
 		setCell( row, 3, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getDescricao() );

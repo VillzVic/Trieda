@@ -3269,7 +3269,6 @@ public class ConvertBeans {
 		
 		
 		
-		domain.setCodigo( dto.getCodigo() );
 		domain.setDescricao( dto.getDescricao() );
 		domain.setTurma( dto.getTurmaString() );
 
@@ -3321,7 +3320,6 @@ public class ConvertBeans {
 		dto.setCenarioId( domain.getCenario().getId() );
 		
 		
-		dto.setCodigo( domain.getCodigo() );
 		dto.setDescricao( domain.getDescricao() );
 		dto.setTurmaString( domain.getTurma() );
 
@@ -3372,7 +3370,7 @@ public class ConvertBeans {
 			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 		}
 
-		dto.setDisplayText( domain.getCodigo() );
+		dto.setDisplayText( domain.getDescricao() );
 
 		return dto;
 	}

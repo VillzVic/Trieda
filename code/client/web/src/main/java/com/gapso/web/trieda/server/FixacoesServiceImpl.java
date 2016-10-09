@@ -44,7 +44,7 @@ public class FixacoesServiceImpl
 
 	@Override
 	public PagingLoadResult< FixacaoDTO > getBuscaList(CenarioDTO cenarioDTO,
-		String codigo, PagingLoadConfig config )
+		String descricao, PagingLoadConfig config )
 	{
 		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
 		
@@ -65,7 +65,7 @@ public class FixacoesServiceImpl
 
 		List< FixacaoDTO > list = new ArrayList< FixacaoDTO >();
 		List< Fixacao > listDomains = Fixacao.findBy( getInstituicaoEnsinoUser(),cenario,
-			codigo, config.getOffset(), config.getLimit(), orderBy );
+						descricao, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Fixacao fixacao : listDomains )
 		{

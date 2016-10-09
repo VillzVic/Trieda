@@ -52,7 +52,6 @@ public class FixacaoFormView extends MyComposite implements
 	private SimpleModal simpleModal;
 	private LayoutContainer container;
 	private FormPanel formPanel;
-	private TextField<String> codigoTF;
 	private TextField<String> descricaoTF;
 	private OtimizacaoProfessorComboBox professorCB;
 	private OtimizacaoDisciplinasComboBox disciplinaCB;
@@ -114,17 +113,6 @@ public class FixacaoFormView extends MyComposite implements
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
-
-		codigoTF = new TextField<String>();
-		codigoTF.setName(FixacaoDTO.PROPERTY_CODIGO);
-		codigoTF.setValue(fixacaoDTO.getCodigo());
-		codigoTF.setFieldLabel("Código");
-		codigoTF.setAllowBlank(true);
-		codigoTF.setMinLength(1);
-		codigoTF.setMaxLength(50);
-		codigoTF.setEmptyText("Preencha o código");
-		codigoTF.hide();
-		formPanel.add(codigoTF, formData);
 
 		descricaoTF = new TextField<String>();
 		descricaoTF.setName(FixacaoDTO.PROPERTY_DESCRICAO);
@@ -225,11 +213,6 @@ public class FixacaoFormView extends MyComposite implements
 	@Override
 	public FixacaoDTO getFixacaoDTO() {
 		return fixacaoDTO;
-	}
-
-	@Override
-	public TextField<String> getCodigoTextField() {
-		return codigoTF;
 	}
 
 	@Override

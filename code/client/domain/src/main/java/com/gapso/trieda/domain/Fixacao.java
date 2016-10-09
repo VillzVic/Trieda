@@ -44,13 +44,7 @@ public class Fixacao
 {
 	private static final long serialVersionUID = -7545908494415718467L;
 
-
 	@NotNull
-    @Column( name = "FIX_CODIGO" )
-    @Size( min = 1, max = 50 )
-    private String codigo;
-    
-    @NotNull
     @Column( name = "FIX_DESCRICAO" )
     @Size( min = 1, max = 50 )
     private String descricao;
@@ -344,31 +338,31 @@ public class Fixacao
     
     @SuppressWarnings( "unchecked" )
     public static List< Fixacao > findBy(
-    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, String descricao,
     	int firstResult, int maxResults, String orderBy )
     {
-    	codigo = ( ( codigo == null || codigo.length() == 0 ) ? "" : codigo );
-        codigo = codigo.replace( '*', '%' );
+    	descricao = ( ( descricao == null || descricao.length() == 0 ) ? "" : descricao );
+    	descricao = descricao.replace( '*', '%' );
 
-        if ( codigo == "" || codigo.charAt( 0 ) != '%' )
+        if ( descricao == "" || descricao.charAt( 0 ) != '%' )
         {
-            codigo = ( "%" + codigo );
+        	descricao = ( "%" + descricao );
         }
 
-        if ( codigo.charAt( codigo.length() - 1 ) != '%' )
+        if ( descricao.charAt( descricao.length() - 1 ) != '%' )
         {
-            codigo = ( codigo + "%" );
+        	descricao = ( descricao + "%" );
         }
 
         orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
         Query q = entityManager().createQuery(
         	" SELECT o FROM Fixacao o WHERE " +
-        	" LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+        	" LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " +
         	" AND o.instituicaoEnsino = :instituicaoEnsino " + 
         	" AND o.cenario = :cenario " + orderBy );
 
-        q.setParameter( "codigo", codigo );
+        q.setParameter( "descricao", descricao );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
         q.setFirstResult( firstResult );
@@ -395,16 +389,6 @@ public class Fixacao
 
 		return q.getResultList();
 	}
-
-    public String getCodigo()
-    {
-        return this.codigo;
-    }
-
-    public void setCodigo( String codigo )
-    {
-        this.codigo = codigo;
-    }
 
     public String getDescricao()
     {
@@ -506,7 +490,6 @@ public class Fixacao
         sb.append( "Id: " ).append( getId() ).append( ", " );
         sb.append( "Version: " ).append( getVersion() ).append( ", " );
         sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-        sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
         sb.append( "Professor: " ).append( getProfessor() ).append( ", " );
         sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
         sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
