@@ -161,6 +161,7 @@ public interface AtendimentosService extends RemoteService {
 
 	List<RelatorioQuantidadeDoubleDTO> getAmbientesFaixaOcupacaoHorariosPorDiaSemana(
 			CenarioDTO cenarioDTO, CampusDTO campusDTO);
-	ListLoadResult< AtendimentoOperacionalDTO > getTurmasPorDisciplina( DisciplinaDTO disciplinaDTO );
+	ListLoadResult< AtendimentoOperacionalDTO > getTurmasPorDisciplinaOtimizada( DisciplinaDTO disciplinaDTO );
+
 	
 }

@@ -27,7 +27,7 @@ public class OtimizacaoTurmaComboBox extends ComboBox<AtendimentoOperacionalDTO>
 		RpcProxy<ListLoadResult<AtendimentoOperacionalDTO>> proxy = new RpcProxy<ListLoadResult<AtendimentoOperacionalDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<AtendimentoOperacionalDTO>> callback) {
-				Services.atendimentos().getTurmasPorDisciplina(disciplinaComboBox.getValue(), callback);
+				Services.atendimentos().getTurmasPorDisciplinaOtimizada(disciplinaComboBox.getValue(), callback);
 			}
 		};
 		
@@ -38,6 +38,7 @@ public class OtimizacaoTurmaComboBox extends ComboBox<AtendimentoOperacionalDTO>
 		setEmptyText("Selecione a Turma");
 		setSimpleTemplate("{" + AtendimentoOperacionalDTO.PROPERTY_TURMA + "}");
 		setEditable(false);
+		setEnabled(this.disciplinaComboBox.getValue() != null);
 		setTriggerAction(TriggerAction.ALL);
 		setUseQueryCache(false);
 		
@@ -51,7 +52,9 @@ public class OtimizacaoTurmaComboBox extends ComboBox<AtendimentoOperacionalDTO>
 				getStore().removeAll();
 				setValue(null);
 				setEnabled(disciplinaDTO != null);
-				getStore().getLoader().load();
+				if(disciplinaDTO != null) {
+					getStore().getLoader().load();
+				}
 				
 			}
 		});

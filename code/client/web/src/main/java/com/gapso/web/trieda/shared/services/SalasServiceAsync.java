@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FaixaCapacidadeSalaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaUtilizadaDTO;
@@ -65,5 +66,5 @@ public interface SalasServiceAsync
 			AsyncCallback<SalaDTO> callback);
 	void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab,
 			AsyncCallback<Void> asyncCallback);
-	void getSalasPorTurma(AtendimentoOperacionalDTO turma, AsyncCallback< ListLoadResult< SalaDTO > > callback);
+	void getSalasOtimizadas(AtendimentoOperacionalDTO turma, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 }

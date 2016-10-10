@@ -428,7 +428,7 @@ public class DisciplinasServiceImpl
 	}
 	
 	@Override
-	public ListLoadResult< DisciplinaDTO > getDisciplinaPorProfessor( ProfessorDTO professorDTO )
+	public ListLoadResult< DisciplinaDTO > getDisciplinaPorProfessorOtimizado( ProfessorDTO professorDTO )
 	{
 
 		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();

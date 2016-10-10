@@ -176,7 +176,7 @@ public class UnidadesServiceImpl
 	
 
 	@Override
-	public ListLoadResult< UnidadeDTO > getUnidadesPorCampus( CampusDTO campusDTO )
+	public ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( CampusDTO campusDTO )
 	{
 		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
 		Campus campus = Campus.find(

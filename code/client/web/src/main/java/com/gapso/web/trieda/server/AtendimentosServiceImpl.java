@@ -195,7 +195,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	@Override
-	public ListLoadResult< AtendimentoOperacionalDTO > getTurmasPorDisciplina( DisciplinaDTO disciplinaDTO )
+	public ListLoadResult< AtendimentoOperacionalDTO > getTurmasPorDisciplinaOtimizada( DisciplinaDTO disciplinaDTO )
 	{
 		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
 		AtendimentoOperacionalDTO atendimento;

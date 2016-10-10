@@ -15,7 +15,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class OtimizacaoProfessorComboBox extends ComboBox<ProfessorDTO>
 {
-	private Boolean readOnly;
 	private CenarioDTO cenarioDTO;
 
 

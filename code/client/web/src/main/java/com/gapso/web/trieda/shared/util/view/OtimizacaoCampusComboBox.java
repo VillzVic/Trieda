@@ -40,6 +40,7 @@ public class OtimizacaoCampusComboBox extends ComboBox<CampusDTO>
 		setEditable( false );
 		setTriggerAction( TriggerAction.ALL );
 		setUseQueryCache(false);
+		setEnabled(this.professorComboBox.getValue() != null);
 		
 	}
 

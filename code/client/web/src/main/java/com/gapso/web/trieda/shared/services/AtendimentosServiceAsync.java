@@ -204,6 +204,6 @@ public interface AtendimentosServiceAsync {
 			CampusDTO campusDTO,
 			AsyncCallback<List<RelatorioQuantidadeDoubleDTO>> callback);
 	
-	void getTurmasPorDisciplina(DisciplinaDTO disciplinaDTO, AsyncCallback< ListLoadResult< AtendimentoOperacionalDTO > > callback );
-	
+	void getTurmasPorDisciplinaOtimizada(DisciplinaDTO disciplinaDTO, AsyncCallback< ListLoadResult< AtendimentoOperacionalDTO > > callback );
+
 }

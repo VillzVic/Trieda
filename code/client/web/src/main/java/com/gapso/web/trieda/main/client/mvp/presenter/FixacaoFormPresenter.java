@@ -178,7 +178,6 @@ public class FixacaoFormPresenter
 
 		fixacaoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		fixacaoDTO.setCenarioId( this.cenario.getId() );
-		
 		fixacaoDTO.setDescricao( this.display.getDescricaoTextField().getValue() );
 
 		ProfessorDTO professor = this.display.getProfessorComboBox().getValue();

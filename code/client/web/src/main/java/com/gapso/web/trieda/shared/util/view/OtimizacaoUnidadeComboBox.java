@@ -27,7 +27,7 @@ public class OtimizacaoUnidadeComboBox	extends ComboBox<UnidadeDTO>
 		RpcProxy<ListLoadResult<UnidadeDTO>> proxy = new RpcProxy<ListLoadResult<UnidadeDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback) {
-				Services.unidades().getUnidadesPorCampus(campusComboBox.getValue(), callback);
+				Services.unidades().getUnidadesPorCampusOtimizado(campusComboBox.getValue(), callback);
 			}
 		};
 		
@@ -38,6 +38,7 @@ public class OtimizacaoUnidadeComboBox	extends ComboBox<UnidadeDTO>
 		setEmptyText("Selecione a unidade");
 		setSimpleTemplate("{"+UnidadeDTO.PROPERTY_NOME+"}");
 		setEditable(false);
+		setEnabled(this.campusComboBox.getValue() != null);
 		setTriggerAction(TriggerAction.ALL);
 			
 	}

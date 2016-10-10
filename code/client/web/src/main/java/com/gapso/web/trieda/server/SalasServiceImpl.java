@@ -48,6 +48,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FaixaCapacidadeSalaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaUtilizadaDTO;
@@ -125,14 +126,12 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< SalaDTO > getSalasPorTurma(  AtendimentoOperacionalDTO turma )
+	public ListLoadResult< SalaDTO > getSalasOtimizadas(  AtendimentoOperacionalDTO turma, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO)
 	{
 		List< SalaDTO > list = new ArrayList< SalaDTO >();
-		/*Campus campus = Campus.find(
-			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
-*/
 		List< Sala > salas = Sala.findByTurmaOtimizada(
-			getInstituicaoEnsinoUser(), ConvertBeans.toAtendimentoOperacional(turma), getCenario() );
+			getInstituicaoEnsinoUser(), ConvertBeans.toAtendimentoOperacional(turma), getCenario(), 
+			ConvertBeans.toProfessor(professorDTO), ConvertBeans.toDisciplina(disciplinaDTO) );
 
 		for ( Sala sala : salas )
 		{

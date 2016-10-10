@@ -53,7 +53,7 @@ public interface DisciplinasServiceAsync {
 	void getListByCursos( List< CursoDTO > cursos, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCurriculo( long curriculoId, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	
-	void getDisciplinaPorProfessor(ProfessorDTO professorDTO, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+	void getDisciplinaPorProfessorOtimizado(ProfessorDTO professorDTO, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 	
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
@@ -67,4 +67,5 @@ public interface DisciplinasServiceAsync {
 	void getDisciplinaNaoAssociada( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String nome, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 	void getListByCurriculoIdAndPeriodo(CenarioDTO cenarioDTO, Long curriculoId, Integer periodo, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 	void getAutoCompleteList(CenarioDTO cenarioDTO, PagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+
 }

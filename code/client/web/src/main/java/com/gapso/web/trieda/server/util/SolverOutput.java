@@ -335,32 +335,36 @@ public class SolverOutput
 												
 												if (alocacaoKey.equals(itemAlocacaoKey) && !aulaKey.contains(alocacaoKey))
 												{
-													for (ItemDicaEliminacao dicas : itemAlocacao.getDicasEliminacao().getDicaEliminacao())
-													{
-														DicaEliminacaoProfessorVirtual newDica = new DicaEliminacaoProfessorVirtual();
-														Long profId = Long.valueOf(dicas.getProfRealId());
-														newDica.setProfessor(professorIdToProfessorMap.get(profId));
-														String dicaString = "";
-														for (String dica : dicas.getAlteracoesNecessarias().getAlteracao())
+													if (itemAlocacao.getDicasEliminacao()!=null){
+														for (ItemDicaEliminacao dicas : itemAlocacao.getDicasEliminacao().getDicaEliminacao())
 														{
-															dicaString += dica + "\n";
+															DicaEliminacaoProfessorVirtual newDica = new DicaEliminacaoProfessorVirtual();
+															Long profId = Long.valueOf(dicas.getProfRealId());
+															newDica.setProfessor(professorIdToProfessorMap.get(profId));
+															String dicaString = "";
+															for (String dica : dicas.getAlteracoesNecessarias().getAlteracao())
+															{
+																dicaString += dica + "\n";
+															}
+															newDica.setDicaEliminacao(dicaString);
+															atendimentoOperacional.getDicasEliminacaoProfessorVirtual().add(newDica);
 														}
-														newDica.setDicaEliminacao(dicaString);
-														atendimentoOperacional.getDicasEliminacaoProfessorVirtual().add(newDica);
 													}
 													
-													for (ItemMotivoDeUso motivos : itemAlocacao.getMotivosDeUso().getMotivo())
-													{
-														MotivoUsoProfessorVirtual newMotivo = new MotivoUsoProfessorVirtual();
-														Long profId = Long.valueOf(motivos.getProfRealId());
-														newMotivo.setProfessor(professorIdToProfessorMap.get(profId));
-														String motivoString = "";
-														for (String motivo : motivos.getDescricoes().getDescricao())
+													if (itemAlocacao.getMotivosDeUso()!=null){
+														for (ItemMotivoDeUso motivos : itemAlocacao.getMotivosDeUso().getMotivo())
 														{
-															motivoString += motivo + "\n";
+															MotivoUsoProfessorVirtual newMotivo = new MotivoUsoProfessorVirtual();
+															Long profId = Long.valueOf(motivos.getProfRealId());
+															newMotivo.setProfessor(professorIdToProfessorMap.get(profId));
+															String motivoString = "";
+															for (String motivo : motivos.getDescricoes().getDescricao())
+															{
+																motivoString += motivo + "\n";
+															}
+															newMotivo.setMotivoUso(motivoString);
+															atendimentoOperacional.getMotivoUsoProfessorVirtual().add(newMotivo);
 														}
-														newMotivo.setMotivoUso(motivoString);
-														atendimentoOperacional.getMotivoUsoProfessorVirtual().add(newMotivo);
 													}
 													aulaKey.add(alocacaoKey);
 												}

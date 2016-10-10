@@ -26,7 +26,7 @@ public class OtimizacaoDisciplinasComboBox	extends ComboBox<DisciplinaDTO>
 			RpcProxy<ListLoadResult<DisciplinaDTO>> proxy = new RpcProxy<ListLoadResult<DisciplinaDTO>>() {
 				@Override
 				public void load(Object loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback) {
-					Services.disciplinas().getDisciplinaPorProfessor(professorComboBox.getValue(), callback);
+					Services.disciplinas().getDisciplinaPorProfessorOtimizado(professorComboBox.getValue(), callback);
 				}
 			};
 			
@@ -37,6 +37,7 @@ public class OtimizacaoDisciplinasComboBox	extends ComboBox<DisciplinaDTO>
 			setEmptyText("Selecione a disciplina");
 			setSimpleTemplate("{" + DisciplinaDTO.PROPERTY_NOME + "} ({" + DisciplinaDTO.PROPERTY_CODIGO + "})");
 			setEditable(false);
+			setEnabled(this.professorComboBox.getValue() != null);
 			setTriggerAction(TriggerAction.ALL);
 			setUseQueryCache(false);
 			

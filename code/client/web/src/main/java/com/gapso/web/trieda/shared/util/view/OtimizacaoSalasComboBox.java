@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.Services;
@@ -19,17 +20,23 @@ public class OtimizacaoSalasComboBox extends ComboBox<SalaDTO>
 {
 	private OtimizacaoTurmaComboBox turmaComboBox;
 	private OtimizacaoUnidadeComboBox unidadeComboBox;
+	private OtimizacaoProfessorComboBox professorComboBox;
+	private OtimizacaoDisciplinasComboBox disciplinaComboBox;
 	
-	public OtimizacaoSalasComboBox(OtimizacaoTurmaComboBox turmaCB, OtimizacaoUnidadeComboBox unidadeCB) {
+	public OtimizacaoSalasComboBox(OtimizacaoTurmaComboBox turmaCB, OtimizacaoUnidadeComboBox unidadeCB, 
+					OtimizacaoProfessorComboBox professorCB, OtimizacaoDisciplinasComboBox disciplinaCB) {
 		this.turmaComboBox = turmaCB;
 		this.unidadeComboBox = unidadeCB;
+		this.professorComboBox = professorCB;
+		this.disciplinaComboBox = disciplinaCB;
 		
 		addListeners();
 		
 		RpcProxy<ListLoadResult<SalaDTO>> proxy = new RpcProxy<ListLoadResult<SalaDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback) {
-				Services.salas().getSalasPorTurma(turmaComboBox.getValue(), callback);
+				Services.salas().getSalasOtimizadas(turmaComboBox.getValue(), professorComboBox.getValue(),
+								disciplinaComboBox.getValue(),  callback);
 			}
 		};
 		
@@ -41,6 +48,7 @@ public class OtimizacaoSalasComboBox extends ComboBox<SalaDTO>
 		setSimpleTemplate( "{" + SalaDTO.PROPERTY_CODIGO + "}-{"
 			+ SalaDTO.PROPERTY_NUMERO + "}" );
 		setEditable( false );
+		setEnabled(this.unidadeComboBox.getValue() != null);
 		setTriggerAction( TriggerAction.ALL );
 		
 	}
@@ -53,11 +61,25 @@ public class OtimizacaoSalasComboBox extends ComboBox<SalaDTO>
 				getStore().removeAll();
 				setValue(null);
 				setEnabled(unidadeDTO != null);
-				/*if(unidadeDTO != null) {*/
+				if(unidadeDTO != null) {
 					getStore().getLoader().load();
-				/*}*/
+				}
 			}
 		});
+		
+		turmaComboBox.addSelectionChangedListener(new SelectionChangedListener<AtendimentoOperacionalDTO>(){
+			@Override
+			public void selectionChanged(SelectionChangedEvent<AtendimentoOperacionalDTO> se) {
+				final AtendimentoOperacionalDTO atendimentoOperacionalDTO = se.getSelectedItem();
+				getStore().removeAll();
+				setValue(null);
+				setEnabled(atendimentoOperacionalDTO != null);
+				if(atendimentoOperacionalDTO != null) {
+					getStore().getLoader().load();
+				}
+			}
+		});
+		
 	}
 	
     @Override

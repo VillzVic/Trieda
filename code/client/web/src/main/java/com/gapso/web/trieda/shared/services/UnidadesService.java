@@ -31,5 +31,5 @@ public interface UnidadesService
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( UnidadeDTO unidadeDTO );
 	void saveHorariosDisponiveis( UnidadeDTO unidadeDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	void saveDeslocamento( CampusDTO campus, List< DeslocamentoUnidadeDTO > list );
-	ListLoadResult< UnidadeDTO > getUnidadesPorCampus( CampusDTO campusDTO );
+	ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( CampusDTO campusDTO );
 }

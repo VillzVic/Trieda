@@ -919,19 +919,49 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 
 	@SuppressWarnings("unchecked")
 	public static List<Sala> findByTurmaOtimizada(
-			InstituicaoEnsino instituicaoEnsino, AtendimentoOperacional turma, Cenario cenario) {
+			InstituicaoEnsino instituicaoEnsino, AtendimentoOperacional turma,
+			Cenario cenario, Professor professor, Disciplina disciplina) {
+		String queryTurma = "", queryProfessor ="", queryDisciplina = "";
+		
+		if(turma != null)
+		{
+			queryTurma = " AND a.turma = :turma ";
+		}
+		if(disciplina != null)
+		{
+			queryDisciplina = " AND a.disciplina = :disciplina ";
+		}
+		if(professor != null)
+		{
+			queryProfessor = " AND a.professor = :professor ";
+		}
+		
 		Query q = entityManager()
 				.createQuery(
 						" SELECT DISTINCT o FROM Sala o "
 								+ " JOIN o.atendimentosOperacionais a "
 								+ " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino "
-								+ " AND a.turma = :turma "
-								+ " AND o.unidade.campus.cenario = :cenario ");
+								+ " AND o.unidade.campus.cenario = :cenario "
+								+ queryTurma
+								+ queryDisciplina
+								+ queryProfessor );
 
-		q.setParameter("turma", turma.getTurma());
 		q.setParameter("cenario", cenario);
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
 		
+		if(turma != null)
+		{
+			q.setParameter("turma", turma.getTurma());
+		}
+		if(disciplina != null)
+		{
+			q.setParameter("disciplina", disciplina);
+		}
+		if(professor != null)
+		{
+			q.setParameter("professor", professor);
+		}
+
 		return q.getResultList();
 	}
 

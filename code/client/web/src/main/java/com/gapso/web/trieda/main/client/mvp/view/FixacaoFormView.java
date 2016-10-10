@@ -151,7 +151,7 @@ public class FixacaoFormView extends MyComposite implements
 		formPanel.add(unidadeCB, formData);
 
 		
-		salaCB = new OtimizacaoSalasComboBox(turmaCB, unidadeCB);
+		salaCB = new OtimizacaoSalasComboBox(turmaCB, unidadeCB, professorCB, disciplinaCB);
 		salaCB.setValue(salaDTO);
 		formPanel.add(salaCB, formData);
 		
@@ -160,13 +160,13 @@ public class FixacaoFormView extends MyComposite implements
 		diasEHorariosCB.setBoxLabel("Dia e Horários");
 		diasEHorariosCB.setName(fixacaoDTO.PROPERTY_FIXA_DIAS_HORARIOS);	
 		diasEHorariosCB.setValue(this.fixacaoDTO.getFixaDiaEHorario());
-		
+		diasEHorariosCB.setEnabled(this.turmaCB.getValue() != null);
 	
 		ambienteCB = new CheckBox();
 		ambienteCB.setBoxLabel("Ambiente");
 		ambienteCB.setName(fixacaoDTO.PROPERTY_FIXA_AMBIENTE);
 		ambienteCB.setValue(this.fixacaoDTO.getFixaAmbiente());
-					
+		ambienteCB.setEnabled(this.salaCB.getValue() != null);			
 		
 		CheckBoxGroup checkGroup = new CheckBoxGroup();
 		checkGroup.setFieldLabel("Fixar");
