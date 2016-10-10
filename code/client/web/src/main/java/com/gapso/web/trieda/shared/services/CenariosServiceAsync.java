@@ -20,7 +20,6 @@ public interface CenariosServiceAsync
 	void getMasterData( AsyncCallback< CenarioDTO > callback );
 	void getCenario( Long id, AsyncCallback< CenarioDTO > callback );
 	void getList( PagingLoadConfig config, AsyncCallback< PagingLoadResult< CenarioDTO > > callback );
-	//void getBuscaList( Integer ano, Integer semestre, PagingLoadConfig config, AsyncCallback< PagingLoadResult< CenarioDTO > > callback );
 	void getBuscaList(String id, String nome, String ano, String semestre, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CenarioDTO>> callback);
 	void editar( CenarioDTO cenarioDTO, AsyncCallback< Void > callback );
 	void criar( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO,

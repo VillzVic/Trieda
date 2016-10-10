@@ -212,50 +212,6 @@ public class CenariosServiceImpl
 		return result;
 	}
 	
-	
-	/*
-	@Override
-	public PagingLoadResult< CenarioDTO > getBuscaList(Integer ano, Integer semestre, PagingLoadConfig config )
-	{
-		List< CenarioDTO > list = new ArrayList< CenarioDTO >();
-		String orderBy = config.getSortField();
-
-		if ( orderBy != null )
-		{
-			if ( config.getSortDir() != null
-				&& config.getSortDir().equals( SortDir.DESC ) )
-			{
-				orderBy = ( orderBy + " asc" );
-			}
-			else
-			{
-				orderBy = ( orderBy + " desc" );
-			}
-		}
-
-		List< Cenario > listCenarios = Cenario.findByAnoAndSemestre(
-			this.getInstituicaoEnsinoSuperUser(), ano, semestre,
-			config.getOffset(), config.getLimit(), orderBy );
-
-		for ( Cenario cenario : listCenarios )
-		{
-			if (isRoleAdministrator())
-				list.add( ConvertBeans.toCenarioDTO( cenario ) );
-			else if (getUsuario().getUsername().equals(cenario.getCriadoPor().getUsername()))
-				list.add( ConvertBeans.toCenarioDTO( cenario ) );
-		}
-
-		BasePagingLoadResult< CenarioDTO > result
-			= new BasePagingLoadResult< CenarioDTO >( list );
-
-		result.setOffset( config.getOffset() );
-		result.setTotalLength( Cenario.count(
-			this.getInstituicaoEnsinoUser() ) );
-
-		return result;
-	}
-	*/
-	
 	public PagingLoadResult<CenarioDTO> getBuscaList(String id, String nome, String ano, String semestre, PagingLoadConfig config)
 	{
 		List<CenarioDTO> list = new ArrayList<CenarioDTO>();
