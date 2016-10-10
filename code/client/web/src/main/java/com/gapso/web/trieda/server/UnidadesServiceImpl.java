@@ -173,7 +173,26 @@ public class UnidadesServiceImpl
 
 		return result;
 	}
+	
 
+	@Override
+	public ListLoadResult< UnidadeDTO > getUnidadesPorCampus( CampusDTO campusDTO )
+	{
+		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		List< Unidade > unidades = Unidade.findByCampusOtimizado(
+			getInstituicaoEnsinoUser(), campus );
+
+		for ( Unidade unidade : unidades )
+		{
+			list.add( ConvertBeans.toUnidadeDTO( unidade ) );
+		}
+
+		return new BaseListLoadResult< UnidadeDTO >( list );
+	}
+	
 	@Override
 	public ListLoadResult< UnidadeDTO > getListByCampus( CampusDTO campusDTO )
 	{

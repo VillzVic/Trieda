@@ -9,6 +9,7 @@ import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -160,4 +161,6 @@ public interface AtendimentosService extends RemoteService {
 
 	List<RelatorioQuantidadeDoubleDTO> getAmbientesFaixaOcupacaoHorariosPorDiaSemana(
 			CenarioDTO cenarioDTO, CampusDTO campusDTO);
+	ListLoadResult< AtendimentoOperacionalDTO > getTurmasPorDisciplina( DisciplinaDTO disciplinaDTO );
+	
 }

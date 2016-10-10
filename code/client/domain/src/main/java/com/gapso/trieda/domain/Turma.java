@@ -1,8 +1,13 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -23,6 +28,8 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import net.sf.cglib.core.Converter;
+
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -35,56 +42,51 @@ import com.gapso.trieda.misc.Semanas;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity( identifierColumn = "TUR_ID" )
-@Table( name = "TURMAS" )
-public class Turma 
-	implements Serializable, Clonable<Turma>
-{
+@RooEntity(identifierColumn = "TUR_ID")
+@Table(name = "TURMAS")
+public class Turma implements Serializable, Clonable<Turma> {
 
 	private static final long serialVersionUID = 2635105670922575311L;
 
 	@PersistenceContext
 	transient EntityManager entityManager;
-	
+
 	@Id
-	@GeneratedValue( strategy = GenerationType.AUTO )
-	@Column( name = "TUR_ID" )
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "TUR_ID")
 	private Long id;
 
 	@Version
-	@Column( name = "version" )
+	@Column(name = "version")
 	private Integer version;
-	
+
 	@NotNull
-	@Column( name = "TUR_NOME" )
-	@Size( min = 1, max = 255 )
+	@Column(name = "TUR_NOME")
+	@Size(min = 1, max = 255)
 	private String nome;
-	
-	@Column( name = "TUR_PARCIAL" )
+
+	@Column(name = "TUR_PARCIAL")
 	private Boolean parcial;
-	
+
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Disciplina.class )
-	@JoinColumn( name = "DIS_ID" )
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Disciplina.class)
+	@JoinColumn(name = "DIS_ID")
 	private Disciplina disciplina;
-	
+
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Cenario.class )
-	@JoinColumn( name = "CEN_ID" )
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Cenario.class)
+	@JoinColumn(name = "CEN_ID")
 	private Cenario cenario;
-	
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinTable(name="TURMAS_ALUNOS_DEMANDA",
-	joinColumns=@JoinColumn(name="TUR_ID"),
-	inverseJoinColumns=@JoinColumn(name="ALD_ID"))
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "TURMAS_ALUNOS_DEMANDA", joinColumns = @JoinColumn(name = "TUR_ID"), inverseJoinColumns = @JoinColumn(name = "ALD_ID"))
 	private Set<AlunoDemanda> alunos = new HashSet<AlunoDemanda>();
-	
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-	@JoinTable(name="AULAS_TURMAS",
-	joinColumns=@JoinColumn(name="TUR_ID"),
-	inverseJoinColumns=@JoinColumn(name="AUL_ID"))
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE })
+	@JoinTable(name = "AULAS_TURMAS", joinColumns = @JoinColumn(name = "TUR_ID"), inverseJoinColumns = @JoinColumn(name = "AUL_ID"))
 	private Set<Aula> aulas = new HashSet<Aula>();
 
 	public Long getId() {
@@ -146,13 +148,12 @@ public class Turma
 	public Set<Aula> getAulas() {
 		return aulas;
 	}
-	
+
 	public Set<Aula> getAulas(Semanas semana) {
 		Set<Aula> aulas = new HashSet<Aula>();
-		for (Aula aula : getAulas())
-		{
-			if(aula.getHorarioDisponivelCenario().getDiaSemana().equals(semana))
-			{
+		for (Aula aula : getAulas()) {
+			if (aula.getHorarioDisponivelCenario().getDiaSemana()
+					.equals(semana)) {
 				aulas.add(aula);
 			}
 		}
@@ -162,58 +163,45 @@ public class Turma
 	public void setAulas(Set<Aula> aulas) {
 		this.aulas = aulas;
 	}
-	
+
 	@Transactional
-	public void detach()
-	{
-		if ( this.entityManager == null )
-		{
+	public void detach() {
+		if (this.entityManager == null) {
 			this.entityManager = entityManager();
 		}
 
-		this.entityManager.detach( this );
+		this.entityManager.detach(this);
 	}
 
 	@Transactional
-	public void persist()
-	{
-		if ( this.entityManager == null )
-		{
+	public void persist() {
+		if (this.entityManager == null) {
 			this.entityManager = entityManager();
 		}
 
-		this.entityManager.persist( this );
+		this.entityManager.persist(this);
 	}
 
 	@Transactional
-	public void remove()
-	{
-		if ( this.entityManager == null )
-		{
+	public void remove() {
+		if (this.entityManager == null) {
 			this.entityManager = entityManager();
 		}
 
-		if ( this.entityManager.contains( this ) )
-		{
-			this.entityManager.remove( this );
-		}
-		else
-		{
-			Turma attached = this.entityManager.find(
-				this.getClass(), this.id );
+		if (this.entityManager.contains(this)) {
+			this.entityManager.remove(this);
+		} else {
+			Turma attached = this.entityManager.find(this.getClass(), this.id);
 
-			if ( attached != null )
-			{
-				this.entityManager.remove( attached );
+			if (attached != null) {
+				this.entityManager.remove(attached);
 			}
 		}
 	}
 
 	@Transactional
-	public void flush()
-	{
-		if ( this.entityManager == null )
-		{
+	public void flush() {
+		if (this.entityManager == null) {
 			this.entityManager = entityManager();
 		}
 
@@ -221,69 +209,57 @@ public class Turma
 	}
 
 	@Transactional
-	public Turma merge()
-	{
-		if ( this.entityManager == null )
-		{
+	public Turma merge() {
+		if (this.entityManager == null) {
 			this.entityManager = entityManager();
 		}
 
-		Turma merged = this.entityManager.merge( this );
+		Turma merged = this.entityManager.merge(this);
 		this.entityManager.flush();
 		return merged;
 	}
 
-	public static final EntityManager entityManager()
-	{
+	public static final EntityManager entityManager() {
 		EntityManager em = new Turma().entityManager;
 
-		if ( em == null )
-		{
+		if (em == null) {
 			throw new IllegalStateException(
-				" Entity manager has not been injected (is the Spring " +
-				" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+					" Entity manager has not been injected (is the Spring "
+							+ " Aspects JAR configured as an AJC/AJDT aspects library?)");
 		}
 
 		return em;
 	}
-	
+
 	@Override
-	public boolean equals( Object obj )
-	{
-		if ( obj == null || !( obj instanceof InstituicaoEnsino ) )
-		{
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof InstituicaoEnsino)) {
 			return false;
 		}
 
 		Turma other = (Turma) obj;
 
-		if ( id == null )
-		{
-			if ( other.id != null )
-			{
+		if (id == null) {
+			if (other.id != null) {
 				return false;
 			}
-		}
-		else if ( !id.equals( other.id ) )
-		{
+		} else if (!id.equals(other.id)) {
 			return false;
 		}
 
 		return true;
 	}
-	
-	public static Turma find(
-		Long id, InstituicaoEnsino instituicaoEnsino )
-	{
-		if ( id == null || instituicaoEnsino == null )
-		{
+
+	public static Turma find(Long id, InstituicaoEnsino instituicaoEnsino) {
+		if (id == null || instituicaoEnsino == null) {
 			return null;
 		}
 
-		Turma turma = entityManager().find( Turma.class, id );
-		
-		if (turma != null && turma.getCenario().getInstituicaoEnsino().equals(instituicaoEnsino))
-		{
+		Turma turma = entityManager().find(Turma.class, id);
+
+		if (turma != null
+				&& turma.getCenario().getInstituicaoEnsino()
+						.equals(instituicaoEnsino)) {
 			return turma;
 		}
 
@@ -292,52 +268,97 @@ public class Turma
 
 	@SuppressWarnings("unchecked")
 	public static List<Turma> findBy(InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, Disciplina disciplina,
-		String nome)
-	{
+			Cenario cenario, Disciplina disciplina, String nome) {
 		String nomeQuery = "";
-		if (nome != null)
-		{
+		if (nome != null) {
 			nomeQuery = " AND o.nome = :nome";
 		}
-		
-		Query q = entityManager().createQuery(
-				" SELECT o FROM Turma o " +
-				" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.cenario = :cenario " +
-				nomeQuery +
-				" AND o.disciplina = :disciplina ");
 
-		q.setParameter( "cenario", cenario );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "disciplina", disciplina );
-		if (nome != null)
-		{
-			q.setParameter( "nome", nome );
+		Query q = entityManager()
+				.createQuery(
+						" SELECT o FROM Turma o "
+								+ " WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND o.cenario = :cenario " + nomeQuery
+								+ " AND o.disciplina = :disciplina ");
+
+		q.setParameter("cenario", cenario);
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("disciplina", disciplina);
+		if (nome != null) {
+			q.setParameter("nome", nome);
 		}
-		
-		
+
 		return q.getResultList();
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static List<Turma> findByEquivalencia(InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, Disciplina disciplina,
-		Campus campus)
-	{
-		
-		Query q = entityManager().createQuery(
-				" SELECT DISTINCT (o) FROM Turma o, IN (o.alunos) alunos " +
-				" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.cenario = :cenario " +
-				" AND alunos.demanda.disciplina = :disciplina " +
-				" AND alunos.demanda.oferta.campus = :campus ");
 
-		q.setParameter( "cenario", cenario );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "disciplina", disciplina );
-		q.setParameter( "campus", campus );
-		
+	@SuppressWarnings("unchecked")
+	public static List<Turma> findByEquivalencia(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Disciplina disciplina, Campus campus) {
+
+		Query q = entityManager()
+				.createQuery(
+						" SELECT DISTINCT (o) FROM Turma o, IN (o.alunos) alunos "
+								+ " WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND o.cenario = :cenario "
+								+ " AND alunos.demanda.disciplina = :disciplina "
+								+ " AND alunos.demanda.oferta.campus = :campus ");
+
+		q.setParameter("cenario", cenario);
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("disciplina", disciplina);
+		q.setParameter("campus", campus);
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<Turma> findByDisciplina(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Disciplina disciplina) {
+
+		/*
+		 * Query q = entityManager() .createQuery(
+		 * " SELECT DISTINCT (o) FROM Turma o, IN (o.alunos) alunos " +
+		 * " WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
+		 * " AND o.cenario = :cenario " +
+		 * " AND alunos.demanda.disciplina = :disciplina ");
+		 */
+
+		Query q = entityManager()
+				.createNativeQuery(
+						"select distinct t.* from trieda.turmas t"
+								+ "inner join trieda.cenarios c on c.cen_id=t.cen_id"
+								+ "inner join trieda.turmas_alunos_demanda tad on tad.tur_id=t.tur_id"
+								+ "inner join trieda.demandas d on d.dis_id=t.dis_id"
+								+ "where c.cen_id=:cenario and c.ins_id=:instituicaoEnsino and t.dis_id=:disciplina");
+
+		q.setParameter("cenario", cenario.getId());
+		q.setParameter("instituicaoEnsino", instituicaoEnsino.getId());
+		q.setParameter("disciplina", disciplina.getId());
+
+		List<Turma> lstTurma = new ArrayList<Turma>();
+		for (Object registro : q.getResultList()) {
+			Long turId = ((BigInteger) ((Object[]) registro)[0]).longValue();
+			lstTurma.add(Turma.find(turId, instituicaoEnsino));
+		}
+
+		return lstTurma;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<Turma> findAll(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario) {
+
+		Query q = entityManager()
+				.createQuery(
+						" SELECT DISTINCT (o) FROM Turma o"
+								+ " WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND o.cenario = :cenario ");
+
+		q.setParameter("cenario", cenario);
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+
 		return q.getResultList();
 	}
 
@@ -347,15 +368,15 @@ public class Turma
 		clone.setDisciplina(novoCenario.getEntidadeClonada(this.getDisciplina()));
 		clone.setNome(this.getNome());
 		clone.setParcial(this.getParcial());
-		
+
 		return clone;
 	}
 
 	public void cloneChilds(CenarioClone novoCenario, Turma entidadeClone) {
-		for (AlunoDemanda alunoDemanda : this.getAlunos())
-		{
-			entidadeClone.getAlunos().add(novoCenario.getEntidadeClonada(alunoDemanda));
-			
+		for (AlunoDemanda alunoDemanda : this.getAlunos()) {
+			entidadeClone.getAlunos().add(
+					novoCenario.getEntidadeClonada(alunoDemanda));
+
 		}
 	}
 }

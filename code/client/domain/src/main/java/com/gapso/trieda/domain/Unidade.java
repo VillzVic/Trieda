@@ -645,6 +645,29 @@ public class Unidade implements Serializable, Clonable< Unidade >
     	return q.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    public static List< Unidade > findByCampusOtimizado(
+    	InstituicaoEnsino instituicaoEnsino, Campus campus )
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT DISTINCT o FROM Unidade o " +
+    		" JOIN o.salas s JOIN s.atendimentosOperacionais a " +
+    		" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND a.oferta.campus = :campus ORDER BY o.nome ASC " );
+    	
+    	/*"SELECT DISTINCT u.uni_nome from atendimento_operacional a " +
+    	"inner join professores p on a.prf_id = p.prf_id " +
+    	"inner join ofertas o on a.ofe_id = o.ofe_id " +
+    	"inner join campi c on c.cam_id= o.cam_id " +
+    	"inner join unidades u on u.cam_id = c.cam_id  " +
+    	"where p.prf_id = ";*/
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+    	return q.getResultList();
+    }
+    
     public static int count( InstituicaoEnsino instituicaoEnsino,
     	Cenario cenario, Campus campus, String nome, String codigo, String operadorCapSalas, Double capSalas )
     {

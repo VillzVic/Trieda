@@ -52,6 +52,9 @@ public interface DisciplinasServiceAsync {
 	void getListByCurriculoIdAndName( CenarioDTO cenarioDTO, Long curriculoId, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCursos( List< CursoDTO > cursos, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCurriculo( long curriculoId, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
+	
+	void getDisciplinaPorProfessor(ProfessorDTO professorDTO, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+	
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 	void getDisciplinasIncompativeis( CurriculoDTO curriculoDTO, Integer periodo,
@@ -63,5 +66,5 @@ public interface DisciplinasServiceAsync {
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
 	void getDisciplinaNaoAssociada( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String nome, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 	void getListByCurriculoIdAndPeriodo(CenarioDTO cenarioDTO, Long curriculoId, Integer periodo, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
-	void getAutoCompleteList(CenarioDTO cenarioDTO,	PagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+	void getAutoCompleteList(CenarioDTO cenarioDTO, PagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 }

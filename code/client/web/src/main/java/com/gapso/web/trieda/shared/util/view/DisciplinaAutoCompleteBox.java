@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -25,6 +26,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class DisciplinaAutoCompleteBox extends ComboBox<DisciplinaDTO> {
 	ComboBox comboDep;
 	CenarioDTO cenarioDTO;
+	//ProfessorDTO professorDTO;
 	
 	public DisciplinaAutoCompleteBox(CenarioDTO cenarioDTO) {
 		this(cenarioDTO, false);
@@ -127,7 +129,7 @@ public class DisciplinaAutoCompleteBox extends ComboBox<DisciplinaDTO> {
         super.onLoad(se);
         if(getStore().getModels().isEmpty())
         {
-			MessageBox.alert("Aviso!","Não existem Disciplinas cadastradas", null);
+			MessageBox.alert("Aviso!","Não existem Disciplinas cadastradas.", null);
         }
     }
 }

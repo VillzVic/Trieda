@@ -1116,4 +1116,9 @@ public class GTriedaI18nConstants implements TriedaI18nConstants
 	public String fixacoes() {
 		return this.languageManager.getText("fixacoes");
 	}
+	
+	@Override
+	public String qtdLimiteProfessorVirtual() {
+		return this.languageManager.getText("qtdLimiteProfessorVirtual");
+	}
 }

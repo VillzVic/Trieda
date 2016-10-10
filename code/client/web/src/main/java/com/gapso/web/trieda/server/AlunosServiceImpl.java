@@ -1,5 +1,4 @@
 package com.gapso.web.trieda.server;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +19,7 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -33,9 +33,9 @@ import com.gapso.web.trieda.shared.util.view.TriedaException;
 public class AlunosServiceImpl
 	extends RemoteService
 	implements AlunosService
-{
+{		
 	private static final long serialVersionUID = -3593829435380014345L;
-
+	
 	@Override
 	public AlunoDTO getAluno( Long id )
 	{
@@ -202,6 +202,22 @@ public class AlunosServiceImpl
 			Aluno aluno = ConvertBeans.toAluno( alunoDTO );
 			aluno.remove();
 		}
+	}
+	
+	@Override
+	public void removeAllAlunos( CenarioDTO cenarioDTO )
+	{
+		//Aluno.removeAllAlunos(ConvertBeans.toCenario(cenarioDTO));
+		List< Aluno > alunos = Aluno.findByCenario(getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenarioDTO)); 
+
+		for(Aluno aluno : alunos){
+			
+			if ( aluno != null )
+			{
+				aluno.remove();
+			}
+		}
+		
 	}
 	
 	@Override

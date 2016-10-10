@@ -194,6 +194,26 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return atendimentosOrdenados;
 	}
 	
+	@Override
+	public ListLoadResult< AtendimentoOperacionalDTO > getTurmasPorDisciplina( DisciplinaDTO disciplinaDTO )
+	{
+		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
+		AtendimentoOperacionalDTO atendimento;
+		Disciplina disciplina = Disciplina.find(
+						disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+		List< String > turmas = AtendimentoOperacional.findByDisciplinaOtimizada( getInstituicaoEnsinoUser(), disciplina );
+		
+		for ( String turma : turmas )
+		{
+			atendimento = new AtendimentoOperacionalDTO();
+			atendimento.setTurma(turma);
+			list.add(  atendimento  );
+		}
+
+		return new BaseListLoadResult< AtendimentoOperacionalDTO >( list );
+	}
+	
+	
 	/**
 	 * @throws TriedaException 
 	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoSala(com.gapso.web.trieda.shared.dtos.SalaDTO, com.gapso.web.trieda.shared.dtos.TurnoDTO)

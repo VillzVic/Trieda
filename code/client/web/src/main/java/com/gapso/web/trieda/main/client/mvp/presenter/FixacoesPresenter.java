@@ -18,6 +18,7 @@ import com.gapso.web.trieda.main.client.mvp.view.FixacaoFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -81,7 +82,7 @@ public class FixacoesPresenter
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<FixacaoDTO>> callback) {
 				String codigo = display.getCodigoBuscaTextField().getValue();
-				Services.fixacoes().getBuscaList(codigo, (PagingLoadConfig)loadConfig, callback);
+				Services.fixacoes().getBuscaList(cenario, codigo, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -105,6 +106,7 @@ public class FixacoesPresenter
 				
 				final FutureResult<ProfessorDTO> futureProfessorDTO = new FutureResult<ProfessorDTO>();
 				final FutureResult<DisciplinaDTO> futureDisciplinaDTO = new FutureResult<DisciplinaDTO>();
+			
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
 				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
 				final FutureResult<SalaDTO> futureSalaDTO = new FutureResult<SalaDTO>();
@@ -112,6 +114,7 @@ public class FixacoesPresenter
 				
 				Services.professores().getProfessor(fixacaoDTO.getProfessorId(), futureProfessorDTO);
 				Services.disciplinas().getDisciplina(fixacaoDTO.getDisciplinaId(), futureDisciplinaDTO);
+				
 				Services.campi().getCampus(fixacaoDTO.getCampusId(), futureCampusDTO);
 				Services.unidades().getUnidade(fixacaoDTO.getUnidadeId(), futureUnidadeDTO);
 				Services.salas().getSala(fixacaoDTO.getSalaId(), futureSalaDTO);
@@ -129,6 +132,7 @@ public class FixacoesPresenter
 					public void onSuccess(Boolean result) {
 						ProfessorDTO professorDTO = futureProfessorDTO.result();
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
+						
 						CampusDTO campusDTO = futureCampusDTO.result();
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						SalaDTO salaDTO = futureSalaDTO.result();

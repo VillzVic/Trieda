@@ -1,7 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
-
+import com.gapso.web.trieda.shared.services.EquivalenciasServiceAsync;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -49,6 +49,7 @@ public class EquivalenciasPresenter
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
+		Button getRemoveAllButton();
 		Button getImportExcelButton();
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
@@ -156,6 +157,30 @@ public class EquivalenciasPresenter
 					public void onSuccess(Void result) {
 						display.getGrid().updateList();
 						Info.display("Removido", "Item removido com sucesso!");
+					}
+				});
+			}
+		});
+		
+		display.getRemoveAllButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				final EquivalenciasServiceAsync service = Services.equivalencias();
+				display.getGrid().mask(display.getI18nMessages().deleting(), "loading");
+				service.removeAll(cenarioDTO, new AsyncCallback< Void >()
+								{
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Não foi possível remover a(s) Equivalência(s)", null );
+				}
+
+					@Override
+				public void onSuccess( Void result )
+					{
+						display.getGrid().updateList();
+						display.getGrid().unmask();
+						Info.display( "Removido", "Equivalência(s) removida(s) com sucesso!" );
 					}
 				});
 			}

@@ -89,7 +89,7 @@ public class DemandasPorAlunoView
 	private void createToolBar()
 	{
 		this.toolBar = new SimpleToolBar( false, false,
-				true, true, true, this );
+				true, true, true, true, this, "Demandas por Aluno" );
 		this.toolBar.add( new SeparatorToolItem() );
 		
 		this.motivosNaoAtendimentoBT = this.toolBar.createButton("Motivos de Não Atendimento",Resources.DEFAULTS.alunoCurriculo16());
@@ -252,6 +252,12 @@ public class DemandasPorAlunoView
 	public Button getRemoveButton()
 	{
 		return this.toolBar.getRemoveButton();
+	}
+	
+	@Override
+	public Button getRemoveAllButton()
+	{
+		return this.toolBar.getRemoveAllButton();
 	}
 	
 	@Override

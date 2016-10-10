@@ -12,6 +12,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -41,4 +42,5 @@ public interface CampiServiceAsync {
 	void getListByCurriculo( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CampusDTO > > callback );
 	void getListAllCampiTodos( CenarioDTO cenarioDTO, AsyncCallback<ListLoadResult<CampusDTO>> callback );
 	void getCenariosComparados(List<CenarioDTO> cenariosDTO, AsyncCallback<List<BaseTreeModel>> callback);
+	void getCampusPorProfessor(ProfessorDTO professorDTO, AsyncCallback<ListLoadResult<CampusDTO>> callback);
 }

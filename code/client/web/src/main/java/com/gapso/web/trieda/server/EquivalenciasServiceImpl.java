@@ -2,7 +2,6 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -129,6 +128,22 @@ public class EquivalenciasServiceImpl
 			if ( equivalencia != null )
 			{
 				equivalencia.remove();
+			}
+		}
+	}
+	
+	@Override
+	public void removeAll( CenarioDTO cenarioDTO )
+	{
+		//Equivalencia.removeAll(ConvertBeans.toCenario(cenarioDTO));
+		
+		List<Equivalencia> equivalencia = Equivalencia.findByCenario(getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenarioDTO)); 
+
+		for(Equivalencia equiv : equivalencia){
+			
+			if ( equiv != null )
+			{
+				equiv.remove();
 			}
 		}
 	}

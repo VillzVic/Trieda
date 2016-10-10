@@ -6,7 +6,6 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -81,6 +80,9 @@ public interface DisciplinasService
 	ListLoadResult< DisciplinaDTO > getListByCurriculoIdAndName( CenarioDTO cenarioDTO, Long curriculoId, String name);
 	ListLoadResult< DisciplinaDTO > getListByCursos( List< CursoDTO > cursos );
 	ListLoadResult< DisciplinaDTO > getListByCurriculo(long curriculoId);
+	
+	ListLoadResult< DisciplinaDTO > getDisciplinaPorProfessor( ProfessorDTO professorDTO );
+	
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	List< DisciplinaIncompativelDTO > getDisciplinasIncompativeis( CurriculoDTO curriculoDTO, Integer periodo );
 	void saveDisciplinasIncompativeis( List< DisciplinaIncompativelDTO > list );

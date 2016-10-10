@@ -32,6 +32,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -89,7 +91,14 @@ public class Campus
 
 	@Column( name = "CAM_PUBLICAR" )
 	private Boolean publicado;
+	
+	@Column( name = "CAM_QTD_LIMITE_PROFESSOR_VIRTUAL" )
+	private Integer qtdLimiteProfessorVirtual;
 
+	@Column( name = "CAM_VALOR_MEDIO_PROFESSOR_VIRTUAL" )
+	@Digits( integer = 6, fraction = 2 )
+	private Double valorMedioProfessorVirtual;
+	
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
 	private Set< Unidade > unidades = new HashSet< Unidade >();
 
@@ -271,6 +280,27 @@ public class Campus
 	{
 		this.publicado = publicado;
 	}
+			
+	public Integer getQtdLimiteProfessorVirtual()
+	{
+		return this.qtdLimiteProfessorVirtual;
+	}
+
+	public void setQtdLimiteProfessorVirtual( Integer qtdLimiteProfessorVirtual )
+	{
+		this.qtdLimiteProfessorVirtual = qtdLimiteProfessorVirtual;
+	}
+	
+	public Double getValorMedioProfessorVirtual()
+	{
+		return this.valorMedioProfessorVirtual;
+	}
+
+	public void setValorMedioProfessorVirtual( Double valorMedioProfessorVirtual )
+	{
+		this.valorMedioProfessorVirtual = valorMedioProfessorVirtual;
+	}
+	
 
 	public Set< Parametro > getParametros()
 	{
@@ -1243,19 +1273,15 @@ public class Campus
 		sb.append( "Estado: " ).append( getEstado().name() ).append( ", " );
 		sb.append( "Municipio: " ).append( getMunicipio() ).append( ", " );
 		sb.append( "Bairro: " ).append( getBairro() ).append( ", " );
-		sb.append( "Unidades: " ).append(
-			getUnidades() == null ? "null" : getUnidades().size() ).append( ", " );
-		sb.append( "Deslocamentos: " ).append(
-			getDeslocamentos() == null ? "null" : getDeslocamentos().size() ).append( ", " );
-		sb.append( "DeslocamentosDestino: " ).append(
-			getDeslocamentosDestino() == null ? "null" : getDeslocamentosDestino().size() ).append( ", " );
-		sb.append("Professores: ").append(
-			getProfessores() == null ? "null" : getProfessores().size() ).append( ", " );
-		sb.append("Horarios: ").append(
-			getOfertas() == null ? "null" : getOfertas().size() );
+		sb.append( "Unidades: " ).append(getUnidades() == null ? "null" : getUnidades().size() ).append( ", " );
+		sb.append( "Deslocamentos: " ).append(getDeslocamentos() == null ? "null" : getDeslocamentos().size() ).append( ", " );
+		sb.append( "DeslocamentosDestino: " ).append(getDeslocamentosDestino() == null ? "null" : getDeslocamentosDestino().size() ).append( ", " );
+		sb.append( "Professores: ").append(getProfessores() == null ? "null" : getProfessores().size() ).append( ", " );
+		sb.append( "Horarios: ").append(getOfertas() == null ? "null" : getOfertas().size() );
 		sb.append( "Publicado: " ).append( getPublicado() );
-		sb.append( "Parametros: " ).append(
-			getParametros() == null ? "null" : getParametros().size() ).append(", ");
+		sb.append( "Parametros: " ).append(getParametros() == null ? "null" : getParametros().size() ).append(", ");
+		sb.append( "QtdLimiteProfessorVirtual: " ).append( getQtdLimiteProfessorVirtual() == null ? "null" : getQtdLimiteProfessorVirtual() ).append(", ");
+		sb.append( "ValorMedioProfessorVirtual: " ).append( getValorMedioProfessorVirtual()==null ? "null" : getValorMedioProfessorVirtual());
 
 		return sb.toString();
 	}
@@ -1303,6 +1329,8 @@ public class Campus
 		clone.setNome(this.getNome());
 		clone.setPublicado(this.getPublicado());
 		clone.setValorCredito(this.getValorCredito());
+		clone.setQtdLimiteProfessorVirtual(this.getQtdLimiteProfessorVirtual());
+		clone.setValorMedioProfessorVirtual(this.getValorMedioProfessorVirtual());
 		
 		return clone;
 	}
@@ -1318,6 +1346,9 @@ public class Campus
 		clone.setNome(this.getNome());
 		clone.setPublicado(this.getPublicado());
 		clone.setValorCredito(this.getValorCredito());
+		clone.setQtdLimiteProfessorVirtual(this.getQtdLimiteProfessorVirtual());
+		clone.setValorMedioProfessorVirtual(this.getValorMedioProfessorVirtual());
+		
 		
 		return clone;
 	}
@@ -1328,5 +1359,24 @@ public class Campus
 		{
 			entidadeClone.getUnidades().add(novoCenario.clone(unidade));
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Campus> findByProfessorOtimizado(
+			InstituicaoEnsino instituicaoEnsino, Professor professor) {
+
+		Query q = entityManager()
+				.createQuery(
+						" SELECT DISTINCT ( o.oferta.campus ) " +
+								" FROM AtendimentoOperacional o " +
+								" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+								" AND o.oferta.campus.cenario = :cenario " +
+								" AND o.professor = :professor " );
+
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("cenario", professor.getCenario());
+		q.setParameter("professor", professor );
+
+		return q.getResultList();
 	}
 }

@@ -56,5 +56,4 @@ public class ConfirmationButton extends Button {
 	public void removeSelectionListener(SelectionListener<ButtonEvent> listener) {
 		listeners.remove(listener);
 	}
-	
 }

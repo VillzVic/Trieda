@@ -3230,6 +3230,7 @@ a.x-grid3-hd-btn:hover {
 		!important;
 }
 
+
 .my-tree-loading .my-tree-item-text span {
 	font-style: italic;
 }
@@ -3829,6 +3830,7 @@ td.x-date-mp-sep {
 .x-tip .x-tip-body .loading-indicator {
     margin:0;
 }
+
 .x-tip-draggable .x-tip-header,.x-tip-draggable .x-tip-header-text {
     cursor:move;
 }
@@ -6116,6 +6118,7 @@ body.ext-ie6.x-body-masked .x-window select {
     font-size: 11px;
     background-image: url(../images/default/grid/loading.gif);
 }
+
 .x-spotlight {
     background-color: #ccc;
 }

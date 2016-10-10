@@ -319,6 +319,7 @@ public class Cenario
 	}
 
 	private void removeEntities(Cenario cenario) {
+
 		List<Query> nativeQueries = new ArrayList<Query>();
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE adao FROM alunos_demanda_atendimentos_operacional adao JOIN atendimento_operacional ao ON adao.atendimentos_operacional = ao.atp_id WHERE ao.cen_id = :cenario"));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE ao FROM atendimento_operacional ao WHERE ao.cen_id = :cenario"));
@@ -396,6 +397,33 @@ public class Cenario
 		}
 	}
 	
+	
+	/*@Transactional
+	public static void removeAllAlunos(Cenario cenario) {
+		Query q = entityManager().createNativeQuery("delete from alunos where cen_id = :cen_id");
+		q.setParameter("cen_id",cenario.getId());
+		q.executeUpdate();
+	}
+	
+	@Transactional
+	public static void removeAllAlunosDemanda(Cenario cenario) {
+		
+		Query q = entityManager().createNativeQuery("delete from alunos_demanda where aln_id in (select distinct aln_id from alunos where cen_id = :cen_id)");
+		q.setParameter("cen_id",cenario.getId());
+		q.executeUpdate();
+		
+	}
+	
+	@Transactional
+	public static void removeAllEquivalencias(Cenario cenario) {
+		
+		Query q = entityManager().createNativeQuery("delete from equivalencias where dis_cursou_id in (select dis_id from disciplinas where cen_id = :cen_id)");
+		q.setParameter("cen_id",cenario.getId());
+		q.executeUpdate();
+		
+	}*/
+	
+		
 	@Transactional
 	public static void limpaSolucoesCenario(Cenario cenario) {
 		List<Query> nativeQueries = new ArrayList<Query>();

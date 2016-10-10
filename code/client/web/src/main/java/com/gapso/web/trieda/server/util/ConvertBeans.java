@@ -124,6 +124,7 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaNullableCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 
@@ -302,6 +303,9 @@ public class ConvertBeans {
 		domain.setBairro( dto.getBairro() );
 		domain.setValorCredito( dto.getValorCredito().getDoubleValue() );
 		domain.setPublicado( dto.getPublicado() );
+		
+		domain.setQtdLimiteProfessorVirtual( dto.getQtdLimiteProfessorVirtual() );
+		domain.setValorMedioProfessorVirtual( dto.getValorMedioProfessorVirtual().getDoubleValue() );
 
 		return domain;
 	}
@@ -345,6 +349,16 @@ public class ConvertBeans {
 		dto.setPublicado( domain.getPublicado() == null ? false : domain.getPublicado() );
 		dto.setOtimizadoTatico( domain.isOtimizadoTatico( instituicaoEnsino ) );
 		dto.setOtimizadoOperacional( domain.isOtimizadoOperacional( instituicaoEnsino ) );
+		
+		if ( domain.getQtdLimiteProfessorVirtual() != null )
+		{
+			dto.setQtdLimiteProfessorVirtual(domain.getQtdLimiteProfessorVirtual() );
+		}
+		
+		if ( domain.getValorMedioProfessorVirtual() != null )
+		{
+			dto.setValorMedioProfessorVirtual(new TriedaNullableCurrency(domain.getValorMedioProfessorVirtual()) );
+		}
 
 		return dto;
 	}
@@ -3248,8 +3262,15 @@ public class ConvertBeans {
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
-		domain.setCodigo( dto.getCodigo() );
+		
+
+		Cenario cenario = Cenario.find(dto.getCenarioId(), instituicaoEnsino );
+		domain.setCenario( cenario );
+		
+		
+		
 		domain.setDescricao( dto.getDescricao() );
+		domain.setTurma( dto.getTurmaString() );
 
 		if ( dto.getProfessorId() != null )
 		{
@@ -3262,6 +3283,7 @@ public class ConvertBeans {
 			domain.setDisciplina( Disciplina.find(
 				dto.getDisciplinaId(), instituicaoEnsino ) );
 		}
+		
 
 		if ( dto.getCampusId() != null )
 		{
@@ -3293,8 +3315,13 @@ public class ConvertBeans {
 
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
-		dto.setCodigo( domain.getCodigo() );
+		
+		
+		dto.setCenarioId( domain.getCenario().getId() );
+		
+		
 		dto.setDescricao( domain.getDescricao() );
+		dto.setTurmaString( domain.getTurma() );
 
 		Professor professor = domain.getProfessor();
 
@@ -3312,6 +3339,7 @@ public class ConvertBeans {
 			dto.setDisciplinaString( disciplina.getCodigo() );
 		}
 
+		
 		Campus campus = domain.getCampus();
 
 		if ( campus != null )
@@ -3342,7 +3370,7 @@ public class ConvertBeans {
 			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 		}
 
-		dto.setDisplayText( domain.getCodigo() );
+		dto.setDisplayText( domain.getDescricao() );
 
 		return dto;
 	}

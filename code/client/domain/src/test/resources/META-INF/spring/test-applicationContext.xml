@@ -45,8 +45,9 @@
 
 	<tx:annotation-driven mode="aspectj" transaction-manager="transactionManager" />
 
+	<bean class="com.gapso.trieda.domain.Parametro" id="parametroBean" />
 	<bean class="com.gapso.trieda.domain.Usuario" id="usuarioBean" />
-	<bean class="com.gapso.trieda.domain.Sessao" id="sessaoBean" />
+	<bean class="com.gapso.trieda.domain.Authority" id="authorityBean" />
 	<bean class="com.gapso.trieda.domain.Turno" id="turnoBean" />
 	<bean class="com.gapso.trieda.domain.Cenario" id="cenarioBean" />
 	<bean class="com.gapso.trieda.domain.Campus" id="campusBean" />
@@ -67,7 +68,7 @@
 	<bean class="com.gapso.trieda.domain.DeslocamentoUnidade" id="deslocamentoUnidadeBean" />
 	<bean class="com.gapso.trieda.domain.HorarioDisponivelCenario" id="horarioDisponivelCenarioBean" />
 	<bean class="com.gapso.trieda.domain.ProfessorDisciplina" id="professorDisciplinaBean" />
-	<bean class="com.gapso.trieda.domain.Compatibilidade" id="compatibilidadeBean" />
+	<bean class="com.gapso.trieda.domain.Incompatibilidade" id="incompatibilidadeBean" />
 	<bean class="com.gapso.trieda.domain.Equivalencia" id="equivalenciaBean" />
 	<bean class="com.gapso.trieda.domain.GrupoSala" id="grupoSalaBean" />
 	<bean class="com.gapso.trieda.domain.Curriculo" id="curriculoBean" />
@@ -78,4 +79,5 @@
 	<bean class="com.gapso.trieda.domain.AtendimentoTatico" id="atendimentoTaticoBean" />
 	<bean class="com.gapso.trieda.domain.AtendimentoOperacional" id="atendimentoOperacionalBean" />
 	<bean class="com.gapso.trieda.domain.Fixacao" id="fixacaoBean" />
+	
 </beans>

@@ -18,6 +18,7 @@ public interface EquivalenciasServiceAsync
 		AsyncCallback< PagingLoadResult< EquivalenciaDTO > > callback );
 	void save( EquivalenciaDTO equivalenciaDTO, List<CursoDTO> cursosSelecionados, AsyncCallback< Void > callback )  throws TriedaException;
 	void remove( List< EquivalenciaDTO > equivalenciaDTOList, AsyncCallback< Void > callback );
+	void removeAll( CenarioDTO cenario, AsyncCallback< Void > callback );
 	void getCursosEquivalencia(EquivalenciaDTO equivalenciaDTO,
 			AsyncCallback<List<CursoDTO>> callback);
 }

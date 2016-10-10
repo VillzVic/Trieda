@@ -859,6 +859,8 @@ public class SolverInput
 			itemCampus.setId( campus.getId().intValue() );
 			itemCampus.setCodigo( campus.getCodigo() );
 			itemCampus.setNome( campus.getNome() );
+			itemCampus.setQtdLimiteProfessorVirtual( campus.getQtdLimiteProfessorVirtual() );
+			itemCampus.setValorMedioProfessorVirtual( campus.getValorMedioProfessorVirtual() );
 			
 			Set< HorarioDisponivelCenario > horarios
 				= new HashSet< HorarioDisponivelCenario >();
@@ -1990,11 +1992,13 @@ public class SolverInput
 		int id = 1;
 		GrupoFixacao grupoFixacao = this.of.createGrupoFixacao();
 
-		List< Fixacao > fixacoes = Fixacao.findAll( this.instituicaoEnsino );
+		List< Fixacao > fixacoes
+			= Fixacao.findAll( this.instituicaoEnsino, this.cenario );
 
 		for ( Fixacao fixacao : fixacoes )
 		{
-			Set< HorarioDisponivelCenario > horarios = this.getHorarios( fixacao );
+			Set< HorarioDisponivelCenario > horarios
+				= this.getHorarios( fixacao );
 
 			if ( horarios.size() > 0 )
 			{

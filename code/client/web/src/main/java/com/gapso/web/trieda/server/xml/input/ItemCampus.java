@@ -47,7 +47,9 @@ import javax.xml.bind.annotation.XmlType;
     "unidades",
     "professores",
     "horariosDisponiveis",
-    "custo"
+    "custo",
+    "qtdLimiteProfessorVirtual",
+    "valorMedioProfessorVirtual",
 })
 public class ItemCampus {
 
@@ -63,6 +65,9 @@ public class ItemCampus {
     @XmlElement(required = true)
     protected GrupoHorario horariosDisponiveis;
     protected double custo;
+    
+    protected Integer qtdLimiteProfessorVirtual;
+    protected Double valorMedioProfessorVirtual;
 
     /**
      * Gets the value of the id property.
@@ -215,5 +220,25 @@ public class ItemCampus {
     public void setCusto(double value) {
         this.custo = value;
     }
+
+    public Integer getQtdLimiteProfessorVirtual()
+	{
+		return qtdLimiteProfessorVirtual;
+	}
+
+	public void setQtdLimiteProfessorVirtual(Integer qtdLimiteProfessorVirtual)
+	{
+		this.qtdLimiteProfessorVirtual = qtdLimiteProfessorVirtual;
+	}
+	
+	public Double getValorMedioProfessorVirtual()
+	{
+		return valorMedioProfessorVirtual;
+	}
+
+	public void setValorMedioProfessorVirtual(Double valorMedioProfessorVirtual)
+	{
+		this.valorMedioProfessorVirtual = valorMedioProfessorVirtual;
+	}
 
 }

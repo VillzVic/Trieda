@@ -73,7 +73,7 @@ public class AlunosView
 	private void createToolBar()
 	{
 		this.toolBar = new SimpleToolBar(
-			true, true, true, true, true, this );
+			true, true, true, true, true, true, this, "Alunos" );//issue6
 
 		this.panel.setTopComponent( this.toolBar );
 	}
@@ -189,6 +189,13 @@ public class AlunosView
 		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
 	}
 	
+	//issue6
+		@Override
+		public Button getRemoveAllButton()
+		{
+			return this.toolBar.getRemoveAllButton();
+		}
+			
 	@Override
 	public MenuItem getExportXlsxExcelButton()
 	{

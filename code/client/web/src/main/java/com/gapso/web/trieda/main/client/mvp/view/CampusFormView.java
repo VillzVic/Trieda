@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.CampusFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
@@ -32,10 +33,14 @@ public class CampusFormView
 	private EstadoComboBox estadoCB;
 	private TextField< String > municipioTF;
 	private TextField< String > bairroTF;
+	private NumberField qtdLimiteProfessorVirtualNF;
+	private NumberField valorMedioProfessorVirtualNF;
 	private NumberField valorCreditoNF;
 	private CheckBox publicadoCB;
 	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
+	private CheckBox habilitaConfiguracoesProfessorVirtualCB;
+	
 
 	public CampusFormView( CenarioDTO cenarioDTO )
 	{
@@ -58,7 +63,7 @@ public class CampusFormView
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.campus16() );
-		this.simpleModal.setHeight( 340 );
+		this.simpleModal.setHeight( 430 );
 		this.simpleModal.setWidth( 400 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
@@ -153,7 +158,55 @@ public class CampusFormView
 		enderecoFS.add( this.bairroTF, formData );
 
 		this.formPanel.add( enderecoFS, formData );
+		
+		
+		FieldSet configFS = new FieldSet();
+		
+		formLayout = new FormLayout( LabelAlign.RIGHT );
+		formLayout.setLabelWidth(160);
+		configFS.setLayout( formLayout );
+		configFS.setHeadingHtml( "Config. Professor Virtual" );
+		
+		this.habilitaConfiguracoesProfessorVirtualCB = new CheckBox();
+		this.habilitaConfiguracoesProfessorVirtualCB.setName("Configurações Professor Virtual");
+		this.habilitaConfiguracoesProfessorVirtualCB.setTitle("Configurações Professor Virtual");
+		this.habilitaConfiguracoesProfessorVirtualCB.setFieldLabel("Permite Configurações");
+		this.habilitaConfiguracoesProfessorVirtualCB.setValue(this.campusDTO.getQtdLimiteProfessorVirtual()!=null || this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue()!=null);
 
+		configFS.add( this.habilitaConfiguracoesProfessorVirtualCB, formData );
+		
+		this.qtdLimiteProfessorVirtualNF = new NumberField();
+		this.qtdLimiteProfessorVirtualNF.setName( CampusDTO.PROPERTY_QTD_LIMITE_PROFESSOR_VIRTUAL );
+		this.qtdLimiteProfessorVirtualNF.setValue( this.campusDTO.getQtdLimiteProfessorVirtual());
+		this.qtdLimiteProfessorVirtualNF.setAllowBlank( true );
+		this.qtdLimiteProfessorVirtualNF.setAllowDecimals( false );
+		this.qtdLimiteProfessorVirtualNF.setMaxValue( 999999 );
+		this.qtdLimiteProfessorVirtualNF.setFieldLabel( "Qtd Limite" );
+		this.qtdLimiteProfessorVirtualNF.setEmptyText( "Quantidade" );
+		this.qtdLimiteProfessorVirtualNF.setToolTip("Representa a quantidade limite de Professores Virturais gerados na Otimização para o Campus.");
+		this.qtdLimiteProfessorVirtualNF.setEnabled(this.campusDTO.getQtdLimiteProfessorVirtual()!=null || this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue()!=null);
+		configFS.add( this.qtdLimiteProfessorVirtualNF, formData );
+		
+		this.valorMedioProfessorVirtualNF = new NumberField();
+		this.valorMedioProfessorVirtualNF.setName( CampusDTO.PROPERTY_VALOR_MEDIO_PROFESSOR_VIRTUAL );
+		
+		if(!(this.campusDTO.getValorMedioProfessorVirtual()==null)){
+			this.valorMedioProfessorVirtualNF.setValue( this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue() );
+		}
+		
+		this.valorMedioProfessorVirtualNF.setFieldLabel( "Custo Médio (R$)" );
+		this.valorMedioProfessorVirtualNF.setAllowBlank( true );
+		this.valorMedioProfessorVirtualNF.setAllowDecimals( true );
+		this.valorMedioProfessorVirtualNF.setMaxValue( 999999 );
+		this.valorMedioProfessorVirtualNF.setEmptyText( "Ex: 65,00" );
+		this.valorMedioProfessorVirtualNF.setToolTip("Representa o custo médio do Professor Virtual.");
+		this.valorMedioProfessorVirtualNF.setEnabled(this.campusDTO.getQtdLimiteProfessorVirtual()!=null || this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue()!=null);
+		configFS.add( this.valorMedioProfessorVirtualNF, formData );
+		
+		
+		this.formPanel.add( configFS, formData );
+		
+		
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
 		
@@ -224,4 +277,23 @@ public class CampusFormView
 	{
 		return this.publicadoCB;
 	}
+	
+	@Override
+	public NumberField getQtdLimiteProfessorVirtualNumberField()
+	{
+		return this.qtdLimiteProfessorVirtualNF;
+	}
+	
+	@Override
+	public NumberField getValorMedioProfessorVirtualNumberField()
+	{
+		return this.valorMedioProfessorVirtualNF;
+	}
+	
+	@Override
+	public CheckBox getHabilitaConfiguracoesProfessorVirtualCheckBox()
+	{
+		return this.habilitaConfiguracoesProfessorVirtualCB;
+	}
+		
 }

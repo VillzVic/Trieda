@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/spring/applicationContext.xml" })
+@ContextConfiguration(locations = { "classpath:**/test-applicationContext.xml" })
 public class GetDatabase {
 
 	@Autowired

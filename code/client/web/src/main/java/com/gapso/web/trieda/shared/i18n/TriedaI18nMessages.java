@@ -6,6 +6,7 @@ public interface TriedaI18nMessages
 	extends Messages
 {
 	String confirmacaoButton();
+	String confirmacaoAllButton(String entidade);
 	String erroAoSalvar(String entidade);
 	String erroAoRemover(String entidade);
 	String erroExclusaoAreaTitulacao();
@@ -37,6 +38,7 @@ public interface TriedaI18nMessages
 	String excelErroCasasDecimaisInvalida( String nomeColuna );
 	String falhaOperacao();
 	String loading();
+	String deleting();
 	String ofertasNaoCadastradas( String campus );
 	String sucessoImportacaoExcel();
 	String sucessoRemoverDoBD( String codigoItem );

@@ -21,6 +21,7 @@ public interface EquivalenciasService extends RemoteService {
 	EquivalenciaDTO getEquivalencia(Long id);
 	void save(EquivalenciaDTO equivalenciaDTO, List<CursoDTO> cursosSelecionados) throws TriedaException;
 	void remove(List<EquivalenciaDTO> equivalenciaDTOList);
+	void removeAll(CenarioDTO cenario);
 	PagingLoadResult<EquivalenciaDTO> getBuscaList(CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO,
 			CursoDTO cursoDTO, PagingLoadConfig config);
 	List<CursoDTO> getCursosEquivalencia(EquivalenciaDTO equivalenciaDTO);

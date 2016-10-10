@@ -287,7 +287,7 @@ public class FixacoesImportExcel extends AbstractImportExcel<FixacoesImportExcel
 		Map<String, Fixacao> fixacoesHash = new HashMap<String, Fixacao>();
 		
 		for(Fixacao fixacao : fixacoes) {
-			fixacoesHash.put(fixacao.getCodigo(), fixacao);
+			fixacoesHash.put(fixacao.getId().toString(), fixacao);
 		}
 
 		return fixacoesHash;
