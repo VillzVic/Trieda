@@ -137,7 +137,7 @@ public class ToolBarView
 	private Button turnosListCampiBt;
 
 	// Planejamento
-	//private Button fixacoesListBt;
+	private Button fixacoesListBt;
 	private Button parametrosBt;
 	private Button consultaRequisicoesOtimizacaoBt;
 	//private Button alocacaoManualBt;
@@ -690,8 +690,8 @@ public class ToolBarView
 		confirmacaoTurmasBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.confirmacao24());
 		planejamentoToolBar.add(confirmacaoTurmasBt);
 		
-		/*fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
-		planejamentoToolBar.add(fixacoesListBt);*/
+		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
+		planejamentoToolBar.add(fixacoesListBt);
 	}
 
 	private Button createButton( String text, String toolTip, ImageResource icon )
@@ -919,11 +919,11 @@ public class ToolBarView
 		return equivalenciasListDisciplinasBt;
 	}
 
-	/*@Override
+	@Override
 	public Button getFixacoesListButton()
 	{
 		return fixacoesListBt;
-	}*/
+	}
 	
 	/*@Override
 	public Button getAlocacaoManualButton()
