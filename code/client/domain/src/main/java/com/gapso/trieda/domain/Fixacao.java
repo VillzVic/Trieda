@@ -62,6 +62,14 @@ public class Fixacao
     @Size( min = 1, max = 255 )
     private String turma;
     
+    @NotNull
+    @Column( name = "FIX_AMBIENTE" )
+    private Integer fix_ambiente;
+    
+    @NotNull
+    @Column( name = "FIX_DIASEHORARIOS" )
+    private Integer fix_diasHorarios;
+    
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REFRESH }, targetEntity = Cenario.class)
     @JoinColumn( name = "CEN_ID" )
@@ -483,6 +491,22 @@ public class Fixacao
         this.horarios = horarios;
     }
 
+	public Integer getFix_ambiente() {
+		return fix_ambiente;
+	}
+
+	public void setFix_ambiente(Integer fix_ambiente) {
+		this.fix_ambiente = fix_ambiente;
+	}
+
+	public Integer getFix_diasHorarios() {
+		return fix_diasHorarios;
+	}
+
+	public void setFix_diasHorarios(Integer fix_diasHorarios) {
+		this.fix_diasHorarios = fix_diasHorarios;
+	}
+
 	public String toString()
 	{
         StringBuilder sb = new StringBuilder();
@@ -498,6 +522,8 @@ public class Fixacao
         sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
         sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
         sb.append( "Sala: " ).append( getSala() ).append( ", " );
+        sb.append( "Fixar Ambiente: " ).append( getFix_ambiente() ).append( ", " );
+        sb.append( "Fixar Dias e Horarios: " ).append( getFix_diasHorarios() ).append( ", " );
         sb.append( "Horarios: " ).append( getHorarios() == null ?
         	"null" : getHorarios().size() );
 

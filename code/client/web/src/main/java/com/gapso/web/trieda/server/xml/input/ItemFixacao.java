@@ -48,7 +48,9 @@ import javax.xml.bind.annotation.XmlType;
     "cenarioId",
     "instituicaoEnsinoId",
     "salaId",
-    "horarios"
+    "horarios",
+    "fixarDiasEHorarios",
+    "fixarAmbiente"
 })
 public class ItemFixacao {
 
@@ -61,6 +63,9 @@ public class ItemFixacao {
     protected Integer instituicaoEnsinoId;
     protected Integer salaId;
     protected GrupoHorarioFixacao horarios;
+    protected Boolean fixarDiasEHorarios;
+    protected Boolean fixarAmbiente;
+    
     /**
      * Gets the value of the id property.
      * 
@@ -227,6 +232,38 @@ public class ItemFixacao {
 	public void setHorarios(GrupoHorarioFixacao horarios)
 	{
 		this.horarios = horarios;
+	}
+
+	/**
+	 * @return the fixarDiasEHorarios
+	 */
+	public Boolean getFixarDiasEHorarios()
+	{
+		return fixarDiasEHorarios;
+	}
+
+	/**
+	 * @param fixarDiasEHorarios the fixarDiasEHorarios to set
+	 */
+	public void setFixarDiasEHorarios(Boolean fixarDiasEHorarios)
+	{
+		this.fixarDiasEHorarios = fixarDiasEHorarios;
+	}
+
+	/**
+	 * @return the fixarAmbiente
+	 */
+	public Boolean getFixarAmbiente()
+	{
+		return fixarAmbiente;
+	}
+
+	/**
+	 * @param fixarAmbiente the fixarAmbiente to set
+	 */
+	public void setFixarAmbiente(Boolean fixarAmbiente)
+	{
+		this.fixarAmbiente = fixarAmbiente;
 	}
 
    

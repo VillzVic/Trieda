@@ -1998,13 +1998,13 @@ public class SolverInput
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Set< HorarioDisponivelCenario > getHorariosDisponiveis(
+
+	public List< HorarioDisponivelCenario > getHorariosDisponiveis(
 					Professor professorDTO, Disciplina disciplinaDTO, Sala salaDTO )
 				{
 					if( disciplinaDTO == null && salaDTO == null && professorDTO == null )
 					{
-						return new HashSet< HorarioDisponivelCenario >(
+						return new ArrayList< HorarioDisponivelCenario >(
 							new ArrayList< HorarioDisponivelCenario >() );
 					}
 
@@ -2101,7 +2101,7 @@ public class SolverInput
 					
 						lista =  ConvertBeans.toHorarioDisponivelCenario( listDTO );
 		
-					return new HashSet< HorarioDisponivelCenario >( lista );
+					return  lista ;
 				}
 
 	private void generateFixacoes()
@@ -2167,6 +2167,17 @@ public class SolverInput
 					{
 						itemFixacao.setInstituicaoEnsinoId( fixacao.getInstituicaoEnsino().getId().intValue() );
 					}
+					
+					if ( fixacao.getFix_diasHorarios() != null )
+					{
+						itemFixacao.setFixarDiasEHorarios( fixacao.getFix_diasHorarios().intValue() == 0 );
+					}
+					
+					if ( fixacao.getFix_ambiente() != null )
+					{
+						itemFixacao.setFixarAmbiente( fixacao.getFix_ambiente().intValue() == 0 );
+					}
+						
 					
 					Set< HorarioDisponivelCenario > setHorarios	= new HashSet< HorarioDisponivelCenario >();
 					setHorarios.addAll(getHorariosDisponiveis(	fixacao.getProfessor(),
