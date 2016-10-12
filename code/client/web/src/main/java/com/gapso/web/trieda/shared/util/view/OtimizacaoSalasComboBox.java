@@ -50,6 +50,7 @@ public class OtimizacaoSalasComboBox extends ComboBox<SalaDTO>
 		setEditable( false );
 		setEnabled(this.unidadeComboBox.getValue() != null);
 		setTriggerAction( TriggerAction.ALL );
+		setUseQueryCache(false);
 		
 	}
 

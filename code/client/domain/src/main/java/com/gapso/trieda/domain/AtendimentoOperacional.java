@@ -2121,7 +2121,7 @@ public class AtendimentoOperacional implements Serializable,
 		Query q = entityManager()
 				.createQuery(
 						" SELECT COUNT(o) "
-								+ " FROM AtendimentoOperacional o ' JOIN o.alunosDemanda a "
+								+ " FROM AtendimentoOperacional o JOIN o.alunosDemanda a "
 								+ " WHERE o.oferta.campus = :campus "
 								+ " AND o.instituicaoEnsino = :instituicaoEnsino "
 								+ " AND o.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) ");

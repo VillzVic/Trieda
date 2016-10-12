@@ -43,21 +43,24 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "professorId",
     "disciplinaId",
+    "turmaId",
+    "campusId",
+    "cenarioId",
+    "instituicaoEnsinoId",
     "salaId",
-    "diaSemana",
-    "turnoId",
-    "horarioAulaId"
+    "horarios"
 })
 public class ItemFixacao {
 
     protected int id;
     protected Integer professorId;
     protected Integer disciplinaId;
+    protected String turmaId;
+    protected Integer campusId;
+    protected Integer cenarioId;
+    protected Integer instituicaoEnsinoId;
     protected Integer salaId;
-    protected Integer diaSemana;
-    protected Integer turnoId;
-    protected Integer horarioAulaId;
-
+    protected GrupoHorarioFixacao horarios;
     /**
      * Gets the value of the id property.
      * 
@@ -146,76 +149,86 @@ public class ItemFixacao {
         this.salaId = value;
     }
 
-    /**
-     * Gets the value of the diaSemana property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getDiaSemana() {
-        return diaSemana;
-    }
+	/**
+	 * @return the turmaId
+	 */
+	public String getTurmaId()
+	{
+		return turmaId;
+	}
 
-    /**
-     * Sets the value of the diaSemana property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setDiaSemana(Integer value) {
-        this.diaSemana = value;
-    }
+	/**
+	 * @param string the turmaId to set
+	 */
+	public void setTurmaId(String string)
+	{
+		this.turmaId = string;
+	}
 
-    /**
-     * Gets the value of the turnoId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getTurnoId() {
-        return turnoId;
-    }
+	/**
+	 * @return the campusId
+	 */
+	public Integer getCampusId()
+	{
+		return campusId;
+	}
 
-    /**
-     * Sets the value of the turnoId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setTurnoId(Integer value) {
-        this.turnoId = value;
-    }
+	/**
+	 * @param campusId the campusId to set
+	 */
+	public void setCampusId(Integer campusId)
+	{
+		this.campusId = campusId;
+	}
 
-    /**
-     * Gets the value of the horarioAulaId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getHorarioAulaId() {
-        return horarioAulaId;
-    }
+	/**
+	 * @return the cenarioId
+	 */
+	public Integer getCenarioId()
+	{
+		return cenarioId;
+	}
 
-    /**
-     * Sets the value of the horarioAulaId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setHorarioAulaId(Integer value) {
-        this.horarioAulaId = value;
-    }
+	/**
+	 * @param cenarioId the cenarioId to set
+	 */
+	public void setCenarioId(Integer cenarioId)
+	{
+		this.cenarioId = cenarioId;
+	}
+
+	/**
+	 * @return the instituicaoEnsinoId
+	 */
+	public Integer getInstituicaoEnsinoId()
+	{
+		return instituicaoEnsinoId;
+	}
+
+	/**
+	 * @param instituicaoEnsinoId the instituicaoEnsinoId to set
+	 */
+	public void setInstituicaoEnsinoId(Integer instituicaoEnsinoId)
+	{
+		this.instituicaoEnsinoId = instituicaoEnsinoId;
+	}
+
+	/**
+	 * @return the horarios
+	 */
+	public GrupoHorarioFixacao getHorarios()
+	{
+		return horarios;
+	}
+
+	/**
+	 * @param horarios the horarios to set
+	 */
+	public void setHorarios(GrupoHorarioFixacao horarios)
+	{
+		this.horarios = horarios;
+	}
+
+   
 
 }

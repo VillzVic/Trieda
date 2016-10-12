@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AreaTitulacao;
@@ -59,6 +63,7 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.DisponibilidadeGenerica;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.FixacoesServiceImpl;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunos;
@@ -79,6 +84,7 @@ import com.gapso.web.trieda.server.xml.input.GrupoFixacao;
 import com.gapso.web.trieda.server.xml.input.GrupoGrupo;
 import com.gapso.web.trieda.server.xml.input.GrupoHorario;
 import com.gapso.web.trieda.server.xml.input.GrupoHorarioAula;
+import com.gapso.web.trieda.server.xml.input.GrupoHorarioFixacao;
 import com.gapso.web.trieda.server.xml.input.GrupoIdentificador;
 import com.gapso.web.trieda.server.xml.input.GrupoNivelDificuldade;
 import com.gapso.web.trieda.server.xml.input.GrupoOfertaCurso;
@@ -117,6 +123,7 @@ import com.gapso.web.trieda.server.xml.input.ItemEquivalencia;
 import com.gapso.web.trieda.server.xml.input.ItemFixacao;
 import com.gapso.web.trieda.server.xml.input.ItemHorario;
 import com.gapso.web.trieda.server.xml.input.ItemHorarioAula;
+import com.gapso.web.trieda.server.xml.input.ItemHorarioFixacao;
 import com.gapso.web.trieda.server.xml.input.ItemNivelDificuldade;
 import com.gapso.web.trieda.server.xml.input.ItemOfertaCurso;
 import com.gapso.web.trieda.server.xml.input.ItemParametrosPlanejamento;
@@ -135,7 +142,11 @@ import com.gapso.web.trieda.server.xml.input.ItemTurno;
 import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
 
 @Transactional
@@ -1986,6 +1997,112 @@ public class SolverInput
 
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Set< HorarioDisponivelCenario > getHorariosDisponiveis(
+					Professor professorDTO, Disciplina disciplinaDTO, Sala salaDTO )
+				{
+					if( disciplinaDTO == null && salaDTO == null && professorDTO == null )
+					{
+						return new HashSet< HorarioDisponivelCenario >(
+							new ArrayList< HorarioDisponivelCenario >() );
+					}
+
+//					SemanaLetiva semanaLetiva = SemanaLetiva.find(
+//						semanaLetivaId, getInstituicaoEnsinoUser() );
+
+					List< HorarioDisponivelCenario > professorHorarios = null;
+					List< HorarioDisponivelCenario > disciplinaHorarios = null;
+					List< HorarioDisponivelCenario > salaHorarios = null;
+
+					if ( professorDTO != null )
+					{
+						Professor professor = Professor.find(
+							professorDTO.getId(), cenario.getInstituicaoEnsino() );
+
+						professorHorarios = professor.getHorarios( cenario.getInstituicaoEnsino() );
+					}
+
+					if ( disciplinaDTO != null )
+					{
+						Disciplina disciplina = Disciplina.find(
+							disciplinaDTO.getId(), cenario.getInstituicaoEnsino() );
+
+						if ( disciplina != null )
+						{
+							disciplinaHorarios = disciplina.getHorarios( cenario.getInstituicaoEnsino() );
+						}
+					}
+
+					if ( salaDTO != null )
+					{
+						Sala sala = Sala.find( salaDTO.getId(), cenario.getInstituicaoEnsino() );
+						salaHorarios = sala.getHorarios( cenario.getInstituicaoEnsino() );
+					}
+
+					List< HorarioDisponivelCenario > list = new FixacoesServiceImpl().intercessaoHorarios(
+						professorHorarios, disciplinaHorarios, salaHorarios );
+
+					List< HorarioDisponivelCenarioDTO > listDTO
+						= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
+
+					Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
+						= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
+
+					for ( HorarioDisponivelCenarioDTO o : listDTO )
+					{
+						List< HorarioDisponivelCenarioDTO > horarios
+							= horariosTurnos.get( o.getTurnoString() );
+
+						if ( horarios == null )
+						{
+							horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
+							horariosTurnos.put( o.getTurnoString(), horarios );
+						}
+
+						horarios.add( o );
+					}
+
+					for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
+						: horariosTurnos.entrySet() )
+					{
+						Collections.sort( entry.getValue() );
+					}
+
+					Map< Date, List< String > > horariosFinalTurnos
+						= new TreeMap< Date, List< String > >();
+
+					for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
+						: horariosTurnos.entrySet() )
+					{
+						Date ultimoHorario = entry.getValue().get(
+							entry.getValue().size()-1 ).getHorario();
+
+						List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
+						if ( turnos == null )
+						{
+							turnos = new ArrayList< String >();
+							horariosFinalTurnos.put( ultimoHorario, turnos );
+						}
+
+						turnos.add( entry.getKey() );
+					}
+
+					listDTO.clear();
+					for ( Entry< Date, List< String > > entry
+						: horariosFinalTurnos.entrySet() )
+					{
+						for ( String turno : entry.getValue() )
+						{
+							listDTO.addAll( horariosTurnos.get( turno ) );
+						}
+					}
+					List<HorarioDisponivelCenario> lista;
+					
+						lista =  ConvertBeans.toHorarioDisponivelCenario( listDTO );
+		
+					return new HashSet< HorarioDisponivelCenario >( lista );
+				}
 
 	private void generateFixacoes()
 	{
@@ -1997,7 +2114,7 @@ public class SolverInput
 
 		for ( Fixacao fixacao : fixacoes )
 		{
-			Set< HorarioDisponivelCenario > horarios
+			/*Set< HorarioDisponivelCenario > horarios
 				= this.getHorarios( fixacao );
 
 			if ( horarios.size() > 0 )
@@ -2007,14 +2124,11 @@ public class SolverInput
 					if ( !this.parametro.getTurnos().contains(horario.getHorarioAula().getTurno()) )
 					{
 						continue;
-					}
+					}*/
 
 					ItemFixacao itemFixacao = this.of.createItemFixacao();
 
 					itemFixacao.setId( id++ );
-					itemFixacao.setDiaSemana( Semanas.toInt( horario.getDiaSemana() ) );
-					itemFixacao.setTurnoId( horario.getHorarioAula().getTurno().getId().intValue() );
-					itemFixacao.setHorarioAulaId( horario.getHorarioAula().getId().intValue() );
 
 					if ( fixacao.getProfessor() != null )
 					{
@@ -2033,10 +2147,41 @@ public class SolverInput
 						itemFixacao.setSalaId(
 							fixacao.getSala().getId().intValue() );
 					}
-
-					grupoFixacao.getFixacao().add( itemFixacao );
+					
+					if ( fixacao.getTurma() != null )
+					{
+						itemFixacao.setTurmaId( fixacao.getTurma() );
+					}
+					
+					if ( fixacao.getCampus() != null )
+					{
+						itemFixacao.setCampusId( fixacao.getCampus().getId().intValue() );
+					}
+					
+					if ( fixacao.getCenario() != null )
+					{
+						itemFixacao.setCenarioId( fixacao.getCenario().getId().intValue() );
+					}
+					
+					if ( fixacao.getInstituicaoEnsino() != null )
+					{
+						itemFixacao.setInstituicaoEnsinoId( fixacao.getInstituicaoEnsino().getId().intValue() );
+					}
+					
+					Set< HorarioDisponivelCenario > setHorarios	= new HashSet< HorarioDisponivelCenario >();
+					setHorarios.addAll(getHorariosDisponiveis(	fixacao.getProfessor(),
+									fixacao.getDisciplina(), fixacao.getSala()));
+					//setHorarios.addAll( this.getHorarios( fixacao ) );
+					List< HorarioDisponivelCenario > listHorarios = new ArrayList< HorarioDisponivelCenario >( setHorarios );
+					
+					itemFixacao.setHorarios( createGrupoHorarioFixacao( listHorarios ) );
+					
+					grupoFixacao.getFixacao().add( itemFixacao );					
+					
 				}
-			}
+		
+		
+			/*}
 			else
 			{
 				ItemFixacao itemFixacao = this.of.createItemFixacao();
@@ -2063,7 +2208,7 @@ public class SolverInput
 				grupoFixacao.getFixacao().add( itemFixacao );
 			}
 
-		}
+		}*/
 
 		this.triedaInput.setFixacoes( grupoFixacao );
 	}
@@ -2517,6 +2662,47 @@ public class SolverInput
 
 		return grupoHorario;
 	}
+	
+	private GrupoHorarioFixacao createGrupoHorarioFixacao(
+					Collection< HorarioDisponivelCenario > horarios )
+				{
+					GrupoHorarioFixacao grupoHorarioFixacao = this.of.createGrupoHorarioFixacao();
+
+					for ( HorarioDisponivelCenario horarioDisponivelCenario : horarios )
+					{
+						List<Integer> lista = new ArrayList<Integer>();
+						HorarioAula horarioAula = horarioDisponivelCenario.getHorarioAula();
+						Semanas semana = horarioDisponivelCenario.getDiaSemana();
+						ItemHorarioFixacao itemHorarioAux = null;
+						lista.add(Semanas.toInt( semana ));
+
+						for ( ItemHorarioFixacao itemHorarioFixacao : grupoHorarioFixacao.getHorarioFixacao() )
+						{
+							if ( itemHorarioFixacao.getHorariosId() == horarioAula.getId() )
+							{
+								itemHorarioAux = itemHorarioFixacao;
+								break;
+							}
+						}
+							if ( !this.parametro.getTurnos().contains(horarioAula.getTurno()) )
+							{
+								continue;
+							}
+
+							itemHorarioAux = this.of.createItemHorarioFixacao();
+
+							itemHorarioAux.setSemanaLetivaId( horarioAula.getSemanaLetiva().getId().intValue());
+							itemHorarioAux.setTurnoId( horarioAula.getTurno().getId().intValue() );
+							itemHorarioAux.setHorariosId( horarioAula.getId().intValue() );
+							itemHorarioAux.setDiaSemana( lista );
+							
+							grupoHorarioFixacao.getHorarioFixacao().add( itemHorarioAux );
+						
+					}
+
+					return grupoHorarioFixacao;
+				}
+
 
 	private void createWarningMessage( String warningMessage )
 	{

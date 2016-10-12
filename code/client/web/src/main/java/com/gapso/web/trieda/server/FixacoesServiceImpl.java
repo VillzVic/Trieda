@@ -266,7 +266,7 @@ public class FixacoesServiceImpl
 		return new BasePagingLoadResult< HorarioDisponivelCenarioDTO >( listDTO );
 	}
 
-	private List< HorarioDisponivelCenario > intercessaoHorarios(
+	public List< HorarioDisponivelCenario > intercessaoHorarios(
 		Collection< HorarioDisponivelCenario > horario1,
 		Collection< HorarioDisponivelCenario > horario2,
 		Collection< HorarioDisponivelCenario > horario3 )

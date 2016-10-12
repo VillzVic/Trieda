@@ -42,8 +42,6 @@ import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoUnidadeComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoCampusComboBox;
-import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 
 
 public class FixacaoFormView extends MyComposite implements
@@ -72,7 +70,6 @@ public class FixacaoFormView extends MyComposite implements
 	private UnidadeDTO unidadeDTO;
 	private SalaDTO salaDTO;
 	private List<HorarioDisponivelCenarioDTO> listHorarios;
-	private AtendimentoOperacionalDTO turma;
 	
 	
 
@@ -160,13 +157,13 @@ public class FixacaoFormView extends MyComposite implements
 		diasEHorariosCB.setBoxLabel("Dia e Horários");
 		diasEHorariosCB.setName(fixacaoDTO.PROPERTY_FIXA_DIAS_HORARIOS);	
 		diasEHorariosCB.setValue(this.fixacaoDTO.getFixaDiaEHorario());
-		diasEHorariosCB.setEnabled(this.turmaCB.getValue() != null);
+		diasEHorariosCB.setEnabled(!this.turmaCB.getValue().equals(null));
 	
 		ambienteCB = new CheckBox();
 		ambienteCB.setBoxLabel("Ambiente");
 		ambienteCB.setName(fixacaoDTO.PROPERTY_FIXA_AMBIENTE);
 		ambienteCB.setValue(this.fixacaoDTO.getFixaAmbiente());
-		ambienteCB.setEnabled(this.salaCB.getValue() != null);			
+		ambienteCB.setEnabled(!this.salaCB.getValue().equals(null));			
 		
 		CheckBoxGroup checkGroup = new CheckBoxGroup();
 		checkGroup.setFieldLabel("Fixar");

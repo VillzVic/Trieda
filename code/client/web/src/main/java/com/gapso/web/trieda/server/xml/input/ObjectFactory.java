@@ -523,6 +523,14 @@ public class ObjectFactory {
     public ItemHorario createItemHorario() {
         return new ItemHorario();
     }
+    
+    /**
+     * Create an instance of {@link ItemHorario }
+     * 
+     */
+    public ItemHorarioFixacao createItemHorarioFixacao() {
+        return new ItemHorarioFixacao();
+    }
 
     /**
      * Create an instance of {@link ItemCurriculo }
@@ -554,6 +562,14 @@ public class ObjectFactory {
      */
     public GrupoHorario createGrupoHorario() {
         return new GrupoHorario();
+    }
+    
+    /**
+     * Create an instance of {@link GrupoHorario }
+     * 
+     */
+    public GrupoHorarioFixacao createGrupoHorarioFixacao() {
+        return new GrupoHorarioFixacao();
     }
 
     /**
