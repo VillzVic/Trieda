@@ -157,13 +157,13 @@ public class FixacaoFormView extends MyComposite implements
 		diasEHorariosCB.setBoxLabel("Dia e Horários");
 		diasEHorariosCB.setName(fixacaoDTO.PROPERTY_FIXA_DIAS_HORARIOS);	
 		diasEHorariosCB.setValue(this.fixacaoDTO.getFixaDiaEHorario());
-		diasEHorariosCB.setEnabled(!this.turmaCB.getValue().equals(null));
+		//diasEHorariosCB.setEnabled(!this.turmaCB.getValue().equals(null));
 	
 		ambienteCB = new CheckBox();
 		ambienteCB.setBoxLabel("Ambiente");
 		ambienteCB.setName(fixacaoDTO.PROPERTY_FIXA_AMBIENTE);
 		ambienteCB.setValue(this.fixacaoDTO.getFixaAmbiente());
-		ambienteCB.setEnabled(!this.salaCB.getValue().equals(null));			
+		//ambienteCB.setEnabled(!this.salaCB.getValue().equals(null));			
 		
 		CheckBoxGroup checkGroup = new CheckBoxGroup();
 		checkGroup.setFieldLabel("Fixar");
