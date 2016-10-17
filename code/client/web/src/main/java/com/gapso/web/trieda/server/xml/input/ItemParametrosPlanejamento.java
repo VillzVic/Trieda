@@ -145,7 +145,11 @@ import javax.xml.bind.annotation.XmlType;
     "percentuaisMinimoIntegral",
     "considerarCoRequisitos",
     "priorizarCalouros",
-    "considerarPrioridadePorAlunos"
+    "considerarPrioridadePorAlunos",
+    "proibirCiclosEquivalencia",
+    "considerarTransitividade",
+    "proibirTrocasDisciplinas",
+    "considerarCapacidadeMaximaSala"
     
 })
 public class ItemParametrosPlanejamento {
@@ -199,6 +203,10 @@ public class ItemParametrosPlanejamento {
     protected boolean considerarCoRequisitos;
     protected boolean priorizarCalouros;
     protected boolean considerarPrioridadePorAlunos;
+    protected boolean proibirCiclosEquivalencia;
+    protected boolean considerarTransitividade;
+    protected boolean proibirTrocasDisciplinas;
+    protected boolean considerarCapacidadeMaximaSala;
 
     /**
      * Gets the value of the modoOtimizacao property.
@@ -994,10 +1002,76 @@ public class ItemParametrosPlanejamento {
     public void setConsiderarPrioridadePorAlunos(boolean value) {
         this.considerarPrioridadePorAlunos = value;
     }
-    
-
+        
 
     /**
+	 * @return the proibirCiclosEquivalencia
+	 */
+	public boolean isProibirCiclosEquivalencia()
+	{
+		return proibirCiclosEquivalencia;
+	}
+
+	/**
+	 * @param proibirCiclosEquivalencia the proibirCiclosEquivalencia to set
+	 */
+	public void setProibirCiclosEquivalencia(boolean proibirCiclosEquivalencia)
+	{
+		this.proibirCiclosEquivalencia = proibirCiclosEquivalencia;
+	}
+
+	/**
+	 * @return the considerarTransitividade
+	 */
+	public boolean isConsiderarTransitividade()
+	{
+		return considerarTransitividade;
+	}
+
+	/**
+	 * @param considerarTransitividade the considerarTransitividade to set
+	 */
+	public void setConsiderarTransitividade(boolean considerarTransitividade)
+	{
+		this.considerarTransitividade = considerarTransitividade;
+	}
+
+	/**
+	 * @return the proibirTrocasDisciplinas
+	 */
+	public boolean isProibirTrocasDisciplinas()
+	{
+		return proibirTrocasDisciplinas;
+	}
+
+	/**
+	 * @param proibirTrocasDisciplinas the proibirTrocasDisciplinas to set
+	 */
+	public void setProibirTrocasDisciplinas(boolean proibirTrocasDisciplinas)
+	{
+		this.proibirTrocasDisciplinas = proibirTrocasDisciplinas;
+	}
+
+	/**
+	 * @return the considerarCapacidadeMaximaSala
+	 */
+	public boolean isConsiderarCapacidadeMaximaSala()
+	{
+		return considerarCapacidadeMaximaSala;
+	}
+
+	/**
+	 * @param considerarCapacidadeMaximaSala the considerarCapacidadeMaximaSala to set
+	 */
+	public void setConsiderarCapacidadeMaximaSala(boolean considerarCapacidadeMaximaSala)
+	{
+		this.considerarCapacidadeMaximaSala = considerarCapacidadeMaximaSala;
+	}
+
+
+
+
+	/**
      * <p>Java class for anonymous complex type.
      * 
      * <p>The following schema fragment specifies the expected content contained within this class.

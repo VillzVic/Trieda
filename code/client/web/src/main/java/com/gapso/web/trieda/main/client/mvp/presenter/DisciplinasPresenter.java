@@ -239,6 +239,7 @@ implements Presenter
 					= new ImportExcelFormView( parametros, display.getGrid() );
 
 				importExcelFormView.show();
+				display.getGrid().updateList();
 			}
 		});
 

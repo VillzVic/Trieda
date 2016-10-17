@@ -1994,115 +1994,19 @@ public class SolverInput
 		itemParametrosPlanejamento.setPriorizarCalouros(this.parametro.getPriorizarCalouros());
 		
 		itemParametrosPlanejamento.setConsiderarPrioridadePorAlunos(this.parametro.getConsiderarPrioridadePorAlunos());
+		
+		itemParametrosPlanejamento.setProibirCiclosEquivalencia(this.parametro.getProibirCiclosEmEquivalencia());
+		
+		itemParametrosPlanejamento.setConsiderarTransitividade(this.parametro.getConsiderarTransitividadeEmEquivalencia());
+		
+		itemParametrosPlanejamento.setProibirTrocasDisciplinas(this.parametro.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia());
+		
+		itemParametrosPlanejamento.setConsiderarCapacidadeMaximaSala(this.parametro.getCapacidadeMaxSalas());
+		
+		
 
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}
-	
-
-	public List< HorarioDisponivelCenario > getHorariosDisponiveis(
-					Professor professorDTO, Disciplina disciplinaDTO, Sala salaDTO )
-				{
-					if( disciplinaDTO == null && salaDTO == null && professorDTO == null )
-					{
-						return new ArrayList< HorarioDisponivelCenario >(
-							new ArrayList< HorarioDisponivelCenario >() );
-					}
-
-//					SemanaLetiva semanaLetiva = SemanaLetiva.find(
-//						semanaLetivaId, getInstituicaoEnsinoUser() );
-
-					List< HorarioDisponivelCenario > professorHorarios = null;
-					List< HorarioDisponivelCenario > disciplinaHorarios = null;
-					List< HorarioDisponivelCenario > salaHorarios = null;
-
-					if ( professorDTO != null )
-					{
-						Professor professor = Professor.find(
-							professorDTO.getId(), cenario.getInstituicaoEnsino() );
-
-						professorHorarios = professor.getHorarios( cenario.getInstituicaoEnsino() );
-					}
-
-					if ( disciplinaDTO != null )
-					{
-						Disciplina disciplina = Disciplina.find(
-							disciplinaDTO.getId(), cenario.getInstituicaoEnsino() );
-
-						if ( disciplina != null )
-						{
-							disciplinaHorarios = disciplina.getHorarios( cenario.getInstituicaoEnsino() );
-						}
-					}
-
-					if ( salaDTO != null )
-					{
-						Sala sala = Sala.find( salaDTO.getId(), cenario.getInstituicaoEnsino() );
-						salaHorarios = sala.getHorarios( cenario.getInstituicaoEnsino() );
-					}
-
-					List< HorarioDisponivelCenario > list = new FixacoesServiceImpl().intercessaoHorarios(
-						professorHorarios, disciplinaHorarios, salaHorarios );
-
-					List< HorarioDisponivelCenarioDTO > listDTO
-						= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
-
-					Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
-						= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
-
-					for ( HorarioDisponivelCenarioDTO o : listDTO )
-					{
-						List< HorarioDisponivelCenarioDTO > horarios
-							= horariosTurnos.get( o.getTurnoString() );
-
-						if ( horarios == null )
-						{
-							horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
-							horariosTurnos.put( o.getTurnoString(), horarios );
-						}
-
-						horarios.add( o );
-					}
-
-					for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
-						: horariosTurnos.entrySet() )
-					{
-						Collections.sort( entry.getValue() );
-					}
-
-					Map< Date, List< String > > horariosFinalTurnos
-						= new TreeMap< Date, List< String > >();
-
-					for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
-						: horariosTurnos.entrySet() )
-					{
-						Date ultimoHorario = entry.getValue().get(
-							entry.getValue().size()-1 ).getHorario();
-
-						List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
-						if ( turnos == null )
-						{
-							turnos = new ArrayList< String >();
-							horariosFinalTurnos.put( ultimoHorario, turnos );
-						}
-
-						turnos.add( entry.getKey() );
-					}
-
-					listDTO.clear();
-					for ( Entry< Date, List< String > > entry
-						: horariosFinalTurnos.entrySet() )
-					{
-						for ( String turno : entry.getValue() )
-						{
-							listDTO.addAll( horariosTurnos.get( turno ) );
-						}
-					}
-					List<HorarioDisponivelCenario> lista;
-					
-						lista =  ConvertBeans.toHorarioDisponivelCenario( listDTO );
-		
-					return  lista ;
-				}
 
 	private void generateFixacoes()
 	{
@@ -2170,19 +2074,18 @@ public class SolverInput
 					
 					if ( fixacao.getFix_diasHorarios() != null )
 					{
-						itemFixacao.setFixarDiasEHorarios( fixacao.getFix_diasHorarios().intValue() == 0 );
+						itemFixacao.setFixarDiasEHorarios( fixacao.getFix_diasHorarios().intValue() == 1 );
 					}
 					
 					if ( fixacao.getFix_ambiente() != null )
 					{
-						itemFixacao.setFixarAmbiente( fixacao.getFix_ambiente().intValue() == 0 );
+						itemFixacao.setFixarAmbiente( fixacao.getFix_ambiente().intValue() == 1 );
 					}
 						
 					
 					Set< HorarioDisponivelCenario > setHorarios	= new HashSet< HorarioDisponivelCenario >();
-					setHorarios.addAll(getHorariosDisponiveis(	fixacao.getProfessor(),
-									fixacao.getDisciplina(), fixacao.getSala()));
-					//setHorarios.addAll( this.getHorarios( fixacao ) );
+
+					setHorarios.addAll( this.getHorarios( fixacao ) );
 					List< HorarioDisponivelCenario > listHorarios = new ArrayList< HorarioDisponivelCenario >( setHorarios );
 					
 					itemFixacao.setHorarios( createGrupoHorarioFixacao( listHorarios ) );

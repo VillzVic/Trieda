@@ -385,7 +385,7 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 			// Verifica se a demanda já estava cadastrada
 			if (demandaBD == null)
 			{
-				/*
+				
 				demandaBD = new Demanda();
 
 				demandaBD.setDisciplina(alunosDemandaExcel.getDisciplina());
@@ -395,8 +395,8 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 
 				// Demanda.entityManager().refresh( demandaBD );
 				demandasBDMap.put(codeDemanda, demandaBD);
-				*/
-				rowsWithErrorsDemandas.add(alunosDemandaExcel.getRow());
+				
+				//rowsWithErrorsDemandas.add(alunosDemandaExcel.getRow());
 			}
 
 			// Verifica se o aluno já estava cadastrado
@@ -493,9 +493,9 @@ public class AlunosDemandaImportExcel extends AbstractImportExcel<AlunosDemandaI
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(StringUtils.join(new String[] { CAMPUS_COLUMN_NAME, TURNO_COLUMN_NAME, CURRICULO_COLUMN_NAME, DISCIPLINA_COLUMN_NAME }, ","), rowsWithErrorsOfertas.toString()));
 		}
 
-		if (!rowsWithErrorsDemandas.isEmpty()) {
+		/*if (!rowsWithErrorsDemandas.isEmpty()) {
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(StringUtils.join(new String[] { CAMPUS_COLUMN_NAME, TURNO_COLUMN_NAME, CURRICULO_COLUMN_NAME }, ","), rowsWithErrorsDemandas.toString()));
-		}
+		}*/
 
 		if (!rowsWithErrorsAlunos.isEmpty()) {
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(MATRICULA_ALUNO_COLUMN_NAME, rowsWithErrorsAlunos.toString()));

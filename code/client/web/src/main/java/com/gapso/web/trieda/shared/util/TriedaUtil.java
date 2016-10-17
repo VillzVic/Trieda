@@ -274,7 +274,7 @@ public class TriedaUtil
 			if (caught instanceof TriedaException) {
 				caughtMessage = ((TriedaException)caught).getCompleteMessage();
 			} else {
-				caughtMessage = "Message: " + caught.getMessage();
+				caughtMessage = "Há Campos não preenchidos corretamente. Incluir valor \"zero\" para campos vazios";//"Message: " + caught.getMessage();
 				Throwable throwable = caught.getCause();
 				while (throwable != null) {
 					caughtMessage += " Cause: " + throwable.getMessage();

@@ -203,7 +203,6 @@ public class CampusFormView
 		this.valorMedioProfessorVirtualNF.setEnabled(this.campusDTO.getQtdLimiteProfessorVirtual()!=null || this.campusDTO.getValorMedioProfessorVirtual().getDoubleValue()!=null);
 		configFS.add( this.valorMedioProfessorVirtualNF, formData );
 		
-		
 		this.formPanel.add( configFS, formData );
 		
 		

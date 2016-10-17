@@ -3262,8 +3262,8 @@ public class ConvertBeans {
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
-		domain.setFix_ambiente(dto.getFixaAmbiente() ? 0 : 1);
-		domain.setFix_diasHorarios(dto.getFixaDiaEHorario() ? 0 : 1);
+		domain.setFix_ambiente(dto.getFixaAmbiente() ? 1 : 0);
+		domain.setFix_diasHorarios(dto.getFixaDiaEHorario() ? 1 : 0);
 
 		Cenario cenario = Cenario.find(dto.getCenarioId(), instituicaoEnsino );
 		domain.setCenario( cenario );
@@ -3316,8 +3316,8 @@ public class ConvertBeans {
 
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
-		dto.setFixaAmbiente( domain.getFix_ambiente() == 0 );
-		dto.setFixaDiaEHorario( domain.getFix_diasHorarios() == 0 );
+		dto.setFixaAmbiente( domain.getFix_ambiente() == 1 );
+		dto.setFixaDiaEHorario( domain.getFix_diasHorarios() == 1 );
 		dto.setCenarioId( domain.getCenario().getId() );
 		
 		
