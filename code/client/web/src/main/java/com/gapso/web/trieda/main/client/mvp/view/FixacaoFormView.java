@@ -3,8 +3,6 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import java.util.ArrayList;
 import java.util.List;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
-import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -29,11 +27,9 @@ import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoDisciplinasComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoTurmaComboBox;
@@ -59,8 +55,8 @@ public class FixacaoFormView extends MyComposite implements
 	private OtimizacaoSalasComboBox salaCB;
 	private CheckBox diasEHorariosCB;
 	private CheckBox ambienteCB;
+	private CheckBox professorCBx;
 	private SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> grid;
-	
 	private boolean selectDefault;
 	private CenarioDTO cenarioDTO;
 	private FixacaoDTO fixacaoDTO;
@@ -94,7 +90,7 @@ public class FixacaoFormView extends MyComposite implements
 		String title = (fixacaoDTO.getId() == null) ? "Inserção de Fixação"
 				: "Edição de Fixação";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.fixacao16());
-		simpleModal.setHeight(500);
+		simpleModal.setHeight(600);
 		simpleModal.setWidth(617);
 		createForm();
 		simpleModal.setContent(container);
@@ -120,14 +116,13 @@ public class FixacaoFormView extends MyComposite implements
 		descricaoTF.setMaxLength(50);
 		descricaoTF.setEmptyText("Preencha a descrição");
 		formPanel.add(descricaoTF, formData);
-
 		
-		professorCB = new OtimizacaoProfessorComboBox(cenarioDTO);
-		professorCB.setValue(professorDTO);
-		formPanel.add(professorCB, formData);
-
 		
-		disciplinaCB = new OtimizacaoDisciplinasComboBox(professorCB);
+		campusCB = new OtimizacaoCampusComboBox(cenarioDTO);
+		campusCB.setValue(campusDTO);
+		formPanel.add(campusCB, formData);
+		
+		disciplinaCB = new OtimizacaoDisciplinasComboBox(cenarioDTO);
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
 		
@@ -136,42 +131,41 @@ public class FixacaoFormView extends MyComposite implements
 		turmaCB = new OtimizacaoTurmaComboBox(disciplinaCB);
 		turmaCB.setValue(atendimento);
 		formPanel.add(turmaCB, formData);
-		
-		
-		campusCB = new OtimizacaoCampusComboBox(professorCB);
-		campusCB.setValue(campusDTO);
-		formPanel.add(campusCB, formData);
 
+		professorCB = new OtimizacaoProfessorComboBox(turmaCB, disciplinaCB);
+		professorCB.setValue(professorDTO);
+		formPanel.add(professorCB, formData);
 		
-		unidadeCB = new OtimizacaoUnidadeComboBox(campusCB);
+		unidadeCB = new OtimizacaoUnidadeComboBox(turmaCB);
 		unidadeCB.setValue(unidadeDTO);
 		formPanel.add(unidadeCB, formData);
 
-		
-		salaCB = new OtimizacaoSalasComboBox(turmaCB, unidadeCB, professorCB, disciplinaCB);
+		salaCB = new OtimizacaoSalasComboBox(turmaCB, campusCB, disciplinaCB);
 		salaCB.setValue(salaDTO);
 		formPanel.add(salaCB, formData);
-		
 		
 		diasEHorariosCB = new CheckBox();
 		diasEHorariosCB.setBoxLabel("Dia e Horários");
 		diasEHorariosCB.setName(fixacaoDTO.PROPERTY_FIXA_DIAS_HORARIOS);	
 		diasEHorariosCB.setValue(this.fixacaoDTO.getFixaDiaEHorario());
-		//diasEHorariosCB.setEnabled(!this.turmaCB.getValue().equals(null));
-	
+		
 		ambienteCB = new CheckBox();
-		ambienteCB.setBoxLabel("Ambiente");
+		ambienteCB.setBoxLabel("Ambiente(s)");
 		ambienteCB.setName(fixacaoDTO.PROPERTY_FIXA_AMBIENTE);
 		ambienteCB.setValue(this.fixacaoDTO.getFixaAmbiente());
-		//ambienteCB.setEnabled(!this.salaCB.getValue().equals(null));			
+		
+		professorCBx = new CheckBox();
+		professorCBx.setBoxLabel("Professor(es)");
+		professorCBx.setName(fixacaoDTO.PROPERTY_FIXA_PROFESSOR);
+		professorCBx.setValue(this.fixacaoDTO.getFixaProfessor());
 		
 		CheckBoxGroup checkGroup = new CheckBoxGroup();
 		checkGroup.setFieldLabel("Fixar");
 	    checkGroup.add(diasEHorariosCB);
 	    checkGroup.add(ambienteCB);
+	    checkGroup.add(professorCBx);
 				
 		formPanel.add(checkGroup, formData);
-		
 		
 		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
 				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID, this);
@@ -255,6 +249,11 @@ public class FixacaoFormView extends MyComposite implements
 	@Override
 	public CheckBox getAmbiente() {
 		return ambienteCB;
+	}
+	
+	@Override
+	public CheckBox getProfessor() {
+		return professorCBx;
 	}
 
 	@Override

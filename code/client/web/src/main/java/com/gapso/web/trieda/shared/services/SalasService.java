@@ -62,6 +62,6 @@ public interface SalasService
 	SalaDTO getProxSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	SalaDTO getAntSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab);
-	ListLoadResult<SalaDTO> getSalasOtimizadas(AtendimentoOperacionalDTO turma, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO);
+	ListLoadResult<SalaDTO> getSalasOtimizadas(AtendimentoOperacionalDTO turma, CampusDTO campusDTO, DisciplinaDTO disciplinaDTO);
 	
 }

@@ -23,6 +23,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
@@ -176,14 +177,12 @@ public class UnidadesServiceImpl
 	
 
 	@Override
-	public ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( CampusDTO campusDTO )
+	public ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( AtendimentoOperacionalDTO turmaCB )
 	{
 		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
-		Campus campus = Campus.find(
-			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		List< Unidade > unidades = Unidade.findByCampusOtimizado(
-			getInstituicaoEnsinoUser(), campus );
+		List< Unidade > unidades = Unidade.findByTurmaOtimizada(
+			getInstituicaoEnsinoUser(), turmaCB.getTurma() );
 
 		for ( Unidade unidade : unidades )
 		{

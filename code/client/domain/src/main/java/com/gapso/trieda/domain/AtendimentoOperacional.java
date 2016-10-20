@@ -273,6 +273,21 @@ public class AtendimentoOperacional implements Serializable,
 
 		return em;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List< HorarioDisponivelCenario > getHorarios( InstituicaoEnsino instituicaoEnsino, String turma ){
+		Query q = entityManager().createQuery(
+				" SELECT o FROM HorarioDisponivelCenario o " +
+				" JOIN o.atendimentosOperacionais c " +
+			    " WHERE c.instituicaoEnsino = :instituicaoEnsino " +
+			    " AND c.turma = :turma " );
+		
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("turma", turma );
+		
+		List< HorarioDisponivelCenario > list = q.getResultList();
+		return list;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<String> findByDisciplinaOtimizada(
@@ -310,16 +325,18 @@ public class AtendimentoOperacional implements Serializable,
 
 	// fixacao professor combobox
 	@SuppressWarnings("unchecked")
-	public static List<Professor> findProfessorEmAtendimentos(Cenario cenario,
+	public static List<Professor> findProfessorEmAtendimentos(String turmaCB, Disciplina disciplina,
 			InstituicaoEnsino instituicaoEnsino) {
 		Query q = entityManager()
 				.createQuery(
 						" SELECT DISTINCT o "
 								+ " FROM Professor o JOIN o.atendimentosOperacionais a "
 								+ " WHERE a.instituicaoEnsino = :instituicaoEnsino "
-								+ " AND a.cenario = :cenario ");
+								+ " AND a.disciplina = :disciplina "
+								+ " AND a.turma = :turma ");
 
-		q.setParameter("cenario", cenario);
+		q.setParameter("turma", turmaCB);
+		q.setParameter("disciplina", disciplina);
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
 
 		List<Professor> list = q.getResultList();

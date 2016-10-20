@@ -1,22 +1,24 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
+
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
-import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -28,7 +30,6 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoCampusComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoDisciplinasComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoTurmaComboBox;
-import com.gapso.web.trieda.shared.util.view.TurmaComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.OtimizacaoSalasComboBox;
 import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
@@ -52,11 +53,13 @@ public class FixacaoFormPresenter
 		OtimizacaoSalasComboBox getSalaComboBox();
 		CheckBox getDiasEHorarios();
 		CheckBox getAmbiente();
+		CheckBox getProfessor();
 		FixacaoDTO getFixacaoDTO();
 		SemanaLetivaDoCenarioGrid< HorarioDisponivelCenarioDTO > getGrid();
 		boolean isValid();
 		SimpleModal getSimpleModal();
 		OtimizacaoProfessorComboBox getProfessorComboBox();
+
 	}
 
 	private CenarioDTO cenario;
@@ -87,10 +90,11 @@ public class FixacaoFormPresenter
 				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
 			{
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
-				SalaDTO salaDTO = display.getSalaComboBox().getValue();
-				ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();
-
-				Services.fixacoes().getHorariosDisponiveis( professorDTO, disciplinaDTO, salaDTO, callback );
+				/*SalaDTO salaDTO = display.getSalaComboBox().getValue();
+				ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();*/
+				AtendimentoOperacionalDTO turma = display.getTurmaComboBox().getValue();
+				
+				Services.fixacoes().getHorariosDisponiveis( /*professorDTO,*/ disciplinaDTO, /*salaDTO,*/ turma.getTurma(), callback );
 			}
 		};
 
@@ -135,7 +139,7 @@ public class FixacaoFormPresenter
 			}
 		});
 
-		this.display.getProfessorComboBox().addSelectionChangedListener(
+		/*this.display.getProfessorComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< ProfessorDTO >()
 		{
 			@Override
@@ -143,7 +147,7 @@ public class FixacaoFormPresenter
 			{
 				display.getGrid().updateList();
 			}
-		});
+		});*/
 
 		this.display.getDisciplinaComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< DisciplinaDTO >()
@@ -155,7 +159,7 @@ public class FixacaoFormPresenter
 			}
 		});
 
-		this.display.getSalaComboBox().addSelectionChangedListener(
+		/*this.display.getSalaComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< SalaDTO >()
 		{
 			@Override
@@ -163,8 +167,15 @@ public class FixacaoFormPresenter
 			{
 				display.getGrid().updateList();
 			}
-		});
+		});*/
 		
+		this.display.getTurmaComboBox().addSelectionChangedListener(new SelectionChangedListener< AtendimentoOperacionalDTO >()	{
+			@Override
+			public void selectionChanged( SelectionChangedEvent< AtendimentoOperacionalDTO > se ){
+				display.getGrid().updateList();
+				
+			}
+		});	
 	}
 
 	private boolean isValid()
@@ -229,6 +240,7 @@ public class FixacaoFormPresenter
 		
 		fixacaoDTO.setFixaDiaEHorario(this.display.getDiasEHorarios().getValue());
 		fixacaoDTO.setFixaAmbiente(this.display.getAmbiente().getValue());
+		fixacaoDTO.setFixaProfessor(this.display.getProfessor().getValue());
 
 		return fixacaoDTO;
 	}

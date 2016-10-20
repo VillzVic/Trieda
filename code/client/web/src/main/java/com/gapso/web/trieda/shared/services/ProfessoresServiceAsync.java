@@ -7,8 +7,10 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -18,6 +20,7 @@ import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.util.view.OtimizacaoDisciplinasComboBox;
 import com.gapso.web.trieda.shared.util.view.RelatorioProfessorFiltro;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -51,7 +54,6 @@ public interface ProfessoresServiceAsync
 		AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
 	void removeProfessorCampus( List< ProfessorCampusDTO > professorCampusDTOList, AsyncCallback< Void > callback );
 	void getProfessoresEmCampus( CampusDTO campusDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
-	void getProfessoresOtimizados( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
 	void getProfessoresNaoEmCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ProfessorDTO > > callback );
 	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList, AsyncCallback< Void > callback );
 	void getProfessorCampusByCurrentProfessor( CenarioDTO cenarioDTO, AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
@@ -88,4 +90,5 @@ public interface ProfessoresServiceAsync
 	void getAntProfessorVirtual(CenarioDTO cenarioDTO,
 			ProfessorVirtualDTO professorVirtualDTO, String order,
 			AsyncCallback<ProfessorVirtualDTO> callback);
+	void getProfessoresOtimizados(AtendimentoOperacionalDTO value, DisciplinaDTO disciplina, AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 }

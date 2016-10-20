@@ -81,7 +81,7 @@ public interface DisciplinasService
 	ListLoadResult< DisciplinaDTO > getListByCursos( List< CursoDTO > cursos );
 	ListLoadResult< DisciplinaDTO > getListByCurriculo(long curriculoId);
 	
-	ListLoadResult< DisciplinaDTO > getDisciplinaPorProfessorOtimizado( ProfessorDTO professorDTO );
+	ListLoadResult<DisciplinaDTO> getDisciplinaPorCenarioOtimizado(CenarioDTO cenarioDTO);
 	
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	List< DisciplinaIncompativelDTO > getDisciplinasIncompativeis( CurriculoDTO curriculoDTO, Integer periodo );

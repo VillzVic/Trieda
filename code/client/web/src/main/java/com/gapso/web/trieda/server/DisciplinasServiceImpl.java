@@ -428,14 +428,12 @@ public class DisciplinasServiceImpl
 	}
 	
 	@Override
-	public ListLoadResult< DisciplinaDTO > getDisciplinaPorProfessorOtimizado( ProfessorDTO professorDTO )
+	public ListLoadResult< DisciplinaDTO > getDisciplinaPorCenarioOtimizado( CenarioDTO cenario )
 	{
 
 		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
-		Professor professor = Professor.find(
-						professorDTO.getId(), getInstituicaoEnsinoUser() );
-		List< Disciplina > disciplinas = Disciplina.findByProfessorOtimizado(
-			getInstituicaoEnsinoUser(), professor );
+		List< Disciplina > disciplinas = Disciplina.findByCenarioOtimizado(
+			getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenario) );
 		for ( Disciplina disciplina : disciplinas )
 		{
 			list.add( ConvertBeans.toDisciplinaDTO( disciplina ) );

@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.services.Services;
@@ -17,16 +18,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class OtimizacaoDisciplinasComboBox	extends ComboBox<DisciplinaDTO>
 	{
-		private OtimizacaoProfessorComboBox professorComboBox;
+		private CenarioDTO cenarioDTO;
 		
-		public OtimizacaoDisciplinasComboBox(OtimizacaoProfessorComboBox professorCB) {
-			this.professorComboBox = professorCB;
-			addListeners();
+		public OtimizacaoDisciplinasComboBox(CenarioDTO cenario) {
+			this.cenarioDTO = cenario;
 			
 			RpcProxy<ListLoadResult<DisciplinaDTO>> proxy = new RpcProxy<ListLoadResult<DisciplinaDTO>>() {
 				@Override
 				public void load(Object loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback) {
-					Services.disciplinas().getDisciplinaPorProfessorOtimizado(professorComboBox.getValue(), callback);
+					Services.disciplinas().getDisciplinaPorCenarioOtimizado(cenarioDTO, callback);
 				}
 			};
 			
@@ -37,25 +37,9 @@ public class OtimizacaoDisciplinasComboBox	extends ComboBox<DisciplinaDTO>
 			setEmptyText("Selecione a disciplina");
 			setSimpleTemplate("{" + DisciplinaDTO.PROPERTY_NOME + "} ({" + DisciplinaDTO.PROPERTY_CODIGO + "})");
 			setEditable(false);
-			setEnabled(this.professorComboBox.getValue() != null);
 			setTriggerAction(TriggerAction.ALL);
 			setUseQueryCache(false);
 			
-		}
-
-		private void addListeners() {
-			professorComboBox.addSelectionChangedListener(new SelectionChangedListener<ProfessorDTO>(){
-				@Override
-				public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se) {
-					final ProfessorDTO professorDTO = se.getSelectedItem();
-					getStore().removeAll();
-					setValue(null);
-					setEnabled(professorDTO != null);
-					if(professorDTO != null) {
-						getStore().getLoader().load();
-					}
-				}
-			});
 		}
 		
 	    @Override

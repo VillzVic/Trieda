@@ -646,23 +646,16 @@ public class Unidade implements Serializable, Clonable< Unidade >
     }
 
     @SuppressWarnings("unchecked")
-    public static List< Unidade > findByCampusOtimizado(
-    	InstituicaoEnsino instituicaoEnsino, Campus campus )
+    public static List< Unidade > findByTurmaOtimizada(
+    	InstituicaoEnsino instituicaoEnsino, String turma )
     {
     	Query q = entityManager().createQuery(
     		" SELECT DISTINCT o FROM Unidade o " +
     		" JOIN o.salas s JOIN s.atendimentosOperacionais a " +
     		" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
-    		" AND a.oferta.campus = :campus ORDER BY o.nome ASC " );
-    	
-    	/*"SELECT DISTINCT u.uni_nome from atendimento_operacional a " +
-    	"inner join professores p on a.prf_id = p.prf_id " +
-    	"inner join ofertas o on a.ofe_id = o.ofe_id " +
-    	"inner join campi c on c.cam_id= o.cam_id " +
-    	"inner join unidades u on u.cam_id = c.cam_id  " +
-    	"where p.prf_id = ";*/
+    		" AND a.turma = :turma ORDER BY o.nome ASC " );
 
-		q.setParameter( "campus", campus );
+		q.setParameter( "turma", turma );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
     	return q.getResultList();

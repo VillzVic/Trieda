@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -19,5 +20,5 @@ public interface FixacoesServiceAsync
 	void save( FixacaoDTO fixacaoDTO, List< HorarioDisponivelCenarioDTO > hdcDTOList, AsyncCallback< Void > callback );
 	void remove( List< FixacaoDTO > fixacaoDTOList, AsyncCallback< Void > callback );
 	void getHorariosSelecionados( FixacaoDTO fixacaoDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
-	void getHorariosDisponiveis( ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO, AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
+	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, String turma, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
 }

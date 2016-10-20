@@ -47,8 +47,10 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -378,10 +380,10 @@ public class ProfessoresServiceImpl
 	}
 	
 	@Override
-	public ListLoadResult< ProfessorDTO > getProfessoresOtimizados( CenarioDTO cenarioDTO )
+	public ListLoadResult< ProfessorDTO > getProfessoresOtimizados( AtendimentoOperacionalDTO turmaCB, DisciplinaDTO disciplina )
 	{
 		List< ProfessorDTO > listDTO = new ArrayList< ProfessorDTO >();
-		List< Professor > list = AtendimentoOperacional.findProfessorEmAtendimentos( ConvertBeans.toCenario(cenarioDTO), this.getInstituicaoEnsinoUser() );
+		List< Professor > list = AtendimentoOperacional.findProfessorEmAtendimentos( turmaCB.getTurma(), ConvertBeans.toDisciplina(disciplina), this.getInstituicaoEnsinoUser() );
 		Collections.sort( list );
 
 		for ( Professor professor : list )

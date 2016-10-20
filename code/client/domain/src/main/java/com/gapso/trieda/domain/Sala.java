@@ -920,8 +920,8 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 	@SuppressWarnings("unchecked")
 	public static List<Sala> findByTurmaOtimizada(
 			InstituicaoEnsino instituicaoEnsino, AtendimentoOperacional turma,
-			Cenario cenario, Professor professor, Disciplina disciplina) {
-		String queryTurma = "", queryProfessor ="", queryDisciplina = "";
+			Cenario cenario, Campus campus, Disciplina disciplina) {
+		String queryTurma = "", queryCampus ="", queryDisciplina = "";
 		
 		if(turma != null)
 		{
@@ -931,9 +931,9 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 		{
 			queryDisciplina = " AND a.disciplina = :disciplina ";
 		}
-		if(professor != null)
+		if(campus != null)
 		{
-			queryProfessor = " AND a.professor = :professor ";
+			queryCampus = " AND o.unidade.campus = :campus ";
 		}
 		
 		Query q = entityManager()
@@ -944,7 +944,7 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 								+ " AND o.unidade.campus.cenario = :cenario "
 								+ queryTurma
 								+ queryDisciplina
-								+ queryProfessor );
+								+ queryCampus );
 
 		q.setParameter("cenario", cenario);
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
@@ -957,9 +957,9 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 		{
 			q.setParameter("disciplina", disciplina);
 		}
-		if(professor != null)
+		if(campus != null)
 		{
-			q.setParameter("professor", professor);
+			q.setParameter("campus", campus);
 		}
 
 		return q.getResultList();

@@ -150,6 +150,16 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		this.setVersion(other.getVersion());
 		this.alunosDemandasDTO = other.getAlunosDemandas();
 	}
+	
+	
+
+	/**
+	 * @return the propertyTurma
+	 */
+	public static String getPropertyTurma()
+	{
+		return PROPERTY_TURMA;
+	}
 
 	public void setId( Long value )
 	{

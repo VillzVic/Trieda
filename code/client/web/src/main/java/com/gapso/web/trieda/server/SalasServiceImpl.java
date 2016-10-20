@@ -126,12 +126,12 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< SalaDTO > getSalasOtimizadas(  AtendimentoOperacionalDTO turma, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO)
+	public ListLoadResult< SalaDTO > getSalasOtimizadas(  AtendimentoOperacionalDTO turma, CampusDTO campusDTO, DisciplinaDTO disciplinaDTO)
 	{
 		List< SalaDTO > list = new ArrayList< SalaDTO >();
 		List< Sala > salas = Sala.findByTurmaOtimizada(
 			getInstituicaoEnsinoUser(), ConvertBeans.toAtendimentoOperacional(turma), getCenario(), 
-			ConvertBeans.toProfessor(professorDTO), ConvertBeans.toDisciplina(disciplinaDTO) );
+			ConvertBeans.toCampus(campusDTO), ConvertBeans.toDisciplina(disciplinaDTO) );
 
 		for ( Sala sala : salas )
 		{

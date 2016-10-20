@@ -53,7 +53,7 @@ public interface DisciplinasServiceAsync {
 	void getListByCursos( List< CursoDTO > cursos, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCurriculo( long curriculoId, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	
-	void getDisciplinaPorProfessorOtimizado(ProfessorDTO professorDTO, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+	void getDisciplinaPorCenarioOtimizado(CenarioDTO cenarioDTO, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 	
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );

@@ -1217,20 +1217,19 @@ public class Disciplina implements Serializable, Comparable<Disciplina>,
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Disciplina> findByProfessorOtimizado(
-			InstituicaoEnsino instituicaoEnsino, Professor professor) {
+	public static List<Disciplina> findByCenarioOtimizado(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
 
 		Query q = entityManager()
 				.createQuery(
 						"SELECT DISTINCT o FROM Disciplina o " +
 						" JOIN o.atendimentosOperacionais a " +
 						" WHERE o.cenario = :cenario " +
-						" AND a.professor = :professor " +
 						" AND o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino");
 
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
-		q.setParameter("cenario", professor.getCenario());
-		q.setParameter("professor", professor );
+		q.setParameter("cenario", cenario);
+		
 
 		return q.getResultList();
 	}

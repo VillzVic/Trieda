@@ -8,24 +8,24 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class OtimizacaoProfessorComboBox extends ComboBox<ProfessorDTO>
 {
-	private CenarioDTO cenarioDTO;
+	private OtimizacaoTurmaComboBox turmaCB;
+	private OtimizacaoDisciplinasComboBox disciplinaCB;
 
-
-	public OtimizacaoProfessorComboBox(CenarioDTO cenario){
-		this.cenarioDTO = cenario;
+	public OtimizacaoProfessorComboBox(OtimizacaoTurmaComboBox turma, OtimizacaoDisciplinasComboBox disciplina){
+		this.turmaCB = turma;
+		this.disciplinaCB = disciplina;
 
 		
 			RpcProxy<ListLoadResult<ProfessorDTO>> proxy = new RpcProxy<ListLoadResult<ProfessorDTO>>(){
 				@Override
 				public void load(Object loadConfig, AsyncCallback<ListLoadResult<ProfessorDTO>> callback){
-						Services.professores().getProfessoresOtimizados(cenarioDTO, callback);
+						Services.professores().getProfessoresOtimizados(turmaCB.getValue(), disciplinaCB.getValue(), callback);
 				}
 			};
 

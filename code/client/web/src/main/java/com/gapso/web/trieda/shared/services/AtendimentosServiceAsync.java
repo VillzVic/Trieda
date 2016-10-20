@@ -206,4 +206,5 @@ public interface AtendimentosServiceAsync {
 	
 	void getTurmasPorDisciplinaOtimizada(DisciplinaDTO disciplinaDTO, AsyncCallback< ListLoadResult< AtendimentoOperacionalDTO > > callback );
 
+
 }

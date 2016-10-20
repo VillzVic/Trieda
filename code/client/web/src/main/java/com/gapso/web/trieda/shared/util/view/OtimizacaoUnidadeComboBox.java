@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -18,16 +19,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class OtimizacaoUnidadeComboBox	extends ComboBox<UnidadeDTO>
 {
-	private OtimizacaoCampusComboBox campusComboBox;
+	private OtimizacaoTurmaComboBox turmaComboBox;
 	
-	public OtimizacaoUnidadeComboBox(OtimizacaoCampusComboBox campusCB) {
-		this.campusComboBox = campusCB;
-		addListeners();
+	public OtimizacaoUnidadeComboBox(OtimizacaoTurmaComboBox turmaCB) {
+		this.turmaComboBox = turmaCB;
 		
 		RpcProxy<ListLoadResult<UnidadeDTO>> proxy = new RpcProxy<ListLoadResult<UnidadeDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback) {
-				Services.unidades().getUnidadesPorCampusOtimizado(campusComboBox.getValue(), callback);
+				Services.unidades().getUnidadesPorCampusOtimizado(turmaComboBox.getValue(), callback);
 			}
 		};
 		
@@ -38,24 +38,8 @@ public class OtimizacaoUnidadeComboBox	extends ComboBox<UnidadeDTO>
 		setEmptyText("Selecione a unidade");
 		setSimpleTemplate("{"+UnidadeDTO.PROPERTY_NOME+"}");
 		setEditable(false);
-		setEnabled(this.campusComboBox.getValue() != null);
 		setTriggerAction(TriggerAction.ALL);
 			
-	}
-
-	private void addListeners() {
-		campusComboBox.addSelectionChangedListener(new SelectionChangedListener<CampusDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
-				final CampusDTO campusDTO = se.getSelectedItem();
-				getStore().removeAll();
-				setValue(null);
-				setEnabled(campusDTO != null);
-				if(campusDTO != null) {
-					getStore().getLoader().load();
-				}
-			}
-		});
 	}
 	
     @Override

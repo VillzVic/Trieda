@@ -43,5 +43,5 @@ public interface CampiService
 	ListLoadResult< CampusDTO > getListByCurriculo( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO );
 	ListLoadResult<CampusDTO> getListAllCampiTodos( CenarioDTO cenarioDTO );
 	List<BaseTreeModel> getCenariosComparados(List<CenarioDTO> cenariosDTO);
-	ListLoadResult< CampusDTO > getCampusPorProfessor( ProfessorDTO professorDTO );
+	ListLoadResult<CampusDTO> getCampusPorCenario(CenarioDTO cenario);
 }

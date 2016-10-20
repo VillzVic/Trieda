@@ -42,5 +42,5 @@ public interface CampiServiceAsync {
 	void getListByCurriculo( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CampusDTO > > callback );
 	void getListAllCampiTodos( CenarioDTO cenarioDTO, AsyncCallback<ListLoadResult<CampusDTO>> callback );
 	void getCenariosComparados(List<CenarioDTO> cenariosDTO, AsyncCallback<List<BaseTreeModel>> callback);
-	void getCampusPorProfessor(ProfessorDTO professorDTO, AsyncCallback<ListLoadResult<CampusDTO>> callback);
+	void getCampusPorCenario(CenarioDTO cenario, AsyncCallback<ListLoadResult<CampusDTO>> callback);
 }

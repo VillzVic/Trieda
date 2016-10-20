@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Fixacao;
@@ -21,6 +22,7 @@ import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -165,9 +167,9 @@ public class FixacoesServiceImpl
 
 	@Override
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO )
+		/*ProfessorDTO professorDTO,*/ DisciplinaDTO disciplinaDTO, /*SalaDTO salaDTO,*/ String turma )
 	{
-		if( disciplinaDTO == null && salaDTO == null && professorDTO == null )
+		if( disciplinaDTO == null && /*salaDTO == null && professorDTO == null &&*/ turma == null)
 		{
 			return new BasePagingLoadResult< HorarioDisponivelCenarioDTO >(
 				new ArrayList< HorarioDisponivelCenarioDTO >() );
@@ -176,17 +178,18 @@ public class FixacoesServiceImpl
 //		SemanaLetiva semanaLetiva = SemanaLetiva.find(
 //			semanaLetivaId, getInstituicaoEnsinoUser() );
 
-		List< HorarioDisponivelCenario > professorHorarios = null;
+		//List< HorarioDisponivelCenario > professorHorarios = null;
 		List< HorarioDisponivelCenario > disciplinaHorarios = null;
-		List< HorarioDisponivelCenario > salaHorarios = null;
+		//List< HorarioDisponivelCenario > salaHorarios = null;
+		List< HorarioDisponivelCenario > turmaHorarios = null;
 
-		if ( professorDTO != null )
+		/*if ( professorDTO != null )
 		{
 			Professor professor = Professor.find(
 				professorDTO.getId(), getInstituicaoEnsinoUser() );
 
 			professorHorarios = professor.getHorarios( getInstituicaoEnsinoUser() );
-		}
+		}*/
 
 		if ( disciplinaDTO != null )
 		{
@@ -199,14 +202,19 @@ public class FixacoesServiceImpl
 			}
 		}
 
-		if ( salaDTO != null )
+		/*if ( salaDTO != null )
 		{
 			Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 			salaHorarios = sala.getHorarios( getInstituicaoEnsinoUser() );
+		}*/
+		
+		if ( turma != null ){
+			AtendimentoOperacional atendimentoTurma = new AtendimentoOperacional();
+			turmaHorarios = atendimentoTurma.getHorarios(getInstituicaoEnsinoUser(), turma);
 		}
 
 		List< HorarioDisponivelCenario > list = intercessaoHorarios(
-			professorHorarios, disciplinaHorarios, salaHorarios );
+			/*professorHorarios,*/ disciplinaHorarios, /*salaHorarios,*/ turmaHorarios );
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
@@ -268,8 +276,9 @@ public class FixacoesServiceImpl
 
 	public List< HorarioDisponivelCenario > intercessaoHorarios(
 		Collection< HorarioDisponivelCenario > horario1,
-		Collection< HorarioDisponivelCenario > horario2,
-		Collection< HorarioDisponivelCenario > horario3 )
+		Collection< HorarioDisponivelCenario > horario2/*,
+		Collection< HorarioDisponivelCenario > horario3, 
+		Collection< HorarioDisponivelCenario > horario4*/ )
 	{
 		List< HorarioDisponivelCenario > horarios
 			= new ArrayList< HorarioDisponivelCenario >();
@@ -284,10 +293,15 @@ public class FixacoesServiceImpl
 			horarios.addAll( horario2 );
 		}
 
-		if ( horarios.size() == 0 && horario3 != null )
+		/*if ( horarios.size() == 0 && horario3 != null )
 		{
 			horarios.addAll( horario3 );
 		}
+		
+		if ( horarios.size() == 0 && horario4 != null )
+		{
+			horarios.addAll( horario4 );
+		}*/
 
 		if ( horario1 != null )
 		{
@@ -299,10 +313,15 @@ public class FixacoesServiceImpl
 			horarios.retainAll( horario2 );
 		}
 
-		if ( horario3 != null )
+		/*if ( horario3 != null )
 		{
 			horarios.retainAll( horario3 );
 		}
+		
+		if ( horario4 != null )
+		{
+			horarios.retainAll( horario4 );
+		}*/
 
 		return horarios;
 	}

@@ -170,14 +170,13 @@ public class CampiServiceImpl extends RemoteService
 	}
 	
 	@Override
-	public ListLoadResult< CampusDTO > getCampusPorProfessor( ProfessorDTO professorDTO )
+	public ListLoadResult< CampusDTO > getCampusPorCenario( CenarioDTO cenario )
 	{
 
 		List< CampusDTO > list = new ArrayList< CampusDTO >();
-		Professor professor = Professor.find(
-						professorDTO.getId(), getInstituicaoEnsinoUser() );
-		List< Campus > listCampus = Campus.findByProfessorOtimizado(
-			getInstituicaoEnsinoUser(), professor );
+		
+		List< Campus > listCampus = Campus.findByCenario(
+			getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenario) );
 		for ( Campus listCamp : listCampus )
 		{
 			list.add( ConvertBeans.toCampusDTO( listCamp ) );

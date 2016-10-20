@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
@@ -30,5 +31,5 @@ public interface UnidadesServiceAsync
 	void saveDeslocamento( CampusDTO campus, List< DeslocamentoUnidadeDTO > list, AsyncCallback< Void > callback );
 	void getHorariosDisponiveis( UnidadeDTO unidadeDTO,
 		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
-	void getUnidadesPorCampusOtimizado( CampusDTO campusDTO, AsyncCallback< ListLoadResult< UnidadeDTO > > callback );
+	void getUnidadesPorCampusOtimizado( AtendimentoOperacionalDTO atendimentoOperacionalDTO, AsyncCallback< ListLoadResult< UnidadeDTO > > callback );
 }

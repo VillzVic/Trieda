@@ -23,6 +23,7 @@ public class FixacaoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_SALA_STRING = "salaString";
 	public static final String PROPERTY_FIXA_DIAS_HORARIOS = "diaEHorarioString";
 	public static final String PROPERTY_FIXA_AMBIENTE = "ambienteString";
+	public static final String PROPERTY_FIXA_PROFESSOR = "professorString";
 	
 	public void setId(Long value)
 	{
@@ -145,6 +146,14 @@ public class FixacaoDTO extends AbstractDTO<String>
 	
 	public Boolean getFixaAmbiente(){
 		return get(PROPERTY_FIXA_AMBIENTE);
+	}
+	
+	public void setFixaProfessor(Boolean value){
+		set(PROPERTY_FIXA_PROFESSOR, value);
+	}
+	
+	public Boolean getFixaProfessor(){
+		return get(PROPERTY_FIXA_PROFESSOR);
 	}
 	
 	@Override

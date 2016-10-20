@@ -66,5 +66,5 @@ public interface SalasServiceAsync
 			AsyncCallback<SalaDTO> callback);
 	void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab,
 			AsyncCallback<Void> asyncCallback);
-	void getSalasOtimizadas(AtendimentoOperacionalDTO turma, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void getSalasOtimizadas(AtendimentoOperacionalDTO turma, CampusDTO campusDTO, DisciplinaDTO disciplinaDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 }

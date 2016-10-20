@@ -19,23 +19,20 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class OtimizacaoSalasComboBox extends ComboBox<SalaDTO>
 {
 	private OtimizacaoTurmaComboBox turmaComboBox;
-	private OtimizacaoUnidadeComboBox unidadeComboBox;
-	private OtimizacaoProfessorComboBox professorComboBox;
+	private OtimizacaoCampusComboBox campusComboBox;
 	private OtimizacaoDisciplinasComboBox disciplinaComboBox;
 	
-	public OtimizacaoSalasComboBox(OtimizacaoTurmaComboBox turmaCB, OtimizacaoUnidadeComboBox unidadeCB, 
-					OtimizacaoProfessorComboBox professorCB, OtimizacaoDisciplinasComboBox disciplinaCB) {
+	public OtimizacaoSalasComboBox(OtimizacaoTurmaComboBox turmaCB, OtimizacaoCampusComboBox campusCB, 
+					OtimizacaoDisciplinasComboBox disciplinaCB) {
 		this.turmaComboBox = turmaCB;
-		this.unidadeComboBox = unidadeCB;
-		this.professorComboBox = professorCB;
+		this.campusComboBox = campusCB;
 		this.disciplinaComboBox = disciplinaCB;
 		
-		addListeners();
 		
 		RpcProxy<ListLoadResult<SalaDTO>> proxy = new RpcProxy<ListLoadResult<SalaDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback) {
-				Services.salas().getSalasOtimizadas(turmaComboBox.getValue(), professorComboBox.getValue(),
+				Services.salas().getSalasOtimizadas(turmaComboBox.getValue(), campusComboBox.getValue(),
 								disciplinaComboBox.getValue(),  callback);
 			}
 		};
@@ -48,38 +45,8 @@ public class OtimizacaoSalasComboBox extends ComboBox<SalaDTO>
 		setSimpleTemplate( "{" + SalaDTO.PROPERTY_CODIGO + "}-{"
 			+ SalaDTO.PROPERTY_NUMERO + "}" );
 		setEditable( false );
-		setEnabled(this.unidadeComboBox.getValue() != null);
 		setTriggerAction( TriggerAction.ALL );
 		setUseQueryCache(false);
-		
-	}
-
-	private void addListeners() {
-		unidadeComboBox.addSelectionChangedListener(new SelectionChangedListener<UnidadeDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<UnidadeDTO> se) {
-				final UnidadeDTO unidadeDTO = se.getSelectedItem();
-				getStore().removeAll();
-				setValue(null);
-				setEnabled(unidadeDTO != null);
-				if(unidadeDTO != null) {
-					getStore().getLoader().load();
-				}
-			}
-		});
-		
-		turmaComboBox.addSelectionChangedListener(new SelectionChangedListener<AtendimentoOperacionalDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<AtendimentoOperacionalDTO> se) {
-				final AtendimentoOperacionalDTO atendimentoOperacionalDTO = se.getSelectedItem();
-				getStore().removeAll();
-				setValue(null);
-				setEnabled(atendimentoOperacionalDTO != null);
-				if(atendimentoOperacionalDTO != null) {
-					getStore().getLoader().load();
-				}
-			}
-		});
 		
 	}
 	

@@ -70,6 +70,10 @@ public class Fixacao
     @Column( name = "FIX_DIASEHORARIOS" )
     private Integer fix_diasHorarios;
     
+    @NotNull
+    @Column( name = "FIX_PROFESSOR" )
+    private Integer fix_professor;
+    
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REFRESH }, targetEntity = Cenario.class)
     @JoinColumn( name = "CEN_ID" )
@@ -506,6 +510,14 @@ public class Fixacao
 	public void setFix_diasHorarios(Integer fix_diasHorarios) {
 		this.fix_diasHorarios = fix_diasHorarios;
 	}
+	
+	public Integer getFix_professor() {
+		return fix_professor;
+	}
+
+	public void setFix_professor(Integer professor) {
+		this.fix_professor = professor;
+	}
 
 	public String toString()
 	{
@@ -524,6 +536,7 @@ public class Fixacao
         sb.append( "Sala: " ).append( getSala() ).append( ", " );
         sb.append( "Fixar Ambiente: " ).append( getFix_ambiente() ).append( ", " );
         sb.append( "Fixar Dias e Horarios: " ).append( getFix_diasHorarios() ).append( ", " );
+        sb.append( "Fixar Professores: " ).append( getFix_professor() ).append( ", " );
         sb.append( "Horarios: " ).append( getHorarios() == null ?
         	"null" : getHorarios().size() );
 
