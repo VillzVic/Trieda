@@ -41,31 +41,30 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ItemFixacao", propOrder = {
     "id",
-    "professorId",
-    "disciplinaId",
-    "turmaId",
     "campusId",
+    "disciplinaId",
+    "turnoId",
+    "turmaId",    
     "cenarioId",
     "instituicaoEnsinoId",
-    "salaId",
     "horarios",
     "fixarDiasEHorarios",
-    "fixarAmbiente"
+    "fixarAmbiente",
+    "fixarProfessor"
 })
 public class ItemFixacao {
 
     protected int id;
-    protected Integer professorId;
-    protected Integer disciplinaId;
-    protected String turmaId;
     protected Integer campusId;
+    protected Integer disciplinaId;
+    protected Long turnoId;
+    protected String turmaId;    
     protected Integer cenarioId;
     protected Integer instituicaoEnsinoId;
-    protected Integer salaId;
     protected GrupoHorarioFixacao horarios;
     protected Boolean fixarDiasEHorarios;
     protected Boolean fixarAmbiente;
-    
+    protected Boolean fixarProfessor;
     /**
      * Gets the value of the id property.
      * 
@@ -80,30 +79,6 @@ public class ItemFixacao {
      */
     public void setId(int value) {
         this.id = value;
-    }
-
-    /**
-     * Gets the value of the professorId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getProfessorId() {
-        return professorId;
-    }
-
-    /**
-     * Sets the value of the professorId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setProfessorId(Integer value) {
-        this.professorId = value;
     }
 
     /**
@@ -128,30 +103,6 @@ public class ItemFixacao {
      */
     public void setDisciplinaId(Integer value) {
         this.disciplinaId = value;
-    }
-
-    /**
-     * Gets the value of the salaId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getSalaId() {
-        return salaId;
-    }
-
-    /**
-     * Sets the value of the salaId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setSalaId(Integer value) {
-        this.salaId = value;
     }
 
 	/**
@@ -266,6 +217,39 @@ public class ItemFixacao {
 		this.fixarAmbiente = fixarAmbiente;
 	}
 
+	/**
+	 * @return the turnoId
+	 */
+	public Long getTurnoId()
+	{
+		return turnoId;
+	}
+
+	/**
+	 * @param turnoId the turnoId to set
+	 */
+	public void setTurnoId(Long turnoId)
+	{
+		this.turnoId = turnoId;
+	}
+
+	/**
+	 * @return the fixarProfessor
+	 */
+	public Boolean getFixarProfessor()
+	{
+		return fixarProfessor;
+	}
+
+	/**
+	 * @param fixarProfessor the fixarProfessor to set
+	 */
+	public void setFixarProfessor(Boolean fixarProfessor)
+	{
+		this.fixarProfessor = fixarProfessor;
+	}
+
+	
    
 
 }

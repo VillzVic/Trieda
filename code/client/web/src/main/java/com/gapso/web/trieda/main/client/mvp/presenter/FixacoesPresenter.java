@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -94,7 +95,7 @@ public class FixacoesPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
-					cenario, new FixacaoFormView( cenario, new FixacaoDTO(), null, null, null, null, null, null, false ), display.getGrid() );
+					cenario, new FixacaoFormView( cenario, new FixacaoDTO(), null, null, null, null, null, null, true ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -103,24 +104,22 @@ public class FixacoesPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				final FixacaoDTO fixacaoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				
-				final FutureResult<ProfessorDTO> futureProfessorDTO = new FutureResult<ProfessorDTO>();
 				final FutureResult<DisciplinaDTO> futureDisciplinaDTO = new FutureResult<DisciplinaDTO>();
-			
 				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
-				final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
-				final FutureResult<SalaDTO> futureSalaDTO = new FutureResult<SalaDTO>();
 				final FutureResult<List<HorarioDisponivelCenarioDTO>> futureHorariosDTO = new FutureResult<List<HorarioDisponivelCenarioDTO>>();
+				final FutureResult<List<ProfessorDTO>> futureProfessorDTO = new FutureResult<List<ProfessorDTO>>();
+				final FutureResult<List<UnidadeDTO>> futureUnidadeDTO = new FutureResult<List<UnidadeDTO>>();
+				final FutureResult<Collection<SalaDTO>> futureSalaDTO = new FutureResult<Collection<SalaDTO>>();
 				
-				Services.professores().getProfessor(fixacaoDTO.getProfessorId(), futureProfessorDTO);
 				Services.disciplinas().getDisciplina(fixacaoDTO.getDisciplinaId(), futureDisciplinaDTO);
-				
 				Services.campi().getCampus(fixacaoDTO.getCampusId(), futureCampusDTO);
-				Services.unidades().getUnidade(fixacaoDTO.getUnidadeId(), futureUnidadeDTO);
-				Services.salas().getSala(fixacaoDTO.getSalaId(), futureSalaDTO);
 				Services.fixacoes().getHorariosSelecionados(fixacaoDTO, futureHorariosDTO);
+				Services.fixacoes().getProfessoresFixados(fixacaoDTO, futureProfessorDTO);
+				Services.fixacoes().getUnidadesFixadas(fixacaoDTO, futureUnidadeDTO);
+				Services.fixacoes().getSalasFixadas(fixacaoDTO, futureSalaDTO);
 				
-				FutureSynchronizer synch = new FutureSynchronizer(futureProfessorDTO, futureDisciplinaDTO, futureCampusDTO, futureUnidadeDTO, futureSalaDTO, futureHorariosDTO);
+				FutureSynchronizer synch = new FutureSynchronizer( futureDisciplinaDTO, futureCampusDTO, futureHorariosDTO, futureProfessorDTO, 
+								futureUnidadeDTO, futureSalaDTO );
 				
 				synch.addCallback(new AsyncCallback<Boolean>() {
 					@Override
@@ -130,17 +129,17 @@ public class FixacoesPresenter
 					}
 					@Override
 					public void onSuccess(Boolean result) {
-						ProfessorDTO professorDTO = futureProfessorDTO.result();
+
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
-						
 						CampusDTO campusDTO = futureCampusDTO.result();
-						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
-						SalaDTO salaDTO = futureSalaDTO.result();
 						List<HorarioDisponivelCenarioDTO> horariosDTOList = futureHorariosDTO.result();
+						List<ProfessorDTO> ProfessorDTOList = futureProfessorDTO.result();
+						List<UnidadeDTO> UnidadeDTOList = futureUnidadeDTO.result();
+						Collection<SalaDTO> SalaDTOList = futureSalaDTO.result();
 						
-						Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
-							cenario, new FixacaoFormView( cenario, fixacaoDTO, professorDTO, disciplinaDTO,
-								campusDTO, unidadeDTO, salaDTO, horariosDTOList, false ), display.getGrid() );
+						Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO, cenario, 
+								new FixacaoFormView( cenario, fixacaoDTO, disciplinaDTO, campusDTO, horariosDTOList, 
+												ProfessorDTOList, UnidadeDTOList, SalaDTOList, true ), display.getGrid() );
 
 						presenter.go( null );
 					}

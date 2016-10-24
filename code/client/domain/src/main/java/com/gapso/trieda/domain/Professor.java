@@ -113,6 +113,8 @@ public class Professor
 
 /*	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "professores" )
 	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();*/
+	@ManyToMany
+	private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
 	private Set< ProfessorDisciplina > disciplinas = new HashSet< ProfessorDisciplina >();
@@ -153,6 +155,7 @@ public class Professor
 		sb.append( "ValorCredito: " ).append( getValorCredito() ).append( ", " );
 		sb.append( "Campi: " ).append( getCampi() == null ? "null" : getCampi().size() ).append( ", " );
 		sb.append( "Disciplinas: ").append( getDisciplinas() == null ? "null" : getDisciplinas().size() ).append( ", " );
+		sb.append( "Fixações: ").append( getFixacoes() == null ? "null" : getFixacoes().size() ).append( ", " );
 		sb.append( "Atendimentos Operacionais: " ).append( getAtendimentosOperacionais() == null ?
 			"null" : getAtendimentosOperacionais().size() ).append( ", " );
 		sb.append( "Usuario: " ).append( getUsuario() == null ? "null" : getUsuario().size() );
@@ -289,6 +292,7 @@ public class Professor
 	{
 		this.campi = campi;
 	}
+	
 
 /*	public Set< HorarioDisponivelCenario > getHorarios()
 	{
@@ -300,6 +304,14 @@ public class Professor
 	{
 		this.horarios = horarios;
 	}*/
+
+	public Set<Fixacao> getFixacoes() {
+		return fixacoes;
+	}
+
+	public void setFixacoes(Set<Fixacao> fixacoes) {
+		this.fixacoes = fixacoes;
+	}
 
 	public Set< ProfessorDisciplina > getDisciplinas()
 	{

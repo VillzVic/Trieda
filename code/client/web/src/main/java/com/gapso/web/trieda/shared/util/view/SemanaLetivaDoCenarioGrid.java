@@ -52,7 +52,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	
 	private Map<Integer, Boolean> checkHeader;
 
-	private boolean selectDefault = false;
+	private boolean selectDefault = true;
 	private String horarioAulaIdPropertyName;
 	private String lastTurno = "";
 	private String lastSemanaLetiva = "";

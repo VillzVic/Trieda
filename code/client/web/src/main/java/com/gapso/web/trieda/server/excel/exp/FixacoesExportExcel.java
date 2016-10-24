@@ -125,7 +125,7 @@ public class FixacoesExportExcel
 		setCell( row, 3, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getDescricao() );
 
 		// CPF Professor
-		setCell( row, 4, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getProfessor().getCpf() );
+		//setCell( row, 4, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getProfessor().getCpf() );
 
 		// Código Disciplina
 		setCell( row, 5, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getDisciplina().getCodigo() );
@@ -134,10 +134,10 @@ public class FixacoesExportExcel
 		setCell( row, 6, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getCampus().getCodigo() );
 
 		// Código Unidade
-		setCell( row, 7, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getUnidade().getCodigo() );
+		//setCell( row, 7, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getUnidade().getCodigo() );
 
 		// Código Sala
-		setCell( row, 8, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getSala().getCodigo() );
+		//setCell( row, 8, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getSala().getCodigo() );
 
 		// Dias e Horários de Aula
 		setCell( row, 9, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], fixacao.getHorariosStr() );

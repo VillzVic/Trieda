@@ -9,45 +9,21 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ItemHorarioFixacao", propOrder = {
-    "semanaLetivaId",
-    "turnoId",
+    "diaSemanaId",
     "horariosId",
-    "diaSemana"
+    "teorica",
+    "salaId",
+    "professorId"
 })
 public class ItemHorarioFixacao
 {
-	 protected int semanaLetivaId;
-	 protected int turnoId;
+	 protected List<Integer> diaSemanaId;
 	 protected int horariosId;
-	 protected List<Integer> diaSemana;
-	/**
-	 * @return the semanaLetivaId
-	 */
-	public int getSemanaLetivaId()
-	{
-		return semanaLetivaId;
-	}
-	/**
-	 * @param semanaLetivaId the semanaLetivaId to set
-	 */
-	public void setSemanaLetivaId(int semanaLetivaId)
-	{
-		this.semanaLetivaId = semanaLetivaId;
-	}
-	/**
-	 * @return the turnoId
-	 */
-	public int getTurnoId()
-	{
-		return turnoId;
-	}
-	/**
-	 * @param turnoId the turnoId to set
-	 */
-	public void setTurnoId(int turnoId)
-	{
-		this.turnoId = turnoId;
-	}
+	 protected boolean teorica;
+	 protected GrupoIdentificador salaId;
+	 protected GrupoIdentificador professorId;
+	 
+	 
 	/**
 	 * @return the horariosId
 	 */
@@ -67,14 +43,38 @@ public class ItemHorarioFixacao
 	 */
 	public List<Integer> getDiaSemana()
 	{
-		return diaSemana;
+		return diaSemanaId;
 	}
 	/**
 	 * @param diaSemana the diaSemana to set
 	 */
 	public void setDiaSemana(List<Integer> diaSemana)
 	{
-		this.diaSemana = diaSemana;
+		this.diaSemanaId = diaSemana;
+	}
+	public boolean isTeorica()
+	{
+		return teorica;
+	}
+	public void setTeorica(boolean teorica)
+	{
+		this.teorica = teorica;
+	}
+	public GrupoIdentificador getSala()
+	{
+		return salaId;
+	}
+	public void setSala(GrupoIdentificador sala)
+	{
+		this.salaId = sala;
+	}
+	public GrupoIdentificador getPorfessor()
+	{
+		return professorId;
+	}
+	public void setPorfessor(GrupoIdentificador porfessor)
+	{
+		this.professorId = porfessor;
 	}
 
 	 

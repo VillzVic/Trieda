@@ -41,7 +41,6 @@ public class OtimizacaoCampusComboBox extends ComboBox<CampusDTO>
 		setTriggerAction( TriggerAction.ALL );
 		setUseQueryCache(false);
 		
-		
 	}
 
 	@Override

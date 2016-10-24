@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
@@ -69,17 +70,13 @@ public class FixacaoFormView extends MyComposite implements
 	
 	
 
-	public FixacaoFormView(CenarioDTO cenarioDTO, FixacaoDTO fixacaoDTO,
-			ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO,
-			CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO,
-			List<HorarioDisponivelCenarioDTO> listHorarios,	Boolean selectDefault) {
+	public FixacaoFormView(CenarioDTO cenarioDTO, FixacaoDTO fixacaoDTO, DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, 
+			List<HorarioDisponivelCenarioDTO> listHorarios, List<ProfessorDTO> listProfessor, List<UnidadeDTO> listUnidade,
+			Collection<SalaDTO> listSala, Boolean selectDefault) {
 		this.cenarioDTO = cenarioDTO;
 		this.fixacaoDTO = fixacaoDTO; 
-		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		this.campusDTO = campusDTO;
-		this.unidadeDTO = unidadeDTO;
-		this.salaDTO = salaDTO;
 		this.listHorarios = (listHorarios == null) ? new ArrayList<HorarioDisponivelCenarioDTO>()
 				: listHorarios;
 		this.selectDefault = selectDefault;
@@ -171,11 +168,11 @@ public class FixacaoFormView extends MyComposite implements
 				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID, this);
 		grid.setSelectDefault(selectDefault);
 		
-		grid.addListener(Events.Render, new Listener<ComponentEvent>(){
+		/*grid.addListener(Events.Render, new Listener<ComponentEvent>(){
 			public void handleEvent(ComponentEvent be){
 				grid.unCheckAllHeaders();
 			}
-		});
+		});*/
 		container.add(formPanel, new VBoxLayoutData(new Margins(0, 0, 5, 0)));
 		VBoxLayoutData flex = new VBoxLayoutData(new Margins(0));
 		flex.setFlex(1);

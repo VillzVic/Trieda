@@ -364,6 +364,32 @@ public class ConvertBeans {
 	}
 
 	// UNIDADE
+	public static List<Unidade> toUnidade(List<UnidadeDTO> listDTO){
+		
+		List< Unidade > listDomain = new ArrayList< Unidade >();
+		Unidade unidade;
+		for ( UnidadeDTO dto : listDTO )
+		{
+			unidade = toUnidade(dto);
+			listDomain.add(unidade);
+		}
+
+		return listDomain;
+	}
+	
+public static List<UnidadeDTO> toUnidadesFixadosDTO(List<Unidade> list){
+		
+		List< UnidadeDTO > listDTO = new ArrayList< UnidadeDTO >();
+		UnidadeDTO unidadeDTO;
+		for ( Unidade domain : list )
+		{
+			unidadeDTO = toUnidadeDTO(domain);
+			listDTO.add(unidadeDTO);
+		}
+
+		return listDTO;
+	}
+	
 	public static Unidade toUnidade( UnidadeDTO dto )
 	{
 		Unidade domain = new Unidade();
@@ -538,6 +564,19 @@ public class ConvertBeans {
 
 		return list;
 	}
+	
+	public static List< Sala > toSala( Collection< SalaDTO > dtos )
+				{
+					List< Sala > list
+						= new ArrayList< Sala >( dtos.size() );
+
+					for ( SalaDTO dto : dtos )
+					{
+						list.add( ConvertBeans.toSala( dto ) );
+					}
+
+					return list;
+				}
 
 	public static Sala toSala( SalaDTO dto )
 	{
@@ -1056,6 +1095,33 @@ public class ConvertBeans {
 		}
 
 		return listDomain;
+	}
+	
+	// PROFESSORES FIXADOS CENÁRIO
+	public static List< Professor > toProfessoresFixados( List< ProfessorDTO > listDTO )
+	{
+		List< Professor > listDomain = new ArrayList< Professor >();
+		Professor professor;
+		for ( ProfessorDTO dto : listDTO )
+		{
+			professor = toProfessor(dto);
+			listDomain.add(professor);
+		}
+
+		return listDomain;
+	}
+	
+	public static List< ProfessorDTO > toProfessoresFixadosDTO( List< Professor > listdomain )
+	{
+		List< ProfessorDTO > listDTO = new ArrayList< ProfessorDTO >();
+		ProfessorDTO professorDTO;
+		for ( Professor domain : listdomain )
+		{
+			professorDTO = toProfessorDTO(domain);
+			listDTO.add(professorDTO);
+		}
+
+		return listDTO;
 	}
 
 	public static HorarioDisponivelCenarioDTO toHorarioDisponivelCenarioDTO(
@@ -2996,6 +3062,7 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	@SuppressWarnings("unused")
 	private static Integer getCargaHorariaSemanal(Professor p) {
 		int totalCred = 0;
 		Set<String> creditos = new HashSet<String>();
@@ -3013,6 +3080,7 @@ public class ConvertBeans {
 		return totalCred;
 	}
 
+	@SuppressWarnings("unused")
 	private static Integer getTotalCred(Professor p) {
 		Set<String> creditos = new HashSet<String>();
 		for (AtendimentoOperacional atendimento : p.getAtendimentosOperacionais())
@@ -3262,9 +3330,9 @@ public class ConvertBeans {
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
-		domain.setFix_ambiente(dto.getFixaAmbiente() ? 1 : 0);
-		domain.setFix_diasHorarios(dto.getFixaDiaEHorario() ? 1 : 0);
-		domain.setFix_professor(dto.getFixaProfessor() ? 1 : 0);
+		domain.setFix_ambiente(dto.getFixaAmbiente());
+		domain.setFix_diasHorarios(dto.getFixaDiaEHorario());
+		domain.setFix_professor(dto.getFixaProfessor());
 
 		Cenario cenario = Cenario.find(dto.getCenarioId(), instituicaoEnsino );
 		domain.setCenario( cenario );
@@ -3274,11 +3342,11 @@ public class ConvertBeans {
 		domain.setDescricao( dto.getDescricao() );
 		domain.setTurma( dto.getTurmaString() );
 
-		if ( dto.getProfessorId() != null )
+		/*if ( dto.getProfessorId() != null )
 		{
 			domain.setProfessor( Professor.find(
 				dto.getProfessorId(), instituicaoEnsino ) );
-		}
+		}*/
 
 		if ( dto.getDisciplinaId() != null )
 		{
@@ -3293,7 +3361,7 @@ public class ConvertBeans {
 				dto.getCampusId(), instituicaoEnsino ) );
 		}
 
-		if ( dto.getUnidadeId() != null )
+		/*if ( dto.getUnidadeId() != null )
 		{
 			domain.setUnidade( Unidade.find(
 				dto.getUnidadeId(), instituicaoEnsino ) );
@@ -3303,7 +3371,7 @@ public class ConvertBeans {
 		{
 			domain.setSala( Sala.find(
 				dto.getSalaId(), instituicaoEnsino ) );
-		}
+		}*/
 
 		return domain;
 	}
@@ -3317,22 +3385,22 @@ public class ConvertBeans {
 
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
-		dto.setFixaAmbiente( domain.getFix_ambiente() == 1 );
-		dto.setFixaDiaEHorario( domain.getFix_diasHorarios() == 1 );
-		dto.setFixaProfessor(domain.getFix_professor() == 1);
+		dto.setFixaAmbiente( domain.getFix_ambiente());
+		dto.setFixaDiaEHorario( domain.getFix_diasHorarios());
+		dto.setFixaProfessor(domain.getFix_professor());
 		dto.setCenarioId( domain.getCenario().getId() );
 		
 		
 		dto.setDescricao( domain.getDescricao() );
 		dto.setTurmaString( domain.getTurma() );
 
-		Professor professor = domain.getProfessor();
+		/*Professor professor = domain.getProfessor();
 
 		if ( professor != null )
 		{
 			dto.setProfessorId( professor.getId() );
 			dto.setProfessorString( professor.getNome() );
-		}
+		}*/
 
 		Disciplina disciplina = domain.getDisciplina();
 
@@ -3351,7 +3419,7 @@ public class ConvertBeans {
 			dto.setCampusString( campus.getCodigo() );
 		}
 
-		Unidade unidade = domain.getUnidade();
+		/*Unidade unidade = domain.getUnidade();
 
 		if ( unidade != null )
 		{
@@ -3366,7 +3434,7 @@ public class ConvertBeans {
 			dto.setSalaId( sala.getId() );
 			dto.setSalaString( sala.getCodigo() );
 		}
-
+*/
 		if ( instituicaoEnsino != null )
 		{
 			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );

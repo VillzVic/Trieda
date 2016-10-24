@@ -12,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
-import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -38,7 +37,7 @@ public class OtimizacaoTurmaComboBox extends ComboBox<AtendimentoOperacionalDTO>
 		setEmptyText("Selecione a Turma");
 		setSimpleTemplate("{" + AtendimentoOperacionalDTO.PROPERTY_TURMA + "}");
 		setEditable(false);
-		setEnabled(this.disciplinaComboBox.getValue() != null);
+		//setEnabled(this.disciplinaComboBox.getValue() != null);
 		setTriggerAction(TriggerAction.ALL);
 		setUseQueryCache(false);
 		

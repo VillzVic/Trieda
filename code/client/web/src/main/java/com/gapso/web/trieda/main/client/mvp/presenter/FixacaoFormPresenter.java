@@ -1,20 +1,17 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
-
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -68,8 +65,7 @@ public class FixacaoFormPresenter
 	private Display display;
 
 	public FixacaoFormPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display, SimpleGrid< FixacaoDTO > gridPanel )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario, Display display, SimpleGrid< FixacaoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
@@ -90,11 +86,9 @@ public class FixacaoFormPresenter
 				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
 			{
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
-				/*SalaDTO salaDTO = display.getSalaComboBox().getValue();
-				ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();*/
 				AtendimentoOperacionalDTO turma = display.getTurmaComboBox().getValue();
 				
-				Services.fixacoes().getHorariosDisponiveis( /*professorDTO,*/ disciplinaDTO, /*salaDTO,*/ turma.getTurma(), callback );
+				Services.fixacoes().getHorariosDisponiveis( disciplinaDTO, turma.getTurma(), callback );
 			}
 		};
 
@@ -112,8 +106,12 @@ public class FixacaoFormPresenter
 				if ( isValid() )
 				{
 					List< HorarioDisponivelCenarioDTO > hdcDTOList	= display.getGrid().getStore().getModels();
+					List< ProfessorDTO > ProfessorDTOList = display.getProfessorComboBox().getStore().getModels();
+					List< UnidadeDTO > UnidadeDTOList = display.getUnidadeComboBox().getStore().getModels();
+					List< SalaDTO > SalaDTOList = display.getSalaComboBox().getStore().getModels();
+ 
 					
-					Services.fixacoes().save( getDTO(), hdcDTOList, new AsyncCallback< Void >()
+					Services.fixacoes().save( getDTO(), hdcDTOList, ProfessorDTOList,  UnidadeDTOList, SalaDTOList, new AsyncCallback< Void >()
 					{
 						@Override
 						public void onFailure( Throwable caught )
@@ -139,33 +137,14 @@ public class FixacaoFormPresenter
 			}
 		});
 
-		/*this.display.getProfessorComboBox().addSelectionChangedListener(
-			new SelectionChangedListener< ProfessorDTO >()
-		{
-			@Override
-			public void selectionChanged( SelectionChangedEvent< ProfessorDTO > se )
-			{
-				display.getGrid().updateList();
-			}
-		});*/
-
-		this.display.getDisciplinaComboBox().addSelectionChangedListener(
+		/*this.display.getDisciplinaComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< DisciplinaDTO >()
 		{
 			@Override
 			public void selectionChanged( SelectionChangedEvent< DisciplinaDTO > se )
 			{
 				display.getGrid().updateList();
-			}
-		});
-
-		/*this.display.getSalaComboBox().addSelectionChangedListener(
-			new SelectionChangedListener< SalaDTO >()
-		{
-			@Override
-			public void selectionChanged( SelectionChangedEvent< SalaDTO > se )
-			{
-				display.getGrid().updateList();
+				
 			}
 		});*/
 		
@@ -191,14 +170,6 @@ public class FixacaoFormPresenter
 		fixacaoDTO.setCenarioId( this.cenario.getId() );
 		fixacaoDTO.setDescricao( this.display.getDescricaoTextField().getValue() );
 
-		ProfessorDTO professor = this.display.getProfessorComboBox().getValue();
-
-		if ( professor != null )
-		{
-			fixacaoDTO.setProfessorId( professor.getId() );
-			fixacaoDTO.setProfessorString( professor.getNome() );
-		}
-
 		DisciplinaDTO disciplina = this.display.getDisciplinaComboBox().getValue();
 
 		if ( disciplina != null )
@@ -220,22 +191,6 @@ public class FixacaoFormPresenter
 		{
 			fixacaoDTO.setCampusId( campus.getId() );
 			fixacaoDTO.setCampusString( campus.getCodigo() );
-		}
-
-		UnidadeDTO unidade = this.display.getUnidadeComboBox().getValue();
-
-		if ( unidade != null )
-		{
-			fixacaoDTO.setUnidadeId( unidade.getId() );
-			fixacaoDTO.setUnidadeString( unidade.getCodigo() );
-		}
-
-		SalaDTO sala = this.display.getSalaComboBox().getValue();
-
-		if ( sala != null )
-		{
-			fixacaoDTO.setSalaId( sala.getId() );
-			fixacaoDTO.setSalaString( sala.getCodigo() );
 		}
 		
 		fixacaoDTO.setFixaDiaEHorario(this.display.getDiasEHorarios().getValue());

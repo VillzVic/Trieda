@@ -226,11 +226,11 @@ public class FixacoesImportExcel extends AbstractImportExcel<FixacoesImportExcel
 				// Update
 				fixacaoBD.setInstituicaoEnsino(this.instituicaoEnsino);
 				fixacaoBD.setDescricao(fixacaoExcel.getDescricaoStr());
-				fixacaoBD.setProfessor(Professor.findByNomeCpf(this.instituicaoEnsino, this.cenario, null, fixacaoExcel.getProfessorStr()));
+				//fixacaoBD.setProfessor(Professor.findByNomeCpf(this.instituicaoEnsino, this.cenario, null, fixacaoExcel.getProfessorStr()));
 				fixacaoBD.setDisciplina(Disciplina.findByCodigo(this.instituicaoEnsino, this.cenario, fixacaoExcel.getDisciplinaStr()));
 				fixacaoBD.setCampus(Campus.findBy(this.instituicaoEnsino, this.cenario, fixacaoExcel.getCampusStr()));
-				fixacaoBD.setUnidade(Unidade.findBy(this.instituicaoEnsino, this.cenario, fixacaoExcel.getUnidadeStr()));
-				fixacaoBD.setSala(Sala.findByCodigo(this.instituicaoEnsino, this.cenario, fixacaoExcel.getSalaStr()));
+				//fixacaoBD.setUnidade(Unidade.findBy(this.instituicaoEnsino, this.cenario, fixacaoExcel.getUnidadeStr()));
+				//fixacaoBD.setSala(Sala.findByCodigo(this.instituicaoEnsino, this.cenario, fixacaoExcel.getSalaStr()));
 				fixacaoBD.setHorarios(this.getHorarios(fixacaoExcel));
 
 				fixacaoBD.merge();
@@ -243,11 +243,11 @@ public class FixacoesImportExcel extends AbstractImportExcel<FixacoesImportExcel
 
 				newFixacao.setInstituicaoEnsino(this.instituicaoEnsino);
 				newFixacao.setDescricao(fixacaoExcel.getDescricaoStr());
-				newFixacao.setProfessor(Professor.findByNomeCpf(this.instituicaoEnsino, this.cenario, null, fixacaoExcel.getProfessorStr()));
+				//newFixacao.setProfessor(Professor.findByNomeCpf(this.instituicaoEnsino, this.cenario, null, fixacaoExcel.getProfessorStr()));
 				newFixacao.setDisciplina(Disciplina.findByCodigo(this.instituicaoEnsino, this.cenario, fixacaoExcel.getDisciplinaStr()));
 				newFixacao.setCampus(Campus.findBy(this.instituicaoEnsino, this.cenario, fixacaoExcel.getCampusStr()));
-				newFixacao.setUnidade(Unidade.findBy(this.instituicaoEnsino, this.cenario, fixacaoExcel.getUnidadeStr()));
-				newFixacao.setSala(Sala.findByCodigo(this.instituicaoEnsino, this.cenario, fixacaoExcel.getSalaStr()));
+				//newFixacao.setUnidade(Unidade.findBy(this.instituicaoEnsino, this.cenario, fixacaoExcel.getUnidadeStr()));
+				//newFixacao.setSala(Sala.findByCodigo(this.instituicaoEnsino, this.cenario, fixacaoExcel.getSalaStr()));
 				newFixacao.setHorarios(this.getHorarios(fixacaoExcel));
 
 				Fixacao.entityManager().refresh(newFixacao);

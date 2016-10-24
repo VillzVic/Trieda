@@ -147,8 +147,11 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "sala")
 	private Set<AtendimentoTatico> atendimentosTaticos = new HashSet<AtendimentoTatico>();
 
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sala")
-	private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
+	/*@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sala")
+	private Set<Fixacao> fixacoes = new HashSet<Fixacao>();*/
+	
+	@ManyToMany
+	private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
 
 	@OneToMany(mappedBy = "sala")
 	private Set<Aula> aulas = new HashSet<Aula>();

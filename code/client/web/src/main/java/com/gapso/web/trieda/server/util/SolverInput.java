@@ -4,20 +4,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AreaTitulacao;
@@ -63,7 +59,6 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.DisponibilidadeGenerica;
 import com.gapso.trieda.misc.Semanas;
-import com.gapso.web.trieda.server.FixacoesServiceImpl;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunos;
@@ -142,11 +137,7 @@ import com.gapso.web.trieda.server.xml.input.ItemTurno;
 import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
-import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
-import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
-import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
-import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
 
 @Transactional
@@ -626,7 +617,7 @@ public class SolverInput
 					itemHorarioAula.setInicio( new XMLGregorianCalendarUtil(
 						horarioAula.getHorario() ) );
 
-					GrupoDiaSemana grupoDiasSemana
+					GrupoDiaSemana grupoDiasSemana 
 						= this.of.createGrupoDiaSemana();
 
 					List< HorarioDisponivelCenario > horariosDisponivelCenario = new ArrayList<HorarioDisponivelCenario>(horarioAula.getHorariosDisponiveisCenario());
@@ -2007,6 +1998,8 @@ public class SolverInput
 
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}
+	
+	
 
 	private void generateFixacoes()
 	{
@@ -2033,11 +2026,10 @@ public class SolverInput
 					ItemFixacao itemFixacao = this.of.createItemFixacao();
 
 					itemFixacao.setId( id++ );
-
-					if ( fixacao.getProfessor() != null )
+					
+					if ( fixacao.getCampus() != null )
 					{
-						itemFixacao.setProfessorId(
-							fixacao.getProfessor().getId().intValue() );
+						itemFixacao.setCampusId( fixacao.getCampus().getId().intValue() );
 					}
 
 					if ( fixacao.getDisciplina() != null )
@@ -2045,21 +2037,16 @@ public class SolverInput
 						itemFixacao.setDisciplinaId(
 							fixacao.getDisciplina().getId().intValue() );
 					}
-
-					if ( fixacao.getSala() != null )
+					
+					if ( fixacao.getTurnoId() != null)
 					{
-						itemFixacao.setSalaId(
-							fixacao.getSala().getId().intValue() );
+						itemFixacao.setTurnoId(
+							fixacao.getTurnoId());
 					}
 					
 					if ( fixacao.getTurma() != null )
 					{
 						itemFixacao.setTurmaId( fixacao.getTurma() );
-					}
-					
-					if ( fixacao.getCampus() != null )
-					{
-						itemFixacao.setCampusId( fixacao.getCampus().getId().intValue() );
 					}
 					
 					if ( fixacao.getCenario() != null )
@@ -2074,12 +2061,18 @@ public class SolverInput
 					
 					if ( fixacao.getFix_diasHorarios() != null )
 					{
-						itemFixacao.setFixarDiasEHorarios( fixacao.getFix_diasHorarios().intValue() == 1 );
+						itemFixacao.setFixarDiasEHorarios( fixacao.getFix_diasHorarios() );
 					}
 					
 					if ( fixacao.getFix_ambiente() != null )
 					{
-						itemFixacao.setFixarAmbiente( fixacao.getFix_ambiente().intValue() == 1 );
+						itemFixacao.setFixarAmbiente( fixacao.getFix_ambiente());
+					}
+					
+					if ( fixacao.getFix_professor() != null){
+						
+						itemFixacao.setFixarProfessor(
+										fixacao.getFix_professor());
 					}
 						
 					
@@ -2088,7 +2081,7 @@ public class SolverInput
 					setHorarios.addAll( this.getHorarios( fixacao ) );
 					List< HorarioDisponivelCenario > listHorarios = new ArrayList< HorarioDisponivelCenario >( setHorarios );
 					
-					itemFixacao.setHorarios( createGrupoHorarioFixacao( listHorarios ) );
+					itemFixacao.setHorarios( createGrupoHorarioFixacao( listHorarios, fixacao ) );
 					
 					grupoFixacao.getFixacao().add( itemFixacao );					
 					
@@ -2565,8 +2558,7 @@ public class SolverInput
 				itemHorarioAux = this.of.createItemHorario();
 
 				itemHorarioAux.setHorarioAulaId( horarioAula.getId().intValue() );
-				itemHorarioAux.setTurnoId(
-					horarioAula.getTurno().getId().intValue() );
+				itemHorarioAux.setTurnoId( horarioAula.getTurno().getId().intValue() );
 				itemHorarioAux.setDiasSemana( this.of.createGrupoDiaSemana() );
 				itemHorarioAux.getDiasSemana().getDiaSemana().add( Semanas.toInt( semana ) );
 
@@ -2578,7 +2570,7 @@ public class SolverInput
 	}
 	
 	private GrupoHorarioFixacao createGrupoHorarioFixacao(
-					Collection< HorarioDisponivelCenario > horarios )
+					Collection< HorarioDisponivelCenario > horarios, Fixacao fixacao )
 				{
 					GrupoHorarioFixacao grupoHorarioFixacao = this.of.createGrupoHorarioFixacao();
 
@@ -2605,10 +2597,23 @@ public class SolverInput
 
 							itemHorarioAux = this.of.createItemHorarioFixacao();
 
-							itemHorarioAux.setSemanaLetivaId( horarioAula.getSemanaLetiva().getId().intValue());
-							itemHorarioAux.setTurnoId( horarioAula.getTurno().getId().intValue() );
-							itemHorarioAux.setHorariosId( horarioAula.getId().intValue() );
 							itemHorarioAux.setDiaSemana( lista );
+							itemHorarioAux.setHorariosId( horarioAula.getId().intValue() );
+							itemHorarioAux.setTeorica(fixacao.isTeoricoHorario(horarioDisponivelCenario.getId().intValue()));
+							
+							GrupoIdentificador SalaFixacao = this.of.createGrupoIdentificador();
+							for(Sala sala : fixacao.getSalas()){
+								if(fixacao.isTeoricoSala(sala.getId().intValue()) == (itemHorarioAux.isTeorica()))
+									SalaFixacao.getId().add(sala.getId().intValue());
+							}
+							
+							itemHorarioAux.setSala(SalaFixacao);
+							
+							GrupoIdentificador grupoProfessorFixacao = this.of.createGrupoIdentificador();
+							for(Professor professor : fixacao.getProfessores()){
+								grupoProfessorFixacao.getId().add(professor.getId().intValue());
+							}
+							itemHorarioAux.setPorfessor(grupoProfessorFixacao);
 							
 							grupoHorarioFixacao.getHorarioFixacao().add( itemHorarioAux );
 						

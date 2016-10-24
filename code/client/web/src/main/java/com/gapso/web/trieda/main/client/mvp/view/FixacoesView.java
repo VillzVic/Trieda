@@ -70,12 +70,9 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_DESCRICAO, "Descrição", 200));
-		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_PROFESSOR_STRING, "Professor", 200));
+		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_CAMPUS_STRING, "Campus", 200));
 		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 200));
 		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_TURMA_STRING, "Turma", 200));
-		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_CAMPUS_STRING, "Campus", 200));
-		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_UNIDADE_STRING, "Unidade", 200));
-		list.add(new ColumnConfig(FixacaoDTO.PROPERTY_SALA_STRING, "Sala", 200));
 		return list;
 	}
 

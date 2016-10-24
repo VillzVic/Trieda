@@ -525,13 +525,13 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link ItemHorario }
+     * Create an instance of {@link ItemHorarioFixacao }
      * 
      */
     public ItemHorarioFixacao createItemHorarioFixacao() {
         return new ItemHorarioFixacao();
     }
-
+    
     /**
      * Create an instance of {@link ItemCurriculo }
      * 
@@ -565,7 +565,7 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link GrupoHorario }
+     * Create an instance of {@link GrupoHorarioFixacao }
      * 
      */
     public GrupoHorarioFixacao createGrupoHorarioFixacao() {
@@ -739,5 +739,6 @@ public class ObjectFactory {
     public ItemParametrosPlanejamento.CargaHorariaSemanalProfessor createItemParametrosPlanejamentoCargaHorariaSemanalProfessor() {
         return new ItemParametrosPlanejamento.CargaHorariaSemanalProfessor();
     }
+    
 
 }

@@ -30,7 +30,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gapso.trieda.misc.Semanas;
 
 
 @Configurable
@@ -49,9 +48,9 @@ public class Fixacao
     @Size( min = 1, max = 50 )
     private String descricao;
     
-    @ManyToOne( targetEntity = Professor.class, fetch=FetchType.LAZY )
+    /*@ManyToOne( targetEntity = Professor.class, fetch=FetchType.LAZY )
     @JoinColumn( name = "PRF_ID" )
-    private Professor professor;
+    private Professor professor;*/
 	
     @ManyToOne( targetEntity = Disciplina.class, fetch=FetchType.LAZY )
     @JoinColumn( name = "DIS_ID" )
@@ -64,15 +63,15 @@ public class Fixacao
     
     @NotNull
     @Column( name = "FIX_AMBIENTE" )
-    private Integer fix_ambiente;
+    private Boolean fix_ambiente;
     
     @NotNull
     @Column( name = "FIX_DIASEHORARIOS" )
-    private Integer fix_diasHorarios;
+    private Boolean fix_diasHorarios;
     
     @NotNull
     @Column( name = "FIX_PROFESSOR" )
-    private Integer fix_professor;
+    private Boolean fix_professor;
     
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REFRESH }, targetEntity = Cenario.class)
@@ -83,16 +82,25 @@ public class Fixacao
     @JoinColumn( name = "CAM_ID" )
     private Campus campus;
     
-    @ManyToOne( targetEntity = Unidade.class )
+   /* @ManyToOne( targetEntity = Unidade.class )
     @JoinColumn( name = "UNI_ID" )
     private Unidade unidade;
     
     @ManyToOne( targetEntity = Sala.class )
     @JoinColumn( name = "SAL_ID" )
-    private Sala sala;
+    private Sala sala;*/
     
     @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "fixacoes" )
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
+    
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "fixacoes" )
+    private Set< Sala > salas = new HashSet< Sala >();
+    
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "fixacoes" )
+    private Set< Professor > professores = new HashSet< Professor >();
+    
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "fixacoes" )
+    private Set< Unidade > unidades = new HashSet< Unidade >();
 
     @PersistenceContext
     transient EntityManager entityManager;
@@ -165,6 +173,9 @@ public class Fixacao
         if ( this.entityManager.contains( this ) )
         {
         	this.removeHorariosDisponivelCenario();
+        	this.removeAmbientesDisponivelCenario();
+        	this.removeProfessoresDisponivelCenario();
+        	this.removeUnidadesDisponivelCenario();
             this.entityManager.remove( this );
         }
         else
@@ -173,6 +184,9 @@ public class Fixacao
             	this.getClass(), this.id );
 
             attached.removeHorariosDisponivelCenario();
+            attached.removeAmbientesDisponivelCenario();
+            attached.removeProfessoresDisponivelCenario();
+            attached.removeUnidadesDisponivelCenario();
             this.entityManager.remove( attached );
         }
     }
@@ -186,6 +200,42 @@ public class Fixacao
     	{
     		horario.getFixacoes().remove( this );
     		horario.merge();
+    	}
+    }
+    
+    @Transactional
+    public void removeProfessoresDisponivelCenario()
+    {
+    	Set< Professor > professores = this.getProfessores();
+
+    	for ( Professor professor : professores )
+    	{
+    		professor.getFixacoes().remove( this );
+    		professor.merge();
+    	}
+    }
+    
+    @Transactional
+    public void removeAmbientesDisponivelCenario()
+    {
+    	Set< Sala > salas = this.getSalas();
+
+    	for ( Sala sala : salas )
+    	{
+    		sala.getFixacoes().remove( this );
+    		sala.merge();
+    	}
+    }
+    
+    @Transactional
+    public void removeUnidadesDisponivelCenario()
+    {
+    	Set< Unidade > unidades = this.getUnidades();
+
+    	for ( Unidade unidade : unidades )
+    	{
+    		unidade.getFixacoes().remove( this );
+    		unidade.merge();
     	}
     }
 
@@ -261,6 +311,101 @@ public class Fixacao
 
         List< Fixacao > list = q.getResultList();
         return list;
+    }
+    
+    public Boolean getTeoricoSala( Integer sala )
+    {
+        Query q = entityManager().createNativeQuery(
+        	" select distinct a.atp_creditoteotico " +
+        	" from atendimento_operacional a " + 
+        	" inner join horario_disponivel_cenario h on a.hdc_id = h.hdc_id " +
+        	" inner join horario_disponivel_cenario_fixacoes hf on hf.horarios = h.hdc_id " +
+        	" inner join fixacoes f on f.fix_id = hf.fixacoes and f.dis_id = a.dis_id " +
+        	" inner join salas_fixacoes sf on sf.fixacoes = f.fix_id " +
+        	" inner join salas s on s.sal_id = sf.salas and s.sal_id = a.sal_id " +
+        	" where f.fix_id = :fixacao and s.sal_id = :sala ");
+      
+        q.setParameter( "sala", sala );
+        q.setParameter( "fixacao", this.getId() );
+               
+        return (Boolean) q.getSingleResult();
+        
+    }
+    
+    public Boolean getTeoricoHorario( Integer hdc )
+    {
+        Query q = entityManager().createNativeQuery(
+        	" select distinct a.atp_creditoteotico " +
+        	" from atendimento_operacional a " + 
+        	" inner join horario_disponivel_cenario h on a.hdc_id = h.hdc_id " +
+        	" inner join horario_disponivel_cenario_fixacoes hf on hf.horarios = h.hdc_id " +
+        	" inner join fixacoes f on f.fix_id = hf.fixacoes and f.dis_id = a.dis_id " +
+        	" where f.fix_id = :fixacao and h.hdc_id = :hdc ");
+      
+        	q.setParameter( "hdc", hdc );
+        	q.setParameter( "fixacao", this.getId() );
+               
+        return (Boolean) q.getSingleResult();
+        
+    }
+    
+    @Transactional
+    public void setTeoricoSala(Integer sala){
+    	Boolean teorico = getTeoricoSala(sala);
+    	
+    	Query q = entityManager().createNativeQuery(
+    			" update salas_fixacoes " +
+    			" set aula_teorica = :teorico " +
+    			" where fixacoes = :fixacoes " +
+    			" and salas = :sala ");
+    	
+    	q.setParameter( "teorico", teorico );
+    	q.setParameter( "fixacoes", this.getId() );
+        q.setParameter( "sala", sala );
+        
+        q.executeUpdate();
+    	
+    }
+    
+    @Transactional
+    public void setTeoricoHorario(Integer hdc){
+    	Boolean teorico = getTeoricoHorario(hdc);
+    	Query q = entityManager().createNativeQuery(
+    			" update horario_disponivel_cenario_fixacoes " +
+    			" set aula_teorica = :teorico " +
+    			" where fixacoes = :fixacoes " +
+    			" and horarios = :hdc ");
+    	
+    	q.setParameter( "teorico", teorico );
+    	q.setParameter( "fixacoes", this.getId() );
+        q.setParameter( "hdc", hdc );
+        
+        q.executeUpdate();
+    	
+    }
+    
+    public Boolean isTeoricoHorario(Integer hdc){
+    	Query q = entityManager().createNativeQuery(
+    			" select aula_teorica " +
+    			" from horario_disponivel_cenario_fixacoes " +
+    			" where fixacoes = :fixacoes and horarios = :hdc ");
+    	
+    	q.setParameter( "hdc", hdc );
+    	q.setParameter( "fixacoes", this.getId() );
+    	
+    	return (Boolean) q.getSingleResult();
+    }
+    
+    public Boolean isTeoricoSala(Integer sala){
+    	Query q = entityManager().createNativeQuery(
+    			" select aula_teorica " +
+    			" from salas_fixacoes " +
+    			" where fixacoes = :fixacoes and salas = :sala ");
+    	
+    	q.setParameter( "sala", sala );
+    	q.setParameter( "fixacoes", this.getId() );
+    	
+    	return (Boolean) q.getSingleResult();
     }
 
     public static Fixacao find(
@@ -401,6 +546,57 @@ public class Fixacao
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public List< Professor > getProfessores(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Professor o, IN ( o.fixacoes ) c " +
+			" WHERE c = :fixacao " +
+			" AND c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.cenario = :cenario " );
+
+		q.setParameter( "fixacao", this );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public List< Unidade > getUnidades(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Unidade o, IN ( o.fixacoes ) c " +
+			" WHERE c = :fixacao " +
+			" AND c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.cenario = :cenario " );
+
+		q.setParameter( "fixacao", this );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public List< Sala > getSalas(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Sala o, IN ( o.fixacoes ) c " +
+			" WHERE c = :fixacao " +
+			" AND c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.cenario = :cenario " );
+
+		q.setParameter( "fixacao", this );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+		return q.getResultList();
+	}
 
     public String getDescricao()
     {
@@ -412,7 +608,7 @@ public class Fixacao
     	this.descricao = descricao;
     }
 
-    public Professor getProfessor()
+   /* public Professor getProfessor()
     {
     	return this.professor;
     }
@@ -420,7 +616,7 @@ public class Fixacao
     public void setProfessor( Professor professor )
     {
     	this.professor = professor;
-    }
+    }*/
 
 	public Disciplina getDisciplina()
 	{
@@ -463,8 +659,10 @@ public class Fixacao
 	{
 		this.campus = campus;
 	}
+	
+	
 
-	public Unidade getUnidade()
+	/*public Unidade getUnidade()
 	{
 		return this.unidade;
 	}
@@ -482,6 +680,30 @@ public class Fixacao
 	public void setSala( Sala sala )
 	{
 		this.sala = sala;
+	}*/
+
+	public Set<Sala> getSalas() {
+		return salas;
+	}
+
+	public void setSalas(Set<Sala> salas) {
+		this.salas = salas;
+	}
+
+	public Set<Professor> getProfessores() {
+		return professores;
+	}
+
+	public void setProfessores(Set<Professor> professores) {
+		this.professores = professores;
+	}
+
+	public Set<Unidade> getUnidades() {
+		return unidades;
+	}
+
+	public void setUnidades(Set<Unidade> unidades) {
+		this.unidades = unidades;
 	}
 
 	private Set< HorarioDisponivelCenario > getHorarios()
@@ -495,28 +717,28 @@ public class Fixacao
         this.horarios = horarios;
     }
 
-	public Integer getFix_ambiente() {
+	public Boolean getFix_ambiente() {
 		return fix_ambiente;
 	}
 
-	public void setFix_ambiente(Integer fix_ambiente) {
+	public void setFix_ambiente(Boolean fix_ambiente) {
 		this.fix_ambiente = fix_ambiente;
 	}
 
-	public Integer getFix_diasHorarios() {
+	public Boolean getFix_diasHorarios() {
 		return fix_diasHorarios;
 	}
 
-	public void setFix_diasHorarios(Integer fix_diasHorarios) {
+	public void setFix_diasHorarios(Boolean fix_diasHorarios) {
 		this.fix_diasHorarios = fix_diasHorarios;
 	}
-	
-	public Integer getFix_professor() {
+
+	public Boolean getFix_professor() {
 		return fix_professor;
 	}
 
-	public void setFix_professor(Integer professor) {
-		this.fix_professor = professor;
+	public void setFix_professor(Boolean fix_professor) {
+		this.fix_professor = fix_professor;
 	}
 
 	public String toString()
@@ -526,14 +748,14 @@ public class Fixacao
         sb.append( "Id: " ).append( getId() ).append( ", " );
         sb.append( "Version: " ).append( getVersion() ).append( ", " );
         sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-        sb.append( "Professor: " ).append( getProfessor() ).append( ", " );
+        sb.append( "Professor: " ).append( getProfessores() ).append( ", " );
         sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
         sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
         sb.append( "Turma: " ).append( getTurma() ).append( ", " );
         sb.append( "Campus: " ).append( getCampus() ).append( ", " );
         sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
-        sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
-        sb.append( "Sala: " ).append( getSala() ).append( ", " );
+        sb.append( "Unidade: " ).append( getUnidades() ).append( ", " );
+        sb.append( "Sala: " ).append( getSalas() ).append( ", " );
         sb.append( "Fixar Ambiente: " ).append( getFix_ambiente() ).append( ", " );
         sb.append( "Fixar Dias e Horarios: " ).append( getFix_diasHorarios() ).append( ", " );
         sb.append( "Fixar Professores: " ).append( getFix_professor() ).append( ", " );
@@ -600,6 +822,18 @@ public class Fixacao
 		}
 
 		return true;
+	}
+	
+	public Long getTurnoId(){
+		Long turno = 0L;
+		for (HorarioDisponivelCenario horarioDisponivelCenario : this.getHorarios())
+		{	if(this != null){
+			turno = horarioDisponivelCenario.getHorarioAula().getTurno().getId();
+			break;
+			}
+			
+		}
+		return turno;
 	}
 
 	public String getHorariosStr()

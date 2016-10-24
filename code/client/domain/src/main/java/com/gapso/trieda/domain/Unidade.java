@@ -1,8 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -23,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
@@ -72,6 +71,9 @@ public class Unidade implements Serializable, Clonable< Unidade >
 
 /*    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "unidades" )
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();*/
+    
+    @ManyToMany
+	private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
 
     @OneToMany( cascade = CascadeType.ALL, mappedBy="unidade" )
     private Set< GrupoSala > gruposSalas = new HashSet< GrupoSala >();
@@ -339,7 +341,7 @@ public class Unidade implements Serializable, Clonable< Unidade >
 				return horaInicio.compareTo(horaFim);
 		    }
 		});
-		DateFormat df = new SimpleDateFormat("HH:mm");
+		//DateFormat df = new SimpleDateFormat("HH:mm");
 		for (int i = 1; i < todosHorariosOrdenados.size() ; i++)
 		{
 			DisponibilidadeUnidade disponibilidade = new DisponibilidadeUnidade();
@@ -519,7 +521,7 @@ public class Unidade implements Serializable, Clonable< Unidade >
     	return q.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    
     public static Unidade findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo)
     {
     	Query q = entityManager().createQuery(
@@ -861,13 +863,23 @@ public class Unidade implements Serializable, Clonable< Unidade >
     {
         this.horarios = horarios;
     }*/
+    
+    
 
     public Set< GrupoSala > getGruposSalas()
     {
     	return this.gruposSalas;
     }
 
-    public void setGruposSalas( Set< GrupoSala > gruposSalas )
+    public Set<Fixacao> getFixacoes() {
+		return fixacoes;
+	}
+
+	public void setFixacoes(Set<Fixacao> fixacoes) {
+		this.fixacoes = fixacoes;
+	}
+
+	public void setGruposSalas( Set< GrupoSala > gruposSalas )
     {
     	this.gruposSalas = gruposSalas;
     }
@@ -894,6 +906,7 @@ public class Unidade implements Serializable, Clonable< Unidade >
         sb.append( "Deslocamentos: " ).append(
         	getDeslocamentos() == null ? "null" : getDeslocamentos().size() ).append( ", " );
         sb.append( "GruposSalas: " ).append( getGruposSalas() == null ? "null" : getGruposSalas().size() );
+        sb.append( "Fixações: " ).append( getFixacoes() == null ? "null" : getFixacoes().size() );
         sb.append( "Salas: ").append( getSalas() == null ? "null" : getSalas().size() );
 
         return sb.toString();
