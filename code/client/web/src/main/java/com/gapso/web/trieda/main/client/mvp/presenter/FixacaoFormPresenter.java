@@ -182,13 +182,7 @@ public class FixacaoFormPresenter
 		
 		if( turma != null )
 		{
-			try
-			{
-				String[] str = turma.getTurma().split("-");
-				String turmaStr = str[0].trim();
-				fixacaoDTO.setTurmaString( turmaStr );
-				
-			}catch (Exception e){}			
+				fixacaoDTO.setTurmaString( turma.getTurma() );		
 		}
 
 		CampusDTO campus = this.display.getCampusComboBox().getValue();

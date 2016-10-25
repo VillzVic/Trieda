@@ -318,9 +318,7 @@ public class Fixacao
         Query q = entityManager().createNativeQuery(
         	" select distinct a.atp_creditoteotico " +
         	" from atendimento_operacional a " + 
-        	" inner join horario_disponivel_cenario h on a.hdc_id = h.hdc_id " +
-        	" inner join horario_disponivel_cenario_fixacoes hf on hf.horarios = h.hdc_id " +
-        	" inner join fixacoes f on f.fix_id = hf.fixacoes and f.dis_id = a.dis_id " +
+        	" inner join fixacoes f on f.dis_id = a.dis_id " +
         	" inner join salas_fixacoes sf on sf.fixacoes = f.fix_id " +
         	" inner join salas s on s.sal_id = sf.salas and s.sal_id = a.sal_id " +
         	" where f.fix_id = :fixacao and s.sal_id = :sala ");

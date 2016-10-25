@@ -240,94 +240,103 @@ public class FixacoesServiceImpl extends RemoteService implements FixacoesServic
 	@Override
 	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma)
 	{
-		if (disciplinaDTO == null && turma == null)
+		List<HorarioDisponivelCenario> disciplinaHorarios = null;
+		List<HorarioDisponivelCenario> turmaHorarios = null;
+		Turno turnoHorario = null;
+		Curriculo curriculoHorario = null;
+		AtendimentoOperacional atendimentoTurma = null;
+		List<HorarioDisponivelCenario> list = null;
+		
+		if (disciplinaDTO == null && turma.getTurma() == null)
 		{
 			return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(new ArrayList<HorarioDisponivelCenarioDTO>());
 		}
-		
-		String curriculoStr = "", turnoStr = "", turmaStr = "";
-		
-		try
-		{
-			String[] str = turma.getTurma().split("-");
-			turmaStr = str[0].trim();
-			curriculoStr = str[1].trim();
-			turnoStr = str[2].trim();
-		}
-		catch (Exception e){}
-		
-		Turno turnoHorario = Turno.findByNome(getInstituicaoEnsinoSuperUser(), getCenario(), turnoStr );
-		Curriculo curriculoHorario = Curriculo.findByCodigo(curriculoStr, getCenario(), getInstituicaoEnsinoSuperUser());
-
-		List<HorarioDisponivelCenario> disciplinaHorarios = null;
-		List<HorarioDisponivelCenario> turmaHorarios = null;
-
-		if (disciplinaDTO != null)
-		{
-			Disciplina disciplina = Disciplina.find(disciplinaDTO.getId(), getInstituicaoEnsinoUser());
-
-			if (disciplina != null)
+		else
+		{			
+			try
 			{
-				disciplinaHorarios = disciplina.getHorarios(getInstituicaoEnsinoUser());
+				if (disciplinaDTO != null)
+				{
+					Disciplina disciplina = Disciplina.find(disciplinaDTO.getId(), getInstituicaoEnsinoUser());
+
+					if (disciplina != null)
+					{
+						disciplinaHorarios = disciplina.getHorarios(getInstituicaoEnsinoUser());
+					}
+				}
+				
+				if (turma.getTurma() != null) 
+				{
+					String curriculoStr = "", turnoStr = "", turmaStr = "";
+					try
+					{
+						String[] str = turma.getTurma().split("-");
+						turmaStr = str[0].trim();
+						curriculoStr = str[1].trim();
+						turnoStr = str[2].trim();
+					}
+					catch (Exception e){}
+					
+					turnoHorario = Turno.findByNome(getInstituicaoEnsinoSuperUser(), getCenario(), turnoStr );
+					curriculoHorario = Curriculo.findByCodigo(curriculoStr, getCenario(), getInstituicaoEnsinoSuperUser());
+
+					atendimentoTurma = new AtendimentoOperacional();
+					turmaHorarios = atendimentoTurma.getHorarios(getInstituicaoEnsinoUser(), turmaStr, curriculoHorario, turnoHorario);
+				}
 			}
-		}
-
-		if (turma != null) 
-		{
-			AtendimentoOperacional atendimentoTurma = new AtendimentoOperacional();
-			turmaHorarios = atendimentoTurma.getHorarios(getInstituicaoEnsinoUser(), turmaStr, curriculoHorario, turnoHorario);
-		}
-
-		List<HorarioDisponivelCenario> list = intercessaoHorarios(disciplinaHorarios, turmaHorarios);
-
-		List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
-
-		Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
-
-		for (HorarioDisponivelCenarioDTO o : listDTO)
-		{
-			List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
-
-			if (horarios == null)
+			catch (Exception e){}
+	
+			list = intercessaoHorarios(disciplinaHorarios, turmaHorarios);
+	
+			List<HorarioDisponivelCenarioDTO> listDTO = ConvertBeans.toHorarioDisponivelCenarioDTO(list);
+	
+			Map<String, List<HorarioDisponivelCenarioDTO>> horariosTurnos = new HashMap<String, List<HorarioDisponivelCenarioDTO>>();
+	
+			for (HorarioDisponivelCenarioDTO o : listDTO)
 			{
-				horarios = new ArrayList<HorarioDisponivelCenarioDTO>();
-				horariosTurnos.put(o.getTurnoString(), horarios);
+				List<HorarioDisponivelCenarioDTO> horarios = horariosTurnos.get(o.getTurnoString());
+	
+				if (horarios == null)
+				{
+					horarios = new ArrayList<HorarioDisponivelCenarioDTO>();
+					horariosTurnos.put(o.getTurnoString(), horarios);
+				}
+	
+				horarios.add(o);
 			}
-
-			horarios.add(o);
-		}
-
-		for (Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet())
-		{
-			Collections.sort(entry.getValue());
-		}
-
-		Map<Date, List<String>> horariosFinalTurnos = new TreeMap<Date, List<String>>();
-
-		for (Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet())
-		{
-			Date ultimoHorario = entry.getValue().get(entry.getValue().size() - 1).getHorario();
-
-			List<String> turnos = horariosFinalTurnos.get(ultimoHorario);
-			if (turnos == null)
+	
+			for (Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet())
 			{
-				turnos = new ArrayList<String>();
-				horariosFinalTurnos.put(ultimoHorario, turnos);
+				Collections.sort(entry.getValue());
 			}
-
-			turnos.add(entry.getKey());
-		}
-
-		listDTO.clear();
-		for (Entry<Date, List<String>> entry : horariosFinalTurnos.entrySet())
-		{
-			for (String turno : entry.getValue())
+	
+			Map<Date, List<String>> horariosFinalTurnos = new TreeMap<Date, List<String>>();
+	
+			for (Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet())
 			{
-				listDTO.addAll(horariosTurnos.get(turno));
+				Date ultimoHorario = entry.getValue().get(entry.getValue().size() - 1).getHorario();
+	
+				List<String> turnos = horariosFinalTurnos.get(ultimoHorario);
+				if (turnos == null)
+				{
+					turnos = new ArrayList<String>();
+					horariosFinalTurnos.put(ultimoHorario, turnos);
+				}
+	
+				turnos.add(entry.getKey());
 			}
+	
+			listDTO.clear();
+			for (Entry<Date, List<String>> entry : horariosFinalTurnos.entrySet())
+			{
+				for (String turno : entry.getValue())
+				{
+					listDTO.addAll(horariosTurnos.get(turno));
+				}
+			}
+	
+			return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
 		}
-
-		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
 	}
 
 	public List<HorarioDisponivelCenario> intercessaoHorarios(Collection<HorarioDisponivelCenario> horario1, Collection<HorarioDisponivelCenario> horario2)
