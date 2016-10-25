@@ -275,15 +275,20 @@ public class AtendimentoOperacional implements Serializable,
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List< HorarioDisponivelCenario > getHorarios( InstituicaoEnsino instituicaoEnsino, String turma ){
+	public List< HorarioDisponivelCenario > getHorarios( InstituicaoEnsino instituicaoEnsino, String turma,
+			Curriculo curriculo, Turno turno ){
 		Query q = entityManager().createQuery(
 				" SELECT o FROM HorarioDisponivelCenario o " +
 				" JOIN o.atendimentosOperacionais c " +
 			    " WHERE c.instituicaoEnsino = :instituicaoEnsino " +
-			    " AND c.turma = :turma " );
+			    " AND c.turma = :turma " +
+			    " AND c.oferta.turno = :turno " +
+			    " AND c.oferta.curriculo = :curriculo " );
 		
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
 		q.setParameter("turma", turma );
+		q.setParameter("turno", turno );
+		q.setParameter("curriculo", curriculo );
 		
 		List< HorarioDisponivelCenario > list = q.getResultList();
 		return list;
@@ -292,13 +297,21 @@ public class AtendimentoOperacional implements Serializable,
 	@SuppressWarnings("unchecked")
 	public static List<String> findByDisciplinaOtimizada(
 			InstituicaoEnsino instituicaoEnsino, Disciplina disciplina) {
-		Query q = entityManager().createQuery(
-				" SELECT DISTINCT o.turma FROM AtendimentoOperacional o "
+		Query q = entityManager().createNativeQuery(
+				" SELECT distinct concat(a.turma,' - ',c.crc_cod,' - ',t.tur_nome)" +
+				" FROM atendimento_operacional a " +
+				" INNER JOIN disciplinas d ON a.dis_id = d.dis_id " +
+				" INNER JOIN ofertas o ON a.ofe_id = o.ofe_id " +
+				" INNER JOIN turnos t ON t.tur_id = o.tur_id " +
+				" INNER JOIN curriculos c ON o.crc_id = c.crc_id " +
+				" WHERE d.dis_codigo = :disciplina " +
+				" AND a.ins_id = :instituicaoEnsino " );
+				/*" SELECT DISTINCT o.turma FROM AtendimentoOperacional o "
 						+ " WHERE o.disciplina = :disciplina "
-						+ " AND o.instituicaoEnsino = :instituicaoEnsino");
-
-		q.setParameter("instituicaoEnsino", instituicaoEnsino);
-		q.setParameter("disciplina", disciplina);
+						+ " AND o.instituicaoEnsino = :instituicaoEnsino");*/
+		
+		q.setParameter("instituicaoEnsino", instituicaoEnsino.getId());
+		q.setParameter("disciplina", disciplina.getCodigo());
 
 		List<String> listas = q.getResultList();
 		

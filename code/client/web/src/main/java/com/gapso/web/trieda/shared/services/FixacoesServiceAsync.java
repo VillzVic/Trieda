@@ -5,9 +5,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.trieda.domain.Professor;
-import com.gapso.trieda.domain.Sala;
-import com.gapso.trieda.domain.Unidade;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -27,5 +25,5 @@ public interface FixacoesServiceAsync
 	void getUnidadesFixadas( FixacaoDTO fixacaoDTO, AsyncCallback< List< UnidadeDTO > > callback );
 	void getSalasFixadas(FixacaoDTO fixacaoDTO, AsyncCallback<Collection<SalaDTO>> callback);
 	void getHorariosSelecionados( FixacaoDTO fixacaoDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
-	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, String turma, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
+	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
 }

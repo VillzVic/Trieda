@@ -922,7 +922,7 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 
 	@SuppressWarnings("unchecked")
 	public static List<Sala> findByTurmaOtimizada(
-			InstituicaoEnsino instituicaoEnsino, AtendimentoOperacional turma,
+			InstituicaoEnsino instituicaoEnsino, String turma,
 			Cenario cenario, Campus campus, Disciplina disciplina) {
 		String queryTurma = "", queryCampus ="", queryDisciplina = "";
 		
@@ -954,7 +954,7 @@ public class Sala implements Serializable, Comparable<Sala>, Clonable<Sala> {
 		
 		if(turma != null)
 		{
-			q.setParameter("turma", turma.getTurma());
+			q.setParameter("turma", turma);
 		}
 		if(disciplina != null)
 		{

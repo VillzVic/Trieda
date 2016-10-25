@@ -286,6 +286,21 @@ public class Curriculo
 
         return q.getResultList();
     }
+	
+	public static Curriculo findByCodigo(String codigo, Cenario cenario, InstituicaoEnsino instituicaoEnsino){
+		
+		Query q = entityManager().createQuery(
+		    " SELECT o FROM Curriculo o " +
+			" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND cenario = :cenario " +
+			" AND o.codigo = :codigo" );
+
+			q.setParameter( "codigo", codigo );
+			q.setParameter( "cenario", cenario );
+	    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+	    	return (Curriculo) q.getSingleResult();
+	}
 
 	public static Map< String, Curriculo > buildCurriculoCodigoToCurriculoMap(
 		List< Curriculo > curriculos )

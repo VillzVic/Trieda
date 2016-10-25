@@ -382,8 +382,16 @@ public class ProfessoresServiceImpl
 	@Override
 	public ListLoadResult< ProfessorDTO > getProfessoresOtimizados( AtendimentoOperacionalDTO turmaCB, DisciplinaDTO disciplina )
 	{
+		String turma = "";
+		
+		try
+		{
+			String[] str = turmaCB.getTurma().split("-");
+			turma = str[0].trim();
+		}
+		catch (Exception e){}
 		List< ProfessorDTO > listDTO = new ArrayList< ProfessorDTO >();
-		List< Professor > list = AtendimentoOperacional.findProfessorEmAtendimentos( turmaCB.getTurma(), ConvertBeans.toDisciplina(disciplina), this.getInstituicaoEnsinoUser() );
+		List< Professor > list = AtendimentoOperacional.findProfessorEmAtendimentos( turma, ConvertBeans.toDisciplina(disciplina), this.getInstituicaoEnsinoUser() );
 		Collections.sort( list );
 
 		for ( Professor professor : list )

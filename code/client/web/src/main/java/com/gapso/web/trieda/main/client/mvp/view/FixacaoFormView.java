@@ -165,14 +165,9 @@ public class FixacaoFormView extends MyComposite implements
 		formPanel.add(checkGroup, formData);
 		
 		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
-				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID, this);
+						listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID, this);
 		grid.setSelectDefault(selectDefault);
-		
-		/*grid.addListener(Events.Render, new Listener<ComponentEvent>(){
-			public void handleEvent(ComponentEvent be){
-				grid.unCheckAllHeaders();
-			}
-		});*/
+	
 		container.add(formPanel, new VBoxLayoutData(new Margins(0, 0, 5, 0)));
 		VBoxLayoutData flex = new VBoxLayoutData(new Margins(0));
 		flex.setFlex(1);

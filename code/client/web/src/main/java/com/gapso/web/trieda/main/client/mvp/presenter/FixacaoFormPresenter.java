@@ -88,7 +88,7 @@ public class FixacaoFormPresenter
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
 				AtendimentoOperacionalDTO turma = display.getTurmaComboBox().getValue();
 				
-				Services.fixacoes().getHorariosDisponiveis( disciplinaDTO, turma.getTurma(), callback );
+				Services.fixacoes().getHorariosDisponiveis( disciplinaDTO, turma, callback );
 			}
 		};
 
@@ -137,7 +137,7 @@ public class FixacaoFormPresenter
 			}
 		});
 
-		/*this.display.getDisciplinaComboBox().addSelectionChangedListener(
+		this.display.getDisciplinaComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< DisciplinaDTO >()
 		{
 			@Override
@@ -146,7 +146,7 @@ public class FixacaoFormPresenter
 				display.getGrid().updateList();
 				
 			}
-		});*/
+		});
 		
 		this.display.getTurmaComboBox().addSelectionChangedListener(new SelectionChangedListener< AtendimentoOperacionalDTO >()	{
 			@Override
@@ -182,7 +182,13 @@ public class FixacaoFormPresenter
 		
 		if( turma != null )
 		{
-			fixacaoDTO.setTurmaString( turma.getTurma() );			
+			try
+			{
+				String[] str = turma.getTurma().split("-");
+				String turmaStr = str[0].trim();
+				fixacaoDTO.setTurmaString( turmaStr );
+				
+			}catch (Exception e){}			
 		}
 
 		CampusDTO campus = this.display.getCampusComboBox().getValue();

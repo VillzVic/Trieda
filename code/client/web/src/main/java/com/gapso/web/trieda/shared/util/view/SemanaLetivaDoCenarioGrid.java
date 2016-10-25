@@ -73,7 +73,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 
 		setHeaderVisible( false );
 		setBodyBorder( false );
-		createCheckboxs();
+		//createCheckboxs();
 	}
 	
 	public SemanaLetivaDoCenarioGrid(
@@ -91,7 +91,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 
 			setHeaderVisible( false );
 			setBodyBorder( false );
-			createCheckboxs();
+			//createCheckboxs();
 		}
 
 	@Override
@@ -262,8 +262,8 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 				}
 
 				M model = getModel( modelCenario );
-				Boolean flag = ( ( model == null ) ? false : (Boolean) model.get( property ) );
-				modelCenario.set( property, ( model == null ) ? false : model.get( property ) );
+				Boolean flag = ( false/*( model == null ) ? false : (Boolean) model.get( property )*/ );
+				modelCenario.set( property, false/*( model == null ) ? false : model.get( property )*/ );
 
 				checkColumnUpdate(colIndex, rowIndex, flag);
 				//if((rowIndex + 1) == store.getModels().size()) checkColumn(colIndex);
@@ -274,7 +274,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 					flag = true;
 				}
 
-				ToggleImageButton tb = new ToggleImageButton( flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16() );
+				ToggleImageButton tb = new ToggleImageButton( flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.save16() );
 				tb.toggle(flag);
 				
 				if(!usaSabado && colIndex == 8 ){

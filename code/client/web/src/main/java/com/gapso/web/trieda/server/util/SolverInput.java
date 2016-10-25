@@ -2598,21 +2598,24 @@ public class SolverInput
 							itemHorarioAux = this.of.createItemHorarioFixacao();
 
 							itemHorarioAux.setDiaSemana( lista );
-							itemHorarioAux.setHorariosId( horarioAula.getId().intValue() );
+							
+								itemHorarioAux.setHorariosId( horarioAula.getId().intValue() );
 							itemHorarioAux.setTeorica(fixacao.isTeoricoHorario(horarioDisponivelCenario.getId().intValue()));
 							
 							GrupoIdentificador SalaFixacao = this.of.createGrupoIdentificador();
-							for(Sala sala : fixacao.getSalas()){
-								if(fixacao.isTeoricoSala(sala.getId().intValue()) == (itemHorarioAux.isTeorica()))
-									SalaFixacao.getId().add(sala.getId().intValue());
-							}
+							
+								for(Sala sala : fixacao.getSalas()){
+									if(fixacao.isTeoricoSala(sala.getId().intValue()) == (itemHorarioAux.isTeorica()))
+										SalaFixacao.getId().add(sala.getId().intValue());
+								}
 							
 							itemHorarioAux.setSala(SalaFixacao);
 							
 							GrupoIdentificador grupoProfessorFixacao = this.of.createGrupoIdentificador();
-							for(Professor professor : fixacao.getProfessores()){
-								grupoProfessorFixacao.getId().add(professor.getId().intValue());
-							}
+							
+								for(Professor professor : fixacao.getProfessores()){
+									grupoProfessorFixacao.getId().add(professor.getId().intValue());
+								}
 							itemHorarioAux.setPorfessor(grupoProfessorFixacao);
 							
 							grupoHorarioFixacao.getHorarioFixacao().add( itemHorarioAux );

@@ -16,13 +16,16 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
@@ -235,12 +238,26 @@ public class FixacoesServiceImpl extends RemoteService implements FixacoesServic
 	}
 
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, String turma)
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma)
 	{
 		if (disciplinaDTO == null && turma == null)
 		{
 			return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(new ArrayList<HorarioDisponivelCenarioDTO>());
 		}
+		
+		String curriculoStr = "", turnoStr = "", turmaStr = "";
+		
+		try
+		{
+			String[] str = turma.getTurma().split("-");
+			turmaStr = str[0].trim();
+			curriculoStr = str[1].trim();
+			turnoStr = str[2].trim();
+		}
+		catch (Exception e){}
+		
+		Turno turnoHorario = Turno.findByNome(getInstituicaoEnsinoSuperUser(), getCenario(), turnoStr );
+		Curriculo curriculoHorario = Curriculo.findByCodigo(curriculoStr, getCenario(), getInstituicaoEnsinoSuperUser());
 
 		List<HorarioDisponivelCenario> disciplinaHorarios = null;
 		List<HorarioDisponivelCenario> turmaHorarios = null;
@@ -255,10 +272,10 @@ public class FixacoesServiceImpl extends RemoteService implements FixacoesServic
 			}
 		}
 
-		if (turma != null && turma != "")
+		if (turma != null) 
 		{
 			AtendimentoOperacional atendimentoTurma = new AtendimentoOperacional();
-			turmaHorarios = atendimentoTurma.getHorarios(getInstituicaoEnsinoUser(), turma);
+			turmaHorarios = atendimentoTurma.getHorarios(getInstituicaoEnsinoUser(), turmaStr, curriculoHorario, turnoHorario);
 		}
 
 		List<HorarioDisponivelCenario> list = intercessaoHorarios(disciplinaHorarios, turmaHorarios);
