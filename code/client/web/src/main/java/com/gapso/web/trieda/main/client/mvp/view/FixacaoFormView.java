@@ -129,15 +129,15 @@ public class FixacaoFormView extends MyComposite implements
 		turmaCB.setValue(atendimento);
 		formPanel.add(turmaCB, formData);
 
-		professorCB = new OtimizacaoProfessorComboBox(turmaCB, disciplinaCB);
+		professorCB = new OtimizacaoProfessorComboBox(turmaCB, disciplinaCB, fixacaoDTO);
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 		
-		unidadeCB = new OtimizacaoUnidadeComboBox(turmaCB, campusCB);
+		unidadeCB = new OtimizacaoUnidadeComboBox(turmaCB, campusCB, fixacaoDTO);
 		unidadeCB.setValue(unidadeDTO);
 		formPanel.add(unidadeCB, formData);
 
-		salaCB = new OtimizacaoSalasComboBox(turmaCB, campusCB, disciplinaCB);
+		salaCB = new OtimizacaoSalasComboBox(turmaCB, campusCB, disciplinaCB, fixacaoDTO);
 		salaCB.setValue(salaDTO);
 		formPanel.add(salaCB, formData);
 		

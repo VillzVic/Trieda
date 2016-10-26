@@ -27,6 +27,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Equivalencia;
+import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -46,6 +47,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FaixaCapacidadeSalaDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -126,10 +128,11 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< SalaDTO > getSalasOtimizadas(  AtendimentoOperacionalDTO turmaCB, CampusDTO campusDTO, DisciplinaDTO disciplinaDTO)
+	public ListLoadResult< SalaDTO > getSalasOtimizadas(  AtendimentoOperacionalDTO turmaCB, CampusDTO campusDTO,
+					DisciplinaDTO disciplinaDTO, FixacaoDTO fixacaoDTO)
 	{
 		String turma = "";
-		
+		List< Sala > salas = null;
 		try
 		{
 			String[] str = turmaCB.getTurma().split("-");
@@ -138,10 +141,18 @@ public class SalasServiceImpl
 		catch (Exception e){}
 		
 		List< SalaDTO > list = new ArrayList< SalaDTO >();
-		List< Sala > salas = Sala.findByTurmaOtimizada(
+		if(fixacaoDTO.getId() == null){
+			System.out.println("Sala fixacao NULL " + fixacaoDTO);
+		salas = Sala.findByTurmaOtimizada(
 			getInstituicaoEnsinoUser(), turma, getCenario(), 
 			ConvertBeans.toCampus(campusDTO), ConvertBeans.toDisciplina(disciplinaDTO) );
-
+		}else{
+			System.out.println("Sala fixacao NOT NULL " + fixacaoDTO);
+			Fixacao fixacao = Fixacao.find(fixacaoDTO.getId(), this.getInstituicaoEnsinoUser());
+			salas = Fixacao.findBySalasFixadas(getInstituicaoEnsinoUser(), turma, getCenario(), 
+							ConvertBeans.toCampus(campusDTO), ConvertBeans.toDisciplina(disciplinaDTO), fixacao);
+		}
+		
 		for ( Sala sala : salas )
 		{
 			list.add( ConvertBeans.toSalaDTO( sala ) );

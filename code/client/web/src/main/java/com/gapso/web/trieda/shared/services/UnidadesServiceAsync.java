@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -31,5 +32,5 @@ public interface UnidadesServiceAsync
 	void saveDeslocamento( CampusDTO campus, List< DeslocamentoUnidadeDTO > list, AsyncCallback< Void > callback );
 	void getHorariosDisponiveis( UnidadeDTO unidadeDTO,
 		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
-	void getUnidadesPorCampusOtimizado(AtendimentoOperacionalDTO atendimentoOperacionalDTO, CampusDTO campusCB, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
+	void getUnidadesPorCampusOtimizado(AtendimentoOperacionalDTO atendimentoOperacionalDTO, CampusDTO campusCB, FixacaoDTO fixacaoDTO, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
 }

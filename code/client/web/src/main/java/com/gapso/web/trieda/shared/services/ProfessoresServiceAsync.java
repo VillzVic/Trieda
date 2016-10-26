@@ -11,6 +11,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -90,5 +91,5 @@ public interface ProfessoresServiceAsync
 	void getAntProfessorVirtual(CenarioDTO cenarioDTO,
 			ProfessorVirtualDTO professorVirtualDTO, String order,
 			AsyncCallback<ProfessorVirtualDTO> callback);
-	void getProfessoresOtimizados(AtendimentoOperacionalDTO value, DisciplinaDTO disciplina, AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
+	void getProfessoresOtimizados(AtendimentoOperacionalDTO value, DisciplinaDTO disciplina, FixacaoDTO fixacao, AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 }

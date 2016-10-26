@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
+import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
@@ -27,6 +28,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.UnidadesService;
@@ -177,9 +179,11 @@ public class UnidadesServiceImpl
 	
 
 	@Override
-	public ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( AtendimentoOperacionalDTO turmaCB ,CampusDTO campusCB)
+	public ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( AtendimentoOperacionalDTO turmaCB ,CampusDTO campusCB,
+					FixacaoDTO fixacaoDTO)
 	{
 		String turma = "";
+		List< Unidade > unidades = null;
 		
 		try
 		{
@@ -188,9 +192,17 @@ public class UnidadesServiceImpl
 		}
 		catch (Exception e){}
 		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
+		
+		if(fixacaoDTO.getId() == null){
+			System.out.println("Unidade fixacao NULL: " + fixacaoDTO );
+			unidades = Unidade.findByTurmaOtimizada(getInstituicaoEnsinoUser(), turma, ConvertBeans.toCampus(campusCB) );
+		}else{
+			System.out.println("Unidade fixacao NOT NULL: " + fixacaoDTO );
+			Fixacao fixacao = Fixacao.find(fixacaoDTO.getId(), this.getInstituicaoEnsinoUser());
+			unidades = Fixacao.findByTurmaFixada(getInstituicaoEnsinoUser(), turma, ConvertBeans.toCampus(campusCB), fixacao);
+		}
 
-		List< Unidade > unidades = Unidade.findByTurmaOtimizada(
-			getInstituicaoEnsinoUser(), turma, ConvertBeans.toCampus(campusCB) );
+		
 
 		for ( Unidade unidade : unidades )
 		{

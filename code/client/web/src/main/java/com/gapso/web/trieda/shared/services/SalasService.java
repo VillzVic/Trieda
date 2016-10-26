@@ -12,6 +12,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FaixaCapacidadeSalaDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -62,6 +63,6 @@ public interface SalasService
 	SalaDTO getProxSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	SalaDTO getAntSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 	void associarDisciplinas(CenarioDTO cenarioDTO, boolean salas, boolean lab);
-	ListLoadResult<SalaDTO> getSalasOtimizadas(AtendimentoOperacionalDTO turma, CampusDTO campusDTO, DisciplinaDTO disciplinaDTO);
+	ListLoadResult<SalaDTO> getSalasOtimizadas(AtendimentoOperacionalDTO turma, CampusDTO campusDTO, DisciplinaDTO disciplinaDTO, FixacaoDTO fixacaoDTO);
 	
 }

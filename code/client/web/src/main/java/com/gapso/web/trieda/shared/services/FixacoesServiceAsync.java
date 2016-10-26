@@ -25,5 +25,5 @@ public interface FixacoesServiceAsync
 	void getUnidadesFixadas( FixacaoDTO fixacaoDTO, AsyncCallback< List< UnidadeDTO > > callback );
 	void getSalasFixadas(FixacaoDTO fixacaoDTO, AsyncCallback<Collection<SalaDTO>> callback);
 	void getHorariosSelecionados( FixacaoDTO fixacaoDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
-	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
+	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma, FixacaoDTO fixacaoDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
 }

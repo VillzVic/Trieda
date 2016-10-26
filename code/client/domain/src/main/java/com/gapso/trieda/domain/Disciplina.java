@@ -1315,6 +1315,24 @@ public class Disciplina implements Serializable, Comparable<Disciplina>,
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<HorarioDisponivelCenario> getHorariosFixados(
+			InstituicaoEnsino instituicaoEnsino, Fixacao fixacao) {
+		Query q = entityManager()
+				.createQuery(
+						" SELECT o FROM HorarioDisponivelCenario o JOIN o.fixacoes f " 
+								+ " WHERE f.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND f.disciplina = :disciplina "
+								+ " AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " 
+								+ " AND o.fixacoes.id = :fixacao");
+
+		q.setParameter("disciplina", this);
+		q.setParameter("fixacao", fixacao.getId());
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+
+		return q.getResultList();
+	}
 
 	public static boolean checkCodigoUnique(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo) {

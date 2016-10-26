@@ -29,7 +29,7 @@ public interface FixacoesService
 	void save(FixacaoDTO fixacaoDTO, List<HorarioDisponivelCenarioDTO> hdcDTOList, List<ProfessorDTO> professorDTOList, List<UnidadeDTO> unidadeDTOList, List<SalaDTO> salaDTOList);
 	
 	List< HorarioDisponivelCenarioDTO > getHorariosSelecionados( FixacaoDTO fixacaoDTO );
-	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma);
+	PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma, FixacaoDTO fixacaoDTO);
 	List<ProfessorDTO> getProfessoresFixados(FixacaoDTO fixacaoDTO);
 	List<UnidadeDTO> getUnidadesFixadas(FixacaoDTO fixacaoDTO);
 	Collection<SalaDTO> getSalasFixadas(FixacaoDTO fixacaoDTO);

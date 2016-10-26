@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.List;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -87,8 +88,9 @@ public class FixacaoFormPresenter
 			{
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
 				AtendimentoOperacionalDTO turma = display.getTurmaComboBox().getValue();
+				FixacaoDTO fixacaoDTO = display.getFixacaoDTO();
 				
-				Services.fixacoes().getHorariosDisponiveis( disciplinaDTO, turma, callback );
+				Services.fixacoes().getHorariosDisponiveis( disciplinaDTO, turma, fixacaoDTO, callback );
 			}
 		};
 

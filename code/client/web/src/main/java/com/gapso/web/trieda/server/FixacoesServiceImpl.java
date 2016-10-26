@@ -238,7 +238,8 @@ public class FixacoesServiceImpl extends RemoteService implements FixacoesServic
 	}
 
 	@Override
-	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AtendimentoOperacionalDTO turma)
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, 
+					AtendimentoOperacionalDTO turma, FixacaoDTO fixacaoDTO)
 	{
 		List<HorarioDisponivelCenario> disciplinaHorarios = null;
 		List<HorarioDisponivelCenario> turmaHorarios = null;
@@ -246,7 +247,8 @@ public class FixacoesServiceImpl extends RemoteService implements FixacoesServic
 		Curriculo curriculoHorario = null;
 		AtendimentoOperacional atendimentoTurma = null;
 		List<HorarioDisponivelCenario> list = null;
-		
+		Fixacao fixacao = null;
+		System.out.println("FixacaoDTO: " + fixacaoDTO.getId().toString());
 		if (disciplinaDTO == null && turma.getTurma() == null)
 		{
 			return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(new ArrayList<HorarioDisponivelCenarioDTO>());
@@ -261,7 +263,15 @@ public class FixacoesServiceImpl extends RemoteService implements FixacoesServic
 
 					if (disciplina != null)
 					{
-						disciplinaHorarios = disciplina.getHorarios(getInstituicaoEnsinoUser());
+						if(fixacaoDTO.getId() == null){
+							System.out.println("Disciplina fixacao NULL " + fixacaoDTO);
+							disciplinaHorarios = disciplina.getHorarios(getInstituicaoEnsinoUser());
+						}else{
+							System.out.println("Disciplina fixacao NOT NULL " + fixacaoDTO);
+							fixacao = Fixacao.find(fixacaoDTO.getId(), this.getInstituicaoEnsinoUser());
+							disciplinaHorarios = disciplina.getHorariosFixados(getInstituicaoEnsinoUser(), fixacao);
+						}
+						
 					}
 				}
 				
@@ -281,7 +291,16 @@ public class FixacoesServiceImpl extends RemoteService implements FixacoesServic
 					curriculoHorario = Curriculo.findByCodigo(curriculoStr, getCenario(), getInstituicaoEnsinoSuperUser());
 
 					atendimentoTurma = new AtendimentoOperacional();
-					turmaHorarios = atendimentoTurma.getHorarios(getInstituicaoEnsinoUser(), turmaStr, curriculoHorario, turnoHorario);
+					if(fixacaoDTO.getId() == null){
+						System.out.println("Turma fixacao NULL " + fixacaoDTO);
+						turmaHorarios = atendimentoTurma.getHorarios(getInstituicaoEnsinoUser(), 
+										turmaStr, curriculoHorario, turnoHorario);
+					}else{
+						System.out.println("Turma fixacao NOT NULL " + fixacaoDTO);
+						fixacao = Fixacao.find(fixacaoDTO.getId(), this.getInstituicaoEnsinoUser());
+						turmaHorarios = Fixacao.getHorariosFixados(getInstituicaoEnsinoUser(), 
+										turmaStr, curriculoHorario, turnoHorario, fixacao);
+					}
 				}
 			}
 			catch (Exception e){}

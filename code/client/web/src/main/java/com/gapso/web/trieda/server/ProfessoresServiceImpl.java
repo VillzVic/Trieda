@@ -35,6 +35,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.DisponibilidadeProfessor;
+import com.gapso.trieda.domain.Fixacao;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
@@ -51,6 +52,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -380,8 +382,10 @@ public class ProfessoresServiceImpl
 	}
 	
 	@Override
-	public ListLoadResult< ProfessorDTO > getProfessoresOtimizados( AtendimentoOperacionalDTO turmaCB, DisciplinaDTO disciplina )
+	public ListLoadResult< ProfessorDTO > getProfessoresOtimizados( AtendimentoOperacionalDTO turmaCB, 
+					DisciplinaDTO disciplina , FixacaoDTO fixacaoDTO)
 	{
+		List< Professor > list = null;
 		String turma = "";
 		
 		try
@@ -391,7 +395,18 @@ public class ProfessoresServiceImpl
 		}
 		catch (Exception e){}
 		List< ProfessorDTO > listDTO = new ArrayList< ProfessorDTO >();
-		List< Professor > list = AtendimentoOperacional.findProfessorEmAtendimentos( turma, ConvertBeans.toDisciplina(disciplina), this.getInstituicaoEnsinoUser() );
+		Fixacao fixacao = null;
+				
+		if(fixacaoDTO.getId() == null){
+			System.out.println("Professor - fixacao NULL: " + fixacaoDTO);
+			 list = AtendimentoOperacional.findProfessorEmAtendimentos( turma, ConvertBeans.toDisciplina(disciplina), this.getInstituicaoEnsinoUser() );
+		}else{
+			System.out.println("Professor - fixacao NOT NULL: " + fixacaoDTO);
+			fixacao = Fixacao.find(fixacaoDTO.getId(), this.getInstituicaoEnsinoUser() );
+			list = Fixacao.findProfessorFixado(turma, ConvertBeans.toDisciplina(disciplina), 
+							this.getInstituicaoEnsinoUser(), fixacao);
+		}
+		
 		Collections.sort( list );
 
 		for ( Professor professor : list )

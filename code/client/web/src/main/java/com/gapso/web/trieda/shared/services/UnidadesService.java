@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -32,6 +33,6 @@ public interface UnidadesService
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( UnidadeDTO unidadeDTO );
 	void saveHorariosDisponiveis( UnidadeDTO unidadeDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	void saveDeslocamento( CampusDTO campus, List< DeslocamentoUnidadeDTO > list );
-	ListLoadResult<UnidadeDTO> getUnidadesPorCampusOtimizado(AtendimentoOperacionalDTO atendimentoOperacionalDTO, CampusDTO campusCB);
+	ListLoadResult<UnidadeDTO> getUnidadesPorCampusOtimizado(AtendimentoOperacionalDTO atendimentoOperacionalDTO, CampusDTO campusCB, FixacaoDTO fixacaoDTO);
 
 }

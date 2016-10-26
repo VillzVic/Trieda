@@ -295,6 +295,119 @@ public class Fixacao
     	List< Fixacao > list = Fixacao.findAll( instituicaoEnsino,cenario );
         return ( list == null ? 0 : list.size() );
     }
+    
+    @SuppressWarnings("unchecked")
+	public static List<Professor> findProfessorFixado(String turmaCB, Disciplina disciplina,
+			InstituicaoEnsino instituicaoEnsino, Fixacao fixacao) {
+		Query q = entityManager()
+				.createQuery(
+						" SELECT DISTINCT o "
+								+ " FROM Professor o JOIN o.fixacoes f "
+								+ " WHERE f.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND f.disciplina = :disciplina "
+								+ " AND f.turma = :turma " 
+								+ " AND o.fixacoes.id = :fixacao ");
+
+		q.setParameter("turma", turmaCB);
+		q.setParameter("disciplina", disciplina);
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("fixacao", fixacao.getId());
+
+		List<Professor> list = q.getResultList();
+		return list;
+	}
+    
+    @SuppressWarnings("unchecked")
+    public static List< Unidade > findByTurmaFixada(
+    	InstituicaoEnsino instituicaoEnsino, String turma , Campus campus, Fixacao fixacao)
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT DISTINCT o FROM Unidade o " +
+    		" JOIN o.salas s JOIN s.fixacoes f " +
+    		" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.campus = :campus " +
+    		" AND f.turma = :turma " +
+    		" AND s.fixacoes.id = :fixacao ORDER BY o.nome ASC " );
+
+		q.setParameter( "turma", turma );
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "fixacao", fixacao.getId() );
+
+    	return q.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public static List<Sala> findBySalasFixadas(
+			InstituicaoEnsino instituicaoEnsino, String turma,
+			Cenario cenario, Campus campus, Disciplina disciplina, Fixacao fixacao) {
+		String queryTurma = "", queryCampus ="", queryDisciplina = "";
+		
+		if(turma != null)
+		{
+			queryTurma = " AND f.turma = :turma ";
+		}
+		if(disciplina != null)
+		{
+			queryDisciplina = " AND f.disciplina = :disciplina ";
+		}
+		if(campus != null)
+		{
+			queryCampus = " AND o.unidade.campus = :campus ";
+		}
+		
+		Query q = entityManager()
+				.createQuery(
+						" SELECT DISTINCT o FROM Sala o "
+								+ " JOIN o.fixacoes f "
+								+ " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino "
+								+ " AND o.unidade.campus.cenario = :cenario " 
+								+ " AND o.fixacoes.id = :fixacao "
+								+ queryTurma
+								+ queryDisciplina
+								+ queryCampus );
+
+		q.setParameter("cenario", cenario);
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("fixacao", fixacao.getId());
+		
+		if(turma != null)
+		{
+			q.setParameter("turma", turma);
+		}
+		if(disciplina != null)
+		{
+			q.setParameter("disciplina", disciplina);
+		}
+		if(campus != null)
+		{
+			q.setParameter("campus", campus);
+		}
+
+		return q.getResultList();
+	}
+    
+    @SuppressWarnings("unchecked")
+	public static List< HorarioDisponivelCenario > getHorariosFixados( InstituicaoEnsino instituicaoEnsino, String turma,
+			Curriculo curriculo, Turno turno, Fixacao fixacao){
+		Query q = entityManager().createQuery(
+				" SELECT o FROM HorarioDisponivelCenario o " +
+				" JOIN o.fixacoes f " +
+			    " WHERE f.instituicaoEnsino = :instituicaoEnsino " +
+			    " AND f.turma = :turma " +
+			    " AND f.campus.ofertas.turno = :turno " +
+			    " AND f.campus.ofertas.curriculo = :curriculo " +
+			    " AND o.fixacoes.id = :fixacao " );
+		
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("turma", turma );
+		q.setParameter("turno", turno );
+		q.setParameter("curriculo", curriculo );
+		q.setParameter("fixacao", fixacao.getId() );
+		
+		List< HorarioDisponivelCenario > list = q.getResultList();
+		return list;
+	}
 
     @SuppressWarnings( "unchecked" )
     public static List< Fixacao > findAll(

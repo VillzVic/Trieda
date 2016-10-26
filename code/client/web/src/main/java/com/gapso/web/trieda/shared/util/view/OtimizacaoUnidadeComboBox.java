@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -21,15 +22,19 @@ public class OtimizacaoUnidadeComboBox	extends ComboBox<UnidadeDTO>
 {
 	private OtimizacaoTurmaComboBox turmaComboBox;
 	private OtimizacaoCampusComboBox campusComboBox;
+	private FixacaoDTO fixacaoDTO;
 	
-	public OtimizacaoUnidadeComboBox(OtimizacaoTurmaComboBox turmaCB, OtimizacaoCampusComboBox campusCB) {
+	public OtimizacaoUnidadeComboBox(OtimizacaoTurmaComboBox turmaCB, OtimizacaoCampusComboBox campusCB,
+					 FixacaoDTO fixacao) {
 		this.turmaComboBox = turmaCB;
 		this.campusComboBox = campusCB;
+		this.fixacaoDTO = fixacao;
 		
 		RpcProxy<ListLoadResult<UnidadeDTO>> proxy = new RpcProxy<ListLoadResult<UnidadeDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback) {
-				Services.unidades().getUnidadesPorCampusOtimizado(turmaComboBox.getValue(), campusComboBox.getValue(), callback);
+				Services.unidades().getUnidadesPorCampusOtimizado(turmaComboBox.getValue(), campusComboBox.getValue(), 
+								fixacaoDTO, callback);
 			}
 		};
 		
