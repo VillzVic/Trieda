@@ -20,14 +20,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class OtimizacaoUnidadeComboBox	extends ComboBox<UnidadeDTO>
 {
 	private OtimizacaoTurmaComboBox turmaComboBox;
+	private OtimizacaoCampusComboBox campusComboBox;
 	
-	public OtimizacaoUnidadeComboBox(OtimizacaoTurmaComboBox turmaCB) {
+	public OtimizacaoUnidadeComboBox(OtimizacaoTurmaComboBox turmaCB, OtimizacaoCampusComboBox campusCB) {
 		this.turmaComboBox = turmaCB;
+		this.campusComboBox = campusCB;
 		
 		RpcProxy<ListLoadResult<UnidadeDTO>> proxy = new RpcProxy<ListLoadResult<UnidadeDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback) {
-				Services.unidades().getUnidadesPorCampusOtimizado(turmaComboBox.getValue(), callback);
+				Services.unidades().getUnidadesPorCampusOtimizado(turmaComboBox.getValue(), campusComboBox.getValue(), callback);
 			}
 		};
 		

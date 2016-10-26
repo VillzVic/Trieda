@@ -177,7 +177,7 @@ public class UnidadesServiceImpl
 	
 
 	@Override
-	public ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( AtendimentoOperacionalDTO turmaCB )
+	public ListLoadResult< UnidadeDTO > getUnidadesPorCampusOtimizado( AtendimentoOperacionalDTO turmaCB ,CampusDTO campusCB)
 	{
 		String turma = "";
 		
@@ -190,7 +190,7 @@ public class UnidadesServiceImpl
 		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
 
 		List< Unidade > unidades = Unidade.findByTurmaOtimizada(
-			getInstituicaoEnsinoUser(), turma );
+			getInstituicaoEnsinoUser(), turma, ConvertBeans.toCampus(campusCB) );
 
 		for ( Unidade unidade : unidades )
 		{

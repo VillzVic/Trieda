@@ -133,7 +133,7 @@ public class FixacaoFormView extends MyComposite implements
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 		
-		unidadeCB = new OtimizacaoUnidadeComboBox(turmaCB);
+		unidadeCB = new OtimizacaoUnidadeComboBox(turmaCB, campusCB);
 		unidadeCB.setValue(unidadeDTO);
 		formPanel.add(unidadeCB, formData);
 
@@ -145,16 +145,20 @@ public class FixacaoFormView extends MyComposite implements
 		diasEHorariosCB.setBoxLabel("Dia e Horários");
 		diasEHorariosCB.setName(fixacaoDTO.PROPERTY_FIXA_DIAS_HORARIOS);	
 		diasEHorariosCB.setValue(this.fixacaoDTO.getFixaDiaEHorario());
+		diasEHorariosCB.setToolTip("Fixa os Horarios listados na grade.");
 		
 		ambienteCB = new CheckBox();
 		ambienteCB.setBoxLabel("Ambiente(s)");
 		ambienteCB.setName(fixacaoDTO.PROPERTY_FIXA_AMBIENTE);
 		ambienteCB.setValue(this.fixacaoDTO.getFixaAmbiente());
+		ambienteCB.setToolTip("Fixa a(s) Sala(s) relacionadas à Turma.");
+		
 		
 		professorCBx = new CheckBox();
 		professorCBx.setBoxLabel("Professor(es)");
 		professorCBx.setName(fixacaoDTO.PROPERTY_FIXA_PROFESSOR);
 		professorCBx.setValue(this.fixacaoDTO.getFixaProfessor());
+		professorCBx.setToolTip("Fixa o(s) Professor(es) relacionados à Turma."); 
 		
 		CheckBoxGroup checkGroup = new CheckBoxGroup();
 		checkGroup.setFieldLabel("Fixar");
